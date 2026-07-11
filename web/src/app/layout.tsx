@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
 const fredoka = Fredoka({
