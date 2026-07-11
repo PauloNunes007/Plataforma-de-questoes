@@ -1,0 +1,202 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-nunito);
+  --font-heading: var(--font-fredoka);
+  --font-mono: var(--font-jetbrains-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Paleta de gamificação Questly — mesma linguagem visual do app legado
+     (ver memória "design-dashboard-trilha-duolingo"): verde de marca,
+     azul/laranja/vermelho/dourado/roxo para XP, ligas, streak e alertas. */
+  --color-questly-green: var(--questly-green);
+  --color-questly-green-dark: var(--questly-green-dark);
+  --color-questly-green-deep: var(--questly-green-deep);
+  --color-questly-green-light: var(--questly-green-light);
+  --color-questly-blue: var(--questly-blue);
+  --color-questly-blue-dark: var(--questly-blue-dark);
+  --color-questly-blue-light: var(--questly-blue-light);
+  --color-questly-orange: var(--questly-orange);
+  --color-questly-orange-dark: var(--questly-orange-dark);
+  --color-questly-orange-light: var(--questly-orange-light);
+  --color-questly-red: var(--questly-red);
+  --color-questly-red-dark: var(--questly-red-dark);
+  --color-questly-red-light: var(--questly-red-light);
+  --color-questly-gold: var(--questly-gold);
+  --color-questly-gold-dark: var(--questly-gold-dark);
+  --color-questly-gold-light: var(--questly-gold-light);
+  --color-questly-purple: var(--questly-purple);
+  --color-questly-locked: var(--questly-locked);
+  --color-questly-locked-dark: var(--questly-locked-dark);
+  --color-questly-locked-ic: var(--questly-locked-ic);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.28 0.01 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.28 0.01 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.28 0.01 285);
+  --primary: var(--questly-green);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: var(--questly-blue-light);
+  --secondary-foreground: var(--questly-blue-dark);
+  --muted: oklch(0.97 0.005 285);
+  --muted-foreground: oklch(0.53 0.01 285);
+  --accent: var(--questly-green-light);
+  --accent-foreground: var(--questly-green-dark);
+  --destructive: var(--questly-red);
+  --border: oklch(0.91 0.003 285);
+  --input: oklch(0.91 0.003 285);
+  --ring: var(--questly-green);
+  --chart-1: var(--questly-green);
+  --chart-2: var(--questly-blue);
+  --chart-3: var(--questly-orange);
+  --chart-4: var(--questly-purple);
+  --chart-5: var(--questly-gold);
+  --radius: 1rem;
+  --sidebar: oklch(0.99 0.003 120);
+  --sidebar-foreground: oklch(0.28 0.01 285);
+  --sidebar-primary: var(--questly-green);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: var(--questly-green-light);
+  --sidebar-accent-foreground: var(--questly-green-dark);
+  --sidebar-border: oklch(0.91 0.003 285);
+  --sidebar-ring: var(--questly-green);
+
+  --questly-green: #2fc44c;
+  --questly-green-dark: #249a3b;
+  --questly-green-deep: #1e8231;
+  --questly-green-light: #dff7e3;
+  --questly-blue: #1cb0f6;
+  --questly-blue-dark: #1590cc;
+  --questly-blue-light: #dff3fe;
+  --questly-orange: #ff9600;
+  --questly-orange-dark: #db7e00;
+  --questly-orange-light: #ffebcc;
+  --questly-red: #ff4b4b;
+  --questly-red-dark: #d93a3a;
+  --questly-red-light: #ffe3e3;
+  --questly-gold: #ffc800;
+  --questly-gold-dark: #e0a500;
+  --questly-gold-light: #fff6d6;
+  --questly-purple: #ce82ff;
+  --questly-locked: #e5e5e5;
+  --questly-locked-dark: #cbcbd1;
+  --questly-locked-ic: #afafaf;
+}
+
+.dark {
+  --background: oklch(0.19 0.006 285);
+  --foreground: oklch(0.94 0.003 285);
+  --card: oklch(0.23 0.007 285);
+  --card-foreground: oklch(0.94 0.003 285);
+  --popover: oklch(0.23 0.007 285);
+  --popover-foreground: oklch(0.94 0.003 285);
+  --primary: var(--questly-green);
+  --primary-foreground: oklch(0.15 0.01 285);
+  --secondary: var(--questly-blue-light);
+  --secondary-foreground: var(--questly-blue-dark);
+  --muted: oklch(0.27 0.007 285);
+  --muted-foreground: oklch(0.68 0.006 285);
+  --accent: var(--questly-green-light);
+  --accent-foreground: var(--questly-green-dark);
+  --destructive: var(--questly-red);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--questly-green);
+  --chart-1: var(--questly-green);
+  --chart-2: var(--questly-blue);
+  --chart-3: var(--questly-orange);
+  --chart-4: var(--questly-purple);
+  --chart-5: var(--questly-gold);
+  --sidebar: oklch(0.21 0.007 285);
+  --sidebar-foreground: oklch(0.94 0.003 285);
+  --sidebar-primary: var(--questly-green);
+  --sidebar-primary-foreground: oklch(0.15 0.01 285);
+  --sidebar-accent: var(--questly-green-light);
+  --sidebar-accent-foreground: var(--questly-green-dark);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: var(--questly-green);
+
+  --questly-green: #34d058;
+  --questly-green-dark: #2fc44c;
+  --questly-green-deep: #249a3b;
+  --questly-green-light: #16321f;
+  --questly-blue: #3dc1ff;
+  --questly-blue-dark: #1cb0f6;
+  --questly-blue-light: #123245;
+  --questly-orange: #ffa733;
+  --questly-orange-dark: #ff9600;
+  --questly-orange-light: #3d2a0f;
+  --questly-red: #ff6b6b;
+  --questly-red-dark: #ff4b4b;
+  --questly-red-light: #3a1414;
+  --questly-gold: #ffd84d;
+  --questly-gold-dark: #ffc800;
+  --questly-gold-light: #3d3210;
+  --questly-purple: #d9a3ff;
+  --questly-locked: #33333a;
+  --questly-locked-dark: #26262b;
+  --questly-locked-ic: #6a6a72;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-tight;
+  }
+}
