@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import type { BossAlvo, DiaTicker } from "@/lib/questly/dashboard-data";
@@ -40,10 +41,16 @@ export function BossSiegeMeter({
         <p className="mb-1 font-heading text-lg font-semibold">
           Sua campanha nasce aqui
         </p>
-        <p className="text-sm font-semibold text-muted-foreground">
+        <p className="mb-5 text-sm font-semibold text-muted-foreground">
           Configure suas disciplinas e as datas das provas pra desbloquear seu
           primeiro Boss.
         </p>
+        <Link
+          href="/onboarding"
+          className="inline-flex items-center justify-center rounded-2xl bg-questly-green px-6 py-3 font-heading text-sm font-semibold text-white shadow-[0_3px_0_var(--questly-green-dark)]"
+        >
+          Configurar agora
+        </Link>
       </div>
     );
   }
@@ -55,9 +62,15 @@ export function BossSiegeMeter({
         <p className="mb-1 font-heading text-lg font-semibold">
           Nenhum Boss no horizonte
         </p>
-        <p className="text-sm font-semibold text-muted-foreground">
+        <p className="mb-5 text-sm font-semibold text-muted-foreground">
           Cadastre a data da sua próxima prova pra começar o cerco.
         </p>
+        <Link
+          href="/configuracoes"
+          className="inline-flex items-center justify-center rounded-2xl bg-questly-orange px-6 py-3 font-heading text-sm font-semibold text-white shadow-[0_3px_0_var(--questly-orange-dark)]"
+        >
+          Cadastrar prova
+        </Link>
       </div>
     );
   }

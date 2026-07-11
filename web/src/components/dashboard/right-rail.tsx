@@ -252,9 +252,17 @@ export function SubjectsRailCard({ subjects, index }: { subjects: SubjectListIte
         </span>
       </CardLabel>
       {subjects.length === 0 ? (
-        <p className="text-sm font-semibold text-muted-foreground">
-          Você ainda não configurou nenhuma disciplina.
-        </p>
+        <div>
+          <p className="mb-3 text-sm font-semibold text-muted-foreground">
+            Você ainda não configurou nenhuma disciplina.
+          </p>
+          <Link
+            href="/onboarding"
+            className="inline-flex w-full items-center justify-center rounded-2xl bg-questly-green px-4 py-2.5 font-heading text-sm font-semibold text-white shadow-[0_3px_0_var(--questly-green-dark)]"
+          >
+            Configurar
+          </Link>
+        </div>
       ) : (
         <div className="flex flex-col">
           {subjects.map((s, i) => (

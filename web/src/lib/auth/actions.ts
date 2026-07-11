@@ -94,7 +94,8 @@ export async function signUpAction(
     await supabase.from("profiles").insert({ id: data.user.id, nome });
   }
 
-  redirect("/dashboard");
+  // conta nova ainda não tem disciplinas/metas configuradas
+  redirect("/onboarding");
 }
 
 export async function signOutAction() {
