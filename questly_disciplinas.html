@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questly — Disciplinas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --bg-soft:#F7FAF7;
+  --bg-page:#FAFBFA;
+  --green:#2FC44C;
+  --green-dark:#249A3B;
+  --green-light:#DFF7E3;
+  --blue:#1CB0F6;
+  --blue-dark:#1590CC;
+  --blue-light:#DFF3FE;
+  --orange:#FF9600;
+  --orange-dark:#DB7E00;
+  --orange-light:#FFEBCC;
+  --red:#FF4B4B;
+  --red-light:#FFE3E3;
+  --gold:#FFC800;
+  --text:#3C3C41;
+  --text-dim:#767680;
+  --text-soft:#9C9CA6;
+  --border:#E7E7EC;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{ font-family:'Nunito',sans-serif; color:var(--text); background:var(--bg-page); }
+h1,h2,h3,h4{font-family:'Fredoka',sans-serif; font-weight:600; letter-spacing:-0.01em; color:#2B2B30;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Fredoka'; font-weight:600; font-size:14.5px;
+  padding:14px 22px; border-radius:14px; border-bottom:4px solid transparent;
+  transition:transform .08s ease, filter .12s ease;
+}
+.btn:hover{ filter:brightness(1.05); }
+.btn:active{ transform:translateY(3px); border-bottom-width:0; }
+.btn:disabled{ opacity:0.45; pointer-events:none; }
+.btn-primary{ background:var(--green); color:#fff; border-bottom-color:var(--green-dark); width:100%; }
+
+.shell{ display:grid; grid-template-columns:236px 1fr; min-height:100vh; }
+
+/* sidebar (mesma do dashboard/configurações) */
+.sidebar{ background:#fff; border-right:1px solid var(--border); padding:24px 16px; display:flex; flex-direction:column; }
+.logo{ display:flex; align-items:center; gap:9px; font-family:'Fredoka'; font-weight:700; font-size:19px; padding:8px 10px 26px; }
+.logo-mark{ width:30px; height:30px; border-radius:10px; background:var(--green); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:#fff;}
+.side-link{ display:flex; align-items:center; gap:11px; padding:11px 13px; border-radius:12px; color:var(--text-dim); font-size:14px; font-weight:700; margin-bottom:3px;}
+.side-link.active{ background:var(--green-light); color:var(--green-dark); }
+.side-link .ic{ width:18px; height:18px; }
+.side-user{ margin-top:auto; display:flex; align-items:center; gap:10px; padding:12px 10px; border-top:1px solid var(--border); }
+.avatar{ width:36px; height:36px; border-radius:11px; background:var(--green); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; color:#fff; overflow:hidden;}
+.avatar-img{ width:100%; height:100%; object-fit:cover; }
+
+/* main */
+.main{ padding:30px 36px 60px; max-width:760px; width:100%; margin:0 auto; }
+.main-head{ margin-bottom:26px; }
+.main-head h1{ font-size:25px; }
+.main-head p{ color:var(--text-dim); font-size:13.5px; font-weight:600; margin-top:4px;}
+
+.card{ background:#fff; border:1px solid var(--border); border-radius:20px; padding:24px; margin-bottom:20px; animation:fadeUp .35s ease both; }
+.card-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.card-head h2{ font-size:16.5px; }
+.card-sub{ font-size:12.5px; color:var(--text-soft); font-weight:600; margin-bottom:18px; }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:9px; }
+.chip{
+  padding:10px 16px; border-radius:100px; border:2px solid var(--border); background:#fff;
+  font-size:13.5px; font-weight:700; color:var(--text-dim); transition:all .12s; cursor:pointer;
+}
+.chip:hover{ border-color:var(--green); }
+.chip.active{ background:var(--green-light); border-color:var(--green); color:var(--green-dark); }
+
+.empty-hint{ font-size:13px; color:var(--text-soft); font-weight:600; padding:8px 0; }
+
+/* passo 1 — escolher disciplina */
+.subj-pick-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:12px; }
+.subj-pick{
+  background:var(--bg-soft); border:2px solid var(--border); border-radius:15px;
+  padding:16px 18px; cursor:pointer; transition:all .12s;
+}
+.subj-pick:hover{ border-color:var(--green); }
+.subj-pick.selected{ background:var(--green-light); border-color:var(--green); }
+.subj-pick-name{ font-family:'Fredoka'; font-weight:600; font-size:14.5px; margin-bottom:4px; }
+.subj-pick-meta{ font-size:11.5px; color:var(--text-soft); font-weight:700; }
+.subj-pick.selected .subj-pick-meta{ color:var(--green-dark); }
+
+/* estado vazio (sem disciplinas) */
+.empty-state{ text-align:center; padding:50px 20px; }
+.empty-state .ic{ font-size:40px; margin-bottom:14px; }
+.empty-state p{ color:var(--text-dim); font-size:14px; font-weight:600; margin-bottom:20px; }
+
+/* passo 4 — resumo e começar */
+.preview-text{ font-size:13.5px; font-weight:700; color:var(--green-dark); margin-bottom:14px; min-height:19px; }
+
+@media(max-width:720px){
+  .shell{ grid-template-columns:1fr; }
+  .sidebar{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-mark">Q</div>Questly</div>
+    <a class="side-link" href="questly_dashboard.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg> Início</a>
+    <a class="side-link active" href="questly_disciplinas.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg> Disciplinas</a>
+    <a class="side-link" href="questly_trilha.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M4 5h16M8 5v14M16 5v14"/></svg> Minha trilha</a>
+    <a class="side-link" href="questly_ranking.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-6"/></svg> Ranking</a>
+    <a class="side-link"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg> Calendário</a>
+    <a class="side-link" href="questly_configuracoes.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg> Perfil</a>
+    <div class="side-user">
+      <div class="avatar" id="sideAvatar">?</div>
+      <div><div style="font-size:13px;font-weight:700;" id="sideName">Carregando...</div><div style="font-size:11px;color:var(--text-soft);font-weight:700;" id="sideCourse"></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-head">
+      <h1>Disciplinas</h1>
+      <p>Monte sua própria prática: escolha a disciplina, os tópicos e quantas questões quer fazer. Conta XP e cobertura do Boss igual à missão do dia.</p>
+    </div>
+
+    <div class="empty-state" id="emptySubjects" style="display:none;">
+      <div class="ic">📚</div>
+      <p>Você ainda não tem disciplinas cadastradas.</p>
+      <a class="btn btn-primary" style="width:auto;display:inline-flex;padding:13px 26px;" href="questly_onboarding.html">Configurar disciplinas</a>
+    </div>
+
+    <div id="pickCard">
+      <div class="card">
+        <div class="card-head"><h2>1. Escolha a disciplina</h2></div>
+        <div class="card-sub">Todas as suas disciplinas cadastradas.</div>
+        <div class="subj-pick-grid" id="subjectPickList">
+          <div class="empty-hint">Carregando disciplinas...</div>
+        </div>
+      </div>
+
+      <div class="card" id="stepTopicos" style="display:none;">
+        <div class="card-head"><h2>2. Tópicos</h2></div>
+        <div class="card-sub">Nenhum selecionado = todos os tópicos da disciplina.</div>
+        <div class="chip-row" id="topicosChips"></div>
+      </div>
+
+      <div class="card" id="stepFiltros" style="display:none;">
+        <div class="card-head"><h2>3. Dificuldade e quantidade</h2></div>
+        <div class="card-sub" style="margin-bottom:8px;">Dificuldade</div>
+        <div class="chip-row" id="dificuldadeChips" style="margin-bottom:18px;">
+          <div class="chip active" data-val="todas">Todas</div>
+          <div class="chip" data-val="facil">Fácil</div>
+          <div class="chip" data-val="medio">Médio</div>
+          <div class="chip" data-val="dificil">Difícil</div>
+        </div>
+        <div class="card-sub" style="margin-bottom:8px;">Quantidade de questões</div>
+        <div class="chip-row" id="qtdChips">
+          <div class="chip" data-val="5">5</div>
+          <div class="chip active" data-val="10">10</div>
+          <div class="chip" data-val="15">15</div>
+          <div class="chip" data-val="20">20</div>
+          <div class="chip" data-val="todas">Todas</div>
+        </div>
+      </div>
+
+      <div class="card" id="startCard" style="display:none;">
+        <div class="card-head"><h2>🚀 Pronto pra praticar?</h2></div>
+        <div class="preview-text" id="previewText">Calculando questões disponíveis...</div>
+        <button class="btn btn-primary" id="startBtn" disabled>🚀 Começar prática</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/disciplinas.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Next.js app (web/)
+web/node_modules/
+web/.next/
+web/out/
+web/build/
+web/.env*.local
+web/.env
+web/*.tsbuildinfo
+web/next-env.d.ts
+
+# OS
+.DS_Store
+Thumbs.db

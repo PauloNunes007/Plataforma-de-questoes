@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questly — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --bg-soft:#F7FAF7;
+  --bg-page:#FFFFFF;
+  --green:#2FC44C;
+  --green-dark:#249A3B;
+  --green-deep:#1E8231;
+  --green-light:#DFF7E3;
+  --blue:#1CB0F6;
+  --blue-dark:#1590CC;
+  --blue-light:#DFF3FE;
+  --orange:#FF9600;
+  --orange-dark:#DB7E00;
+  --orange-light:#FFEBCC;
+  --red:#FF4B4B;
+  --red-dark:#D93A3A;
+  --red-light:#FFE3E3;
+  --gold:#FFC800;
+  --gold-dark:#E0A500;
+  --gold-light:#FFF6D6;
+  --purple:#CE82FF;
+  --text:#3C3C41;
+  --text-dim:#767680;
+  --text-soft:#AFAFB8;
+  --border:#E5E5E5;
+  --locked:#E5E5E5;
+  --locked-dark:#CBCBD1;
+  --locked-ic:#AFAFAF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{ font-family:'Nunito',sans-serif; color:var(--text); background:var(--bg-page); }
+h1,h2,h3,h4{font-family:'Fredoka',sans-serif; font-weight:600; letter-spacing:-0.01em; color:#2B2B30;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none; background:none;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* ============ BOTÕES 3D (estilo Duolingo) ============ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Fredoka'; font-weight:600; font-size:14.5px; letter-spacing:0.06em;
+  text-transform:uppercase;
+  padding:14px 24px; border-radius:14px; border-bottom:4px solid transparent;
+  transition:filter .12s ease, transform .05s ease;
+  user-select:none;
+}
+.btn:hover{ filter:brightness(1.05); }
+.btn:active{ transform:translateY(4px); border-bottom-width:0; margin-bottom:4px; }
+.btn-primary{ background:var(--green); color:#fff; border-bottom-color:var(--green-dark); }
+.btn-white{ background:#fff; color:var(--green-dark); border-bottom-color:#D7E6DA; }
+.btn-ghost{ background:#fff; color:var(--blue); border:2px solid var(--border); border-bottom-width:4px; }
+
+/* ============ SHELL ============ */
+.shell{ display:grid; grid-template-columns:250px 1fr; min-height:100vh; }
+
+/* ============ SIDEBAR ============ */
+.sidebar{
+  border-right:2px solid var(--border);
+  padding:20px 16px; display:flex; flex-direction:column;
+  position:sticky; top:0; height:100vh; background:#fff; z-index:50;
+}
+.logo{ display:flex; align-items:center; gap:10px; font-family:'Fredoka'; font-weight:700; font-size:24px; color:var(--green); padding:6px 12px 24px; letter-spacing:-0.02em;}
+.logo-mark{
+  width:38px; height:38px; border-radius:12px; background:var(--green);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; font-weight:700; color:#fff;
+  box-shadow:0 3px 0 var(--green-dark);
+}
+.side-link{
+  display:flex; align-items:center; gap:13px; padding:10px 12px; border-radius:14px;
+  color:var(--text-dim); font-family:'Fredoka'; font-size:14px; font-weight:600;
+  letter-spacing:0.05em; text-transform:uppercase; margin-bottom:4px;
+  border:2px solid transparent; transition:background .12s;
+}
+.side-link:hover{ background:var(--bg-soft); }
+.side-link.active{ background:var(--blue-light); color:var(--blue-dark); border-color:#B8E4FB; }
+.side-ic{
+  width:34px; height:34px; border-radius:10px; display:flex; align-items:center;
+  justify-content:center; font-size:19px; flex-shrink:0;
+}
+.side-user{ margin-top:auto; display:flex; align-items:center; gap:11px; padding:14px 10px 4px; border-top:2px solid var(--border); }
+.avatar{
+  width:40px; height:40px; border-radius:13px; background:linear-gradient(135deg,var(--green),#57D96F);
+  display:flex; align-items:center; justify-content:center; font-family:'Fredoka';
+  font-weight:700; font-size:16px; color:#fff; box-shadow:0 2px 0 var(--green-dark); overflow:hidden;
+}
+.avatar-img{ width:100%; height:100%; object-fit:cover; }
+.side-user b{ font-size:13.5px; font-weight:800; display:block; }
+.side-user span{ font-size:11px; color:var(--text-soft); font-weight:700; }
+
+/* ============ MAIN (trilha + rail) ============ */
+.main{
+  display:grid; grid-template-columns:minmax(0,620px) 368px;
+  gap:32px; justify-content:center; align-items:start;
+  padding:28px 32px 90px; width:100%;
+}
+
+/* ---- cabeçalho da coluna da trilha ---- */
+.path-col{ min-width:0; }
+.greet-row{ margin:2px 4px 18px; }
+.greet-row h1{ font-size:24px; }
+.greet-row p{ color:var(--text-dim); font-size:14px; font-weight:600; margin-top:3px; }
+
+/* ---- cabeçalho com contagem até o boss (fica acima da lista de missões) ---- */
+.mission-day-head{ display:flex; justify-content:flex-end; margin-bottom:10px; }
+
+/* ---- banner missão do dia (1 card por disciplina agendada hoje) ---- */
+.banner{
+  position:relative; overflow:hidden;
+  background:linear-gradient(135deg, #34CC52 0%, #1FA83C 100%);
+  border-radius:20px; padding:24px 26px 26px; color:#fff;
+  box-shadow:0 4px 0 var(--green-deep);
+  margin-bottom:34px;
+}
+/* missão de Mestre: todos os tópicos da missão já têm maestria
+   (>= 90% em >= 20 questões) — o banner fica dourado e o XP paga 1.5x */
+.banner.mestre{
+  background:linear-gradient(135deg, #FFC800 0%, #E8A200 100%);
+  box-shadow:0 4px 0 #B07C00;
+}
+.banner::before{ content:""; position:absolute; width:260px; height:260px; border-radius:50%; background:rgba(255,255,255,0.09); top:-130px; right:-70px; }
+.banner::after{ content:""; position:absolute; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,0.06); bottom:-80px; left:-40px; }
+.banner > *{ position:relative; z-index:2; }
+.banner-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.banner-kicker{
+  font-family:'Fredoka'; font-size:12px; font-weight:600; letter-spacing:0.12em;
+  text-transform:uppercase; color:rgba(255,255,255,0.85);
+  background:rgba(255,255,255,0.18); padding:6px 14px; border-radius:100px;
+}
+.banner-days{ font-size:12.5px; font-weight:800; color:rgba(255,255,255,0.9); display:flex; align-items:center; gap:6px;}
+.banner h2{ color:#fff; font-size:23px; margin-bottom:5px; }
+.banner .desc{ color:rgba(255,255,255,0.85); font-size:13.5px; font-weight:600; margin-bottom:18px; }
+.banner-chips{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+.chip{
+  background:rgba(255,255,255,0.16); border:1.5px solid rgba(255,255,255,0.22);
+  border-radius:100px; padding:7px 15px; font-size:12.5px; font-weight:800;
+  display:flex; align-items:center; gap:7px;
+}
+.chip b{ font-family:'JetBrains Mono'; font-weight:700; font-size:13px; }
+
+/* ---- trilha ---- */
+.path-wrap{ position:relative; padding:8px 0 30px; }
+.path-nodes{ display:flex; flex-direction:column; align-items:center; gap:22px; }
+
+.path-node{ position:relative; display:flex; flex-direction:column; align-items:center; transition:transform .15s;}
+.node-btn{
+  width:72px; height:66px; border-radius:50% / 46%;
+  display:flex; align-items:center; justify-content:center;
+  border-bottom:8px solid; position:relative;
+  transition:filter .12s, transform .06s;
+}
+.node-btn:hover{ filter:brightness(1.06); }
+.node-btn:active{ transform:translateY(6px); border-bottom-width:2px; }
+.node-btn svg{ width:30px; height:30px; }
+.node-date{
+  margin-top:7px; font-size:10.5px; font-weight:800; color:var(--text-soft);
+  letter-spacing:0.04em; text-transform:uppercase;
+}
+
+.path-node.done .node-btn{ background:var(--green); border-bottom-color:var(--green-dark); color:#fff; }
+.path-node.done .node-date{ color:var(--green-dark); }
+
+.path-node.missed .node-btn{ background:var(--locked); border-bottom-color:var(--locked-dark); color:var(--locked-ic); cursor:default; }
+.path-node.missed .node-btn:active{ transform:none; border-bottom-width:8px; }
+
+.path-node.locked .node-btn{ background:var(--locked); border-bottom-color:var(--locked-dark); color:var(--locked-ic); cursor:default; }
+.path-node.locked .node-btn:hover{ filter:none; }
+.path-node.locked .node-btn:active{ transform:none; border-bottom-width:8px; }
+
+.path-node.rest .node-btn{ background:var(--blue-light); border-bottom-color:#B8E4FB; color:var(--blue-dark); cursor:default; }
+.path-node.rest .node-btn:active{ transform:none; border-bottom-width:8px; }
+
+/* nó ativo (hoje) */
+.path-node.active{ margin:26px 0 14px; }
+.node-ring{
+  padding:7px; border-radius:50%;
+  border:5px solid var(--green-light);
+  animation:ringPulse 1.8s ease-in-out infinite;
+}
+.path-node.active .node-btn{
+  width:82px; height:76px;
+  background:var(--green); border-bottom-color:var(--green-dark); color:#fff;
+}
+.path-node.active.done-today .node-btn{ background:var(--gold); border-bottom-color:var(--gold-dark); }
+.path-node.active.done-today .node-ring{ border-color:var(--gold-light); }
+@keyframes ringPulse{
+  0%,100%{ border-color:var(--green-light); transform:scale(1); }
+  50%{ border-color:#B9EFC5; transform:scale(1.04); }
+}
+
+.start-bubble{
+  position:absolute; top:-46px; left:50%; transform:translateX(-50%);
+  background:#fff; border:2px solid var(--border); border-radius:12px;
+  font-family:'Fredoka'; font-size:13px; font-weight:600; letter-spacing:0.1em;
+  color:var(--green); padding:9px 16px; white-space:nowrap; z-index:5;
+  animation:bubbleBounce 1.4s ease-in-out infinite;
+  text-transform:uppercase;
+}
+.start-bubble::after{
+  content:""; position:absolute; bottom:-7px; left:50%; transform:translateX(-50%) rotate(45deg);
+  width:12px; height:12px; background:#fff; border-right:2px solid var(--border); border-bottom:2px solid var(--border);
+}
+@keyframes bubbleBounce{ 0%,100%{ transform:translateX(-50%) translateY(0);} 50%{ transform:translateX(-50%) translateY(-6px);} }
+
+/* mascote ao lado do nó ativo */
+.mascote{
+  position:absolute; width:110px; top:-26px; pointer-events:none; z-index:4;
+  animation:mascoteFloat 3s ease-in-out infinite;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+}
+.mascote.lado-direito{ left:calc(50% + 62px); }
+.mascote.lado-esquerdo{ right:calc(50% + 62px); }
+@keyframes mascoteFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+
+/* nó do boss */
+.path-node.boss{ margin-top:30px; }
+.path-node.boss .node-btn{
+  width:104px; height:96px; font-size:42px;
+  background:linear-gradient(160deg,#FF9600,#FF6D00);
+  border-bottom-color:#C25B00; color:#fff;
+  cursor:default;
+}
+.path-node.boss .node-btn:active{ transform:none; border-bottom-width:8px; }
+.path-node.boss .node-date{ font-size:12px; color:var(--orange-dark); margin-top:9px; }
+.boss-flag{
+  margin-top:3px; font-family:'Fredoka'; font-size:14px; font-weight:600; color:#2B2B30;
+}
+
+/* divisor "semana da prova" */
+.path-divider{
+  display:flex; align-items:center; gap:14px; width:100%; max-width:440px;
+  margin:10px 0 4px; color:var(--orange-dark);
+  font-family:'Fredoka'; font-size:12.5px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
+}
+.path-divider::before, .path-divider::after{ content:""; flex:1; height:2px; background:var(--orange-light); border-radius:2px; }
+
+/* estado vazio da trilha */
+.path-empty{
+  text-align:center; padding:44px 30px; border:2px dashed var(--border); border-radius:20px;
+}
+.path-empty .emo{ font-size:40px; margin-bottom:12px; }
+.path-empty p{ font-size:14px; color:var(--text-dim); font-weight:600; margin-bottom:18px; }
+
+/* ============ RAIL DIREITA ============ */
+.rail{ display:flex; flex-direction:column; gap:18px; position:sticky; top:24px; }
+.card{
+  background:#fff; border:2px solid var(--border); border-radius:18px; padding:20px 22px;
+}
+.card-label{
+  font-family:'Fredoka'; font-size:15px; font-weight:600; color:#2B2B30;
+  margin-bottom:14px; display:flex; align-items:center; justify-content:space-between;
+}
+.card-label .see-all{ font-family:'Nunito'; font-size:11.5px; color:var(--blue); font-weight:800; text-transform:uppercase; letter-spacing:0.06em;}
+
+/* boss card */
+.boss-head{ display:flex; align-items:center; gap:13px; margin-bottom:15px; }
+.boss-ic{
+  width:52px; height:48px; border-radius:16px;
+  background:linear-gradient(160deg,#FF9600,#FF6D00); box-shadow:0 3px 0 #C25B00;
+  display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;
+}
+.boss-head b{ font-family:'Fredoka'; font-weight:600; font-size:15px; display:block; line-height:1.25; }
+.boss-head span{ font-size:12px; color:var(--orange-dark); font-weight:800; }
+.hp-track{ height:14px; background:var(--bg-soft); border:2px solid var(--border); border-radius:100px; overflow:hidden; margin-bottom:7px;}
+.hp-fill{ height:100%; background:linear-gradient(90deg, var(--orange), #FFB84D); border-radius:100px; width:0%; transition:width .8s cubic-bezier(.22,1,.36,1);}
+.boss-foot{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-soft); font-weight:800; margin-bottom:16px;}
+.approval{
+  background:var(--green-light); border-radius:14px; padding:13px 16px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.approval .l{ font-size:12px; color:var(--green-dark); font-weight:800;}
+.approval .v{ font-family:'Fredoka'; font-size:24px; font-weight:700; color:var(--green-dark);}
+
+/* xp card */
+.xp-row{ display:flex; align-items:center; gap:14px; }
+.level-badge{
+  width:52px; height:48px; border-radius:16px;
+  background:linear-gradient(160deg,var(--gold),#FFAD00); box-shadow:0 3px 0 var(--gold-dark);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Fredoka'; font-weight:700; font-size:16px; color:#fff; flex-shrink:0;
+}
+.xp-row b{ font-family:'Fredoka'; font-weight:600; font-size:16px; display:block; }
+.xp-row span{ font-size:12px; color:var(--text-dim); font-weight:700; }
+.xp-bar-track{ height:14px; background:var(--bg-soft); border:2px solid var(--border); border-radius:100px; overflow:hidden; margin-top:14px;}
+.xp-bar-fill{ height:100%; background:linear-gradient(90deg,var(--gold),#FFDE59); border-radius:100px; width:0%; transition:width .8s cubic-bezier(.22,1,.36,1);}
+.xp-bar-caption{ display:flex; justify-content:space-between; margin-top:7px; font-size:11px; color:var(--text-soft); font-weight:800;}
+
+/* streak card */
+.streak-row{ display:flex; align-items:center; gap:14px; }
+.streak-ic{
+  width:52px; height:48px; border-radius:16px;
+  background:linear-gradient(160deg,#FF9600,#FF4B4B); box-shadow:0 3px 0 #C23A3A;
+  display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;
+}
+.streak-num{ font-family:'Fredoka'; font-size:26px; font-weight:700; line-height:1;}
+.streak-lbl{ font-size:12px; color:var(--text-dim); font-weight:700; margin-top:3px;}
+.heat{ display:grid; grid-template-columns:repeat(10,1fr); gap:5px; margin-top:16px;}
+.heat div{ aspect-ratio:1; border-radius:6px; background:var(--bg-soft); border:1.5px solid var(--border);}
+.heat div.l3{ background:var(--green); border-color:var(--green-dark); }
+
+/* calendário */
+.cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center;}
+.cal-dow{ font-size:10px; color:var(--text-soft); font-weight:900; padding-bottom:5px;}
+.cal-day{ aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:11.5px; font-weight:800; color:var(--text-dim); position:relative;}
+.cal-day.study{ background:var(--green-light); color:var(--green-dark); }
+.cal-day.today{ background:var(--blue); color:#fff; box-shadow:0 2px 0 var(--blue-dark);}
+.cal-day.exam{ background:var(--orange-light); color:var(--orange-dark); }
+.cal-day.exam::after{ content:"⚔️"; position:absolute; font-size:8px; bottom:1px; right:2px; }
+.cal-legend{ display:flex; gap:13px; margin-top:13px; flex-wrap:wrap;}
+.cal-legend span{ font-size:10.5px; color:var(--text-soft); font-weight:800; display:flex; align-items:center; gap:5px;}
+.cal-legend i{ width:10px; height:10px; border-radius:3px; display:inline-block;}
+
+/* disciplinas */
+.subject-row{ display:flex; align-items:center; gap:13px; padding:11px 0; border-bottom:2px solid var(--bg-soft); }
+.subject-row:last-child{ border-bottom:none; padding-bottom:2px; }
+.subject-emo{
+  width:42px; height:40px; border-radius:13px; background:var(--blue-light);
+  display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;
+  box-shadow:0 2px 0 #B8E4FB;
+}
+.subject-info{ flex:1; min-width:0; }
+.subject-info b{ font-size:13px; font-weight:800; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.subject-info span{ font-size:11px; color:var(--text-soft); font-weight:700; }
+.mini-track{ height:8px; background:var(--bg-soft); border-radius:100px; overflow:hidden; margin-top:5px; border:1.5px solid var(--border);}
+.mini-fill{ height:100%; background:var(--green); border-radius:100px; transition:width .8s cubic-bezier(.22,1,.36,1);}
+.subject-pct{ font-family:'Fredoka'; font-size:14px; font-weight:600; color:var(--green-dark); flex-shrink:0;}
+
+/* animação de entrada dos cards */
+.rail .card, .banner, .greet-row{ animation:fadeUp .5s cubic-bezier(.22,1,.36,1) both; }
+.rail .card:nth-child(1){ animation-delay:.05s; }
+.rail .card:nth-child(2){ animation-delay:.1s; }
+.rail .card:nth-child(3){ animation-delay:.15s; }
+.rail .card:nth-child(4){ animation-delay:.2s; }
+.rail .card:nth-child(5){ animation-delay:.25s; }
+.rail .card:nth-child(6){ animation-delay:.3s; }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:translateY(0);} }
+
+/* ============ NAV MOBILE (embaixo) ============ */
+.mobile-nav{ display:none; }
+
+@media(max-width:1180px){
+  .main{ grid-template-columns:minmax(0,620px); }
+  .rail{ position:static; max-width:620px; width:100%; margin:0 auto; }
+}
+@media(max-width:760px){
+  .shell{ grid-template-columns:1fr; }
+  .sidebar{ display:none; }
+  .main{ padding:20px 16px 110px; }
+  .banner{ padding:20px; }
+  .mobile-nav{
+    display:flex; position:fixed; bottom:0; left:0; right:0; z-index:100;
+    background:#fff; border-top:2px solid var(--border);
+    justify-content:space-around; padding:10px 8px calc(10px + env(safe-area-inset-bottom));
+  }
+  .mobile-nav a{
+    width:52px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+    font-size:22px; border:2px solid transparent;
+  }
+  .mobile-nav a.active{ background:var(--blue-light); border-color:#B8E4FB; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-mark">Q</div>questly</div>
+    <a class="side-link active"><span class="side-ic">🏠</span> Início</a>
+    <a class="side-link" href="questly_disciplinas.html"><span class="side-ic">📚</span> Disciplinas</a>
+    <a class="side-link" href="questly_trilha.html"><span class="side-ic">🧭</span> Minha trilha</a>
+    <a class="side-link" href="questly_ranking.html"><span class="side-ic">🏆</span> Ranking</a>
+    <a class="side-link" href="questly_configuracoes.html"><span class="side-ic">📅</span> Calendário</a>
+    <a class="side-link" href="questly_configuracoes.html"><span class="side-ic">⚙️</span> Ajustes</a>
+    <div class="side-user">
+      <div class="avatar" id="sideAvatar">?</div>
+      <div><b id="sideName">Carregando...</b><span id="sideCourse"></span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ============ COLUNA DA TRILHA ============ -->
+    <div class="path-col">
+      <div class="greet-row">
+        <h1 id="greeting">Bom dia 👋</h1>
+        <p id="subheading">Carregando sua campanha...</p>
+      </div>
+
+      <div class="mission-day-head">
+        <span class="banner-days" id="bannerDays"></span>
+      </div>
+      <div id="missionBannerList"><!-- 1 card por disciplina agendada hoje (js/dashboard.js) --></div>
+
+      <div class="path-wrap">
+        <div class="path-nodes" id="pathNodes">
+          <!-- trilha gerada via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ RAIL DIREITA ============ -->
+    <aside class="rail">
+
+      <div class="card" id="bossCard">
+        <div class="card-label">Boss atual</div>
+        <div class="boss-head">
+          <div class="boss-ic">⚔️</div>
+          <div><b id="bossName">-</b><span id="bossCountdown">-</span></div>
+        </div>
+        <div class="hp-track"><div class="hp-fill" id="bossHpFill"></div></div>
+        <div class="boss-foot"><span id="bossPrep">Preparação: 0%</span><span id="bossTopics"></span></div>
+        <div class="approval">
+          <span class="l">Chance de aprovação</span>
+          <span class="v" id="bossApproval">-</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">XP & Nível</div>
+        <div class="xp-row">
+          <div class="level-badge" id="levelBadge">N1</div>
+          <div>
+            <b id="levelNum">Nível 1</b>
+            <span id="xpTotalNum">0 XP na campanha</span>
+          </div>
+        </div>
+        <div class="xp-bar-track"><div class="xp-bar-fill" id="xpBarFill"></div></div>
+        <div class="xp-bar-caption"><span id="xpBarCurrent">0 XP</span><span id="xpBarTarget">-</span></div>
+      </div>
+
+      <div class="card" id="ligaCard">
+        <div class="card-label">Liga<a class="see-all" href="questly_ranking.html">Ver ranking</a></div>
+        <div class="xp-row">
+          <div class="level-badge" id="ligaIcone" style="background:linear-gradient(160deg,#CE82FF,#A855F7); box-shadow:0 3px 0 #7C3AED; font-size:22px;">🥉</div>
+          <div>
+            <b id="ligaNome">Bronze</b>
+            <span id="ligaXp">0 XP essa semana</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Streak</div>
+        <div class="streak-row">
+          <div class="streak-ic">🔥</div>
+          <div>
+            <div class="streak-num" id="streakNum">0</div>
+            <div class="streak-lbl">dias seguidos cumprindo missão</div>
+          </div>
+        </div>
+        <div class="heat" id="heatGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label"><span id="calMonthLabel">Calendário</span><a class="see-all" href="questly_configuracoes.html">Ver tudo</a></div>
+        <div class="cal-grid">
+          <div class="cal-dow">D</div><div class="cal-dow">S</div><div class="cal-dow">T</div><div class="cal-dow">Q</div><div class="cal-dow">Q</div><div class="cal-dow">S</div><div class="cal-dow">S</div>
+          <div id="calDays" style="display:contents;"></div>
+        </div>
+        <div class="cal-legend">
+          <span><i style="background:var(--green-light);"></i>Estudou</span>
+          <span><i style="background:var(--blue);"></i>Hoje</span>
+          <span><i style="background:var(--orange-light);"></i>Boss (prova)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Disciplinas<span class="see-all" id="subjectCount"></span></div>
+        <div id="subjectList">
+          <!-- gerado via JS -->
+        </div>
+      </div>
+
+    </aside>
+  </main>
+</div>
+
+<!-- nav mobile -->
+<nav class="mobile-nav">
+  <a class="active">🏠</a>
+  <a href="questly_disciplinas.html">📚</a>
+  <a href="questly_ranking.html">🏆</a>
+  <a href="questly_configuracoes.html">📅</a>
+  <a href="questly_configuracoes.html">⚙️</a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/rotina-engine.js"></script>
+<script src="js/mission-engine.js"></script>
+<script src="js/liga.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

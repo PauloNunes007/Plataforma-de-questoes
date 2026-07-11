@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questly — Configure sua campanha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --bg-soft:#F7FAF7;
+  --green:#2FC44C;
+  --green-dark:#249A3B;
+  --green-light:#DFF7E3;
+  --blue:#1CB0F6;
+  --blue-dark:#1590CC;
+  --blue-light:#DFF3FE;
+  --orange:#FF9600;
+  --orange-dark:#DB7E00;
+  --orange-light:#FFEBCC;
+  --red:#FF4B4B;
+  --text:#3C3C41;
+  --text-dim:#767680;
+  --text-soft:#9C9CA6;
+  --border:#E7E7EC;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Nunito',sans-serif; color:var(--text); min-height:100vh;
+  background:var(--bg-soft); display:flex; align-items:center; justify-content:center; padding:24px;
+}
+h1,h2,h3,h4{font-family:'Fredoka',sans-serif; font-weight:600; letter-spacing:-0.01em; color:#2B2B30;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none;}
+input{font-family:inherit;}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Fredoka'; font-weight:600; font-size:15px;
+  padding:15px 28px; border-radius:16px; border-bottom:4px solid transparent;
+  transition:transform .08s ease, opacity .15s;
+}
+.btn:active{ transform:translateY(3px); border-bottom-width:0; }
+.btn-primary{ background:var(--green); color:#fff; border-bottom-color:var(--green-dark); }
+.btn-primary:disabled{ background:#D5D8D6; border-bottom-color:#C0C4C1; color:#fff; cursor:not-allowed; }
+.btn-ghost{ background:none; color:var(--text-dim); font-weight:700; font-size:13.5px; padding:10px; border-bottom:none; }
+
+/* shell */
+.wiz{
+  width:100%; max-width:640px; background:#fff; border:1px solid var(--border); border-radius:24px;
+  box-shadow:0 24px 60px -28px rgba(30,50,40,0.22); overflow:hidden;
+}
+.wiz-top{ display:flex; align-items:center; gap:14px; padding:22px 28px 0; }
+.back-btn{
+  width:36px; height:36px; border-radius:10px; background:var(--bg-soft); display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:var(--text-dim); flex-shrink:0; visibility:hidden;
+}
+.progress-track{ flex:1; height:9px; background:var(--bg-soft); border-radius:100px; overflow:hidden; }
+.progress-fill{ height:100%; background:var(--green); border-radius:100px; width:11%; transition:width .3s ease; }
+.step-count{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-soft); font-weight:700; flex-shrink:0; }
+.skip-btn{ font-size:12.5px; font-weight:700; color:var(--text-soft); flex-shrink:0; visibility:hidden; }
+
+.wiz-body{ padding:34px 40px 30px; min-height:400px; }
+.step{ display:none; }
+.step.active{ display:block; animation:fadeUp .25s ease; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+.step-eyebrow{ font-size:12.5px; font-weight:800; color:var(--green-dark); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;}
+.step h2{ font-size:24px; line-height:1.3; margin-bottom:8px; }
+.step .step-sub{ font-size:14px; color:var(--text-dim); font-weight:600; margin-bottom:26px; }
+
+.text-input{
+  width:100%; padding:15px 16px; border:2px solid var(--border); border-radius:13px;
+  font-size:15px; font-weight:600; color:var(--text); outline:none; transition:border-color .15s;
+}
+.text-input:focus{ border-color:var(--blue); }
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  padding:11px 18px; border-radius:100px; border:2px solid var(--border); background:#fff;
+  font-size:14px; font-weight:700; color:var(--text-dim); transition:all .12s;
+}
+.chip:hover{ border-color:var(--green); }
+.chip.active{ background:var(--green-light); border-color:var(--green); color:var(--green-dark); }
+
+.sem-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+.sem-chip{
+  padding:16px 0; text-align:center; border-radius:13px; border:2px solid var(--border);
+  font-family:'Fredoka'; font-weight:600; font-size:15px; color:var(--text-dim);
+}
+.sem-chip.active{ background:var(--green-light); border-color:var(--green); color:var(--green-dark); }
+
+.add-custom{ display:flex; gap:8px; margin-top:16px; }
+.add-custom input{ flex:1; padding:11px 13px; border:2px dashed var(--border); border-radius:11px; font-size:13.5px; font-weight:600; outline:none;}
+.add-custom button{ background:var(--bg-soft); color:var(--text-dim); font-weight:800; font-size:13px; padding:0 16px; border-radius:11px; }
+
+/* disciplina config cards */
+.disc-list{ display:flex; flex-direction:column; gap:16px; max-height:340px; overflow-y:auto; padding-right:4px; }
+.disc-card{ background:var(--bg-soft); border-radius:16px; padding:18px 18px 16px; }
+.disc-card h4{ font-size:15px; margin-bottom:14px; }
+.disc-label{ font-size:11.5px; font-weight:800; color:var(--text-soft); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;}
+.nota-row{ margin-bottom:16px; }
+.nota-chip{ width:42px; height:42px; padding:0; border-radius:11px; display:flex; align-items:center; justify-content:center; font-family:'Fredoka'; }
+.prova-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.prova-row input[type="text"]{ width:70px; padding:9px 10px; border:2px solid var(--border); border-radius:9px; font-size:13px; font-weight:700; outline:none;}
+.prova-row input[type="date"]{ flex:1; padding:9px 10px; border:2px solid var(--border); border-radius:9px; font-size:13px; font-weight:600; outline:none; color:var(--text);}
+.prova-row .rm{ width:30px; height:30px; border-radius:8px; background:#fff; border:2px solid var(--border); color:var(--red); font-weight:800; flex-shrink:0;}
+.add-prova-btn{ font-size:12.5px; font-weight:800; color:var(--green-dark); background:none; padding:6px 0; }
+
+.level-cards{ display:flex; flex-direction:column; gap:12px; }
+.level-card{ display:flex; align-items:center; gap:14px; padding:18px; border:2px solid var(--border); border-radius:15px; }
+.level-card:hover{ border-color:var(--green); }
+.level-card.active{ background:var(--green-light); border-color:var(--green); }
+.level-ic{ width:40px; height:40px; border-radius:11px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;}
+.level-card b{ font-family:'Fredoka'; font-size:14.5px; display:block; }
+.level-card span{ font-size:12.5px; color:var(--text-dim); font-weight:600; }
+
+/* resumo */
+.summary-list{ display:flex; flex-direction:column; gap:0; border:1px solid var(--border); border-radius:15px; overflow:hidden; margin-bottom:8px;}
+.summary-row{ display:flex; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); }
+.summary-row:last-child{ border-bottom:none; }
+.summary-row .k{ font-size:13px; color:var(--text-dim); font-weight:700; }
+.summary-row .v{ font-size:13.5px; color:var(--text); font-weight:800; text-align:right; max-width:60%; }
+.success-box{ display:none; text-align:center; padding:20px 0 4px; }
+.success-box.show{ display:block; }
+.success-box .ic{ font-size:40px; margin-bottom:10px; }
+
+.wiz-foot{ display:flex; justify-content:flex-end; padding:0 40px 34px; }
+
+@media(max-width:560px){
+  .wiz-body{ padding:26px 22px 22px; }
+  .wiz-foot{ padding:0 22px 26px; }
+  .sem-grid{ grid-template-columns:repeat(5,1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="wiz">
+  <div class="wiz-top">
+    <div class="back-btn" id="backBtn" onclick="prevStep()">←</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="step-count" id="stepCount">1/9</div>
+  </div>
+
+  <div class="wiz-body">
+
+    <!-- 1. CURSO -->
+    <div class="step active" data-step="1">
+      <div class="step-eyebrow">Sobre você</div>
+      <h2>Qual curso você está fazendo?</h2>
+      <div class="step-sub">Assim conseguimos entender o contexto da sua campanha.</div>
+      <input class="text-input" id="curso" placeholder="Ex: Engenharia de Produção" oninput="validate()">
+    </div>
+
+    <!-- 2. UNIVERSIDADE -->
+    <div class="step" data-step="2">
+      <div class="step-eyebrow">Sobre você</div>
+      <h2>Em qual universidade?</h2>
+      <div class="step-sub">Opcional — ajuda a comparar seu ranking com colegas da mesma instituição.</div>
+      <input class="text-input" id="universidade" placeholder="Ex: UFRJ">
+    </div>
+
+    <!-- 3. SEMESTRE -->
+    <div class="step" data-step="3">
+      <div class="step-eyebrow">Sobre você</div>
+      <h2>Em qual semestre você está?</h2>
+      <div class="step-sub">Isso ajuda a calibrar a dificuldade inicial das questões.</div>
+      <div class="sem-grid" id="semGrid"></div>
+    </div>
+
+    <!-- 4. DISCIPLINAS -->
+    <div class="step" data-step="4">
+      <div class="step-eyebrow">Sua campanha</div>
+      <h2>Quais disciplinas você está cursando?</h2>
+      <div class="step-sub">Cada uma vira uma campanha paralela. Escolha quantas quiser.</div>
+      <div class="chip-row" id="discChips">
+        <div class="chip" data-name="Fundamentos de Cálculo e Geometria">Fundamentos de Cálculo e Geometria</div>
+        <div class="chip" data-name="Cálculo I">Cálculo I</div>
+        <div class="chip" data-name="Cálculo II">Cálculo II</div>
+        <div class="chip" data-name="Cálculo III">Cálculo III</div>
+        <div class="chip" data-name="Álgebra Linear">Álgebra Linear</div>
+        <div class="chip" data-name="Física I">Física I</div>
+        <div class="chip" data-name="Física II">Física II</div>
+        <div class="chip" data-name="Química Geral">Química Geral</div>
+        <div class="chip" data-name="Programação I">Programação I</div>
+      </div>
+      <div class="add-custom">
+        <input type="text" id="customDisc" placeholder="Não achou? Digite o nome da disciplina">
+        <button onclick="addCustomDisc()">+ Adicionar</button>
+      </div>
+    </div>
+
+    <!-- 5. NOTA + PROVAS POR DISCIPLINA -->
+    <div class="step" data-step="5">
+      <div class="step-eyebrow">Sua campanha</div>
+      <h2>Meta e provas de cada disciplina</h2>
+      <div class="step-sub">Defina a nota que você quer tirar e as datas das provas.</div>
+      <div class="disc-list" id="discList"></div>
+    </div>
+
+    <!-- 6. DIAS DISPONÍVEIS -->
+    <div class="step" data-step="6">
+      <div class="step-eyebrow">Sua rotina</div>
+      <h2>Quais dias você tem disponíveis pra estudar?</h2>
+      <div class="step-sub">As missões diárias só aparecem nesses dias.</div>
+      <div class="chip-row" id="diasChips">
+        <div class="chip" data-day="Seg">Seg</div>
+        <div class="chip" data-day="Ter">Ter</div>
+        <div class="chip" data-day="Qua">Qua</div>
+        <div class="chip" data-day="Qui">Qui</div>
+        <div class="chip" data-day="Sex">Sex</div>
+        <div class="chip" data-day="Sáb">Sáb</div>
+        <div class="chip" data-day="Dom">Dom</div>
+      </div>
+    </div>
+
+    <!-- 7. TEMPO DIÁRIO -->
+    <div class="step" data-step="7">
+      <div class="step-eyebrow">Sua rotina</div>
+      <h2>Quanto tempo por dia você consegue estudar?</h2>
+      <div class="step-sub">Suas missões diárias são dimensionadas pra caber nesse tempo — dividido entre as disciplinas que você estuda no dia.</div>
+      <div class="chip-row" id="tempoChips">
+        <div class="chip" data-val="30 min">30 min</div>
+        <div class="chip" data-val="1 hora">1 hora</div>
+        <div class="chip" data-val="1h30">1h30</div>
+        <div class="chip" data-val="2h">2h</div>
+        <div class="chip" data-val="3h">3h</div>
+        <div class="chip" data-val="4h">4h</div>
+        <div class="chip" data-val="6h">6h</div>
+        <div class="chip" data-val="8h ou mais">8h ou mais</div>
+      </div>
+    </div>
+
+    <!-- 8. NÍVEL -->
+    <div class="step" data-step="8">
+      <div class="step-eyebrow">Sua rotina</div>
+      <h2>Como você avalia seu nível hoje?</h2>
+      <div class="step-sub">Só pra calibrar o ponto de partida — a dificuldade se ajusta sozinha depois.</div>
+      <div class="level-cards" id="levelCards">
+        <div class="level-card" data-val="iniciante">
+          <div class="level-ic">🌱</div>
+          <div><b>Iniciante</b><span>Ainda travando nos conceitos básicos</span></div>
+        </div>
+        <div class="level-card" data-val="intermediario">
+          <div class="level-ic">⚡</div>
+          <div><b>Intermediário</b><span>Entendo a matéria, erro nas aplicações</span></div>
+        </div>
+        <div class="level-card" data-val="avancado">
+          <div class="level-ic">🏆</div>
+          <div><b>Avançado</b><span>Domino o conteúdo, quero manter o ritmo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. RESUMO -->
+    <div class="step" data-step="9">
+      <div id="summaryView">
+        <div class="step-eyebrow">Tudo pronto</div>
+        <h2>Sua campanha está pronta</h2>
+        <div class="step-sub">Confira antes de começar — dá pra mudar tudo isso depois nas configurações.</div>
+        <div class="summary-list" id="summaryList"></div>
+      </div>
+      <div class="success-box" id="successBox">
+        <div class="ic">🎉</div>
+        <h2 style="margin-bottom:6px;">Campanha criada!</h2>
+        <div class="step-sub" style="margin-bottom:0;">Sua missão de hoje já está esperando por você no dashboard.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wiz-foot">
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Continuar</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script>
+var TOTAL = 9;
+var current = 1;
+var state = { curso:'', universidade:'', semestre:null, disciplinas:[], discCfg:{}, dias:[], tempo:null, nivel:null };
+
+var currentUser = null;
+document.addEventListener('DOMContentLoaded', async function(){
+  currentUser = await questlyExigirLogin(); // manda pro login.html se não houver sessão
+});
+
+/* semestre grid */
+var semGrid = document.getElementById('semGrid');
+for(var i=1;i<=10;i++){
+  var d = document.createElement('div');
+  d.className='sem-chip';
+  d.textContent = i + 'º';
+  d.dataset.val = i;
+  d.onclick = function(){
+    document.querySelectorAll('.sem-chip').forEach(function(c){ c.classList.remove('active'); });
+    this.classList.add('active');
+    state.semestre = this.dataset.val;
+    validate();
+  };
+  semGrid.appendChild(d);
+}
+
+/* disciplina chips (multi) */
+document.querySelectorAll('#discChips .chip').forEach(function(c){
+  c.onclick = function(){
+    var name = this.dataset.name;
+    this.classList.toggle('active');
+    var idx = state.disciplinas.indexOf(name);
+    if(this.classList.contains('active') && idx === -1){ state.disciplinas.push(name); }
+    else if(!this.classList.contains('active') && idx !== -1){ state.disciplinas.splice(idx,1); }
+    validate();
+  };
+});
+function addCustomDisc(){
+  var input = document.getElementById('customDisc');
+  var name = input.value.trim();
+  if(!name) return;
+  if(state.disciplinas.indexOf(name) !== -1){ input.value=''; return; }
+  state.disciplinas.push(name);
+  var chip = document.createElement('div');
+  chip.className='chip active';
+  chip.dataset.name = name;
+  chip.textContent = name;
+  chip.onclick = function(){
+    this.classList.toggle('active');
+    var idx = state.disciplinas.indexOf(name);
+    if(this.classList.contains('active') && idx === -1){ state.disciplinas.push(name); }
+    else if(!this.classList.contains('active') && idx !== -1){ state.disciplinas.splice(idx,1); }
+    validate();
+  };
+  document.getElementById('discChips').appendChild(chip);
+  input.value='';
+  validate();
+}
+
+/* dias chips (multi) */
+document.querySelectorAll('#diasChips .chip').forEach(function(c){
+  c.onclick = function(){
+    var day = this.dataset.day;
+    this.classList.toggle('active');
+    var idx = state.dias.indexOf(day);
+    if(this.classList.contains('active') && idx === -1){ state.dias.push(day); }
+    else if(!this.classList.contains('active') && idx !== -1){ state.dias.splice(idx,1); }
+    validate();
+  };
+});
+
+/* tempo chips (single) */
+document.querySelectorAll('#tempoChips .chip').forEach(function(c){
+  c.onclick = function(){
+    document.querySelectorAll('#tempoChips .chip').forEach(function(x){ x.classList.remove('active'); });
+    this.classList.add('active');
+    state.tempo = this.dataset.val;
+    validate();
+  };
+});
+
+/* nivel cards (single) */
+document.querySelectorAll('#levelCards .level-card').forEach(function(c){
+  c.onclick = function(){
+    document.querySelectorAll('#levelCards .level-card').forEach(function(x){ x.classList.remove('active'); });
+    this.classList.add('active');
+    state.nivel = this.dataset.val;
+    validate();
+  };
+});
+
+document.getElementById('curso').addEventListener('input', function(){ state.curso = this.value; validate(); });
+document.getElementById('universidade').addEventListener('input', function(){ state.universidade = this.value; });
+
+/* passo 5 - cards por disciplina */
+function buildDiscCards(){
+  var list = document.getElementById('discList');
+  list.innerHTML = '';
+  if(state.disciplinas.length === 0){
+    list.innerHTML = '<div style="font-size:13.5px;color:var(--text-soft);font-weight:600;">Nenhuma disciplina selecionada ainda — volte no passo anterior.</div>';
+    return;
+  }
+  state.disciplinas.forEach(function(nome){
+    if(!state.discCfg[nome]){ state.discCfg[nome] = { nota: 8, provas: [{ nome:'P1', data:'' }] }; }
+    var cfg = state.discCfg[nome];
+
+    var card = document.createElement('div');
+    card.className = 'disc-card';
+
+    var h4 = document.createElement('h4');
+    h4.textContent = nome;
+    card.appendChild(h4);
+
+    var notaLabel = document.createElement('div');
+    notaLabel.className = 'disc-label';
+    notaLabel.textContent = 'Nota desejada';
+    card.appendChild(notaLabel);
+
+    var notaRow = document.createElement('div');
+    notaRow.className = 'chip-row nota-row';
+    [6,7,8,9,10].forEach(function(n){
+      var chip = document.createElement('div');
+      chip.className = 'chip nota-chip' + (cfg.nota === n ? ' active' : '');
+      chip.textContent = n;
+      chip.onclick = function(){
+        cfg.nota = n;
+        notaRow.querySelectorAll('.nota-chip').forEach(function(x){ x.classList.remove('active'); });
+        chip.classList.add('active');
+      };
+      notaRow.appendChild(chip);
+    });
+    card.appendChild(notaRow);
+
+    var provasLabel = document.createElement('div');
+    provasLabel.className = 'disc-label';
+    provasLabel.textContent = 'Provas';
+    card.appendChild(provasLabel);
+
+    var provasList = document.createElement('div');
+    card.appendChild(provasList);
+
+    function renderProvas(){
+      provasList.innerHTML = '';
+      cfg.provas.forEach(function(p, idx){
+        var row = document.createElement('div');
+        row.className = 'prova-row';
+
+        var nomeInput = document.createElement('input');
+        nomeInput.type = 'text';
+        nomeInput.value = p.nome;
+        nomeInput.oninput = function(){ p.nome = this.value; };
+        row.appendChild(nomeInput);
+
+        var dataInput = document.createElement('input');
+        dataInput.type = 'date';
+        dataInput.value = p.data;
+        dataInput.oninput = function(){ p.data = this.value; };
+        row.appendChild(dataInput);
+
+        var rmBtn = document.createElement('button');
+        rmBtn.className = 'rm';
+        rmBtn.textContent = '×';
+        rmBtn.onclick = function(){ cfg.provas.splice(idx,1); renderProvas(); };
+        row.appendChild(rmBtn);
+
+        provasList.appendChild(row);
+      });
+    }
+    renderProvas();
+
+    var addBtn = document.createElement('button');
+    addBtn.className = 'add-prova-btn';
+    addBtn.textContent = '+ Adicionar prova';
+    addBtn.onclick = function(){
+      cfg.provas.push({ nome: 'P' + (cfg.provas.length + 1), data: '' });
+      renderProvas();
+    };
+    card.appendChild(addBtn);
+
+    list.appendChild(card);
+  });
+}
+
+/* resumo */
+function buildSummary(){
+  var el = document.getElementById('summaryList');
+  var rows = [
+    ['Curso', state.curso || '—'],
+    ['Universidade', state.universidade || 'não informado'],
+    ['Semestre', state.semestre ? state.semestre + 'º' : '—'],
+    ['Disciplinas', state.disciplinas.length ? state.disciplinas.join(', ') : '—'],
+    ['Dias de estudo', state.dias.length ? state.dias.join(', ') : '—'],
+    ['Tempo diário', state.tempo || '—'],
+    ['Nível', state.nivel || '—']
+  ];
+  el.innerHTML = rows.map(function(r){
+    return '<div class="summary-row"><span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>';
+  }).join('');
+}
+
+/* navegação */
+function showStep(n){
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelector('.step[data-step="' + n + '"]').classList.add('active');
+  document.getElementById('progressFill').style.width = (n/TOTAL*100) + '%';
+  document.getElementById('stepCount').textContent = n + '/' + TOTAL;
+  document.getElementById('backBtn').style.visibility = n === 1 ? 'hidden' : 'visible';
+
+  var nextBtn = document.getElementById('nextBtn');
+  if(n === 5){ buildDiscCards(); }
+  if(n === 9){
+    buildSummary();
+    nextBtn.textContent = 'Começar minha campanha';
+  } else {
+    nextBtn.textContent = 'Continuar';
+  }
+  validate();
+}
+async function nextStep(){
+  if(current === 9){
+    var btn = document.getElementById('nextBtn');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    var ok = await salvarCampanha();
+
+    if(!ok){
+      btn.disabled = false;
+      btn.textContent = 'Começar minha campanha';
+      return;
+    }
+
+    document.getElementById('summaryView').style.display = 'none';
+    document.getElementById('successBox').classList.add('show');
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('backBtn').style.visibility = 'hidden';
+
+    setTimeout(function(){ window.location.href = 'questly_dashboard.html'; }, 1800);
+    return;
+  }
+  if(current < TOTAL){ current++; showStep(current); }
+}
+
+/* grava curso/rotina no profile + cada disciplina como subject/campaign/bosses */
+async function salvarCampanha(){
+  if(!currentUser){
+    currentUser = await questlyExigirLogin();
+    if(!currentUser) return false;
+  }
+
+  var tempoMap = { '30 min':30, '1 hora':60, '1h30':90, '2h':120, '3h':180, '4h':240, '6h':360, '8h ou mais':480 };
+
+  var profileUpdate = await supabaseClient.from('profiles').update({
+    curso: state.curso,
+    universidade: state.universidade || null,
+    semestre: state.semestre ? parseInt(state.semestre, 10) : null,
+    nivel_conhecimento: state.nivel,
+    dias_disponiveis: state.dias,
+    tempo_diario_min: tempoMap[state.tempo] || null
+  }).eq('id', currentUser.id);
+
+  if(profileUpdate.error){
+    console.error('Erro ao salvar profile:', profileUpdate.error);
+    alert('Não foi possível salvar seus dados. Tente novamente.');
+    return false;
+  }
+
+  // grade semanal padrão: todas as disciplinas em todos os dias
+  // escolhidos (state.dias, ex. "Seg","Ter") — dá uma rotina funcionando
+  // já no primeiro dia. Editável e refinável depois em Configurações →
+  // Grade semanal, com a recomendação automática (js/rotina-engine.js),
+  // que aí já tem chance_aprovacao real pra pesar a distribuição.
+  var diasNormalizados = state.dias.map(questlyNormalizarDia);
+
+  for(var i=0; i<state.disciplinas.length; i++){
+    var nome = state.disciplinas[i];
+    var cfg = state.discCfg[nome] || { nota: 8, provas: [] };
+
+    // materia = taxonomia compartilhada de conteúdo (tópicos/questões
+    // pendem dela, não da campanha pessoal do aluno) — busca ou cria
+    var materiaId = null;
+    var materiaExistente = await supabaseClient.from('materias').select('id').eq('nome', nome).maybeSingle();
+    if(materiaExistente.data){
+      materiaId = materiaExistente.data.id;
+    } else {
+      var materiaNova = await supabaseClient.from('materias').insert({ nome: nome }).select().single();
+      if(materiaNova.error){
+        console.error('Erro ao criar materia', nome, materiaNova.error);
+      } else {
+        materiaId = materiaNova.data.id;
+      }
+    }
+
+    var subjectResult = await supabaseClient.from('subjects').insert({
+      user_id: currentUser.id,
+      nome: nome,
+      nota_desejada: cfg.nota,
+      materia_id: materiaId
+    }).select().single();
+
+    if(subjectResult.error){
+      console.error('Erro ao criar disciplina', nome, subjectResult.error);
+      continue;
+    }
+    var subject = subjectResult.data;
+
+    await supabaseClient.from('campaigns').insert({
+      user_id: currentUser.id,
+      subject_id: subject.id
+    });
+
+    if(diasNormalizados.length > 0){
+      await supabaseClient.from('rotina_semanal').insert(
+        diasNormalizados.map(function(dia){ return { user_id: currentUser.id, subject_id: subject.id, dia_semana: dia }; })
+      );
+    }
+
+    var provasValidas = (cfg.provas || []).filter(function(p){ return p.data; });
+    for(var j=0; j<provasValidas.length; j++){
+      await supabaseClient.from('bosses').insert({
+        subject_id: subject.id,
+        nome: provasValidas[j].nome,
+        data_prova: provasValidas[j].data
+      });
+    }
+  }
+
+  return true;
+}
+
+function prevStep(){
+  if(current > 1){ current--; showStep(current); }
+}
+function validate(){
+  var nextBtn = document.getElementById('nextBtn');
+  var ok = true;
+  if(current === 1){ ok = state.curso.trim().length > 0; }
+  else if(current === 3){ ok = state.semestre !== null; }
+  else if(current === 4){ ok = state.disciplinas.length > 0; }
+  else if(current === 6){ ok = state.dias.length > 0; }
+  else if(current === 7){ ok = state.tempo !== null; }
+  else if(current === 8){ ok = state.nivel !== null; }
+  nextBtn.disabled = !ok;
+}
+
+showStep(1);
+</script>
+
+</body>
+</html>

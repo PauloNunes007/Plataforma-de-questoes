@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questly — Transforme seu semestre em uma campanha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --bg-soft:#F7FAF7;
+  --bg-tint:#EFFBF1;
+  --green:#2FC44C;
+  --green-dark:#249A3B;
+  --green-light:#DFF7E3;
+  --blue:#1CB0F6;
+  --blue-dark:#1590CC;
+  --blue-light:#DFF3FE;
+  --orange:#FF9600;
+  --orange-dark:#DB7E00;
+  --orange-light:#FFEBCC;
+  --gold:#FFC800;
+  --text:#3C3C41;
+  --text-dim:#767680;
+  --text-soft:#9C9CA6;
+  --border:#E7E7EC;
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Nunito',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:'Fredoka',sans-serif; font-weight:600; letter-spacing:-0.01em; color:#2B2B30;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none;}
+img,svg{display:block;}
+
+/* botao estilo duolingo (3D) */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Fredoka'; font-weight:600; font-size:15px; letter-spacing:0.01em;
+  padding:15px 28px; border-radius:16px; border-bottom:4px solid transparent;
+  transition:transform .08s ease, box-shadow .08s ease;
+  cursor:pointer;
+}
+.btn:active{ transform:translateY(3px); border-bottom-width:0; }
+.btn-primary{ background:var(--green); color:#fff; border-bottom-color:var(--green-dark); }
+.btn-outline{ background:#fff; color:var(--green); border:2.5px solid var(--border); border-bottom:4px solid var(--border); }
+.btn-outline:hover{ border-color:var(--green); background:var(--green-light); }
+.btn-sm{ padding:10px 18px; font-size:13.5px; border-radius:12px; border-bottom-width:3px; }
+
+/* nav */
+.nav{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:20px 6%; position:sticky; top:0; background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(8px); z-index:50; border-bottom:1px solid transparent;
+}
+.nav.scrolled{ border-bottom-color:var(--border); }
+.logo{ display:flex; align-items:center; gap:9px; font-family:'Fredoka'; font-weight:700; font-size:21px; color:#2B2B30;}
+.logo-mark{
+  width:34px; height:34px; border-radius:11px; background:var(--green);
+  display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; color:#fff;
+  box-shadow:0 3px 0 var(--green-dark);
+}
+.nav-links{ display:flex; gap:30px; font-size:14.5px; font-weight:700; color:var(--text-dim); }
+.nav-links a:hover{ color:var(--text); }
+.nav-right{ display:flex; align-items:center; gap:18px; }
+.nav-login{ font-size:14.5px; font-weight:700; color:var(--text-dim); }
+.nav-login:hover{ color:var(--text); }
+
+/* hero */
+.hero{
+  display:grid; grid-template-columns:1fr 0.95fr; gap:36px; align-items:center;
+  padding:52px 6% 90px; max-width:1280px; margin:0 auto;
+}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:800;
+  color:var(--green-dark); background:var(--green-light); padding:8px 16px; border-radius:100px;
+  margin-bottom:22px;
+}
+.hero h1{ font-size:50px; line-height:1.08; margin-bottom:20px; }
+.hero h1 .accent{ color:var(--green); }
+.hero p.lead{ font-size:17.5px; color:var(--text-dim); line-height:1.6; max-width:480px; margin-bottom:30px; font-weight:500;}
+.hero-ctas{ display:flex; gap:14px; align-items:center; margin-bottom:34px;}
+.hero-note{ font-size:13px; color:var(--text-soft); font-weight:700; display:flex; align-items:center; gap:8px;}
+.avatars{ display:flex; }
+.avatars span{
+  width:26px; height:26px; border-radius:50%; border:2.5px solid #fff; margin-left:-8px;
+  display:inline-block; background:linear-gradient(135deg,var(--green),var(--blue));
+}
+.avatars span:first-child{ margin-left:0; }
+
+/* trilha de campanha - hero visual */
+.path-card{
+  background:var(--bg-soft); border:1px solid var(--border); border-radius:28px; padding:30px 24px;
+  position:relative;
+}
+.path-card-label{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+.path-card-label span{ font-size:12.5px; font-weight:800; color:var(--text-soft); text-transform:uppercase; letter-spacing:0.05em;}
+.path-card-label b{ font-size:13px; font-weight:800; color:var(--green-dark); background:var(--green-light); padding:5px 12px; border-radius:100px;}
+.node-label{ font-family:'Fredoka'; font-size:12.5px; font-weight:600; fill:var(--text); }
+.node-sub{ font-family:'Nunito'; font-size:10.5px; font-weight:700; fill:var(--text-soft); }
+
+/* como funciona */
+.section{ padding:88px 6%; max-width:1200px; margin:0 auto; position:relative;}
+.section-head{ text-align:center; max-width:600px; margin:0 auto 54px;}
+.section-tag{ font-size:12.5px; font-weight:800; color:var(--green-dark); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:12px;}
+.section-head h2{ font-size:34px; margin-bottom:12px;}
+.section-head p{ color:var(--text-dim); font-size:15.5px; line-height:1.6; font-weight:500;}
+
+.steps-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+.step-card{ position:relative; padding:26px 22px; }
+.step-num{
+  width:40px; height:40px; border-radius:12px; background:var(--green-light); color:var(--green-dark);
+  font-family:'Fredoka'; font-weight:700; font-size:17px; display:flex; align-items:center; justify-content:center;
+  margin-bottom:18px;
+}
+.step-card h4{ font-size:16px; margin-bottom:8px;}
+.step-card p{ font-size:13.5px; color:var(--text-dim); line-height:1.55; font-weight:500;}
+.step-arrow{ position:absolute; top:34px; right:-14px; color:var(--border); font-size:20px;}
+
+/* diferenciais */
+.bg-tint{ background:var(--bg-tint); }
+.features-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.feature-card{
+  background:#fff; border:1px solid var(--border); border-radius:20px; padding:26px;
+  transition:transform .2s, box-shadow .2s;
+}
+.feature-card:hover{ transform:translateY(-4px); box-shadow:0 14px 30px -18px rgba(0,0,0,0.15); }
+.feature-icon{
+  width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+}
+.feature-icon.green{ background:var(--green-light); }
+.feature-icon.blue{ background:var(--blue-light); }
+.feature-icon.orange{ background:var(--orange-light); }
+.feature-card h3{ font-size:16px; margin-bottom:8px;}
+.feature-card p{ font-size:13.5px; color:var(--text-dim); line-height:1.55; font-weight:500;}
+
+/* boss showcase */
+.boss-band{
+  display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;
+  background:#fff; border:1px solid var(--border); border-radius:28px; padding:50px; max-width:1200px; margin:0 auto;
+}
+.boss-visual{ background:var(--bg-soft); border-radius:20px; padding:26px; }
+.boss-hp-track{ height:14px; background:#fff; border:2px solid var(--border); border-radius:100px; overflow:hidden; margin-top:6px;}
+.boss-hp-fill{ height:100%; background:linear-gradient(90deg, var(--orange), #FFB84D); width:64%; border-radius:100px;}
+.boss-topics{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
+.boss-chip{ font-size:11.5px; font-weight:700; padding:6px 11px; border-radius:100px; background:#fff; border:1.5px solid var(--border); color:var(--text-dim);}
+.boss-chip.covered{ background:var(--green-light); color:var(--green-dark); border-color:transparent; }
+
+/* disciplinas */
+.subjects-pills{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+.pill{
+  padding:12px 20px; border-radius:100px; background:#fff; border:2px solid var(--border);
+  font-size:14px; font-weight:700; color:var(--text-dim); display:flex; align-items:center; gap:8px;
+}
+.pill .pdot{ width:8px; height:8px; border-radius:50%; background:var(--green); }
+
+/* cta band */
+.cta-band{
+  max-width:1200px; margin:0 auto; background:var(--green); border-radius:28px; padding:60px;
+  display:flex; justify-content:space-between; align-items:center; position:relative; overflow:hidden;
+}
+.cta-band h2{ font-size:30px; color:#fff; max-width:440px; }
+.cta-band p{ color:rgba(255,255,255,0.9); margin-top:10px; font-size:14.5px; max-width:400px; font-weight:600;}
+.btn-white{ background:#fff; color:var(--green-dark); border-bottom:4px solid #DDEFDF; }
+
+.foot{
+  padding:40px 6%; display:flex; justify-content:space-between; align-items:center;
+  color:var(--text-soft); font-size:13px; font-weight:700; border-top:1px solid var(--border);
+}
+
+@media(max-width:960px){
+  .hero{ grid-template-columns:1fr; }
+  .features-grid{ grid-template-columns:1fr 1fr; }
+  .steps-row{ grid-template-columns:1fr 1fr; }
+  .boss-band{ grid-template-columns:1fr; padding:30px;}
+  .nav-links{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="logo"><div class="logo-mark">Q</div>Questly</div>
+  <div class="nav-links">
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#diferenciais">Diferenciais</a>
+    <a href="#boss">O Boss</a>
+    <a href="#disciplinas">Disciplinas</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-login" href="#">Entrar</a>
+    <a class="btn btn-primary btn-sm" href="#">Começar campanha</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div>
+    <div class="eyebrow">🎯 Feito para a graduação em exatas</div>
+    <h1>Sua nota não é sorte.<br>É uma <span class="accent">campanha.</span></h1>
+    <p class="lead">Você diz a nota que quer em cada disciplina. A Questly monta a campanha, define sua missão do dia e te leva preparado até a prova — o Boss final. Você nunca precisa decidir o que estudar.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="#">Começar minha campanha</a>
+      <a class="btn btn-outline" href="#como-funciona">Como funciona</a>
+    </div>
+    <div class="hero-note">
+      <div class="avatars"><span></span><span></span><span></span></div>
+      Alunos de Cálculo, Física e Álgebra já estão em campanha
+    </div>
+  </div>
+
+  <div class="path-card">
+    <div class="path-card-label">
+      <span>Sua campanha · Cálculo I</span>
+      <b>Nível 6</b>
+    </div>
+    <svg viewBox="0 0 320 460" width="100%">
+      <path d="M60,40 L150,110 L80,180 L160,250 L90,330 L150,410" stroke="#D8DEDC" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 16" fill="none"/>
+
+      <!-- node 1: cadastro (done) -->
+      <circle cx="60" cy="40" r="22" fill="#2FC44C"/>
+      <path d="M51,40 l6,7 l12,-14" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="94" y="36" class="node-label">Cadastro</text>
+      <text x="94" y="49" class="node-sub">concluído</text>
+
+      <!-- node 2: missao 1 (done) -->
+      <circle cx="150" cy="110" r="22" fill="#2FC44C"/>
+      <path d="M141,110 l6,7 l12,-14" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="184" y="106" class="node-label">Missão 1</text>
+      <text x="184" y="119" class="node-sub">12 XP ganhos</text>
+
+      <!-- node 3: missao 2 (done) -->
+      <circle cx="80" cy="180" r="22" fill="#2FC44C"/>
+      <path d="M71,180 l6,7 l12,-14" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="114" y="176" class="node-label">Missão 2</text>
+      <text x="114" y="189" class="node-sub">15 XP ganhos</text>
+
+      <!-- node 4: atual, pulsando -->
+      <circle cx="160" cy="250" r="30" fill="#DFF3FE"/>
+      <circle cx="160" cy="250" r="22" fill="#1CB0F6"/>
+      <text x="160" y="256" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="13" fill="#fff">Hoje</text>
+      <text x="194" y="246" class="node-label">Missão do dia</text>
+      <text x="194" y="259" class="node-sub">8 questões · 20 min</text>
+
+      <!-- node 5: boss -->
+      <circle cx="90" cy="330" r="26" fill="#FFEBCC"/>
+      <circle cx="90" cy="330" r="19" fill="#FF9600"/>
+      <path d="M83,323 l14,14 M97,323 l-14,14" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <text x="128" y="326" class="node-label">Boss · P1</text>
+      <text x="128" y="339" class="node-sub">daqui 12 dias</text>
+
+      <!-- node 6: meta -->
+      <circle cx="150" cy="410" r="24" fill="#FFF6D6" stroke="#FFC800" stroke-width="2" stroke-dasharray="3 4"/>
+      <text x="150" y="416" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="14" fill="#B88A00">9.0</text>
+      <text x="184" y="406" class="node-label">Meta final</text>
+      <text x="184" y="419" class="node-sub">chance atual: 82%</text>
+    </svg>
+  </div>
+</div>
+
+<div class="section" id="como-funciona">
+  <div class="section-head">
+    <div class="section-tag">Como funciona</div>
+    <h2>Quatro passos até a nota que você quer</h2>
+    <p>Sem planilha, sem lista de exercícios genérica. A campanha se ajusta a cada coisa que você faz.</p>
+  </div>
+  <div class="steps-row">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h4>Conte sua meta</h4>
+      <p>Disciplinas cursadas, nota desejada em cada uma, datas das provas e quanto tempo por dia você tem pra estudar.</p>
+      <span class="step-arrow">›</span>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h4>A campanha é montada</h4>
+      <p>Cada disciplina vira uma campanha, cada prova vira um Boss. Tudo calculado a partir da sua meta e do tempo até a prova.</p>
+      <span class="step-arrow">›</span>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h4>Cumpra a missão do dia</h4>
+      <p>A plataforma decide o que você precisa estudar hoje — provas próximas, pontos fracos e conteúdo esquecido entram na conta.</p>
+      <span class="step-arrow">›</span>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <h4>Enfrente o Boss preparado</h4>
+      <p>Acompanhe sua chance de aprovação subindo conforme a barra do Boss enche com os assuntos cobrados na prova.</p>
+    </div>
+  </div>
+</div>
+
+<div class="bg-tint">
+  <div class="section" id="diferenciais">
+    <div class="section-head">
+      <div class="section-tag">Diferenciais</div>
+      <h2>Você nunca precisa decidir o que estudar</h2>
+      <p>A plataforma monta a missão ideal do dia — você só entra e cumpre.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#249A3B" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.5" fill="#249A3B"/></svg></div>
+        <h3>Missão do dia automática</h3>
+        <p>Gerada com base nas provas próximas, conteúdos fracos, esquecidos e sua meta de nota. Zero decisão manual.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DB7E00" stroke-width="2"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 20 12 16.5 6.5 20 8 13.5 3 9l6.5-.5z"/></svg></div>
+        <h3>Boss = sua prova</h3>
+        <p>Cada P1, P2 ou PF é um Boss com barra de progresso própria, que enche conforme você resolve os assuntos cobrados nela.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1590CC" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <h3>XP e nível por disciplina</h3>
+        <p>Cada questão e cada missão concluída rendem XP. Seu nível em Cálculo é independente do seu nível em Física.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#249A3B" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M21 7v6h-6"/></svg></div>
+        <h3>Chance de aprovação</h3>
+        <p>Calculada em tempo real com cobertura de conteúdo, precisão, frequência e tempo restante até a prova.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DB7E00" stroke-width="2"><path d="M12 2C8 6 6 10 6 13a6 6 0 0 0 12 0c0-1.5-.5-3-1.5-4.5C15.5 10 14 11 14 11c.5-3-1-6.5-2-9z"/></svg></div>
+        <h3>Streak da campanha</h3>
+        <p>Sequência de dias ativos, com a missão do dia sempre pronta esperando você.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1590CC" stroke-width="2"><path d="M4 4v6h6M20 20v-6h-6M4.5 15A8 8 0 0 0 19 8.5M19.5 9A8 8 0 0 0 5 15.5"/></svg></div>
+        <h3>Recálculo automático</h3>
+        <p>Atrasou ou mudou a data de uma prova? A campanha inteira se reorganiza sozinha a partir disso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="boss">
+  <div class="boss-band">
+    <div>
+      <div class="section-tag">O Boss</div>
+      <h2 style="font-size:28px; margin-bottom:14px;">Cada prova é um chefe que você derrota preparado</h2>
+      <p style="color:var(--text-dim); font-size:14.5px; line-height:1.6; font-weight:500;">A barra de vida do Boss representa sua preparação real pra prova — ela só enche quando você resolve questões dos assuntos que caem nela. Nada de estudar tópico que não vai ser cobrado.</p>
+    </div>
+    <div class="boss-visual">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-family:'Fredoka'; font-weight:600; font-size:15px;">🗡️ Boss: Cálculo I — P1</span>
+        <span style="font-size:12px; font-weight:800; color:var(--orange-dark); background:var(--orange-light); padding:4px 10px; border-radius:100px;">12 dias restantes</span>
+      </div>
+      <div class="boss-hp-track"><div class="boss-hp-fill"></div></div>
+      <div style="display:flex; justify-content:space-between; margin-top:6px;">
+        <span style="font-size:11.5px; color:var(--text-soft); font-weight:700;">Preparação: 64%</span>
+        <span style="font-size:11.5px; color:var(--text-soft); font-weight:700;">Chance de aprovação: 82%</span>
+      </div>
+      <div class="boss-topics">
+        <span class="boss-chip covered">Limites ✓</span>
+        <span class="boss-chip covered">Derivadas ✓</span>
+        <span class="boss-chip">Área entre curvas</span>
+        <span class="boss-chip">Regra da cadeia</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="disciplinas">
+  <div class="section-head">
+    <div class="section-tag">Cobertura</div>
+    <h2>As disciplinas que mais pesam na graduação</h2>
+  </div>
+  <div class="subjects-pills">
+    <div class="pill"><span class="pdot"></span>Fundamentos de Cálculo e Geometria</div>
+    <div class="pill"><span class="pdot"></span>Cálculo I, II e III</div>
+    <div class="pill"><span class="pdot"></span>Álgebra Linear</div>
+    <div class="pill"><span class="pdot"></span>Física I e II</div>
+    <div class="pill"><span class="pdot"></span>Química Geral</div>
+    <div class="pill"><span class="pdot"></span>Programação I</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="cta-band">
+    <div>
+      <h2>Sua campanha começa com uma pergunta: que nota você quer?</h2>
+      <p>Cadastro leva 2 minutos. A gente monta o resto.</p>
+    </div>
+    <a class="btn btn-white" href="#">Começar minha campanha</a>
+  </div>
+</div>
+
+<div class="foot">
+  <div class="logo"><div class="logo-mark">Q</div>Questly</div>
+  <div>© 2026 Questly — transforme seu semestre em campanha</div>
+</div>
+
+<script>
+window.addEventListener('scroll', ()=>{
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 8);
+});
+</script>
+
+</body>
+</html>

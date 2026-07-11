@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questly — Missão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<style>
+:root{
+  --bg-page:#FAFBFA;
+  --green:#2FC44C;
+  --green-dark:#249A3B;
+  --green-light:#DFF7E3;
+  --blue:#1CB0F6;
+  --blue-dark:#1590CC;
+  --blue-light:#DFF3FE;
+  --red:#FF4B4B;
+  --red-dark:#D93A3A;
+  --red-light:#FFE3E3;
+  --gold:#FFC800;
+  --gold-light:#FFF6D6;
+  --text:#3C3C41;
+  --text-dim:#767680;
+  --text-soft:#9C9CA6;
+  --border:#E7E7EC;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{ font-family:'Nunito',sans-serif; color:var(--text); background:var(--bg-page); min-height:100vh; overflow-x:hidden; }
+h1,h2,h3,h4{font-family:'Fredoka',sans-serif; font-weight:600; letter-spacing:-0.01em; color:#2B2B30;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Fredoka'; font-weight:600; font-size:15px;
+  padding:14px 24px; border-radius:15px; border-bottom:4px solid transparent;
+  transition:transform .08s ease, opacity .15s; width:100%;
+}
+.btn:active{ transform:translateY(3px); border-bottom-width:0; }
+.btn:disabled{ opacity:0.45; pointer-events:none; }
+.btn-primary{ background:var(--green); color:#fff; border-bottom-color:var(--green-dark); }
+.btn-ghost{ background:var(--bg-page); color:var(--text-dim); font-weight:800; border:2px solid var(--border); }
+
+/* top bar */
+.topbar{ display:flex; align-items:center; gap:16px; padding:20px 24px; max-width:780px; margin:0 auto; }
+.exit-btn{ font-size:22px; color:var(--text-soft); font-weight:700; flex-shrink:0; }
+.progress-track{ flex:1; height:12px; background:var(--border); border-radius:100px; overflow:hidden; }
+.progress-fill{ height:100%; background:var(--green); border-radius:100px; width:0%; transition:width .35s ease; }
+.xp-counter{ font-family:'JetBrains Mono'; font-weight:700; font-size:14px; color:#DB7E00; flex-shrink:0; min-width:60px; text-align:right; }
+
+/* card */
+.wrap{ max-width:780px; margin:0 auto; padding:14px 24px 50px; }
+.qcard{ position:relative; overflow:hidden; background:#fff; border:1px solid var(--border); border-radius:28px; padding:40px 40px 36px; animation:cardIn .3s ease; box-shadow:0 30px 60px -36px rgba(30,50,40,0.18); }
+.qcard::before{ content:""; position:absolute; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle, rgba(47,196,76,0.07), transparent 70%); top:-140px; right:-110px; pointer-events:none; }
+.qcard-body{ position:relative; z-index:1; }
+@keyframes cardIn{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+.q-counter{ font-family:'JetBrains Mono'; font-size:12px; font-weight:700; color:var(--text-soft); margin-bottom:10px; }
+.q-meta{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+.q-tag{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:6px 13px; border-radius:100px; background:var(--blue-light); color:var(--blue-dark); }
+.q-enunciado{ font-size:19px; font-weight:600; line-height:1.65; margin-bottom:30px; white-space:pre-wrap; }
+.q-enunciado .katex{ font-size:1.08em; }
+.q-imagem{ margin:-14px 0 28px; text-align:center; }
+.q-imagem img{ max-width:100%; max-height:340px; border-radius:14px; border:1px solid var(--border); }
+
+.alt-list{ display:flex; flex-direction:column; gap:12px; margin-bottom:26px; }
+.alt-btn{
+  position:relative; display:flex; align-items:center; gap:16px; text-align:left; cursor:pointer;
+  background:#fff; border:2px solid var(--border); border-radius:17px; padding:18px 58px 18px 20px;
+  font-family:'Nunito'; font-size:15.5px; font-weight:700; color:var(--text);
+  transition:border-color .12s, background .12s, transform .1s;
+  opacity:0; animation:altIn .35s ease forwards;
+}
+@keyframes altIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+.alt-btn:hover:not(.locked){ border-color:var(--blue); transform:translateY(-1px); }
+.alt-texto{ flex:1; min-width:0; }
+.alt-img{ display:block; max-width:100%; max-height:170px; border-radius:12px; margin-bottom:8px; object-fit:contain; }
+.alt-btn.locked{ cursor:default; }
+.alt-letra{
+  width:36px; height:36px; border-radius:10px; background:var(--bg-page); border:2px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-family:'Fredoka'; font-weight:700; font-size:14px; flex-shrink:0;
+  transition:border-color .12s, background .12s, color .12s;
+}
+.alt-btn.selecionada{ border-color:var(--blue); background:var(--blue-light); }
+.alt-btn.selecionada .alt-letra{ border-color:var(--blue); background:var(--blue); color:#fff; }
+.alt-btn.correta{ border-color:var(--green); background:var(--green-light); }
+.alt-btn.correta .alt-letra{ border-color:var(--green); background:var(--green); color:#fff; }
+.alt-btn.errada{ border-color:var(--red); background:var(--red-light); animation:shake .4s ease; }
+.alt-btn.errada .alt-letra{ border-color:var(--red); background:var(--red); color:#fff; }
+@keyframes shake{
+  0%,100%{ transform:translateX(0); }
+  20%{ transform:translateX(-8px); }
+  40%{ transform:translateX(7px); }
+  60%{ transform:translateX(-5px); }
+  80%{ transform:translateX(3px); }
+}
+
+/* riscar alternativa — estilo "sabre de luz", reversível */
+.alt-cross-btn{
+  position:absolute; right:12px; top:50%; transform:translateY(-50%) scale(0.75);
+  width:30px; height:30px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:#fff; border:2px solid var(--border); color:var(--text-soft);
+  font-family:'Fredoka'; font-weight:800; font-size:15px; line-height:1;
+  opacity:0; transition:opacity .15s, transform .15s, background .15s, border-color .15s, color .15s, box-shadow .15s;
+  z-index:3;
+}
+.alt-btn:hover .alt-cross-btn{ opacity:1; transform:translateY(-50%) scale(1); }
+.alt-cross-btn:hover{ background:var(--red); border-color:var(--red); color:#fff; box-shadow:0 0 14px 2px rgba(255,75,75,0.55); }
+.alt-cross-btn.active{ opacity:1; transform:translateY(-50%) scale(1); background:var(--red-light); border-color:var(--red); color:var(--red-dark); }
+.alt-btn.locked .alt-cross-btn{ display:none; }
+
+.alt-btn.riscada::after{
+  content:""; position:absolute; left:20px; right:56px; top:50%; height:3px; margin-top:-1.5px;
+  background:linear-gradient(90deg, rgba(255,75,75,0) 0%, #FF4B4B 12%, #FF7A7A 50%, #FF4B4B 88%, rgba(255,75,75,0) 100%);
+  box-shadow:0 0 10px 2px rgba(255,60,60,0.6), 0 0 22px 5px rgba(255,60,60,0.28);
+  transform:scaleX(0); transform-origin:left center;
+  animation:sabreSlash .32s cubic-bezier(.16,.9,.3,1.05) forwards;
+  pointer-events:none; z-index:2;
+}
+@keyframes sabreSlash{ to{ transform:scaleX(1); } }
+
+.confirm-row{ display:flex; }
+
+/* feedback pós-resposta */
+.feedback{ display:none; margin-top:22px; }
+.feedback.show{ display:block; animation:cardIn .25s ease; }
+.feedback-banner{ display:flex; align-items:center; gap:12px; padding:16px 18px; border-radius:16px; margin-bottom:16px; font-family:'Fredoka'; font-weight:600; font-size:16px; }
+.feedback-banner.ok{ background:var(--green-light); color:var(--green-dark); }
+.feedback-banner.bad{ background:var(--red-light); color:var(--red-dark); }
+.feedback-ic{ font-size:24px; }
+.resolucao{ background:var(--bg-page); border-radius:16px; padding:18px 20px; font-size:14px; line-height:1.65; color:var(--text-dim); font-weight:600; white-space:pre-wrap; }
+.resolucao b{ color:var(--text); }
+
+/* autópsia do erro (metacognição) — chips "por que você errou?" */
+.motivo-erro{ margin-top:14px; }
+.motivo-erro-titulo{ font-size:12.5px; font-weight:800; color:var(--text-dim); margin-bottom:9px; }
+.motivo-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.motivo-chip{
+  background:#fff; border:2px solid var(--border); border-radius:100px;
+  padding:8px 14px; font-family:'Nunito'; font-size:12.5px; font-weight:800; color:var(--text-dim);
+  transition:border-color .12s, background .12s, color .12s, transform .1s;
+}
+.motivo-chip:hover{ border-color:var(--blue); transform:translateY(-1px); }
+.motivo-chip.ativo{ border-color:var(--blue); background:var(--blue-light); color:var(--blue-dark); }
+
+/* navegação entre perguntas */
+.nav-row{ display:flex; gap:12px; margin-top:18px; }
+.nav-row #anteriorBtn{ flex:0 0 150px; }
+.nav-row #proximoBtn{ flex:1; }
+
+/* +XP flutuante */
+.xp-float{
+  position:fixed; font-family:'Fredoka'; font-weight:700; font-size:20px; color:var(--gold); pointer-events:none;
+  animation:floatUp 1.1s ease forwards; z-index:50; text-shadow:0 2px 8px rgba(255,200,0,0.4);
+}
+@keyframes floatUp{
+  0%{ transform:translateY(0) scale(0.6); opacity:0; }
+  20%{ transform:translateY(-8px) scale(1.15); opacity:1; }
+  100%{ transform:translateY(-70px) scale(1); opacity:0; }
+}
+
+/* flash de acerto/erro na tela toda */
+.screen-flash{ position:fixed; inset:0; pointer-events:none; z-index:40; opacity:0; }
+.screen-flash.flash-ok{ background:radial-gradient(circle at 50% 30%, rgba(47,196,76,0.18), transparent 60%); animation:flashFade .6s ease; }
+.screen-flash.flash-bad{ background:radial-gradient(circle at 50% 30%, rgba(255,75,75,0.18), transparent 60%); animation:flashFade .6s ease; }
+@keyframes flashFade{ 0%{opacity:1;} 100%{opacity:0;} }
+
+/* resultado */
+.result-card{ background:#fff; border:1px solid var(--border); border-radius:24px; padding:40px 32px; text-align:center; animation:cardIn .35s ease; }
+
+/* novo distintivo de Mestre (maestria: >= 90% em >= 20 questões) */
+.mestre-box{
+  display:none; text-align:left; background:var(--gold-light); border:2px solid var(--gold);
+  border-radius:16px; padding:16px 18px; margin-bottom:18px;
+}
+.mestre-titulo{ font-family:'Fredoka'; font-weight:600; font-size:16px; color:#8A6D00; margin-bottom:6px; }
+.mestre-texto{ font-size:13px; font-weight:600; color:var(--text-dim); line-height:1.55; }
+.mestre-texto b{ color:var(--text); }
+
+/* desafio de recuperação (retrieval practice) */
+.desafio-box{
+  display:none; text-align:left; background:var(--blue-light); border:2px solid var(--blue);
+  border-radius:16px; padding:16px 18px; margin-bottom:18px;
+}
+.desafio-titulo{ font-family:'Fredoka'; font-weight:600; font-size:16px; color:var(--blue-dark); margin-bottom:6px; }
+.desafio-texto{ font-size:13px; font-weight:600; color:var(--text-dim); line-height:1.55; margin-bottom:14px; }
+.desafio-texto b{ color:var(--text); }
+.btn-gold{ background:var(--gold); color:#5C4700; border-bottom-color:#D9AB00; }
+.result-ic{ font-size:52px; margin-bottom:10px; }
+.result-card h2{ font-size:23px; margin-bottom:6px; }
+.result-sub{ color:var(--text-dim); font-size:13.5px; font-weight:600; margin-bottom:26px; }
+.result-stats{ display:flex; gap:12px; margin-bottom:28px; }
+.result-stat{ flex:1; background:var(--bg-page); border-radius:16px; padding:16px 10px; }
+.result-stat .n{ font-family:'JetBrains Mono'; font-weight:700; font-size:21px; }
+.result-stat .l{ font-size:10.5px; color:var(--text-soft); font-weight:700; margin-top:4px; }
+
+.empty-state{ text-align:center; padding:60px 20px; }
+.empty-state .ic{ font-size:44px; margin-bottom:14px; }
+.empty-state p{ color:var(--text-dim); font-size:14px; font-weight:600; margin-bottom:20px; max-width:380px; margin-left:auto; margin-right:auto; }
+
+.view{ display:none; }
+.view.active{ display:block; }
+</style>
+</head>
+<body>
+
+<div class="screen-flash" id="screenFlash"></div>
+
+<div class="topbar">
+  <a class="exit-btn" href="questly_dashboard.html" title="Sair da missão">×</a>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="xp-counter" id="xpCounter">+0 XP</div>
+</div>
+
+<div class="wrap">
+
+  <!-- QUESTÃO -->
+  <div class="view" id="questionView">
+    <div class="qcard">
+      <div class="qcard-body">
+        <div class="q-counter" id="qCounter">Pergunta 1 de 1</div>
+        <div class="q-meta" id="qMeta"></div>
+        <div class="q-enunciado" id="qEnunciado">Carregando pergunta...</div>
+        <div class="q-imagem" id="qImagem" style="display:none;"></div>
+        <div class="alt-list" id="altList"></div>
+
+        <div class="confirm-row" id="confirmRow">
+          <button class="btn btn-primary" id="confirmarBtn" disabled>Confirmar resposta</button>
+        </div>
+
+        <div class="feedback" id="feedback">
+          <div class="feedback-banner" id="feedbackBanner"></div>
+          <div class="resolucao" id="resolucaoBox" style="display:none;"></div>
+          <div class="motivo-erro" id="motivoErroBox" style="display:none;">
+            <div class="motivo-erro-titulo">Por que você errou? Classificar ajuda a calibrar sua chance de aprovação 🧠</div>
+            <div class="motivo-chips" id="motivoChips"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="anteriorBtn">← Anterior</button>
+      <button class="btn btn-primary" id="proximoBtn">Próxima →</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="view" id="resultView">
+    <div class="result-card">
+      <div class="result-ic" id="resultIc">🎉</div>
+      <h2 id="resultTitle">Missão cumprida!</h2>
+      <div class="result-sub" id="resultSub">Aqui está como você se saiu.</div>
+      <div class="result-stats">
+        <div class="result-stat"><div class="n" id="statAcertos" style="color:var(--green-dark);">0</div><div class="l">acertos</div></div>
+        <div class="result-stat"><div class="n" id="statErros" style="color:var(--red-dark);">0</div><div class="l">erros</div></div>
+        <div class="result-stat"><div class="n" id="statXp" style="color:#DB7E00;">0</div><div class="l">XP ganho</div></div>
+        <div class="result-stat"><div class="n" id="statTempo" style="color:var(--blue-dark);">0 min</div><div class="l">tempo gasto</div></div>
+      </div>
+      <div class="result-sub" id="statTempoPrevisto" style="margin-bottom:20px;margin-top:-14px;"></div>
+      <div class="mestre-box" id="mestreBox"></div>
+      <div class="desafio-box" id="desafioBox"></div>
+      <a class="btn btn-primary" href="questly_dashboard.html">Voltar ao Dashboard</a>
+    </div>
+  </div>
+
+  <!-- ESTADO VAZIO / ERRO -->
+  <div class="view" id="emptyView">
+    <div class="empty-state">
+      <div class="ic">🗺️</div>
+      <p id="emptyMsg">Carregando sua missão...</p>
+      <a class="btn btn-primary" style="width:auto;display:inline-flex;padding:13px 26px;" href="questly_dashboard.html">Voltar ao Dashboard</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/chance-aprovacao.js"></script>
+<script src="js/liga.js"></script>
+<script src="js/questao.js"></script>
+</body>
+</html>
