@@ -2,9 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Renova o cookie de sessão a cada request (Server Components não podem
-// escrever cookies). Guards de rota protegida entram na Etapa 2
-// (Autenticação & Layouts) — este middleware, por enquanto, só mantém a
-// sessão viva.
+// escrever cookies) e devolve o usuário atual pro chamador decidir guards
+// de rota (proxy.ts).
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -29,9 +28,9 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // Necessário chamar getUser() (não getSession()) para o token ser
-  // validado/renovado — descartamos o retorno por enquanto.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return supabaseResponse;
+  return { supabaseResponse, user };
 }
