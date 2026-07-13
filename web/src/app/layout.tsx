@@ -1,25 +1,20 @@
 import type { Metadata } from "next";
-import { Fredoka, Nunito, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 
-const fredoka = Fredoka({
-  variable: "--font-fredoka",
+// Redesign 2026-07: Fredoka/Nunito (arredondadas, tom lúdico) deram lugar a
+// Geist — tipografia neutra e refinada, adequada a leitura longa e à
+// identidade "SaaS premium" pedida pro público universitário.
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +31,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${fredoka.variable} ${nunito.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
         <ThemeProvider

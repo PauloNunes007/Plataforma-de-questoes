@@ -11,3 +11,6 @@ web/next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code local config/tooling (not app code)
+.claude/

@@ -1,7 +1,10 @@
 "use server";
 
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { questlyEhMestre, questlyXpDaQuestao } from "@/lib/questly/shared";
+import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
 import { questlyGarantirSemanaLiga } from "@/lib/questly/liga";
 import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
 
@@ -44,7 +47,7 @@ export async function registrarRespostaAction(input: {
   if (input.topicId) {
     const { data: progresso } = await supabase
       .from("aluno_topico_progresso")
-      .select("taxa_acerto, num_questoes_respondidas")
+      .select("taxa_acerto, num_questoes_respondidas, maestria, estabilidade, ultima_revisao")
       .eq("user_id", user.id)
       .eq("topico_id", input.topicId)
       .maybeSingle();
@@ -54,12 +57,28 @@ export async function registrarRespostaAction(input: {
     const novoNum = numAnterior + 1;
     const novaTaxa = (taxaAnterior * numAnterior + (input.correta ? 1 : 0)) / novoNum;
 
+    // Motor de aprovação: evolui maestria (BKT) e estabilidade (revisão
+    // espaçada) a partir do estado persistido. Semeia no cold-start com
+    // os mesmos números do backfill SQL. ultima_revisao é lida ANTES de
+    // ser sobrescrita, pra retenção do momento sair correta.
+    const { maestria, estabilidade } = questlyEvoluirEstadoTopico({
+      maestria: progresso?.maestria ?? null,
+      estabilidade: progresso?.estabilidade ?? null,
+      ultimaRevisao: progresso?.ultima_revisao ?? null,
+      taxaAnterior,
+      numAnterior,
+      acertou: input.correta,
+      agoraMs: Date.now(),
+    });
+
     const { error: upsertError } = await supabase.from("aluno_topico_progresso").upsert(
       {
         user_id: user.id,
         topico_id: input.topicId,
         taxa_acerto: novaTaxa,
         num_questoes_respondidas: novoNum,
+        maestria,
+        estabilidade,
         ultima_revisao: new Date().toISOString(),
       },
       { onConflict: "user_id,topico_id" },
@@ -70,7 +89,10 @@ export async function registrarRespostaAction(input: {
   const novoTempoMedio = input.tempoMedioAnterior
     ? Math.round(input.tempoMedioAnterior * 0.7 + input.tempoSeg * 0.3)
     : input.tempoSeg;
-  const { error: tempoError } = await supabase
+  // `questions` só é escrita pelo admin (RLS de segurança) — a recalibração do
+  // tempo médio, que qualquer aluno dispara ao responder, roda via service_role
+  // no servidor (o user já foi validado acima).
+  const { error: tempoError } = await createAdminClient()
     .from("questions")
     .update({ tempo_medio_seg: novoTempoMedio })
     .eq("id", input.questionId);
@@ -127,8 +149,13 @@ export async function finalizarMissaoAction(input: {
     .update({ concluida: true, tempo_gasto_min: input.tempoGastoMinMissao })
     .eq("id", input.missaoId);
 
-  await atualizarXpELiga(supabase, user.id, input.acertos, input.erros, input.xpGanho);
-  await atualizarStreakEDailyLog(supabase, user.id);
+  // XP/liga/streak vivem em colunas protegidas de `profiles` (só service_role
+  // escreve — supabase_seguranca_hardening.sql). Essas duas rodam via cliente
+  // admin; o resto (recap/métricas/missão) fica no cliente do usuário porque
+  // são writes owner-scoped em tabelas não protegidas.
+  const admin = createAdminClient();
+  await atualizarXpELiga(admin, user.id, input.acertos, input.erros, input.xpGanho);
+  await atualizarStreakEDailyLog(admin, user.id);
   const recapResultado = await avaliarRecap(supabase, user.id, input.recapTopicoId, input.acertos, input.erros);
   if (input.subjectId) {
     await atualizarMetricasSubject(supabase, user.id, input.subjectId);
@@ -145,7 +172,7 @@ export async function finalizarMissaoAction(input: {
 }
 
 async function atualizarXpELiga(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: SupabaseClient,
   userId: string,
   acertos: number,
   erros: number,
@@ -153,18 +180,28 @@ async function atualizarXpELiga(
 ) {
   const estado = await questlyGarantirSemanaLiga(supabase, { id: userId });
 
-  const { data: profile } = await supabase.from("profiles").select("xp_total").eq("id", userId).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("xp_total, questoes_total")
+    .eq("id", userId)
+    .single();
   const novoXpTotal = (profile?.xp_total || 0) + xpGanho;
   const novoXpSemana = (estado?.xp_semana || 0) + xpGanho;
   const novasQuestoesSemana = (estado?.questoes_semana || 0) + (acertos + erros);
+  const novasQuestoesTotal = (profile?.questoes_total || 0) + (acertos + erros);
 
   await supabase
     .from("profiles")
-    .update({ xp_total: novoXpTotal, xp_semana: novoXpSemana, questoes_semana: novasQuestoesSemana })
+    .update({
+      xp_total: novoXpTotal,
+      xp_semana: novoXpSemana,
+      questoes_semana: novasQuestoesSemana,
+      questoes_total: novasQuestoesTotal,
+    })
     .eq("id", userId);
 }
 
-async function atualizarStreakEDailyLog(supabase: Awaited<ReturnType<typeof createClient>>, userId: string) {
+async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId: string) {
   const hoje = new Date().toISOString().slice(0, 10);
 
   const { data: logHoje } = await supabase

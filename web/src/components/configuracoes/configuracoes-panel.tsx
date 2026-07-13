@@ -1,6 +1,22 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  BookOpen,
+  CalendarDays,
+  CalendarRange,
+  Check,
+  ImageIcon,
+  Lock,
+  Plus,
+  Sparkles,
+  Swords,
+  Trash2,
+  User,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import {
   QUESTLY_DIAS_SEMANA,
   questlyNormalizarDia,
@@ -15,11 +31,14 @@ import {
   removerFotoAction,
   removerProvaAction,
   salvarGradeAction,
+  salvarNomeAction,
   salvarNotaAction,
   salvarRotinaAction,
   uploadFotoAction,
   type SubjectComBosses,
 } from "@/lib/configuracoes/actions";
+
+const NOME_CARENCIA_DIAS = 15;
 
 const DIAS_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const TEMPO_OPCOES: { label: string; minutos: number }[] = [
@@ -44,35 +63,51 @@ const DISCIPLINAS_PADRAO = [
   "Programação I",
 ];
 
+const CHIP_BASE =
+  "cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors";
+const CHIP_INATIVO = "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground";
+const CHIP_ATIVO = "border-questly-green/50 bg-questly-green-light text-questly-green-dark";
+
+const BTN_PRIMARIO =
+  "inline-flex items-center gap-2 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-50 dark:text-[#0c1512]";
+const BTN_SECUNDARIO =
+  "inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50";
+
 type ProfileMin = {
   nome: string | null;
   foto_url: string | null;
   dias_disponiveis: string[] | null;
   tempo_diario_min: number | null;
+  nome_alterado_em: string | null;
 };
 
 function Card({
-  icon,
+  icon: Icon,
   title,
   sub,
   action,
   children,
 }: {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   sub: string;
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[20px] border border-border bg-card p-6">
-      <div className="mb-1.5 flex items-center justify-between gap-3">
-        <h2 className="font-heading text-lg font-semibold">
-          {icon} {title}
-        </h2>
-        {action}
+    <div className="surface p-5 sm:p-6">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-questly-green-light text-questly-green-dark">
+            <Icon size={18} strokeWidth={1.75} />
+          </span>
+          <div>
+            <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{sub}</p>
+          </div>
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
       </div>
-      <p className="mb-5 text-sm font-semibold text-muted-foreground">{sub}</p>
       {children}
     </div>
   );
@@ -80,11 +115,19 @@ function Card({
 
 function SavedTag({ show }: { show: boolean }) {
   return (
-    <span
-      className={`text-xs font-extrabold text-questly-green-dark transition-opacity ${show ? "opacity-100" : "opacity-0"}`}
-    >
-      ✓ Salvo
-    </span>
+    <AnimatePresence>
+      {show && (
+        <motion.span
+          initial={{ opacity: 0, x: -4 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ type: "spring", stiffness: 280, damping: 22 }}
+          className="inline-flex items-center gap-1 text-xs font-semibold text-questly-green-dark"
+        >
+          <Check size={14} strokeWidth={2.5} /> Salvo
+        </motion.span>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -98,15 +141,7 @@ function Chip({
   children: React.ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-full border-2 px-4 py-2 text-sm font-bold transition-colors ${
-        active
-          ? "border-questly-green bg-questly-green-light text-questly-green-dark"
-          : "border-border bg-card text-muted-foreground hover:border-questly-green"
-      }`}
-    >
+    <button type="button" onClick={onClick} className={`${CHIP_BASE} ${active ? CHIP_ATIVO : CHIP_INATIVO}`}>
       {children}
     </button>
   );
@@ -126,8 +161,13 @@ export function ConfiguracoesPanel({
   const [tempoMin, setTempoMin] = useState<number | null>(profile?.tempo_diario_min ?? null);
 
   return (
-    <div className="mx-auto flex max-w-[720px] flex-col gap-5 px-6 py-8">
-      <h1 className="font-heading text-2xl font-semibold">Configurações</h1>
+    <div className="mx-auto flex max-w-[720px] flex-col gap-5 px-5 py-8 sm:px-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Configurações</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Ajuste sua rotina, disciplinas e provas quando quiser.</p>
+      </div>
+
+      <NomeCard nomeInicial={profile?.nome ?? null} nomeAlteradoEmInicial={profile?.nome_alterado_em ?? null} />
 
       <FotoCard nome={profile?.nome || "Aluno(a)"} fotoUrlInicial={profile?.foto_url ?? null} />
 
@@ -139,6 +179,125 @@ export function ConfiguracoesPanel({
 
       <ProvasCard subjects={subjects} onSubjectsChange={setSubjects} />
     </div>
+  );
+}
+
+function diasRestantesCarencia(nomeAlteradoEm: string | null): number {
+  if (!nomeAlteradoEm) return 0;
+  const decorridoMs = Date.now() - new Date(nomeAlteradoEm).getTime();
+  const restanteMs = NOME_CARENCIA_DIAS * 24 * 60 * 60 * 1000 - decorridoMs;
+  return restanteMs <= 0 ? 0 : Math.ceil(restanteMs / (24 * 60 * 60 * 1000));
+}
+
+function NomeCard({
+  nomeInicial,
+  nomeAlteradoEmInicial,
+}: {
+  nomeInicial: string | null;
+  nomeAlteradoEmInicial: string | null;
+}) {
+  const [nome, setNome] = useState(nomeInicial ?? "");
+  const [nomeAlteradoEm, setNomeAlteradoEm] = useState(nomeAlteradoEmInicial);
+  const [editando, setEditando] = useState(false);
+  const [rascunho, setRascunho] = useState(nomeInicial ?? "");
+  const [salvando, setSalvando] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  const diasRestantes = diasRestantesCarencia(nomeAlteradoEm);
+  const bloqueado = diasRestantes > 0;
+
+  async function salvar() {
+    setErro(null);
+    if (rascunho.trim() === nome) {
+      setEditando(false);
+      return;
+    }
+    setSalvando(true);
+    const resultado = await salvarNomeAction(rascunho);
+    setSalvando(false);
+    if (!("nome" in resultado)) {
+      setErro(resultado.error);
+      return;
+    }
+    setNome(resultado.nome);
+    setNomeAlteradoEm(resultado.nomeAlteradoEm || null);
+    setEditando(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  }
+
+  return (
+    <Card
+      icon={User}
+      title="Nome"
+      sub="É como você aparece pros outros alunos no ranking. Precisa ser único e só pode ser trocado a cada 15 dias."
+    >
+      {editando ? (
+        <div className="flex flex-col gap-3">
+          <input
+            autoFocus
+            value={rascunho}
+            maxLength={40}
+            onChange={(e) => setRascunho(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") salvar();
+              if (e.key === "Escape") {
+                setRascunho(nome);
+                setErro(null);
+                setEditando(false);
+              }
+            }}
+            placeholder="Seu nome"
+            className="w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
+          />
+          {erro && <p className="text-xs font-medium text-questly-red-dark">{erro}</p>}
+          <div className="flex items-center gap-2">
+            <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
+              {salvando ? "Salvando..." : "Salvar nome"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setRascunho(nome);
+                setErro(null);
+                setEditando(false);
+              }}
+              className={BTN_SECUNDARIO}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-[15px] font-semibold">{nome || "Sem nome definido"}</p>
+            {bloqueado && (
+              <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Lock size={12} strokeWidth={1.75} />
+                Você poderá trocar de novo em {diasRestantes} dia(s).
+              </p>
+            )}
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <SavedTag show={saved} />
+            <button
+              type="button"
+              disabled={bloqueado}
+              onClick={() => {
+                setRascunho(nome);
+                setEditando(true);
+              }}
+              className={BTN_SECUNDARIO}
+              title={bloqueado ? `Disponível em ${diasRestantes} dia(s)` : undefined}
+            >
+              Editar
+            </button>
+          </div>
+        </div>
+      )}
+    </Card>
   );
 }
 
@@ -199,12 +358,12 @@ function FotoCard({ nome, fotoUrlInicial }: { nome: string; fotoUrlInicial: stri
 
   return (
     <Card
-      icon="🖼️"
+      icon={ImageIcon}
       title="Foto de perfil"
       sub="Aparece pros outros alunos no ranking. A imagem é recortada e reduzida automaticamente antes de subir."
     >
       <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-questly-green to-[#57D96F] font-heading text-xl font-bold text-white">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-questly-green to-questly-green-deep text-xl font-semibold text-white">
           {mostrarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={mostrarUrl} alt="Avatar" className="h-full w-full object-cover" />
@@ -214,32 +373,23 @@ function FotoCard({ nome, fotoUrlInicial }: { nome: string; fotoUrlInicial: stri
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => inputRef.current?.click()}
-              className="rounded-xl border-2 border-border bg-card px-4 py-2 text-xs font-extrabold text-muted-foreground"
-            >
+            <button type="button" onClick={() => inputRef.current?.click()} className={BTN_SECUNDARIO}>
               Escolher imagem
             </button>
             {fotoUrl && (
               <button
                 type="button"
                 onClick={removerFoto}
-                className="rounded-xl border-2 border-border bg-card px-4 py-2 text-xs font-extrabold text-questly-red-dark"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-questly-red-dark transition-colors hover:bg-questly-red-light"
               >
-                Remover
+                <Trash2 size={14} strokeWidth={1.75} /> Remover
               </button>
             )}
           </div>
           <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={aoEscolherArquivo} />
           {pendente && (
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                disabled={enviando}
-                onClick={salvarFoto}
-                className="rounded-xl bg-questly-green px-4 py-2 text-xs font-extrabold text-white disabled:opacity-50"
-              >
+              <button type="button" disabled={enviando} onClick={salvarFoto} className={BTN_PRIMARIO}>
                 {enviando ? "Enviando..." : "Salvar foto"}
               </button>
               <SavedTag show={saved} />
@@ -282,32 +432,33 @@ function RotinaCard({
   }
 
   return (
-    <Card icon="🗓️" title="Rotina de estudos" sub="As missões diárias só são geradas nos dias marcados abaixo.">
-      <div className="mb-5 flex flex-wrap gap-2.5">
-        {DIAS_LABELS.map((dia) => (
-          <Chip
-            key={dia}
-            active={diasSel.includes(dia)}
-            onClick={() => setDiasSel((s) => (s.includes(dia) ? s.filter((d) => d !== dia) : [...s, dia]))}
-          >
-            {dia}
-          </Chip>
-        ))}
+    <Card icon={CalendarDays} title="Rotina de estudos" sub="As missões diárias só são geradas nos dias marcados abaixo.">
+      <div className="mb-5">
+        <div className="kicker mb-2.5">Dias disponíveis</div>
+        <div className="flex flex-wrap gap-2">
+          {DIAS_LABELS.map((dia) => (
+            <Chip
+              key={dia}
+              active={diasSel.includes(dia)}
+              onClick={() => setDiasSel((s) => (s.includes(dia) ? s.filter((d) => d !== dia) : [...s, dia]))}
+            >
+              {dia}
+            </Chip>
+          ))}
+        </div>
       </div>
-      <div className="mb-5 flex flex-wrap gap-2.5">
-        {TEMPO_OPCOES.map((t) => (
-          <Chip key={t.label} active={tempoLabel === t.label} onClick={() => setTempoLabel(t.label)}>
-            {t.label}
-          </Chip>
-        ))}
+      <div className="mb-5">
+        <div className="kicker mb-2.5">Tempo por dia</div>
+        <div className="flex flex-wrap gap-2">
+          {TEMPO_OPCOES.map((t) => (
+            <Chip key={t.label} active={tempoLabel === t.label} onClick={() => setTempoLabel(t.label)}>
+              {t.label}
+            </Chip>
+          ))}
+        </div>
       </div>
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          disabled={salvando}
-          onClick={salvar}
-          className="rounded-xl bg-questly-green px-5 py-2.5 text-sm font-extrabold text-white disabled:opacity-50"
-        >
+        <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
           {salvando ? "Salvando..." : "Salvar rotina"}
         </button>
         <SavedTag show={saved} />
@@ -379,66 +530,58 @@ function GradeSemanalCard({
 
   return (
     <Card
-      icon="📅"
+      icon={CalendarRange}
       title="Grade semanal por disciplina"
       sub="Marque em quais dias você estuda cada disciplina. A recomendação usa a proximidade das provas, seu desempenho e sua meta de nota — mas quem decide é você."
       action={
         subjects.length > 0 && diasOrdenados.length > 0 ? (
-          <button
-            type="button"
-            onClick={recomendar}
-            className="shrink-0 rounded-xl border-2 border-border bg-card px-3.5 py-2 text-xs font-extrabold text-muted-foreground"
-          >
-            🎯 Recomendar
+          <button type="button" onClick={recomendar} className={BTN_SECUNDARIO}>
+            <Sparkles size={14} strokeWidth={1.75} /> Recomendar
           </button>
         ) : undefined
       }
     >
       {subjects.length === 0 ? (
-        <p className="text-sm font-semibold text-muted-foreground">
-          Adicione uma disciplina abaixo pra montar sua grade semanal.
-        </p>
+        <p className="text-sm text-muted-foreground">Adicione uma disciplina abaixo pra montar sua grade semanal.</p>
       ) : diasOrdenados.length === 0 ? (
-        <p className="text-sm font-semibold text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Escolha seus dias disponíveis em &quot;Rotina de estudos&quot; acima primeiro.
         </p>
       ) : (
         <>
           <div className="overflow-x-auto">
             <div
-              className="grid items-center gap-y-2"
+              className="grid items-center gap-y-1"
               style={{ gridTemplateColumns: `160px repeat(${diasOrdenados.length}, 44px)` }}
             >
               <div />
               {diasOrdenados.map((d) => (
-                <div key={d.abrev} className="text-center text-[11px] font-extrabold text-muted-foreground">
+                <div key={d.abrev} className="kicker text-center">
                   {d.label}
                 </div>
               ))}
               {subjects.map((s) => (
                 <div key={s.id} className="contents">
-                  <div className="truncate pr-2 text-sm font-bold">{s.nome}</div>
+                  <div className="truncate pr-2 text-sm font-medium">{s.nome}</div>
                   {diasOrdenados.map((d) => (
-                    <div key={d.abrev} className="flex justify-center">
+                    // label cobre a célula inteira (44px), não só a
+                    // caixinha — alvo de toque real bem maior que os 20px
+                    // visuais do checkbox.
+                    <label key={d.abrev} className="flex h-10 w-11 cursor-pointer items-center justify-center">
                       <input
                         type="checkbox"
                         checked={!!marcado[`${s.id}|${d.abrev}`]}
                         onChange={() => toggle(s.id, d.abrev)}
                         className="h-5 w-5 accent-questly-green"
                       />
-                    </div>
+                    </label>
                   ))}
                 </div>
               ))}
             </div>
           </div>
           <div className="mt-5 flex items-center gap-3">
-            <button
-              type="button"
-              disabled={salvando}
-              onClick={salvar}
-              className="rounded-xl bg-questly-green px-5 py-2.5 text-sm font-extrabold text-white disabled:opacity-50"
-            >
+            <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
               {salvando ? "Salvando..." : "Salvar grade"}
             </button>
             <SavedTag show={saved} />
@@ -497,36 +640,34 @@ function DisciplinasCard({
   const sugestoes = DISCIPLINAS_PADRAO.filter((n) => !jaTem.has(n.toLowerCase()));
 
   return (
-    <Card icon="📚" title="Disciplinas & metas" sub="Clique numa nota pra atualizar a meta na hora.">
+    <Card icon={BookOpen} title="Disciplinas & metas" sub="Clique numa nota pra atualizar a meta na hora.">
       {subjects.length === 0 ? (
-        <p className="mb-5 text-sm font-semibold text-muted-foreground">Nenhuma disciplina ainda. Adicione uma abaixo.</p>
+        <p className="mb-5 text-sm text-muted-foreground">Nenhuma disciplina ainda. Adicione uma abaixo.</p>
       ) : (
-        <div className="mb-5 flex flex-col gap-3">
+        <div className="mb-5 flex flex-col gap-2.5">
           {subjects.map((s) => (
-            <div key={s.id} className="rounded-2xl bg-muted p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <h4 className="font-heading text-[15px] font-semibold">{s.nome}</h4>
+            <div key={s.id} className="rounded-xl border border-border bg-muted/40 p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h4 className="text-[15px] font-semibold tracking-tight">{s.nome}</h4>
                 <button
                   type="button"
                   onClick={() => remover(s)}
-                  className="rounded-lg border-2 border-border bg-card px-3 py-1.5 text-xs font-extrabold text-questly-red-dark"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-questly-red-dark transition-colors hover:bg-questly-red-light"
                 >
-                  Remover
+                  <Trash2 size={13} strokeWidth={1.75} /> Remover
                 </button>
               </div>
-              <div className="mb-1.5 text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground">
-                Nota desejada
-              </div>
+              <div className="kicker mb-2">Nota desejada</div>
               <div className="flex gap-2">
                 {[6, 7, 8, 9, 10].map((n) => (
                   <button
                     key={n}
                     type="button"
                     onClick={() => salvarNota(s, n)}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg border-2 font-heading text-sm font-semibold ${
+                    className={`tnum flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-semibold transition-colors ${
                       s.nota_desejada === n
-                        ? "border-questly-green bg-questly-green-light text-questly-green-dark"
-                        : "border-border bg-card"
+                        ? "border-questly-green/50 bg-questly-green-light text-questly-green-dark"
+                        : "border-border bg-card text-muted-foreground hover:bg-muted"
                     }`}
                   >
                     {n}
@@ -538,33 +679,37 @@ function DisciplinasCard({
         </div>
       )}
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {sugestoes.map((nome) => (
-          <button
-            key={nome}
-            type="button"
-            disabled={adicionando}
-            onClick={() => adicionar(nome)}
-            className="rounded-full border-2 border-border bg-card px-3.5 py-2 text-xs font-bold text-muted-foreground hover:border-questly-green disabled:opacity-50"
-          >
-            {nome}
-          </button>
-        ))}
-      </div>
+      {sugestoes.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          {sugestoes.map((nome) => (
+            <button
+              key={nome}
+              type="button"
+              disabled={adicionando}
+              onClick={() => adicionar(nome)}
+              className={`${CHIP_BASE} ${CHIP_INATIVO} disabled:opacity-50`}
+            >
+              <Plus size={13} strokeWidth={2} className="mr-1 inline-block align-[-2px]" />
+              {nome}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="flex gap-2">
         <input
           value={novaDisc}
           onChange={(e) => setNovaDisc(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && adicionar(novaDisc)}
           placeholder="Não achou? Digite o nome da disciplina"
-          className="flex-1 rounded-xl border-2 border-dashed border-border px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-questly-blue"
+          className="flex-1 rounded-xl border border-dashed border-border bg-card px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
         />
         <button
           type="button"
           disabled={adicionando}
           onClick={() => adicionar(novaDisc)}
-          className="rounded-xl bg-muted px-4 text-xs font-extrabold text-muted-foreground disabled:opacity-50"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-muted px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
         >
-          + Adicionar
+          <Plus size={14} strokeWidth={2} /> Adicionar
         </button>
       </div>
     </Card>
@@ -604,23 +749,19 @@ function ProvasCard({
 
   return (
     <Card
-      icon="🗡️"
+      icon={Swords}
       title="Provas por disciplina"
       sub="Mudou a data de uma prova? Atualize aqui — a campanha recalcula sozinha."
     >
       {subjects.length === 0 ? (
-        <p className="text-sm font-semibold text-muted-foreground">
-          Adicione uma disciplina pra poder cadastrar provas.
-        </p>
+        <p className="text-sm text-muted-foreground">Adicione uma disciplina pra poder cadastrar provas.</p>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {subjects.map((s) => (
-            <div key={s.id} className="rounded-2xl bg-muted p-4">
-              <div className="mb-2.5 text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground">
-                {s.nome}
-              </div>
+            <div key={s.id} className="rounded-xl border border-border bg-muted/40 p-4">
+              <div className="kicker mb-2.5">{s.nome}</div>
               {s.bosses.length === 0 && (
-                <p className="mb-2 text-xs font-semibold text-muted-foreground">Nenhuma prova cadastrada ainda.</p>
+                <p className="mb-2 text-xs text-muted-foreground">Nenhuma prova cadastrada ainda.</p>
               )}
               <div className="flex flex-col gap-2">
                 {s.bosses.map((b) => (
@@ -628,20 +769,21 @@ function ProvasCard({
                     <input
                       defaultValue={b.nome}
                       onBlur={(e) => atualizarProva(b.id, { nome: e.target.value })}
-                      className="w-[70px] rounded-lg border-2 border-border bg-card px-2.5 py-2 text-xs font-bold outline-none"
+                      className="w-[70px] rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
                     />
                     <input
                       type="date"
                       defaultValue={b.data_prova ? String(b.data_prova).slice(0, 10) : ""}
                       onBlur={(e) => atualizarProva(b.id, { data_prova: e.target.value })}
-                      className="flex-1 rounded-lg border-2 border-border bg-card px-2.5 py-2 text-xs font-semibold outline-none"
+                      className="tnum flex-1 rounded-lg border border-border bg-card px-2.5 py-2 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
                     />
                     <button
                       type="button"
                       onClick={() => removerProva(s, b.id)}
-                      className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg border-2 border-border bg-card font-bold text-questly-red"
+                      aria-label="Remover prova"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-questly-red transition-colors hover:bg-questly-red-light"
                     >
-                      ×
+                      <X size={16} strokeWidth={2} />
                     </button>
                   </div>
                 ))}
@@ -649,9 +791,9 @@ function ProvasCard({
               <button
                 type="button"
                 onClick={() => adicionarProva(s)}
-                className="mt-2.5 text-xs font-extrabold text-questly-green-dark"
+                className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-questly-green-dark transition-opacity hover:opacity-80"
               >
-                + Adicionar prova
+                <Plus size={14} strokeWidth={2} /> Adicionar prova
               </button>
             </div>
           ))}

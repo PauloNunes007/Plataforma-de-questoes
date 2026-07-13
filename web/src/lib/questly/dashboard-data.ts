@@ -10,12 +10,17 @@ import {
   diasAte,
   addDias,
   toISODate,
+  fmtDataCurta,
   questlyEhMestre,
   questlyNormalizarDia,
   saudacaoPorHorario,
 } from "./shared";
 import { questlyGerarMissoesDoDia, type Mission, type Subject } from "./mission-engine";
 import { questlyGarantirSemanaLiga, QUESTLY_LIGA_INFO, type EstadoLiga } from "./liga";
+import { questlyProjetarProva } from "./motor-aprovacao";
+import { ehPro } from "@/lib/plano/plano";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
 
 const XP_POR_NIVEL = 1000;
 const DOW_ABREV = ["dom", "seg", "ter", "qua", "qui", "sex", "sab"];
@@ -55,6 +60,8 @@ export type BossAlvo = {
   diasAteProva: number;
   preparoPercentual: number;
   chanceAprovacao: number | null;
+  notaProjetada: number | null; // nota esperada na prova se nada mudar (motor)
+  emRiscoCount: number; // tópicos que chegam fracos no dia D
 };
 
 export type SubjectListItem = {
@@ -74,12 +81,66 @@ export type DiaTicker = {
 
 export type CalDay = {
   dia: number;
+  data: string;
   estado: "normal" | "hoje" | "prova" | "estudou";
   title?: string;
+  temTarefa: boolean;
+};
+
+// "Metas" do dia (card do hero da aba Hoje) — reinterpreta o "Aulas
+// concluídas" do print de referência com métricas que existem de fato no
+// domínio do Questly (não há conceito de aula/vídeo aqui): missões,
+// questões respondidas e XP, todos derivados de dados.missions — sem
+// query extra.
+export type MetasHoje = {
+  missoesConcluidas: number;
+  missoesTotal: number;
+  questoesRespondidas: number;
+  questoesTotal: number;
+  xpHoje: number;
+  xpMetaHoje: number;
+};
+
+export type DiaSemanaResumo = {
+  data: string;
+  label: string;
+  dataLabel: string;
+  xpGanho: number;
+  estudou: boolean;
+  hoje: boolean;
+};
+
+// Percentil do aluno vs. todos os outros por XP da semana. Cross-user,
+// mas honesto: `profiles` é legível por qualquer autenticado (RLS), então
+// dá pra ranquear de verdade em vez de inventar número. `percentil` é o
+// "top X%" (menor = melhor); null quando o aluno ainda não pontuou nesta
+// rodada semanal (aí mostramos um estado de incentivo, não um número).
+export type ComparativoSemana = {
+  percentil: number | null;
+  totalAlunos: number;
+};
+
+// Recorde pessoal: maior sequência de dias seguidos estudando já feita
+// (derivada de daily_logs, não de um campo persistido — não há
+// streak_maximo no schema, então recomputamos).
+export type RecordeEstudo = {
+  melhorStreak: number;
+  streakAtual: number;
+};
+
+export type SemanaResumo = {
+  dias: DiaSemanaResumo[];
+  xpSemana: number;
+  metaSemanalXp: number;
+  metaDiariaXp: number;
+  streakAtual: number;
+  comparativo: ComparativoSemana;
+  recorde: RecordeEstudo;
 };
 
 export type DashboardData = {
   profile: ProfileRow | null;
+  ehPro: boolean;
   greeting: string;
   subheading: string;
   subjects: SubjectListItem[];
@@ -92,6 +153,10 @@ export type DashboardData = {
   streakHeat: boolean[];
   dayTicker: DiaTicker[];
   calendar: { monthLabel: string; dowOffset: number; days: CalDay[] };
+  tarefasHoje: TarefaRow[];
+  tarefasPorData: Record<string, TarefaRow[]>;
+  metasHoje: MetasHoje;
+  semana: SemanaResumo;
 };
 
 export async function carregarDadosDashboard(
@@ -148,6 +213,17 @@ export async function carregarDadosDashboard(
   const missoes = missaoResultado.missoes;
   const todasConcluidas = missoes.length > 0 && missoes.every((m) => m.concluida);
 
+  // ---- Metas de hoje (card "Metas") — tudo derivado de missoes, sem query nova ----
+  const missoesConcluidasHoje = missoes.filter((m) => m.concluida);
+  const metasHoje: MetasHoje = {
+    missoesConcluidas: missoesConcluidasHoje.length,
+    missoesTotal: missoes.length,
+    questoesRespondidas: missoesConcluidasHoje.reduce((acc, m) => acc + m.qtd_questoes, 0),
+    questoesTotal: missoes.reduce((acc, m) => acc + m.qtd_questoes, 0),
+    xpHoje: missoesConcluidasHoje.reduce((acc, m) => acc + m.xp_recompensa, 0),
+    xpMetaHoje: missoes.reduce((acc, m) => acc + m.xp_recompensa, 0),
+  };
+
   const topicIdsRelevantes = Array.from(new Set(missoes.flatMap((m) => m.topic_ids || [])));
   const progressoPorTopico: Record<string, { taxa_acerto: number; num_questoes_respondidas: number }> = {};
   if (topicIdsRelevantes.length > 0) {
@@ -179,6 +255,48 @@ export async function carregarDadosDashboard(
     .filter((x): x is { subject: Subject; boss: NonNullable<typeof x.boss> } => Boolean(x.boss))
     .sort((a, b) => new Date(a.boss.data_prova).getTime() - new Date(b.boss.data_prova).getTime())[0];
 
+  // Projeção pra data da prova (motor): que nota o aluno tira no dia D
+  // se nada mudar, e quantos tópicos chegam fracos lá. Escopo: tópicos
+  // que caem na prova da matéria do boss-alvo, sem os 'pulado'.
+  let notaProjetada: number | null = null;
+  let emRiscoCount = 0;
+  if (alvo && alvo.subject.materia_id) {
+    const { data: topicosProva } = await supabase
+      .from("topicos")
+      .select("id")
+      .eq("materia_id", alvo.subject.materia_id)
+      .eq("cai_na_prova", true);
+    const idsProva = (topicosProva || []).map((t) => t.id);
+    if (idsProva.length > 0) {
+      const { data: progProva } = await supabase
+        .from("aluno_topico_progresso")
+        .select("topico_id, status, maestria, estabilidade, taxa_acerto, num_questoes_respondidas, ultima_revisao")
+        .eq("user_id", user.id)
+        .in("topico_id", idsProva);
+      type ProgProva = {
+        topico_id: string;
+        status?: string | null;
+        maestria?: number | null;
+        estabilidade?: number | null;
+        taxa_acerto?: number | null;
+        num_questoes_respondidas?: number | null;
+        ultima_revisao?: string | null;
+      };
+      const progPorId: Record<string, ProgProva> = {};
+      ((progProva || []) as ProgProva[]).forEach((p) => (progPorId[p.topico_id] = p));
+      const topicosParaProjecao = idsProva
+        .map((id) => ({ id, ...(progPorId[id] || {}) }))
+        .filter((t) => t.status !== "pulado");
+      const projecao = questlyProjetarProva(
+        topicosParaProjecao,
+        new Date(alvo.boss.data_prova).getTime(),
+        Date.now(),
+      );
+      notaProjetada = projecao.notaProjetada;
+      emRiscoCount = projecao.emRisco.length;
+    }
+  }
+
   const bossAlvo: BossAlvo | null = alvo
     ? {
         subjectNome: alvo.subject.nome,
@@ -187,6 +305,8 @@ export async function carregarDadosDashboard(
         diasAteProva: diasAte(alvo.boss.data_prova),
         preparoPercentual: alvo.boss.preparo_percentual || 0,
         chanceAprovacao: alvo.subject.chance_aprovacao != null ? Math.round(alvo.subject.chance_aprovacao) : null,
+        notaProjetada,
+        emRiscoCount,
       }
     : null;
 
@@ -236,7 +356,7 @@ export async function carregarDadosDashboard(
   });
 
   // ---- Liga ----
-  const estadoLiga = await questlyGarantirSemanaLiga(supabase, user);
+  const estadoLiga = await questlyGarantirSemanaLiga(supabase, user, () => createAdminClient());
   const ligaEstado = estadoLiga
     ? {
         ...estadoLiga,
@@ -297,7 +417,13 @@ export async function carregarDadosDashboard(
     estudadoPorDia[l.data] = l.estudou;
   });
 
+  // Tarefas do mês exibido — cobre tanto os dots do calendário quanto o
+  // card "Tarefas do dia" (filtra hoje) e, na prática, a semana corrente
+  // também (só escapa em transições de mês, aceitável pra essa feature).
+  const tarefasPorData = await carregarTarefasIntervalo(supabase, user, inicioMesStr, fimMesStr);
+
   const hojeCalStr = agora.toISOString().slice(0, 10);
+  const tarefasHoje = tarefasPorData[hojeCalStr] || [];
   const days: CalDay[] = [];
   for (let dia = 1; dia <= totalDias; dia++) {
     const dataStr = `${ano}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
@@ -308,11 +434,101 @@ export async function carregarDadosDashboard(
       estado = "prova";
       title = provasPorDia[dataStr];
     } else if (estudadoPorDia[dataStr]) estado = "estudou";
-    days.push({ dia, estado, title });
+    days.push({ dia, data: dataStr, estado, title, temTarefa: Boolean(tarefasPorData[dataStr]?.length) });
   }
+
+  // ---- Aba "Semana": XP ganho por dia (Dom–Sáb da semana corrente) ----
+  const diaSemanaHoje = hoje.getDay();
+  const inicioSemanaDate = addDias(hoje, -diaSemanaHoje);
+  const fimSemanaDate = addDias(inicioSemanaDate, 6);
+  const inicioSemanaStr = toISODate(inicioSemanaDate);
+  const fimSemanaStr = toISODate(fimSemanaDate);
+  const { data: missoesSemana } = await supabase
+    .from("missions")
+    .select("data, concluida, xp_recompensa")
+    .eq("user_id", user.id)
+    .gte("data", inicioSemanaStr)
+    .lte("data", fimSemanaStr);
+  const xpPorDia: Record<string, number> = {};
+  (missoesSemana || []).forEach((m) => {
+    if (!m.concluida) return;
+    xpPorDia[m.data] = (xpPorDia[m.data] || 0) + (m.xp_recompensa || 0);
+  });
+
+  const xpSemana = ligaEstado?.xp_semana || 0;
+
+  // Meta semanal de XP — heurística transparente (não é alvo configurável):
+  // XP planejado pras missões de hoje × nº de dias de estudo por semana.
+  // Fallback pra média dos dias já pontuados quando hoje é descanso, e um
+  // piso pra barra não ficar sem sentido no cold-start.
+  const diasEstudoSemana = profile?.dias_disponiveis?.length || 7;
+  const xpDiasComPonto = Object.values(xpPorDia).filter((v) => v > 0);
+  const mediaDiaPontuado = xpDiasComPonto.length
+    ? Math.round(xpDiasComPonto.reduce((a, b) => a + b, 0) / xpDiasComPonto.length)
+    : 0;
+  const metaDiariaXp = metasHoje.xpMetaHoje || mediaDiaPontuado || 100;
+  const metaSemanalXp = Math.max(metaDiariaXp * diasEstudoSemana, xpSemana, 1);
+
+  // Comparativo: percentil do aluno vs. todos por XP da semana.
+  const { data: xpTodos } = await supabase.from("profiles").select("xp_semana");
+  const valoresXp = (xpTodos || []).map((p) => p.xp_semana || 0).filter((v) => v > 0);
+  let comparativo: ComparativoSemana = { percentil: null, totalAlunos: valoresXp.length };
+  if (xpSemana > 0 && valoresXp.length > 0) {
+    const melhores = valoresXp.filter((v) => v > xpSemana).length;
+    comparativo = {
+      percentil: Math.max(1, Math.round(((melhores + 1) / valoresXp.length) * 100)),
+      totalAlunos: valoresXp.length,
+    };
+  }
+
+  // Recorde: maior sequência de dias seguidos estudando (daily_logs inteiro).
+  const { data: todosLogs } = await supabase
+    .from("daily_logs")
+    .select("data, estudou")
+    .eq("user_id", user.id)
+    .order("data");
+  let melhorStreak = 0;
+  let corrente = 0;
+  let anterior: number | null = null;
+  const UM_DIA_MS = 86400000;
+  (todosLogs || []).forEach((l) => {
+    if (!l.estudou) {
+      corrente = 0;
+      anterior = null;
+      return;
+    }
+    const t = new Date(String(l.data).slice(0, 10)).getTime();
+    corrente = anterior != null && t - anterior === UM_DIA_MS ? corrente + 1 : 1;
+    anterior = t;
+    if (corrente > melhorStreak) melhorStreak = corrente;
+  });
+  const streakAtual = profile?.streak_atual || 0;
+  melhorStreak = Math.max(melhorStreak, streakAtual);
+
+  const semana: SemanaResumo = {
+    dias: Array.from({ length: 7 }).map((_, i) => {
+      const d = addDias(inicioSemanaDate, i);
+      const dataStr = toISODate(d);
+      return {
+        data: dataStr,
+        label: DOW_ABREV[d.getDay()],
+        dataLabel: fmtDataCurta(d),
+        xpGanho: xpPorDia[dataStr] || 0,
+        estudou: Boolean(xpPorDia[dataStr]),
+        hoje: dataStr === hojeStr,
+      };
+    }),
+    xpSemana,
+    metaSemanalXp,
+    metaDiariaXp,
+    streakAtual,
+    comparativo,
+    recorde: { melhorStreak, streakAtual },
+  };
 
   return {
     profile,
+    ehPro: ehPro(profile),
     greeting,
     subheading,
     subjects: subjectListItems,
@@ -325,6 +541,10 @@ export async function carregarDadosDashboard(
     streakHeat,
     dayTicker,
     calendar: { monthLabel: `${MESES_PT[mes]} ${ano}`, dowOffset, days },
+    tarefasHoje,
+    tarefasPorData,
+    metasHoje,
+    semana,
   };
 }
 

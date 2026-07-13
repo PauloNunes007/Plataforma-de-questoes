@@ -4,11 +4,11 @@ export function Logo({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2.5 font-heading text-2xl font-bold text-questly-green",
+        "flex items-center gap-2.5 font-heading text-[17px] font-semibold tracking-tight text-foreground",
         className,
       )}
     >
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-questly-green text-lg font-bold text-white shadow-[0_3px_0_var(--questly-green-dark)]">
+      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-bold text-white dark:text-[#0c1512]">
         Q
       </span>
       Questly

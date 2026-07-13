@@ -3,6 +3,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import {
+  AlertTriangle,
+  Check,
+  Lock,
+  Map as MapIcon,
+  Swords,
+  Target,
+} from "lucide-react";
 import type { BossAlvo, DiaTicker } from "@/lib/questly/dashboard-data";
 
 type BossSiegeMeterProps = {
@@ -12,20 +20,10 @@ type BossSiegeMeterProps = {
   missoesPendentesIds: string[];
 };
 
-const ESTADO_ESTILO: Record<DiaTicker["estado"], string> = {
-  feito: "border-white/0 bg-white/25 text-white",
-  perdido: "border-white/10 bg-white/5 text-white/40",
-  hoje: "border-white bg-white text-questly-green-dark",
-  bloqueado: "border-dashed border-white/20 bg-transparent text-white/35",
-};
-
-const ESTADO_ICONE: Record<DiaTicker["estado"], string> = {
-  feito: "✓",
-  perdido: "·",
-  hoje: "🎯",
-  bloqueado: "🔒",
-};
-
+// Painel do Boss (redesign 2026-07): sai o gradiente laranja gritante,
+// entra um "painel de guerra" sóbrio — a nota projetada é o número
+// protagonista, com cor semântica (verde/âmbar/vermelho) e um brilho
+// ambiente sutil. O ticker de dias vira uma régua discreta no rodapé.
 export function BossSiegeMeter({
   bossAlvo,
   hasSubjects,
@@ -36,42 +34,23 @@ export function BossSiegeMeter({
 
   if (!hasSubjects) {
     return (
-      <div className="rounded-3xl border border-border bg-card p-8 text-center">
-        <div className="mb-3 text-4xl">🗺️</div>
-        <p className="mb-1 font-heading text-lg font-semibold">
-          Sua campanha nasce aqui
-        </p>
-        <p className="mb-5 text-sm font-semibold text-muted-foreground">
-          Configure suas disciplinas e as datas das provas pra desbloquear seu
-          primeiro Boss.
-        </p>
-        <Link
-          href="/onboarding"
-          className="inline-flex items-center justify-center rounded-2xl bg-questly-green px-6 py-3 font-heading text-sm font-semibold text-white shadow-[0_3px_0_var(--questly-green-dark)]"
-        >
-          Configurar agora
-        </Link>
-      </div>
+      <EstadoVazio
+        titulo="Sua campanha nasce aqui"
+        descricao="Configure suas disciplinas e as datas das provas pra desbloquear seu primeiro Boss."
+        href="/onboarding"
+        cta="Configurar agora"
+      />
     );
   }
 
   if (!bossAlvo) {
     return (
-      <div className="rounded-3xl border border-border bg-card p-8 text-center">
-        <div className="mb-3 text-4xl">⚔️</div>
-        <p className="mb-1 font-heading text-lg font-semibold">
-          Nenhum Boss no horizonte
-        </p>
-        <p className="mb-5 text-sm font-semibold text-muted-foreground">
-          Cadastre a data da sua próxima prova pra começar o cerco.
-        </p>
-        <Link
-          href="/configuracoes"
-          className="inline-flex items-center justify-center rounded-2xl bg-questly-orange px-6 py-3 font-heading text-sm font-semibold text-white shadow-[0_3px_0_var(--questly-orange-dark)]"
-        >
-          Cadastrar prova
-        </Link>
-      </div>
+      <EstadoVazio
+        titulo="Nenhum Boss no horizonte"
+        descricao="Cadastre a data da sua próxima prova pra começar o cerco."
+        href="/configuracoes"
+        cta="Cadastrar prova"
+      />
     );
   }
 
@@ -83,53 +62,91 @@ export function BossSiegeMeter({
     }
   };
 
+  // A nota projetada é o número protagonista quando o motor tem dados;
+  // sem dados ainda (cold-start), o card recua pro preparo (cobertura).
+  const temProjecao = bossAlvo.notaProjetada != null;
+  const valorPrincipal = bossAlvo.notaProjetada ?? Math.round(bossAlvo.preparoPercentual);
+  const corValor =
+    valorPrincipal >= 70
+      ? "text-questly-green"
+      : valorPrincipal >= 50
+        ? "text-questly-orange"
+        : "text-questly-red";
+  const corBarra =
+    valorPrincipal >= 70
+      ? "bg-questly-green"
+      : valorPrincipal >= 50
+        ? "bg-questly-orange"
+        : "bg-questly-red";
+
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#FF9600] to-[#D9480F] p-7 text-white shadow-[0_4px_0_#B0470A]">
-      <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-white/10" />
-      <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-white/5" />
+    <div className="surface relative overflow-hidden rounded-2xl p-5 sm:p-6">
+      {/* brilho ambiente sutil na cor do boss — destaque, não decoração */}
+      <div
+        className="pointer-events-none absolute -right-24 -top-32 h-72 w-72 rounded-full opacity-[0.07] blur-2xl dark:opacity-[0.1]"
+        style={{ background: "var(--questly-orange)" }}
+      />
 
       <div className="relative z-10">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="rounded-full bg-white/20 px-3.5 py-1.5 font-heading text-xs font-semibold uppercase tracking-wider">
-            ⚔️ Cerco ao Boss
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-questly-orange">
+            <Swords size={13} strokeWidth={2} />
+            Próximo Boss
           </span>
-          <span className="font-heading text-sm font-bold">
-            {bossAlvo.diasAteProva} {bossAlvo.diasAteProva === 1 ? "dia" : "dias"}
+          <span className="tnum rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            {bossAlvo.diasAteProva === 0
+              ? "é hoje"
+              : `em ${bossAlvo.diasAteProva} ${bossAlvo.diasAteProva === 1 ? "dia" : "dias"}`}
           </span>
         </div>
 
-        <h2 className="mb-1 font-heading text-2xl font-semibold">
-          {bossAlvo.bossNome}
-        </h2>
-        <p className="mb-5 text-sm font-semibold text-white/85">
-          {bossAlvo.subjectNome}
-        </p>
+        <h2 className="font-heading text-xl font-semibold tracking-tight">{bossAlvo.bossNome}</h2>
+        <p className="mb-5 text-sm text-muted-foreground">{bossAlvo.subjectNome}</p>
 
-        <div className="mb-2 flex items-center gap-4">
-          <div className="relative h-6 flex-1 overflow-hidden rounded-full bg-black/20">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-white to-[#FFE1B3]"
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.min(100, bossAlvo.preparoPercentual)}%` }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            />
+        {/* PROTAGONISTA: nota projetada pro dia da prova */}
+        <div className="mb-2 flex items-end justify-between gap-4">
+          <div>
+            <span className={`tnum block font-heading text-[44px] font-semibold leading-none tracking-tight ${corValor}`}>
+              {valorPrincipal}
+              <span className="text-[22px] font-medium text-muted-foreground">%</span>
+            </span>
+            <span className="mt-1.5 block text-xs text-muted-foreground">
+              {temProjecao ? "nota projetada pro dia da prova" : "preparo (conteúdo coberto)"}
+            </span>
           </div>
-          <motion.div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-black/25 text-2xl"
-            animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            👹
-          </motion.div>
-        </div>
-        <div className="mb-6 flex items-center justify-between text-xs font-bold text-white/85">
-          <span>{Math.round(bossAlvo.preparoPercentual)}% preparado</span>
-          {bossAlvo.chanceAprovacao != null && (
-            <span>Chance de aprovação: {bossAlvo.chanceAprovacao}%</span>
+          {temProjecao && bossAlvo.emRiscoCount > 0 && (
+            <Link
+              href="/trilha"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-questly-orange-light px-3 py-1.5 text-xs font-medium text-questly-orange-dark transition-colors hover:brightness-95"
+            >
+              <AlertTriangle size={13} strokeWidth={2} />
+              <span className="tnum">{bossAlvo.emRiscoCount}</span>
+              {bossAlvo.emRiscoCount === 1 ? "tópico em risco" : "tópicos em risco"}
+            </Link>
           )}
         </div>
 
-        <div className="flex items-end justify-center gap-2.5 border-t border-white/15 pt-5">
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+          <motion.div
+            className={`h-full rounded-full ${corBarra}`}
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(100, valorPrincipal)}%` }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </div>
+
+        <div className="mt-2 mb-5 text-xs text-muted-foreground">
+          {temProjecao && (
+            <span className="tnum">{Math.round(bossAlvo.preparoPercentual)}% do conteúdo coberto</span>
+          )}
+          {temProjecao && bossAlvo.chanceAprovacao != null && " · "}
+          {bossAlvo.chanceAprovacao != null && (
+            <span className="tnum">chance de aprovação {bossAlvo.chanceAprovacao}%</span>
+          )}
+        </div>
+
+        {/* Régua de ritmo: passado → hoje → até o boss */}
+        <div className="flex items-end justify-between gap-1.5 border-t border-border pt-4 sm:justify-start sm:gap-3">
           {dayTicker.map((dia) => {
             const isHoje = dia.estado === "hoje";
             return (
@@ -138,23 +155,39 @@ export function BossSiegeMeter({
                 type="button"
                 onClick={isHoje ? handleHojeClick : undefined}
                 disabled={!isHoje}
+                title={isHoje ? "Ir pra missão de hoje" : undefined}
                 className={`flex flex-col items-center gap-1.5 ${isHoje ? "cursor-pointer" : "cursor-default"}`}
               >
-                <span className="font-heading text-[10px] font-bold uppercase tracking-wide text-white/70">
+                <span
+                  className={`text-[10px] font-medium uppercase tracking-wide ${
+                    isHoje ? "text-questly-green" : "text-muted-foreground/70"
+                  }`}
+                >
                   {isHoje ? "Hoje" : dia.label}
                 </span>
-                <span className="relative flex h-9 w-9 items-center justify-center rounded-full">
+                <span className="relative flex h-9 w-9 items-center justify-center">
                   {isHoje && (
                     <motion.span
-                      className="absolute inset-0 rounded-full border-2 border-white"
-                      animate={{ scale: [1, 1.25, 1], opacity: [0.7, 0, 0.7] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                      className="absolute inset-0 rounded-xl border border-questly-green"
+                      animate={{ scale: [1, 1.18, 1], opacity: [0.6, 0, 0.6] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     />
                   )}
                   <span
-                    className={`flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm ${ESTADO_ESTILO[dia.estado]}`}
+                    className={`flex h-9 w-9 items-center justify-center rounded-xl border transition-colors ${
+                      dia.estado === "feito"
+                        ? "border-transparent bg-questly-green-light text-questly-green"
+                        : dia.estado === "perdido"
+                          ? "border-border bg-transparent text-muted-foreground/40"
+                          : isHoje
+                            ? "border-transparent bg-questly-green text-white dark:text-[#0c1512]"
+                            : "border-dashed border-border bg-transparent text-muted-foreground/40"
+                    }`}
                   >
-                    {ESTADO_ICONE[dia.estado]}
+                    {dia.estado === "feito" && <Check size={15} strokeWidth={2.25} />}
+                    {dia.estado === "perdido" && <span className="text-sm leading-none">·</span>}
+                    {isHoje && <Target size={15} strokeWidth={2.25} />}
+                    {dia.estado === "bloqueado" && <Lock size={13} strokeWidth={1.75} />}
                   </span>
                 </span>
               </button>
@@ -162,6 +195,34 @@ export function BossSiegeMeter({
           })}
         </div>
       </div>
+    </div>
+  );
+}
+
+function EstadoVazio({
+  titulo,
+  descricao,
+  href,
+  cta,
+}: {
+  titulo: string;
+  descricao: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <div className="surface flex flex-col items-center rounded-2xl px-6 py-10 text-center">
+      <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-questly-orange-light">
+        <MapIcon size={18} strokeWidth={1.75} className="text-questly-orange" />
+      </span>
+      <p className="mb-1 text-[15px] font-medium">{titulo}</p>
+      <p className="mb-5 max-w-[380px] text-sm text-muted-foreground">{descricao}</p>
+      <Link
+        href={href}
+        className="inline-flex items-center rounded-xl bg-questly-green px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+      >
+        {cta}
+      </Link>
     </div>
   );
 }

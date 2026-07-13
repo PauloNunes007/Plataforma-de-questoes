@@ -10,6 +10,15 @@ const PUBLIC_ROUTES = ["/", "/login"];
 export async function proxy(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
+
+  // Rotas /api fazem a própria autorização (ex.: o webhook do Mercado Pago é
+  // chamado sem sessão pelo gateway; a rota do TikZ checa admin por dentro).
+  // Não podem cair no redirect pro /login — o MP receberia um 307 e nunca
+  // processaria a confirmação de pagamento.
+  if (pathname.startsWith("/api/")) {
+    return supabaseResponse;
+  }
+
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
 
   if (!user && !isPublicRoute) {

@@ -2,73 +2,120 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Crown, LogOut, ShieldAlert } from "lucide-react";
 import { Logo } from "@/components/logo";
+import { NAV_ITEMS } from "@/components/nav-items";
+import { ProBadge } from "@/components/plano/pro-ui";
 import { signOutAction } from "@/lib/auth/actions";
-
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Início", icon: "🏠" },
-  { href: "/disciplinas", label: "Disciplinas", icon: "📚" },
-  { href: "/trilha", label: "Minha trilha", icon: "🧭" },
-  { href: "/ranking", label: "Ranking", icon: "🏆" },
-  { href: "/configuracoes", label: "Ajustes", icon: "⚙️" },
-];
 
 type SidebarProps = {
   nome: string;
   curso: string | null;
+  isAdmin: boolean;
+  ehPro: boolean;
 };
 
-export function Sidebar({ nome, curso }: SidebarProps) {
+// Sidebar do redesign 2026-07: densidade Linear-like — itens de 36px,
+// rótulos em sentence case (nada de uppercase gritado), estado ativo com
+// pill sutil + barra de acento, ícones Lucide 18px.
+export function Sidebar({ nome, curso, isAdmin, ehPro }: SidebarProps) {
   const pathname = usePathname();
+  const proAtivo = pathname.startsWith("/pro");
 
   return (
-    <aside className="sticky top-0 flex h-screen w-[250px] shrink-0 flex-col border-r border-border bg-card px-4 py-5">
-      <Logo className="mb-6 px-3 pt-1.5" />
+    <aside className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-3 py-4 lg:flex">
+      <Logo className="mb-7 px-2.5 pt-1" />
 
-      <nav className="flex flex-col gap-1">
+      <nav className="flex flex-col gap-0.5">
         {NAV_ITEMS.map((item) => {
-          const active = pathname === item.href;
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const Icon = item.icon;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2.5 font-heading text-sm font-semibold tracking-wide uppercase transition-colors ${
+              aria-current={active ? "page" : undefined}
+              className={`group relative flex h-9 items-center gap-3 rounded-lg px-2.5 text-[13.5px] font-medium transition-colors duration-150 ${
                 active
-                  ? "border-questly-blue-light bg-questly-blue-light text-questly-blue-dark"
-                  : "border-transparent text-muted-foreground hover:bg-muted"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
               }`}
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl text-lg">
-                {item.icon}
-              </span>
+              {active && (
+                <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-questly-green" />
+              )}
+              <Icon
+                size={18}
+                strokeWidth={active ? 2 : 1.75}
+                className={active ? "text-questly-green" : "text-muted-foreground/80 group-hover:text-sidebar-foreground"}
+              />
               {item.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto flex items-center gap-3 border-t border-border pt-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-questly-green to-[#57D96F] font-heading text-base font-bold text-white shadow-[0_2px_0_var(--questly-green-dark)]">
-          {nome.charAt(0).toUpperCase()}
-        </div>
-        <div className="min-w-0">
-          <b className="block truncate text-sm font-extrabold">{nome}</b>
-          {curso && (
-            <span className="block truncate text-xs font-bold text-muted-foreground">
-              {curso}
-            </span>
-          )}
-        </div>
+      <div className="mt-3">
+        <Link
+          href="/pro"
+          aria-current={proAtivo ? "page" : undefined}
+          className={`group relative flex h-9 items-center gap-3 rounded-lg px-2.5 text-[13.5px] font-medium transition-colors duration-150 ${
+            proAtivo
+              ? "bg-questly-gold/15 text-questly-gold"
+              : "text-questly-gold/90 hover:bg-questly-gold/10 hover:text-questly-gold"
+          }`}
+        >
+          <Crown size={18} strokeWidth={proAtivo ? 2 : 1.75} />
+          {ehPro ? "Questly Pro" : "Seja Pro"}
+          {ehPro && <ProBadge size="sm" className="ml-auto" />}
+        </Link>
       </div>
 
-      <form action={signOutAction} className="mt-3">
-        <button
-          type="submit"
-          className="w-full rounded-xl px-3 py-2 text-left text-xs font-bold text-muted-foreground hover:bg-muted"
-        >
-          Sair
-        </button>
-      </form>
+      {isAdmin && (
+        <div className="mt-3">
+          <Link
+            href="/admin/questoes"
+            aria-current={pathname.startsWith("/admin") ? "page" : undefined}
+            className={`group relative flex h-9 items-center gap-3 rounded-lg px-2.5 text-[13.5px] font-medium transition-colors duration-150 ${
+              pathname.startsWith("/admin")
+                ? "bg-questly-purple/15 text-questly-purple"
+                : "text-muted-foreground hover:bg-questly-purple/10 hover:text-questly-purple"
+            }`}
+          >
+            <ShieldAlert size={18} strokeWidth={1.75} />
+            Admin de questões
+          </Link>
+        </div>
+      )}
+
+      <div className="mt-auto border-t border-sidebar-border pt-3">
+        <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white dark:text-[#0c1512]">
+            {nome.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <span className="flex items-center gap-1.5 truncate text-[13px] font-medium leading-tight">
+              <span className="truncate">{nome}</span>
+              {ehPro && <ProBadge size="sm" />}
+            </span>
+            {curso && (
+              <span className="block truncate text-[11.5px] leading-tight text-muted-foreground">
+                {curso}
+              </span>
+            )}
+          </div>
+          <form action={signOutAction}>
+            <button
+              type="submit"
+              title="Sair"
+              aria-label="Sair"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-questly-red"
+            >
+              <LogOut size={16} strokeWidth={1.75} />
+            </button>
+          </form>
+        </div>
+      </div>
     </aside>
   );
 }

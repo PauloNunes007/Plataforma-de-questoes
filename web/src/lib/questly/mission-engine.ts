@@ -9,9 +9,14 @@ import {
   QUESTLY_RETENCAO_LIMIAR,
   questlyEmbaralhar,
   questlyNormalizarDia,
-  questlyRetencaoTopico,
   questlyXpDaQuestao,
 } from "./shared";
+import {
+  questlyEstadoEfetivo,
+  questlyRetencaoEfetiva,
+  questlyForcaNaProva,
+  QUESTLY_FORCA_RISCO,
+} from "./motor-aprovacao";
 import { questlyApportionarMinutos, questlyBuscarRotinaCompleta, type SubjectComPeso } from "./rotina-engine";
 
 export type { Boss } from "./shared";
@@ -23,7 +28,9 @@ const MAX_QUESTOES = 40;
 const COBERTURA_TOPICO_QUESTOES = 5;
 const BONUS_FRONTEIRA = 35;
 const BONUS_REVISAO_URGENTE = 45;
+const BONUS_RISCO_PROVA = 40;
 const DOSE_REVISAO_URGENTE = 3;
+const DOSE_RISCO_PROVA = 3;
 
 export type Subject = SubjectComPeso & {
   nome: string;
@@ -64,7 +71,10 @@ type TopicoComProgresso = {
   taxa_acerto: number;
   num_questoes_respondidas: number;
   ultima_revisao: string | null;
+  maestria: number | null;
+  estabilidade: number | null;
   revisaoUrgente?: boolean;
+  riscoProva?: boolean;
 };
 
 export function questlyDisciplinaComBossMaisProximo(subjects: Subject[]): Subject {
@@ -196,6 +206,8 @@ export async function questlyGerarMissaoParaSubject(
     taxa_acerto?: number | null;
     num_questoes_respondidas?: number | null;
     ultima_revisao?: string | null;
+    maestria?: number | null;
+    estabilidade?: number | null;
   };
 
   const progressoPorTopico: Record<string, ProgressoRow> = {};
@@ -219,6 +231,8 @@ export async function questlyGerarMissaoParaSubject(
       taxa_acerto: p?.taxa_acerto ?? 0,
       num_questoes_respondidas: p?.num_questoes_respondidas ?? 0,
       ultima_revisao: p?.ultima_revisao ?? null,
+      maestria: p?.maestria ?? null,
+      estabilidade: p?.estabilidade ?? null,
     };
   });
 
@@ -241,6 +255,16 @@ export async function questlyGerarMissaoParaSubject(
 
   const candidatos = fronteira ? elegiveis.filter((t) => t.ordem <= fronteira.ordem) : elegiveis;
 
+  // Prova mais próxima da disciplina — habilita o sinal preditivo do
+  // motor: um tópico já coberto pode projetar fraco no dia D e virar
+  // prioridade mesmo com retenção de hoje ainda ok.
+  const hojeMs0 = new Date(new Date().toDateString()).getTime();
+  const bossFuturo =
+    (subject.bosses || [])
+      .filter((b) => new Date(b.data_prova).getTime() >= hojeMs0)
+      .sort((a, b) => new Date(a.data_prova).getTime() - new Date(b.data_prova).getTime())[0] || null;
+  const dataProvaMs = bossFuturo ? new Date(bossFuturo.data_prova).getTime() : null;
+
   const agoraMs = Date.now();
   const pontuados = candidatos.map((t) => {
     let score = 0;
@@ -248,18 +272,29 @@ export async function questlyGerarMissaoParaSubject(
     if (fronteira && t.id === fronteira.id) score += BONUS_FRONTEIRA;
     if (t.cai_na_prova) score += 40;
 
-    const taxaAcerto = t.taxa_acerto ?? 0;
-    score += (1 - taxaAcerto) * 30;
+    // Fraqueza = 1 - maestria (BKT), não 1 - taxa_acerto: um slip isolado
+    // não faz o tópico parecer fraco, e um chute certo não o infla.
+    const { maestria } = questlyEstadoEfetivo(t);
+    score += (1 - maestria) * 30;
 
-    const retencao = questlyRetencaoTopico(t, agoraMs);
+    const retencao = questlyRetencaoEfetiva(t, agoraMs);
     score += retencao == null ? 30 : (1 - retencao) * 30;
 
     const coberto = (t.num_questoes_respondidas || 0) >= COBERTURA_TOPICO_QUESTOES;
     t.revisaoUrgente = coberto && retencao != null && retencao < QUESTLY_RETENCAO_LIMIAR;
     if (t.revisaoUrgente) score += BONUS_REVISAO_URGENTE;
 
+    // Risco de prova: tópico já tocado que, PROJETADO pra data da prova,
+    // chega abaixo do limiar de força. Distinto de revisaoUrgente (que
+    // olha só a retenção de hoje): aqui o esquecimento é extrapolado até
+    // o dia D — é o que consertar a falha ANTES que ela aconteça.
+    if (dataProvaMs != null && (t.num_questoes_respondidas || 0) > 0) {
+      t.riscoProva = questlyForcaNaProva(t, dataProvaMs, agoraMs) < QUESTLY_FORCA_RISCO;
+      if (t.riscoProva) score += BONUS_RISCO_PROVA;
+    }
+
     const notaDesejada = subject.nota_desejada || 6;
-    if (notaDesejada >= 9) score += (1 - taxaAcerto) * 10;
+    if (notaDesejada >= 9) score += (1 - maestria) * 10;
 
     return { topic: t, score };
   });
@@ -279,12 +314,22 @@ export async function questlyGerarMissaoParaSubject(
 
   let embaralhadas = questlyEmbaralhar(candidatas);
   const prioritarias: (typeof candidatas)[number][] = [];
+  // Memória vencida hoje E projeção fraca no dia D vêm primeiro (a dose
+  // de risco de prova só entra se ainda não foi puxada como urgente).
   topicosEscolhidos
     .filter((t) => t.revisaoUrgente)
     .forEach((t) => {
       embaralhadas
         .filter((q) => q.topic_id === t.id)
         .slice(0, DOSE_REVISAO_URGENTE)
+        .forEach((q) => prioritarias.push(q));
+    });
+  topicosEscolhidos
+    .filter((t) => t.riscoProva && !t.revisaoUrgente)
+    .forEach((t) => {
+      embaralhadas
+        .filter((q) => q.topic_id === t.id && !prioritarias.includes(q))
+        .slice(0, DOSE_RISCO_PROVA)
         .forEach((q) => prioritarias.push(q));
     });
   if (fronteira) {

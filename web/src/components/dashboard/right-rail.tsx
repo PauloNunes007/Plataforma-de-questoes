@@ -1,14 +1,19 @@
 "use client";
 
+// Rail direito do dashboard (redesign 2026-07). Os antigos cards de
+// Boss/XP/Liga/Streak foram consolidados no StatStrip e no painel do
+// Boss; aqui ficam o calendário (agora interativo: clicar num dia abre
+// o detalhe ali mesmo) e a lista de disciplinas (cada linha navega pra
+// trilha da disciplina).
 import Link from "next/link";
-import { motion } from "framer-motion";
-import type { BossAlvo, CalDay, ProfileRow, SubjectListItem } from "@/lib/questly/dashboard-data";
-import { XP_POR_NIVEL } from "@/lib/questly/dashboard-data";
-import type { EstadoLiga as EstadoLigaBase } from "@/lib/questly/liga";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { ArrowUpRight, Check, Plus, Swords, X } from "lucide-react";
+import type { CalDay, SubjectListItem } from "@/lib/questly/dashboard-data";
+import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
+import { alternarTarefaAction, criarTarefaAction } from "@/lib/tarefas/actions";
 
-type EstadoLigaComVisual = EstadoLigaBase & { icone: string; nomeExibicao: string };
-
-const CARD_CLASS = "rounded-[18px] border border-border bg-card p-5";
+const CARD_CLASS = "surface p-5";
 
 function CardEntry({ index, children }: { index: number; children: React.ReactNode }) {
   return (
@@ -23,273 +28,343 @@ function CardEntry({ index, children }: { index: number; children: React.ReactNo
   );
 }
 
-function CardLabel({ children, seeAllHref, seeAllLabel }: { children: React.ReactNode; seeAllHref?: string; seeAllLabel?: string }) {
+function CardLabel({
+  children,
+  seeAllHref,
+  seeAllLabel,
+}: {
+  children: React.ReactNode;
+  seeAllHref?: string;
+  seeAllLabel?: string;
+}) {
   return (
-    <div className="mb-3.5 flex items-center justify-between font-heading text-[15px] font-semibold">
-      <span>{children}</span>
+    <div className="mb-4 flex items-center justify-between">
+      <span className="text-[13.5px] font-semibold tracking-tight">{children}</span>
       {seeAllHref && (
-        <Link href={seeAllHref} className="text-[11.5px] font-extrabold uppercase tracking-wide text-questly-blue">
+        <Link
+          href={seeAllHref}
+          className="inline-flex items-center gap-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
           {seeAllLabel}
+          <ArrowUpRight size={13} strokeWidth={2} />
         </Link>
       )}
     </div>
   );
 }
 
-export function BossRailCard({ bossAlvo, index }: { bossAlvo: BossAlvo | null; index: number }) {
-  return (
-    <CardEntry index={index}>
-      <CardLabel>Boss atual</CardLabel>
-      {!bossAlvo ? (
-        <p className="text-sm font-semibold text-muted-foreground">Nenhuma prova cadastrada ainda.</p>
-      ) : (
-        <>
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-questly-orange to-[#FF6D00] text-2xl shadow-[0_3px_0_#C25B00]">
-              ⚔️
-            </div>
-            <div className="min-w-0">
-              <b className="block truncate font-heading text-[15px] font-semibold leading-tight">
-                {bossAlvo.subjectNome} — {bossAlvo.bossNome}
-              </b>
-              <span className="text-xs font-extrabold text-questly-orange-dark">
-                Prova em {bossAlvo.diasAteProva} dias
-              </span>
-            </div>
-          </div>
-          <div className="mb-1.5 h-3.5 overflow-hidden rounded-full border-2 border-border bg-muted">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-questly-orange to-[#FFB84D] transition-[width] duration-700"
-              style={{ width: `${Math.min(100, bossAlvo.preparoPercentual)}%` }}
-            />
-          </div>
-          <div className="mb-4 text-xs font-extrabold text-muted-foreground">
-            Preparação: {Math.round(bossAlvo.preparoPercentual)}%
-          </div>
-          <div className="flex items-center justify-between rounded-2xl bg-questly-green-light px-4 py-3">
-            <span className="text-xs font-extrabold text-questly-green-dark">Chance de aprovação</span>
-            <span className="font-heading text-2xl font-bold text-questly-green-dark">
-              {bossAlvo.chanceAprovacao != null ? `${bossAlvo.chanceAprovacao}%` : "-"}
-            </span>
-          </div>
-        </>
-      )}
-    </CardEntry>
-  );
-}
-
-export function XpRailCard({ profile, index }: { profile: ProfileRow | null; index: number }) {
-  const xp = profile?.xp_total || 0;
-  const nivel = profile?.nivel || 1;
-  const xpNoNivel = xp % XP_POR_NIVEL;
-  const pct = Math.min(100, (xpNoNivel / XP_POR_NIVEL) * 100);
-
-  return (
-    <CardEntry index={index}>
-      <CardLabel>XP &amp; Nível</CardLabel>
-      <div className="flex items-center gap-3.5">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-questly-gold to-[#FFAD00] font-heading text-base font-bold text-white shadow-[0_3px_0_var(--questly-gold-dark)]">
-          N{nivel}
-        </div>
-        <div>
-          <b className="block font-heading text-base font-semibold">Nível {nivel}</b>
-          <span className="text-xs font-bold text-muted-foreground">
-            {xp.toLocaleString("pt-BR")} XP na campanha
-          </span>
-        </div>
-      </div>
-      <div className="mt-3.5 h-3.5 overflow-hidden rounded-full border-2 border-border bg-muted">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-questly-gold to-[#FFDE59] transition-[width] duration-700"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <div className="mt-1.5 flex justify-between text-[11px] font-extrabold text-muted-foreground">
-        <span>{xpNoNivel.toLocaleString("pt-BR")} XP</span>
-        <span>{XP_POR_NIVEL.toLocaleString("pt-BR")} XP p/ nível {nivel + 1}</span>
-      </div>
-    </CardEntry>
-  );
-}
-
-export function LigaRailCard({ liga, index }: { liga: EstadoLigaComVisual | null; index: number }) {
-  return (
-    <CardEntry index={index}>
-      <CardLabel seeAllHref="/ranking" seeAllLabel="Ver ranking">
-        Liga
-      </CardLabel>
-      {!liga ? (
-        <p className="text-sm font-semibold text-muted-foreground">Não foi possível carregar sua liga.</p>
-      ) : (
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-questly-purple to-[#A855F7] text-xl shadow-[0_3px_0_#7C3AED]">
-            {liga.icone}
-          </div>
-          <div>
-            <b className="block font-heading text-base font-semibold">{liga.nomeExibicao}</b>
-            <span className="text-xs font-bold text-muted-foreground">
-              {liga.xp_semana || 0} XP essa semana
-            </span>
-          </div>
-        </div>
-      )}
-    </CardEntry>
-  );
-}
-
-export function StreakRailCard({
-  streakAtual,
-  heat,
-  index,
-}: {
-  streakAtual: number;
-  heat: boolean[];
-  index: number;
-}) {
-  return (
-    <CardEntry index={index}>
-      <CardLabel>Streak</CardLabel>
-      <div className="flex items-center gap-3.5">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-questly-orange to-questly-red text-2xl shadow-[0_3px_0_#C23A3A]">
-          🔥
-        </div>
-        <div>
-          <div className="font-heading text-2xl font-bold leading-none">{streakAtual}</div>
-          <div className="mt-1 text-xs font-bold text-muted-foreground">dias seguidos cumprindo missão</div>
-        </div>
-      </div>
-      <div className="mt-4 grid grid-cols-10 gap-1.5">
-        {heat.map((estudou, i) => (
-          <div
-            key={i}
-            className={`aspect-square rounded-[6px] border ${
-              estudou ? "border-questly-green-dark bg-questly-green" : "border-border bg-muted"
-            }`}
-          />
-        ))}
-      </div>
-    </CardEntry>
-  );
-}
-
 const CAL_DOW = ["D", "S", "T", "Q", "Q", "S", "S"];
-const CAL_ESTADO_CLASSE: Record<CalDay["estado"], string> = {
-  normal: "text-muted-foreground",
-  hoje: "bg-questly-blue text-white shadow-[0_2px_0_var(--questly-blue-dark)]",
-  prova: "bg-questly-orange-light text-questly-orange-dark",
-  estudou: "bg-questly-green-light text-questly-green-dark",
-};
 
 export function CalendarRailCard({
   monthLabel,
   dowOffset,
   days,
+  tarefas,
+  subjects,
   index,
 }: {
   monthLabel: string;
   dowOffset: number;
   days: CalDay[];
+  tarefas: Record<string, TarefaRow[]>;
+  subjects: { id: string; nome: string }[];
   index: number;
 }) {
+  const [selecionado, setSelecionado] = useState<CalDay | null>(null);
+  const [tarefasPorDia, setTarefasPorDia] = useState(tarefas);
+  const [formAberto, setFormAberto] = useState(false);
+  const [nome, setNome] = useState("");
+  const [subjectId, setSubjectId] = useState("");
+  const [salvando, setSalvando] = useState(false);
+
+  const descricaoDia = (day: CalDay) => {
+    switch (day.estado) {
+      case "prova":
+        return day.title || "Dia de prova";
+      case "estudou":
+        return "Missão cumprida nesse dia";
+      case "hoje":
+        return "Hoje — sua missão te espera";
+      default:
+        return "Nada registrado nesse dia";
+    }
+  };
+
+  function selecionar(day: CalDay) {
+    const ativo = selecionado?.dia === day.dia;
+    setSelecionado(ativo ? null : day);
+    setFormAberto(false);
+    setNome("");
+    setSubjectId("");
+  }
+
+  async function adicionarTarefa() {
+    if (!selecionado || !nome.trim() || salvando) return;
+    setSalvando(true);
+    const { ok, id } = await criarTarefaAction({
+      nome,
+      descricao: null,
+      subjectId: subjectId || null,
+      data: selecionado.data,
+    });
+    if (ok && id) {
+      const subjectNome = subjects.find((s) => s.id === subjectId)?.nome || null;
+      setTarefasPorDia((prev) => ({
+        ...prev,
+        [selecionado.data]: [
+          ...(prev[selecionado.data] || []),
+          { id, nome: nome.trim(), descricao: null, data: selecionado.data, concluida: false, subjectId: subjectId || null, subjectNome },
+        ],
+      }));
+      setNome("");
+      setSubjectId("");
+      setFormAberto(false);
+    }
+    setSalvando(false);
+  }
+
+  async function alternarTarefa(data: string, id: string, concluidaAtual: boolean) {
+    setTarefasPorDia((prev) => ({
+      ...prev,
+      [data]: (prev[data] || []).map((t) => (t.id === id ? { ...t, concluida: !concluidaAtual } : t)),
+    }));
+    await alternarTarefaAction(id, !concluidaAtual);
+  }
+
+  const tarefasDoDiaSelecionado = selecionado ? tarefasPorDia[selecionado.data] || [] : [];
+
   return (
     <CardEntry index={index}>
-      <CardLabel seeAllHref="/configuracoes" seeAllLabel="Ver tudo">
-        {monthLabel}
-      </CardLabel>
+      <CardLabel>{monthLabel}</CardLabel>
       <div className="grid grid-cols-7 gap-1 text-center">
         {CAL_DOW.map((d, i) => (
-          <div key={i} className="pb-1 text-[10px] font-black text-muted-foreground">
+          <div key={i} className="pb-1.5 text-[10px] font-semibold text-muted-foreground/70">
             {d}
           </div>
         ))}
         {Array.from({ length: dowOffset }).map((_, i) => (
           <div key={`offset-${i}`} className="aspect-square" />
         ))}
-        {days.map((day) => (
-          <div
-            key={day.dia}
-            title={day.title}
-            className={`relative flex aspect-square items-center justify-center rounded-[10px] text-[11.5px] font-extrabold ${CAL_ESTADO_CLASSE[day.estado]}`}
-          >
-            {day.dia}
-            {day.estado === "prova" && (
-              <span className="absolute bottom-0 right-0.5 text-[8px]">⚔️</span>
-            )}
-          </div>
-        ))}
+        {days.map((day) => {
+          const ativo = selecionado?.dia === day.dia;
+          const temTarefa = (tarefasPorDia[day.data]?.length || 0) > 0;
+          return (
+            <button
+              key={day.dia}
+              type="button"
+              onClick={() => selecionar(day)}
+              className={`tnum relative flex aspect-square cursor-pointer items-center justify-center rounded-lg text-[11.5px] font-medium transition-colors ${
+                day.estado === "hoje"
+                  ? "bg-questly-green font-semibold text-white dark:text-[#0c1512]"
+                  : day.estado === "prova"
+                    ? "bg-questly-orange-light font-semibold text-questly-orange-dark"
+                    : day.estado === "estudou"
+                      ? "bg-questly-green-light text-questly-green-dark"
+                      : "text-muted-foreground hover:bg-muted"
+              } ${ativo ? "ring-2 ring-questly-green/50 ring-offset-1 ring-offset-card" : ""}`}
+            >
+              {day.dia}
+              {day.estado === "prova" && (
+                <Swords
+                  size={8}
+                  strokeWidth={2.5}
+                  className="absolute bottom-0.5 right-0.5 text-questly-orange-dark"
+                />
+              )}
+              {temTarefa && day.estado !== "prova" && (
+                <span className="absolute bottom-1 right-1 h-1.5 w-1.5 rounded-full bg-questly-purple" />
+              )}
+            </button>
+          );
+        })}
       </div>
-      <div className="mt-3.5 flex flex-wrap gap-3.5">
-        <span className="flex items-center gap-1.5 text-[10.5px] font-extrabold text-muted-foreground">
-          <i className="inline-block h-2.5 w-2.5 rounded-[3px] bg-questly-green-light" />
-          Estudou
-        </span>
-        <span className="flex items-center gap-1.5 text-[10.5px] font-extrabold text-muted-foreground">
-          <i className="inline-block h-2.5 w-2.5 rounded-[3px] bg-questly-blue" />
-          Hoje
-        </span>
-        <span className="flex items-center gap-1.5 text-[10.5px] font-extrabold text-muted-foreground">
-          <i className="inline-block h-2.5 w-2.5 rounded-[3px] bg-questly-orange-light" />
-          Boss (prova)
-        </span>
+
+      {/* Detalhe do dia selecionado — in-place, sem sair do dashboard */}
+      <AnimatePresence initial={false}>
+        {selecionado && (
+          <motion.div
+            key={selecionado.dia}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3 rounded-xl bg-muted/60 px-3.5 py-2.5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="tnum flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-card text-[13px] font-semibold shadow-sm">
+                    {selecionado.dia}
+                  </span>
+                  <span className="text-xs leading-snug text-muted-foreground">{descricaoDia(selecionado)}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFormAberto((v) => !v)}
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-card text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+                >
+                  {formAberto ? <X size={13} strokeWidth={2.25} /> : <Plus size={13} strokeWidth={2.25} />}
+                </button>
+              </div>
+
+              {tarefasDoDiaSelecionado.length > 0 && (
+                <ul className="mt-2.5 flex flex-col gap-1">
+                  {tarefasDoDiaSelecionado.map((t) => (
+                    <li key={t.id} className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => alternarTarefa(selecionado.data, t.id, t.concluida)}
+                        className={`flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded border-2 transition-colors ${
+                          t.concluida ? "border-questly-green bg-questly-green text-white" : "border-border"
+                        }`}
+                      >
+                        {t.concluida && <Check size={9} strokeWidth={3} />}
+                      </button>
+                      <span
+                        className={`truncate text-xs ${t.concluida ? "text-muted-foreground line-through" : ""}`}
+                      >
+                        {t.nome}
+                        {t.subjectNome && <span className="text-muted-foreground"> · {t.subjectNome}</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <AnimatePresence initial={false}>
+                {formAberto && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-2.5 flex flex-col gap-1.5">
+                      <input
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                        placeholder="Nome da tarefa"
+                        className="w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs outline-none focus:border-questly-green"
+                      />
+                      <select
+                        value={subjectId}
+                        onChange={(e) => setSubjectId(e.target.value)}
+                        className="w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs outline-none focus:border-questly-green"
+                      >
+                        <option value="">Sem disciplina</option>
+                        {subjects.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.nome}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={adicionarTarefa}
+                        disabled={!nome.trim() || salvando}
+                        className="rounded-lg bg-questly-green px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50 dark:text-[#0c1512]"
+                      >
+                        {salvando ? "Salvando..." : "Adicionar"}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
+        <LegendaItem cor="bg-questly-green-light" rotulo="Estudou" />
+        <LegendaItem cor="bg-questly-green" rotulo="Hoje" />
+        <LegendaItem cor="bg-questly-orange-light" rotulo="Prova" />
+        <LegendaItem cor="bg-questly-purple" rotulo="Tarefa" />
       </div>
     </CardEntry>
   );
 }
 
-const EMOJIS_DISCIPLINA = ["📘", "📕", "📗", "📙", "📒", "📓"];
+function LegendaItem({ cor, rotulo }: { cor: string; rotulo: string }) {
+  return (
+    <span className="flex items-center gap-1.5 text-[10.5px] font-medium text-muted-foreground">
+      <i className={`inline-block h-2 w-2 rounded-[3px] ${cor}`} />
+      {rotulo}
+    </span>
+  );
+}
+
+// Paleta de acento por posição — tons desaturados coerentes com o tema.
+const CORES_DISCIPLINA = [
+  "var(--questly-green)",
+  "var(--questly-purple)",
+  "var(--questly-blue)",
+  "var(--questly-orange)",
+  "var(--questly-red)",
+  "var(--questly-gold)",
+];
 
 export function SubjectsRailCard({ subjects, index }: { subjects: SubjectListItem[]; index: number }) {
   return (
     <CardEntry index={index}>
-      <CardLabel>
-        <span className="flex items-center gap-2">
-          Disciplinas
-          {subjects.length > 0 && (
-            <span className="text-[11.5px] font-extrabold uppercase tracking-wide text-questly-blue">
-              {subjects.length === 1 ? "1 ativa" : `${subjects.length} ativas`}
-            </span>
-          )}
-        </span>
+      <CardLabel seeAllHref="/questoes" seeAllLabel="Praticar">
+        Disciplinas
       </CardLabel>
       {subjects.length === 0 ? (
         <div>
-          <p className="mb-3 text-sm font-semibold text-muted-foreground">
+          <p className="mb-3 text-sm text-muted-foreground">
             Você ainda não configurou nenhuma disciplina.
           </p>
           <Link
             href="/onboarding"
-            className="inline-flex w-full items-center justify-center rounded-2xl bg-questly-green px-4 py-2.5 font-heading text-sm font-semibold text-white shadow-[0_3px_0_var(--questly-green-dark)]"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-questly-green px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
           >
             Configurar
           </Link>
         </div>
       ) : (
         <div className="flex flex-col">
-          {subjects.map((s, i) => (
-            <div
-              key={s.id}
-              className="flex items-center gap-3.5 border-b border-muted py-2.5 last:border-none last:pb-0"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-questly-blue-light text-lg shadow-[0_2px_0_#B8E4FB]">
-                {EMOJIS_DISCIPLINA[i % EMOJIS_DISCIPLINA.length]}
-              </div>
-              <div className="min-w-0 flex-1">
-                <b className="block truncate text-[13px] font-extrabold">{s.nome}</b>
-                <span className="text-[11px] font-bold text-muted-foreground">
-                  {s.diasBoss != null ? `Boss em ${s.diasBoss} dias` : "Sem prova marcada"} · Nv. {s.nivel}
+          {subjects.map((s, i) => {
+            const cor = CORES_DISCIPLINA[i % CORES_DISCIPLINA.length];
+            return (
+              <Link
+                key={s.id}
+                href="/trilha"
+                className="group -mx-2 flex items-center gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-muted/60"
+              >
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[13px] font-semibold"
+                  style={{
+                    color: cor,
+                    background: `color-mix(in oklab, ${cor} 12%, transparent)`,
+                  }}
+                >
+                  {s.nome.charAt(0).toUpperCase()}
                 </span>
-                <div className="mt-1.5 h-2 overflow-hidden rounded-full border border-border bg-muted">
-                  <div
-                    className="h-full rounded-full bg-questly-green transition-[width] duration-700"
-                    style={{ width: `${s.diasBoss != null ? s.preparo : 0}%` }}
-                  />
-                </div>
-              </div>
-              <div className="shrink-0 font-heading text-sm font-semibold text-questly-green-dark">
-                {s.aprovacao != null ? `${s.aprovacao}%` : "–"}
-              </div>
-            </div>
-          ))}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[13px] font-medium leading-tight">
+                    {s.nome}
+                  </span>
+                  <span className="tnum block text-[11px] leading-tight text-muted-foreground">
+                    {s.diasBoss != null ? `Boss em ${s.diasBoss} dias` : "Sem prova marcada"}
+                  </span>
+                  <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-muted">
+                    <span
+                      className="block h-full rounded-full transition-[width] duration-700"
+                      style={{
+                        width: `${s.diasBoss != null ? s.preparo : 0}%`,
+                        background: cor,
+                      }}
+                    />
+                  </span>
+                </span>
+                <span className="tnum shrink-0 text-[13px] font-semibold text-muted-foreground group-hover:text-foreground">
+                  {s.aprovacao != null ? `${s.aprovacao}%` : "–"}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       )}
     </CardEntry>

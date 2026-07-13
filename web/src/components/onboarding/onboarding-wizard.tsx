@@ -188,7 +188,7 @@ export function OnboardingWizard() {
             <button
               type="button"
               onClick={() => irPara(step - 1)}
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-base text-muted-foreground transition-opacity ${
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-base text-muted-foreground transition-opacity ${
                 step === 1 ? "pointer-events-none opacity-0" : "opacity-100"
               }`}
             >
@@ -329,7 +329,7 @@ function StepContent({
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
             Isso ajuda a calibrar a dificuldade inicial das questões.
           </p>
-          <div className="grid grid-cols-5 gap-2.5">
+          <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
             {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
               <motion.button
                 key={n}
@@ -607,7 +607,7 @@ function DisciplinaCard({
             <button
               type="button"
               onClick={() => onChange({ ...cfg, provas: cfg.provas.filter((_, i) => i !== idx) })}
-              className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg border-2 border-border bg-card font-bold text-questly-red"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-border bg-card font-bold text-questly-red"
             >
               ×
             </button>

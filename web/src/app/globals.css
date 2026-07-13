@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-nunito);
-  --font-heading: var(--font-fredoka);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-sans: var(--font-geist-sans);
+  --font-heading: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,9 +47,10 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Paleta de gamificação Questly — mesma linguagem visual do app legado
-     (ver memória "design-dashboard-trilha-duolingo"): verde de marca,
-     azul/laranja/vermelho/dourado/roxo para XP, ligas, streak e alertas. */
+  /* Paleta de gamificação Questly — mesma SEMÂNTICA do app legado
+     (verde = marca/sucesso, âmbar/laranja = boss/prova, ouro = maestria,
+     violeta = liga/XP, vermelho = risco), mas retonalizada pra uma
+     identidade madura e desaturada (redesign "SaaS premium", 2026-07). */
   --color-questly-green: var(--questly-green);
   --color-questly-green-dark: var(--questly-green-dark);
   --color-questly-green-deep: var(--questly-green-deep);
@@ -73,114 +74,114 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.28 0.01 285);
+  --background: oklch(0.988 0.002 247);
+  --foreground: oklch(0.22 0.015 257);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.28 0.01 285);
+  --card-foreground: oklch(0.22 0.015 257);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.28 0.01 285);
+  --popover-foreground: oklch(0.22 0.015 257);
   --primary: var(--questly-green);
   --primary-foreground: oklch(1 0 0);
-  --secondary: var(--questly-blue-light);
-  --secondary-foreground: var(--questly-blue-dark);
-  --muted: oklch(0.97 0.005 285);
-  --muted-foreground: oklch(0.53 0.01 285);
-  --accent: var(--questly-green-light);
-  --accent-foreground: var(--questly-green-dark);
+  --secondary: oklch(0.955 0.004 247);
+  --secondary-foreground: oklch(0.32 0.015 257);
+  --muted: oklch(0.962 0.004 247);
+  --muted-foreground: oklch(0.5 0.014 257);
+  --accent: oklch(0.955 0.004 247);
+  --accent-foreground: oklch(0.28 0.015 257);
   --destructive: var(--questly-red);
-  --border: oklch(0.91 0.003 285);
-  --input: oklch(0.91 0.003 285);
+  --border: oklch(0.915 0.005 247);
+  --input: oklch(0.905 0.005 247);
   --ring: var(--questly-green);
   --chart-1: var(--questly-green);
-  --chart-2: var(--questly-blue);
+  --chart-2: var(--questly-purple);
   --chart-3: var(--questly-orange);
-  --chart-4: var(--questly-purple);
+  --chart-4: var(--questly-blue);
   --chart-5: var(--questly-gold);
-  --radius: 1rem;
-  --sidebar: oklch(0.99 0.003 120);
-  --sidebar-foreground: oklch(0.28 0.01 285);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.975 0.003 247);
+  --sidebar-foreground: oklch(0.28 0.015 257);
   --sidebar-primary: var(--questly-green);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: var(--questly-green-light);
-  --sidebar-accent-foreground: var(--questly-green-dark);
-  --sidebar-border: oklch(0.91 0.003 285);
+  --sidebar-accent: oklch(0.94 0.005 247);
+  --sidebar-accent-foreground: oklch(0.22 0.015 257);
+  --sidebar-border: oklch(0.915 0.005 247);
   --sidebar-ring: var(--questly-green);
 
-  --questly-green: #2fc44c;
-  --questly-green-dark: #249a3b;
-  --questly-green-deep: #1e8231;
-  --questly-green-light: #dff7e3;
-  --questly-blue: #1cb0f6;
-  --questly-blue-dark: #1590cc;
-  --questly-blue-light: #dff3fe;
-  --questly-orange: #ff9600;
-  --questly-orange-dark: #db7e00;
-  --questly-orange-light: #ffebcc;
-  --questly-red: #ff4b4b;
-  --questly-red-dark: #d93a3a;
-  --questly-red-light: #ffe3e3;
-  --questly-gold: #ffc800;
-  --questly-gold-dark: #e0a500;
-  --questly-gold-light: #fff6d6;
-  --questly-purple: #ce82ff;
-  --questly-locked: #e5e5e5;
-  --questly-locked-dark: #cbcbd1;
-  --questly-locked-ic: #afafaf;
+  --questly-green: #0e9f6e;
+  --questly-green-dark: #0b7a56;
+  --questly-green-deep: #085e43;
+  --questly-green-light: #e3f5ee;
+  --questly-blue: #5b5bd6;
+  --questly-blue-dark: #4747b3;
+  --questly-blue-light: #e9e9fb;
+  --questly-orange: #d97706;
+  --questly-orange-dark: #b45309;
+  --questly-orange-light: #fbf0dc;
+  --questly-red: #dc4747;
+  --questly-red-dark: #b93838;
+  --questly-red-light: #fbe7e7;
+  --questly-gold: #c9930a;
+  --questly-gold-dark: #a37708;
+  --questly-gold-light: #faf1d6;
+  --questly-purple: #8b5cf6;
+  --questly-locked: #e4e7ec;
+  --questly-locked-dark: #cdd2da;
+  --questly-locked-ic: #98a1b0;
 }
 
 .dark {
-  --background: oklch(0.19 0.006 285);
-  --foreground: oklch(0.94 0.003 285);
-  --card: oklch(0.23 0.007 285);
-  --card-foreground: oklch(0.94 0.003 285);
-  --popover: oklch(0.23 0.007 285);
-  --popover-foreground: oklch(0.94 0.003 285);
+  --background: oklch(0.165 0.01 262);
+  --foreground: oklch(0.93 0.004 257);
+  --card: oklch(0.203 0.011 262);
+  --card-foreground: oklch(0.93 0.004 257);
+  --popover: oklch(0.225 0.012 262);
+  --popover-foreground: oklch(0.93 0.004 257);
   --primary: var(--questly-green);
-  --primary-foreground: oklch(0.15 0.01 285);
-  --secondary: var(--questly-blue-light);
-  --secondary-foreground: var(--questly-blue-dark);
-  --muted: oklch(0.27 0.007 285);
-  --muted-foreground: oklch(0.68 0.006 285);
-  --accent: var(--questly-green-light);
-  --accent-foreground: var(--questly-green-dark);
+  --primary-foreground: oklch(0.14 0.01 262);
+  --secondary: oklch(0.26 0.012 262);
+  --secondary-foreground: oklch(0.9 0.004 257);
+  --muted: oklch(0.245 0.012 262);
+  --muted-foreground: oklch(0.66 0.01 257);
+  --accent: oklch(0.26 0.012 262);
+  --accent-foreground: oklch(0.93 0.004 257);
   --destructive: var(--questly-red);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
   --ring: var(--questly-green);
   --chart-1: var(--questly-green);
-  --chart-2: var(--questly-blue);
+  --chart-2: var(--questly-purple);
   --chart-3: var(--questly-orange);
-  --chart-4: var(--questly-purple);
+  --chart-4: var(--questly-blue);
   --chart-5: var(--questly-gold);
-  --sidebar: oklch(0.21 0.007 285);
-  --sidebar-foreground: oklch(0.94 0.003 285);
+  --sidebar: oklch(0.185 0.011 262);
+  --sidebar-foreground: oklch(0.9 0.004 257);
   --sidebar-primary: var(--questly-green);
-  --sidebar-primary-foreground: oklch(0.15 0.01 285);
-  --sidebar-accent: var(--questly-green-light);
-  --sidebar-accent-foreground: var(--questly-green-dark);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-primary-foreground: oklch(0.14 0.01 262);
+  --sidebar-accent: oklch(0.25 0.012 262);
+  --sidebar-accent-foreground: oklch(0.93 0.004 257);
+  --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: var(--questly-green);
 
-  --questly-green: #34d058;
-  --questly-green-dark: #2fc44c;
-  --questly-green-deep: #249a3b;
-  --questly-green-light: #16321f;
-  --questly-blue: #3dc1ff;
-  --questly-blue-dark: #1cb0f6;
-  --questly-blue-light: #123245;
-  --questly-orange: #ffa733;
-  --questly-orange-dark: #ff9600;
-  --questly-orange-light: #3d2a0f;
-  --questly-red: #ff6b6b;
-  --questly-red-dark: #ff4b4b;
-  --questly-red-light: #3a1414;
-  --questly-gold: #ffd84d;
-  --questly-gold-dark: #ffc800;
-  --questly-gold-light: #3d3210;
-  --questly-purple: #d9a3ff;
-  --questly-locked: #33333a;
-  --questly-locked-dark: #26262b;
-  --questly-locked-ic: #6a6a72;
+  --questly-green: #2dd4a0;
+  --questly-green-dark: #4be0b3;
+  --questly-green-deep: #0e9f6e;
+  --questly-green-light: #12312a;
+  --questly-blue: #8f8fe8;
+  --questly-blue-dark: #a5a5f0;
+  --questly-blue-light: #24244a;
+  --questly-orange: #f5a623;
+  --questly-orange-dark: #ffc04d;
+  --questly-orange-light: #362a14;
+  --questly-red: #f47171;
+  --questly-red-dark: #f79090;
+  --questly-red-light: #3a1a1a;
+  --questly-gold: #e8b931;
+  --questly-gold-dark: #f2ca55;
+  --questly-gold-light: #35300f;
+  --questly-purple: #a78bfa;
+  --questly-locked: #2b2f3a;
+  --questly-locked-dark: #3a3f4d;
+  --questly-locked-ic: #6d7585;
 }
 
 @layer base {
@@ -189,14 +190,72 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv11", "ss01";
   }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable;
   }
   h1,
   h2,
   h3,
   h4 {
     @apply font-heading tracking-tight;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--questly-green) 25%, transparent);
+  }
+  /* Scrollbar discreta, coerente com o tema */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--foreground) 18%, transparent) transparent;
+  }
+}
+
+@layer utilities {
+  /* Números que não "dançam" em contadores/estatísticas */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Kicker padrão do design system: rótulo pequeno em small-caps */
+  .kicker {
+    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground;
+  }
+  /* Superfície padrão de card do redesign: hairline + elevação mínima */
+  .surface {
+    @apply rounded-2xl border border-border bg-card;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  }
+  .dark .surface {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  }
+  /* Realce de borda com gradiente sutil (pontos-chave apenas) */
+  .surface-brand {
+    position: relative;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      linear-gradient(
+          135deg,
+          color-mix(in oklab, var(--questly-green) 55%, var(--border)),
+          var(--border) 45%,
+          var(--border) 55%,
+          color-mix(in oklab, var(--questly-green) 35%, var(--border))
+        )
+        border-box;
+    border: 1px solid transparent;
+  }
+  .surface-gold {
+    position: relative;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      linear-gradient(
+          135deg,
+          color-mix(in oklab, var(--questly-gold) 65%, var(--border)),
+          var(--border) 45%,
+          var(--border) 55%,
+          color-mix(in oklab, var(--questly-gold) 40%, var(--border))
+        )
+        border-box;
+    border: 1px solid transparent;
   }
 }

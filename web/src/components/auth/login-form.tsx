@@ -90,6 +90,7 @@ export function LoginForm() {
                   type="email"
                   placeholder="seu@email.com"
                   required
+                  className="h-11"
                 />
               </div>
               <div className="space-y-1.5">
@@ -101,11 +102,12 @@ export function LoginForm() {
                     type={showSignInPw ? "text" : "password"}
                     placeholder="Sua senha"
                     required
+                    className="h-11"
                   />
                   <button
                     type="button"
                     onClick={() => setShowSignInPw((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-questly-blue-dark"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-2.5 text-xs font-bold text-questly-blue-dark"
                   >
                     {showSignInPw ? "ocultar" : "mostrar"}
                   </button>
@@ -118,7 +120,7 @@ export function LoginForm() {
                 </p>
               )}
 
-              <Button type="submit" className="w-full" disabled={signInPending}>
+              <Button type="submit" className="h-12 w-full" disabled={signInPending}>
                 {signInPending ? "Entrando..." : "Entrar"}
               </Button>
             </form>
@@ -140,6 +142,7 @@ export function LoginForm() {
                   name="nome"
                   placeholder="Como podemos te chamar"
                   required
+                  className="h-11"
                 />
               </div>
               <div className="space-y-1.5">
@@ -150,6 +153,7 @@ export function LoginForm() {
                   type="email"
                   placeholder="seu@email.com"
                   required
+                  className="h-11"
                 />
               </div>
               <div className="space-y-1.5">
@@ -163,11 +167,12 @@ export function LoginForm() {
                     required
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
+                    className="h-11"
                   />
                   <button
                     type="button"
                     onClick={() => setShowSignUpPw((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-questly-blue-dark"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-2.5 text-xs font-bold text-questly-blue-dark"
                   >
                     {showSignUpPw ? "ocultar" : "mostrar"}
                   </button>
@@ -198,7 +203,7 @@ export function LoginForm() {
                 </p>
               )}
 
-              <Button type="submit" className="w-full" disabled={signUpPending}>
+              <Button type="submit" className="h-12 w-full" disabled={signUpPending}>
                 {signUpPending ? "Criando conta..." : "Criar conta e começar"}
               </Button>
               <p className="text-center text-xs font-semibold text-muted-foreground">

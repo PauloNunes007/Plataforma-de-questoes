@@ -10,6 +10,7 @@ export type Pergunta = {
   ano: number | null;
   imagem_url: string | null;
   resolucao: string | null;
+  subtopico: string | null;
   tempo_medio_seg: number | null;
 };
 

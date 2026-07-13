@@ -30,6 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# dev server (rodado em background)
+dev-*.log
+dev.pid
+
+# arquivos de conflito de sync do OneDrive (não devem entrar no repo)
+*-DESKTOP-*
+
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example

@@ -49,7 +49,9 @@ export function MathText({ text, className }: { text: string | null | undefined;
           displayMode: seg.display,
         });
         return seg.display ? (
-          <div key={i} dangerouslySetInnerHTML={{ __html: html }} />
+          // equação longa/matriz não deve forçar a página inteira a rolar
+          // de lado num celular — ela rola sozinha dentro dessa div.
+          <div key={i} className="max-w-full overflow-x-auto" dangerouslySetInnerHTML={{ __html: html }} />
         ) : (
           <span key={i} dangerouslySetInnerHTML={{ __html: html }} />
         );

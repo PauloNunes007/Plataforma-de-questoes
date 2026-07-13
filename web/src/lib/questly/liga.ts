@@ -60,6 +60,12 @@ export type EstadoLiga = {
 export async function questlyGarantirSemanaLiga(
   supabase: SupabaseClient,
   user: { id: string },
+  // As colunas de liga (liga/xp_semana/semana_inicio) em `profiles` são
+  // protegidas por trigger (supabase_seguranca_hardening.sql) — a virada de
+  // semana precisa escrever via service_role. Esse factory é chamado SÓ quando
+  // há virada, então as leituras normais (mesma semana) não constroem o
+  // cliente admin nem exigem a chave service_role.
+  obterClienteEscrita?: () => SupabaseClient,
 ): Promise<EstadoLiga | null> {
   const { data: profile, error } = await supabase
     .from("profiles")
@@ -107,7 +113,8 @@ export async function questlyGarantirSemanaLiga(
     );
   }
 
-  const { data: atualizado, error: updateError } = await supabase
+  const escrita = obterClienteEscrita ? obterClienteEscrita() : supabase;
+  const { data: atualizado, error: updateError } = await escrita
     .from("profiles")
     .update({ liga: novaLiga, xp_semana: 0, questoes_semana: 0, semana_inicio: segundaAtual })
     .eq("id", user.id)

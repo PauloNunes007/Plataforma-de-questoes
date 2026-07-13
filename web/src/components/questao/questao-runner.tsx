@@ -4,7 +4,26 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Brain,
+  Calculator,
+  CheckCircle2,
+  Crown,
+  Dices,
+  Dumbbell,
+  Lock,
+  PartyPopper,
+  Search,
+  Trophy,
+  X,
+  XCircle,
+  Zap,
+} from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
+import { QuestaoAcoes } from "@/components/questao/questao-acoes";
 import { QUESTLY_MAESTRIA_MULT_XP, questlyXpDaQuestao } from "@/lib/questly/shared";
 import {
   aceitarDesafioAction,
@@ -13,6 +32,7 @@ import {
   registrarRespostaAction,
   type FinalizarMissaoResultado,
 } from "@/lib/questao/actions";
+import { alternarFavoritoAction, salvarNotaAction } from "@/lib/anotacoes/actions";
 import type { MissaoResumo, Pergunta } from "@/lib/questao/types";
 
 type EstadoPergunta = {
@@ -26,10 +46,10 @@ type EstadoPergunta = {
 };
 
 const MOTIVOS_ERRO = [
-  { valor: "conceito", rotulo: "📚 Não sabia o conceito" },
-  { valor: "calculo", rotulo: "✏️ Errei a conta" },
-  { valor: "interpretacao", rotulo: "🔍 Interpretei errado" },
-  { valor: "chute", rotulo: "🎲 Chutei" },
+  { valor: "conceito", rotulo: "Não sabia o conceito", icone: BookOpen },
+  { valor: "calculo", rotulo: "Errei a conta", icone: Calculator },
+  { valor: "interpretacao", rotulo: "Interpretei errado", icone: Search },
+  { valor: "chute", rotulo: "Chutei", icone: Dices },
 ];
 
 function estadoInicial(): EstadoPergunta {
@@ -49,11 +69,17 @@ export function QuestaoRunner({
   perguntas,
   jaAcertadasAntesIds,
   topicosMestreInicioIds,
+  favoritosIniciaisIds,
+  notasIniciais,
+  ehPro,
 }: {
   missao: MissaoResumo;
   perguntas: Pergunta[];
   jaAcertadasAntesIds: string[];
   topicosMestreInicioIds: string[];
+  favoritosIniciaisIds: string[];
+  notasIniciais: Record<string, string>;
+  ehPro: boolean;
 }) {
   const router = useRouter();
   const [perguntasState, setPerguntasState] = useState(perguntas);
@@ -69,6 +95,8 @@ export function QuestaoRunner({
   const [flash, setFlash] = useState<{ tipo: "ok" | "bad"; key: number } | null>(null);
   const [xpFloat, setXpFloat] = useState<{ xp: number; key: number } | null>(null);
   const [desafioAceitando, setDesafioAceitando] = useState(false);
+  const [favoritos, setFavoritos] = useState<Set<string>>(new Set(favoritosIniciaisIds));
+  const [notas, setNotas] = useState<Record<string, string>>(notasIniciais);
 
   const jaAcertadasAntes = useRef(new Set(jaAcertadasAntesIds));
   const topicosMestreInicio = useRef(new Set(topicosMestreInicioIds));
@@ -160,6 +188,32 @@ export function QuestaoRunner({
     }
   }
 
+  async function toggleFavorito() {
+    const id = pergunta.id;
+    const eraFavorito = favoritos.has(id);
+    setFavoritos((prev) => {
+      const next = new Set(prev);
+      if (eraFavorito) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+    const resultado = await alternarFavoritoAction(id);
+    if ("error" in resultado) {
+      setFavoritos((prev) => {
+        const next = new Set(prev);
+        if (eraFavorito) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
+  }
+
+  async function salvarNota(texto: string) {
+    const id = pergunta.id;
+    setNotas((prev) => ({ ...prev, [id]: texto }));
+    await salvarNotaAction(id, texto);
+  }
+
   function navegarPara(indice: number) {
     if (indice < 0 || indice >= perguntasState.length) return;
     setIndiceAtual(indice);
@@ -235,56 +289,76 @@ export function QuestaoRunner({
   const progressoPct = ((indiceAtual + 1) / perguntasState.length) * 100;
 
   return (
-    <div className="relative mx-auto flex min-h-screen max-w-[900px] flex-col px-6 py-6">
+    <div className="relative mx-auto flex min-h-screen max-w-[980px] flex-col px-4 py-4 sm:px-6 sm:py-6">
       <FlashOverlay flash={flash} />
       <XpFloatOverlay xpFloat={xpFloat} anchorRef={correctBtnRef} />
 
-      <div className="mb-6 flex items-center gap-4">
-        <Link href="/dashboard" className="shrink-0 text-2xl font-bold text-muted-foreground" title="Sair da missão">
-          ×
+      <div className="mb-6 flex items-center gap-3 sm:gap-4">
+        <Link
+          href="/dashboard"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          title="Sair da missão"
+        >
+          <X size={18} strokeWidth={2} />
         </Link>
-        <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
           <motion.div
             className="h-full rounded-full bg-questly-green"
             animate={{ width: `${progressoPct}%` }}
             transition={{ duration: 0.35, ease: "easeOut" }}
           />
         </div>
-        <div className="shrink-0 min-w-[70px] text-right font-mono text-sm font-bold text-questly-orange-dark">
+        <div className="tnum flex shrink-0 items-center gap-1 text-xs font-semibold text-questly-gold-dark sm:text-[13px]">
+          <Zap size={13} strokeWidth={2} />
           +{xpGanho} XP
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-[28px] border border-border bg-card p-8 shadow-xl sm:p-10">
-        <div className="mb-2 font-mono text-xs font-bold text-muted-foreground">
+      <div className="surface relative overflow-hidden rounded-2xl p-5 sm:p-10">
+        <div className="tnum kicker mb-2">
           Pergunta {indiceAtual + 1} de {perguntasState.length}
         </div>
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="mb-4 flex flex-wrap gap-1.5">
           {pergunta.dificuldade && (
-            <span className="rounded-full bg-questly-blue-light px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-questly-blue-dark">
+            <span className="rounded-full bg-muted px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
               {pergunta.dificuldade}
             </span>
           )}
           {pergunta.instituicao && (
-            <span className="rounded-full bg-questly-blue-light px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-questly-blue-dark">
+            <span className="rounded-full bg-muted px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
               {pergunta.instituicao}
               {pergunta.ano ? ` ${pergunta.ano}` : ""}
             </span>
           )}
+          {pergunta.subtopico && (
+            <span className="rounded-full bg-questly-blue-light px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide text-questly-blue-dark">
+              {pergunta.subtopico}
+            </span>
+          )}
         </div>
 
-        <div className="mb-7 text-lg font-semibold leading-relaxed">
+        <QuestaoAcoes
+          key={pergunta.id}
+          questionId={pergunta.id}
+          resolucao={pergunta.resolucao}
+          favoritado={favoritos.has(pergunta.id)}
+          notaInicial={notas[pergunta.id] ?? null}
+          onToggleFavorito={toggleFavorito}
+          onSalvarNota={salvarNota}
+        />
+
+        <div className="mb-7 text-[18px] font-medium leading-relaxed tracking-tight sm:text-[19px]">
           <MathText text={pergunta.enunciado} />
         </div>
 
         {pergunta.imagem_url && (
-          <div className="mb-7 text-center">
+          <div className="mb-7 flex h-[280px] items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-3 sm:h-[380px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={pergunta.imagem_url}
               alt="Imagem da questão"
               loading="lazy"
-              className="mx-auto max-h-[340px] max-w-full rounded-2xl border border-border"
+              className="h-full w-full object-contain"
               onError={(e) => {
                 (e.currentTarget.parentElement as HTMLElement).style.display = "none";
               }}
@@ -313,47 +387,51 @@ export function QuestaoRunner({
                 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
                 onClick={() => !estado.respondida && selecionarAlternativa(letra)}
-                className={`relative flex min-h-[68px] cursor-pointer items-center gap-4 rounded-2xl border-2 px-5 py-4 pr-14 transition-colors ${
-                  estado.respondida ? "cursor-default" : "hover:border-questly-blue"
+                className={`relative flex min-h-[68px] cursor-pointer items-center gap-3.5 rounded-xl border px-4 py-4 pr-13 transition-colors ${
+                  estado.respondida ? "cursor-default" : "hover:border-questly-green/50"
                 } ${
                   isCorreta
-                    ? "border-questly-green bg-questly-green-light"
+                    ? "border-questly-green/60 bg-questly-green-light"
                     : isErrada
-                      ? "border-questly-red bg-questly-red-light"
+                      ? "border-questly-red/60 bg-questly-red-light"
                       : selecionada
-                        ? "border-questly-blue bg-questly-blue-light"
+                        ? "border-questly-green/60 bg-questly-green-light/50"
                         : "border-border bg-card"
                 }`}
               >
                 <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border-2 font-heading text-sm font-bold ${
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-[14px] font-semibold transition-colors ${
                     isCorreta
-                      ? "border-questly-green bg-questly-green text-white"
+                      ? "border-transparent bg-questly-green text-white dark:text-[#0c1512]"
                       : isErrada
-                        ? "border-questly-red bg-questly-red text-white"
+                        ? "border-transparent bg-questly-red text-white dark:text-[#2b0a0a]"
                         : selecionada
-                          ? "border-questly-blue bg-questly-blue text-white"
-                          : "border-border bg-muted"
+                          ? "border-transparent bg-questly-green text-white dark:text-[#0c1512]"
+                          : "border-border bg-muted text-muted-foreground"
                   }`}
                 >
                   {letra.toUpperCase()}
                 </span>
-                <span className="min-w-0 flex-1 text-[15.5px] font-semibold leading-snug">
+                <span className="min-w-0 flex-1 text-[15.5px] font-normal leading-relaxed sm:text-[16px]">
                   {imgAlt && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={imgAlt}
-                      alt={`Imagem da alternativa ${letra.toUpperCase()}`}
-                      loading="lazy"
-                      className="mb-2 block max-h-[170px] max-w-full rounded-xl object-contain"
-                      onError={(e) => e.currentTarget.remove()}
-                    />
+                    <div className="mb-2 flex h-[150px] w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-white p-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={imgAlt}
+                        alt={`Imagem da alternativa ${letra.toUpperCase()}`}
+                        loading="lazy"
+                        className="h-full w-full object-contain"
+                        onError={(e) => {
+                          (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+                        }}
+                      />
+                    </div>
                   )}
                   <MathText text={texto} />
                 </span>
                 {riscada && (
                   <motion.span
-                    className="pointer-events-none absolute left-5 right-14 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-questly-red"
+                    className="pointer-events-none absolute left-4 right-13 top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-questly-red"
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
                     style={{ transformOrigin: "left center" }}
@@ -363,18 +441,19 @@ export function QuestaoRunner({
                 {!estado.respondida && (
                   <button
                     type="button"
-                    title="Marcar como errada"
+                    title="Riscar alternativa"
+                    aria-label={`Riscar alternativa ${letra.toUpperCase()}`}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       toggleRiscar(letra);
                     }}
-                    className={`absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border-2 text-sm font-extrabold transition-colors ${
+                    className={`absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-lg transition-colors ${
                       riscada
-                        ? "border-questly-red bg-questly-red-light text-questly-red-dark"
-                        : "border-border bg-card text-muted-foreground hover:border-questly-red hover:bg-questly-red hover:text-white"
+                        ? "bg-questly-red-light text-questly-red-dark"
+                        : "text-muted-foreground/50 hover:bg-questly-red-light hover:text-questly-red-dark"
                     }`}
                   >
-                    ×
+                    <X size={15} strokeWidth={2.25} />
                   </button>
                 )}
               </motion.div>
@@ -387,7 +466,7 @@ export function QuestaoRunner({
             type="button"
             disabled={!estado.selecionada}
             onClick={confirmarResposta}
-            className="w-full rounded-2xl bg-questly-green px-6 py-4 font-heading text-[15px] font-semibold text-white shadow-[0_4px_0_var(--questly-green-dark)] transition active:translate-y-1 active:shadow-none disabled:opacity-40 disabled:pointer-events-none"
+            className="w-full cursor-pointer rounded-xl bg-questly-green px-6 py-3.5 text-[15px] font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-40 dark:text-[#0c1512]"
           >
             Confirmar resposta
           </button>
@@ -396,6 +475,7 @@ export function QuestaoRunner({
             pergunta={pergunta}
             estado={estado}
             onClassificarMotivo={classificarMotivo}
+            ehPro={ehPro}
           />
         )}
       </div>
@@ -405,21 +485,23 @@ export function QuestaoRunner({
           type="button"
           disabled={indiceAtual === 0}
           onClick={() => navegarPara(indiceAtual - 1)}
-          className="w-[150px] shrink-0 rounded-2xl border-2 border-border bg-card px-4 py-3.5 font-heading text-sm font-bold text-muted-foreground disabled:opacity-40"
+          className="inline-flex w-[110px] shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-2 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40 sm:w-[150px]"
         >
-          ← Anterior
+          <ArrowLeft size={15} strokeWidth={2} />
+          Anterior
         </button>
         <button
           type="button"
           disabled={finalizando}
           onClick={handleProximo}
-          className="flex-1 rounded-2xl bg-questly-green px-6 py-3.5 font-heading text-sm font-semibold text-white shadow-[0_4px_0_var(--questly-green-dark)] transition active:translate-y-1 active:shadow-none disabled:opacity-40"
+          className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-questly-green px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-40 dark:text-[#0c1512]"
         >
           {finalizando
             ? "Finalizando..."
             : indiceAtual < perguntasState.length - 1
-              ? "Próxima →"
-              : "Finalizar missão →"}
+              ? "Próxima"
+              : "Finalizar missão"}
+          {!finalizando && <ArrowRight size={15} strokeWidth={2} />}
         </button>
       </div>
     </div>
@@ -430,52 +512,82 @@ function FeedbackArea({
   pergunta,
   estado,
   onClassificarMotivo,
+  ehPro,
 }: {
   pergunta: Pergunta;
   estado: EstadoPergunta;
   onClassificarMotivo: (motivo: string) => void;
+  ehPro: boolean;
 }) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
       <div
-        className={`mb-4 flex items-center gap-3 rounded-2xl px-5 py-4 font-heading text-base font-semibold ${
-          estado.correta ? "bg-questly-green-light text-questly-green-dark" : "bg-questly-red-light text-questly-red-dark"
+        className={`mb-4 flex items-center gap-3 rounded-xl px-4 py-3.5 text-[14.5px] font-medium ${
+          estado.correta
+            ? "bg-questly-green-light text-questly-green-dark"
+            : "bg-questly-red-light text-questly-red-dark"
         }`}
       >
-        <span className="text-2xl">{estado.correta ? "🎯" : "💥"}</span>
+        {estado.correta ? (
+          <CheckCircle2 size={20} strokeWidth={2} className="shrink-0" />
+        ) : (
+          <XCircle size={20} strokeWidth={2} className="shrink-0" />
+        )}
         <span>
-          {estado.correta ? "Isso aí! Resposta certa." : `Não foi dessa vez — a certa era a ${pergunta.gabarito.toUpperCase()}.`}
+          {estado.correta
+            ? "Isso aí! Resposta certa."
+            : `Não foi dessa vez — a certa era a ${pergunta.gabarito.toUpperCase()}.`}
         </span>
       </div>
 
       {pergunta.resolucao && (
-        <div className="mb-4 rounded-2xl bg-muted px-5 py-4 text-sm font-semibold leading-relaxed text-muted-foreground">
-          <b className="text-foreground">Resolução:</b>
+        <div className="mb-4 rounded-xl bg-muted/60 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
+          <b className="font-semibold text-foreground">Resolução:</b>
           <br />
           <MathText text={pergunta.resolucao} />
         </div>
       )}
 
-      {!estado.correta && (
+      {!estado.correta && !ehPro && (
+        <Link
+          href="/pro"
+          className="flex items-center gap-2 rounded-xl border border-questly-gold/30 bg-questly-gold/10 px-3.5 py-2.5 text-xs font-medium text-questly-gold transition-colors hover:bg-questly-gold/20"
+        >
+          <Lock size={13} strokeWidth={2} />
+          <span>
+            <b className="font-semibold">Autópsia do erro</b> é do Pro: descubra por que errou (conceito,
+            cálculo, interpretação ou chute) e corrija o padrão.
+          </span>
+        </Link>
+      )}
+
+      {!estado.correta && ehPro && (
         <div>
-          <p className="mb-2 text-xs font-extrabold text-muted-foreground">
-            Por que você errou? Classificar ajuda a calibrar sua chance de aprovação 🧠
+          <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+            <Brain size={13} strokeWidth={1.75} />
+            Por que você errou? Classificar ajuda a calibrar sua chance de aprovação.
           </p>
           <div className="flex flex-wrap gap-2">
-            {MOTIVOS_ERRO.map((m) => (
-              <button
-                key={m.valor}
-                type="button"
-                onClick={() => onClassificarMotivo(m.valor)}
-                className={`rounded-full border-2 px-3.5 py-2 text-xs font-extrabold transition-colors ${
-                  estado.motivoErro === m.valor
-                    ? "border-questly-blue bg-questly-blue-light text-questly-blue-dark"
-                    : "border-border bg-card text-muted-foreground hover:border-questly-blue"
-                }`}
-              >
-                {m.rotulo}
-              </button>
-            ))}
+            {MOTIVOS_ERRO.map((m) => {
+              const Icone = m.icone;
+              const ativo = estado.motivoErro === m.valor;
+              return (
+                <button
+                  key={m.valor}
+                  type="button"
+                  onClick={() => onClassificarMotivo(m.valor)}
+                  aria-pressed={ativo}
+                  className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                    ativo
+                      ? "border-questly-green/50 bg-questly-green-light text-questly-green-dark"
+                      : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <Icone size={12} strokeWidth={1.75} />
+                  {m.rotulo}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -493,8 +605,8 @@ function FlashOverlay({ flash }: { flash: { tipo: "ok" | "bad"; key: number } | 
           style={{
             background:
               flash.tipo === "ok"
-                ? "radial-gradient(circle at 50% 30%, rgba(47,196,76,0.18), transparent 60%)"
-                : "radial-gradient(circle at 50% 30%, rgba(255,75,75,0.18), transparent 60%)",
+                ? "radial-gradient(circle at 50% 30%, rgba(45,212,160,0.15), transparent 60%)"
+                : "radial-gradient(circle at 50% 30%, rgba(220,71,71,0.15), transparent 60%)",
           }}
           initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
@@ -528,8 +640,8 @@ function XpFloatOverlay({
     <AnimatePresence>
       <motion.div
         key={xpFloat.key}
-        className="pointer-events-none fixed z-50 font-heading text-xl font-bold text-questly-gold"
-        style={{ left: pos.left, top: pos.top, textShadow: "0 2px 8px rgba(255,200,0,0.4)" }}
+        className="tnum pointer-events-none fixed z-50 font-heading text-lg font-semibold text-questly-gold"
+        style={{ left: pos.left, top: pos.top, textShadow: "0 2px 10px rgba(201,147,10,0.35)" }}
         initial={{ opacity: 0, y: 0, scale: 0.6 }}
         animate={{ opacity: [0, 1, 1, 0], y: -70, scale: 1 }}
         transition={{ duration: 1.1, ease: "easeOut" }}
@@ -563,85 +675,100 @@ function ResultView({
   const taxa = total > 0 ? acertos / total : 0;
   const recap = resultadoExtra?.recapResultado;
 
-  let icone = "🎉";
+  let Icone = PartyPopper;
+  let corIcone = "text-questly-green";
+  let bgIcone = "bg-questly-green-light";
   let titulo = "Missão cumprida!";
   let subtitulo = "Bom progresso. Alguns pontos pra revisar.";
 
   if (recap) {
-    icone = recap.dominou ? "✅" : "📚";
+    Icone = recap.dominou ? CheckCircle2 : BookOpen;
+    corIcone = recap.dominou ? "text-questly-green" : "text-questly-orange";
+    bgIcone = recap.dominou ? "bg-questly-green-light" : "bg-questly-orange-light";
     titulo = recap.dominou ? "Recap aprovado!" : "Ainda vale revisar";
     subtitulo = recap.dominou
       ? "Você provou que domina esse tópico — ele saiu das suas missões. Pode focar no que falta."
       : "Faltou pouco pra fechar o recap — esse tópico continua na sua trilha pra você reforçar.";
   } else if (taxa >= 0.8) {
-    icone = "🏆";
+    Icone = Trophy;
+    corIcone = "text-questly-gold";
+    bgIcone = "bg-questly-gold-light";
     titulo = "Missão dominada!";
     subtitulo = "Mandou muito bem — continue assim.";
   } else if (taxa < 0.5) {
-    icone = "💪";
+    Icone = Dumbbell;
+    corIcone = "text-questly-orange";
+    bgIcone = "bg-questly-orange-light";
     titulo = "Missão concluída";
     subtitulo = "Foi difícil dessa vez — esses tópicos vão voltar em revisão.";
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-[560px] flex-col items-center justify-center px-6 py-10">
+    <div className="mx-auto flex min-h-screen max-w-[560px] flex-col items-center justify-center px-4 py-10 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="w-full rounded-3xl border border-border bg-card p-9 text-center"
+        className="surface w-full p-5 text-center sm:p-9"
       >
-        <div className="mb-2 text-5xl">{icone}</div>
-        <h2 className="mb-1 font-heading text-xl font-semibold">{titulo}</h2>
-        <p className="mb-6 text-sm font-semibold text-muted-foreground">{subtitulo}</p>
+        <span className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full ${bgIcone}`}>
+          <Icone size={26} strokeWidth={1.75} className={corIcone} />
+        </span>
+        <h2 className="mb-1 font-heading text-xl font-semibold tracking-tight">{titulo}</h2>
+        <p className="mb-6 text-sm leading-relaxed text-muted-foreground">{subtitulo}</p>
 
-        <div className="mb-2 grid grid-cols-4 gap-2.5">
+        <div className="mb-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
           <StatBox valor={acertos} label="acertos" cor="text-questly-green-dark" />
           <StatBox valor={erros} label="erros" cor="text-questly-red-dark" />
-          <StatBox valor={xpGanho} label="XP ganho" cor="text-questly-orange-dark" />
+          <StatBox valor={xpGanho} label="XP ganho" cor="text-questly-gold-dark" />
           <StatBox valor={`${tempoGastoMinMissao} min`} label="tempo gasto" cor="text-questly-blue-dark" />
         </div>
         {tempoPrevistoMin != null && (
-          <p className="mb-5 mt-1 text-xs font-semibold text-muted-foreground">previsto: ~{tempoPrevistoMin} min</p>
+          <p className="tnum mb-5 mt-1 text-xs text-muted-foreground">previsto: ~{tempoPrevistoMin} min</p>
         )}
 
         {resultadoExtra && resultadoExtra.novosMestresNomes.length > 0 && (
-          <div className="mb-4 rounded-2xl border-2 border-questly-gold bg-questly-gold-light p-4 text-left">
-            <div className="mb-1.5 font-heading text-base font-semibold text-questly-gold-dark">
-              🏅 Novo distintivo de Mestre!
+          <div className="surface-gold mb-4 rounded-xl p-4 text-left">
+            <div className="mb-1.5 flex items-center gap-2 text-[14.5px] font-semibold text-questly-gold-dark">
+              <Crown size={16} strokeWidth={2} />
+              Novo distintivo de Mestre!
             </div>
-            <p className="text-sm font-semibold leading-relaxed text-muted-foreground">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Você atingiu 90%+ de acerto em{" "}
-              <b className="text-foreground">{resultadoExtra.novosMestresNomes.join(", ")}</b>. A partir de agora,
-              questões desse tópico pagam <b className="text-foreground">XP em 1.5x</b> pra manter a coroa.
+              <b className="font-medium text-foreground">{resultadoExtra.novosMestresNomes.join(", ")}</b>. A
+              partir de agora, questões desse tópico pagam{" "}
+              <b className="font-medium text-foreground">XP em 1.5×</b> pra manter a coroa.
             </p>
           </div>
         )}
 
         {resultadoExtra?.desafio && (
-          <div className="mb-4 rounded-2xl border-2 border-questly-blue bg-questly-blue-light p-4 text-left">
-            <div className="mb-1.5 font-heading text-base font-semibold text-questly-blue-dark">
-              🧠 Desafio de Recuperação
+          <div className="mb-4 rounded-xl border border-questly-purple/30 bg-questly-purple/5 p-4 text-left">
+            <div className="mb-1.5 flex items-center gap-2 text-[14.5px] font-semibold text-questly-purple">
+              <Brain size={16} strokeWidth={2} />
+              Desafio de Recuperação
             </div>
-            <p className="mb-3.5 text-sm font-semibold leading-relaxed text-muted-foreground">
-              Você não toca em <b className="text-foreground">{resultadoExtra.desafio.topicoNome}</b> há{" "}
-              {resultadoExtra.desafio.diasSemTocar} dias. Resgatar da memória agora é o que fixa de verdade. Topa 1
-              questão?
+            <p className="mb-3.5 text-sm leading-relaxed text-muted-foreground">
+              Você não toca em{" "}
+              <b className="font-medium text-foreground">{resultadoExtra.desafio.topicoNome}</b> há{" "}
+              {resultadoExtra.desafio.diasSemTocar} dias. Resgatar da memória agora é o que fixa de verdade.
+              Topa 1 questão?
             </p>
             <button
               type="button"
               disabled={desafioAceitando}
               onClick={onAceitarDesafio}
-              className="w-full rounded-xl bg-questly-gold px-5 py-2.5 font-heading text-sm font-semibold text-[#5C4700] shadow-[0_3px_0_#D9AB00] disabled:opacity-50"
+              className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-questly-purple px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
             >
-              {desafioAceitando ? "Preparando..." : "Aceitar desafio ⚡"}
+              <Zap size={14} strokeWidth={2} />
+              {desafioAceitando ? "Preparando..." : "Aceitar desafio"}
             </button>
           </div>
         )}
 
         <Link
           href="/dashboard"
-          className="mt-2 inline-flex w-full items-center justify-center rounded-2xl bg-questly-green px-6 py-3.5 font-heading text-sm font-semibold text-white shadow-[0_4px_0_var(--questly-green-dark)]"
+          className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-questly-green px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
         >
           Voltar ao Dashboard
         </Link>
@@ -652,9 +779,9 @@ function ResultView({
 
 function StatBox({ valor, label, cor }: { valor: string | number; label: string; cor: string }) {
   return (
-    <div className="rounded-2xl bg-muted px-2 py-4">
-      <div className={`font-mono text-xl font-bold ${cor}`}>{valor}</div>
-      <div className="mt-1 text-[10.5px] font-bold text-muted-foreground">{label}</div>
+    <div className="rounded-xl bg-muted/60 px-2 py-3.5">
+      <div className={`tnum font-heading text-lg font-semibold tracking-tight ${cor}`}>{valor}</div>
+      <div className="mt-0.5 text-[10.5px] font-medium text-muted-foreground">{label}</div>
     </div>
   );
 }

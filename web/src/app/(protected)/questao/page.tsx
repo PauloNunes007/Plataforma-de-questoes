@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Map as MapIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { questlyEhMestre, questlyEmbaralhar } from "@/lib/questly/shared";
 import { QuestaoRunner } from "@/components/questao/questao-runner";
+import { ehPro } from "@/lib/plano/plano";
 import type { Pergunta } from "@/lib/questao/types";
 
 export const metadata: Metadata = {
@@ -12,11 +14,13 @@ export const metadata: Metadata = {
 function EmptyState({ mensagem }: { mensagem: string }) {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center gap-5 px-6 text-center">
-      <div className="text-5xl">🗺️</div>
-      <p className="font-semibold text-muted-foreground">{mensagem}</p>
+      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+        <MapIcon size={20} strokeWidth={1.75} className="text-muted-foreground" />
+      </span>
+      <p className="text-sm leading-relaxed text-muted-foreground">{mensagem}</p>
       <Link
         href="/dashboard"
-        className="inline-flex items-center justify-center rounded-2xl bg-questly-green px-6 py-3 font-heading text-sm font-semibold text-white shadow-[0_3px_0_var(--questly-green-dark)]"
+        className="inline-flex items-center rounded-xl bg-questly-green px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
       >
         Voltar ao Dashboard
       </Link>
@@ -97,6 +101,21 @@ export default async function QuestaoPage({
     topicosMestreInicioIds = (progsIniciais || []).filter(questlyEhMestre).map((p) => p.topico_id);
   }
 
+  const perguntaIds = perguntas.map((p) => p.id);
+  const [{ data: favoritosData }, { data: notasData }] = await Promise.all([
+    supabase.from("question_favoritos").select("question_id").eq("user_id", user.id).in("question_id", perguntaIds),
+    supabase.from("question_notes").select("question_id, nota").eq("user_id", user.id).in("question_id", perguntaIds),
+  ]);
+  const favoritosIniciaisIds = (favoritosData || []).map((f) => f.question_id);
+  const notasIniciais: Record<string, string> = {};
+  (notasData || []).forEach((n) => (notasIniciais[n.question_id] = n.nota));
+
+  const { data: perfilPlano } = await supabase
+    .from("profiles")
+    .select("plano, plano_expira_em")
+    .eq("id", user.id)
+    .maybeSingle();
+
   return (
     <QuestaoRunner
       missao={{
@@ -110,6 +129,9 @@ export default async function QuestaoPage({
       perguntas={perguntas}
       jaAcertadasAntesIds={jaAcertadasAntesIds}
       topicosMestreInicioIds={topicosMestreInicioIds}
+      favoritosIniciaisIds={favoritosIniciaisIds}
+      notasIniciais={notasIniciais}
+      ehPro={ehPro(perfilPlano)}
     />
   );
 }

@@ -18,6 +18,76 @@ async function buscarSubjectsComBosses(
   return (data as SubjectComBosses[]) || [];
 }
 
+const NOME_CARENCIA_DIAS = 15;
+const NOME_CARENCIA_MS = NOME_CARENCIA_DIAS * 24 * 60 * 60 * 1000;
+const NOME_MIN = 2;
+const NOME_MAX = 40;
+
+// Troca de nome com duas travas: nome único entre todos os alunos
+// (aparece no ranking) e no máximo uma troca a cada 15 dias. Retorna o
+// novo "nome_alterado_em" pra UI recalcular a próxima data liberada.
+export async function salvarNomeAction(
+  novoNomeBruto: string,
+): Promise<{ error: null; nome: string; nomeAlteradoEm: string } | { error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessão expirada." };
+
+  const novoNome = novoNomeBruto.trim().replace(/\s+/g, " ");
+  if (novoNome.length < NOME_MIN) return { error: `O nome precisa ter pelo menos ${NOME_MIN} caracteres.` };
+  if (novoNome.length > NOME_MAX) return { error: `O nome pode ter no máximo ${NOME_MAX} caracteres.` };
+
+  const { data: perfilAtual } = await supabase
+    .from("profiles")
+    .select("nome, nome_alterado_em")
+    .eq("id", user.id)
+    .single();
+
+  // Igual ao atual (ignorando caixa) → nada a fazer, não consome a carência.
+  if (perfilAtual?.nome && perfilAtual.nome.toLowerCase() === novoNome.toLowerCase()) {
+    if (perfilAtual.nome === novoNome) {
+      return { error: null, nome: perfilAtual.nome, nomeAlteradoEm: perfilAtual.nome_alterado_em ?? "" };
+    }
+    // Só mudou a caixa (ex.: "joão" → "João") — libera sem gastar carência.
+  } else if (perfilAtual?.nome_alterado_em) {
+    const decorrido = Date.now() - new Date(perfilAtual.nome_alterado_em).getTime();
+    if (decorrido < NOME_CARENCIA_MS) {
+      const diasRestantes = Math.ceil((NOME_CARENCIA_MS - decorrido) / (24 * 60 * 60 * 1000));
+      return {
+        error: `Você só pode trocar o nome a cada ${NOME_CARENCIA_DIAS} dias. Faltam ${diasRestantes} dia(s).`,
+      };
+    }
+  }
+
+  // Unicidade case-insensitive (o índice único é a rede de segurança
+  // contra corrida; aqui a checagem dá uma mensagem amigável).
+  const { data: colisao } = await supabase
+    .from("profiles")
+    .select("id")
+    .ilike("nome", novoNome)
+    .neq("id", user.id)
+    .limit(1)
+    .maybeSingle();
+  if (colisao) return { error: "Esse nome já está em uso por outro aluno. Tente outro." };
+
+  const agora = new Date().toISOString();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ nome: novoNome, nome_alterado_em: agora })
+    .eq("id", user.id);
+
+  if (error) {
+    // 23505 = unique_violation (corrida perdida pro índice único).
+    if (error.code === "23505") return { error: "Esse nome já está em uso por outro aluno. Tente outro." };
+    console.error("Erro ao salvar nome:", error);
+    return { error: "Não foi possível salvar seu nome." };
+  }
+
+  return { error: null, nome: novoNome, nomeAlteradoEm: agora };
+}
+
 export async function salvarRotinaAction(dias: string[], tempoDiarioMin: number | null) {
   const supabase = await createClient();
   const {
