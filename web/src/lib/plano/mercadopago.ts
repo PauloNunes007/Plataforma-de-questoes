@@ -7,12 +7,19 @@ import type { OpcaoPlano } from "./plano";
 
 const MP_API = "https://api.mercadopago.com";
 
+// process.env às vezes chega com espaço/quebra de linha sobrando (copy-paste
+// no painel do Vercel) — .trim() em toda leitura evita um "\n" virar parte da
+// URL/token e quebrar a validação de formato do gateway.
+function tokenMP(): string | undefined {
+  return process.env.MP_ACCESS_TOKEN?.trim() || undefined;
+}
+
 export function mpConfigurado(): boolean {
-  return !!process.env.MP_ACCESS_TOKEN;
+  return !!tokenMP();
 }
 
 function urlDoApp(): string {
-  return (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/+$/, "");
+  return (process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000").replace(/\/+$/, "");
 }
 
 // Cria uma preferência de Checkout Pro e devolve o link pro qual redirecionar o
@@ -22,7 +29,7 @@ export async function criarPreferenciaCheckout(params: {
   opcao: OpcaoPlano;
   userEmail?: string | null;
 }): Promise<{ url: string } | { error: string }> {
-  const token = process.env.MP_ACCESS_TOKEN;
+  const token = tokenMP();
   if (!token) return { error: "Gateway de pagamento não configurado." };
 
   const base = urlDoApp();
@@ -88,7 +95,7 @@ export async function criarPreferenciaCheckout(params: {
 export async function buscarPagamentoMP(
   paymentId: string,
 ): Promise<{ status: string; externalReference: string | null } | null> {
-  const token = process.env.MP_ACCESS_TOKEN;
+  const token = tokenMP();
   if (!token) return null;
   try {
     const res = await fetch(`${MP_API}/v1/payments/${paymentId}`, {

@@ -69,7 +69,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const secret = process.env.MP_WEBHOOK_SECRET;
+    // .trim() pelo mesmo motivo de urlDoApp()/tokenMP() em mercadopago.ts —
+    // copy-paste no painel do Vercel pode grudar um "\n" no fim do valor.
+    const secret = process.env.MP_WEBHOOK_SECRET?.trim();
     if (secret && !validarAssinatura(req, paymentId, secret)) {
       return NextResponse.json({ error: "assinatura inválida" }, { status: 401 });
     }
