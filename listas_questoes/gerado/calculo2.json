@@ -1,0 +1,230 @@
+[
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação separável",
+    "dificuldade": "facil",
+    "enunciado": "Resolva a equação diferencial separável $\\dfrac{dy}{dx} = \\dfrac{x}{y}$, com a condição inicial $y(0)=2$. Qual é o valor de $y$ quando $x=\\sqrt5$?",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$\\sqrt5$",
+      "c": "$2\\sqrt2$",
+      "d": "$9$",
+      "e": "$\\sqrt{13}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Separando as variáveis: $y\\,dy = x\\,dx$. Integrando: $\\frac{y^2}{2}=\\frac{x^2}{2}+C$. Usando $y(0)=2$: $\\frac{4}{2}=0+C \\Rightarrow C=2$. Logo, $y^2=x^2+4$. Em $x=\\sqrt5$: $y^2=5+4=9 \\Rightarrow y=3$ (raiz positiva, pois $y(0)=2>0$ e a solução é contínua).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação linear de primeira ordem — modelo de mistura (tanque)",
+    "dificuldade": "dificil",
+    "enunciado": "Um tanque contém inicialmente $100$ L de água pura. Uma solução salina com concentração de $2$ g/L entra no tanque a $5$ L/min, e a mistura (homogênea) sai à mesma taxa. Se $Q(t)$ é a quantidade de sal (em gramas) no instante $t$ (minutos), o modelo é a EDO linear $\\dfrac{dQ}{dt} = 10 - \\dfrac{Q}{20}$, com $Q(0)=0$. Resolva para $Q(t)$.",
+    "alternativas": {
+      "a": "$Q(t)=200\\left(1-e^{-t/20}\\right)$",
+      "b": "$Q(t)=200\\left(1+e^{-t/20}\\right)$",
+      "c": "$Q(t)=200\\,e^{-t/20}$",
+      "d": "$Q(t)=10t$",
+      "e": "$Q(t)=200-e^{-t/20}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Reescrevendo: $\\frac{dQ}{dt}+\\frac{Q}{20}=10$. O fator integrante é $\\mu(t)=e^{\\int\\frac{1}{20}dt}=e^{t/20}$. Multiplicando: $\\frac{d}{dt}\\left[Q\\,e^{t/20}\\right]=10\\,e^{t/20}$. Integrando: $Q\\,e^{t/20}=200\\,e^{t/20}+C \\Rightarrow Q(t)=200+C\\,e^{-t/20}$. Usando $Q(0)=0$: $0=200+C \\Rightarrow C=-200$. Logo, $Q(t)=200-200\\,e^{-t/20}=200\\left(1-e^{-t/20}\\right)$ — a quantidade de sal cresce e se estabiliza em $200$ g (equilíbrio: $10 \\text{ g/min} \\times 20 \\text{ min} = 200$ g, consistente com $\\frac{dQ}{dt}=0$ quando $Q=200$).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "EDO linear homogênea de 2ª ordem — coeficientes constantes",
+    "dificuldade": "facil",
+    "enunciado": "Resolva a equação diferencial $y'' - 5y' + 6y = 0$.",
+    "alternativas": {
+      "a": "$y=C_1e^{2x}+C_2e^{3x}$",
+      "b": "$y=C_1e^{-2x}+C_2e^{-3x}$",
+      "c": "$y=C_1e^{2x}+C_2xe^{2x}$",
+      "d": "$y=C_1\\cos(2x)+C_2\\sin(3x)$",
+      "e": "$y=C_1e^{5x}+C_2e^{6x}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A equação característica é $r^2-5r+6=0$, cujas raízes são obtidas fatorando $(r-2)(r-3)=0$, ou seja, $r=2$ e $r=3$. Como as raízes são reais e distintas, a solução geral é $y=C_1e^{2x}+C_2e^{3x}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "EDO linear não-homogênea — método dos coeficientes a determinar",
+    "dificuldade": "dificil",
+    "enunciado": "Determine uma solução particular de $y'' - y' - 2y = 4x^2$ usando o método dos coeficientes a determinar.",
+    "alternativas": {
+      "a": "$y_p=-2x^2+2x-3$",
+      "b": "$y_p=2x^2-2x+3$",
+      "c": "$y_p=-2x^2-2x-3$",
+      "d": "$y_p=4x^2$",
+      "e": "$y_p=-2x^2+2x+3$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como o lado direito é um polinômio de grau 2 e $r=0$ não é raiz da equação característica ($r^2-r-2=0$, raízes $r=2,-1$), tentamos $y_p=Ax^2+Bx+C$. Temos $y_p'=2Ax+B$ e $y_p''=2A$. Substituindo: $2A-(2Ax+B)-2(Ax^2+Bx+C)=4x^2$, ou seja, $-2Ax^2+(-2A-2B)x+(2A-B-2C)=4x^2$. Igualando coeficientes: $-2A=4\\Rightarrow A=-2$; $-2A-2B=0\\Rightarrow4-2B=0\\Rightarrow B=2$; $2A-B-2C=0\\Rightarrow-4-2-2C=0\\Rightarrow C=-3$. Logo, $y_p=-2x^2+2x-3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Vetor aceleração de uma curva paramétrica",
+    "dificuldade": "facil",
+    "enunciado": "Uma partícula se move segundo $\\vec r(t) = (t^2, t^3, 2t)$. Determine o vetor aceleração $\\vec r\\,''(t)$ no instante $t=1$.",
+    "alternativas": {
+      "a": "$(2,6,0)$",
+      "b": "$(2,3,2)$",
+      "c": "$(2,6,2)$",
+      "d": "$(1,3,0)$",
+      "e": "$(4,6,0)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\vec r\\,'(t)=(2t,3t^2,2)$ e $\\vec r\\,''(t)=(2,6t,0)$. Em $t=1$: $\\vec r\\,''(1)=(2,6,0)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Comprimento de arco de uma hélice",
+    "dificuldade": "medio",
+    "enunciado": "Calcule o comprimento de arco da hélice $\\vec r(t)=(3\\cos t,\\ 3\\sin t,\\ 4t)$ para $t\\in[0,2\\pi]$.",
+    "alternativas": {
+      "a": "$10\\pi$",
+      "b": "$5\\pi$",
+      "c": "$20\\pi$",
+      "d": "$6\\pi$",
+      "e": "$8\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\vec r\\,'(t)=(-3\\sin t,\\ 3\\cos t,\\ 4)$, então $\\|\\vec r\\,'(t)\\|=\\sqrt{9\\sin^2t+9\\cos^2t+16}=\\sqrt{9+16}=\\sqrt{25}=5$ (constante). O comprimento de arco é $L=\\int_0^{2\\pi}\\|\\vec r\\,'(t)\\|\\,dt=\\int_0^{2\\pi}5\\,dt=5(2\\pi)=10\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Identificação de superfícies quádricas",
+    "dificuldade": "medio",
+    "enunciado": "A equação $\\dfrac{x^2}{4}+\\dfrac{y^2}{9}-z^2=1$ representa qual superfície quádrica?",
+    "alternativas": {
+      "a": "Hiperboloide de uma folha",
+      "b": "Hiperboloide de duas folhas",
+      "c": "Elipsoide",
+      "d": "Paraboloide elíptico",
+      "e": "Cone elíptico"
+    },
+    "gabarito": "a",
+    "resolucao": "A forma padrão $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}-\\frac{z^2}{c^2}=1$ (dois termos positivos, um negativo, igual a $1$) é exatamente a equação canônica do HIPERBOLOIDE DE UMA FOLHA — uma superfície conexa, em forma de \"ampulheta alargada\", que envolve o eixo associado ao termo negativo (aqui, o eixo $z$). Isso contrasta com o hiperboloide de duas folhas (que teria dois termos negativos) e o elipsoide (todos os termos positivos).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Superfície de revolução",
+    "dificuldade": "dificil",
+    "enunciado": "A superfície gerada pela rotação da reta $z=2y$ (no plano $yz$, $y\\ge0$) em torno do eixo $z$ tem equação:",
+    "alternativas": {
+      "a": "$z^2=4(x^2+y^2)$",
+      "b": "$z^2=2(x^2+y^2)$",
+      "c": "$z=2(x^2+y^2)$",
+      "d": "$x^2+y^2+z^2=4$",
+      "e": "$z=4(x^2+y^2)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Ao girar em torno do eixo $z$, cada ponto $(0,y,z)$ da reta original, com $y\\ge0$, gera uma circunferência de raio $y$ na altura $z$. Como o raio após a rotação é $r=\\sqrt{x^2+y^2}$, substituímos $y$ por $\\sqrt{x^2+y^2}$ na equação original $z=2y$: $z=2\\sqrt{x^2+y^2}$, ou, elevando ao quadrado, $z^2=4(x^2+y^2)$ — a equação de um cone circular.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Gradiente de função de duas variáveis",
+    "dificuldade": "facil",
+    "enunciado": "Seja $f(x,y)=x^2y+3xy^2$. Calcule $\\nabla f(1,2)$.",
+    "alternativas": {
+      "a": "$(16,13)$",
+      "b": "$(13,16)$",
+      "c": "$(8,13)$",
+      "d": "$(16,6)$",
+      "e": "$(4,12)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$f_x=2xy+3y^2$ e $f_y=x^2+6xy$. Em $(1,2)$: $f_x(1,2)=2(1)(2)+3(2)^2=4+12=16$ e $f_y(1,2)=1^2+6(1)(2)=1+12=13$. Logo, $\\nabla f(1,2)=(16,13)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Plano tangente a uma superfície",
+    "dificuldade": "medio",
+    "enunciado": "Determine a equação do plano tangente à superfície $z=x^2+y^2$ no ponto $(1,1,2)$.",
+    "alternativas": {
+      "a": "$z=2x+2y-2$",
+      "b": "$z=2x+2y$",
+      "c": "$z=x+y+2$",
+      "d": "$z=2x+2y+2$",
+      "e": "$z=4x+4y-2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para $z=f(x,y)=x^2+y^2$, temos $f_x=2x$ e $f_y=2y$. Em $(1,1)$: $f_x(1,1)=2$ e $f_y(1,1)=2$. O plano tangente é $z-z_0=f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0)$: $z-2=2(x-1)+2(y-1) \\Rightarrow z=2x+2y-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Classificação de ponto crítico — teste da hessiana",
+    "dificuldade": "medio",
+    "enunciado": "Classifique o ponto crítico de $f(x,y)=x^2+y^2-4x-6y+13$ usando o teste da segunda derivada (hessiana).",
+    "alternativas": {
+      "a": "Mínimo local em $(2,3)$",
+      "b": "Máximo local em $(2,3)$",
+      "c": "Ponto de sela em $(2,3)$",
+      "d": "Mínimo local em $(4,6)$",
+      "e": "Não é possível classificar (teste inconclusivo)"
+    },
+    "gabarito": "a",
+    "resolucao": "Ponto crítico: $f_x=2x-4=0\\Rightarrow x=2$ e $f_y=2y-6=0\\Rightarrow y=3$, ou seja, $(2,3)$. Segundas derivadas: $f_{xx}=2$, $f_{yy}=2$, $f_{xy}=0$. O discriminante hessiano é $D=f_{xx}f_{yy}-(f_{xy})^2=4-0=4>0$, e como $f_{xx}=2>0$, o ponto é um MÍNIMO LOCAL.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Multiplicadores de Lagrange",
+    "dificuldade": "dificil",
+    "enunciado": "Usando multiplicadores de Lagrange, determine o valor MÁXIMO de $f(x,y)=xy$ sujeito à restrição $x^2+y^2=8$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$8$",
+      "c": "$2$",
+      "d": "$16$",
+      "e": "$-4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo método de Lagrange, $\\nabla f=\\lambda\\nabla g$: $(y,x)=\\lambda(2x,2y)$, ou seja, $y=2\\lambda x$ e $x=2\\lambda y$. Multiplicando essas equações: $xy=2\\lambda x^2$ e $xy=2\\lambda y^2$, o que dá $x^2=y^2$ (para $\\lambda\\neq0$), logo $x=\\pm y$. Caso $x=y$: a restrição $2x^2=8$ dá $x=\\pm2$, e $f=xy=x^2=4$. Caso $x=-y$: $f=xy=-x^2=-4$ (mínimo). Portanto, o valor máximo é $4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

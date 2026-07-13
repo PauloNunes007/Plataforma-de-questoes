@@ -1,0 +1,1370 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Lançamento vertical com aceleração horizontal extra (vento) — independência dos movimentos em x e y",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Um projétil é disparado verticalmente para cima, a partir do solo, com velocidade inicial de módulo $v_0 = 15$ m/s. Um vento horizontal imprime ao projétil uma aceleração constante de $3{,}0$ m/s² (na direção do eixo $x$). Use $g = 9{,}8$ m/s². Qual é o vetor velocidade do projétil no instante em que ele retorna ao nível original de lançamento?",
+    "alternativas": {
+      "a": "$\\vec v = 9{,}2\\,\\hat\\imath - 15\\,\\hat\\jmath$ (m/s)",
+      "b": "$\\vec v = 15\\,\\hat\\imath - 9{,}2\\,\\hat\\jmath$ (m/s)",
+      "c": "$\\vec v = 9{,}2\\,\\hat\\imath + 15\\,\\hat\\jmath$ (m/s)",
+      "d": "$\\vec v = 3{,}0\\,\\hat\\imath - 15\\,\\hat\\jmath$ (m/s)",
+      "e": "$\\vec v = 9{,}2\\,\\hat\\imath - 9{,}8\\,\\hat\\jmath$ (m/s)"
+    },
+    "gabarito": "a",
+    "resolucao": "O movimento vertical é independente do horizontal. O tempo total de voo (subida + descida) é o mesmo de um lançamento vertical puro: $t = 2v_0/g = 15/4{,}9 \\approx 3{,}06$ s. Por simetria, $v_y = -v_0 = -15$ m/s nesse instante. Já a velocidade horizontal cresce continuamente por causa do vento: $v_x = a_x t = 3{,}0 \\times 3{,}06 \\approx 9{,}2$ m/s. Logo, $\\vec v = 9{,}2\\,\\hat\\imath - 15\\,\\hat\\jmath$ m/s.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Sistema de blocos empilhados em plano inclinado com atrito cinético — equilíbrio a velocidade constante",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Dois blocos, A e B, um sobre o outro, deslizam com velocidade constante rampa abaixo, com uma força $F$ aplicada sobre o bloco B (empurrando rampa acima, freando a descida). O coeficiente de atrito cinético entre B e a rampa é $0{,}450$, e o coeficiente de atrito estático entre A e B é $0{,}800$ (mas eles não deslizam entre si). A rampa faz $30{,}0°$ com a horizontal. O peso de A é $314$ N e o de B é $470$ N. Qual o valor de $F$ para que o conjunto desça com velocidade constante?",
+    "alternativas": {
+      "a": "86,0 N",
+      "b": "62,0 N",
+      "c": "108 N",
+      "d": "134 N",
+      "e": "306 N"
+    },
+    "gabarito": "a",
+    "resolucao": "Como A e B descem juntos com velocidade constante, a força normal que B recebe da rampa é $N_B = (P_A+P_B)\\cos\\theta$ (soma dos dois pesos projetados na normal, já que A se apoia em B). O atrito cinético entre B e a rampa vale $F_{at} = \\mu_c N_B = 0{,}45\\times784\\times\\cos30° \\approx 306$ N. Tratando A+B como um único sistema ao longo da rampa (o atrito e a normal entre A e B são internos e se cancelam): $(P_A+P_B)\\,\\text{sen}\\,30° - F_{at} - F = 0 \\Rightarrow F = 392 - 306 = 86{,}0$ N.",
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[thick] (0,0) -- (5,0) -- (5,2.9) -- cycle;\n\\draw[thick, fill=gray!20] (2.3,1.15) rectangle ++(1.4,0.7) node[midway]{B};\n\\draw[thick, fill=gray!40] (2.5,1.85) rectangle ++(1.0,0.6) node[midway]{A};\n\\draw[->, thick, red] (3.7,1.5) -- (4.7,2.05) node[right]{$F$};\n\\draw (0.6,0) arc (0:30:0.6);\n\\node at (1.0,0.25) {$30°$};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Independência do movimento de projétil em relação à massa do corpo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma bola de 50 g rola de um balcão de cozinha e pousa a 2 m de distância da base do balcão. Uma bola de 100 g rola do mesmo balcão, saindo com a mesma velocidade horizontal. A que distância da base ela pousa?",
+    "alternativas": {
+      "a": "menos de 1 m",
+      "b": "1 m",
+      "c": "2 m",
+      "d": "4 m",
+      "e": "mais de 4 m"
+    },
+    "gabarito": "c",
+    "resolucao": "Numa queda livre a partir da borda do balcão, o tempo de queda depende só da altura e de $g$ — não da massa. Como as duas bolas caem da mesma altura com a mesma velocidade horizontal, o alcance $x=v\\cdot t$ também não depende da massa. As duas pousam à mesma distância: 2 m.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Terceira Lei de Newton aplicada à interação gravitacional Terra–objeto",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma pessoa de massa $m$ está parada sobre a superfície da Terra (massa $M$). Ela salta, atingindo uma altura máxima $h$. Quando a pessoa está nessa altura $h$, qual é o módulo da força que ela exerce sobre a Terra?",
+    "alternativas": {
+      "a": "$mg$",
+      "b": "$Mg$",
+      "c": "$\\frac{m}{M^2}g$",
+      "d": "$\\frac{M}{m^2}g$",
+      "e": "zero"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela Terceira Lei de Newton, a força gravitacional que a pessoa exerce sobre a Terra tem a mesma intensidade da força gravitacional que a Terra exerce sobre a pessoa, em qualquer instante do voo — inclusive no ponto mais alto. Essa força é o próprio peso da pessoa, $mg$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Conceitos de Movimento",
+    "subtopico": "Algarismos significativos na expressão de grandezas medidas e calculadas",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma pessoa percorre uma distância de $3{,}6$ km em $50$ minutos. Expressando o resultado com o número correto de algarismos significativos, o valor da velocidade desenvolvida é",
+    "alternativas": {
+      "a": "12,0 m/s",
+      "b": "1,2 m/s",
+      "c": "0,120 × 10³ m/s",
+      "d": "1,2 × 10 m/s",
+      "e": "120 × 10⁻² m/s"
+    },
+    "gabarito": "b",
+    "resolucao": "$v = \\dfrac{3600\\text{ m}}{3000\\text{ s}} = 1{,}2$ m/s. Os dados (3,6 km e 50 min) têm dois algarismos significativos, então o resultado deve ser expresso também com dois: $1{,}2$ m/s — as alternativas c, d e e representam o mesmo valor numérico, mas escrito de forma não padronizada em notação científica.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Conversão de rpm para velocidade angular e cálculo da velocidade tangencial",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "As hélices de um helicóptero descrevem uma área circular de $36\\pi$ m². Partindo do repouso, elas atingem em $10$ s a velocidade operacional de $360$ rpm. Nessa velocidade, quais são a velocidade angular da hélice e a velocidade tangencial de um ponto na sua extremidade, respectivamente?",
+    "alternativas": {
+      "a": "12π rad/s e 72π m/s",
+      "b": "6 rps e 36 m/s",
+      "c": "12π rad/s e 144π² m/s",
+      "d": "6 rps e 216 m/s",
+      "e": "12π rad/s e 144π m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "Área $=\\pi r^2=36\\pi \\Rightarrow r=6$ m. $360$ rpm $=6$ rev/s $=6\\times2\\pi=12\\pi$ rad/s. Velocidade tangencial na ponta: $v=\\omega r=12\\pi\\times6=72\\pi$ m/s.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Ausência de atrito entre blocos empilhados — força não é transmitida ao bloco superior",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Dois blocos de mesmo formato estão dispostos um sobre o outro: o de cima tem massa $M$, o de baixo tem massa $2M$. Aplica-se uma força horizontal $F$ no bloco de baixo, colocando-o em movimento. O atrito entre os dois blocos é nulo (há atrito apenas entre o bloco de baixo e o chão). O que acontece?",
+    "alternativas": {
+      "a": "ambos se movem juntos na direção de $F$",
+      "b": "ambos se movem na direção de $F$, mas em sentidos opostos",
+      "c": "o bloco de cima cai, pois não é arrastado junto com o de baixo",
+      "d": "o bloco de baixo adquire metade da velocidade do de cima",
+      "e": "o bloco de cima adquire metade da velocidade do de baixo"
+    },
+    "gabarito": "c",
+    "resolucao": "A única força horizontal que poderia acelerar o bloco de cima é o atrito entre ele e o bloco de baixo. Como esse atrito é nulo, nenhuma força horizontal atua sobre o bloco de cima — ele permanece parado (na horizontal) enquanto o bloco de baixo desliza para fora debaixo dele, fazendo-o cair.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Composição de velocidade horizontal inicial e velocidade vertical adquirida em queda (projétil horizontal)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma bola rola sobre o tampo de uma mesa com velocidade horizontal de módulo $v$. Ao perder contato com a mesa, ela cai em queda livre e atinge o solo, situado a uma altura $h$ abaixo do tampo, com velocidade de módulo",
+    "alternativas": {
+      "a": "$\\sqrt{v^2+(2gh)^2}$",
+      "b": "$2gh$",
+      "c": "$\\sqrt{2gh}$",
+      "d": "$v^2+(2gh)^2$",
+      "e": "$\\sqrt{v^2+2gh}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A componente horizontal permanece $v$ durante a queda. A componente vertical ganha módulo $v_y=\\sqrt{2gh}$ (queda livre a partir do repouso vertical). A velocidade final é a soma vetorial dessas componentes perpendiculares: $v_f=\\sqrt{v^2+v_y^2}=\\sqrt{v^2+2gh}$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Peso aparente em elevador acelerado — segunda lei de Newton",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Um bloco de peso $50$ N está sobre uma balança no piso de um elevador. O elevador sobe com aceleração de módulo igual à metade da aceleração da gravidade local. Qual é a leitura da balança?",
+    "alternativas": {
+      "a": "25 N",
+      "b": "50 N (inalterada)",
+      "c": "75 N",
+      "d": "100 N",
+      "e": "200 N"
+    },
+    "gabarito": "c",
+    "resolucao": "Chamando de $N$ a leitura da balança (força normal): $N - P = ma \\Rightarrow N = P + P\\cdot\\dfrac{a}{g} = P\\left(1+\\dfrac12\\right) = 1{,}5\\times50 = 75$ N.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Movimento em rampa com atrito — comparação entre tempos de subida e descida",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Num carrinho lançado rampa acima com uma pancada inicial, ele sobe até certa distância no tempo $t_s$ e desce de volta à posição inicial, com tempo total da viagem igual a $t$. A rampa faz ângulo $\\theta$ com a horizontal e o coeficiente de atrito cinético entre o carrinho e a rampa é $\\mu$. Qual é a razão $t/t_s$?",
+    "alternativas": {
+      "a": "2",
+      "b": "$1+\\sqrt{(\\text{tg}\\theta+\\mu)/(\\text{tg}\\theta-\\mu)}$",
+      "c": "$1+\\sqrt{(\\cos\\theta+\\mu)/(\\cos\\theta-\\mu)}$",
+      "d": "$1+\\sqrt{(\\text{sen}\\theta+\\mu)/(\\text{sen}\\theta-\\mu)}$",
+      "e": "$1-\\sqrt{(\\text{tg}\\theta+\\mu)/(\\text{tg}\\theta-\\mu)}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Na subida, o atrito soma-se à gravidade: desaceleração $a_s=g(\\text{sen}\\theta+\\mu\\cos\\theta)$, e $t_s=v_0/a_s$. Na descida, o atrito se opõe à gravidade: aceleração $a_d=g(\\text{sen}\\theta-\\mu\\cos\\theta)$; a mesma distância percorrida na subida é percorrida na descida, partindo do repouso, o que dá um tempo de descida $t_d=t_s\\sqrt{a_s/a_d}$. Como $t=t_s+t_d$: $t/t_s=1+\\sqrt{a_s/a_d}=1+\\sqrt{(\\text{tg}\\theta+\\mu)/(\\text{tg}\\theta-\\mu)}$ (dividindo numerador e denominador por $\\cos\\theta$).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Leitura de gráfico velocidade × tempo — aceleração como inclinação e deslocamento como área",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma partícula move-se ao longo do eixo $x$ com velocidade dada pelo gráfico $v$ versus $t$ da figura (reta de $v=0$ em $t=0$ s até $v=3$ m/s em $t=3$ s; depois reta decrescente até $v=-3$ m/s em $t=5$ s; depois $v=-3$ m/s constante até $t=6$ s). Pede-se o intervalo de tempo em que o módulo da aceleração é máximo e o deslocamento nos primeiros seis segundos.",
+    "alternativas": {
+      "a": "[5 s, 6 s]; 2,0 m",
+      "b": "[0, 4 s]; 2,0 m",
+      "c": "[3 s, 5 s]; 1,5 m",
+      "d": "[5 s, 6 s]; 1,5 m",
+      "e": "[6 s, 7 s]; 1,0 m"
+    },
+    "gabarito": "c",
+    "resolucao": "A inclinação do gráfico é a aceleração. De 0 a 3 s: $a=1$ m/s². De 3 a 5 s: $a=(-3-3)/2=-3$ m/s² (módulo máximo). De 5 a 6 s: $a=0$. O deslocamento é a área sob a curva: triângulo de 0–3s ($+4{,}5$ m); de 3–5s a reta cruza zero em $t=4$s, dando um triângulo positivo de 3–4s ($+1{,}5$ m) e um negativo de 4–5s ($-1{,}5$ m), que se cancelam; de 5–6s, área $=-3\\times1=-3$ m. Total: $4{,}5+0-3=1{,}5$ m.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$ (s), ylabel=$v$ (m/s), xmin=0, xmax=7, ymin=-4, ymax=4, width=9cm, height=6.5cm, xtick={1,2,3,4,5,6,7}, ytick={-3,-2,-1,1,2,3}]\n\\addplot[thick, blue] coordinates {(0,0) (3,3) (5,-3) (6,-3)};\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Velocidade máxima em curva com atrito — força centrípeta fornecida pelo atrito estático",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Em um dia gelado, o coeficiente de atrito entre os pneus de um carro e a estrada cai para um quarto do valor em dia seco. Como resultado, a rapidez máxima $v_{max,gelado}$ com que o carro faz com segurança a mesma curva de raio $R$ é",
+    "alternativas": {
+      "a": "$v_{max,seco}$",
+      "b": "$0{,}71\\,v_{max,seco}$",
+      "c": "$0{,}50\\,v_{max,seco}$",
+      "d": "$0{,}25\\,v_{max,seco}$",
+      "e": "reduzida de uma quantidade desconhecida, que depende da massa do carro"
+    },
+    "gabarito": "c",
+    "resolucao": "A velocidade máxima numa curva com atrito vem de $\\mu mg = mv^2/R \\Rightarrow v=\\sqrt{\\mu g R}$, ou seja, $v\\propto\\sqrt{\\mu}$. Reduzindo $\\mu$ a $1/4$: $v_{gelado}=\\sqrt{1/4}\\,v_{seco}=0{,}50\\,v_{seco}$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Sistema de blocos conectados por corda — mesma aceleração para ambos",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Dois blocos de mesma massa $m$ estão ligados por uma corda horizontal sem massa, em repouso sobre uma mesa sem atrito. Um deles é puxado por uma força externa horizontal $F$. Qual é a razão entre as forças resultantes que atuam sobre os dois blocos?",
+    "alternativas": {
+      "a": "1:1",
+      "b": "1:1,41",
+      "c": "1:1,5",
+      "d": "1:2",
+      "e": "nenhuma das anteriores"
+    },
+    "gabarito": "a",
+    "resolucao": "Os dois blocos, ligados por uma corda inextensível, têm sempre a mesma aceleração $a=F/(2m)$. A força resultante sobre cada bloco é $F_{res}=ma$, que é a mesma para os dois já que ambos têm massa $m$ e a mesma aceleração. A razão é $1{:}1$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Propriedades do atrito estático e cinético — diferenças conceituais",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Qual das seguintes observações sobre a força de atrito está INCORRETA?",
+    "alternativas": {
+      "a": "o módulo do atrito cinético é sempre proporcional à força normal",
+      "b": "o módulo do atrito estático máximo é sempre proporcional à força normal",
+      "c": "o módulo do atrito estático é sempre proporcional à força externa aplicada",
+      "d": "o sentido do atrito cinético é sempre oposto ao do movimento relativo entre as superfícies",
+      "e": "o módulo das forças de atrito depende da rugosidade das superfícies em contato"
+    },
+    "gabarito": "c",
+    "resolucao": "O atrito estático NÃO é proporcional à força aplicada — ele apenas se ajusta, ponto a ponto, para equilibrá-la, até um valor máximo $\\mu_e N$ (proporcional à normal, não à força aplicada). Passado esse limite, o corpo desliza. As demais afirmações (a, b, d, e) são corretas.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Lançamento de projétil com velocidade inicial inclinada, a partir de uma altura",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Um avião monomotor, à altitude de $500$ m, deixa cair uma caixa no instante em que voa a $60{,}0$ m/s numa trajetória retilínea inclinada de $30{,}0°$ acima da horizontal. Despreze a resistência do ar e use $g=9{,}80$ m/s². A que distância horizontal do ponto de lançamento a caixa atinge o solo?",
+    "alternativas": {
+      "a": "708 m",
+      "b": "520 m",
+      "c": "900 m",
+      "d": "353 m",
+      "e": "1040 m"
+    },
+    "gabarito": "a",
+    "resolucao": "Com origem no ponto de soltura, a altura da caixa é $y=h+(v_i\\,\\text{sen}\\theta)t-\\frac12 gt^2$. Ela atinge o solo quando $y=0$: $gt^2-2(v_i\\,\\text{sen}\\theta)t-2h=0$. Tomando a raiz positiva com $v_i=60$, $\\theta=30°$, $h=500$ m: $t_1\\approx13{,}62$ s. A distância horizontal é $d=(v_i\\cos\\theta)t_1\\approx707{,}7\\approx708$ m.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Movimento circular em plano vertical — dinâmica com tensão e componente do peso na direção radial",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma pequena bola de massa $m=2{,}0$ kg descreve uma circunferência num plano vertical, presa a um fio de comprimento $r=1{,}0$ m e massa desprezível. A outra extremidade do fio está presa a um dinamômetro fixo, que registra a tensão no fio. A tensão é $20$ N quando o fio forma um ângulo $\\theta=30°$ com a vertical. Use $g=9{,}8$ m/s². Qual é a rapidez da bola nesse instante?",
+    "alternativas": {
+      "a": "4,3 m/s",
+      "b": "3,2 m/s",
+      "c": "3,9 m/s",
+      "d": "6,1 m/s",
+      "e": "5,0 m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "Na direção radial, a segunda lei de Newton dá $T+mg\\cos\\theta=mv^2/r$ (a componente do peso ao longo do fio também contribui, pois o fio não está na horizontal). Assim, $v=\\sqrt{\\dfrac{(T+mg\\cos\\theta)\\,r}{m}}=\\sqrt{\\dfrac{20+2{,}0\\times9{,}8\\times\\cos30°}{2{,}0}}\\approx4{,}3$ m/s.",
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[thick] (0,0) circle (2);\n\\draw[thick] (0,2) -- (0.9,1.65);\n\\node[circle,fill=black,inner sep=1.5pt] at (0.9,1.65) {};\n\\draw[dashed] (0,0) -- (0,2);\n\\draw (0,1.55) arc (90:57:0.45);\n\\node at (0.35,1.5) {\\small $\\theta$};\n\\draw[->, thick, blue] (0.9,1.65) -- (0.45,0.85) node[midway, left]{$T$};\n\\draw[->, thick, red] (0.9,1.65) -- (0.9,0.85) node[midway, right]{$mg$};\n\\node[fill=black,circle,inner sep=1pt] at (0,2) {};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Movimento circular com aceleração tangencial constante — relação entre acelerações e ângulo percorrido",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Um carro parte do repouso numa pista circular de raio $120$ m, com aceleração tangencial constante de $1{,}0$ m/s². Que ângulo (em graus) o carro terá percorrido quando o módulo de sua aceleração total for $2{,}0$ m/s²?",
+    "alternativas": {
+      "a": "50°",
+      "b": "29°",
+      "c": "69°",
+      "d": "100°",
+      "e": "25°"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $a_t=1{,}0$ m/s² constante e $a=\\sqrt{a_r^2+a_t^2}=2{,}0 \\Rightarrow a_r=\\sqrt{3}$ m/s². Como $\\omega_0=0$ e $a_r=v^2/r=\\omega^2 r$, e $a_t=\\alpha r$ (constante): $\\Delta\\theta=\\dfrac{a_r}{2a_t}=\\dfrac{\\sqrt3}{2}$ rad $\\approx49{,}6°\\approx50°$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Peso aparente em elevador com aceleração para baixo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma menina de massa $50{,}0$ kg está sobre uma balança de mola dentro de um elevador que desce com aceleração constante de módulo $2{,}00$ m/s². Use $g=9{,}80$ m/s². Qual é a leitura da balança?",
+    "alternativas": {
+      "a": "390 N",
+      "b": "590 N",
+      "c": "490 N",
+      "d": "100 N",
+      "e": "340 N"
+    },
+    "gabarito": "a",
+    "resolucao": "Com o elevador descendo e acelerando (aceleração para baixo), a segunda lei de Newton dá $P-N=ma \\Rightarrow N=m(g-a)=50{,}0\\times(9{,}80-2{,}00)=390$ N.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Sistema bloco-cunha sem atrito — aceleração comum para altura relativa constante",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma cunha de peso $P_M=8{,}0$ N e ângulo $\\alpha=45°$ está sobre uma superfície horizontal sem atrito. Um bloco de peso $P_m=2{,}0$ N é posto sobre a face inclinada da cunha (também sem atrito) e uma força horizontal $F$ é aplicada na cunha. Qual deve ser o módulo de $F$ para que o bloco permaneça a uma altura constante acima do chão (ou seja, para que bloco e cunha se movam juntos, sem o bloco escorregar sobre a face inclinada)?",
+    "alternativas": {
+      "a": "10 N",
+      "b": "8 N",
+      "c": "14 N",
+      "d": "5 N",
+      "e": "20 N"
+    },
+    "gabarito": "a",
+    "resolucao": "Para o bloco não subir nem descer em relação ao chão, sua aceleração vertical deve ser nula: da 2ª lei aplicada ao bloco, isso exige $N=P_m/\\cos\\alpha$ e aceleração horizontal $a_x=g\\,\\text{tg}\\,\\alpha$. Para bloco e cunha se moverem juntos com essa mesma aceleração, a força total necessária é $F=\\dfrac{P_M+P_m}{g}a_x=(P_M+P_m)\\,\\text{tg}\\,\\alpha=(8{,}0+2{,}0)\\times1=10$ N (pois $\\text{tg}\\,45°=1$).",
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[thick, fill=gray!15] (0,0) -- (3,0) -- (3,2.2) -- cycle;\n\\draw[thick, fill=gray!40] (1.7,1.6) rectangle ++(0.9,0.5);\n\\draw[->, thick, red] (-0.2,0.9) -- (0.9,0.9) node[right]{};\n\\node at (0.3,1.15) {$F$};\n\\node at (2.6,0.3) {$\\alpha$};\n\\node at (3.4,1.1) {$M$};\n\\node at (2.15,2.1) {$m$};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Sistema de corpos conectados por fios em série — tensões distintas ao longo da cadeia",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Três caixas idênticas de massa $m$ são unidas por fios sem massa (fio A entre a 1ª e a 2ª caixa, fio B entre a 2ª e a 3ª) e puxadas por uma força constante $F$ aplicada à caixa da extremidade direita. Não há atrito entre as caixas e a superfície. Determine a razão $T_B/T_A$ entre as tensões nos fios B e A.",
+    "alternativas": {
+      "a": "2",
+      "b": "1",
+      "c": "3",
+      "d": "1,5",
+      "e": "0,5"
+    },
+    "gabarito": "a",
+    "resolucao": "A aceleração comum das três massas é $a=F/(3m)$. Isolando a 3ª caixa: $F-T_B=ma \\Rightarrow T_B=F-\\frac{F}{3}=\\frac{2F}{3}$. Isolando só a 1ª caixa: $T_A=ma=\\frac{F}{3}$. Logo, $T_B/T_A=2$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Aceleração centrípeta em movimento circular uniforme — direção radial",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma partícula descreve uma trajetória circular no sentido horário com rapidez constante. Em um dado ponto P da trajetória, qual é a direção do vetor aceleração da partícula?",
+    "alternativas": {
+      "a": "aponta para o centro da circunferência (radial, centrípeta)",
+      "b": "aponta para fora da circunferência (radial, centrífuga)",
+      "c": "tangente à trajetória, no mesmo sentido do movimento",
+      "d": "tangente à trajetória, sentido oposto ao do movimento",
+      "e": "é nula, pois a rapidez é constante"
+    },
+    "gabarito": "a",
+    "resolucao": "Com rapidez constante, a aceleração tangencial é nula — toda a aceleração é centrípeta, perpendicular à velocidade e apontando sempre para o centro da trajetória circular, com módulo $a=v^2/r$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Velocidade obtida pela área sob o gráfico aceleração × tempo",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Um objeto parte do repouso em $t=0$ e move-se ao longo de uma linha reta. O gráfico de aceleração em função do tempo é: $a$ cresce linearmente de $0$ (em $t=0$) até $5{,}0$ m/s² (em $t=1{,}0$ s); permanece em $5{,}0$ m/s² de $t=1{,}0$ s até $t=3{,}0$ s; depois decresce linearmente, cruzando zero em $t=4{,}0$ s e chegando a $-5{,}0$ m/s² em $t=5{,}0$ s. Com exceção do instante inicial, em que outro instante a velocidade do objeto é igual a zero?",
+    "alternativas": {
+      "a": "durante o intervalo de 1,0 a 3,0 s",
+      "b": "em t = 3,5 s",
+      "c": "em t = 4,0 s",
+      "d": "em t = 5,0 s",
+      "e": "em nenhum instante anterior a 5,0 s"
+    },
+    "gabarito": "e",
+    "resolucao": "A velocidade é a área acumulada sob o gráfico de aceleração. Como $a\\ge0$ para todo $t$ entre $0$ e $4{,}0$ s, a velocidade cresce continuamente nesse intervalo (nunca volta a zero). Em $t=4{,}0$ s, $a=0$ momentaneamente, mas isso marca o instante de velocidade MÁXIMA, não nula. Só depois de $t=4{,}0$ s a aceleração fica negativa e a velocidade começa a diminuir — calculando a área total até $t=5{,}0$ s, a velocidade ainda é positiva (não chegou a zero). Logo, a velocidade não se anula em nenhum instante mostrado antes de $5{,}0$ s.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$ (s), ylabel=$a$ (m/s²), xmin=0, xmax=5.5, ymin=-6, ymax=6, width=9cm, height=6.5cm, xtick={1,2,3,4,5}, ytick={-5,5}]\n\\addplot[thick, blue] coordinates {(0,0) (1,5) (3,5) (5,-5)};\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Equilíbrio de um corpo sob três forças — soma vetorial de forças simétricas",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Duas forças de mesma intensidade ($4{,}6$ N cada) atuam sobre um corpo. Elas são simétricas em relação a uma linha horizontal, cada uma fazendo um ângulo $\\theta=20°$ com essa linha e apontando para a esquerda (afastando-se do corpo, uma acima e outra abaixo da linha). Qual a intensidade e o sentido da terceira força necessária para manter o corpo em equilíbrio?",
+    "alternativas": {
+      "a": "8,6 N, para a direita",
+      "b": "7,0 N, para a direita",
+      "c": "4,3 N, para a direita",
+      "d": "8,6 N, para a esquerda",
+      "e": "7,0 N, para a esquerda"
+    },
+    "gabarito": "a",
+    "resolucao": "Por simetria, as componentes verticais das duas forças se cancelam. A resultante é puramente horizontal: $R=2\\times4{,}6\\times\\cos20°\\approx8{,}6$ N, apontando para a esquerda (sentido das duas forças). A força equilibrante tem a mesma intensidade e sentido oposto: $8{,}6$ N para a direita.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Primeira Lei de Newton — equilíbrio dinâmico em referencial inercial",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Um objeto move-se com velocidade constante em relação a um referencial inercial. Qual das afirmações abaixo é necessariamente verdadeira?",
+    "alternativas": {
+      "a": "não há forças agindo sobre o objeto",
+      "b": "uma pequena força age sobre o objeto, na direção do movimento",
+      "c": "a força resultante sobre o objeto é zero",
+      "d": "duas das afirmações anteriores são necessariamente verdadeiras",
+      "e": "todas as afirmações anteriores são falsas"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela Primeira Lei de Newton, velocidade constante (inclusive zero) equivale a força resultante nula — podem existir forças individuais atuando (como peso e normal), desde que se cancelem. A alternativa (a) é falsa nesse sentido mais geral; a correta é (c).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Velocidade, aceleração e força no ponto mais alto de um lançamento vertical",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma bola é arremessada verticalmente para cima. No instante em que ela alcança a altura máxima, é correto afirmar que",
+    "alternativas": {
+      "a": "a velocidade é zero, a aceleração é zero e a força da gravidade aponta para baixo",
+      "b": "a velocidade é zero, a aceleração é zero e a força da gravidade é zero",
+      "c": "a velocidade é zero, a aceleração aponta para baixo e a força da gravidade é zero",
+      "d": "a velocidade é zero, a aceleração aponta para baixo e a força da gravidade aponta para baixo",
+      "e": "nenhuma das afirmações anteriores é verdadeira"
+    },
+    "gabarito": "d",
+    "resolucao": "No ponto mais alto, a velocidade instantânea é zero, mas a aceleração continua sendo $g$, apontando para baixo — é exatamente essa aceleração (causada pela força da gravidade, também para baixo) que faz a bola voltar a descer. Aceleração zero na altura máxima é um erro comum: ela só seria zero se a força resultante fosse zero, o que nunca acontece aqui.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Terceira Lei de Newton em colisões — pares ação-reação têm mesma intensidade",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Um caminhão colide frontalmente com uma bicicleta. Durante a colisão,",
+    "alternativas": {
+      "a": "a força do caminhão sobre a bicicleta é mais intensa que a da bicicleta sobre o caminhão",
+      "b": "a força do caminhão sobre a bicicleta é menos intensa que a da bicicleta sobre o caminhão",
+      "c": "a força do caminhão sobre a bicicleta é tão intensa quanto a da bicicleta sobre o caminhão",
+      "d": "o caminhão exerce força intensa sobre a bicicleta, e a bicicleta exerce força desprezível sobre o caminhão",
+      "e": "quanto maior a velocidade do caminhão, maior a diferença entre as duas forças"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela Terceira Lei de Newton, forças de ação e reação têm sempre a mesma intensidade, independentemente das massas ou velocidades envolvidas — o que difere é o efeito (aceleração) que cada força produz, já que $a=F/m$ e a bicicleta tem massa muito menor.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Atrito estático em corpo em repouso sobre plano inclinado",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Um tijolo está em repouso sobre uma superfície áspera inclinada. A força de atrito que age sobre o tijolo é",
+    "alternativas": {
+      "a": "zero",
+      "b": "igual ao peso do tijolo",
+      "c": "maior do que o peso do tijolo",
+      "d": "menor do que o peso do tijolo",
+      "e": "tanto menor quanto maior a inclinação da superfície"
+    },
+    "gabarito": "d",
+    "resolucao": "Em equilíbrio sobre o plano inclinado, o atrito estático equilibra apenas a componente do peso ao longo do plano: $f=mg\\,\\text{sen}\\theta$. Como $\\text{sen}\\theta<1$ para $\\theta<90°$, esse valor é sempre menor que o peso total $mg$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Diagrama de corpo livre em sistema de Atwood — comparação entre peso e tração",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Duas massas desiguais, $M$ e $m$ (com $M>m$), estão conectadas por um fio ideal (inextensível e sem massa) que passa por uma polia ideal (sem massa e sem atrito). Ao serem liberadas, o sistema se acelera, com $M$ descendo e $m$ subindo. Qual das descrições abaixo representa corretamente as forças (peso e tração) em cada bloco?",
+    "alternativas": {
+      "a": "tração e peso têm o mesmo módulo nos dois blocos",
+      "b": "a tração é a mesma nos dois blocos; em $M$ o peso é maior que a tração, e em $m$ a tração é maior que o peso",
+      "c": "o peso é maior que a tração nos dois blocos",
+      "d": "a tração é maior que o peso nos dois blocos",
+      "e": "a tração em $M$ é maior que em $m$, e o peso é maior que a tração nos dois"
+    },
+    "gabarito": "b",
+    "resolucao": "Como o fio é ideal e a polia não tem massa nem atrito, a tração $T$ é a mesma nos dois lados. Para $M$, que desce (aceleração para baixo): $Mg-T=Ma>0 \\Rightarrow Mg>T$. Para $m$, que sobe (aceleração para cima): $T-mg=ma>0 \\Rightarrow T>mg$. Ou seja, mesma tração nos dois blocos, mas comparada de forma diferente com o peso de cada um.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Lançamento oblíquo — equação da trajetória e faixa de velocidades para atingir um alvo",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma equipe de estudantes projeta uma catapulta para lançar uma bolinha a partir de um ponto $A$, com velocidade inicial $v_0$ fazendo um ângulo de $30°$ com a horizontal. A bolinha deve cair dentro de uma caixa cuja borda mais próxima de $A$ está no ponto $(3{,}5\\text{ m}; -0{,}10\\text{ m})$ e cuja borda mais distante está em $(4{,}1\\text{ m}; -0{,}10\\text{ m})$, num sistema de eixos com origem em $A$ ($x$ horizontal, $y$ vertical, ambos em metros, $y$ negativo abaixo de $A$). Use $g=9{,}8$ m/s². Qual é a faixa de valores de $v_0$ para que a bolinha caia dentro da caixa?",
+    "alternativas": {
+      "a": "6,1 m/s ≤ v₀ ≤ 6,7 m/s",
+      "b": "5,5 m/s ≤ v₀ ≤ 6,0 m/s",
+      "c": "6,7 m/s ≤ v₀ ≤ 7,3 m/s",
+      "d": "4,8 m/s ≤ v₀ ≤ 5,4 m/s",
+      "e": "6,1 m/s ≤ v₀ ≤ 7,3 m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "As equações do movimento dão $x=v_0\\cos30°\\,t$ e $y=v_0\\,\\text{sen}30°\\,t-\\frac12 gt^2$. Eliminando $t$, a trajetória é $y=-\\dfrac{6{,}53}{v_0^2}x^2+0{,}58x$, ou seja, $v_0^2=\\dfrac{6{,}53x^2}{0{,}58x-y}$. Substituindo a borda próxima $(3{,}5;-0{,}10)$: $v_0\\approx6{,}13$ m/s. Substituindo a borda distante $(4{,}1;-0{,}10)$: $v_0\\approx6{,}66$ m/s. Para cair dentro da caixa, $v_0$ deve estar entre esses dois valores: $6{,}1\\text{ m/s}\\le v_0\\le6{,}7$ m/s.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força normal em movimento circular vertical — ponto mais baixo (roda-gigante)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma criança de massa $40{,}0$ kg anda numa roda-gigante, descrevendo um círculo vertical de raio $10{,}0$ m com rapidez constante de $3{,}00$ m/s. Use $g=9{,}80$ m/s². Determine a força exercida pelo assento sobre a criança no ponto mais baixo da roda-gigante.",
+    "alternativas": {
+      "a": "428 N",
+      "b": "392 N",
+      "c": "356 N",
+      "d": "464 N",
+      "e": "320 N"
+    },
+    "gabarito": "a",
+    "resolucao": "No ponto mais baixo, a força resultante aponta para o centro (para cima): $N-mg=\\dfrac{mv^2}{R} \\Rightarrow N=mg+\\dfrac{mv^2}{R}=40{,}0\\times9{,}80+\\dfrac{40{,}0\\times9{,}00}{10{,}0}=392+36=428$ N.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Atrito estático — ajuste automático da força de atrito para manter o equilíbrio",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um bloco está em repouso sob a ação de uma força horizontal $F_1=10$ N e da força de atrito entre o bloco e a superfície (atrito estático, que se ajusta para manter o bloco parado). Uma segunda força horizontal, $F_2=2$ N, de sentido contrário a $F_1$, passa a ser aplicada também. Qual o módulo da força resultante sobre o bloco?",
+    "alternativas": {
+      "a": "nula",
+      "b": "2 N",
+      "c": "8 N",
+      "d": "10 N",
+      "e": "12 N"
+    },
+    "gabarito": "a",
+    "resolucao": "Antes de $F_2$ ser aplicada, o atrito estático já equilibrava exatamente $F_1=10$ N (o bloco estava em repouso). Com $F_2=2$ N em sentido oposto, a força aplicada líquida cai para $8$ N — e, como o atrito estático se AJUSTA a qualquer valor até seu máximo (que já era pelo menos $10$ N), ele simplesmente passa a valer $8$ N, mantendo o bloco em repouso. A força resultante continua nula.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Velocidade instantânea como inclinação do gráfico posição × tempo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "O gráfico abaixo mostra a posição de um objeto em função do tempo. As letras H, I, J, K e L indicam instantes de tempo particulares: a posição cresce de H até um pico em I, decresce passando por J, cruza o zero em K e continua decrescendo suavemente até se estabilizar perto de L. Em qual desses instantes a rapidez do objeto é máxima?",
+    "alternativas": {
+      "a": "H",
+      "b": "I",
+      "c": "J",
+      "d": "K",
+      "e": "L"
+    },
+    "gabarito": "c",
+    "resolucao": "A rapidez é o módulo da inclinação do gráfico posição × tempo. Em I (o pico), a inclinação é momentaneamente zero. A inclinação (em módulo) é máxima no trecho de descida mais íngreme, que fica entre o pico (I) e o cruzamento pelo zero (K) — ou seja, em J, próximo ao ponto de inflexão da curva.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$, ylabel=posição, xmin=0, xmax=10, ymin=-2.5, ymax=2.5, width=9cm, height=6cm, xtick=\\empty, ytick=\\empty]\n\\addplot[thick, blue, smooth] coordinates {(0,-0.3) (1.2,0.3) (2,1.1) (3,1.8) (3.8,1.3) (4.4,0.3) (5,-0.4) (5.6,-1.0) (7,-1.7) (8.5,-1.9) (10,-1.95)};\n\\draw[dashed] (1.2,-2.5) -- (1.2,2.5) node[above]{H};\n\\draw[dashed] (3,-2.5) -- (3,2.5) node[above]{I};\n\\draw[dashed] (4.4,-2.5) -- (4.4,2.5) node[above]{J};\n\\draw[dashed] (5.6,-2.5) -- (5.6,2.5) node[above]{K};\n\\draw[dashed] (8.5,-2.5) -- (8.5,2.5) node[above]{L};\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Decomposição da aceleração em componentes tangencial e centrípeta — movimento curvilíneo não uniforme",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um corpo se move no plano horizontal descrevendo uma trajetória curva. Em certo instante, sua velocidade aponta para o norte. Nesse mesmo instante, o corpo está virando para a direita (sentido horário, visto de cima) e diminuindo sua rapidez. Qual das alternativas descreve corretamente a direção do vetor aceleração nesse instante?",
+    "alternativas": {
+      "a": "para sudeste (componente para trás e para a direita do movimento)",
+      "b": "para nordeste (componente à frente e para a direita)",
+      "c": "exatamente para o sul (só a componente que reduz a rapidez)",
+      "d": "exatamente para o leste (só a componente centrípeta)",
+      "e": "para noroeste (componente para trás e para a esquerda)"
+    },
+    "gabarito": "a",
+    "resolucao": "A aceleração tem duas componentes: a tangencial, oposta à velocidade porque a rapidez diminui (aponta para o sul, já que a velocidade aponta para o norte); e a centrípeta, perpendicular à velocidade, apontando para o centro de curvatura — que fica à direita de quem se move para o norte e curva para a direita, ou seja, para o leste. A soma dessas duas componentes resulta numa aceleração apontando para sudeste.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Diagrama de corpo livre em elevador com aceleração — comparação entre normal e peso",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma pessoa está em pé sobre o piso de um elevador que sobe com rapidez decrescente (ou seja, desacelerando enquanto sobe). Sendo $F_f$ a força normal que o piso do elevador exerce sobre a pessoa e $F_g$ a força da gravidade sobre a pessoa, qual é a relação correta entre as intensidades dessas forças?",
+    "alternativas": {
+      "a": "$F_f<F_g$",
+      "b": "$F_f>F_g$",
+      "c": "$F_f=F_g$",
+      "d": "$F_f=0$",
+      "e": "$F_g=0$"
+    },
+    "gabarito": "a",
+    "resolucao": "Subir com rapidez decrescente significa que a aceleração aponta para baixo (oposta à velocidade, que aponta para cima). Pela segunda lei, tomando para cima como positivo: $F_f-F_g=ma$, com $a<0$ (aceleração para baixo) $\\Rightarrow F_f=F_g+ma<F_g$. A força normal é menor que o peso.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Transmissão de tração em elementos ligados em série (dinamômetros) — equilíbrio",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um peixe de $160$ g é pesado usando duas balanças de mola (dinamômetros) de massa desprezível, ligadas uma após a outra em série (uma pendurada da outra, e o peixe pendurado na de baixo), presas ao teto. O sistema está em repouso e $g=10{,}0$ m/s². Qual é a leitura de cada balança?",
+    "alternativas": {
+      "a": "a de baixo marca 1,6 N e a de cima marca zero",
+      "b": "cada uma marca 1,6 N",
+      "c": "a de cima marca 1,6 N e a de baixo marca zero",
+      "d": "marcam valores diferentes, mas a soma é 1,6 N",
+      "e": "cada uma marca 0,8 N"
+    },
+    "gabarito": "b",
+    "resolucao": "Como as balanças (e o peixe) estão em equilíbrio e ligadas em série por fios/ganchos ideais, a força de tração se transmite integralmente ao longo de toda a cadeia — cada balança mede a mesma tração, igual ao peso total sustentado: $P=mg=0{,}160\\times10{,}0=1{,}6$ N. Cada uma marca $1{,}6$ N.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Independência horizontal/vertical em queda de objeto lançado horizontalmente de uma aeronave",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um piloto de avião solta um pacote enquanto o avião voa horizontalmente com velocidade constante. Desprezando a resistência do ar, quando o pacote atinge o solo, a posição horizontal do avião estará",
+    "alternativas": {
+      "a": "atrás do pacote",
+      "b": "sobre o pacote",
+      "c": "à frente do pacote",
+      "d": "depende da rapidez do avião no instante da soltura",
+      "e": "é impossível determinar sem saber a altura do voo"
+    },
+    "gabarito": "b",
+    "resolucao": "No instante da soltura, o pacote já tem a mesma velocidade horizontal do avião. Como não há resistência do ar, essa velocidade horizontal permanece constante durante toda a queda — igual à do avião, que também voa com velocidade horizontal constante. Avião e pacote percorrem sempre a mesma distância horizontal no mesmo tempo, então o avião permanece sempre exatamente acima do pacote.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Inércia — ausência de força real na sensação de ser 'jogado para frente'",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Você está de pé num ônibus em movimento, olhando para a frente, quando o motorista freia bruscamente e você cai para frente. Qual força atuou sobre você causando essa queda?",
+    "alternativas": {
+      "a": "a força da gravidade",
+      "b": "a força normal do chão do ônibus",
+      "c": "a força de atrito estático entre você e o chão do ônibus",
+      "d": "a força de atrito cinético entre você e o chão do ônibus",
+      "e": "nenhuma força atuou sobre você para causar a queda"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela inércia (Primeira Lei de Newton), seu corpo tende a continuar se movendo com a velocidade que tinha antes da freada, enquanto o ônibus desacelera. Não é uma força que te empurra para frente — é a ausência de uma força suficiente para te desacelerar junto com o ônibus. Você continua seguindo em frente simplesmente porque nada te impediu de fazê-lo (a menos que segure em algo).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Velocidade terminal — equilíbrio entre peso e força de arraste do ar",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Quando um paraquedista pula de um avião, ele acaba alcançando uma velocidade constante, chamada velocidade terminal. A partir do momento em que essa velocidade terminal é alcançada,",
+    "alternativas": {
+      "a": "a aceleração do paraquedista é igual a g",
+      "b": "a força de arraste do ar é igual a zero",
+      "c": "a intensidade da força de arraste do ar é igual a g",
+      "d": "a velocidade do paraquedista é igual a g",
+      "e": "a intensidade da força de arraste do ar é igual à força gravitacional sobre ele"
+    },
+    "gabarito": "e",
+    "resolucao": "Velocidade terminal significa velocidade constante, ou seja, aceleração nula — logo, a força resultante sobre o paraquedista é zero. As únicas forças atuando são o peso (para baixo) e o arraste do ar (para cima); para que se cancelem, elas precisam ter a mesma intensidade.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força normal centrípeta e atrito estático vertical — 'roda da morte' em parque de diversões",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um brinquedo de parque de diversões consiste num cilindro vertical grande que gira sobre seu eixo com velocidade suficiente para que uma pessoa dentro dele fique 'colada' à parede quando o chão desaparece. Considerando as três forças que atuam sobre a pessoa (peso, normal da parede e atrito estático), qual conjunto de forças está correto?",
+    "alternativas": {
+      "a": "normal horizontal apontando para o centro do cilindro; atrito estático vertical para cima equilibrando o peso; peso vertical para baixo",
+      "b": "normal horizontal apontando para fora do cilindro; atrito vertical para cima equilibrando o peso; peso para baixo",
+      "c": "apenas a normal horizontal (para o centro) e o peso — sem atrito",
+      "d": "normal vertical para cima equilibrando o peso; atrito horizontal apontando para o centro",
+      "e": "peso e normal apontando ambos para o centro do cilindro, sem componente vertical de atrito"
+    },
+    "gabarito": "a",
+    "resolucao": "A parede empurra a pessoa para dentro (força normal, horizontal, apontando para o centro) — é essa força que fornece a aceleração centrípeta necessária ao movimento circular. Como não há chão, é o atrito estático entre a pessoa e a parede, na direção vertical, que precisa equilibrar o peso; sem ele, a pessoa escorregaria para baixo.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Atrito estático como força propulsora ao caminhar — aceleração máxima",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Os sapatos de uma enfermeira de massa $60{,}0$ kg têm coeficiente de atrito estático de $0{,}500$ com o piso. Use $g=9{,}80$ m/s². Qual é a maior aceleração horizontal que ela consegue desenvolver ao caminhar (usando o atrito estático do piso como força propulsora), e em que direção aponta essa força de atrito?",
+    "alternativas": {
+      "a": "4,90 m/s²; a favor do movimento (propulsão)",
+      "b": "4,90 m/s²; contrária ao movimento",
+      "c": "2,94 m/s²; a favor do movimento",
+      "d": "9,80 m/s²; a favor do movimento",
+      "e": "1,40 m/s²; contrária ao movimento"
+    },
+    "gabarito": "a",
+    "resolucao": "A força que impulsiona uma pessoa ao caminhar é o atrito estático do chão sobre o pé, que aponta no sentido do movimento (reação ao pé empurrar o chão para trás). Seu valor máximo é $f_{max}=\\mu_e N=\\mu_e mg=0{,}500\\times60{,}0\\times9{,}80=294$ N, o que dá $a_{max}=f_{max}/m=\\mu_e g=4{,}90$ m/s².",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Atrito entre um bloco e uma parede vertical — normal fornecida por uma força horizontal aplicada",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um bloco de $10$ kg é empurrado continuamente contra uma parede vertical por uma força horizontal de $100$ N. O coeficiente de atrito estático entre o bloco e a parede é $0{,}60$. Use $g=10$ m/s². O que acontece com o bloco?",
+    "alternativas": {
+      "a": "desliza para baixo, pois o atrito estático máximo (60 N) é menor que o peso (100 N)",
+      "b": "permanece parado, pois o atrito estático máximo (60 N) seria suficiente",
+      "c": "desliza para cima, empurrado pela força aplicada",
+      "d": "permanece parado, pois a normal já equilibra o peso",
+      "e": "desliza para baixo com velocidade constante desde o início"
+    },
+    "gabarito": "a",
+    "resolucao": "A força horizontal $F=100$ N faz o papel da normal entre o bloco e a parede: $N=F=100$ N. O atrito estático máximo possível é $f_{e,max}=\\mu_e N=0{,}60\\times100=60$ N — insuficiente para equilibrar o peso de $100$ N. Como o atrito não consegue sustentar o bloco, ele desliza para baixo (a partir daí, passa a atuar o atrito cinético).",
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[thick, pattern=north east lines] (2,-1) rectangle ++(0.3,3);\n\\draw[thick, fill=gray!20] (1.0,0.4) rectangle ++(1.0,1.0);\n\\draw[->, thick, red] (0.1,0.9) -- (0.9,0.9) node[midway, above]{$F$};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Força aplicada em ângulo para iniciar o movimento — atrito estático com componente vertical",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma caixa de peso $50$ N está em repouso sobre uma superfície horizontal, com coeficiente de atrito estático $\\mu_e=0{,}40$. Uma força é aplicada na caixa, formando um ângulo de $30°$ acima da horizontal. Qual é a intensidade mínima dessa força para colocar a caixa em movimento?",
+    "alternativas": {
+      "a": "19 N",
+      "b": "20 N",
+      "c": "25 N",
+      "d": "15 N",
+      "e": "30 N"
+    },
+    "gabarito": "a",
+    "resolucao": "Com a força na iminência de mover a caixa: na horizontal, $F\\cos\\theta=\\mu_e N$; na vertical, $N+F\\,\\text{sen}\\theta=P$. Combinando: $F=\\dfrac{\\mu_e P}{\\cos\\theta+\\mu_e\\,\\text{sen}\\theta}=\\dfrac{0{,}40\\times50}{\\cos30°+0{,}40\\,\\text{sen}30°}=\\dfrac{20}{0{,}866+0{,}20}\\approx18{,}7\\approx19$ N (menor que os $20$ N necessários com a força puramente horizontal, pois a componente vertical de $F$ alivia a normal).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força de atrito como resultante das componentes radial e tangencial em movimento circular acelerado",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um carro de $500$ kg parte do repouso numa pista circular horizontal de raio $400$ m, com aceleração tangencial constante de $0{,}50$ m/s². Qual é a intensidade da força de atrito da pista sobre o carro no instante em que as acelerações radial e tangencial se igualam?",
+    "alternativas": {
+      "a": "354 N",
+      "b": "250 N",
+      "c": "500 N",
+      "d": "177 N",
+      "e": "707 N"
+    },
+    "gabarito": "a",
+    "resolucao": "Quando $a_r=a_t=0{,}50$ m/s², a aceleração total tem módulo $a=\\sqrt{a_r^2+a_t^2}=0{,}50\\sqrt2\\approx0{,}707$ m/s². Como o atrito é a única força horizontal atuando (a pista é horizontal), $F=ma=500\\times0{,}707\\approx354$ N — direcionada a $45°$ da direção radial, na mesma direção da aceleração total.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Conceitos de Movimento",
+    "subtopico": "Diferença entre deslocamento e distância percorrida em trajetória curva",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma partícula viaja ao longo de uma trajetória curva entre dois pontos P e Q. O deslocamento da partícula NÃO depende",
+    "alternativas": {
+      "a": "da localização de P",
+      "b": "da localização de Q",
+      "c": "da distância percorrida de P até Q",
+      "d": "da menor distância entre P e Q",
+      "e": "da direção definida pelos pontos P e Q"
+    },
+    "gabarito": "c",
+    "resolucao": "O deslocamento é o vetor que liga a posição inicial à posição final — depende só de onde estão P e Q (e, portanto, da distância mínima e da direção entre eles), e não de qual caminho (nem de quão longo) a partícula percorreu entre um ponto e outro.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Conceitos de Movimento",
+    "subtopico": "Velocidade média em percursos com metades de distância iguais — média harmônica",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um carro viajou da cidade A até a cidade B por uma estrada reta. A primeira metade da DISTÂNCIA foi percorrida a $50$ km/h e a segunda metade a $90$ km/h. A velocidade média do carro entre A e B foi",
+    "alternativas": {
+      "a": "70 km/h",
+      "b": "mais próxima de 50 km/h do que de 90 km/h",
+      "c": "mais próxima de 90 km/h do que de 50 km/h",
+      "d": "tanto mais próxima de 50 km/h quanto menor a distância entre A e B",
+      "e": "tanto mais próxima de 90 km/h quanto maior a distância entre A e B"
+    },
+    "gabarito": "b",
+    "resolucao": "Quando as METADES DA DISTÂNCIA (não do tempo) são percorridas a velocidades diferentes, a velocidade média é a média HARMÔNICA, não a aritmética: $v_m=\\dfrac{2v_1v_2}{v_1+v_2}=\\dfrac{2\\times50\\times90}{140}\\approx64{,}3$ km/h. Isso é menor que a média aritmética ($70$ km/h) e mais próximo de $50$ km/h — porque o carro passa mais tempo andando na velocidade menor (já que percorre a mesma distância mais devagar).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Força resultante variável identificada pela curvatura do gráfico velocidade × tempo",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um objeto move-se ao longo de uma linha reta sobre uma superfície horizontal sem atrito; a força resultante sobre ele está sempre na direção do movimento. O gráfico mostra a velocidade em função do tempo: entre os instantes $t=0$ e $t_1$ (intervalo I) a curva sobe suavemente (não é uma reta); entre $t_1$ e $t_2$ (II) e entre $t_2$ e $t_3$ (III) a velocidade cresce e depois se mantém constante ao longo de segmentos retos; entre $t_3$ e $t_4$ (IV) a velocidade cai em linha reta; e entre $t_4$ e $t_5$ (V) a curva se estabiliza suavemente (não é uma reta). Em qual(is) intervalo(s) o módulo da força resultante é VARIÁVEL?",
+    "alternativas": {
+      "a": "I e III",
+      "b": "II e IV",
+      "c": "III",
+      "d": "IV",
+      "e": "I e V"
+    },
+    "gabarito": "e",
+    "resolucao": "A força resultante é proporcional à aceleração, isto é, à inclinação do gráfico $v\\times t$. Nos trechos retos (II, III, IV), a inclinação é constante, logo a força é constante nesses intervalos. Já nos trechos curvos (I e V), a inclinação muda continuamente — é aí que a força resultante é variável.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$, ylabel=$v$, xmin=0, xmax=10, ymin=0, ymax=5, width=9cm, height=6cm, xtick=\\empty, ytick=\\empty]\n\\addplot[thick, blue, smooth] coordinates {(0,0.3) (0.8,0.6) (1.5,1.6) (2,2.5)};\n\\addplot[thick, blue] coordinates {(2,2.5) (4,4)};\n\\addplot[thick, blue] coordinates {(4,4) (5.5,4)};\n\\addplot[thick, blue] coordinates {(5.5,4) (7.5,1.5)};\n\\addplot[thick, blue, smooth] coordinates {(7.5,1.5) (8.3,1.1) (9,1.0) (10,1.0)};\n\\draw[dashed] (2,0) -- (2,4.3) node[above]{$t_1$};\n\\draw[dashed] (4,0) -- (4,4.3) node[above]{$t_2$};\n\\draw[dashed] (5.5,0) -- (5.5,4.3) node[above]{$t_3$};\n\\draw[dashed] (7.5,0) -- (7.5,4.3) node[above]{$t_4$};\n\\node at (1,-0.4) {I};\n\\node at (3,-0.4) {II};\n\\node at (4.75,-0.4) {III};\n\\node at (6.5,-0.4) {IV};\n\\node at (8.75,-0.4) {V};\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Conceitos de Movimento",
+    "subtopico": "Relação entre velocidade constante e aceleração nula — situações fisicamente impossíveis",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Qual das seguintes situações NÃO é possível?",
+    "alternativas": {
+      "a": "um corpo tem velocidade zero e aceleração diferente de zero",
+      "b": "um corpo se move com velocidade apontando para o norte e aceleração apontando para o norte",
+      "c": "um corpo se move com velocidade apontando para o norte e aceleração apontando para o sul",
+      "d": "um corpo viaja com velocidade constante e aceleração que varia com o tempo",
+      "e": "um corpo viaja com aceleração constante e velocidade que varia com o tempo"
+    },
+    "gabarito": "d",
+    "resolucao": "Velocidade constante significa, por definição, aceleração sempre igual a zero — logo, a aceleração não pode 'variar com o tempo' nesse caso (ela é identicamente nula o tempo todo). As demais situações são fisicamente possíveis: (a) no ponto mais alto de um lançamento vertical, (b) e (c) em movimentos acelerando ou freando numa linha reta, (e) em qualquer movimento uniformemente acelerado.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Velocidade mínima no ponto mais alto de uma trajetória parabólica (projétil)",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma bola é chutada e percorre uma trajetória parabólica antes de atingir o chão. Qual das afirmações abaixo é verdadeira (desprezando a resistência do ar)?",
+    "alternativas": {
+      "a": "a aceleração da bola diminui à medida que ela sobe",
+      "b": "a velocidade da bola é zero quando ela atinge o ponto mais alto da trajetória",
+      "c": "a aceleração da bola é zero no ponto mais alto da trajetória",
+      "d": "o módulo da velocidade da bola é mínimo no ponto mais alto da trajetória",
+      "e": "o módulo da velocidade da bola é máximo no ponto mais alto da trajetória"
+    },
+    "gabarito": "d",
+    "resolucao": "No ponto mais alto, a componente vertical da velocidade é zero, mas a componente horizontal (constante durante todo o voo) permanece. Como a velocidade é a soma vetorial das duas componentes, seu módulo é mínimo — igual à componente horizontal — exatamente nesse ponto (nunca zero, a menos que o lançamento seja puramente vertical). A aceleração, por sua vez, é $g$ constante durante todo o voo, inclusive no topo.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Equilíbrio dinâmico — corpo em movimento retilíneo uniforme mesmo em trajetória inclinada",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um avião sobe com rapidez CONSTANTE de $240$ m/s ao longo de uma linha reta inclinada de $24°$ em relação à horizontal. Qual afirmação é verdadeira a respeito do módulo da força resultante sobre o avião?",
+    "alternativas": {
+      "a": "é igual a zero",
+      "b": "é igual ao peso do avião",
+      "c": "é igual ao módulo da força de resistência do ar",
+      "d": "é menor que o peso do avião mas maior que zero",
+      "e": "é igual à componente do peso do avião na direção do movimento"
+    },
+    "gabarito": "a",
+    "resolucao": "Rapidez constante em uma trajetória RETILÍNEA (mesmo que inclinada) significa velocidade vetorial constante, ou seja, aceleração nula — pela Primeira Lei de Newton, isso só é possível se a força resultante sobre o avião for zero (peso, sustentação, tração e arrasto se cancelam exatamente).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Velocidade terminal — corpo lançado com rapidez inicial maior que a terminal desacelera até atingi-la",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "A velocidade terminal de uma bola de isopor é $15$ m/s. A bola é arremessada verticalmente para baixo com velocidade inicial de $30$ m/s (maior que a terminal). Considerando o sentido para baixo como negativo, qual gráfico de velocidade em função do tempo melhor descreve o movimento?",
+    "alternativas": {
+      "a": "uma reta horizontal constante em -30 m/s",
+      "b": "uma reta subindo de -30 m/s até um valor positivo",
+      "c": "uma reta descendo continuamente, sem limite",
+      "d": "uma curva que parte de -30 m/s e se aproxima suavemente, de forma assintótica, de -15 m/s, sem nunca ultrapassar esse valor",
+      "e": "uma curva que decresce indefinidamente a partir de -30 m/s, afastando-se cada vez mais de zero"
+    },
+    "gabarito": "d",
+    "resolucao": "Como a velocidade inicial ($30$ m/s) é MAIOR que a terminal ($15$ m/s), a força de arrasto do ar nesse momento é maior que o peso, e a bola desacelera (em módulo). A rapidez diminui progressivamente e se aproxima assintoticamente da velocidade terminal ($-15$ m/s, na convenção adotada), sem nunca cruzá-la nem oscilar — é o comportamento típico de arrasto proporcional à velocidade.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$, ylabel=$v_y$ (m/s), xmin=0, xmax=6, ymin=-32, ymax=2, width=9cm, height=6cm, ytick={-30,-15}, xtick=\\empty]\n\\addplot[thick, blue, domain=0:6, samples=60] {-15 - 15*exp(-0.9*x)};\n\\draw[dashed] (0,-15) -- (6,-15);\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Variação linear da componente vertical da velocidade em lançamento oblíquo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um projétil é disparado fazendo um ângulo de $45°$ com a horizontal. Desconsiderando a resistência do ar, qual das opções melhor descreve o gráfico da componente vertical da velocidade $v_y$ em função do tempo $t$, durante todo o voo (do lançamento até o retorno ao nível de partida)?",
+    "alternativas": {
+      "a": "uma curva, começando positiva e terminando em zero",
+      "b": "uma reta horizontal, com $v_y$ constante e positivo",
+      "c": "uma parábola com concavidade para baixo",
+      "d": "uma reta com inclinação negativa constante, partindo de um valor positivo e terminando num valor negativo de mesmo módulo",
+      "e": "uma reta horizontal em $v_y=0$ durante todo o voo"
+    },
+    "gabarito": "d",
+    "resolucao": "A aceleração vertical é $-g$, constante — logo $v_y(t)=v_{0y}-gt$ é uma função LINEAR do tempo (reta), com inclinação constante e negativa. Ela começa em $v_{0y}=v_0\\,\\text{sen}45°>0$, passa por zero no ponto mais alto e termina em $-v_{0y}$ (mesmo módulo do início, com sinal trocado) no instante em que o projétil retorna ao nível de lançamento.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$, ylabel=$v_y$, xmin=0, xmax=4, ymin=-3, ymax=3, width=8cm, height=6cm, xtick=\\empty, ytick=\\empty]\n\\addplot[thick, blue] coordinates {(0.3,2.5) (3.7,-2.5)};\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Módulo da força resultante em função do ângulo entre duas forças — casos extremos",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Apenas duas forças atuam sobre um objeto: uma de $3$ N e outra de $5$ N. Para qual configuração de direções o módulo da aceleração resultante do objeto é MÍNIMO?",
+    "alternativas": {
+      "a": "as duas forças em sentidos opostos (antiparalelas)",
+      "b": "as duas forças perpendiculares entre si",
+      "c": "as duas forças no mesmo sentido (paralelas)",
+      "d": "as duas forças fazendo 45° entre si",
+      "e": "as duas forças fazendo 135° entre si"
+    },
+    "gabarito": "a",
+    "resolucao": "O módulo da resultante de dois vetores é mínimo quando eles apontam em sentidos exatamente opostos: $R=|5-3|=2$ N — o menor valor possível para essas duas forças, menor até que nas configurações perpendicular ou de 45°/135°. No sentido oposto, a diferença de módulos é o piso; no mesmo sentido, a soma ($8$ N) é o teto.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Componente horizontal de uma força aplicada em ângulo — efeito sobre o atrito de equilíbrio dinâmico",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um bloco de madeira é arrastado com velocidade constante sobre uma chapa de aço horizontal por uma força aplicada. Na situação (i), a força é horizontal. Na situação (ii), uma força de MESMO módulo é aplicada inclinada para cima, formando um ângulo com a horizontal (mas o bloco continua deslizando sobre a mesma superfície horizontal). Comparado com a situação (i), o módulo da força de atrito em (ii) é",
+    "alternativas": {
+      "a": "o mesmo",
+      "b": "maior",
+      "c": "menor",
+      "d": "menor para alguns ângulos e maior para outros",
+      "e": "depende do módulo da força aplicada"
+    },
+    "gabarito": "c",
+    "resolucao": "Em ambos os casos, o bloco se move com velocidade constante, logo o atrito equilibra exatamente a componente HORIZONTAL da força aplicada. Em (i), toda a força é horizontal, então o atrito vale $F$. Em (ii), só a componente horizontal $F\\cos\\theta$ atua nessa direção (a componente vertical apenas alivia a normal), então o atrito vale $F\\cos\\theta<F$. O atrito em (ii) é, portanto, menor.",
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[thick] (0,0) -- (3,0);\n\\draw[thick, fill=gray!20] (0.5,0) rectangle ++(1,0.8);\n\\draw[->, thick, red] (1.5,0.4) -- (2.5,0.4) node[right]{$F$};\n\\node at (1,-0.5) {(i)};\n\\draw[thick] (4.5,0) -- (7.5,0);\n\\draw[thick, fill=gray!20] (5,0) rectangle ++(1,0.8);\n\\draw[->, thick, red] (6,0.4) -- (7.0,1.2) node[above]{$F$};\n\\node at (5.5,-0.5) {(ii)};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Componentes da velocidade e aceleração em lançamento oblíquo — convenção de sinais",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Uma pedra é lançada fazendo um certo ângulo acima da horizontal. O eixo $x$ é horizontal, positivo para a direita, e o eixo $y$ é vertical, positivo para cima. Desprezando a resistência do ar, qual sentença é verdadeira?",
+    "alternativas": {
+      "a": "a componente horizontal da velocidade permanece constante e a componente vertical da aceleração é +g",
+      "b": "a componente horizontal da velocidade permanece constante e a componente vertical da aceleração é -g",
+      "c": "a componente horizontal da velocidade permanece constante e a componente vertical da aceleração é zero",
+      "d": "as componentes verticais da velocidade e da aceleração permanecem constantes",
+      "e": "a componente vertical da velocidade permanece constante e não nula, e a componente vertical da aceleração é -g"
+    },
+    "gabarito": "b",
+    "resolucao": "Sem resistência do ar, a única força é o peso, vertical para baixo — logo $a_x=0$ (velocidade horizontal constante) e $a_y=-g$ constante (já que $y$ positivo é para cima). A velocidade vertical NÃO é constante: ela diminui, se anula no topo e depois fica negativa.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Comparação de deslocamentos via área sob o gráfico velocidade × tempo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Os movimentos de um carro e de um caminhão numa estrada retilínea estão representados em gráficos de velocidade versus tempo: ambos partem emparelhados (mesma posição) no instante $t=0$; o caminhão mantém velocidade constante $v_0$ durante todo o intervalo, enquanto o carro parte do repouso e cresce linearmente até atingir também $v_0$ exatamente no instante $t_c$. Em $t_c$, qual sentença é verdadeira?",
+    "alternativas": {
+      "a": "o deslocamento do caminhão é maior que o do carro",
+      "b": "o deslocamento do carro é maior que o do caminhão",
+      "c": "caminhão e carro apresentam o mesmo deslocamento",
+      "d": "o carro está ultrapassando o caminhão em $t_c$",
+      "e": "nenhuma das sentenças acima é correta"
+    },
+    "gabarito": "a",
+    "resolucao": "O deslocamento é a área sob o gráfico $v\\times t$. O caminhão, com velocidade constante $v_0$ durante todo o intervalo, percorre uma área retangular $v_0 t_c$. O carro, cuja velocidade cresce linearmente de $0$ até $v_0$, percorre uma área triangular $\\frac12 v_0 t_c$ — exatamente metade. Logo, o deslocamento do caminhão é o dobro do deslocamento do carro.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$, ylabel=$v$, xmin=0, xmax=5, ymin=0, ymax=4, width=8cm, height=6cm, xtick={4}, xticklabels={$t_c$}, ytick=\\empty]\n\\addplot[thick, blue] coordinates {(0,3) (4,3)} node[above, pos=0.5]{caminhão};\n\\addplot[thick, red] coordinates {(0,0) (4,3)} node[below, pos=0.6]{carro};\n\\draw[dashed] (4,0) -- (4,3);\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Aceleração em movimento circular não uniforme — componentes tangencial e centrípeta combinadas",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Um corpo se move em sentido horário, com rapidez decrescente, ao longo de uma trajetória circular. Num certo ponto P, que corresponde ao ponto mais à direita da circunferência (posição das 3 horas, no relógio), qual é a direção do vetor aceleração?",
+    "alternativas": {
+      "a": "radialmente para o centro (para a esquerda)",
+      "b": "tangente à trajetória, no sentido do movimento (para baixo)",
+      "c": "diagonal, com componente para cima e para a esquerda",
+      "d": "radialmente para fora do círculo (para a direita)",
+      "e": "tangente à trajetória, sentido oposto ao movimento, sem componente radial (reta para cima)"
+    },
+    "gabarito": "c",
+    "resolucao": "Como a rapidez diminui, existe uma componente tangencial de aceleração oposta à velocidade. No ponto mais à direita, com movimento horário, a velocidade aponta para baixo — logo essa componente aponta para cima. Além disso, sempre existe a componente centrípeta, radial, apontando para o centro (para a esquerda, nesse ponto). A soma vetorial dessas duas componentes dá uma aceleração diagonal, para cima e para a esquerda.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Inércia — ausência de força real na sensação de ser 'jogado para frente'",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Uma pessoa está em pé num ônibus em movimento, olhando para a frente. De repente, o ônibus freia bruscamente e ela cai para frente. A força que atua sobre a pessoa e causa a sua queda é",
+    "alternativas": {
+      "a": "a força da gravidade",
+      "b": "a força normal do piso do ônibus sobre a pessoa",
+      "c": "a força de atrito estático entre a pessoa e o piso do ônibus",
+      "d": "a força de atrito cinético entre a pessoa e o piso do ônibus",
+      "e": "não há nenhuma força atuando sobre a pessoa que cause a queda"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela inércia, o corpo da pessoa tende a manter a velocidade que tinha antes da freada, enquanto o ônibus desacelera bruscamente. Não existe uma força extra empurrando a pessoa para frente — ela simplesmente continua se movendo, e é o ônibus que passa a se mover mais devagar do que ela.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Atrito estático sustentando uma carga sobre superfície inclinada em movimento uniforme",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Um caminhão de carga sobe uma rua de inclinação $\\theta$ com velocidade CONSTANTE. Uma carga de massa $m$ está apoiada sobre a carroceria, sem deslizar. Os coeficientes de atrito estático e cinético entre a carga e a carroceria são $\\mu_e$ e $\\mu_c$, respectivamente. Qual é a magnitude da força de atrito $f_a$ que atua sobre a carga?",
+    "alternativas": {
+      "a": "$f_a=0$",
+      "b": "$f_a=mg\\,\\text{sen}\\theta$",
+      "c": "$f_a=mg\\cos\\theta$",
+      "d": "$f_a=\\mu_e\\,mg\\,\\text{sen}\\theta$",
+      "e": "$f_a=\\mu_e\\,mg\\cos\\theta$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com velocidade constante, a aceleração da carga é nula. Ao longo do plano (direção da rua), a única força que pode equilibrar a componente do peso $mg\\,\\text{sen}\\theta$ é o atrito ESTÁTICO (a carga não desliza) — logo $f_a=mg\\,\\text{sen}\\theta$, exatamente o necessário para o equilíbrio (não necessariamente o valor máximo $\\mu_e mg\\cos\\theta$).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Ângulo máximo de inclinação antes de deslizar — relação com o coeficiente de atrito estático",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Na situação da questão anterior (caminhão subindo com velocidade constante e carga em repouso relativo sobre a carroceria), qual é a MAIOR inclinação $\\theta_{max}$ que a rua pode ter sem que a carga deslize?",
+    "alternativas": {
+      "a": "$\\theta_{max}=\\arccos(\\mu_e)$",
+      "b": "$\\theta_{max}=\\text{arcsen}(\\mu_c)$",
+      "c": "$\\theta_{max}=\\text{arcsen}(\\mu_e)$",
+      "d": "$\\theta_{max}=\\text{arctan}(\\mu_c)$",
+      "e": "$\\theta_{max}=\\text{arctan}(\\mu_e)$"
+    },
+    "gabarito": "e",
+    "resolucao": "A carga está na iminência de deslizar quando o atrito necessário atinge seu valor máximo: $mg\\,\\text{sen}\\theta_{max}=\\mu_e\\,N=\\mu_e mg\\cos\\theta_{max}$ (a normal, perpendicular à rua, vale $mg\\cos\\theta$ mesmo com velocidade constante, já que não há aceleração perpendicular ao plano). Dividindo os dois lados por $\\cos\\theta_{max}$: $\\text{tg}\\,\\theta_{max}=\\mu_e \\Rightarrow \\theta_{max}=\\text{arctan}(\\mu_e)$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Conservação do momento linear em sistema isolado (bola+Terra) — independência da energia dissipada",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Uma bola cai no solo de uma altura $h$ e retorna até uma altura $h'$ (possivelmente diferente de $h$, por perda de energia no impacto). O momento linear do sistema {bola + Terra} é conservado",
+    "alternativas": {
+      "a": "não importa a altura h' alcançada",
+      "b": "somente se h' < h",
+      "c": "somente se h' = h",
+      "d": "somente se h' > h",
+      "e": "somente se h' ≥ h"
+    },
+    "gabarito": "a",
+    "resolucao": "Tratando {bola + Terra} como um sistema isolado, a única força relevante (gravidade mútua) é INTERNA ao sistema — não há força externa significativa. O momento linear total desse sistema se conserva sempre, independentemente de quanta energia é dissipada no impacto (que afeta a energia, não o momento do sistema como um todo).",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Peso aparente em elevador — aceleração para cima durante uma freada na descida",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Uma pessoa de massa $m=80{,}0$ kg está sobre uma balança no piso de um elevador que está DESCENDO, com aceleração de $1{,}20$ m/s² apontando para CIMA (isto é, o elevador está freando durante a descida). Use $g=9{,}80$ m/s². Qual o peso aparente mostrado na balança?",
+    "alternativas": {
+      "a": "784 N",
+      "b": "96,0 N",
+      "c": "688 N",
+      "d": "880 N",
+      "e": "980 N"
+    },
+    "gabarito": "d",
+    "resolucao": "Tomando para cima como positivo: $N-mg=ma \\Rightarrow N=m(g+a)=80{,}0\\times(9{,}80+1{,}20)=80{,}0\\times11{,}0=880$ N.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força centrípeta e comprimento do raio — mesma rapidez, raios diferentes",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Duas pedras de massas idênticas são amarradas a cordas sem massa e giram em trajetórias circulares horizontais com a mesma rapidez. O comprimento de uma das cordas é o dobro do comprimento da outra. Qual o valor da tração $T_1$ na corda mais curta, em função da tração $T_2$ na corda mais longa?",
+    "alternativas": {
+      "a": "$T_1=T_2/4$",
+      "b": "$T_1=T_2/2$",
+      "c": "$T_1=T_2$",
+      "d": "$T_1=2T_2$",
+      "e": "$T_1=4T_2$"
+    },
+    "gabarito": "d",
+    "resolucao": "A tração fornece a força centrípeta: $T=mv^2/r$. Com $m$ e $v$ iguais para as duas pedras, $T\\propto1/r$. Se a corda curta tem metade do comprimento da longa, $r_1=r_2/2$, então $T_1=mv^2/r_1=mv^2/(r_2/2)=2mv^2/r_2=2T_2$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força normal no ponto mais baixo de um loop vertical — peso mais força centrípeta",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Qual é a força exercida pelo assento sobre um piloto de jato, de massa $70{,}0$ kg, ao completar um loop vertical de raio $500$ m a uma rapidez de $200$ m/s, no ponto mais baixo do loop? Use $g=9{,}80$ m/s².",
+    "alternativas": {
+      "a": "4,90×10³ N",
+      "b": "6,30×10³ N",
+      "c": "700 N",
+      "d": "660 N",
+      "e": "8,40×10³ N"
+    },
+    "gabarito": "b",
+    "resolucao": "No ponto mais baixo, a força resultante aponta para cima (para o centro): $N-mg=\\dfrac{mv^2}{r} \\Rightarrow N=m\\left(g+\\dfrac{v^2}{r}\\right)=70{,}0\\times\\left(9{,}80+\\dfrac{200^2}{500}\\right)=70{,}0\\times(9{,}80+80{,}0)=70{,}0\\times89{,}8\\approx6{,}30\\times10^3$ N.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Pêndulo cônico — decomposição da tração nas componentes vertical e horizontal",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Considere um pêndulo cônico: uma partícula de massa $m$, presa à extremidade de um fio ideal de comprimento $l$, gira com velocidade angular constante $\\omega$, descrevendo um círculo horizontal de raio $r$ (com $r<l$, já que o fio faz um ângulo com a vertical). Qual é o módulo da tração $T$ no fio?",
+    "alternativas": {
+      "a": "$T=mgl/r$",
+      "b": "$T=ml\\omega^2$",
+      "c": "$T=mr\\omega^2$",
+      "d": "$T=ml\\omega^2/r$",
+      "e": "$T=mgr/l$"
+    },
+    "gabarito": "b",
+    "resolucao": "Na direção horizontal, a componente da tração fornece a força centrípeta: $T\\,\\text{sen}\\theta=m\\omega^2 r$. Como $r=l\\,\\text{sen}\\theta$ (geometria do pêndulo), substituindo: $T\\,\\text{sen}\\theta=m\\omega^2(l\\,\\text{sen}\\theta) \\Rightarrow T=m\\omega^2 l$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica — conservação do momento com massas diferentes e sentidos opostos",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Um corpo de massa $M$ move-se no sentido positivo do eixo $x$ com rapidez $v$. Um segundo corpo, de massa $M/2$, move-se no sentido oposto com a mesma rapidez $v$. Os dois sofrem uma colisão frontal perfeitamente inelástica. Qual é a rapidez do sistema logo após a colisão?",
+    "alternativas": {
+      "a": "0",
+      "b": "v/2",
+      "c": "v/3",
+      "d": "2v/3",
+      "e": "v"
+    },
+    "gabarito": "c",
+    "resolucao": "Conservação do momento linear (eixo $x$, com o sentido do primeiro corpo como positivo): $Mv+\\dfrac{M}{2}(-v)=\\left(M+\\dfrac{M}{2}\\right)v_f \\Rightarrow \\dfrac{Mv}{2}=\\dfrac{3M}{2}v_f \\Rightarrow v_f=\\dfrac{v}{3}$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Atrito estático fornecendo a força centrípeta numa curva plana — coeficiente mínimo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Um carro percorre a $18$ m/s uma curva plana (não inclinada) de raio $1{,}0\\times10^2$ m. Qual deve ser o valor mínimo do coeficiente de atrito estático entre o pavimento e os pneus para que o carro não derrape? Use $g=9{,}80$ m/s².",
+    "alternativas": {
+      "a": "0,33",
+      "b": "0,66",
+      "c": "0,99",
+      "d": "0,55",
+      "e": "0,88"
+    },
+    "gabarito": "a",
+    "resolucao": "O atrito estático fornece toda a força centrípeta: $\\mu_e mg=\\dfrac{mv^2}{r} \\Rightarrow \\mu_e=\\dfrac{v^2}{gr}=\\dfrac{18^2}{9{,}80\\times100}=\\dfrac{324}{980}\\approx0{,}33$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Teorema impulso-momento — tempo de contato a partir da área do gráfico força × tempo",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Um deslizador de trilho de ar, de massa $600$ g, colide com uma mola fixa numa das extremidades do trilho. Antes da colisão, ele se move a $-3{,}0$ m/s; a mola o reflete, e ele sai a $+3{,}0$ m/s. Durante o contato, a força que a mola exerce sobre ele cresce linearmente de zero até um pico de $36$ N e depois decresce linearmente de volta a zero, formando um pulso triangular de duração $\\Delta t$. Por quanto tempo o deslizador fica em contato com a mola?",
+    "alternativas": {
+      "a": "0,20 s",
+      "b": "0,40 s",
+      "c": "0,10 s",
+      "d": "0,60 s",
+      "e": "0,30 s"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo teorema impulso-momento, o impulso da força (área do triângulo do gráfico $F\\times t$) é igual à variação do momento linear: $\\text{Impulso}=\\dfrac12\\times\\Delta t\\times36=\\Delta p=m\\,\\Delta v=0{,}600\\times[3{,}0-(-3{,}0)]=3{,}6$ kg·m/s. Logo, $18\\,\\Delta t=3{,}6 \\Rightarrow \\Delta t=0{,}20$ s.",
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$t$, ylabel=$F$ (N), xmin=0, xmax=1, ymin=0, ymax=40, width=8cm, height=5.5cm, xtick=\\empty, ytick={36}]\n\\addplot[thick, blue] coordinates {(0.3,0) (0.5,36) (0.7,0)};\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Variação do momento linear em colisões elástica vs. inelástica com uma parede",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Duas bolas, A e B, de massa $0{,}20$ kg cada, movem-se a $4{,}0$ m/s e colidem separadamente com uma parede vertical. A bola A rebate com a mesma rapidez (colisão elástica); a bola B para (colisão perfeitamente inelástica). Como se comparam os módulos da variação do momento linear das duas bolas?",
+    "alternativas": {
+      "a": "$|\\Delta p_B|<|\\Delta p_A|$",
+      "b": "$|\\Delta p_B|=|\\Delta p_A|$",
+      "c": "$|\\Delta p_B|>|\\Delta p_A|$",
+      "d": "$|\\Delta p_B|=2|\\Delta p_A|$",
+      "e": "$|\\Delta p_A|=4|\\Delta p_B|$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\Delta p_A=m(-v-v)=0{,}20\\times(-8{,}0)=-1{,}6$ kg·m/s (módulo $1{,}6$). $\\Delta p_B=m(0-v)=0{,}20\\times(-4{,}0)=-0{,}8$ kg·m/s (módulo $0{,}8$). A bola que inverte o sentido (A) sofre uma variação de momento maior do que a que apenas para (B): $|\\Delta p_B|<|\\Delta p_A|$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Terceira Lei de Newton em colisões — forças de mesma intensidade independente das massas",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Um carro pequeno colide frontalmente com um caminhão muito grande. Qual sentença sobre o módulo da força impulsiva MÉDIA durante a colisão é correta?",
+    "alternativas": {
+      "a": "a força média sobre o caminhão é maior que a sobre o carro",
+      "b": "a força média sobre o carro é maior que a sobre o caminhão",
+      "c": "a força média sobre o caminhão é a mesma que a sobre o carro",
+      "d": "é impossível responder sem saber as massas dos dois veículos",
+      "e": "é impossível responder sem saber as rapidezes dos dois veículos"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela Terceira Lei de Newton, a força que o carro exerce sobre o caminhão e a força que o caminhão exerce sobre o carro formam um par ação-reação, com a mesma intensidade em cada instante — e portanto também a mesma força média, independentemente das massas ou velocidades envolvidas.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Impulso mútuo em colisões — igual independentemente das massas (3ª Lei de Newton)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Numa colisão entre dois corpos de massas diferentes, como se comparam os módulos do impulso transmitido do corpo maior para o menor, e do impulso transmitido do corpo menor para o maior?",
+    "alternativas": {
+      "a": "o corpo de menor massa recebe um impulso maior",
+      "b": "o corpo de maior massa recebe um impulso maior",
+      "c": "ambos os corpos recebem o mesmo impulso",
+      "d": "a resposta depende da razão entre as massas",
+      "e": "a resposta depende da razão entre as rapidezes"
+    },
+    "gabarito": "c",
+    "resolucao": "O impulso é a integral no tempo da força. Como as forças que os dois corpos exercem um sobre o outro formam, a cada instante, um par ação-reação de mesma intensidade (3ª Lei de Newton), suas integrais no tempo — os impulsos — também são iguais em módulo, qualquer que seja a razão de massas ou velocidades.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Conservação do momento linear em explosão/fragmentação bidimensional",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Um corpo de massa $3M$, movendo-se no sentido positivo do eixo $x$ com velocidade $v_0$, se rompe em duas partes de massas $M$ e $2M$. Após a explosão, o fragmento de massa $2M$ sai com velocidade $v_2$ fazendo $30°$ acima do eixo $x$, e o fragmento de massa $M$ sai com velocidade $v_1$ fazendo $45°$ abaixo do eixo $x$ (em lados opostos do eixo). Quais são as rapidezes finais das partes, em função de $v_0$?",
+    "alternativas": {
+      "a": "$v_1=\\dfrac{2}{\\sqrt2+1}v_0;\\; v_2=\\dfrac{6}{\\sqrt3+1}v_0$",
+      "b": "$v_1=\\dfrac{3}{\\sqrt3+1}v_0;\\; v_2=\\dfrac{3\\sqrt2}{\\sqrt3+1}v_0$",
+      "c": "$v_1=\\dfrac{2}{\\sqrt2}v_0;\\; v_2=\\dfrac{4}{\\sqrt3}v_0$",
+      "d": "$v_1=\\dfrac{3\\sqrt2}{\\sqrt3+1}v_0;\\; v_2=\\dfrac{3}{\\sqrt3+1}v_0$",
+      "e": "$v_1=\\dfrac{\\sqrt2}{2}v_0;\\; v_2=\\dfrac{\\sqrt3}{4}v_0$"
+    },
+    "gabarito": "d",
+    "resolucao": "Conservação do momento em $y$: $2Mv_2\\,\\text{sen}30°=Mv_1\\,\\text{sen}45° \\Rightarrow v_2=v_1/\\sqrt2$. Conservação do momento em $x$: $3Mv_0=2Mv_2\\cos30°+Mv_1\\cos45°$. Substituindo $v_2$ e resolvendo para $v_1$: $v_1=\\dfrac{3\\sqrt2}{\\sqrt3+1}v_0\\approx1{,}55\\,v_0$, e então $v_2=v_1/\\sqrt2=\\dfrac{3}{\\sqrt3+1}v_0\\approx1{,}10\\,v_0$.",
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Aceleração centrípeta em alta rotação — conversão de rpm e razão com g",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2016,
+    "enunciado": "Numa centrífuga girando a $1000$ rpm, uma partícula está a $0{,}200$ m do eixo de rotação. Use $g=9{,}80$ m/s². Calcule a razão $r=a_c/g$ entre a aceleração centrípeta $a_c$ dessa partícula e a aceleração da gravidade.",
+    "alternativas": {
+      "a": "224",
+      "b": "45,0",
+      "c": "300",
+      "d": "20,4×10³",
+      "e": "56,0"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\omega=1000\\,\\text{rpm}=1000\\times\\dfrac{2\\pi}{60}\\approx104{,}7$ rad/s. $a_c=\\omega^2 R=(104{,}7)^2\\times0{,}200\\approx2193$ m/s². $r=a_c/g=2193/9{,}80\\approx224$.",
+    "tikz_code": null
+  }
+]

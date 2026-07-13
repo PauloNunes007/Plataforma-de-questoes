@@ -1,0 +1,534 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Conceitos de Movimento",
+    "subtopico": "Velocidade escalar média vs. velocidade vetorial média",
+    "dificuldade": "facil",
+    "enunciado": "Um corredor percorre 100 m para o leste em 10 s e depois retorna, percorrendo os mesmos 100 m de volta ao ponto de partida em 10 s. Quais são sua velocidade média (vetorial) e sua velocidade escalar média (rapidez média) no percurso total de 20 s?",
+    "alternativas": {
+      "a": "Escalar: 10 m/s; vetorial: 0",
+      "b": "Ambas 10 m/s",
+      "c": "Vetorial: 10 m/s; escalar: 0",
+      "d": "Ambas 0",
+      "e": "Escalar: 5 m/s; vetorial: 0"
+    },
+    "gabarito": "a",
+    "resolucao": "Velocidade média (vetorial) $= \\frac{\\Delta x}{\\Delta t}$ depende do DESLOCAMENTO, que aqui é zero (voltou ao início) → velocidade média = 0. Já a velocidade escalar média $=\\frac{\\text{distância total percorrida}}{\\Delta t} = \\frac{200\\text{ m}}{20\\text{ s}}=10$ m/s, pois soma a distância percorrida independentemente da direção. Confundir essas duas grandezas é um erro comum: elas só coincidem quando o movimento é numa única direção, sem inversão de sentido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Conceitos de Movimento",
+    "subtopico": "Algarismos significativos em medidas",
+    "dificuldade": "medio",
+    "enunciado": "Um estudante mede o comprimento de uma mesa e obtém $1{,}24$ m, e a largura, obtendo $0{,}6$ m. Multiplicando na calculadora, $1{,}24 \\times 0{,}6 = 0{,}744$ m². Com quantos algarismos significativos o resultado deve ser reportado?",
+    "alternativas": {
+      "a": "$0{,}7\\text{ m}^2$",
+      "b": "$0{,}744\\text{ m}^2$",
+      "c": "$0{,}74\\text{ m}^2$",
+      "d": "$0{,}7440\\text{ m}^2$",
+      "e": "Não há regra a aplicar"
+    },
+    "gabarito": "a",
+    "resolucao": "Regra de algarismos significativos para multiplicação/divisão: o resultado deve ter o mesmo número de algarismos significativos que o fator com MENOS algarismos significativos. $0{,}6$ m tem 1 algarismo significativo; $1{,}24$ m tem 3. O resultado deve ser arredondado para 1 algarismo significativo: $0{,}744 \\approx 0{,}7$ m². Reportar $0{,}744$ m² passaria uma falsa sensação de precisão que a medida de $0{,}6$ m não sustenta.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Queda livre — independência da massa",
+    "dificuldade": "facil",
+    "enunciado": "Desprezando a resistência do ar, uma bola de boliche (pesada) e uma bola de tênis (leve) são soltas do repouso, na mesma altura, ao mesmo tempo. Qual chega ao chão primeiro?",
+    "alternativas": {
+      "a": "A bola de boliche",
+      "b": "A bola de tênis",
+      "c": "Ambas ao mesmo tempo",
+      "d": "Depende do formato de cada bola",
+      "e": "Não é possível saber sem a densidade do ar"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela segunda lei de Newton, $a = F/m$. A força peso é $F=mg$, então $a = mg/m = g$ — a massa se cancela algebricamente. Esse é o insight de Galileu, contrariando a intuição aristotélica de que objetos mais pesados caem mais rápido: na ausência de resistência do ar, todos os objetos em queda livre têm exatamente a mesma aceleração $g\\approx9{,}8\\,\\text{m/s}^2$, independente da massa.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Uma Dimensão",
+    "subtopico": "Deslocamento em MRUV (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Um carro parte do repouso e acelera uniformemente, atingindo $20$ m/s após $4$ s. Qual foi a distância percorrida nesse intervalo?",
+    "alternativas": {
+      "a": "$40\\text{ m}$",
+      "b": "$80\\text{ m}$",
+      "c": "$20\\text{ m}$",
+      "d": "$60\\text{ m}$",
+      "e": "$10\\text{ m}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para aceleração constante, a velocidade média do intervalo é a média aritmética entre a velocidade inicial e final: $\\bar v = \\frac{v_0+v}{2}=\\frac{0+20}{2}=10$ m/s. A distância é $\\Delta x = \\bar v \\cdot t = 10\\times4=40$ m. Confere com $\\Delta x = v_0 t + \\frac12at^2$: como $a=\\frac{20-0}{4}=5\\text{ m/s}^2$, $\\Delta x = \\frac12(5)(16)=40$ m. (80 m viria do erro de usar a velocidade final durante todo o percurso, em vez da velocidade média.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Soma vetorial (módulo da resultante)",
+    "dificuldade": "facil",
+    "enunciado": "Dois vetores força, cada um com módulo $10$ N, são aplicados sobre um objeto, perpendiculares entre si. Qual é o módulo da força resultante?",
+    "alternativas": {
+      "a": "$20\\text{ N}$",
+      "b": "$10\\sqrt2\\approx14{,}1\\text{ N}$",
+      "c": "$0\\text{ N}$",
+      "d": "$10\\text{ N}$",
+      "e": "$5\\text{ N}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A soma vetorial depende da direção de cada vetor, não apenas do módulo. Pela lei dos cossenos, $|\\vec A+\\vec B| = \\sqrt{A^2+B^2+2AB\\cos\\theta}$. Para $\\theta=90°$ (perpendiculares), $\\cos90°=0$, dando $\\sqrt{A^2+B^2}=\\sqrt{10^2+10^2}=10\\sqrt2\\approx14{,}1$ N. Somar os módulos diretamente (20 N) só vale para vetores paralelos de mesmo sentido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[->, thick, blue] (0,0) -- (3,0) node[right] {$\\vec{A}$};\n\\draw[->, thick, red] (0,0) -- (0,3) node[above] {$\\vec{B}$};\n\\draw[dashed, blue] (3,0) -- (3,3);\n\\draw[dashed, red] (0,3) -- (3,3);\n\\draw[->, ultra thick, green!60!black] (0,0) -- (3,3) node[midway, above left] {$\\vec{A}+\\vec{B}$};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Componentes vetoriais e escolha de eixos",
+    "dificuldade": "medio",
+    "enunciado": "Um bloco está sobre um plano inclinado sem atrito. Um estudante escolhe o sistema de eixos horizontal-vertical tradicional em vez de eixos paralelo/perpendicular à rampa para decompor peso e normal. Isso é:",
+    "alternativas": {
+      "a": "Inválido; vetores exigem eixos horizontais/verticais",
+      "b": "Válido; mesma física, porém com mais álgebra",
+      "c": "Inválido em qualquer sistema de eixos",
+      "d": "Válido, e sempre resulta em contas mais simples",
+      "e": "Inválido; a Normal não existe fora da rampa"
+    },
+    "gabarito": "b",
+    "resolucao": "A escolha dos eixos coordenados é livre — é uma ferramenta matemática, não uma restrição física. Qualquer sistema de eixos leva à mesma resposta física correta. A conveniência de alinhar os eixos com o plano inclinado é que a força Normal fica inteiramente em um eixo, exigindo decompor apenas o peso; com eixos horizontal/vertical, tanto o peso quanto a normal têm componentes nos dois eixos, aumentando o trabalho algébrico sem mudar o resultado final.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Independência dos movimentos horizontal e vertical (projéteis)",
+    "dificuldade": "facil",
+    "enunciado": "Numa mesma altura, uma bala é disparada horizontalmente do topo de um penhasco no mesmo instante em que outra bala idêntica é solta em queda livre (sem velocidade horizontal). Sem resistência do ar, qual bala chega ao chão primeiro?",
+    "alternativas": {
+      "a": "A bala disparada horizontalmente",
+      "b": "A bala em queda livre",
+      "c": "Ambas ao mesmo tempo",
+      "d": "Depende da velocidade horizontal do disparo",
+      "e": "Depende do alcance horizontal atingido"
+    },
+    "gabarito": "c",
+    "resolucao": "No lançamento de projéteis, os movimentos horizontal e vertical são independentes: horizontalmente não há aceleração, e verticalmente a aceleração é sempre $g$, para baixo, em ambos os casos, independente de qualquer velocidade horizontal. Como as duas balas partem da mesma altura com a mesma velocidade vertical inicial (zero), elas descrevem o mesmo movimento vertical $y(t)=h-\\frac12gt^2$ e atingem o chão exatamente no mesmo instante.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Aceleração centrípeta (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Um carro faz uma curva de raio $50$ m a uma velocidade constante de $20$ m/s. Qual é o módulo da aceleração centrípeta?",
+    "alternativas": {
+      "a": "$8\\text{ m/s}^2$",
+      "b": "$4\\text{ m/s}^2$",
+      "c": "$0{,}4\\text{ m/s}^2$",
+      "d": "$400\\text{ m/s}^2$",
+      "e": "$20\\text{ m/s}^2$"
+    },
+    "gabarito": "a",
+    "resolucao": "A aceleração centrípeta é $a_c=\\frac{v^2}{r}=\\frac{20^2}{50}=\\frac{400}{50}=8\\text{ m/s}^2$. Ela existe mesmo com a rapidez (módulo da velocidade) constante, pois a DIREÇÃO da velocidade muda continuamente na trajetória circular — mudança de direção também é aceleração.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[thick] (0,0) circle (2);\n\\draw[->, thick, blue] (2,0) -- (2,1.2) node[right] {$\\vec v_1$};\n\\draw[->, thick, red] (2,0) -- (0.8,0) node[midway, above] {$\\vec a_c$};\n\\draw[->, thick, blue] (0,2) -- (-1.2,2) node[above] {$\\vec v_2$};\n\\draw[->, thick, red] (0,2) -- (0,0.8) node[midway, right] {$\\vec a_c$};\n\\draw[fill] (0,0) circle (1.5pt) node[below left] {centro};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Primeira Lei de Newton — força não é necessária para manter movimento",
+    "dificuldade": "facil",
+    "enunciado": "Um bloco desliza sobre uma superfície horizontal SEM atrito, com velocidade constante, sem nenhuma força horizontal sendo aplicada. Um estudante estranha: \"isso não pode estar certo, pois é preciso uma força constante para manter algo em movimento.\" Essa afirmação do estudante está:",
+    "alternativas": {
+      "a": "Certa; o bloco deveria estar parado",
+      "b": "Errada; força muda o movimento, não o mantém",
+      "c": "Certa, mas só por ser uma situação artificial",
+      "d": "Errada, mas só porque a superfície é horizontal",
+      "e": "Certa, pois toda força cessa com o tempo"
+    },
+    "gabarito": "b",
+    "resolucao": "A concepção de que \"força é necessária para manter o movimento\" é a física aristotélica, corrigida por Newton com a Primeira Lei: na ausência de força resultante, um corpo mantém sua velocidade (incluindo repouso) indefinidamente. No cotidiano, objetos param porque forças de atrito/resistência atuam sobre eles — não porque \"o movimento se esgota\" naturalmente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Diagrama de corpo livre — quais forças incluir",
+    "dificuldade": "medio",
+    "enunciado": "Ao desenhar o diagrama de corpo livre de uma caixa apoiada sobre uma mesa, um estudante desenha três vetores: o peso da caixa, a força Normal da mesa sobre a caixa, e \"a força que a caixa faz sobre a mesa\". Esse terceiro vetor:",
+    "alternativas": {
+      "a": "Deve ser incluído normalmente",
+      "b": "Não deve ser incluído; atua sobre a mesa",
+      "c": "Deve ser incluído com sinal negativo",
+      "d": "Não deve ser incluído; essa força não existe",
+      "e": "É a mesma força que o peso"
+    },
+    "gabarito": "b",
+    "resolucao": "Um diagrama de corpo livre isola UM corpo e mostra somente as forças que atuam SOBRE ele, vindas de outros corpos. A caixa sofre duas forças: peso (da Terra) e Normal (da mesa). A força \"caixa sobre mesa\" é o par de ação-reação (Terceira Lei) da Normal, mas atua sobre a MESA — pertence ao diagrama de corpo livre da mesa, não da caixa.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Peso em outro planeta (cálculo)",
+    "dificuldade": "facil",
+    "enunciado": "Um astronauta tem massa de $80$ kg. Sabendo que $g_{Lua}\\approx1{,}6\\text{ m/s}^2$, qual é o peso dele na Lua?",
+    "alternativas": {
+      "a": "$128\\text{ N}$",
+      "b": "$784\\text{ N}$",
+      "c": "$80\\text{ N}$",
+      "d": "$50\\text{ N}$",
+      "e": "$16\\text{ N}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Peso é a força gravitacional $P=mg$. Na Lua: $P=80\\times1{,}6=128$ N. (784 N seria o peso na TERRA, usando $g\\approx9{,}8\\text{ m/s}^2$ por engano — a massa, 80 kg, não muda de planeta para planeta; o que muda é $g$, e portanto o peso.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Atrito estático máximo vs. atrito cinético",
+    "dificuldade": "dificil",
+    "enunciado": "Um estudante empurra uma caixa pesada parada no chão, aumentando gradualmente a força aplicada. Enquanto a caixa permanece parada, a força de atrito parece \"acompanhar\" sua força aplicada. No instante em que a caixa começa a deslizar, fica mais fácil empurrá-la. Isso é consistente com:",
+    "alternativas": {
+      "a": "Um erro de percepção do estudante",
+      "b": "O atrito cinético ser menor que o estático máximo",
+      "c": "O atrito estático ser sempre maior, o que é impossível",
+      "d": "A caixa ter ficado mais leve",
+      "e": "Uma força externa desconhecida"
+    },
+    "gabarito": "b",
+    "resolucao": "O atrito estático não tem valor fixo — ajusta-se (reage) à força aplicada, de 0 até um valor máximo $f_{s,max}=\\mu_s N$, exatamente o suficiente para impedir o movimento relativo. Quando a força aplicada excede esse máximo, o objeto começa a deslizar, e passa a atuar o atrito CINÉTICO, $f_c=\\mu_c N$, com $\\mu_c$ tipicamente menor que $\\mu_s$ — daí a sensação de \"ficar mais fácil\" empurrar assim que a caixa começa a se mover.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Pares ação-reação atuam em corpos diferentes",
+    "dificuldade": "medio",
+    "enunciado": "Um cavalo puxa uma carroça através de uma corda. Pela Terceira Lei, a carroça puxa o cavalo de volta com força de mesmo módulo e sentido oposto. Um estudante conclui: \"então essas forças sempre se cancelam, e o sistema nunca poderia acelerar.\" O erro nesse raciocínio é:",
+    "alternativas": {
+      "a": "Não há erro; o sistema nunca poderia se mover",
+      "b": "As forças atuam em corpos diferentes",
+      "c": "A Terceira Lei só vale em repouso",
+      "d": "Cordas não transmitem força de reação",
+      "e": "O cavalo é mais pesado que a carroça"
+    },
+    "gabarito": "b",
+    "resolucao": "As forças do par ação-reação atuam em corpos DIFERENTES — uma na carroça, outra no cavalo — então jamais podem se cancelar (só se cancelam forças que atuam sobre o MESMO corpo). O movimento do sistema é determinado pelas forças EXTERNAS ao sistema cavalo+carroça: o atrito do chão sobre os cascos do cavalo supera o atrito/resistência sobre as rodas da carroça, resultando em aceleração líquida para frente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Máquina de Atwood — tração na corda (cálculo)",
+    "dificuldade": "dificil",
+    "enunciado": "Dois blocos, de massas $3$ kg e $5$ kg, estão ligados por uma corda ideal que passa por uma polia ideal (sistema de Atwood). Usando $g=10\\text{ m/s}^2$, qual é o módulo da tração na corda?",
+    "alternativas": {
+      "a": "$37{,}5\\text{ N}$",
+      "b": "$30\\text{ N}$",
+      "c": "$40\\text{ N}$",
+      "d": "$50\\text{ N}$",
+      "e": "$80\\text{ N}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A aceleração comum do sistema é $a=\\frac{(m_2-m_1)g}{m_1+m_2}=\\frac{(5-3)(10)}{8}=\\frac{20}{8}=2{,}5\\text{ m/s}^2$. A tração é a mesma nos dois lados da corda ideal sobre a polia ideal: para o bloco mais leve (que sobe), $T-m_1g=m_1a \\Rightarrow T=m_1(g+a)=3(10+2{,}5)=37{,}5$ N. Conferindo pelo bloco mais pesado (que desce): $T=m_2(g-a)=5(10-2{,}5)=37{,}5$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força centrípeta não é um novo tipo de força",
+    "dificuldade": "medio",
+    "enunciado": "Um carro faz uma curva circular em pista plana e horizontal, com atrito suficiente entre pneus e asfalto. Um estudante pergunta: \"além do peso, da normal e do atrito, existe também a força centrípeta, empurrando o carro para o centro da curva?\"",
+    "alternativas": {
+      "a": "Sim, é uma força adicional e distinta",
+      "b": "Não; é o nome dado à resultante das forças reais",
+      "c": "Sim, e é sempre igual ao peso do carro",
+      "d": "Não; em MCU não há força resultante",
+      "e": "Sim, mas só em referenciais girantes"
+    },
+    "gabarito": "b",
+    "resolucao": "\"Centrípeta\" é um adjetivo que descreve a DIREÇÃO e o EFEITO de uma força (ou resultante de forças) — aponta para o centro da trajetória e causa a aceleração $a_c=v^2/r$ — não é uma força com mecanismo físico próprio. No exemplo do carro, é o atrito estático entre pneus e pista que fornece essa resultante centrípeta. Tratar \"força centrípeta\" como uma força adicional a somar no diagrama de corpo livre é um erro comum que leva a contar a mesma força duas vezes.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força centrífuga como força fictícia (referencial não inercial)",
+    "dificuldade": "dificil",
+    "enunciado": "Um passageiro dentro de um carro que faz uma curva sente-se \"jogado\" para fora da curva, contra a porta. Do ponto de vista de um observador PARADO na calçada (referencial inercial), a explicação correta é:",
+    "alternativas": {
+      "a": "Existe uma força centrífuga real empurrando o passageiro",
+      "b": "A porta se aproxima e empurra o passageiro para dentro",
+      "c": "A gravidade muda de direção durante a curva",
+      "d": "O atrito dos pneus atua diretamente no passageiro",
+      "e": "A centrífuga e a centrípeta se cancelam"
+    },
+    "gabarito": "b",
+    "resolucao": "A \"força centrífuga\" é uma força FICTÍCIA (inercial): só \"existe\" em referenciais NÃO INERCIAIS, como o do carro que acelera ao curvar. No referencial inercial da calçada, não há força real \"para fora\" — existe a inércia do passageiro (tendência a seguir em linha reta, pela 1ª Lei) combinada com o fato de que a porta do carro se aproxima dele durante a curva, empurrando-o para dentro (força centrípeta real, de contato).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Conservação do momento — patinadores (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Dois patinadores, de massas $40$ kg e $60$ kg, inicialmente em repouso no gelo (sem atrito), empurram-se um ao outro. Se o patinador de $60$ kg sai com velocidade de $2$ m/s, qual é a velocidade (em módulo) do patinador de $40$ kg?",
+    "alternativas": {
+      "a": "$3\\text{ m/s}$",
+      "b": "$2\\text{ m/s}$",
+      "c": "$1{,}33\\text{ m/s}$",
+      "d": "$4\\text{ m/s}$",
+      "e": "$0{,}75\\text{ m/s}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como o sistema parte do repouso, o momento total é zero antes e depois: $m_1v_1=m_2v_2$ (em módulo, sentidos opostos). Então $40\\,v_1=60\\times2=120 \\Rightarrow v_1=3$ m/s. Note que o patinador de MENOR massa sai com MAIOR velocidade — é essa relação inversa que a conservação do momento impõe.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Um carro de $1000$ kg a $20$ m/s colide de forma perfeitamente inelástica (ficam grudados) com outro carro de $1500$ kg, inicialmente parado. Qual é a velocidade comum dos dois carros logo após a colisão?",
+    "alternativas": {
+      "a": "$8\\text{ m/s}$",
+      "b": "$12\\text{ m/s}$",
+      "c": "$20\\text{ m/s}$",
+      "d": "$5\\text{ m/s}$",
+      "e": "$13{,}3\\text{ m/s}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O momento linear se conserva na colisão: $m_1v_1+m_2v_2=(m_1+m_2)v'$. Substituindo: $1000(20)+1500(0)=(1000+1500)v' \\Rightarrow 20000=2500v' \\Rightarrow v'=8$ m/s. A energia cinética NÃO se conserva nessa colisão (parte vira calor/deformação) — só o momento.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Energia potencial gravitacional depende do referencial",
+    "dificuldade": "facil",
+    "enunciado": "Um estudante pergunta qual é \"a\" energia potencial gravitacional de um livro sobre uma mesa de 1 m de altura. Sobre isso:",
+    "alternativas": {
+      "a": "Existe um único valor universal",
+      "b": "Depende do nível de referência escolhido",
+      "c": "Só pode ser medida a partir do centro da Terra",
+      "d": "Não existe para objetos em repouso",
+      "e": "É sempre igual à energia cinética do objeto"
+    },
+    "gabarito": "b",
+    "resolucao": "$U=mgh$ envolve uma altura $h$ medida a partir de um nível de referência escolhido arbitrariamente (o chão, a mesa, o nível do mar) — diferentes escolhas dão diferentes valores numéricos de $U$ para a mesma situação física. Só importam DIFERENÇAS de energia potencial ($\\Delta U$), que não dependem do referencial escolhido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Energia potencial elástica (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Uma mola tem constante elástica $k=200$ N/m. Qual é a energia potencial elástica armazenada quando ela é comprimida $0{,}1$ m?",
+    "alternativas": {
+      "a": "$1\\text{ J}$",
+      "b": "$2\\text{ J}$",
+      "c": "$10\\text{ J}$",
+      "d": "$0{,}5\\text{ J}$",
+      "e": "$20\\text{ J}$"
+    },
+    "gabarito": "a",
+    "resolucao": "$U=\\frac12kx^2=\\frac12(200)(0{,}1)^2=\\frac12(200)(0{,}01)=1$ J. Repare que $U$ é proporcional ao QUADRADO da deformação — dobrando a compressão para $0{,}2$ m, a energia quadruplicaria para $4$ J, não dobraria para $2$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho de força perpendicular ao deslocamento é nulo",
+    "dificuldade": "medio",
+    "enunciado": "Um satélite descreve uma órbita circular perfeita em torno da Terra, sob ação exclusiva da força gravitacional. Qual é o trabalho realizado pela gravidade durante uma volta completa?",
+    "alternativas": {
+      "a": "Positivo",
+      "b": "Negativo",
+      "c": "Zero",
+      "d": "Indefinido",
+      "e": "Igual à energia potencial gravitacional"
+    },
+    "gabarito": "c",
+    "resolucao": "O trabalho de uma força depende do ângulo entre a força e o deslocamento: $W=\\int \\vec F\\cdot d\\vec s$. Numa órbita circular, a força gravitacional aponta sempre para o centro, enquanto o deslocamento é sempre tangente à trajetória — direções sempre perpendiculares. Como $\\cos90°=0$, a força não realiza trabalho, consistente com a rapidez do satélite permanecer constante durante toda a órbita.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho de força variável — área sob o gráfico F×x",
+    "dificuldade": "dificil",
+    "enunciado": "O gráfico de uma força $F(x)$ em função da posição mostra uma reta que sobe de $F=0$ em $x=0$ até $F=10$ N em $x=4$ m. Qual é o trabalho realizado por essa força ao deslocar o objeto de $x=0$ a $x=4$ m?",
+    "alternativas": {
+      "a": "$20\\text{ J}$",
+      "b": "$40\\text{ J}$",
+      "c": "$0\\text{ J}$",
+      "d": "$10\\text{ J}$",
+      "e": "$5\\text{ J}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Quando a força varia com a posição, o trabalho é a integral $W=\\int_0^4 F(x)\\,dx$, geometricamente a ÁREA sob o gráfico $F$ vs. $x$. Como o gráfico é uma reta de $(0,0)$ a $(4,10)$, a área é a de um triângulo: $\\frac12\\cdot4\\cdot10=20$ J. Multiplicar o valor final da força (10 N) pelo deslocamento total (40 J) superestima o trabalho, pois ignora que a força era menor durante boa parte do percurso.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$x$ (m), ylabel=$F$ (N), xmin=-0.5, xmax=5, ymin=-1, ymax=12, width=8cm, height=6cm]\n\\addplot[thick, blue] coordinates {(0,0) (4,10)};\n\\addplot[fill=blue, fill opacity=0.2, draw=none] coordinates {(0,0) (4,10) (4,0)} \\closedcycle;\n\\end{axis}"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Momento de inércia de um disco (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Um disco maciço homogêneo tem massa $2$ kg e raio $0{,}5$ m, e gira em torno do seu eixo central ($I=\\frac12mR^2$). Qual é o seu momento de inércia?",
+    "alternativas": {
+      "a": "$0{,}25\\text{ kg}\\cdot\\text{m}^2$",
+      "b": "$0{,}5\\text{ kg}\\cdot\\text{m}^2$",
+      "c": "$1\\text{ kg}\\cdot\\text{m}^2$",
+      "d": "$0{,}125\\text{ kg}\\cdot\\text{m}^2$",
+      "e": "$2\\text{ kg}\\cdot\\text{m}^2$"
+    },
+    "gabarito": "a",
+    "resolucao": "$I=\\frac12mR^2=\\frac12(2)(0{,}5)^2=\\frac12(2)(0{,}25)=0{,}25\\text{ kg}\\cdot\\text{m}^2$. Um anel de mesma massa e raio teria $I=mR^2=0{,}5\\text{ kg}\\cdot\\text{m}^2$ — o dobro, pois toda sua massa está na borda, enquanto o disco maciço tem massa distribuída mais perto do eixo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Torque — braço de alavanca (cálculo)",
+    "dificuldade": "facil",
+    "enunciado": "Uma força de $30$ N é aplicada perpendicularmente a uma porta, a $0{,}8$ m de distância das dobradiças (eixo de rotação). Qual é o torque produzido?",
+    "alternativas": {
+      "a": "$24\\text{ N}\\cdot\\text{m}$",
+      "b": "$30\\text{ N}\\cdot\\text{m}$",
+      "c": "$0{,}8\\text{ N}\\cdot\\text{m}$",
+      "d": "$37{,}5\\text{ N}\\cdot\\text{m}$",
+      "e": "$240\\text{ N}\\cdot\\text{m}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para força perpendicular ao braço de alavanca, $\\tau=rF=0{,}8\\times30=24\\text{ N}\\cdot\\text{m}$. Quanto maior o braço de alavanca $r$ (distância do eixo ao ponto de aplicação), maior o torque para a mesma força — por isso é mais fácil abrir uma porta empurrando na maçaneta do que perto das dobradiças.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Lei da Gravitação Universal — dependência do inverso do quadrado",
+    "dificuldade": "facil",
+    "enunciado": "Se a distância entre dois corpos celestes triplica, o que acontece com a força gravitacional entre eles (massas constantes)?",
+    "alternativas": {
+      "a": "Fica $1/9$ do valor original",
+      "b": "Também triplica",
+      "c": "Fica um terço do valor original",
+      "d": "Permanece a mesma",
+      "e": "Fica 9 vezes maior"
+    },
+    "gabarito": "a",
+    "resolucao": "A Lei da Gravitação Universal é $F=G\\frac{m_1m_2}{r^2}$ — inversamente proporcional ao QUADRADO da distância. Se $r\\to3r$, então $r^2\\to9r^2$, e $F\\to F/9$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Peso aparente em órbita — 'ausência de gravidade' é um equívoco",
+    "dificuldade": "dificil",
+    "enunciado": "Astronautas na Estação Espacial Internacional (ISS), a cerca de 400 km de altitude, flutuam em aparente \"ausência de gravidade\" (microgravidade). Isso ocorre porque:",
+    "alternativas": {
+      "a": "A gravidade da Terra não alcança essa altitude",
+      "b": "A gravidade continua quase plena; é queda livre orbital contínua",
+      "c": "Estão fora do campo gravitacional do sistema solar",
+      "d": "A ISS anula a gravidade artificialmente",
+      "e": "A gravidade é substituída pela força centrífuga"
+    },
+    "gabarito": "b",
+    "resolucao": "A gravidade na altitude da ISS é quase 90% da que existe na superfície — é ela quem fornece a força centrípeta que mantém a órbita. A sensação de ausência de peso ocorre porque tanto a ISS quanto os astronautas estão em QUEDA LIVRE simultânea: sem força normal de contato entre astronauta e \"chão\" (ambos aceleram igualmente sob a gravidade), não há peso APARENTE, mesmo com a gravidade real continuando a agir plenamente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Período do pêndulo simples (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Um pêndulo simples tem comprimento $L=2{,}5$ m. Usando $g=10\\text{ m/s}^2$, qual é o período de oscilação (pequenas oscilações)?",
+    "alternativas": {
+      "a": "$\\pi\\text{ s}\\approx3{,}14\\text{ s}$",
+      "b": "$2\\pi\\text{ s}\\approx6{,}28\\text{ s}$",
+      "c": "$0{,}5\\text{ s}$",
+      "d": "$\\frac{\\pi}{2}\\text{ s}$",
+      "e": "$4\\text{ s}$"
+    },
+    "gabarito": "a",
+    "resolucao": "$T=2\\pi\\sqrt{\\frac{L}{g}}=2\\pi\\sqrt{\\frac{2{,}5}{10}}=2\\pi\\sqrt{0{,}25}=2\\pi(0{,}5)=\\pi\\approx3{,}14$ s. Note que a massa do pêndulo não entra na fórmula — dois pêndulos de mesmo comprimento e massas diferentes têm o mesmo período.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Ressonância — amplitude máxima próxima da frequência natural",
+    "dificuldade": "medio",
+    "enunciado": "Um sistema massa-mola tem frequência natural de oscilação $f_0$. Se uma força externa periódica é aplicada ao sistema, a amplitude de oscilação em regime estacionário será máxima quando:",
+    "alternativas": {
+      "a": "A frequência externa for muito maior que $f_0$",
+      "b": "A frequência externa for muito menor que $f_0$",
+      "c": "A frequência externa for próxima de $f_0$",
+      "d": "A amplitude não depender da frequência externa",
+      "e": "A frequência externa for exatamente zero"
+    },
+    "gabarito": "c",
+    "resolucao": "Quando $f\\approx f_0$, ocorre RESSONÂNCIA: a energia é bombeada para o sistema de forma síncrona com seu movimento natural, reforçando a oscilação a cada ciclo e produzindo amplitudes muito maiores (limitadas, na prática, pelo amortecimento). Esse fenômeno explica desde empurrar um balanço no ritmo certo até falhas estruturais quando frequências externas coincidem com frequências naturais de uma estrutura.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

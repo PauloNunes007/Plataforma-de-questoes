@@ -1,0 +1,382 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Lei do inverso do quadrado (cálculo)",
+    "dificuldade": "facil",
+    "enunciado": "Duas cargas puntiformes idênticas exercem força de repulsão $F$ uma sobre a outra quando separadas por uma distância $d$. Se a distância for reduzida para $d/2$, qual será a nova força?",
+    "alternativas": {
+      "a": "$4F$",
+      "b": "$2F$",
+      "c": "$F/2$",
+      "d": "$F/4$",
+      "e": "$F$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela Lei de Coulomb, $F=k\\frac{q_1q_2}{r^2}$ — inversamente proporcional ao QUADRADO da distância. Reduzindo $r$ para $r/2$: $F'=k\\frac{q_1q_2}{(r/2)^2}=4k\\frac{q_1q_2}{r^2}=4F$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Processos de eletrização — condução",
+    "dificuldade": "medio",
+    "enunciado": "Um bastão de vidro é atritado com seda e fica carregado positivamente. Ao encostar esse bastão em uma esfera metálica neutra e isolada, e depois afastá-lo, a esfera fica carregada por qual processo, e com que sinal?",
+    "alternativas": {
+      "a": "Positivamente, por condução",
+      "b": "Negativamente, por condução",
+      "c": "Permanece neutra",
+      "d": "Positivamente, por indução",
+      "e": "Negativamente, por indução"
+    },
+    "gabarito": "a",
+    "resolucao": "No contato direto (condução), elétrons livres da esfera metálica são atraídos pelo bastão positivo e migram para ele, até que o sistema atinja equilíbrio. Ao afastar o bastão, a esfera fica com déficit de elétrons — carregada POSITIVAMENTE, com o MESMO sinal do bastão. Isso é diferente da eletrização por indução, que não exige contato e resulta em carga de sinal OPOSTO ao do indutor.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Torque sobre um dipolo em campo uniforme",
+    "dificuldade": "facil",
+    "enunciado": "Um dipolo elétrico é colocado em um campo elétrico externo uniforme, não alinhado com o campo. O que o dipolo experimenta?",
+    "alternativas": {
+      "a": "Um torque, tendendo a alinhá-lo com o campo",
+      "b": "Uma força resultante não nula",
+      "c": "Nenhum efeito, pois a carga total é zero",
+      "d": "Uma força de atração ao centro do campo",
+      "e": "Uma aceleração linear constante"
+    },
+    "gabarito": "a",
+    "resolucao": "Em campo UNIFORME, as forças sobre as duas cargas do dipolo ($+q$ e $-q$) têm mesmo módulo e sentidos opostos, cancelando-se (força resultante nula). Porém, como essas forças atuam em pontos diferentes (separados pela distância do dipolo), há um TORQUE resultante $\\vec\\tau=\\vec p\\times\\vec E$, que tende a girar o dipolo até alinhá-lo com $\\vec E$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Superposição de campos de cargas puntiformes (cálculo)",
+    "dificuldade": "dificil",
+    "enunciado": "Duas cargas puntiformes, $+2\\ \\mu C$ e $-2\\ \\mu C$, estão fixas em dois pontos separados por $2$ m. Qual é o módulo do campo elétrico no ponto médio entre elas (use $k=9\\times10^9\\text{ N}\\cdot\\text{m}^2/\\text{C}^2$)?",
+    "alternativas": {
+      "a": "$3{,}6\\times10^4\\text{ N/C}$",
+      "b": "$1{,}8\\times10^4\\text{ N/C}$",
+      "c": "$0$",
+      "d": "$9\\times10^4\\text{ N/C}$",
+      "e": "$7{,}2\\times10^4\\text{ N/C}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Cada carga está a $r=1$ m do ponto médio. O módulo do campo de cada uma é $E=k\\frac{|q|}{r^2}=9\\times10^9\\times\\frac{2\\times10^{-6}}{1^2}=1{,}8\\times10^4$ N/C. Num dipolo, no ponto médio, o campo da carga positiva aponta PARA FORA dela (em direção à carga negativa) e o campo da carga negativa aponta PARA ELA (também na mesma direção) — os dois campos têm a MESMA direção e se SOMAM (não se cancelam): $E_{total}=2\\times1{,}8\\times10^4=3{,}6\\times10^4$ N/C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Fluxo elétrico — independência do tamanho da superfície",
+    "dificuldade": "facil",
+    "enunciado": "Uma carga puntiforme $+q$ está no centro de uma superfície gaussiana esférica de raio $R$. Se o raio da superfície for dobrado para $2R$ (mantendo a carga no centro), o fluxo elétrico total através da superfície:",
+    "alternativas": {
+      "a": "Permanece o mesmo",
+      "b": "Dobra",
+      "c": "Fica um quarto",
+      "d": "Quadruplica",
+      "e": "Cai pela metade"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela Lei de Gauss, $\\Phi_E=\\frac{Q_{enc}}{\\varepsilon_0}$ — o fluxo elétrico total através de uma superfície fechada depende APENAS da carga líquida envolvida por ela, não do tamanho, formato ou posição exata da superfície. Como a carga envolvida ($+q$) não muda ao dobrar o raio, o fluxo permanece o mesmo (mesmo que o campo elétrico em cada ponto da superfície maior seja mais fraco — o fluxo é a integral do campo sobre uma área maior, e os dois efeitos se cancelam exatamente).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Simetria cilíndrica (cálculo)",
+    "dificuldade": "dificil",
+    "enunciado": "Um fio retilíneo infinito tem densidade linear de carga $\\lambda=2\\times10^{-6}\\text{ C/m}$. Usando a Lei de Gauss para simetria cilíndrica ($E=\\frac{\\lambda}{2\\pi\\varepsilon_0 r}$, com $\\frac{1}{2\\pi\\varepsilon_0}\\approx1{,}8\\times10^{10}\\text{ N}\\cdot\\text{m/C}$), qual é o campo elétrico a $r=0{,}5$ m do fio?",
+    "alternativas": {
+      "a": "$7{,}2\\times10^4\\text{ N/C}$",
+      "b": "$3{,}6\\times10^4\\text{ N/C}$",
+      "c": "$1{,}8\\times10^4\\text{ N/C}$",
+      "d": "$1{,}44\\times10^5\\text{ N/C}$",
+      "e": "$9\\times10^3\\text{ N/C}$"
+    },
+    "gabarito": "a",
+    "resolucao": "$E=\\frac{\\lambda}{2\\pi\\varepsilon_0 r} = \\lambda\\times1{,}8\\times10^{10}\\div r = (2\\times10^{-6})(1{,}8\\times10^{10})\\div0{,}5 = (3{,}6\\times10^4)\\div0{,}5=7{,}2\\times10^4$ N/C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Superfícies equipotenciais e trabalho",
+    "dificuldade": "facil",
+    "enunciado": "Uma partícula carregada se move ao longo de uma superfície equipotencial. O trabalho realizado pela força elétrica sobre essa partícula é:",
+    "alternativas": {
+      "a": "Zero",
+      "b": "Positivo, sempre",
+      "c": "Negativo, sempre",
+      "d": "Depende da velocidade da partícula",
+      "e": "Depende apenas da carga"
+    },
+    "gabarito": "a",
+    "resolucao": "O trabalho realizado pela força elétrica é $W=q\\Delta V=q(V_f-V_i)$. Numa superfície equipotencial, todos os pontos têm o MESMO potencial, então $\\Delta V=0$ para qualquer deslocamento dentro dela, e portanto $W=0$ — independente do caminho percorrido ou da velocidade da partícula.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Potencial de carga puntiforme (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "O potencial elétrico a uma distância de $0{,}3$ m de uma carga puntiforme é $300$ V. Qual é o valor dessa carga (use $k=9\\times10^9\\text{ N}\\cdot\\text{m}^2/\\text{C}^2$)?",
+    "alternativas": {
+      "a": "$10\\text{ nC}$",
+      "b": "$1\\text{ nC}$",
+      "c": "$100\\text{ nC}$",
+      "d": "$9\\text{ nC}$",
+      "e": "$0{,}1\\text{ nC}$"
+    },
+    "gabarito": "a",
+    "resolucao": "$V=\\frac{kq}{r} \\Rightarrow q=\\frac{Vr}{k}=\\frac{300\\times0{,}3}{9\\times10^9}=\\frac{90}{9\\times10^9}=10^{-8}\\text{ C}=10\\text{ nC}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Energia armazenada em capacitor (cálculo)",
+    "dificuldade": "facil",
+    "enunciado": "Um capacitor de placas paralelas tem capacitância $C=4\\ \\mu F$ e está carregado com diferença de potencial $V=10$ V. Qual é a energia armazenada nele?",
+    "alternativas": {
+      "a": "$200\\ \\mu J$",
+      "b": "$400\\ \\mu J$",
+      "c": "$40\\ \\mu J$",
+      "d": "$20\\ \\mu J$",
+      "e": "$2\\ \\mu J$"
+    },
+    "gabarito": "a",
+    "resolucao": "$U=\\frac12CV^2=\\frac12(4\\times10^{-6})(10)^2=\\frac12(4\\times10^{-6})(100)=2\\times10^{-4}\\text{ J}=200\\ \\mu J$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[very thick] (-1,-1.5) -- (-1,1.5);\n\\draw[very thick] (1,-1.5) -- (1,1.5);\n\\draw[->, thick, red] (-0.8,0.8) -- (0.8,0.8);\n\\draw[->, thick, red] (-0.8,0) -- (0.8,0);\n\\draw[->, thick, red] (-0.8,-0.8) -- (0.8,-0.8);\n\\node at (-1,1.8) {$+Q$};\n\\node at (1,1.8) {$-Q$};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Efeito do dielétrico em capacitor isolado",
+    "dificuldade": "medio",
+    "enunciado": "Um capacitor de placas paralelas, com carga $Q$ fixa (desconectado de qualquer bateria), tem um dielétrico inserido entre suas placas. O que acontece com sua capacitância e com a diferença de potencial entre as placas?",
+    "alternativas": {
+      "a": "Capacitância aumenta; a diferença de potencial diminui",
+      "b": "Capacitância diminui; a diferença de potencial aumenta",
+      "c": "Ambas aumentam",
+      "d": "Ambas permanecem iguais",
+      "e": "Capacitância aumenta; a diferença de potencial também aumenta"
+    },
+    "gabarito": "a",
+    "resolucao": "Inserir um dielétrico multiplica a capacitância pela constante dielétrica $\\kappa>1$: $C=\\kappa C_0$. Como a carga $Q$ está fixa (capacitor isolado, não conectado a bateria), a diferença de potencial $V=Q/C$ DIMINUI quando $C$ aumenta — o dielétrico reduz o campo elétrico entre as placas ao se polarizar, opondo-se parcialmente ao campo original.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Lei de Ohm (cálculo)",
+    "dificuldade": "facil",
+    "enunciado": "Um resistor de $R=50\\ \\Omega$ é conectado a uma diferença de potencial de $V=10$ V. Qual é a corrente que passa por ele?",
+    "alternativas": {
+      "a": "$0{,}2\\text{ A}$",
+      "b": "$5\\text{ A}$",
+      "c": "$500\\text{ A}$",
+      "d": "$0{,}5\\text{ A}$",
+      "e": "$2\\text{ A}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela Lei de Ohm, $I=\\frac{V}{R}=\\frac{10}{50}=0{,}2$ A.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Resistência — dependência com comprimento e área",
+    "dificuldade": "dificil",
+    "enunciado": "Dois fios são feitos do mesmo material (mesma resistividade $\\rho$), mas o fio B tem o dobro do comprimento e o dobro do diâmetro do fio A. Como a resistência do fio B se compara à do fio A?",
+    "alternativas": {
+      "a": "É a metade",
+      "b": "É o dobro",
+      "c": "É a mesma",
+      "d": "É um quarto",
+      "e": "É quatro vezes maior"
+    },
+    "gabarito": "a",
+    "resolucao": "$R=\\rho\\frac{L}{A}$. Dobrando o comprimento, $L_B=2L_A$. Dobrando o DIÂMETRO, o RAIO também dobra, e como $A=\\pi r^2$, a ÁREA quadruplica: $A_B=4A_A$. Logo $R_B=\\rho\\frac{2L_A}{4A_A}=\\frac12\\left(\\rho\\frac{L_A}{A_A}\\right)=\\frac{R_A}{2}$ — a resistência do fio B é a METADE da do fio A, porque o aumento de área (que reduz a resistência) domina sobre o aumento de comprimento (que a aumenta).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Resistores em série (cálculo)",
+    "dificuldade": "facil",
+    "enunciado": "Três resistores de $10\\ \\Omega$, $20\\ \\Omega$ e $30\\ \\Omega$ são associados em SÉRIE a uma bateria de $12$ V. Qual é a corrente total fornecida pela bateria?",
+    "alternativas": {
+      "a": "$0{,}2\\text{ A}$",
+      "b": "$2\\text{ A}$",
+      "c": "$0{,}4\\text{ A}$",
+      "d": "$60\\text{ A}$",
+      "e": "$0{,}12\\text{ A}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Em série, as resistências somam: $R_{total}=10+20+30=60\\ \\Omega$. Pela Lei de Ohm: $I=\\frac{V}{R_{total}}=\\frac{12}{60}=0{,}2$ A.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{circuitikz}\n\\draw (0,0) to[battery1, l=$12\\,V$] (0,3)\nto[R=$10\\,\\Omega$] (3,3)\nto[R=$20\\,\\Omega$] (6,3)\nto[R=$30\\,\\Omega$] (6,0)\n-- (0,0);\n\\end{circuitikz}"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Lei das Malhas de Kirchhoff — conservação de energia",
+    "dificuldade": "dificil",
+    "enunciado": "A Lei das Malhas de Kirchhoff (a soma das variações de potencial ao longo de qualquer laço fechado de um circuito é zero) é uma consequência direta de qual princípio físico?",
+    "alternativas": {
+      "a": "Conservação de energia",
+      "b": "Conservação de carga",
+      "c": "Conservação de momento linear",
+      "d": "Lei de Coulomb diretamente",
+      "e": "Lei de Ampère"
+    },
+    "gabarito": "a",
+    "resolucao": "O potencial elétrico é uma função de estado (como a energia potencial): percorrendo um caminho fechado, retorna-se ao ponto de partida com o MESMO potencial, então a soma algébrica das variações de potencial no laço deve ser zero — isso é essencialmente conservação de energia aplicada ao circuito. (A outra lei de Kirchhoff, a Lei dos Nós, é consequência da conservação de CARGA — as duas leis vêm de princípios de conservação diferentes.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Força magnética sobre carga em movimento (caso paralelo)",
+    "dificuldade": "facil",
+    "enunciado": "Uma partícula carregada se move com velocidade $\\vec v$ paralela a um campo magnético uniforme $\\vec B$ (mesma direção). Qual é a força magnética sobre a partícula?",
+    "alternativas": {
+      "a": "Zero",
+      "b": "Máxima, na direção de $\\vec v$",
+      "c": "Máxima, perpendicular a $\\vec v$ e $\\vec B$",
+      "d": "Depende da carga, mas nunca é zero",
+      "e": "Igual ao peso da partícula"
+    },
+    "gabarito": "a",
+    "resolucao": "A força magnética é $\\vec F=q\\vec v\\times\\vec B$, com módulo $F=qvB\\sin\\theta$, onde $\\theta$ é o ângulo entre $\\vec v$ e $\\vec B$. Quando $\\vec v$ é paralelo a $\\vec B$, $\\theta=0°$, e $\\sin0°=0$ — a força é ZERO, independente do módulo de $v$, $B$ ou da carga $q$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[->, thick, blue] (-2,1) -- (2,1);\n\\draw[->, thick, blue] (-2,0) -- (2,0);\n\\draw[->, thick, blue] (-2,-1) -- (2,-1);\n\\node at (2.3,0) {$\\vec B$};\n\\draw[->, ultra thick, red] (-1.5,-1.8) -- (1.5,-1.8) node[right] {};\n\\node at (1.9,-1.8) {$\\vec v$};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Força magnética sobre carga em movimento (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Um próton (carga $q=1{,}6\\times10^{-19}$ C) se move com velocidade $v=2\\times10^6$ m/s, perpendicular a um campo magnético $B=0{,}5$ T. Qual é o módulo da força magnética sobre o próton?",
+    "alternativas": {
+      "a": "$1{,}6\\times10^{-13}\\text{ N}$",
+      "b": "$1{,}6\\times10^{-19}\\text{ N}$",
+      "c": "$3{,}2\\times10^{-13}\\text{ N}$",
+      "d": "$8\\times10^{-14}\\text{ N}$",
+      "e": "$1{,}6\\times10^{-6}\\text{ N}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $\\vec v\\perp\\vec B$, $\\sin\\theta=1$, então $F=qvB=(1{,}6\\times10^{-19})(2\\times10^6)(0{,}5)$. Calculando: $(1{,}6\\times10^{-19})(2\\times10^6)=3{,}2\\times10^{-13}$, e $3{,}2\\times10^{-13}\\times0{,}5=1{,}6\\times10^{-13}$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Lei de Lenz — sentido da corrente induzida",
+    "dificuldade": "medio",
+    "enunciado": "Um ímã é aproximado, com o polo norte à frente, de uma espira condutora fechada. Pela Lei de Lenz, o efeito da corrente induzida na espira é:",
+    "alternativas": {
+      "a": "Criar um campo que se opõe ao aumento do fluxo (repele o ímã)",
+      "b": "Criar um campo que reforça o fluxo (atrai o ímã)",
+      "c": "Não há corrente induzida, pois é o ímã que se move",
+      "d": "A corrente só é induzida quando o ímã para",
+      "e": "O sentido é imprevisível sem mais dados"
+    },
+    "gabarito": "a",
+    "resolucao": "A Lei de Lenz afirma que a corrente induzida sempre se opõe à VARIAÇÃO do fluxo magnético que a gerou (não ao fluxo em si). Como o fluxo através da espira está AUMENTANDO (o ímã se aproxima), a corrente induzida cria seu próprio campo magnético na direção OPOSTA a esse aumento — o que, pela força entre polos magnéticos iguais, resulta numa repulsão sobre o ímã. Note que o que importa é o MOVIMENTO RELATIVO entre ímã e espira — tanto faz qual dos dois se move.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Fem induzida (cálculo)",
+    "dificuldade": "dificil",
+    "enunciado": "Uma espira circular de área $0{,}2\\text{ m}^2$ está imersa em um campo magnético uniforme perpendicular ao seu plano, que varia de $0{,}5$ T para $0{,}1$ T em $2$ s. Qual é o módulo da fem induzida na espira?",
+    "alternativas": {
+      "a": "$0{,}04\\text{ V}$",
+      "b": "$0{,}4\\text{ V}$",
+      "c": "$0{,}08\\text{ V}$",
+      "d": "$4\\text{ V}$",
+      "e": "$0{,}02\\text{ V}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela Lei de Faraday, $|\\varepsilon|=\\left|\\frac{\\Delta\\Phi}{\\Delta t}\\right|=A\\left|\\frac{\\Delta B}{\\Delta t}\\right|=0{,}2\\times\\left|\\frac{0{,}1-0{,}5}{2}\\right|=0{,}2\\times0{,}2=0{,}04$ V.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Energia em circuito LC ideal",
+    "dificuldade": "facil",
+    "enunciado": "Em um circuito LC ideal (sem resistência) oscilando livremente, a energia total do sistema:",
+    "alternativas": {
+      "a": "Permanece constante, alternando entre capacitor e indutor",
+      "b": "Diminui exponencialmente com o tempo",
+      "c": "Aumenta indefinidamente",
+      "d": "Fica sempre armazenada só no capacitor",
+      "e": "Fica sempre armazenada só no indutor"
+    },
+    "gabarito": "a",
+    "resolucao": "Sem resistência (sem dissipação), a energia total do circuito LC se conserva, oscilando periodicamente entre energia elétrica armazenada no campo do capacitor ($U_C=\\frac{q^2}{2C}$) e energia magnética armazenada no campo do indutor ($U_L=\\frac12Li^2$) — análogo à troca entre energia cinética e potencial elástica num sistema massa-mola sem atrito.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Tensão eficaz (RMS) em corrente alternada (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Uma fonte de corrente alternada tem tensão de pico $V_0=170$ V. Qual é a tensão eficaz (RMS), usada para calcular a potência média dissipada?",
+    "alternativas": {
+      "a": "$\\approx120\\text{ V}$",
+      "b": "$170\\text{ V}$",
+      "c": "$85\\text{ V}$",
+      "d": "$240\\text{ V}$",
+      "e": "$340\\text{ V}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A tensão eficaz (RMS) de uma onda senoidal se relaciona com o pico por $V_{rms}=\\frac{V_0}{\\sqrt2}$. Aqui, $V_{rms}=\\frac{170}{\\sqrt2}\\approx\\frac{170}{1{,}414}\\approx120$ V — é por isso que uma tomada residencial \"de 120 V\" na verdade tem tensão de PICO de cerca de 170 V.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

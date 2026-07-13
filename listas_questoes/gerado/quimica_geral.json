@@ -1,0 +1,154 @@
+[
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Modelo de Bohr — energia dos níveis eletrônicos",
+    "dificuldade": "medio",
+    "enunciado": "No átomo de hidrogênio (modelo de Bohr), um elétron salta do nível $n=3$ para o nível $n=2$, emitindo um fóton. Comparado ao fóton emitido numa transição de $n=2$ para $n=1$, o fóton da transição $n=3\\to n=2$ tem:",
+    "alternativas": {
+      "a": "Energia menor",
+      "b": "Energia maior",
+      "c": "Exatamente a mesma energia",
+      "d": "Frequência maior",
+      "e": "Não há emissão nessa transição"
+    },
+    "gabarito": "a",
+    "resolucao": "No modelo de Bohr, a energia dos níveis é $E_n=-\\frac{13{,}6}{n^2}$ eV, e os níveis ficam cada vez mais PRÓXIMOS uns dos outros à medida que $n$ aumenta. A diferença $E_3-E_2$ é menor que $E_2-E_1$ (níveis mais altos são mais \"apertados\"), então o fóton emitido em $3\\to2$ tem energia (e frequência, já que $E=hf$) MENOR que o emitido em $2\\to1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Tendências periódicas — exceção na energia de ionização",
+    "dificuldade": "dificil",
+    "enunciado": "Considerando as configurações eletrônicas do magnésio ($[Ne]3s^2$) e do alumínio ($[Ne]3s^23p^1$), qual dos dois átomos tem MAIOR primeira energia de ionização?",
+    "alternativas": {
+      "a": "Magnésio",
+      "b": "Alumínio",
+      "c": "São exatamente iguais",
+      "d": "Depende apenas do raio atômico",
+      "e": "Não é possível comparar sem dados experimentais"
+    },
+    "gabarito": "a",
+    "resolucao": "A regra geral (energia de ionização cresce da esquerda para a direita num período) tem uma exceção conhecida aqui: o magnésio tem uma subcamada $3s$ COMPLETA (configuração especialmente estável), enquanto o elétron mais externo do alumínio está sozinho numa subcamada $3p$ de energia mais alta e mais blindada pelos elétrons $3s^2$. Isso torna mais fácil remover um elétron do alumínio do que do magnésio, apesar do alumínio ter maior carga nuclear — um exemplo clássico de que tendências periódicas são regras gerais, não leis absolutas, e a configuração eletrônica detalhada explica as exceções.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Previsão do tipo de ligação pela eletronegatividade",
+    "dificuldade": "facil",
+    "enunciado": "Qual tipo de ligação química se espera entre sódio (Na, eletronegatividade $\\approx0{,}9$) e cloro (Cl, eletronegatividade $\\approx3{,}0$)?",
+    "alternativas": {
+      "a": "Iônica",
+      "b": "Covalente apolar",
+      "c": "Covalente polar",
+      "d": "Metálica",
+      "e": "Ligação de hidrogênio"
+    },
+    "gabarito": "a",
+    "resolucao": "A grande diferença de eletronegatividade ($\\Delta\\chi\\approx2{,}1$) indica que o cloro atrai o(s) elétron(s) de ligação com força muito maior que o sódio, ao ponto de o elétron ser efetivamente TRANSFERIDO do sódio para o cloro, formando os íons $Na^+$ e $Cl^-$ — caracterizando uma ligação IÔNICA. Diferenças de eletronegatividade pequenas ($\\Delta\\chi<0{,}5$) indicariam ligação covalente apolar; diferenças intermediárias, covalente polar.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Forças intermoleculares e ponto de ebulição",
+    "dificuldade": "medio",
+    "enunciado": "A água ($H_2O$, massa molar $18$ g/mol) tem ponto de ebulição ($100°C$) muito maior que o metano ($CH_4$, massa molar $16$ g/mol, ponto de ebulição $-162°C$), apesar das massas molares semelhantes. Por quê?",
+    "alternativas": {
+      "a": "A água forma ligações de hidrogênio entre suas moléculas",
+      "b": "A água tem massa molar maior",
+      "c": "O metano é um gás nobre",
+      "d": "A água tem ligações covalentes internas mais fracas",
+      "e": "É uma coincidência sem explicação estrutural"
+    },
+    "gabarito": "a",
+    "resolucao": "O ponto de ebulição depende muito mais da força das interações INTERMOLECULARES do que da massa molar. A água, com átomos de H ligados a um O muito eletronegativo, forma ligações de hidrogênio — a mais forte das forças intermoleculares comuns — entre suas moléculas. O metano, apolar, só tem forças de dispersão de London (fracas). É essa diferença de força intermolecular, não a massa molar (quase idêntica), que explica a enorme diferença nos pontos de ebulição.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Princípio de Le Chatelier — efeito da temperatura",
+    "dificuldade": "medio",
+    "enunciado": "Para a reação em equilíbrio $N_2(g)+3H_2(g)\\rightleftharpoons2NH_3(g)$ (reação direta EXOTÉRMICA), o que acontece ao equilíbrio se a temperatura for AUMENTADA?",
+    "alternativas": {
+      "a": "Desloca para a esquerda (menos $NH_3$)",
+      "b": "Desloca para a direita (mais $NH_3$)",
+      "c": "Não desloca, só acelera a reação",
+      "d": "A constante de equilíbrio não se altera",
+      "e": "O equilíbrio é destruído permanentemente"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo Princípio de Le Chatelier, um sistema em equilíbrio se desloca no sentido que se OPÕE à perturbação aplicada. Como a reação direta é exotérmica (libera calor), podemos tratar o calor como um \"produto\" da reação direta. Aumentar a temperatura equivale a adicionar mais \"produto\" (calor), deslocando o equilíbrio no sentido que consome esse excesso — a reação REVERSA (endotérmica) — deslocando o equilíbrio para a ESQUERDA, reduzindo a produção de $NH_3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Espontaneidade (termodinâmica) não é velocidade (cinética)",
+    "dificuldade": "dificil",
+    "enunciado": "A reação de oxidação do diamante em $CO_2$ tem $\\Delta G$ negativo (é espontânea) à temperatura ambiente, porém ocorre tão devagar que é imperceptível em escala humana. Isso é possível porque:",
+    "alternativas": {
+      "a": "Espontaneidade (termodinâmica) não determina a velocidade (cinética) da reação",
+      "b": "$\\Delta G$ negativo sempre implica reação rápida",
+      "c": "Na verdade, a reação não é espontânea",
+      "d": "$\\Delta G$ e velocidade de reação são a mesma grandeza física",
+      "e": "É fisicamente impossível ter $\\Delta G<0$ e reação lenta"
+    },
+    "gabarito": "a",
+    "resolucao": "Termodinâmica ($\\Delta G$) e cinética (velocidade de reação) respondem perguntas DIFERENTES: $\\Delta G<0$ diz que os produtos são mais estáveis que os reagentes (a reação É favorável), mas nada diz sobre quão RÁPIDO o sistema chega lá. A velocidade depende da energia de ativação — a barreira energética que precisa ser vencida — que no caso do diamante é extremamente alta à temperatura ambiente, tornando a reação, embora espontânea, praticamente imperceptível numa escala de tempo humana. É a mesma razão pela qual você pode guardar gasolina (espontaneamente combustível no ar) com segurança: a reação é espontânea, mas cineticamente lenta sem uma faísca que forneça energia de ativação.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Células a combustível — aplicação em energias alternativas",
+    "dificuldade": "medio",
+    "enunciado": "Células a combustível de hidrogênio convertem energia química diretamente em energia elétrica através de uma reação redox entre $H_2$ e $O_2$, produzindo água como único subproduto. Qual é a principal vantagem ambiental dessa tecnologia em relação à combustão de hidrocarbonetos?",
+    "alternativas": {
+      "a": "Não emite $CO_2$, pois o subproduto é água",
+      "b": "Produz mais energia por grama que qualquer combustível conhecido",
+      "c": "Não depende de reações de oxirredução",
+      "d": "É sempre mais barata que qualquer outra fonte de energia",
+      "e": "Não requer nenhum tipo de catalisador"
+    },
+    "gabarito": "a",
+    "resolucao": "Na célula a combustível de hidrogênio, o $H_2$ é oxidado e o $O_2$ é reduzido (reação redox), gerando corrente elétrica, com água ($H_2O$) como único produto da reação global. Diferente da combustão de hidrocarbonetos (que contêm carbono e liberam $CO_2$, um gás de efeito estufa), essa tecnologia não emite carbono algum — essa é sua principal vantagem ambiental no contexto de energias alternativas para engenharia.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Semicondutores dopados — aplicação em novos materiais",
+    "dificuldade": "dificil",
+    "enunciado": "Semicondutores de silício (grupo 14) dopados com fósforo (grupo 15), usados em painéis fotovoltaicos e microeletrônica, são chamados de semicondutores do tipo $n$. O que caracteriza esse tipo de dopagem?",
+    "alternativas": {
+      "a": "Excesso de elétrons livres (portadores de carga negativos)",
+      "b": "Excesso de buracos (portadores de carga positivos)",
+      "c": "Ausência total de elétrons de valência",
+      "d": "Um isolante elétrico perfeito à temperatura ambiente",
+      "e": "Um condutor metálico comum"
+    },
+    "gabarito": "a",
+    "resolucao": "O fósforo (grupo 15) tem um elétron de valência a mais que o silício (grupo 14). Ao substituir um átomo de silício na rede cristalina, quatro dos cinco elétrons de valência do fósforo formam ligações covalentes normais com os átomos de silício vizinhos, e o quinto elétron fica fracamente ligado, disponível para conduzir corrente — um excesso de portadores de carga NEGATIVOS (elétrons), o que caracteriza o tipo $n$ (\"negativo\"). O oposto, dopagem com um elemento do grupo 13 (como o boro, com um elétron de valência a menos), cria um excesso de \"buracos\" (portadores positivos), caracterizando o tipo $p$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

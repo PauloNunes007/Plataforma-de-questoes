@@ -1,0 +1,420 @@
+[
+  {
+    "materia": "Cálculo I",
+    "topico": "Limites",
+    "subtopico": "Limite trigonométrico fundamental",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to 0} \\frac{\\sin(3x)}{x}$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$\\frac{1}{3}$",
+      "c": "$0$",
+      "d": "O limite não existe.",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Reescrevendo $\\frac{\\sin(3x)}{x} = 3\\cdot\\frac{\\sin(3x)}{3x}$. Fazendo $u=3x$ (quando $x\\to0$, $u\\to0$), $\\frac{\\sin(3x)}{3x}=\\frac{\\sin u}{u}\\to1$ pelo limite trigonométrico fundamental $\\lim_{u\\to0}\\frac{\\sin u}{u}=1$. Logo, $\\lim_{x\\to0}\\frac{\\sin(3x)}{x}=3\\cdot1=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Limites",
+    "subtopico": "Limite por racionalização (conjugado)",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to 0} \\frac{\\sqrt{x+4}-2}{x}$.",
+    "alternativas": {
+      "a": "$\\frac{1}{4}$",
+      "b": "$0$",
+      "c": "$1$",
+      "d": "O limite não existe.",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Substituição direta dá $\\frac{0}{0}$ (indeterminado). Multiplicando numerador e denominador pelo conjugado $\\sqrt{x+4}+2$: $\\frac{(\\sqrt{x+4}-2)(\\sqrt{x+4}+2)}{x(\\sqrt{x+4}+2)} = \\frac{(x+4)-4}{x(\\sqrt{x+4}+2)} = \\frac{x}{x(\\sqrt{x+4}+2)} = \\frac{1}{\\sqrt{x+4}+2}$. Agora a substituição direta funciona: $\\lim_{x\\to0}\\frac{1}{\\sqrt{x+4}+2} = \\frac{1}{\\sqrt4+2}=\\frac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Determinação de parâmetro para continuidade",
+    "dificuldade": "facil",
+    "enunciado": "Para qual valor de $k$ a função $f(x)=\\begin{cases} x^2-1, & x\\le 2 \\\\ kx+1, & x>2 \\end{cases}$ é contínua em $x=2$?",
+    "alternativas": {
+      "a": "$k=1$",
+      "b": "$k=3$",
+      "c": "$k=2$",
+      "d": "$k=-1$",
+      "e": "$k=\\frac{1}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para continuidade em $x=2$, os limites laterais devem ser iguais a $f(2)$. Pela esquerda: $f(2)=2^2-1=3$. Pela direita: $\\lim_{x\\to2^+}(kx+1)=2k+1$. Igualando: $2k+1=3 \\Rightarrow 2k=2 \\Rightarrow k=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Classificação de descontinuidades",
+    "dificuldade": "dificil",
+    "enunciado": "Determine e classifique os pontos de descontinuidade de $f(x)=\\dfrac{x^2-1}{x^2-3x+2}$.",
+    "alternativas": {
+      "a": "$x=1$ (removível) e $x=2$ (infinita)",
+      "b": "$x=1$ e $x=2$, ambas removíveis",
+      "c": "Apenas $x=2$, descontinuidade infinita",
+      "d": "Apenas $x=1$, descontinuidade removível",
+      "e": "$x=-1$ e $x=2$, ambas infinitas"
+    },
+    "gabarito": "a",
+    "resolucao": "Fatorando: $f(x)=\\frac{(x-1)(x+1)}{(x-1)(x-2)}$. A função não está definida em $x=1$ e $x=2$ (zeros do denominador original). Em $x=1$, o fator $(x-1)$ cancela, e $\\lim_{x\\to1}f(x)=\\frac{1+1}{1-2}=-2$ (finito) — descontinuidade REMOVÍVEL. Em $x=2$, após simplificar $f(x)=\\frac{x+1}{x-2}$ para $x\\neq1$, o denominador se anula sem cancelamento e $\\lim_{x\\to2}|f(x)|=\\infty$ — descontinuidade INFINITA (assíntota vertical).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Derivada pela definição (limite)",
+    "dificuldade": "facil",
+    "enunciado": "Usando a definição de derivada por limite ($f'(x)=\\lim_{h\\to0}\\frac{f(x+h)-f(x)}{h}$), calcule $f'(x)$ para $f(x)=x^2+3x$.",
+    "alternativas": {
+      "a": "$2x+3$",
+      "b": "$2x$",
+      "c": "$x^2+3$",
+      "d": "$x+3$",
+      "e": "$2x+3x^2$"
+    },
+    "gabarito": "a",
+    "resolucao": "$f(x+h)-f(x) = [(x+h)^2+3(x+h)] - [x^2+3x] = x^2+2xh+h^2+3x+3h-x^2-3x = 2xh+h^2+3h = h(2x+h+3)$. Dividindo por $h$: $\\frac{f(x+h)-f(x)}{h}=2x+h+3$. Fazendo $h\\to0$: $f'(x)=2x+3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Reta tangente",
+    "dificuldade": "medio",
+    "enunciado": "Encontre a equação da reta tangente ao gráfico de $f(x)=x^3-2x$ no ponto onde $x=1$.",
+    "alternativas": {
+      "a": "$y=x-2$",
+      "b": "$y=x+2$",
+      "c": "$y=-x-2$",
+      "d": "$y=3x-4$",
+      "e": "$y=x-1$"
+    },
+    "gabarito": "a",
+    "resolucao": "$f(1)=1^3-2(1)=-1$, então o ponto de tangência é $(1,-1)$. A derivada é $f'(x)=3x^2-2$, e $f'(1)=3(1)-2=1$ é o coeficiente angular da reta tangente. Usando a forma ponto-inclinação: $y-(-1)=1\\cdot(x-1) \\Rightarrow y=x-1-1 \\Rightarrow y=x-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Regra do produto combinada com a regra da cadeia",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a derivada de $f(x)=\\sin(x^2)\\cdot e^{3x}$.",
+    "alternativas": {
+      "a": "$e^{3x}\\left[2x\\cos(x^2)+3\\sin(x^2)\\right]$",
+      "b": "$2x\\cos(x^2)e^{3x}$",
+      "c": "$3\\sin(x^2)e^{3x}$",
+      "d": "$e^{3x}\\left[2x\\cos(x^2)-3\\sin(x^2)\\right]$",
+      "e": "$\\cos(x^2)e^{3x}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela regra do produto, $f'(x)=\\frac{d}{dx}[\\sin(x^2)]\\cdot e^{3x} + \\sin(x^2)\\cdot\\frac{d}{dx}[e^{3x}]$. Pela regra da cadeia, $\\frac{d}{dx}[\\sin(x^2)]=\\cos(x^2)\\cdot2x$ e $\\frac{d}{dx}[e^{3x}]=3e^{3x}$. Substituindo: $f'(x)=2x\\cos(x^2)e^{3x}+3\\sin(x^2)e^{3x} = e^{3x}\\left[2x\\cos(x^2)+3\\sin(x^2)\\right]$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita",
+    "dificuldade": "dificil",
+    "enunciado": "Dada a curva $x^3+y^3=6xy$ (fólio de Descartes), encontre $\\dfrac{dy}{dx}$ no ponto $(3,3)$.",
+    "alternativas": {
+      "a": "$-1$",
+      "b": "$1$",
+      "c": "$-3$",
+      "d": "$3$",
+      "e": "$0$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando implicitamente ambos os lados: $3x^2+3y^2y' = 6y+6xy'$ (regra do produto no lado direito). Isolando $y'$: $3y^2y'-6xy'=6y-3x^2 \\Rightarrow y'(3y^2-6x)=6y-3x^2 \\Rightarrow y'=\\frac{6y-3x^2}{3y^2-6x}=\\frac{2y-x^2}{y^2-2x}$. No ponto $(3,3)$: $y'=\\frac{2(3)-3^2}{3^2-2(3)}=\\frac{6-9}{9-6}=\\frac{-3}{3}=-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Otimização — área máxima com cerca limitada",
+    "dificuldade": "medio",
+    "enunciado": "Um fazendeiro tem 100 m de cerca para cercar um terreno retangular ao longo de um rio (o lado junto ao rio não precisa de cerca). Qual é a maior área que ele pode cercar?",
+    "alternativas": {
+      "a": "$1250\\text{ m}^2$",
+      "b": "$2500\\text{ m}^2$",
+      "c": "$1000\\text{ m}^2$",
+      "d": "$625\\text{ m}^2$",
+      "e": "$1875\\text{ m}^2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Seja $x$ o comprimento de cada um dos dois lados perpendiculares ao rio, e $y$ o lado paralelo ao rio. A cerca usada é $2x+y=100 \\Rightarrow y=100-2x$. A área é $A(x)=xy=x(100-2x)=100x-2x^2$. Derivando e igualando a zero: $A'(x)=100-4x=0 \\Rightarrow x=25$. Como $A''(x)=-4<0$, é máximo. Então $y=100-2(25)=50$, e $A=25\\times50=1250\\text{ m}^2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[very thick, blue] (-0.3,3) -- (5.3,3) node[right] {rio};\n\\draw[thick] (0,3) -- (0,0) -- (5,0) -- (5,3);\n\\draw[<->] (0,-0.5) -- (5,-0.5) node[midway, below] {$y$};\n\\draw[<->] (-0.5,0) -- (-0.5,3) node[midway, left] {$x$};\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Otimização — retângulo inscrito em semicírculo",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a área máxima de um retângulo inscrito em um semicírculo de raio $4$, com a base do retângulo sobre o diâmetro.",
+    "alternativas": {
+      "a": "$16$",
+      "b": "$32$",
+      "c": "$8$",
+      "d": "$24$",
+      "e": "$16\\sqrt2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Posicionando o centro do semicírculo na origem, um vértice do retângulo é $(x,y)$ com $y=\\sqrt{16-x^2}$ (equação do semicírculo de raio 4). A área do retângulo (largura $2x$, altura $y$) é $A(x)=2x\\sqrt{16-x^2}$. Derivando: $A'(x)=2\\sqrt{16-x^2}+2x\\cdot\\frac{-x}{\\sqrt{16-x^2}}=\\frac{2(16-x^2)-2x^2}{\\sqrt{16-x^2}}=\\frac{32-4x^2}{\\sqrt{16-x^2}}$. Igualando a zero: $32-4x^2=0\\Rightarrow x^2=8\\Rightarrow x=2\\sqrt2$. Então $y=\\sqrt{16-8}=2\\sqrt2$, e $A=2(2\\sqrt2)(2\\sqrt2)=2\\cdot8=16$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$x$, ylabel=$y$, xmin=-5, xmax=5, ymin=-1, ymax=5, width=8cm, height=6cm]\n\\addplot[domain=-4:4, samples=60, thick, blue] {sqrt(16-x^2)};\n\\draw[fill=blue, fill opacity=0.15] (axis cs:-2.83,0) rectangle (axis cs:2.83,2.83);\n\\end{axis}"
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Cálculo direto de integral definida polinomial",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\displaystyle\\int_0^2 (3x^2-4x+1)\\,dx$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$6$",
+      "c": "$-2$",
+      "d": "$10$",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Uma primitiva é $F(x)=x^3-2x^2+x$. Pelo Teorema Fundamental do Cálculo: $\\int_0^2(3x^2-4x+1)\\,dx = F(2)-F(0) = (8-8+2)-(0-0+0) = 2-0=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integração por substituição em integral definida",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_0^{\\pi/2} \\sin^2(x)\\cos(x)\\,dx$.",
+    "alternativas": {
+      "a": "$\\frac13$",
+      "b": "$\\frac12$",
+      "c": "$\\frac23$",
+      "d": "$1$",
+      "e": "$\\frac{\\pi}{4}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Substituindo $u=\\sin x$, $du=\\cos x\\,dx$. Os limites mudam: $x=0\\Rightarrow u=0$; $x=\\pi/2\\Rightarrow u=1$. A integral vira $\\int_0^1 u^2\\,du = \\left[\\frac{u^3}{3}\\right]_0^1 = \\frac13-0=\\frac13$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Antiderivada de função polinomial",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\displaystyle\\int (4x^3-6x+5)\\,dx$.",
+    "alternativas": {
+      "a": "$x^4-3x^2+5x+C$",
+      "b": "$x^4-3x^2+C$",
+      "c": "$4x^4-3x^2+5x+C$",
+      "d": "$x^4+3x^2+5x+C$",
+      "e": "$\\frac{x^4}{4}-3x^2+5x+C$"
+    },
+    "gabarito": "a",
+    "resolucao": "Integrando termo a termo com a regra da potência ($\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C$): $\\int4x^3\\,dx=x^4$, $\\int(-6x)\\,dx=-3x^2$, $\\int5\\,dx=5x$. Somando: $x^4-3x^2+5x+C$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Integração por substituição",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int x\\,e^{x^2}\\,dx$.",
+    "alternativas": {
+      "a": "$\\frac12 e^{x^2}+C$",
+      "b": "$e^{x^2}+C$",
+      "c": "$2e^{x^2}+C$",
+      "d": "$\\frac12 x^2 e^{x^2}+C$",
+      "e": "$\\frac{1}{2x}e^{x^2}+C$"
+    },
+    "gabarito": "a",
+    "resolucao": "Substituindo $u=x^2$, $du=2x\\,dx \\Rightarrow x\\,dx=\\frac{du}{2}$. A integral vira $\\int e^u \\cdot \\frac{du}{2} = \\frac12\\int e^u\\,du = \\frac12 e^u+C = \\frac12 e^{x^2}+C$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre curvas",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região delimitada pelas curvas $y=x^2$ e $y=4$.",
+    "alternativas": {
+      "a": "$\\frac{32}{3}$",
+      "b": "$\\frac{16}{3}$",
+      "c": "$8$",
+      "d": "$\\frac{64}{3}$",
+      "e": "$16$"
+    },
+    "gabarito": "a",
+    "resolucao": "As curvas se interceptam onde $x^2=4$, ou seja, $x=\\pm2$. Nesse intervalo, $y=4$ está acima de $y=x^2$. A área é $\\int_{-2}^{2}(4-x^2)\\,dx = \\left[4x-\\frac{x^3}{3}\\right]_{-2}^{2} = \\left(8-\\frac83\\right)-\\left(-8+\\frac83\\right) = 16-\\frac{16}{3}=\\frac{48-16}{3}=\\frac{32}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{axis}[axis lines=middle, xlabel=$x$, ylabel=$y$, xmin=-3, xmax=3, ymin=-0.5, ymax=5, width=8cm, height=6cm]\n\\addplot[domain=-2:2, samples=50, thick, blue, name path=A] {x^2};\n\\addplot[domain=-2:2, samples=2, thick, red, name path=B] {4};\n\\addplot[blue!20] fill between[of=A and B];\n\\end{axis}"
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume de sólido de revolução (discos)",
+    "dificuldade": "medio",
+    "enunciado": "Calcule o volume do sólido gerado pela rotação, em torno do eixo $x$, da região sob $y=\\sqrt{x}$ entre $x=0$ e $x=4$ (método dos discos).",
+    "alternativas": {
+      "a": "$8\\pi$",
+      "b": "$16\\pi$",
+      "c": "$4\\pi$",
+      "d": "$\\frac{32\\pi}{3}$",
+      "e": "$2\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo método dos discos, $V=\\int_0^4 \\pi[f(x)]^2\\,dx = \\int_0^4 \\pi(\\sqrt{x})^2\\,dx = \\pi\\int_0^4 x\\,dx = \\pi\\left[\\frac{x^2}{2}\\right]_0^4 = \\pi\\cdot8 = 8\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Cálculo pontual da função inversa",
+    "dificuldade": "facil",
+    "enunciado": "Se $f(x)=x^3+2$, determine $f^{-1}(10)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$8$",
+      "c": "$10$",
+      "d": "$3$",
+      "e": "$\\frac12$"
+    },
+    "gabarito": "a",
+    "resolucao": "$f^{-1}(10)$ é o valor de $x$ tal que $f(x)=10$: $x^3+2=10 \\Rightarrow x^3=8 \\Rightarrow x=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada da função inversa (cálculo numérico)",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=2x+\\sin x$ (bijetora, pois $f'(x)=2+\\cos x>0$ para todo $x$). Sabendo que $f(0)=0$, calcule $(f^{-1})'(0)$.",
+    "alternativas": {
+      "a": "$\\frac13$",
+      "b": "$3$",
+      "c": "$\\frac12$",
+      "d": "$2$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo Teorema da Função Inversa, $(f^{-1})'(y)=\\frac{1}{f'(f^{-1}(y))}$. Como $f(0)=0$, temos $f^{-1}(0)=0$. Então $(f^{-1})'(0)=\\frac{1}{f'(0)}$. Calculando $f'(x)=2+\\cos x$, temos $f'(0)=2+\\cos(0)=2+1=3$. Logo, $(f^{-1})'(0)=\\frac13$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Integração por partes",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int x\\cos x\\,dx$.",
+    "alternativas": {
+      "a": "$x\\sin x+\\cos x+C$",
+      "b": "$x\\sin x-\\cos x+C$",
+      "c": "$-x\\sin x+\\cos x+C$",
+      "d": "$\\sin x+C$",
+      "e": "$x\\cos x-\\sin x+C$"
+    },
+    "gabarito": "a",
+    "resolucao": "Usando integração por partes com $u=x$ ($du=dx$) e $dv=\\cos x\\,dx$ ($v=\\sin x$): $\\int x\\cos x\\,dx = x\\sin x - \\int \\sin x\\,dx = x\\sin x - (-\\cos x) + C = x\\sin x+\\cos x+C$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Frações parciais",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int \\frac{3x+5}{x^2-x-2}\\,dx$.",
+    "alternativas": {
+      "a": "$\\frac{11}{3}\\ln|x-2|-\\frac{2}{3}\\ln|x+1|+C$",
+      "b": "$\\frac{11}{3}\\ln|x-2|+\\frac{2}{3}\\ln|x+1|+C$",
+      "c": "$3\\ln|x-2|+5\\ln|x+1|+C$",
+      "d": "$\\ln|x-2|-\\ln|x+1|+C$",
+      "e": "$\\frac{2}{3}\\ln|x-2|-\\frac{11}{3}\\ln|x+1|+C$"
+    },
+    "gabarito": "a",
+    "resolucao": "Fatorando o denominador: $x^2-x-2=(x-2)(x+1)$. Decompondo: $\\frac{3x+5}{(x-2)(x+1)}=\\frac{A}{x-2}+\\frac{B}{x+1}$, ou seja, $3x+5=A(x+1)+B(x-2)$. Com $x=2$: $11=3A \\Rightarrow A=\\frac{11}{3}$. Com $x=-1$: $2=-3B \\Rightarrow B=-\\frac23$. Integrando: $\\int\\left(\\frac{11/3}{x-2}-\\frac{2/3}{x+1}\\right)dx = \\frac{11}{3}\\ln|x-2|-\\frac23\\ln|x+1|+C$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Convergência de integral imprópria (limite infinito)",
+    "dificuldade": "medio",
+    "enunciado": "Determine se $\\displaystyle\\int_1^{\\infty} \\frac{1}{x^3}\\,dx$ converge ou diverge; se convergir, calcule seu valor.",
+    "alternativas": {
+      "a": "Converge para $\\frac12$",
+      "b": "Converge para $1$",
+      "c": "Diverge",
+      "d": "Converge para $\\frac13$",
+      "e": "Converge para $2$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\int_1^{\\infty}\\frac{1}{x^3}\\,dx = \\lim_{b\\to\\infty}\\int_1^b x^{-3}\\,dx = \\lim_{b\\to\\infty}\\left[-\\frac{1}{2x^2}\\right]_1^b = \\lim_{b\\to\\infty}\\left(-\\frac{1}{2b^2}+\\frac12\\right) = 0+\\frac12=\\frac12$. Converge (consistente com o teste-p: $\\int_1^\\infty x^{-p}dx$ converge para $p=3>1$).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Integral imprópria com descontinuidade infinita",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_0^4 \\frac{1}{\\sqrt{4-x}}\\,dx$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$2$",
+      "c": "$8$",
+      "d": "Diverge",
+      "e": "$2\\sqrt2$"
+    },
+    "gabarito": "a",
+    "resolucao": "O integrando tem descontinuidade infinita em $x=4$. Substituindo $u=4-x$, $du=-dx$: quando $x=0$, $u=4$; quando $x=4$, $u=0$. A integral vira $\\int_0^4 u^{-1/2}\\,du = \\left[2\\sqrt u\\right]_0^4 = 2\\sqrt4-2\\sqrt0=4$. Converge, apesar de imprópria.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

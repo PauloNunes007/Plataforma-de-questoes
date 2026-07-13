@@ -1,0 +1,1142 @@
+[
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Cálculo de determinante 2x2",
+    "dificuldade": "facil",
+    "enunciado": "Calcule o determinante de $A=\\begin{pmatrix}2&3\\\\1&4\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$8$",
+      "c": "$11$",
+      "d": "$-5$",
+      "e": "$2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para uma matriz $2\\times2$, $\\det\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}=ad-bc$. Aqui, $\\det(A)=2(4)-3(1)=8-3=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Resolução de sistema linear 2x2",
+    "dificuldade": "facil",
+    "enunciado": "Resolva o sistema $\\begin{cases}2x+y=5\\\\x-y=1\\end{cases}$.",
+    "alternativas": {
+      "a": "$x=2,\\ y=1$",
+      "b": "$x=1,\\ y=2$",
+      "c": "$x=3,\\ y=-1$",
+      "d": "$x=-1,\\ y=3$",
+      "e": "$x=0,\\ y=5$"
+    },
+    "gabarito": "a",
+    "resolucao": "Da segunda equação, $x=y+1$. Substituindo na primeira: $2(y+1)+y=5 \\Rightarrow 2y+2+y=5 \\Rightarrow 3y=3 \\Rightarrow y=1$. Logo $x=1+1=2$. Verificação: $2(2)+1=5$ ✓ e $2-1=1$ ✓.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Verificação de dependência linear",
+    "dificuldade": "facil",
+    "enunciado": "O conjunto $\\{(1,2,0),(2,4,0)\\}$ é linearmente independente ou linearmente dependente?",
+    "alternativas": {
+      "a": "Linearmente dependente",
+      "b": "Linearmente independente",
+      "c": "Não formam subespaço",
+      "d": "Geram $\\mathbb{R}^3$",
+      "e": "Formam base de $\\mathbb{R}^2$"
+    },
+    "gabarito": "a",
+    "resolucao": "$(2,4,0) = 2\\cdot(1,2,0)$ — o segundo vetor é múltiplo escalar do primeiro. Logo existe uma combinação linear não trivial que dá o vetor nulo ($2\\cdot(1,2,0) - 1\\cdot(2,4,0) = \\vec0$), então o conjunto é linearmente DEPENDENTE.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Dimensão de um subespaço gerado",
+    "dificuldade": "dificil",
+    "enunciado": "Qual é a dimensão do subespaço de $\\mathbb{R}^3$ gerado por $\\{(1,1,0),(0,1,1),(1,2,1)\\}$?",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$1$",
+      "d": "$0$",
+      "e": "Impossível determinar"
+    },
+    "gabarito": "a",
+    "resolucao": "Note que $(1,1,0)+(0,1,1)=(1,2,1)$ — o terceiro vetor é combinação linear dos dois primeiros, então não acrescenta nada ao espaço gerado. Os dois primeiros, $(1,1,0)$ e $(0,1,1)$, não são múltiplos um do outro, logo são linearmente independentes. A dimensão do subespaço gerado pelos três vetores é, portanto, $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Aplicação de uma transformação linear",
+    "dificuldade": "facil",
+    "enunciado": "Seja $T:\\mathbb{R}^2\\to\\mathbb{R}^2$ definida por $T(x,y)=(2x-y,\\ x+3y)$. Calcule $T(1,2)$.",
+    "alternativas": {
+      "a": "$(0,7)$",
+      "b": "$(2,7)$",
+      "c": "$(0,5)$",
+      "d": "$(4,7)$",
+      "e": "$(2,5)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$T(1,2)=(2(1)-2,\\ 1+3(2)) = (2-2,\\ 1+6) = (0,7)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Teorema do núcleo e da imagem",
+    "dificuldade": "medio",
+    "enunciado": "Uma transformação linear $T:\\mathbb{R}^5\\to\\mathbb{R}^3$ tem núcleo (kernel) de dimensão $2$. Qual é a dimensão da imagem de $T$?",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$5$",
+      "c": "$2$",
+      "d": "$7$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "O Teorema do Núcleo e da Imagem estabelece $\\dim(\\text{domínio}) = \\dim(\\ker T)+\\dim(\\text{Im }T)$. Aqui, $\\dim(\\text{domínio})=5$ e $\\dim(\\ker T)=2$, então $\\dim(\\text{Im }T)=5-2=3$. Como a imagem é subespaço de $\\mathbb{R}^3$ (dimensão 3) e tem dimensão 3, ela coincide com todo o contradomínio — $T$ é sobrejetora.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Cálculo de autovalores",
+    "dificuldade": "medio",
+    "enunciado": "Encontre os autovalores da matriz $A=\\begin{pmatrix}4&1\\\\2&3\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$\\lambda=5$ e $\\lambda=2$",
+      "b": "$\\lambda=4$ e $\\lambda=3$",
+      "c": "$\\lambda=7$ e $\\lambda=10$",
+      "d": "$\\lambda=-5$ e $\\lambda=-2$",
+      "e": "$\\lambda=1$ e $\\lambda=6$"
+    },
+    "gabarito": "a",
+    "resolucao": "O polinômio característico é $\\det(A-\\lambda I)=(4-\\lambda)(3-\\lambda)-(1)(2) = 12-7\\lambda+\\lambda^2-2 = \\lambda^2-7\\lambda+10$. Fatorando: $(\\lambda-5)(\\lambda-2)=0$, logo $\\lambda=5$ ou $\\lambda=2$. Verificação: soma dos autovalores ($5+2=7$) deve ser igual ao traço de $A$ ($4+3=7$) ✓.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Diagonalização — teste em matriz concreta",
+    "dificuldade": "dificil",
+    "enunciado": "A matriz $A=\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$ é diagonalizável?",
+    "alternativas": {
+      "a": "Não; o autoespaço tem dimensão insuficiente",
+      "b": "Sim; toda matriz triangular é diagonalizável",
+      "c": "Sim; basta ter autovalores reais",
+      "d": "Não; o determinante de $A$ é nulo",
+      "e": "Sim; basta ter autovalores distintos"
+    },
+    "gabarito": "a",
+    "resolucao": "O único autovalor de $A$ é $\\lambda=1$ (raiz dupla do polinômio característico $(1-\\lambda)^2=0$), com multiplicidade algébrica 2. Resolvendo $(A-I)v=\\vec0$: $\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}v=\\vec0$ dá autoespaço de dimensão 1 (gerado por $(1,0)$) — menor que a multiplicidade algébrica 2. Faltam autovetores independentes para formar uma base de $\\mathbb{R}^2$, logo $A$ NÃO é diagonalizável (nota: $\\det A=1\\neq0$, então (d) está descartada por esse motivo).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Autovalores de matriz simétrica (cálculo)",
+    "dificuldade": "medio",
+    "enunciado": "Determine os autovalores da matriz simétrica $A=\\begin{pmatrix}2&1\\\\1&2\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$\\lambda=1$ e $\\lambda=3$",
+      "b": "$\\lambda=2$ e $\\lambda=2$",
+      "c": "$\\lambda=1$ e $\\lambda=-3$",
+      "d": "$\\lambda=0$ e $\\lambda=4$",
+      "e": "$\\lambda=\\pm i$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\det(A-\\lambda I)=(2-\\lambda)^2-1=0 \\Rightarrow (2-\\lambda)=\\pm1 \\Rightarrow \\lambda=1$ ou $\\lambda=3$. Ambos reais, como garante o Teorema Espectral para qualquer matriz simétrica real — diferente de matrizes não simétricas em geral, que podem ter autovalores complexos como em (e).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Processo de Gram-Schmidt (cálculo)",
+    "dificuldade": "dificil",
+    "enunciado": "Aplique o processo de Gram-Schmidt a $v_1=(1,1)$ e $v_2=(0,1)$ para obter uma base ortogonal $\\{u_1,u_2\\}$ de $\\mathbb{R}^2$. Qual é $u_2$?",
+    "alternativas": {
+      "a": "$\\left(-\\frac12,\\frac12\\right)$",
+      "b": "$\\left(\\frac12,\\frac12\\right)$",
+      "c": "$(0,1)$",
+      "d": "$(-1,1)$",
+      "e": "$(1,-1)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$u_1=v_1=(1,1)$. A projeção de $v_2$ sobre $u_1$ é $\\text{proj}_{u_1}v_2 = \\frac{v_2\\cdot u_1}{u_1\\cdot u_1}u_1 = \\frac{(0)(1)+(1)(1)}{1+1}(1,1)=\\frac12(1,1)=\\left(\\frac12,\\frac12\\right)$. Então $u_2=v_2-\\text{proj}_{u_1}v_2=(0,1)-\\left(\\frac12,\\frac12\\right)=\\left(-\\frac12,\\frac12\\right)$. Verificação: $u_1\\cdot u_2 = 1\\left(-\\frac12\\right)+1\\left(\\frac12\\right)=0$ ✓ (ortogonais), e $\\text{span}\\{u_1,u_2\\}=\\text{span}\\{v_1,v_2\\}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Resolução de sistema linear 3x3 (escalonamento)",
+    "dificuldade": "facil",
+    "enunciado": "Resolva o sistema $\\begin{cases}x+y+z=6\\\\x-y+2z=5\\\\2x+y-z=1\\end{cases}$.",
+    "alternativas": {
+      "a": "$(1,2,3)$",
+      "b": "$(3,2,1)$",
+      "c": "$(2,1,3)$",
+      "d": "$(1,3,2)$",
+      "e": "$(-1,2,3)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Somando a primeira e a segunda equação: $2x+3z=11$. Da primeira equação, $y=6-x-z$; substituindo na terceira: $2x+(6-x-z)-z=1 \\Rightarrow x-2z=-5 \\Rightarrow x=2z-5$. Igualando com $x=\\frac{11-3z}{2}$: $2z-5=\\frac{11-3z}{2} \\Rightarrow 4z-10=11-3z \\Rightarrow 7z=21 \\Rightarrow z=3$. Logo $x=2(3)-5=1$ e $y=6-1-3=2$. Verificação: $1-2+6=5$ ✓ e $2(1)+2-3=1$ ✓.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Matriz inversa 3x3 via Gauss-Jordan",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a matriz inversa de $A=\\begin{pmatrix}1&1&1\\\\0&1&2\\\\0&0&1\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$\\begin{pmatrix}1&-1&1\\\\0&1&-2\\\\0&0&1\\end{pmatrix}$",
+      "b": "$\\begin{pmatrix}1&-1&-1\\\\0&1&-2\\\\0&0&1\\end{pmatrix}$",
+      "c": "$\\begin{pmatrix}1&1&-1\\\\0&1&-2\\\\0&0&1\\end{pmatrix}$",
+      "d": "$\\begin{pmatrix}1&-1&1\\\\0&1&2\\\\0&0&1\\end{pmatrix}$",
+      "e": "$\\begin{pmatrix}1&-1&0\\\\0&1&-2\\\\0&0&1\\end{pmatrix}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Escalonando $[A\\,|\\,I]$: a linha 3 já elimina o $2$ da linha 2 (linha2 $-2\\cdot$linha3) e o $1$ da linha 1 (linha1 $-$linha3); em seguida linha1 $-$ (nova linha2) elimina o primeiro $1$ de fora da diagonal. O resultado é $A^{-1}=\\begin{pmatrix}1&-1&1\\\\0&1&-2\\\\0&0&1\\end{pmatrix}$. Verificação: $AA^{-1}=I$ (conferindo linha a linha o produto).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Produto de matrizes",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $AB$ para $A=\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}$ e $B=\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$\\begin{pmatrix}2&1\\\\4&3\\end{pmatrix}$",
+      "b": "$\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}$",
+      "c": "$\\begin{pmatrix}3&4\\\\1&2\\end{pmatrix}$",
+      "d": "$\\begin{pmatrix}2&1\\\\3&4\\end{pmatrix}$",
+      "e": "$\\begin{pmatrix}0&2\\\\3&0\\end{pmatrix}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Multiplicando linha por coluna: primeira linha de $A$ com as colunas de $B$ dá $(1\\cdot0+2\\cdot1,\\ 1\\cdot1+2\\cdot0)=(2,1)$; segunda linha dá $(3\\cdot0+4\\cdot1,\\ 3\\cdot1+4\\cdot0)=(4,3)$. Logo $AB=\\begin{pmatrix}2&1\\\\4&3\\end{pmatrix}$. Note que $BA=\\begin{pmatrix}3&4\\\\1&2\\end{pmatrix}\\neq AB$ — o produto de matrizes não é comutativo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Matriz transposta",
+    "dificuldade": "facil",
+    "enunciado": "Calcule a transposta de $A=\\begin{pmatrix}1&4&0\\\\2&-1&3\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$\\begin{pmatrix}1&2\\\\4&-1\\\\0&3\\end{pmatrix}$",
+      "b": "$\\begin{pmatrix}1&2\\\\4&1\\\\0&3\\end{pmatrix}$",
+      "c": "$\\begin{pmatrix}1&4&0\\\\2&-1&3\\end{pmatrix}$",
+      "d": "$\\begin{pmatrix}2&1\\\\-1&4\\\\3&0\\end{pmatrix}$",
+      "e": "$\\begin{pmatrix}1&2\\\\0&3\\\\4&-1\\end{pmatrix}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A transposta troca linhas por colunas: a primeira coluna de $A^T$ é a primeira linha de $A$, $(1,4,0)$, e a segunda coluna é a segunda linha, $(2,-1,3)$. Logo $A^T=\\begin{pmatrix}1&2\\\\4&-1\\\\0&3\\end{pmatrix}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Matriz inversa 2x2 (fórmula direta)",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a inversa de $A=\\begin{pmatrix}3&1\\\\2&1\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$\\begin{pmatrix}1&-1\\\\-2&3\\end{pmatrix}$",
+      "b": "$\\begin{pmatrix}1&1\\\\2&3\\end{pmatrix}$",
+      "c": "$\\begin{pmatrix}1&-2\\\\-1&3\\end{pmatrix}$",
+      "d": "$\\begin{pmatrix}3&-1\\\\-2&1\\end{pmatrix}$",
+      "e": "$\\begin{pmatrix}-1&1\\\\2&-3\\end{pmatrix}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para $A=\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$, $A^{-1}=\\frac{1}{\\det A}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}$. Aqui $\\det A=3(1)-1(2)=1$, então $A^{-1}=\\begin{pmatrix}1&-1\\\\-2&3\\end{pmatrix}$. Verificação: $AA^{-1}=\\begin{pmatrix}3-2&-3+3\\\\2-2&-2+3\\end{pmatrix}=\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}$ ✓.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Cálculo de determinante 3x3 (regra de Sarrus)",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\det\\begin{pmatrix}1&2&3\\\\0&1&4\\\\5&6&0\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$-1$",
+      "c": "$40$",
+      "d": "$-39$",
+      "e": "$79$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela regra de Sarrus: $\\det=1(1\\cdot0-4\\cdot6)-2(0\\cdot0-4\\cdot5)+3(0\\cdot6-1\\cdot5) = 1(-24)-2(-20)+3(-5) = -24+40-15=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Sistema linear via Regra de Cramer",
+    "dificuldade": "medio",
+    "enunciado": "Resolva por Cramer o sistema $\\begin{cases}2x+3y=8\\\\x-2y=-3\\end{cases}$.",
+    "alternativas": {
+      "a": "$(1,2)$",
+      "b": "$(2,1)$",
+      "c": "$(-1,2)$",
+      "d": "$(1,-2)$",
+      "e": "$(3,2)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$D=\\begin{vmatrix}2&3\\\\1&-2\\end{vmatrix}=-4-3=-7$. $D_x=\\begin{vmatrix}8&3\\\\-3&-2\\end{vmatrix}=-16+9=-7 \\Rightarrow x=\\frac{D_x}{D}=1$. $D_y=\\begin{vmatrix}2&8\\\\1&-3\\end{vmatrix}=-6-8=-14 \\Rightarrow y=\\frac{D_y}{D}=2$. Verificação: $2(1)+3(2)=8$ ✓ e $1-2(2)=-3$ ✓.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Propriedade do determinante do produto (det(AB))",
+    "dificuldade": "medio",
+    "enunciado": "Sejam $A$ e $B$ matrizes $3\\times3$ com $\\det(A)=4$ e $\\det(B)=-3$. Qual é $\\det(AB^T)$?",
+    "alternativas": {
+      "a": "$-12$",
+      "b": "$12$",
+      "c": "$-1$",
+      "d": "$1$",
+      "e": "$-7$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $\\det(B^T)=\\det(B)$ e $\\det(XY)=\\det(X)\\det(Y)$, temos $\\det(AB^T)=\\det(A)\\det(B^T)=\\det(A)\\det(B)=4\\cdot(-3)=-12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Determinante de matriz triangular",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\det\\begin{pmatrix}2&0&0\\\\5&-3&0\\\\1&4&7\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$-42$",
+      "b": "$42$",
+      "c": "$-30$",
+      "d": "$30$",
+      "e": "$-14$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para matriz triangular (inferior, neste caso), o determinante é o produto dos elementos da diagonal principal: $\\det=2\\cdot(-3)\\cdot7=-42$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Sistemas Lineares, Matrizes e Determinantes",
+    "subtopico": "Posto (rank) de uma matriz",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o posto (rank) da matriz $\\begin{pmatrix}1&2&1\\\\2&4&3\\\\3&6&5\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$1$",
+      "d": "$0$",
+      "e": "Impossível determinar sem mais dados"
+    },
+    "gabarito": "a",
+    "resolucao": "Escalonando: $L_2-2L_1=(0,0,1)$ e $L_3-3L_1=(0,0,2)$; em seguida $L_3-2L_2'=(0,0,0)$. Restam duas linhas não nulas, $(1,2,1)$ e $(0,0,1)$, logo o posto é $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Dimensão de subespaço definido por equação linear",
+    "dificuldade": "medio",
+    "enunciado": "Qual é a dimensão do subespaço $W=\\{(x,y,z)\\in\\mathbb{R}^3 : x-2y+z=0\\}$?",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$1$",
+      "d": "$0$",
+      "e": "Não é subespaço vetorial"
+    },
+    "gabarito": "a",
+    "resolucao": "A equação é homogênea (passa pela origem), logo $W$ é subespaço. Isolando $x=2y-z$, com $y,z$ livres, obtemos $2$ parâmetros independentes — logo $\\dim W=2$ (um plano por origem em $\\mathbb{R}^3$), com base por exemplo $\\{(2,1,0),(-1,0,1)\\}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Combinação linear — determinar coeficientes",
+    "dificuldade": "facil",
+    "enunciado": "Escreva $w=(4,3)$ como combinação linear $w=au+bv$ de $u=(1,0)$ e $v=(1,1)$. Determine $(a,b)$.",
+    "alternativas": {
+      "a": "$(1,3)$",
+      "b": "$(3,1)$",
+      "c": "$(4,3)$",
+      "d": "$(2,3)$",
+      "e": "$(1,4)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$au+bv=(a+b,\\ b)=(4,3)$. Da segunda coordenada, $b=3$; substituindo na primeira, $a+3=4 \\Rightarrow a=1$. Logo $(a,b)=(1,3)$, e de fato $1(1,0)+3(1,1)=(4,3)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Pertinência ao subespaço gerado",
+    "dificuldade": "medio",
+    "enunciado": "O vetor $w=(2,5,3)$ pertence ao subespaço gerado por $v_1=(1,2,1)$ e $v_2=(0,1,1)$? Se sim, quais são $(a,b)$ tais que $w=av_1+bv_2$?",
+    "alternativas": {
+      "a": "Pertence; $(a,b)=(2,1)$",
+      "b": "Não pertence a esse subespaço",
+      "c": "Pertence; $(a,b)=(1,2)$",
+      "d": "Pertence; $(a,b)=(2,3)$",
+      "e": "Pertence; $(a,b)=(3,1)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Da primeira coordenada, $a\\cdot1+b\\cdot0=2 \\Rightarrow a=2$. Da segunda, $2a+b=5 \\Rightarrow b=1$. Testando na terceira: $a+b=2+1=3$, que bate com $w_3=3$. Logo $w=2v_1+1v_2$ pertence ao subespaço gerado.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Verificação de solução do sistema homogêneo",
+    "dificuldade": "facil",
+    "enunciado": "Qual dos vetores abaixo pertence ao espaço-solução do sistema homogêneo $x-y+2z=0$?",
+    "alternativas": {
+      "a": "$(1,1,0)$",
+      "b": "$(1,0,1)$",
+      "c": "$(2,1,1)$",
+      "d": "$(0,1,1)$",
+      "e": "$(1,1,1)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Basta testar cada vetor na equação $x-y+2z=0$. Para $(1,1,0)$: $1-1+2(0)=0$ ✓. Os demais falham: $(1,0,1)\\to3$, $(2,1,1)\\to3$, $(0,1,1)\\to1$, $(1,1,1)\\to2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Coordenadas de vetor em relação a uma base",
+    "dificuldade": "medio",
+    "enunciado": "Determine as coordenadas de $v=(4,2)$ em relação à base $B=\\{(1,1),(1,-1)\\}$ de $\\mathbb{R}^2$.",
+    "alternativas": {
+      "a": "$(3,1)$",
+      "b": "$(1,3)$",
+      "c": "$(4,2)$",
+      "d": "$(2,3)$",
+      "e": "$(3,-1)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Buscamos $a,b$ com $a(1,1)+b(1,-1)=(4,2)$: $a+b=4$ e $a-b=2$. Somando, $2a=6 \\Rightarrow a=3$; logo $b=1$. As coordenadas de $v$ na base $B$ são $[v]_B=(3,1)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Mudança de base — de base não-canônica para canônica",
+    "dificuldade": "dificil",
+    "enunciado": "Um vetor tem coordenadas $(2,3)$ em relação à base $B=\\{(1,1),(1,-1)\\}$ de $\\mathbb{R}^2$. Quais são suas coordenadas na base canônica?",
+    "alternativas": {
+      "a": "$(5,-1)$",
+      "b": "$(-1,5)$",
+      "c": "$(2,3)$",
+      "d": "$(5,1)$",
+      "e": "$(1,-5)$"
+    },
+    "gabarito": "a",
+    "resolucao": "O vetor na base canônica é $v=2(1,1)+3(1,-1)=(2+3,\\ 2-3)=(5,-1)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Base de R³ via determinante",
+    "dificuldade": "medio",
+    "enunciado": "Os vetores $v_1=(1,0,1)$, $v_2=(0,1,1)$ e $v_3=(1,1,0)$ formam uma base de $\\mathbb{R}^3$?",
+    "alternativas": {
+      "a": "Sim; formam base (LI)",
+      "b": "Não; são LD",
+      "c": "Sim; mas não geram $\\mathbb{R}^3$",
+      "d": "Não; mas formam base de um subespaço",
+      "e": "Indeterminado sem escalonar"
+    },
+    "gabarito": "a",
+    "resolucao": "O determinante da matriz com esses vetores como linhas é $\\det\\begin{pmatrix}1&0&1\\\\0&1&1\\\\1&1&0\\end{pmatrix}=1(0-1)-0+1(0-1)=-2\\neq0$. Como o determinante é não nulo, os três vetores são LI e, sendo três vetores LI em $\\mathbb{R}^3$, formam uma base.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Dimensão de subespaço de polinômios (P₂)",
+    "dificuldade": "dificil",
+    "enunciado": "O subespaço de $P_2$ gerado por $\\{1+x,\\ x+x^2,\\ 1+x^2\\}$ tem dimensão:",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$2$",
+      "c": "$1$",
+      "d": "$0$",
+      "e": "Indeterminado sem mais dados"
+    },
+    "gabarito": "a",
+    "resolucao": "Nas coordenadas em relação à base $\\{1,x,x^2\\}$, os três polinômios são $(1,1,0)$, $(0,1,1)$ e $(1,0,1)$. O determinante dessa matriz é $1(1-0)-1(0-1)+0=1+1=2\\neq0$, logo são LI. Três vetores LI em $P_2$ (que tem dimensão 3) formam uma base do próprio $P_2$, então o subespaço gerado tem dimensão $3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Independência linear de três vetores",
+    "dificuldade": "facil",
+    "enunciado": "O conjunto $\\{(1,0,0),(1,1,0),(1,1,1)\\}$ é linearmente independente ou linearmente dependente?",
+    "alternativas": {
+      "a": "Linearmente independente",
+      "b": "Linearmente dependente",
+      "c": "Não formam subespaço",
+      "d": "Geram apenas um plano",
+      "e": "Formam base de $\\mathbb{R}^2$"
+    },
+    "gabarito": "a",
+    "resolucao": "A matriz com esses vetores como linhas é triangular inferior com $1$'s na diagonal, $\\begin{pmatrix}1&0&0\\\\1&1&0\\\\1&1&1\\end{pmatrix}$, cujo determinante é $1\\cdot1\\cdot1=1\\neq0$. Logo o conjunto é linearmente independente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Espaços Vetoriais",
+    "subtopico": "Verificação de fechamento sob soma (subespaço)",
+    "dificuldade": "medio",
+    "enunciado": "Considere $W=\\{(x,y)\\in\\mathbb{R}^2 : xy=0\\}$ e os vetores $u=(1,0)$ e $v=(0,1)$, ambos em $W$. O vetor $u+v$ pertence a $W$?",
+    "alternativas": {
+      "a": "Não; $u+v\\notin W$, logo $W$ não é subespaço",
+      "b": "Sim; $u+v\\in W$, logo $W$ é subespaço",
+      "c": "Não; mas $W$ ainda é subespaço vetorial",
+      "d": "Sim; mas $W$ não contém a origem",
+      "e": "Indeterminado sem testar outros vetores"
+    },
+    "gabarito": "a",
+    "resolucao": "$u+v=(1,1)$, e $1\\cdot1=1\\neq0$, logo $u+v\\notin W$ mesmo com $u,v\\in W$. Como $W$ não é fechado sob a soma, $W$ NÃO é subespaço vetorial de $\\mathbb{R}^2$ (apesar de conter a origem e ser fechado sob alguns escalares).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Verificação de linearidade de uma transformação",
+    "dificuldade": "facil",
+    "enunciado": "A transformação $T(x,y)=(x+1,\\ y)$ é linear?",
+    "alternativas": {
+      "a": "Não; $T(0,0)$ é diferente de $(0,0)$",
+      "b": "Sim; toda fórmula afim é linear",
+      "c": "Sim; $T$ preserva a soma de vetores",
+      "d": "Não; $T$ não está definida em $(0,0)$",
+      "e": "Sim; basta ser dada por polinômios de grau 1"
+    },
+    "gabarito": "a",
+    "resolucao": "Uma condição necessária para linearidade é $T(\\vec0)=\\vec0$. Aqui $T(0,0)=(0+1,\\ 0)=(1,0)\\neq(0,0)$, logo $T$ NÃO é uma transformação linear (é apenas uma função afim, com um deslocamento constante).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Matriz canônica de uma transformação linear",
+    "dificuldade": "medio",
+    "enunciado": "Determine a matriz canônica de $T:\\mathbb{R}^2\\to\\mathbb{R}^2$, $T(x,y)=(3x+y,\\ -x+2y)$.",
+    "alternativas": {
+      "a": "$\\begin{pmatrix}3&1\\\\-1&2\\end{pmatrix}$",
+      "b": "$\\begin{pmatrix}3&-1\\\\1&2\\end{pmatrix}$",
+      "c": "$\\begin{pmatrix}1&3\\\\2&-1\\end{pmatrix}$",
+      "d": "$\\begin{pmatrix}3&1\\\\1&2\\end{pmatrix}$",
+      "e": "$\\begin{pmatrix}2&-1\\\\1&3\\end{pmatrix}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Os coeficientes de $x$ e $y$ em cada componente de $T(x,y)$ formam as linhas da matriz: a primeira linha vem de $3x+y$, dando $(3,1)$, e a segunda vem de $-x+2y$, dando $(-1,2)$. Logo $[T]=\\begin{pmatrix}3&1\\\\-1&2\\end{pmatrix}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Núcleo (kernel) de uma transformação linear",
+    "dificuldade": "medio",
+    "enunciado": "Determine uma base para o núcleo de $T(x,y,z)=(x-y+z,\\ 2x+y-z)$.",
+    "alternativas": {
+      "a": "$\\{(0,1,1)\\}$",
+      "b": "$\\{(1,0,1)\\}$",
+      "c": "$\\{(1,1,0)\\}$",
+      "d": "$\\{(1,1,1)\\}$",
+      "e": "$\\{(0,0,0)\\}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Resolvendo $x-y+z=0$ e $2x+y-z=0$: somando as duas, $3x=0 \\Rightarrow x=0$; da primeira, $z=y$. Logo $\\ker T=\\{(0,t,t): t\\in\\mathbb{R}\\}$, com dimensão $1$ e base $\\{(0,1,1)\\}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Dimensão da imagem via posto da matriz",
+    "dificuldade": "medio",
+    "enunciado": "A transformação linear $T:\\mathbb{R}^3\\to\\mathbb{R}^3$ tem matriz $\\begin{pmatrix}1&2&3\\\\2&4&6\\\\1&1&1\\end{pmatrix}$. Qual a dimensão da imagem de $T$?",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$1$",
+      "d": "$0$",
+      "e": "Não é possível determinar"
+    },
+    "gabarito": "a",
+    "resolucao": "A segunda linha é o dobro da primeira ($2\\cdot(1,2,3)=(2,4,6)$), então essas duas são LD. A primeira e a terceira linha, $(1,2,3)$ e $(1,1,1)$, não são múltiplas uma da outra, logo são LI. O posto da matriz é $2$, e $\\dim(\\text{Im }T)=\\text{posto}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Composição de transformações lineares",
+    "dificuldade": "facil",
+    "enunciado": "Sejam $S(x,y)=(x+y,\\ x-y)$ e $T(x,y)=(2x,\\ y)$. Calcule $(T\\circ S)(1,3)$.",
+    "alternativas": {
+      "a": "$(8,-2)$",
+      "b": "$(4,-2)$",
+      "c": "$(8,2)$",
+      "d": "$(-2,8)$",
+      "e": "$(2,-8)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Primeiro, $S(1,3)=(1+3,\\ 1-3)=(4,-2)$. Depois, $T(4,-2)=(2\\cdot4,\\ -2)=(8,-2)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Classificação: injetora, sobrejetora ou ambas",
+    "dificuldade": "medio",
+    "enunciado": "A transformação $T:\\mathbb{R}^3\\to\\mathbb{R}^2$, $T(x,y,z)=(x+y+z,\\ x+2y+3z)$, é injetora, sobrejetora, ambas ou nenhuma das duas?",
+    "alternativas": {
+      "a": "Sobrejetora, mas não injetora",
+      "b": "Injetora, mas não sobrejetora",
+      "c": "Bijetora (injetora e sobrejetora)",
+      "d": "Nem injetora, nem sobrejetora",
+      "e": "Não é possível classificar sem mais dados"
+    },
+    "gabarito": "a",
+    "resolucao": "Núcleo: $x+y+z=0$ e $x+2y+3z=0$; subtraindo, $y+2z=0 \\Rightarrow y=-2z$, e $x=-y-z=z$. Logo $\\ker T=\\{(z,-2z,z)\\}$ tem dimensão $1\\neq0$, então $T$ não é injetora. Pelo teorema do núcleo e da imagem, $\\dim(\\text{Im }T)=3-1=2$, que coincide com a dimensão do contradomínio $\\mathbb{R}^2$ — logo $T$ é sobrejetora.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Matriz de rotação no plano",
+    "dificuldade": "facil",
+    "enunciado": "Aplique a rotação de $90°$ (sentido anti-horário) ao vetor $v=(3,4)$.",
+    "alternativas": {
+      "a": "$(-4,3)$",
+      "b": "$(4,-3)$",
+      "c": "$(4,3)$",
+      "d": "$(-3,4)$",
+      "e": "$(3,-4)$"
+    },
+    "gabarito": "a",
+    "resolucao": "A matriz de rotação de $90°$ é $\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}$. Aplicando a $v=(3,4)$: $(0\\cdot3-1\\cdot4,\\ 1\\cdot3+0\\cdot4)=(-4,3)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Projeção ortogonal sobre uma reta",
+    "dificuldade": "medio",
+    "enunciado": "Determine a projeção ortogonal do vetor $v=(4,0)$ sobre a reta gerada por $u=(1,1)$.",
+    "alternativas": {
+      "a": "$(2,2)$",
+      "b": "$(4,0)$",
+      "c": "$(0,4)$",
+      "d": "$(1,1)$",
+      "e": "$(2,0)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\text{proj}_u v=\\dfrac{v\\cdot u}{u\\cdot u}u$. Aqui $v\\cdot u=4\\cdot1+0\\cdot1=4$ e $u\\cdot u=1+1=2$. Logo $\\text{proj}_u v=\\dfrac{4}{2}(1,1)=(2,2)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Transformação no espaço — reflexão",
+    "dificuldade": "facil",
+    "enunciado": "Seja $T(x,y,z)=(x,y,-z)$ a reflexão em relação ao plano $xy$. Calcule $T(2,-3,5)$.",
+    "alternativas": {
+      "a": "$(2,-3,-5)$",
+      "b": "$(2,3,5)$",
+      "c": "$(-2,-3,5)$",
+      "d": "$(2,-3,5)$",
+      "e": "$(-2,3,-5)$"
+    },
+    "gabarito": "a",
+    "resolucao": "A reflexão pelo plano $xy$ mantém $x$ e $y$ e inverte o sinal de $z$: $T(2,-3,5)=(2,-3,-5)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Transformações Lineares",
+    "subtopico": "Determinar T(v) por linearidade a partir da base",
+    "dificuldade": "dificil",
+    "enunciado": "Sabendo que $T$ é linear, $T(1,0)=(2,3)$ e $T(0,1)=(-1,4)$, calcule $T(5,-2)$.",
+    "alternativas": {
+      "a": "$(12,7)$",
+      "b": "$(8,23)$",
+      "c": "$(12,-7)$",
+      "d": "$(2,23)$",
+      "e": "$(10,15)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $(5,-2)=5(1,0)-2(0,1)$, pela linearidade $T(5,-2)=5\\,T(1,0)-2\\,T(0,1)=5(2,3)-2(-1,4)=(10,15)-(-2,8)=(12,7)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Autovalores de matriz triangular",
+    "dificuldade": "facil",
+    "enunciado": "Quais são os autovalores de $A=\\begin{pmatrix}5&2&1\\\\0&-3&4\\\\0&0&7\\end{pmatrix}$?",
+    "alternativas": {
+      "a": "$5,\\ -3,\\ 7$",
+      "b": "$5,\\ 2,\\ 1$",
+      "c": "$-5,\\ 3,\\ -7$",
+      "d": "$2,\\ 4,\\ 1$",
+      "e": "$0,\\ 0,\\ 7$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para uma matriz triangular, os autovalores são exatamente os elementos da diagonal principal (o determinante de $A-\\lambda I$ se reduz ao produto dos termos diagonais $(5-\\lambda)(-3-\\lambda)(7-\\lambda)$). Logo os autovalores são $5$, $-3$ e $7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Autovetor associado a um autovalor",
+    "dificuldade": "medio",
+    "enunciado": "Determine um autovetor de $A=\\begin{pmatrix}4&2\\\\1&3\\end{pmatrix}$ associado ao autovalor $\\lambda=2$.",
+    "alternativas": {
+      "a": "$(1,-1)$",
+      "b": "$(1,1)$",
+      "c": "$(2,1)$",
+      "d": "$(-1,2)$",
+      "e": "$(2,-1)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Resolvemos $(A-2I)v=\\vec0$: $\\begin{pmatrix}2&2\\\\1&1\\end{pmatrix}v=\\vec0 \\Rightarrow 2x+2y=0 \\Rightarrow x=-y$. Um autovetor é $(1,-1)$ (verificação: $A(1,-1)^T=(4-2,\\ 1-3)^T=(2,-2)^T=2(1,-1)^T$ ✓).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Base do autoespaço",
+    "dificuldade": "medio",
+    "enunciado": "Para $A=\\begin{pmatrix}3&1&0\\\\0&3&0\\\\0&0&5\\end{pmatrix}$, determine uma base do autoespaço associado a $\\lambda=3$.",
+    "alternativas": {
+      "a": "$\\{(1,0,0)\\}$",
+      "b": "$\\{(0,1,0)\\}$",
+      "c": "$\\{(1,1,0)\\}$",
+      "d": "$\\{(0,0,1)\\}$",
+      "e": "$\\{(1,0,0),(0,1,0)\\}$"
+    },
+    "gabarito": "a",
+    "resolucao": "$(A-3I)=\\begin{pmatrix}0&1&0\\\\0&0&0\\\\0&0&2\\end{pmatrix}$. Da primeira linha, $y=0$; da terceira, $2z=0 \\Rightarrow z=0$; $x$ fica livre. O autoespaço é $\\{(t,0,0): t\\in\\mathbb{R}\\}$, com base $\\{(1,0,0)\\}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Multiplicidade algébrica vs. geométrica",
+    "dificuldade": "dificil",
+    "enunciado": "A matriz $A=\\begin{pmatrix}3&1&0\\\\0&3&0\\\\0&0&5\\end{pmatrix}$ tem autovalor $\\lambda=3$ com multiplicidade algébrica $2$. Qual é a multiplicidade geométrica (dimensão do autoespaço) de $\\lambda=3$?",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$0$",
+      "d": "$3$",
+      "e": "Iguais (ambas $2$)"
+    },
+    "gabarito": "a",
+    "resolucao": "Resolvendo $(A-3I)v=\\vec0$ obtemos o autoespaço $\\{(t,0,0)\\}$, de dimensão $1$. Assim, a multiplicidade geométrica ($1$) é menor que a algébrica ($2$) — por isso essa matriz não é diagonalizável.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Diagonalização — matriz diagonal D",
+    "dificuldade": "dificil",
+    "enunciado": "Diagonalize $A=\\begin{pmatrix}4&2\\\\1&3\\end{pmatrix}$: determine a diagonal principal de $D$, em ordem crescente.",
+    "alternativas": {
+      "a": "$2,\\ 5$",
+      "b": "$5,\\ 2$",
+      "c": "$4,\\ 3$",
+      "d": "$1,\\ 6$",
+      "e": "$3,\\ 4$"
+    },
+    "gabarito": "a",
+    "resolucao": "O polinômio característico é $(4-\\lambda)(3-\\lambda)-2=\\lambda^2-7\\lambda+10=(\\lambda-5)(\\lambda-2)$, com raízes $\\lambda=5$ e $\\lambda=2$, ambas de multiplicidade $1$ (autovalores distintos garantem diagonalizabilidade). Em ordem crescente, a diagonal de $D$ é $2,\\ 5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Operador invertível via determinante",
+    "dificuldade": "facil",
+    "enunciado": "Determine se o operador com matriz $A=\\begin{pmatrix}2&4\\\\1&2\\end{pmatrix}$ é invertível, calculando $\\det A$.",
+    "alternativas": {
+      "a": "Não é invertível ($\\det A=0$)",
+      "b": "É invertível ($\\det A=4$)",
+      "c": "É invertível ($\\det A=-4$)",
+      "d": "Não é invertível ($\\det A=8$)",
+      "e": "É invertível ($\\det A=1$)"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\det A=2\\cdot2-4\\cdot1=4-4=0$. Como o determinante é nulo, $A$ é singular e o operador NÃO é invertível.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Matrizes semelhantes — traço e determinante",
+    "dificuldade": "medio",
+    "enunciado": "Se $B$ é semelhante a $A$ (isto é, $B=P^{-1}AP$ para alguma $P$ invertível), com $\\text{tr}(A)=7$ e $\\det(A)=10$, quais são $\\text{tr}(B)$ e $\\det(B)$?",
+    "alternativas": {
+      "a": "$\\text{tr}(B)=7$ e $\\det(B)=10$",
+      "b": "$\\text{tr}(B)=10$ e $\\det(B)=7$",
+      "c": "$\\text{tr}(B)=7$ e $\\det(B)=7$",
+      "d": "$\\text{tr}(B)=-7$ e $\\det(B)=10$",
+      "e": "$\\text{tr}(B)=17$ e $\\det(B)=10$"
+    },
+    "gabarito": "a",
+    "resolucao": "Matrizes semelhantes representam o mesmo operador em bases diferentes e por isso compartilham o mesmo polinômio característico — logo o mesmo traço e o mesmo determinante. Assim $\\text{tr}(B)=\\text{tr}(A)=7$ e $\\det(B)=\\det(A)=10$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Traço de A² via autovalores",
+    "dificuldade": "dificil",
+    "enunciado": "Um operador linear em $\\mathbb{R}^2$ tem autovalores $6$ e $1$. Determine o traço de $A^2$.",
+    "alternativas": {
+      "a": "$37$",
+      "b": "$7$",
+      "c": "$49$",
+      "d": "$-35$",
+      "e": "$36$"
+    },
+    "gabarito": "a",
+    "resolucao": "Se os autovalores de $A$ são $6$ e $1$, os autovalores de $A^2$ são $6^2=36$ e $1^2=1$, e o traço de $A^2$ é a soma desses autovalores: $\\text{tr}(A^2)=36+1=37$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Determinante via produto dos autovalores",
+    "dificuldade": "facil",
+    "enunciado": "Um operador linear em $\\mathbb{R}^3$ tem autovalores $3$, $-2$ e $5$. Qual é o determinante do operador?",
+    "alternativas": {
+      "a": "$-30$",
+      "b": "$30$",
+      "c": "$6$",
+      "d": "$-6$",
+      "e": "$10$"
+    },
+    "gabarito": "a",
+    "resolucao": "O determinante de um operador é igual ao produto de seus autovalores (contando multiplicidade): $\\det=3\\cdot(-2)\\cdot5=-30$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Operadores Lineares",
+    "subtopico": "Polinômio característico",
+    "dificuldade": "medio",
+    "enunciado": "Determine o polinômio característico de $A=\\begin{pmatrix}1&2\\\\3&2\\end{pmatrix}$.",
+    "alternativas": {
+      "a": "$\\lambda^2-3\\lambda-4$",
+      "b": "$\\lambda^2+3\\lambda-4$",
+      "c": "$\\lambda^2-3\\lambda+4$",
+      "d": "$\\lambda^2-5\\lambda+4$",
+      "e": "$\\lambda^2-3\\lambda-2$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\det(A-\\lambda I)=(1-\\lambda)(2-\\lambda)-2\\cdot3=2-3\\lambda+\\lambda^2-6=\\lambda^2-3\\lambda-4$ (que fatora como $(\\lambda-4)(\\lambda+1)$, dando autovalores $4$ e $-1$).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Produto interno canônico",
+    "dificuldade": "facil",
+    "enunciado": "Calcule o produto interno $\\langle u,v\\rangle$ para $u=(2,-1,3)$ e $v=(1,4,-2)$.",
+    "alternativas": {
+      "a": "$-8$",
+      "b": "$8$",
+      "c": "$0$",
+      "d": "$-4$",
+      "e": "$12$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\langle u,v\\rangle=2(1)+(-1)(4)+3(-2)=2-4-6=-8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Norma de um vetor",
+    "dificuldade": "facil",
+    "enunciado": "Calcule a norma $\\|v\\|$ do vetor $v=(3,-4,12)$.",
+    "alternativas": {
+      "a": "$13$",
+      "b": "$19$",
+      "c": "$5$",
+      "d": "$169$",
+      "e": "$11$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\|v\\|=\\sqrt{3^2+(-4)^2+12^2}=\\sqrt{9+16+144}=\\sqrt{169}=13$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Ângulo entre vetores",
+    "dificuldade": "medio",
+    "enunciado": "Determine o ângulo entre $u=(1,0)$ e $v=(1,1)$.",
+    "alternativas": {
+      "a": "$45°$",
+      "b": "$30°$",
+      "c": "$60°$",
+      "d": "$90°$",
+      "e": "$15°$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\cos\\theta=\\dfrac{\\langle u,v\\rangle}{\\|u\\|\\|v\\|}=\\dfrac{1}{1\\cdot\\sqrt2}=\\dfrac{1}{\\sqrt2}$, logo $\\theta=45°$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Complemento ortogonal de uma reta em R³",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a equação do complemento ortogonal da reta gerada por $u=(1,2,2)$ em $\\mathbb{R}^3$.",
+    "alternativas": {
+      "a": "$x+2y+2z=0$",
+      "b": "$2x+y+2z=0$",
+      "c": "$x+2y-2z=0$",
+      "d": "$x-2y+2z=0$",
+      "e": "$x+y+z=0$"
+    },
+    "gabarito": "a",
+    "resolucao": "O complemento ortogonal é o conjunto dos vetores $(x,y,z)$ com $\\langle(x,y,z),u\\rangle=0$, ou seja, $1x+2y+2z=0$, um plano por origem perpendicular a $u$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Normalização de vetor (base ortonormal)",
+    "dificuldade": "facil",
+    "enunciado": "Normalize o vetor $v=(3,4)$ para obter um vetor unitário na mesma direção.",
+    "alternativas": {
+      "a": "$\\left(\\frac35,\\frac45\\right)$",
+      "b": "$\\left(\\frac45,\\frac35\\right)$",
+      "c": "$(3,4)$",
+      "d": "$\\left(\\frac13,\\frac14\\right)$",
+      "e": "$\\left(-\\frac35,\\frac45\\right)$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\|v\\|=\\sqrt{3^2+4^2}=\\sqrt{25}=5$. O vetor normalizado é $\\dfrac{v}{\\|v\\|}=\\left(\\dfrac35,\\dfrac45\\right)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Verificação de matriz ortogonal",
+    "dificuldade": "medio",
+    "enunciado": "Verifique se $Q=\\begin{pmatrix}3/5&-4/5\\\\4/5&3/5\\end{pmatrix}$ é ortogonal, calculando $Q^TQ$.",
+    "alternativas": {
+      "a": "$Q^TQ=I$; $Q$ é ortogonal",
+      "b": "$Q^TQ=\\begin{pmatrix}2&0\\\\0&2\\end{pmatrix}$; não é ortogonal",
+      "c": "$Q^TQ=\\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}$; não é ortogonal",
+      "d": "$Q^TQ=0$; não é ortogonal",
+      "e": "$Q^TQ=\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$; não é ortogonal"
+    },
+    "gabarito": "a",
+    "resolucao": "As colunas de $Q$ têm norma $\\sqrt{(3/5)^2+(4/5)^2}=\\sqrt{9/25+16/25}=1$ e o produto interno entre elas é $\\frac35\\cdot(-\\frac45)+\\frac45\\cdot\\frac35=-\\frac{12}{25}+\\frac{12}{25}=0$. Colunas unitárias e ortogonais entre si dão $Q^TQ=I$, logo $Q$ é ortogonal.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Diagonalização ortogonal de matriz simétrica",
+    "dificuldade": "dificil",
+    "enunciado": "Diagonalize ortogonalmente $A=\\begin{pmatrix}5&3\\\\3&5\\end{pmatrix}$: quais são os autovalores que compõem a diagonal de $D$?",
+    "alternativas": {
+      "a": "$2$ e $8$",
+      "b": "$5$ e $3$",
+      "c": "$-2$ e $8$",
+      "d": "$1$ e $9$",
+      "e": "$4$ e $6$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\det(A-\\lambda I)=(5-\\lambda)^2-9=0 \\Rightarrow (5-\\lambda)=\\pm3 \\Rightarrow \\lambda=2$ ou $\\lambda=8$ — ambos reais, como garante o Teorema Espectral para matrizes simétricas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Verificação de conjunto ortogonal",
+    "dificuldade": "facil",
+    "enunciado": "Verifique se $\\{(1,1,0),(1,-1,0),(0,0,1)\\}$ é um conjunto ortogonal.",
+    "alternativas": {
+      "a": "Sim; conjunto ortogonal",
+      "b": "Não; conjunto não ortogonal",
+      "c": "Sim; e também ortonormal",
+      "d": "Não; apenas dois dos vetores são ortogonais",
+      "e": "Indeterminado sem normalizar os vetores"
+    },
+    "gabarito": "a",
+    "resolucao": "Testando os produtos internos par a par: $(1,1,0)\\cdot(1,-1,0)=1-1=0$, $(1,1,0)\\cdot(0,0,1)=0$ e $(1,-1,0)\\cdot(0,0,1)=0$ — todos nulos, logo o conjunto é ortogonal (mas não ortonormal, já que os dois primeiros vetores têm norma $\\sqrt2\\neq1$).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Distância entre dois vetores",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a distância entre $u=(1,2,3)$ e $v=(4,6,3)$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$7$",
+      "c": "$25$",
+      "d": "$\\sqrt{13}$",
+      "e": "$3$"
+    },
+    "gabarito": "a",
+    "resolucao": "$d(u,v)=\\|u-v\\|=\\|(-3,-4,0)\\|=\\sqrt{9+16+0}=\\sqrt{25}=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Álgebra Linear",
+    "topico": "Diagonalização de Matrizes Simétricas",
+    "subtopico": "Operador autoadjunto (matriz simétrica)",
+    "dificuldade": "medio",
+    "enunciado": "A transformação $T(x,y)=(3x+2y,\\ 2x+3y)$ é autoadjunta em relação ao produto interno canônico?",
+    "alternativas": {
+      "a": "Sim; a matriz de $T$ é simétrica",
+      "b": "Não; a matriz de $T$ não é simétrica",
+      "c": "Sim; mas só para outro produto interno",
+      "d": "Não; $T$ nem é linear",
+      "e": "Indeterminado sem calcular autovalores"
+    },
+    "gabarito": "a",
+    "resolucao": "A matriz canônica de $T$ é $\\begin{pmatrix}3&2\\\\2&3\\end{pmatrix}$, que é simétrica ($A=A^T$). Em relação ao produto interno canônico, um operador é autoadjunto se e somente se sua matriz é simétrica — logo $T$ é autoadjunto.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

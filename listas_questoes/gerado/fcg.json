@@ -1,0 +1,192 @@
+[
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções em R",
+    "subtopico": "Domínio de função com radical e fração",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o domínio (máximo) de $f(x) = \\sqrt{\\dfrac{x^2-x-2}{x^2-4}}$.",
+    "alternativas": {
+      "a": "$(-\\infty,-2)\\cup[-1,2)\\cup(2,+\\infty)$",
+      "b": "$[-1,2)\\cup(2,+\\infty)$",
+      "c": "$(-\\infty,-2)\\cup[-1,+\\infty)$",
+      "d": "$\\mathbb{R}\\setminus\\{-2,2\\}$",
+      "e": "$[-2,-1]\\cup[2,+\\infty)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Fatorando: $\\frac{x^2-x-2}{x^2-4}=\\frac{(x-2)(x+1)}{(x-2)(x+2)}$, com $x\\neq2$ e $x\\neq-2$ (denominador original). Para $x\\neq2$, a expressão se reduz a $\\frac{x+1}{x+2}$, e precisamos $\\frac{x+1}{x+2}\\ge0$. Estudo de sinal (pontos críticos $x=-2$ e $x=-1$): positivo para $x<-2$ ou $x\\ge-1$ (com $x\\neq-2$). Juntando com a restrição $x\\neq2$: domínio $=(-\\infty,-2)\\cup[-1,2)\\cup(2,+\\infty)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": "\\begin{tikzpicture}\n\\draw[thick, ->] (-4,0) -- (4,0) node[right] {$x$};\n\\foreach \\x in {-2,-1,0,1,2} \\draw (\\x,0.1) -- (\\x,-0.1) node[below] {$\\x$};\n\\draw[very thick, blue] (-4,0) -- (-2,0);\n\\draw[very thick, blue] (-1,0) -- (2,0);\n\\draw[very thick, blue] (2,0) -- (4,0);\n\\draw[fill=white] (-2,0) circle (2pt);\n\\draw[fill=blue] (-1,0) circle (2pt);\n\\draw[fill=white] (2,0) circle (2pt);\n\\end{tikzpicture}"
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções em R",
+    "subtopico": "Função exponencial — modelo de resfriamento",
+    "dificuldade": "medio",
+    "enunciado": "Um objeto metálico, retirado de um forno a $300°C$, é colocado em uma sala com temperatura ambiente constante de $20°C$. A cada hora, a diferença de temperatura entre o objeto e o ambiente se reduz à metade. Qual é a temperatura do objeto após $3$ horas?",
+    "alternativas": {
+      "a": "$55°C$",
+      "b": "$35°C$",
+      "c": "$75°C$",
+      "d": "$40°C$",
+      "e": "$60°C$"
+    },
+    "gabarito": "a",
+    "resolucao": "Seja $D(t)=T(t)-20$ a diferença para a temperatura ambiente. Como $D$ reduz à metade a cada hora, $D(t)=D(0)\\cdot\\left(\\frac12\\right)^t$. Aqui $D(0)=300-20=280$. Em $t=3$: $D(3)=280\\cdot\\left(\\frac12\\right)^3=280\\cdot\\frac18=35$. Logo, $T(3)=D(3)+20=35+20=55°C$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Função inversa — cálculo pontual",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{3x+1}{x-2}$, definida para $x\\neq2$. Determine $f^{-1}(4)$.",
+    "alternativas": {
+      "a": "$9$",
+      "b": "$4$",
+      "c": "$-9$",
+      "d": "$2$",
+      "e": "$7$"
+    },
+    "gabarito": "a",
+    "resolucao": "$f^{-1}(4)$ é o valor de $x$ tal que $f(x)=4$: $\\frac{3x+1}{x-2}=4 \\Rightarrow 3x+1=4(x-2)=4x-8 \\Rightarrow 1+8=4x-3x \\Rightarrow x=9$. Verificação: $f(9)=\\frac{27+1}{9-2}=\\frac{28}{7}=4$ ✓.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Composição de funções — determinação de função desconhecida",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $f(x)=2x-1$ e $g(x)=x^2+3x+1$. Sabendo que $m(x)=ax^2+bx+c$ satisfaz $(m\\circ f)(x)=2g(x)$ para todo $x\\in\\mathbb{R}$, determine $m(x)$.",
+    "alternativas": {
+      "a": "$m(x)=\\frac12x^2+4x+\\frac{11}{2}$",
+      "b": "$m(x)=2x^2+4x+2$",
+      "c": "$m(x)=\\frac12x^2+6x+2$",
+      "d": "$m(x)=x^2+4x+\\frac{11}{2}$",
+      "e": "$m(x)=\\frac12x^2-4x+\\frac{11}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "$(m\\circ f)(x)=m(2x-1)=a(2x-1)^2+b(2x-1)+c=4ax^2+(-4a+2b)x+(a-b+c)$. Por outro lado, $2g(x)=2x^2+6x+2$. Igualando coeficientes: $4a=2\\Rightarrow a=\\frac12$; $-4a+2b=6\\Rightarrow-2+2b=6\\Rightarrow b=4$; $a-b+c=2\\Rightarrow\\frac12-4+c=2\\Rightarrow c=\\frac{11}{2}$. Logo, $m(x)=\\frac12x^2+4x+\\frac{11}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Função par e função ímpar",
+    "dificuldade": "facil",
+    "enunciado": "Classifique a função $f(x) = x^3 - 4x$ quanto à paridade.",
+    "alternativas": {
+      "a": "Ímpar",
+      "b": "Par",
+      "c": "Nem par nem ímpar",
+      "d": "Par e ímpar simultaneamente",
+      "e": "Não é possível determinar sem o gráfico"
+    },
+    "gabarito": "a",
+    "resolucao": "Calculando $f(-x) = (-x)^3-4(-x) = -x^3+4x = -(x^3-4x) = -f(x)$. Como $f(-x)=-f(x)$ para todo $x$, a função é ÍMPAR.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Transformações de gráficos (translação e reflexão)",
+    "dificuldade": "medio",
+    "enunciado": "O gráfico de $g(x) = -f(x-2)+3$ é obtido a partir do gráfico de $f$ por quais transformações, na ordem em que devem ser aplicadas?",
+    "alternativas": {
+      "a": "Translação de 2 unidades à direita, reflexão em torno do eixo $x$, translação de 3 unidades para cima",
+      "b": "Translação de 2 unidades à esquerda, reflexão em torno do eixo $y$, translação de 3 unidades para baixo",
+      "c": "Reflexão em torno do eixo $y$, translação de 2 unidades à direita, translação de 3 unidades para cima",
+      "d": "Translação de 3 unidades à direita, reflexão em torno do eixo $y$, translação de 2 unidades para cima",
+      "e": "Translação de 2 unidades para cima, reflexão em torno do eixo $x$, translação de 3 unidades à direita"
+    },
+    "gabarito": "a",
+    "resolucao": "Partindo de $f(x)$: substituir $x$ por $x-2$ desloca o gráfico $2$ unidades para a DIREITA, dando $f(x-2)$. Aplicar o sinal negativo reflete o resultado em torno do eixo $x$, dando $-f(x-2)$. Por fim, somar $3$ desloca $3$ unidades para CIMA, dando $-f(x-2)+3=g(x)$. A ordem segue a estrutura algébrica de dentro para fora: primeiro a transformação dentro de $f(\\cdot)$ (horizontal), depois as transformações aplicadas ao resultado de $f$ (reflexão e deslocamento vertical).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Vetores e Retas no Plano",
+    "subtopico": "Distância de ponto a reta",
+    "dificuldade": "facil",
+    "enunciado": "Calcule a distância do ponto $A=(1,2)$ à reta $r: 3x-4y+1=0$.",
+    "alternativas": {
+      "a": "$\\frac45$",
+      "b": "$0$",
+      "c": "$\\frac54$",
+      "d": "$1$",
+      "e": "$\\frac85$"
+    },
+    "gabarito": "a",
+    "resolucao": "A distância de um ponto $(x_0,y_0)$ à reta $ax+by+c=0$ é $d=\\frac{|ax_0+by_0+c|}{\\sqrt{a^2+b^2}}$. Aqui, $d=\\frac{|3(1)-4(2)+1|}{\\sqrt{3^2+(-4)^2}}=\\frac{|3-8+1|}{\\sqrt{25}}=\\frac{|-4|}{5}=\\frac45$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Vetores e Retas no Plano",
+    "subtopico": "Área de triângulo via produto vetorial (2D)",
+    "dificuldade": "medio",
+    "enunciado": "Os pontos $A=(1,1)$, $B=(4,2)$ e $C=(2,5)$ formam um triângulo. Calcule sua área usando o determinante dos vetores $\\overrightarrow{AB}$ e $\\overrightarrow{AC}$.",
+    "alternativas": {
+      "a": "$\\frac{11}{2}$",
+      "b": "$11$",
+      "c": "$22$",
+      "d": "$\\frac{11}{4}$",
+      "e": "$6$"
+    },
+    "gabarito": "a",
+    "resolucao": "$\\overrightarrow{AB}=(3,1)$ e $\\overrightarrow{AC}=(1,4)$. O \"produto vetorial\" em 2D (componente $z$ do produto vetorial em 3D) é $3\\cdot4-1\\cdot1=12-1=11$. A área do triângulo é a metade do valor absoluto desse determinante: $\\text{Área}=\\frac{|11|}{2}=\\frac{11}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Vetores no Espaço e Geometria Sólida",
+    "subtopico": "Produto misto — volume do paralelepípedo",
+    "dificuldade": "medio",
+    "enunciado": "Calcule o volume do paralelepípedo determinado pelos vetores $\\vec u=(1,0,2)$, $\\vec v=(0,1,1)$ e $\\vec w=(2,1,0)$, usando o produto misto.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$-5$",
+      "c": "$10$",
+      "d": "$3$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "O volume é $|\\det[\\vec u,\\vec v,\\vec w]|$. $\\det\\begin{pmatrix}1&0&2\\\\0&1&1\\\\2&1&0\\end{pmatrix} = 1(1\\cdot0-1\\cdot1) - 0(0\\cdot0-1\\cdot2) + 2(0\\cdot1-1\\cdot2) = 1(-1)-0+2(-2) = -1-4=-5$. Volume $=|-5|=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Vetores no Espaço e Geometria Sólida",
+    "subtopico": "Distância de ponto a plano",
+    "dificuldade": "facil",
+    "enunciado": "Calcule a distância do ponto $P=(1,2,3)$ ao plano $\\pi: 2x - y + 2z - 4=0$.",
+    "alternativas": {
+      "a": "$\\frac23$",
+      "b": "$\\frac43$",
+      "c": "$2$",
+      "d": "$\\frac13$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "A distância de um ponto a um plano $ax+by+cz+d=0$ é $\\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}$. Aqui, $d=\\frac{|2(1)-2+2(3)-4|}{\\sqrt{4+1+4}}=\\frac{|2-2+6-4|}{\\sqrt9}=\\frac{|2|}{3}=\\frac23$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]
