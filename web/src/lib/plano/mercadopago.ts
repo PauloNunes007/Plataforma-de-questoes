@@ -63,7 +63,13 @@ export async function criarPreferenciaCheckout(params: {
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      console.error("Erro ao criar preferência MP:", res.status, await res.text());
+      console.error(
+        "Erro ao criar preferência MP:",
+        res.status,
+        await res.text(),
+        "— back_urls enviadas:",
+        (body as { back_urls: unknown }).back_urls,
+      );
       return { error: "Não foi possível iniciar o pagamento agora." };
     }
     const data = (await res.json()) as { init_point?: string; sandbox_init_point?: string };
