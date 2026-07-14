@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Layers, ListChecks, NotebookPen, Star } from "lucide-react";
+import { ArrowRight, Crown, Layers, ListChecks, NotebookPen, Star } from "lucide-react";
 import { HubTiltCard } from "@/components/questoes/hub-tilt-card";
 
 // Hub sem fetch — cada sub-rota trata seu próprio empty-state (sem
@@ -20,7 +20,7 @@ export default function QuestoesPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <HubTiltCard
           href="/questoes/banco"
           Icone={Layers}
@@ -38,6 +38,15 @@ export default function QuestoesPage() {
           titulo="Listas de"
           tituloDestaque="Questões"
           descricao="Escolha uma disciplina e pratique tópico por tópico, com listas já prontas."
+        />
+        <HubTiltCard
+          href="/questoes/xadrez"
+          Icone={Crown}
+          corA="#8b5cf6"
+          corB="#5b21b6"
+          titulo="Arena de"
+          tituloDestaque="Xadrez"
+          descricao="Responda certo e a máquina joga lances brilhantes por você. Erre, e ela vacila."
         />
       </div>
 

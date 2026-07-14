@@ -24,7 +24,7 @@ export default async function ProtectedLayout({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("nome, curso, plano, plano_expira_em")
+    .select("nome, username, curso, foto_url, plano, plano_expira_em")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -34,8 +34,22 @@ export default async function ProtectedLayout({
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
-      <Sidebar nome={nome} curso={profile?.curso ?? null} isAdmin={isAdmin} ehPro={pro} />
-      <MobileHeader nome={nome} curso={profile?.curso ?? null} isAdmin={isAdmin} ehPro={pro} />
+      <Sidebar
+        nome={nome}
+        username={profile?.username ?? null}
+        curso={profile?.curso ?? null}
+        fotoUrl={profile?.foto_url ?? null}
+        isAdmin={isAdmin}
+        ehPro={pro}
+      />
+      <MobileHeader
+        nome={nome}
+        username={profile?.username ?? null}
+        curso={profile?.curso ?? null}
+        fotoUrl={profile?.foto_url ?? null}
+        isAdmin={isAdmin}
+        ehPro={pro}
+      />
       {/* pb-16 abre espaço pra MobileBottomNav (fixed, ~56px + safe-area)
           não tampar o fim da página em telas < lg. */}
       <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>

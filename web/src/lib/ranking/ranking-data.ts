@@ -12,6 +12,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export type RankingRow = {
   id: string;
   nome: string;
+  /** Identidade pública (@handle) — o ranking mostra ele; `nome` é o
+   *  fallback pra contas que ainda não escolheram um username. */
+  username: string | null;
   fotoUrl: string | null;
   xpSemana: number;
   questoesSemana: number;
@@ -55,7 +58,7 @@ export async function buscarGrupoLiga(
 ): Promise<GrupoLiga> {
   const { data: alunos } = await supabase
     .from("profiles")
-    .select("id, nome, foto_url, xp_semana, questoes_semana")
+    .select("id, nome, username, foto_url, xp_semana, questoes_semana")
     .eq("liga", liga)
     .eq("semana_inicio", semanaInicio)
     .order("xp_semana", { ascending: false });
@@ -67,6 +70,7 @@ export async function buscarGrupoLiga(
   const grupo: RankingRow[] = lista.map((a) => ({
     id: a.id,
     nome: a.nome || "Aluno(a)",
+    username: a.username || null,
     fotoUrl: a.foto_url,
     xpSemana: a.xp_semana || 0,
     questoesSemana: a.questoes_semana || 0,

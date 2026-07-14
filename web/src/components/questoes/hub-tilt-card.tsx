@@ -61,7 +61,7 @@ export function HubTiltCard({
       <Link href={href} className="block" style={{ transformStyle: "preserve-3d" }}>
         <motion.div
           style={{ rotateX: springX, rotateY: springY, transformStyle: "preserve-3d" }}
-          className="relative flex min-h-[280px] flex-col overflow-hidden rounded-[22px] p-6 shadow-xl shadow-black/10 sm:min-h-[420px] sm:p-8"
+          className="relative flex min-h-[320px] flex-col overflow-hidden rounded-[22px] p-6 shadow-xl shadow-black/10 sm:min-h-[480px] sm:p-8"
         >
           <div
             className="absolute inset-0"
@@ -94,8 +94,11 @@ export function HubTiltCard({
             transition={{ duration: 3.2, repeat: Infinity, repeatDelay: 2.2, ease: "easeInOut" }}
           />
 
+          {/* flex-1 (não h-full: height:100% não resolve contra um pai
+              com só min-height) — é o que empurra o CTA pro pé do card,
+              longe do texto. */}
           <div
-            className="relative z-20 flex h-full flex-col"
+            className="relative z-20 flex flex-1 flex-col"
             style={{ transform: "translateZ(30px)" }}
           >
             <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 text-white ring-1 ring-white/30 backdrop-blur-sm sm:h-16 sm:w-16">
@@ -107,11 +110,13 @@ export function HubTiltCard({
               <br />
               <span className="font-extrabold">{tituloDestaque}</span>
             </h2>
-            <p className="mt-3 max-w-[300px] text-[13.5px] leading-relaxed text-white/85 sm:text-[14.5px]">
+            {/* mb-8 garante respiro mínimo entre o texto e o CTA mesmo
+                quando o card está na altura mínima */}
+            <p className="mb-8 mt-3 max-w-[300px] text-[13.5px] leading-relaxed text-white/85 sm:text-[14.5px]">
               {descricao}
             </p>
 
-            <span className="mt-auto inline-flex w-fit items-center gap-1.5 rounded-full bg-white/20 px-4 py-2.5 text-sm font-medium text-white ring-1 ring-white/30 backdrop-blur-sm transition-transform group-hover:translate-x-0.5">
+            <span className="mt-auto inline-flex w-fit items-center gap-1.5 rounded-full bg-white/20 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm transition-transform group-hover:translate-x-0.5">
               Começar
               <ArrowRight size={15} strokeWidth={2.25} />
             </span>

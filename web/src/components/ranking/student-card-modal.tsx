@@ -138,7 +138,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
             Liga {card.ligaNome}
           </span>
           <h3 className={`min-w-0 flex-1 truncate font-heading text-[17px] font-bold text-white ${TEXTO_POP}`}>
-            {card.nome}
+            {card.username ? `@${card.username}` : card.nome}
           </h3>
           <span className={`flex shrink-0 items-baseline gap-1 text-white ${TEXTO_POP}`}>
             <span className="text-[9px] font-bold uppercase">Nv</span>
@@ -168,7 +168,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
               </span>
             )}
             <RankAvatar
-              nome={card.nome}
+              nome={card.username || card.nome}
               fotoUrl={card.fotoUrl}
               size={112}
               gradientClassName="from-white/25 to-black/20"

@@ -1,19 +1,25 @@
 "use client";
 
+// Configurações — redesign fintech (2026-07-14): um card "Conta" estilo
+// app de banco (capa em gradiente do curso, avatar sobreposto, linhas de
+// conta com edição inline pra Nome e Username) seguido de seções
+// agrupadas por kicker. O username (@handle, único, carência de 15 dias)
+// é a identidade pública do ranking; o nome é só exibição no dashboard —
+// ver supabase_username.sql.
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  AtSign,
   BookOpen,
   CalendarDays,
   CalendarRange,
+  Camera,
   Check,
-  ImageIcon,
   Lock,
   Plus,
   Sparkles,
   Swords,
   Trash2,
-  User,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -23,6 +29,8 @@ import {
 } from "@/lib/questly/shared";
 import { questlyRecomendarRotina, type RotinaLinha } from "@/lib/questly/rotina-engine";
 import { redimensionarAvatar } from "@/lib/configuracoes/avatar-resize";
+import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
+import { CursoIcone } from "@/components/cursos/curso-icone";
 import {
   adicionarProvaAction,
   atualizarProvaAction,
@@ -34,11 +42,12 @@ import {
   salvarNomeAction,
   salvarNotaAction,
   salvarRotinaAction,
+  salvarUsernameAction,
   uploadFotoAction,
   type SubjectComBosses,
 } from "@/lib/configuracoes/actions";
 
-const NOME_CARENCIA_DIAS = 15;
+const USERNAME_CARENCIA_DIAS = 15;
 
 const DIAS_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 const TEMPO_OPCOES: { label: string; minutos: number }[] = [
@@ -73,12 +82,17 @@ const BTN_PRIMARIO =
 const BTN_SECUNDARIO =
   "inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50";
 
+const INPUT_BASE =
+  "w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20";
+
 type ProfileMin = {
   nome: string | null;
+  username: string | null;
+  username_alterado_em: string | null;
+  curso: string | null;
   foto_url: string | null;
   dias_disponiveis: string[] | null;
   tempo_diario_min: number | null;
-  nome_alterado_em: string | null;
 };
 
 function Card({
@@ -98,7 +112,7 @@ function Card({
     <div className="surface p-5 sm:p-6">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-questly-green-light text-questly-green-dark">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-questly-green/18 to-questly-green/5 text-questly-green-dark ring-1 ring-inset ring-questly-green/15">
             <Icon size={18} strokeWidth={1.75} />
           </span>
           <div>
@@ -147,6 +161,10 @@ function Chip({
   );
 }
 
+function SecaoKicker({ children }: { children: React.ReactNode }) {
+  return <div className="kicker mt-3 px-1">{children}</div>;
+}
+
 export function ConfiguracoesPanel({
   profile,
   subjectsIniciais,
@@ -161,152 +179,94 @@ export function ConfiguracoesPanel({
   const [tempoMin, setTempoMin] = useState<number | null>(profile?.tempo_diario_min ?? null);
 
   return (
-    <div className="mx-auto flex max-w-[720px] flex-col gap-5 px-5 py-8 sm:px-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Configurações</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Ajuste sua rotina, disciplinas e provas quando quiser.</p>
+    <div className="mx-auto flex max-w-[760px] flex-col gap-4 px-5 py-8 sm:px-6">
+      <div className="mb-1">
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">Configurações</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Sua conta, sua rotina e suas provas — tudo num lugar só.</p>
       </div>
 
-      <NomeCard nomeInicial={profile?.nome ?? null} nomeAlteradoEmInicial={profile?.nome_alterado_em ?? null} />
+      <ContaCard profile={profile} />
 
-      <FotoCard nome={profile?.nome || "Aluno(a)"} fotoUrlInicial={profile?.foto_url ?? null} />
-
+      <SecaoKicker>Plano de estudo</SecaoKicker>
       <RotinaCard dias={dias} tempoMin={tempoMin} onSalvar={(d, t) => { setDias(d); setTempoMin(t); }} />
-
       <GradeSemanalCard subjects={subjects} dias={dias} tempoMin={tempoMin} rotinaInicial={rotinaInicial} />
 
+      <SecaoKicker>Disciplinas e provas</SecaoKicker>
       <DisciplinasCard subjects={subjects} onSubjectsChange={setSubjects} />
-
       <ProvasCard subjects={subjects} onSubjectsChange={setSubjects} />
     </div>
   );
 }
 
-function diasRestantesCarencia(nomeAlteradoEm: string | null): number {
-  if (!nomeAlteradoEm) return 0;
-  const decorridoMs = Date.now() - new Date(nomeAlteradoEm).getTime();
-  const restanteMs = NOME_CARENCIA_DIAS * 24 * 60 * 60 * 1000 - decorridoMs;
+function diasRestantesCarencia(alteradoEm: string | null): number {
+  if (!alteradoEm) return 0;
+  const decorridoMs = Date.now() - new Date(alteradoEm).getTime();
+  const restanteMs = USERNAME_CARENCIA_DIAS * 24 * 60 * 60 * 1000 - decorridoMs;
   return restanteMs <= 0 ? 0 : Math.ceil(restanteMs / (24 * 60 * 60 * 1000));
 }
 
-function NomeCard({
-  nomeInicial,
-  nomeAlteradoEmInicial,
-}: {
-  nomeInicial: string | null;
-  nomeAlteradoEmInicial: string | null;
-}) {
-  const [nome, setNome] = useState(nomeInicial ?? "");
-  const [nomeAlteradoEm, setNomeAlteradoEm] = useState(nomeAlteradoEmInicial);
-  const [editando, setEditando] = useState(false);
-  const [rascunho, setRascunho] = useState(nomeInicial ?? "");
-  const [salvando, setSalvando] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
+// ————— Card "Conta": capa + avatar + nome + username, estilo fintech —————
 
-  const diasRestantes = diasRestantesCarencia(nomeAlteradoEm);
-  const bloqueado = diasRestantes > 0;
+function ContaCard({ profile }: { profile: ProfileMin | null }) {
+  const identidade = resolverCurso(profile?.curso ?? null);
+  const reconhecido = cursoReconhecido(identidade);
 
-  async function salvar() {
-    setErro(null);
-    if (rascunho.trim() === nome) {
-      setEditando(false);
-      return;
-    }
-    setSalvando(true);
-    const resultado = await salvarNomeAction(rascunho);
-    setSalvando(false);
-    if (!("nome" in resultado)) {
-      setErro(resultado.error);
-      return;
-    }
-    setNome(resultado.nome);
-    setNomeAlteradoEm(resultado.nomeAlteradoEm || null);
-    setEditando(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1800);
-  }
+  const [nome, setNome] = useState(profile?.nome ?? "");
+  const [username, setUsername] = useState(profile?.username ?? null);
 
   return (
-    <Card
-      icon={User}
-      title="Nome"
-      sub="É como você aparece pros outros alunos no ranking. Precisa ser único e só pode ser trocado a cada 15 dias."
-    >
-      {editando ? (
-        <div className="flex flex-col gap-3">
-          <input
-            autoFocus
-            value={rascunho}
-            maxLength={40}
-            onChange={(e) => setRascunho(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") salvar();
-              if (e.key === "Escape") {
-                setRascunho(nome);
-                setErro(null);
-                setEditando(false);
-              }
-            }}
-            placeholder="Seu nome"
-            className="w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
+    <div className="surface overflow-hidden">
+      {/* capa com o acento do curso — o app "reage" a quem você é */}
+      <div
+        className="relative h-24"
+        style={{ background: `linear-gradient(120deg, ${identidade.corA}, ${identidade.corB})` }}
+      >
+        <div className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full bg-white/15 blur-sm" />
+        <div className="pointer-events-none absolute -bottom-8 left-1/3 h-24 w-24 rounded-full bg-black/10 blur-md" />
+        {reconhecido && (
+          <span className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-black/20 py-1 pl-1.5 pr-3 text-white ring-1 ring-white/25 backdrop-blur-sm">
+            <span className="flex h-5 w-5 items-center justify-center">
+              <CursoIcone icone={identidade.icone} size={14} strokeWidth={2} />
+            </span>
+            <span className="truncate text-[10.5px] font-semibold uppercase tracking-wide">
+              {identidade.nome}
+            </span>
+          </span>
+        )}
+      </div>
+
+      <div className="px-5 pb-5 sm:px-6 sm:pb-6">
+        <div className="-mt-10 mb-4 flex items-end justify-between gap-3">
+          <FotoAvatar nome={nome || "Aluno(a)"} fotoUrlInicial={profile?.foto_url ?? null} />
+          <div className="min-w-0 pb-1 text-right">
+            <p className="truncate font-heading text-[17px] font-semibold leading-tight">{nome || "Sem nome"}</p>
+            <p className="truncate text-[12.5px] text-muted-foreground">
+              {username ? `@${username}` : "sem username ainda"}
+            </p>
+          </div>
+        </div>
+
+        <div className="divide-y divide-border rounded-xl border border-border">
+          <NomeRow nome={nome} onSalvo={setNome} />
+          <UsernameRow
+            usernameInicial={username}
+            usernameAlteradoEmInicial={profile?.username_alterado_em ?? null}
+            onSalvo={setUsername}
           />
-          {erro && <p className="text-xs font-medium text-questly-red-dark">{erro}</p>}
-          <div className="flex items-center gap-2">
-            <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
-              {salvando ? "Salvando..." : "Salvar nome"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setRascunho(nome);
-                setErro(null);
-                setEditando(false);
-              }}
-              className={BTN_SECUNDARIO}
-            >
-              Cancelar
-            </button>
-          </div>
         </div>
-      ) : (
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-[15px] font-semibold">{nome || "Sem nome definido"}</p>
-            {bloqueado && (
-              <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Lock size={12} strokeWidth={1.75} />
-                Você poderá trocar de novo em {diasRestantes} dia(s).
-              </p>
-            )}
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <SavedTag show={saved} />
-            <button
-              type="button"
-              disabled={bloqueado}
-              onClick={() => {
-                setRascunho(nome);
-                setEditando(true);
-              }}
-              className={BTN_SECUNDARIO}
-              title={bloqueado ? `Disponível em ${diasRestantes} dia(s)` : undefined}
-            >
-              Editar
-            </button>
-          </div>
-        </div>
-      )}
-    </Card>
+      </div>
+    </div>
   );
 }
 
-function FotoCard({ nome, fotoUrlInicial }: { nome: string; fotoUrlInicial: string | null }) {
+// Avatar com upload embutido: câmera abre o seletor, e a confirmação
+// aparece como uma barra inline logo abaixo (mesmo fluxo de antes, só
+// que sem um card inteiro dedicado à foto).
+function FotoAvatar({ nome, fotoUrlInicial }: { nome: string; fotoUrlInicial: string | null }) {
   const [fotoUrl, setFotoUrl] = useState(fotoUrlInicial);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pendente, setPendente] = useState<Blob | null>(null);
   const [enviando, setEnviando] = useState(false);
-  const [saved, setSaved] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function aoEscolherArquivo(e: React.ChangeEvent<HTMLInputElement>) {
@@ -337,9 +297,13 @@ function FotoCard({ nome, fotoUrlInicial }: { nome: string; fotoUrlInicial: stri
       setFotoUrl(resultado.url);
       setPendente(null);
       setPreviewUrl(null);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 1800);
     }
+  }
+
+  function descartar() {
+    setPendente(null);
+    setPreviewUrl(null);
+    if (inputRef.current) inputRef.current.value = "";
   }
 
   async function removerFoto() {
@@ -350,56 +314,289 @@ function FotoCard({ nome, fotoUrlInicial }: { nome: string; fotoUrlInicial: stri
       return;
     }
     setFotoUrl(null);
-    setPendente(null);
-    setPreviewUrl(null);
+    descartar();
   }
 
   const mostrarUrl = previewUrl || fotoUrl;
 
   return (
-    <Card
-      icon={ImageIcon}
-      title="Foto de perfil"
-      sub="Aparece pros outros alunos no ranking. A imagem é recortada e reduzida automaticamente antes de subir."
-    >
-      <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-questly-green to-questly-green-deep text-xl font-semibold text-white">
+    <div className="flex items-end gap-2.5">
+      <div className="relative shrink-0">
+        <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-questly-green to-questly-green-deep text-2xl font-semibold text-white ring-4 ring-card">
           {mostrarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={mostrarUrl} alt="Avatar" className="h-full w-full object-cover" />
+            <img src={mostrarUrl} alt="Sua foto de perfil" className="h-full w-full object-cover" />
           ) : (
             nome.charAt(0).toUpperCase()
           )}
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
-            <button type="button" onClick={() => inputRef.current?.click()} className={BTN_SECUNDARIO}>
-              Escolher imagem
-            </button>
-            {fotoUrl && (
-              <button
-                type="button"
-                onClick={removerFoto}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-questly-red-dark transition-colors hover:bg-questly-red-light"
-              >
-                <Trash2 size={14} strokeWidth={1.75} /> Remover
-              </button>
-            )}
-          </div>
-          <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={aoEscolherArquivo} />
-          {pendente && (
-            <div className="flex items-center gap-3">
-              <button type="button" disabled={enviando} onClick={salvarFoto} className={BTN_PRIMARIO}>
-                {enviando ? "Enviando..." : "Salvar foto"}
-              </button>
-              <SavedTag show={saved} />
-            </div>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          aria-label="Trocar foto de perfil"
+          className="absolute -bottom-1.5 -right-1.5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+        >
+          <Camera size={14} strokeWidth={2} />
+        </button>
+        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={aoEscolherArquivo} />
       </div>
-    </Card>
+
+      {pendente ? (
+        <div className="flex items-center gap-1.5 pb-0.5">
+          <button
+            type="button"
+            disabled={enviando}
+            onClick={salvarFoto}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-3.5 py-2 text-xs font-medium text-white shadow-sm transition-all hover:brightness-105 disabled:opacity-50 dark:text-[#0c1512]"
+          >
+            <Check size={13} strokeWidth={2.5} /> {enviando ? "Enviando..." : "Salvar foto"}
+          </button>
+          <button
+            type="button"
+            onClick={descartar}
+            aria-label="Descartar foto escolhida"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:bg-muted"
+          >
+            <X size={14} strokeWidth={2} />
+          </button>
+        </div>
+      ) : (
+        fotoUrl && (
+          <button
+            type="button"
+            onClick={removerFoto}
+            aria-label="Remover foto de perfil"
+            className="mb-0.5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:bg-questly-red-light hover:text-questly-red-dark"
+          >
+            <Trash2 size={13.5} strokeWidth={1.75} />
+          </button>
+        )
+      )}
+    </div>
   );
 }
+
+// Linha de conta genérica (rótulo + valor + Editar → input inline).
+function LinhaConta({
+  rotulo,
+  hint,
+  valor,
+  placeholderVazio,
+  bloqueadoInfo,
+  editando,
+  onEditar,
+  saved,
+  children,
+}: {
+  rotulo: string;
+  hint: string;
+  valor: string | null;
+  placeholderVazio: string;
+  bloqueadoInfo?: string | null;
+  editando: boolean;
+  onEditar: () => void;
+  saved: boolean;
+  children: React.ReactNode; // o formulário inline quando editando
+}) {
+  return (
+    <div className="px-4 py-3.5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="kicker">{rotulo}</div>
+          {!editando && (
+            <p className={`mt-1 truncate text-[14.5px] font-semibold ${valor ? "" : "text-muted-foreground/70"}`}>
+              {valor || placeholderVazio}
+            </p>
+          )}
+          <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">{hint}</p>
+          {bloqueadoInfo && (
+            <p className="mt-1 flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
+              <Lock size={11} strokeWidth={1.75} /> {bloqueadoInfo}
+            </p>
+          )}
+        </div>
+        {!editando && (
+          <div className="flex shrink-0 items-center gap-2">
+            <SavedTag show={saved} />
+            <button type="button" disabled={!!bloqueadoInfo} onClick={onEditar} className={BTN_SECUNDARIO}>
+              Editar
+            </button>
+          </div>
+        )}
+      </div>
+      {editando && <div className="mt-2.5">{children}</div>}
+    </div>
+  );
+}
+
+function NomeRow({ nome, onSalvo }: { nome: string; onSalvo: (nome: string) => void }) {
+  const [editando, setEditando] = useState(false);
+  const [rascunho, setRascunho] = useState(nome);
+  const [salvando, setSalvando] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  function fechar() {
+    setRascunho(nome);
+    setErro(null);
+    setEditando(false);
+  }
+
+  async function salvar() {
+    setErro(null);
+    if (rascunho.trim() === nome) {
+      setEditando(false);
+      return;
+    }
+    setSalvando(true);
+    const resultado = await salvarNomeAction(rascunho);
+    setSalvando(false);
+    if (!("nome" in resultado)) {
+      setErro(resultado.error);
+      return;
+    }
+    onSalvo(resultado.nome);
+    setRascunho(resultado.nome);
+    setEditando(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  }
+
+  return (
+    <LinhaConta
+      rotulo="Nome de exibição"
+      hint="Aparece na saudação do seu dashboard — só você vê."
+      valor={nome || null}
+      placeholderVazio="Sem nome definido"
+      editando={editando}
+      onEditar={() => {
+        setRascunho(nome);
+        setEditando(true);
+      }}
+      saved={saved}
+    >
+      <div className="flex flex-col gap-2.5">
+        <input
+          autoFocus
+          value={rascunho}
+          maxLength={40}
+          onChange={(e) => setRascunho(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") salvar();
+            if (e.key === "Escape") fechar();
+          }}
+          placeholder="Seu nome"
+          className={INPUT_BASE}
+        />
+        {erro && <p className="text-xs font-medium text-questly-red-dark">{erro}</p>}
+        <div className="flex items-center gap-2">
+          <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
+            {salvando ? "Salvando..." : "Salvar nome"}
+          </button>
+          <button type="button" onClick={fechar} className={BTN_SECUNDARIO}>
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </LinhaConta>
+  );
+}
+
+function UsernameRow({
+  usernameInicial,
+  usernameAlteradoEmInicial,
+  onSalvo,
+}: {
+  usernameInicial: string | null;
+  usernameAlteradoEmInicial: string | null;
+  onSalvo: (username: string) => void;
+}) {
+  const [username, setUsername] = useState(usernameInicial);
+  const [alteradoEm, setAlteradoEm] = useState(usernameAlteradoEmInicial);
+  const [editando, setEditando] = useState(false);
+  const [rascunho, setRascunho] = useState(usernameInicial ?? "");
+  const [salvando, setSalvando] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  // A carência só vale pra quem JÁ tem username — escolher o primeiro é livre.
+  const diasRestantes = username ? diasRestantesCarencia(alteradoEm) : 0;
+
+  function fechar() {
+    setRascunho(username ?? "");
+    setErro(null);
+    setEditando(false);
+  }
+
+  async function salvar() {
+    setErro(null);
+    setSalvando(true);
+    const resultado = await salvarUsernameAction(rascunho);
+    setSalvando(false);
+    if (!("username" in resultado)) {
+      setErro(resultado.error);
+      return;
+    }
+    setUsername(resultado.username);
+    setAlteradoEm(resultado.usernameAlteradoEm || null);
+    onSalvo(resultado.username);
+    setEditando(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  }
+
+  return (
+    <LinhaConta
+      rotulo="Username"
+      hint="Sua identidade pública no ranking. Único entre todos os alunos e trocável a cada 15 dias."
+      valor={username ? `@${username}` : null}
+      placeholderVazio="Escolha seu @"
+      bloqueadoInfo={diasRestantes > 0 ? `Você poderá trocar de novo em ${diasRestantes} dia(s).` : null}
+      editando={editando}
+      onEditar={() => {
+        setRascunho(username ?? "");
+        setEditando(true);
+      }}
+      saved={saved}
+    >
+      <div className="flex flex-col gap-2.5">
+        <div className="relative">
+          <AtSign
+            size={15}
+            strokeWidth={2}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <input
+            autoFocus
+            value={rascunho}
+            maxLength={20}
+            onChange={(e) => setRascunho(e.target.value.toLowerCase())}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") salvar();
+              if (e.key === "Escape") fechar();
+            }}
+            placeholder="seu.username"
+            className={`${INPUT_BASE} pl-9 lowercase`}
+          />
+        </div>
+        <p className="text-[11.5px] text-muted-foreground">
+          3–20 caracteres: letras minúsculas, números, ponto e underline.
+        </p>
+        {erro && <p className="text-xs font-medium text-questly-red-dark">{erro}</p>}
+        <div className="flex items-center gap-2">
+          <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
+            {salvando ? "Salvando..." : "Salvar username"}
+          </button>
+          <button type="button" onClick={fechar} className={BTN_SECUNDARIO}>
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </LinhaConta>
+  );
+}
+
+// ————— Plano de estudo —————
 
 function RotinaCard({
   dias,
@@ -551,31 +748,42 @@ function GradeSemanalCard({
         <>
           <div className="overflow-x-auto">
             <div
-              className="grid items-center gap-y-1"
+              className="grid items-center gap-y-1.5"
               style={{ gridTemplateColumns: `160px repeat(${diasOrdenados.length}, 44px)` }}
             >
               <div />
               {diasOrdenados.map((d) => (
-                <div key={d.abrev} className="kicker text-center">
+                <div key={d.abrev} className="kicker pb-1 text-center">
                   {d.label}
                 </div>
               ))}
               {subjects.map((s) => (
                 <div key={s.id} className="contents">
                   <div className="truncate pr-2 text-sm font-medium">{s.nome}</div>
-                  {diasOrdenados.map((d) => (
-                    // label cobre a célula inteira (44px), não só a
-                    // caixinha — alvo de toque real bem maior que os 20px
-                    // visuais do checkbox.
-                    <label key={d.abrev} className="flex h-10 w-11 cursor-pointer items-center justify-center">
-                      <input
-                        type="checkbox"
-                        checked={!!marcado[`${s.id}|${d.abrev}`]}
-                        onChange={() => toggle(s.id, d.abrev)}
-                        className="h-5 w-5 accent-questly-green"
-                      />
-                    </label>
-                  ))}
+                  {diasOrdenados.map((d) => {
+                    const ativo = !!marcado[`${s.id}|${d.abrev}`];
+                    return (
+                      // célula-toggle no lugar do checkbox nativo — mesma
+                      // área de toque (44px de coluna), visual de app de
+                      // banco: pill verde preenchida quando ativa.
+                      <div key={d.abrev} className="flex h-10 w-11 items-center justify-center">
+                        <button
+                          type="button"
+                          role="checkbox"
+                          aria-checked={ativo}
+                          aria-label={`${s.nome} — ${d.label}`}
+                          onClick={() => toggle(s.id, d.abrev)}
+                          className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${
+                            ativo
+                              ? "border-questly-green bg-questly-green text-white shadow-sm dark:text-[#0c1512]"
+                              : "border-border bg-card text-transparent hover:border-questly-green/40 hover:bg-muted"
+                          }`}
+                        >
+                          <Check size={14} strokeWidth={3} />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
@@ -591,6 +799,8 @@ function GradeSemanalCard({
     </Card>
   );
 }
+
+// ————— Disciplinas e provas —————
 
 function DisciplinasCard({
   subjects,
@@ -664,7 +874,7 @@ function DisciplinasCard({
                     key={n}
                     type="button"
                     onClick={() => salvarNota(s, n)}
-                    className={`tnum flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-semibold transition-colors ${
+                    className={`tnum flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border text-sm font-semibold transition-colors ${
                       s.nota_desejada === n
                         ? "border-questly-green/50 bg-questly-green-light text-questly-green-dark"
                         : "border-border bg-card text-muted-foreground hover:bg-muted"
@@ -781,7 +991,7 @@ function ProvasCard({
                       type="button"
                       onClick={() => removerProva(s, b.id)}
                       aria-label="Remover prova"
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-questly-red transition-colors hover:bg-questly-red-light"
+                      className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-questly-red transition-colors hover:bg-questly-red-light"
                     >
                       <X size={16} strokeWidth={2} />
                     </button>
@@ -791,7 +1001,7 @@ function ProvasCard({
               <button
                 type="button"
                 onClick={() => adicionarProva(s)}
-                className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-questly-green-dark transition-opacity hover:opacity-80"
+                className="mt-2.5 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-questly-green-dark transition-opacity hover:opacity-80"
               >
                 <Plus size={14} strokeWidth={2} /> Adicionar prova
               </button>

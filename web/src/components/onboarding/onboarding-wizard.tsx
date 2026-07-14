@@ -1,16 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { salvarCampanhaAction, type DisciplinaInput, type ProvaInput } from "@/lib/onboarding/actions";
+import { Check, X } from "lucide-react";
+import {
+  salvarCampanhaAction,
+  verificarUsernameAction,
+  type DisciplinaInput,
+  type ProvaInput,
+} from "@/lib/onboarding/actions";
 import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cursos/registro";
 import { CursoReveal } from "@/components/onboarding/curso-reveal";
 import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
 import { TourPlataforma } from "@/components/onboarding/tour-plataforma";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
+
+const USERNAME_REGEX = /^[a-z0-9][a-z0-9_.]{2,19}$/;
+type UsernameStatus = "idle" | "verificando" | "disponivel" | "indisponivel" | "invalido";
 
 const DISCIPLINAS_SUGERIDAS = [
   "Fundamentos de Cálculo e Geometria",
@@ -47,6 +56,8 @@ type DiscCfg = { nota: number; provas: ProvaInput[] };
 
 type WizardState = {
   curso: string;
+  username: string;
+  usernameStatus: UsernameStatus;
   universidade: string;
   semestre: number | null;
   disciplinas: string[];
@@ -58,6 +69,8 @@ type WizardState = {
 
 const ESTADO_INICIAL: WizardState = {
   curso: "",
+  username: "",
+  usernameStatus: "idle",
   universidade: "",
   semestre: null,
   disciplinas: [],
@@ -67,19 +80,24 @@ const ESTADO_INICIAL: WizardState = {
   nivel: null,
 };
 
+// Passo 2 (username) é pulável — só bloqueia o "Continuar" quando o aluno
+// digitou algo mas ainda não chegou num veredito "disponível" (evita
+// mandar pro backend um @ que a checagem em tempo real já rejeitou).
 function ehValido(step: number, s: WizardState): boolean {
   switch (step) {
     case 1:
       return s.curso.trim().length > 0;
-    case 3:
-      return s.semestre !== null;
+    case 2:
+      return s.usernameStatus === "idle" || s.usernameStatus === "disponivel";
     case 4:
+      return s.semestre !== null;
+    case 5:
       return s.disciplinas.length > 0;
-    case 6:
-      return s.dias.length > 0;
     case 7:
-      return s.tempoLabel !== null;
+      return s.dias.length > 0;
     case 8:
+      return s.tempoLabel !== null;
+    case 9:
       return s.nivel !== null;
     default:
       return true;
@@ -90,12 +108,13 @@ const EYEBROWS: Record<number, string> = {
   1: "Sobre você",
   2: "Sobre você",
   3: "Sobre você",
-  4: "Sua campanha",
+  4: "Sobre você",
   5: "Sua campanha",
-  6: "Sua rotina",
+  6: "Sua campanha",
   7: "Sua rotina",
   8: "Sua rotina",
-  9: "Tudo pronto",
+  9: "Sua rotina",
+  10: "Tudo pronto",
 };
 
 function Chip({
@@ -183,6 +202,7 @@ export function OnboardingWizard() {
 
     const resultado = await salvarCampanhaAction({
       curso: state.curso,
+      username: state.usernameStatus === "disponivel" ? state.username.trim().toLowerCase() : null,
       universidade: state.universidade || null,
       semestre: state.semestre,
       nivel: state.nivel,
@@ -204,7 +224,7 @@ export function OnboardingWizard() {
   }
 
   const podeContinuar = ehValido(step, state);
-  const mostrarPular = step === 2 || step === 5;
+  const mostrarPular = step === 2 || step === 3 || step === 6;
 
   if (mostrarTour) {
     return <TourPlataforma identidade={acento} onFinalizar={() => router.push("/dashboard")} />;
@@ -350,6 +370,23 @@ function StepContent({
     case 2:
       return (
         <div>
+          <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">Escolha seu @ de usuário</h2>
+          <p className="mb-6 text-sm font-semibold text-muted-foreground">
+            É como você aparece no ranking pros outros alunos. Único, e dá pra trocar depois em Configurações
+            (a cada 15 dias) — se preferir, pule e escolha mais tarde.
+          </p>
+          <UsernameField
+            value={state.username}
+            status={state.usernameStatus}
+            onChange={(v) => setState((s) => ({ ...s, username: v }))}
+            onStatusChange={(status) => setState((s) => ({ ...s, usernameStatus: status }))}
+          />
+        </div>
+      );
+
+    case 3:
+      return (
+        <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">Em qual universidade?</h2>
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
             Opcional — ajuda a comparar seu ranking com colegas da mesma instituição.
@@ -369,7 +406,7 @@ function StepContent({
         </div>
       );
 
-    case 3:
+    case 4:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -398,7 +435,7 @@ function StepContent({
         </div>
       );
 
-    case 4: {
+    case 5: {
       const reconhecido = cursoReconhecido(identidade);
       const sugeridas = reconhecido ? identidade.disciplinasNucleo : DISCIPLINAS_SUGERIDAS;
       return (
@@ -450,7 +487,7 @@ function StepContent({
       );
     }
 
-    case 5:
+    case 6:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -478,7 +515,7 @@ function StepContent({
         </div>
       );
 
-    case 6:
+    case 7:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -501,7 +538,7 @@ function StepContent({
         </div>
       );
 
-    case 7:
+    case 8:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -525,7 +562,7 @@ function StepContent({
         </div>
       );
 
-    case 8:
+    case 9:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -558,10 +595,11 @@ function StepContent({
         </div>
       );
 
-    case 9: {
+    case 10: {
       const tempoOpcao = TEMPO_OPCOES.find((t) => t.label === state.tempoLabel);
       const rows: [string, string][] = [
         ["Curso", state.curso || "—"],
+        ["Username", state.usernameStatus === "disponivel" ? `@${state.username}` : "não escolhido ainda"],
         ["Universidade", state.universidade || "não informado"],
         ["Semestre", state.semestre ? `${state.semestre}º` : "—"],
         ["Disciplinas", state.disciplinas.length ? state.disciplinas.join(", ") : "—"],
@@ -614,6 +652,89 @@ function StepContent({
     default:
       return null;
   }
+}
+
+const USERNAME_MENSAGEM: Record<Exclude<UsernameStatus, "idle">, { texto: string; cor: string }> = {
+  verificando: { texto: "Verificando disponibilidade…", cor: "text-muted-foreground" },
+  disponivel: { texto: "Disponível!", cor: "text-questly-green-dark" },
+  indisponivel: { texto: "Esse username já está em uso.", cor: "text-questly-red-dark" },
+  invalido: { texto: "3–20 caracteres: letras minúsculas, números, ponto e underline.", cor: "text-questly-red-dark" },
+};
+
+function UsernameField({
+  value,
+  status,
+  onChange,
+  onStatusChange,
+}: {
+  value: string;
+  status: UsernameStatus;
+  onChange: (v: string) => void;
+  onStatusChange: (status: UsernameStatus) => void;
+}) {
+  // Checagem debounced de disponibilidade — mesmo padrão de useEffect +
+  // Server Action assíncrona usado em pratica-wizard.tsx.
+  useEffect(() => {
+    const limpo = value.trim().toLowerCase();
+    if (!limpo) {
+      onStatusChange("idle");
+      return;
+    }
+    if (!USERNAME_REGEX.test(limpo)) {
+      onStatusChange("invalido");
+      return;
+    }
+    onStatusChange("verificando");
+    const timer = setTimeout(async () => {
+      const resultado = await verificarUsernameAction(limpo);
+      onStatusChange(resultado.disponivel ? "disponivel" : "indisponivel");
+    }, 450);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  const corBorda =
+    status === "indisponivel" || status === "invalido"
+      ? "border-questly-red focus:border-questly-red"
+      : status === "disponivel"
+        ? "border-questly-green focus:border-questly-green"
+        : "border-border focus:border-questly-blue";
+
+  return (
+    <div>
+      <div className="relative">
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] font-semibold text-muted-foreground">
+          @
+        </span>
+        <input
+          autoFocus
+          value={value}
+          maxLength={20}
+          onChange={(e) => onChange(e.target.value.toLowerCase().replace(/\s+/g, ""))}
+          placeholder="seu.usuario"
+          className={`w-full rounded-2xl border-2 py-4 pr-11 pl-9 text-[15px] font-semibold outline-none transition-colors ${corBorda}`}
+        />
+        {(status === "disponivel" || status === "indisponivel") && (
+          <span
+            className={`absolute right-4 top-1/2 -translate-y-1/2 ${
+              status === "disponivel" ? "text-questly-green-dark" : "text-questly-red-dark"
+            }`}
+          >
+            {status === "disponivel" ? (
+              <Check size={18} strokeWidth={2.75} />
+            ) : (
+              <X size={18} strokeWidth={2.75} />
+            )}
+          </span>
+        )}
+      </div>
+      {status !== "idle" && (
+        <p className={`mt-2.5 text-xs font-bold ${USERNAME_MENSAGEM[status].cor}`}>
+          {USERNAME_MENSAGEM[status].texto}
+        </p>
+      )}
+    </div>
+  );
 }
 
 function CustomDisciplinaInput({ onAdd }: { onAdd: (nome: string) => void }) {

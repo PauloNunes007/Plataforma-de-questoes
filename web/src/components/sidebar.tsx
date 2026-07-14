@@ -6,11 +6,15 @@ import { Crown, LogOut, ShieldAlert } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { NAV_ITEMS } from "@/components/nav-items";
 import { ProBadge } from "@/components/plano/pro-ui";
+import { CursoIcone } from "@/components/cursos/curso-icone";
+import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { signOutAction } from "@/lib/auth/actions";
 
 type SidebarProps = {
   nome: string;
+  username: string | null;
   curso: string | null;
+  fotoUrl: string | null;
   isAdmin: boolean;
   ehPro: boolean;
 };
@@ -18,7 +22,7 @@ type SidebarProps = {
 // Sidebar do redesign 2026-07: densidade Linear-like — itens de 36px,
 // rótulos em sentence case (nada de uppercase gritado), estado ativo com
 // pill sutil + barra de acento, ícones Lucide 18px.
-export function Sidebar({ nome, curso, isAdmin, ehPro }: SidebarProps) {
+export function Sidebar({ nome, username, curso, fotoUrl, isAdmin, ehPro }: SidebarProps) {
   const pathname = usePathname();
   const proAtivo = pathname.startsWith("/pro");
 
@@ -88,19 +92,52 @@ export function Sidebar({ nome, curso, isAdmin, ehPro }: SidebarProps) {
         </div>
       )}
 
-      <div className="mt-auto border-t border-sidebar-border pt-3">
-        <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white dark:text-[#0c1512]">
-            {nome.charAt(0).toUpperCase()}
+      {/* Cartão de conta do rodapé (redesign 2026-07-14): foto real do
+          aluno (antes só a inicial — o foto_url nem chegava aqui), nome +
+          @username, e o curso resolvido pela identidade (ícone + nome
+          padronizado em até 2 linhas, em vez do texto livre truncado). */}
+      <SidebarConta nome={nome} username={username} curso={curso} fotoUrl={fotoUrl} ehPro={ehPro} />
+    </aside>
+  );
+}
+
+function SidebarConta({
+  nome,
+  username,
+  curso,
+  fotoUrl,
+  ehPro,
+}: {
+  nome: string;
+  username: string | null;
+  curso: string | null;
+  fotoUrl: string | null;
+  ehPro: boolean;
+}) {
+  const identidade = resolverCurso(curso);
+  const temCurso = !!curso;
+  const nomeCurso = cursoReconhecido(identidade) ? identidade.nome : curso;
+
+  return (
+    <div className="mt-auto border-t border-sidebar-border pt-3">
+      <div className="rounded-xl border border-sidebar-border bg-card/60 p-2.5">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white dark:text-[#0c1512]">
+            {fotoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={fotoUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              nome.charAt(0).toUpperCase()
+            )}
           </div>
           <div className="min-w-0 flex-1">
-            <span className="flex items-center gap-1.5 truncate text-[13px] font-medium leading-tight">
+            <span className="flex items-center gap-1.5 text-[13px] font-semibold leading-tight">
               <span className="truncate">{nome}</span>
               {ehPro && <ProBadge size="sm" />}
             </span>
-            {curso && (
-              <span className="block truncate text-[11.5px] leading-tight text-muted-foreground">
-                {curso}
+            {username && (
+              <span className="block truncate text-[11px] leading-tight text-muted-foreground">
+                @{username}
               </span>
             )}
           </div>
@@ -115,7 +152,20 @@ export function Sidebar({ nome, curso, isAdmin, ehPro }: SidebarProps) {
             </button>
           </form>
         </div>
+        {temCurso && (
+          <div className="mt-2 flex items-center gap-2 border-t border-sidebar-border pt-2">
+            <span
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-white"
+              style={{ background: `linear-gradient(135deg, ${identidade.corA}, ${identidade.corB})` }}
+            >
+              <CursoIcone icone={identidade.icone} size={12} strokeWidth={2} />
+            </span>
+            <span className="line-clamp-2 text-[11px] font-medium leading-snug text-muted-foreground">
+              {nomeCurso}
+            </span>
+          </div>
+        )}
       </div>
-    </aside>
+    </div>
   );
 }

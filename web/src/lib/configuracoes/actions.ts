@@ -18,17 +18,18 @@ async function buscarSubjectsComBosses(
   return (data as SubjectComBosses[]) || [];
 }
 
-const NOME_CARENCIA_DIAS = 15;
-const NOME_CARENCIA_MS = NOME_CARENCIA_DIAS * 24 * 60 * 60 * 1000;
+const USERNAME_CARENCIA_DIAS = 15;
+const USERNAME_CARENCIA_MS = USERNAME_CARENCIA_DIAS * 24 * 60 * 60 * 1000;
+const USERNAME_REGEX = /^[a-z0-9][a-z0-9_.]{2,19}$/;
 const NOME_MIN = 2;
 const NOME_MAX = 40;
 
-// Troca de nome com duas travas: nome único entre todos os alunos
-// (aparece no ranking) e no máximo uma troca a cada 15 dias. Retorna o
-// novo "nome_alterado_em" pra UI recalcular a próxima data liberada.
+// Nome de exibição (dashboard/sidebar). Desde o username
+// (supabase_username.sql) ele deixou de ser a identidade pública do
+// ranking, então perdeu a unicidade e a carência — troca livre.
 export async function salvarNomeAction(
   novoNomeBruto: string,
-): Promise<{ error: null; nome: string; nomeAlteradoEm: string } | { error: string }> {
+): Promise<{ error: null; nome: string } | { error: string }> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -39,53 +40,82 @@ export async function salvarNomeAction(
   if (novoNome.length < NOME_MIN) return { error: `O nome precisa ter pelo menos ${NOME_MIN} caracteres.` };
   if (novoNome.length > NOME_MAX) return { error: `O nome pode ter no máximo ${NOME_MAX} caracteres.` };
 
-  const { data: perfilAtual } = await supabase
-    .from("profiles")
-    .select("nome, nome_alterado_em")
-    .eq("id", user.id)
-    .single();
-
-  // Igual ao atual (ignorando caixa) → nada a fazer, não consome a carência.
-  if (perfilAtual?.nome && perfilAtual.nome.toLowerCase() === novoNome.toLowerCase()) {
-    if (perfilAtual.nome === novoNome) {
-      return { error: null, nome: perfilAtual.nome, nomeAlteradoEm: perfilAtual.nome_alterado_em ?? "" };
-    }
-    // Só mudou a caixa (ex.: "joão" → "João") — libera sem gastar carência.
-  } else if (perfilAtual?.nome_alterado_em) {
-    const decorrido = Date.now() - new Date(perfilAtual.nome_alterado_em).getTime();
-    if (decorrido < NOME_CARENCIA_MS) {
-      const diasRestantes = Math.ceil((NOME_CARENCIA_MS - decorrido) / (24 * 60 * 60 * 1000));
-      return {
-        error: `Você só pode trocar o nome a cada ${NOME_CARENCIA_DIAS} dias. Faltam ${diasRestantes} dia(s).`,
-      };
-    }
-  }
-
-  // Unicidade case-insensitive (o índice único é a rede de segurança
-  // contra corrida; aqui a checagem dá uma mensagem amigável).
-  const { data: colisao } = await supabase
-    .from("profiles")
-    .select("id")
-    .ilike("nome", novoNome)
-    .neq("id", user.id)
-    .limit(1)
-    .maybeSingle();
-  if (colisao) return { error: "Esse nome já está em uso por outro aluno. Tente outro." };
-
-  const agora = new Date().toISOString();
-  const { error } = await supabase
-    .from("profiles")
-    .update({ nome: novoNome, nome_alterado_em: agora })
-    .eq("id", user.id);
-
+  const { error } = await supabase.from("profiles").update({ nome: novoNome }).eq("id", user.id);
   if (error) {
-    // 23505 = unique_violation (corrida perdida pro índice único).
-    if (error.code === "23505") return { error: "Esse nome já está em uso por outro aluno. Tente outro." };
     console.error("Erro ao salvar nome:", error);
     return { error: "Não foi possível salvar seu nome." };
   }
 
-  return { error: null, nome: novoNome, nomeAlteradoEm: agora };
+  return { error: null, nome: novoNome };
+}
+
+// Username público (@handle) — é o que aparece no ranking. Três travas:
+// formato restrito, único entre todos os alunos (case-insensitive) e no
+// máximo uma troca a cada 15 dias. Retorna o novo "username_alterado_em"
+// pra UI recalcular a próxima data liberada.
+export async function salvarUsernameAction(
+  brutoDigitado: string,
+): Promise<{ error: null; username: string; usernameAlteradoEm: string } | { error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessão expirada." };
+
+  const novo = brutoDigitado.trim().replace(/^@+/, "").toLowerCase();
+  if (!USERNAME_REGEX.test(novo)) {
+    return {
+      error:
+        "Username inválido: use 3 a 20 caracteres entre letras minúsculas, números, ponto e underline, começando com letra ou número.",
+    };
+  }
+
+  const { data: perfilAtual } = await supabase
+    .from("profiles")
+    .select("username, username_alterado_em")
+    .eq("id", user.id)
+    .single();
+
+  // Igual ao atual → nada a fazer, não consome a carência.
+  if (perfilAtual?.username === novo) {
+    return { error: null, username: novo, usernameAlteradoEm: perfilAtual.username_alterado_em ?? "" };
+  }
+
+  if (perfilAtual?.username && perfilAtual?.username_alterado_em) {
+    const decorrido = Date.now() - new Date(perfilAtual.username_alterado_em).getTime();
+    if (decorrido < USERNAME_CARENCIA_MS) {
+      const diasRestantes = Math.ceil((USERNAME_CARENCIA_MS - decorrido) / (24 * 60 * 60 * 1000));
+      return {
+        error: `Você só pode trocar o username a cada ${USERNAME_CARENCIA_DIAS} dias. Faltam ${diasRestantes} dia(s).`,
+      };
+    }
+  }
+
+  // Unicidade (o índice único é a rede de segurança contra corrida;
+  // aqui a checagem dá uma mensagem amigável).
+  const { data: colisao } = await supabase
+    .from("profiles")
+    .select("id")
+    .ilike("username", novo)
+    .neq("id", user.id)
+    .limit(1)
+    .maybeSingle();
+  if (colisao) return { error: "Esse username já está em uso. Tente outro." };
+
+  const agora = new Date().toISOString();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ username: novo, username_alterado_em: agora })
+    .eq("id", user.id);
+
+  if (error) {
+    // 23505 = unique_violation (corrida perdida pro índice único).
+    if (error.code === "23505") return { error: "Esse username já está em uso. Tente outro." };
+    console.error("Erro ao salvar username:", error);
+    return { error: "Não foi possível salvar seu username." };
+  }
+
+  return { error: null, username: novo, usernameAlteradoEm: agora };
 }
 
 export async function salvarRotinaAction(dias: string[], tempoDiarioMin: number | null) {

@@ -225,7 +225,7 @@ function PodiumSlot({
           </motion.span>
         )}
         <RankAvatar
-          nome={aluno.nome}
+          nome={aluno.username || aluno.nome}
           fotoUrl={aluno.fotoUrl}
           size={tamanhoAvatar}
           gradientClassName={LIGA_GRADIENTE[liga]}
@@ -238,7 +238,7 @@ function PodiumSlot({
         </span>
       </div>
       <b className="w-full truncate text-center text-[11.5px] font-semibold">
-        {aluno.ehVoce ? "Você" : aluno.nome.split(" ")[0]}
+        {aluno.ehVoce ? "Você" : aluno.username ? `@${aluno.username}` : aluno.nome.split(" ")[0]}
       </b>
       <span className="tnum text-[11px] font-medium text-questly-green-dark">
         {aluno.xpSemana.toLocaleString("pt-BR")} XP
@@ -269,10 +269,10 @@ function RankRow({ aluno, posicao, onClick }: { aluno: RankingRow; posicao: numb
       <div className="tnum w-6 shrink-0 text-center text-[13px] font-semibold text-muted-foreground">
         {posicao}
       </div>
-      <RankAvatar nome={aluno.nome} fotoUrl={aluno.fotoUrl} size={36} />
+      <RankAvatar nome={aluno.username || aluno.nome} fotoUrl={aluno.fotoUrl} size={36} />
       <div className="min-w-0 flex-1">
         <b className="block truncate text-[13px] font-semibold">
-          {aluno.nome}
+          {aluno.username ? `@${aluno.username}` : aluno.nome}
           {aluno.ehVoce && <span className="font-normal text-muted-foreground"> (você)</span>}
         </b>
         <span className="tnum text-[11px] text-muted-foreground">

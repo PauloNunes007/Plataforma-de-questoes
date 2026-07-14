@@ -11,6 +11,8 @@ import { buscarGrupoLiga, type GrupoLiga } from "@/lib/ranking/ranking-data";
 
 export type CardUsuario = {
   nome: string;
+  /** @handle público — o card mostra ele quando existe (nome é fallback). */
+  username: string | null;
   curso: string | null;
   semestre: number | null;
   fotoUrl: string | null;
@@ -32,7 +34,7 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
   const [{ data: profile }, { data: subjects }, { data: historico }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("nome, curso, semestre, foto_url, liga, xp_semana, xp_total, nivel, streak_atual, questoes_total")
+      .select("nome, username, curso, semestre, foto_url, liga, xp_semana, xp_total, nivel, streak_atual, questoes_total")
       .eq("id", userId)
       .single(),
     supabase.from("subjects").select("nome").eq("user_id", userId).order("nome"),
@@ -59,6 +61,7 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
 
   return {
     nome: profile.nome || "Aluno(a)",
+    username: profile.username || null,
     curso: profile.curso,
     semestre: profile.semestre,
     fotoUrl: profile.foto_url,

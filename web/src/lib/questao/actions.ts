@@ -1,11 +1,10 @@
 "use server";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { questlyEhMestre, questlyXpDaQuestao } from "@/lib/questly/shared";
 import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
-import { questlyGarantirSemanaLiga } from "@/lib/questly/liga";
+import { atualizarStreakEDailyLog, atualizarXpELiga } from "@/lib/questly/economia";
 import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
 
 // Portado de js/questao.js — mesmo fluxo (registrar tentativa, atualizar
@@ -171,54 +170,9 @@ export async function finalizarMissaoAction(input: {
   return { recapResultado, novosMestresNomes, desafio };
 }
 
-async function atualizarXpELiga(
-  supabase: SupabaseClient,
-  userId: string,
-  acertos: number,
-  erros: number,
-  xpGanho: number,
-) {
-  const estado = await questlyGarantirSemanaLiga(supabase, { id: userId });
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("xp_total, questoes_total")
-    .eq("id", userId)
-    .single();
-  const novoXpTotal = (profile?.xp_total || 0) + xpGanho;
-  const novoXpSemana = (estado?.xp_semana || 0) + xpGanho;
-  const novasQuestoesSemana = (estado?.questoes_semana || 0) + (acertos + erros);
-  const novasQuestoesTotal = (profile?.questoes_total || 0) + (acertos + erros);
-
-  await supabase
-    .from("profiles")
-    .update({
-      xp_total: novoXpTotal,
-      xp_semana: novoXpSemana,
-      questoes_semana: novasQuestoesSemana,
-      questoes_total: novasQuestoesTotal,
-    })
-    .eq("id", userId);
-}
-
-async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId: string) {
-  const hoje = new Date().toISOString().slice(0, 10);
-
-  const { data: logHoje } = await supabase
-    .from("daily_logs")
-    .select("data")
-    .eq("user_id", userId)
-    .eq("data", hoje)
-    .maybeSingle();
-
-  await supabase.from("daily_logs").upsert({ user_id: userId, data: hoje, estudou: true }, { onConflict: "user_id,data" });
-
-  if (!logHoje) {
-    const { data: profile } = await supabase.from("profiles").select("streak_atual").eq("id", userId).single();
-    const novoStreak = (profile?.streak_atual || 0) + 1;
-    await supabase.from("profiles").update({ streak_atual: novoStreak }).eq("id", userId);
-  }
-}
+// atualizarXpELiga/atualizarStreakEDailyLog moraram aqui até a Arena de
+// Xadrez precisar delas também — agora vivem em lib/questly/economia.ts
+// (sem "use server", pra não virarem endpoints).
 
 async function avaliarRecap(
   supabase: Awaited<ReturnType<typeof createClient>>,

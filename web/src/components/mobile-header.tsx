@@ -6,6 +6,8 @@ import { Crown, LogOut, ShieldAlert } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "@/components/logo";
 import { ProBadge } from "@/components/plano/pro-ui";
+import { CursoIcone } from "@/components/cursos/curso-icone";
+import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { signOutAction } from "@/lib/auth/actions";
 
 // Topo fixo em telas < lg — a Sidebar (que leva nome/curso/Sair) fica
@@ -13,16 +15,22 @@ import { signOutAction } from "@/lib/auth/actions";
 // um botão de avatar que abre um menu curto com essas mesmas informações.
 export function MobileHeader({
   nome,
+  username,
   curso,
+  fotoUrl,
   isAdmin,
   ehPro,
 }: {
   nome: string;
+  username: string | null;
   curso: string | null;
+  fotoUrl: string | null;
   isAdmin: boolean;
   ehPro: boolean;
 }) {
   const [aberto, setAberto] = useState(false);
+  const identidade = resolverCurso(curso);
+  const nomeCurso = cursoReconhecido(identidade) ? identidade.nome : curso;
 
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/85 px-4 backdrop-blur-xl lg:hidden">
@@ -42,9 +50,14 @@ export function MobileHeader({
             type="button"
             onClick={() => setAberto((v) => !v)}
             aria-label="Conta"
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white dark:text-[#0c1512]"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white dark:text-[#0c1512]"
           >
-            {nome.charAt(0).toUpperCase()}
+            {fotoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={fotoUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              nome.charAt(0).toUpperCase()
+            )}
           </button>
 
         <AnimatePresence>
@@ -64,12 +77,23 @@ export function MobileHeader({
                 className="absolute right-0 z-50 mt-2 w-60 origin-top-right rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/5 dark:shadow-black/30"
               >
                 <div className="px-2.5 py-2">
-                  <span className="flex items-center gap-1.5 truncate text-[13.5px] font-medium">
+                  <span className="flex items-center gap-1.5 truncate text-[13.5px] font-semibold">
                     <span className="truncate">{nome}</span>
                     {ehPro && <ProBadge size="sm" />}
                   </span>
+                  {username && (
+                    <span className="block truncate text-xs text-muted-foreground">@{username}</span>
+                  )}
                   {curso && (
-                    <span className="block truncate text-xs text-muted-foreground">{curso}</span>
+                    <span className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <span
+                        className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded text-white"
+                        style={{ background: `linear-gradient(135deg, ${identidade.corA}, ${identidade.corB})` }}
+                      >
+                        <CursoIcone icone={identidade.icone} size={10} strokeWidth={2.25} />
+                      </span>
+                      <span className="line-clamp-2 leading-snug">{nomeCurso}</span>
+                    </span>
                   )}
                 </div>
                 {isAdmin && (

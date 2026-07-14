@@ -122,16 +122,18 @@ export function NoJornada({
 
   return (
     <div className="relative flex flex-col items-center">
-      {/* mascote (corpo inteiro) parado no nó onde o aluno está — o bob
-          de "respiração" já vive dentro do próprio Mascote */}
+      {/* mascote (corpo inteiro) parado no nó onde o aluno está — a
+          "respiração" já vive dentro do próprio Mascote e mantém os pés
+          plantados; o offset faz os pés PISAREM na face do marcador (uns
+          9px pra dentro da borda superior), senão ele parece flutuar */}
       {ehFronteira && (
         <motion.div
-          className="pointer-events-none absolute -top-[64px] z-20"
+          className="pointer-events-none absolute -top-[66px] z-20"
           initial={reduzir ? false : { y: -8, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Mascote size={66} />
+          <Mascote size={84} />
         </motion.div>
       )}
 

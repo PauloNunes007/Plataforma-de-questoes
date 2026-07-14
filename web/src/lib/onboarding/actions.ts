@@ -20,7 +20,32 @@ export type SalvarCampanhaInput = {
   dias: string[];
   tempoDiarioMin: number | null;
   disciplinas: DisciplinaInput[];
+  /** Null quando o aluno pulou a escolha — dá pra fazer depois em Configurações. */
+  username: string | null;
 };
+
+// Mesmo formato/regra de supabase_username.sql — duplicado aqui em vez de
+// importado de lib/configuracoes/actions.ts (convenção do repo: heurísticas
+// pequenas ficam duplicadas por arquivo em vez de uma abstração compartilhada
+// pra um único formato, ver COBERTURA_TOPICO_QUESTOES/iconePorNome).
+const USERNAME_REGEX = /^[a-z0-9][a-z0-9_.]{2,19}$/;
+
+// Checagem de disponibilidade em tempo real, chamada (debounced) pelo campo
+// de username do wizard — não persiste nada, só confere formato + unicidade.
+export async function verificarUsernameAction(usernameBruto: string): Promise<{ disponivel: boolean }> {
+  const username = usernameBruto.trim().toLowerCase();
+  if (!USERNAME_REGEX.test(username)) return { disponivel: false };
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("id")
+    .ilike("username", username)
+    .limit(1)
+    .maybeSingle();
+
+  return { disponivel: !data };
+}
 
 export async function salvarCampanhaAction(
   input: SalvarCampanhaInput,
@@ -31,6 +56,23 @@ export async function salvarCampanhaAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sessão expirada. Faça login novamente." };
 
+  const username = input.username?.trim().toLowerCase() || null;
+  if (username) {
+    if (!USERNAME_REGEX.test(username)) {
+      return { error: "Username inválido: use 3 a 20 caracteres entre letras minúsculas, números, ponto e underline." };
+    }
+    // Revalidação autoritativa no submit final (a checagem em tempo real do
+    // wizard pode ter ficado desatualizada por uma corrida rara).
+    const { data: colisao } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("username", username)
+      .neq("id", user.id)
+      .limit(1)
+      .maybeSingle();
+    if (colisao) return { error: "Esse username já está em uso. Volte e escolha outro." };
+  }
+
   const { error: profileError } = await supabase
     .from("profiles")
     .update({
@@ -40,10 +82,13 @@ export async function salvarCampanhaAction(
       nivel_conhecimento: input.nivel,
       dias_disponiveis: input.dias,
       tempo_diario_min: input.tempoDiarioMin,
+      ...(username ? { username, username_alterado_em: new Date().toISOString() } : {}),
     })
     .eq("id", user.id);
 
   if (profileError) {
+    // 23505 = unique_violation (corrida perdida pro índice único).
+    if (profileError.code === "23505") return { error: "Esse username já está em uso. Volte e escolha outro." };
     console.error("Erro ao salvar profile:", profileError);
     return { error: "Não foi possível salvar seus dados. Tente novamente." };
   }

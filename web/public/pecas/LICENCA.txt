@@ -1,0 +1,5 @@
+Peças de xadrez SVG — set "cburnett"
+Autor: Colin M.L. Burnett (User:Cburnett)
+Fonte: Wikimedia Commons — https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces
+Licença: CC-BY-SA 3.0 / GFDL (dupla licença)
+Arquivos originais: Chess_{k,q,r,b,n,p}{l,d}t45.svg (renomeados para {w,b}{K,Q,R,B,N,P}.svg)

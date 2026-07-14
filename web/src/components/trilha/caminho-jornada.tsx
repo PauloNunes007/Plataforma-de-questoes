@@ -22,9 +22,14 @@ import { BossEncontro } from "./boss-encontro";
 import { CenarioTrilha } from "./cenario-trilha";
 import { COR_ESTADO, NoJornada, PainelTopico } from "./no-jornada";
 
-const ROW_H = 128; // distância vertical entre nós (folga pro cenário)
-const PAD_TOP = 84; // espaço pro mascote + bandeira de largada
-const PAD_BOTTOM = 118; // espaço pro castelo no fim
+const ROW_H = 136; // distância vertical entre nós (folga pro cenário)
+// PAD_TOP precisa comportar mascote (72px) + bandeira de largada quando a
+// fronteira é o 1º nó — senão o mascote estoura o overflow-hidden e corta.
+const PAD_TOP = 152;
+// PAD_BOTTOM comporta o castelo + nome do boss + contagem de dias (o bloco
+// é centralizado em bossY, então metade dele desce além de bossY) — senão
+// ele cai em cima da legenda.
+const PAD_BOTTOM = 200;
 const AMP_PCT = 26; // amplitude horizontal da serpente (% da largura)
 
 // paleta do cenário (dia ↔ noite) — CSS vars lidas pelo cenario-trilha e
@@ -251,7 +256,7 @@ function MapaVale({
   const xPct = (i: number) => 50 + AMP_PCT * Math.sin(i * 0.8 + 0.35);
   const yPx = (i: number) => PAD_TOP + i * ROW_H;
   const xPx = (i: number) => (xPct(i) / 100) * largura;
-  const bossY = PAD_TOP + Math.max(0, n - 1) * ROW_H + PAD_BOTTOM * 0.58;
+  const bossY = PAD_TOP + Math.max(0, n - 1) * ROW_H + PAD_BOTTOM * 0.5;
 
   // até onde a estrada já foi percorrida (pegadas verdes)
   const walkedEnd = fronteiraIdx >= 0 ? fronteiraIdx : n - 1;
@@ -357,10 +362,10 @@ function MapaVale({
           )}
         </div>
 
-        {/* bandeira de largada */}
+        {/* bandeira de largada — fica acima da zona do mascote (ver PAD_TOP) */}
         <div
           className="absolute z-[5] flex items-center gap-1.5 rounded-full bg-black/20 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm"
-          style={{ left: `${xPct(0)}%`, top: 26, transform: "translateX(-50%)" }}
+          style={{ left: `${xPct(0)}%`, top: 16, transform: "translateX(-50%)" }}
         >
           <Flag size={12} strokeWidth={2.25} className="text-questly-green-light" />
           Início
@@ -433,7 +438,7 @@ const LEGENDA: Array<{ estado: keyof typeof COR_ESTADO; rotulo: string }> = [
 
 function Legenda() {
   return (
-    <div className="relative z-20 mx-3 mb-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 rounded-xl bg-card/75 px-3 py-2 backdrop-blur-sm sm:mx-4 sm:mb-4">
+    <div className="relative z-20 mx-3 mb-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 rounded-xl border border-border/50 bg-card/80 px-3.5 py-2.5 shadow-sm backdrop-blur-sm sm:mx-4 sm:mb-4">
       {LEGENDA.map((l) => (
         <span key={l.estado} className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
           <span

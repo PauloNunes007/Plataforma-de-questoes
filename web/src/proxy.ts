@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const PUBLIC_ROUTES = ["/", "/login"];
+const PUBLIC_ROUTES = ["/", "/login", "/dev-tabuleiro"];
 
 // Guarda de rota (equivalente ao antigo questlyExigirLogin de
 // js/supabase-client.js, mas no servidor): sem sessão, qualquer rota fora
@@ -37,7 +37,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // .js/.wasm/.txt cobrem os assets do Stockfish (public/stockfish/) — o
+  // worker do engine é carregado por URL e não pode receber um redirect
+  // de login no lugar do código (sessão expirada no meio de uma partida
+  // quebraria o worker com HTML).
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|js|wasm|txt)$).*)",
   ],
 };
