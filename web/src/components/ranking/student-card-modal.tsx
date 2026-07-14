@@ -18,6 +18,8 @@ import {
   LIGA_HOLO,
   LIGA_RARIDADE,
 } from "@/components/ranking/liga-visual";
+import { CursoIcone } from "@/components/cursos/curso-icone";
+import { cursoReconhecido, resolverCurso } from "@/lib/cursos/registro";
 import type { CardUsuario } from "@/lib/ranking/actions";
 
 type StudentCardModalProps = {
@@ -67,6 +69,8 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
 function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void }) {
   const raridade = LIGA_RARIDADE[card.liga];
   const numeroCarta = String(Math.max(1, card.nivel)).padStart(3, "0");
+  const curso = resolverCurso(card.curso);
+  const cursoNoCard = cursoReconhecido(curso);
 
   // tilt 3D acompanhando o mouse — a carta "na mão"
   const ref = useRef<HTMLDivElement>(null);
@@ -146,8 +150,23 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
         {/* janela de arte, com moldura "metálica" como numa carta */}
         <div className="relative z-10 mx-1 mt-2.5 rounded-lg bg-gradient-to-b from-white/70 via-white/30 to-white/60 p-[3px]">
           <div
-            className={`flex items-center justify-center rounded-[6px] bg-gradient-to-br py-6 ${LIGA_GRADIENTE[card.liga]}`}
+            className={`relative flex items-center justify-center overflow-hidden rounded-[6px] bg-gradient-to-br py-6 ${LIGA_GRADIENTE[card.liga]}`}
           >
+            {/* "tipo" da carta = identidade do curso do aluno */}
+            {cursoNoCard && (
+              <span
+                title={`${curso.nome} — ${curso.tagline}`}
+                className={`absolute left-2 top-2 z-20 flex max-w-[60%] items-center gap-1.5 rounded-full py-1 pl-1.5 pr-2.5 text-white ring-1 ring-white/40 ${TEXTO_POP}`}
+                style={{ background: `linear-gradient(90deg, ${curso.corA}, ${curso.corB})` }}
+              >
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                  <CursoIcone icone={curso.icone} size={13} strokeWidth={2.25} />
+                </span>
+                <span className="truncate text-[9.5px] font-bold uppercase tracking-wide">
+                  {curso.nome}
+                </span>
+              </span>
+            )}
             <RankAvatar
               nome={card.nome}
               fotoUrl={card.fotoUrl}

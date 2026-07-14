@@ -4,6 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { salvarCampanhaAction, type DisciplinaInput, type ProvaInput } from "@/lib/onboarding/actions";
+import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cursos/registro";
+import { CursoReveal } from "@/components/onboarding/curso-reveal";
+import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
+import { TourPlataforma } from "@/components/onboarding/tour-plataforma";
+import { CursoIcone } from "@/components/cursos/curso-icone";
 
 const TOTAL_STEPS = 9;
 
@@ -126,6 +131,7 @@ export function OnboardingWizard() {
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState(false);
+  const [mostrarTour, setMostrarTour] = useState(false);
 
   function irPara(novoStep: number) {
     if (novoStep < 1 || novoStep > TOTAL_STEPS) return;
@@ -141,8 +147,26 @@ export function OnboardingWizard() {
     return state.discCfg[nome] || { nota: 8, provas: [{ nome: "P1", data: "" }] };
   }
 
+  // Identidade do curso digitado — dirige acento visual e sugestões.
+  const identidade = resolverCurso(state.curso);
+  const acento: CursoIdentidade | null = cursoReconhecido(identidade) ? identidade : null;
+
+  function adicionarDisciplinas(nomes: string[]) {
+    setState((s) => {
+      const set = new Set(s.disciplinas);
+      nomes.forEach((n) => set.add(n));
+      return { ...s, disciplinas: [...set] };
+    });
+  }
+
   async function handleContinuar() {
     if (step < TOTAL_STEPS) {
+      // Ao sair do passo do curso, pré-seleciona as disciplinas-núcleo típicas
+      // dele (se o aluno ainda não escolheu nenhuma) — o app já chega ao passo
+      // de disciplinas com as certas marcadas.
+      if (step === 1 && state.disciplinas.length === 0) {
+        adicionarDisciplinas(identidade.disciplinasNucleo);
+      }
       irPara(step + 1);
       return;
     }
@@ -173,12 +197,18 @@ export function OnboardingWizard() {
       return;
     }
 
+    // Celebração breve, depois o tour cinematográfico pela plataforma —
+    // é ele quem leva pro dashboard (ou pra /pro) no final.
     setSucesso(true);
-    setTimeout(() => router.push("/dashboard"), 1800);
+    setTimeout(() => setMostrarTour(true), 1600);
   }
 
   const podeContinuar = ehValido(step, state);
   const mostrarPular = step === 2 || step === 5;
+
+  if (mostrarTour) {
+    return <TourPlataforma identidade={acento} onFinalizar={() => router.push("/dashboard")} />;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted px-5 py-10">
@@ -197,6 +227,7 @@ export function OnboardingWizard() {
             <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
               <motion.div
                 className="h-full rounded-full bg-questly-green"
+                style={acento ? { backgroundColor: acento.corA } : undefined}
                 animate={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               />
@@ -246,7 +277,15 @@ export function OnboardingWizard() {
                   )}
                 </div>
 
-                <StepContent step={step} state={state} setState={setState} toggleEm={toggleEm} garantirDiscCfg={garantirDiscCfg} />
+                <StepContent
+                  step={step}
+                  state={state}
+                  setState={setState}
+                  toggleEm={toggleEm}
+                  garantirDiscCfg={garantirDiscCfg}
+                  identidade={identidade}
+                  adicionarDisciplinas={adicionarDisciplinas}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -276,12 +315,16 @@ function StepContent({
   setState,
   toggleEm,
   garantirDiscCfg,
+  identidade,
+  adicionarDisciplinas,
 }: {
   step: number;
   state: WizardState;
   setState: React.Dispatch<React.SetStateAction<WizardState>>;
   toggleEm: (lista: string[], valor: string) => string[];
   garantirDiscCfg: (nome: string) => DiscCfg;
+  identidade: CursoIdentidade;
+  adicionarDisciplinas: (nomes: string[]) => void;
 }) {
   switch (step) {
     case 1:
@@ -300,6 +343,7 @@ function StepContent({
             placeholder="Ex: Engenharia de Produção"
             className="w-full rounded-2xl border-2 border-border px-4 py-4 text-[15px] font-semibold outline-none focus:border-questly-blue"
           />
+          <CursoReveal identidade={identidade} temTexto={state.curso.trim().length > 0} />
         </div>
       );
 
@@ -316,6 +360,11 @@ function StepContent({
             onChange={(e) => setState((s) => ({ ...s, universidade: e.target.value }))}
             placeholder="Ex: UFRJ"
             className="w-full rounded-2xl border-2 border-border px-4 py-4 text-[15px] font-semibold outline-none focus:border-questly-blue"
+          />
+          <InstituicaoCallout
+            universidade={state.universidade}
+            disciplinasSelecionadas={state.disciplinas}
+            onAdicionar={adicionarDisciplinas}
           />
         </div>
       );
@@ -349,17 +398,40 @@ function StepContent({
         </div>
       );
 
-    case 4:
+    case 4: {
+      const reconhecido = cursoReconhecido(identidade);
+      const sugeridas = reconhecido ? identidade.disciplinasNucleo : DISCIPLINAS_SUGERIDAS;
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
             Quais disciplinas você está cursando?
           </h2>
-          <p className="mb-6 text-sm font-semibold text-muted-foreground">
+          <p className="mb-4 text-sm font-semibold text-muted-foreground">
             Cada uma vira uma campanha paralela. Escolha quantas quiser.
           </p>
+          {reconhecido && (
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-border px-3 py-2" style={{ background: `linear-gradient(100deg, ${identidade.corA}12, transparent 75%)` }}>
+              <span
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white"
+                style={{ background: `radial-gradient(circle at 50% 35%, ${identidade.corA}, ${identidade.corB})` }}
+              >
+                <CursoIcone icone={identidade.icone} size={16} strokeWidth={2} />
+              </span>
+              <span className="min-w-0 flex-1 text-xs font-semibold text-muted-foreground">
+                Sugestões típicas de <b className="text-foreground">{identidade.nome}</b>
+              </span>
+              <button
+                type="button"
+                onClick={() => adicionarDisciplinas(identidade.disciplinasNucleo)}
+                className="shrink-0 rounded-lg px-2.5 py-1 text-[11px] font-bold text-white transition-[filter] hover:brightness-105"
+                style={{ backgroundColor: identidade.corA }}
+              >
+                Marcar todas
+              </button>
+            </div>
+          )}
           <div className="flex flex-wrap gap-2.5">
-            {Array.from(new Set([...DISCIPLINAS_SUGERIDAS, ...state.disciplinas])).map((nome) => (
+            {Array.from(new Set([...sugeridas, ...state.disciplinas])).map((nome) => (
               <Chip
                 key={nome}
                 active={state.disciplinas.includes(nome)}
@@ -376,6 +448,7 @@ function StepContent({
           />
         </div>
       );
+    }
 
     case 5:
       return (
@@ -504,6 +577,23 @@ function StepContent({
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
             Confira antes de começar — dá pra mudar tudo isso depois nas configurações.
           </p>
+          {cursoReconhecido(identidade) && (
+            <div
+              className="mb-4 flex items-center gap-3 rounded-2xl border p-3.5"
+              style={{ borderColor: `${identidade.corA}66`, background: `linear-gradient(100deg, ${identidade.corA}14, transparent 75%)` }}
+            >
+              <span
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white shadow-sm ring-1 ring-inset ring-white/20"
+                style={{ background: `radial-gradient(circle at 50% 35%, ${identidade.corA}, ${identidade.corB})` }}
+              >
+                <CursoIcone icone={identidade.icone} size={24} strokeWidth={1.9} />
+              </span>
+              <div className="min-w-0">
+                <p className="truncate font-heading text-[15px] font-semibold leading-tight">{identidade.nome}</p>
+                <p className="mt-0.5 text-xs font-medium text-muted-foreground">{identidade.tagline}</p>
+              </div>
+            </div>
+          )}
           <div className="overflow-hidden rounded-2xl border border-border">
             {rows.map(([k, v], i) => (
               <div
