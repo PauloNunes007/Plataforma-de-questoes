@@ -28,15 +28,24 @@ export function MobileHeader({
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/85 px-4 backdrop-blur-xl lg:hidden">
       <Logo />
 
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => setAberto((v) => !v)}
-          aria-label="Conta"
-          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white dark:text-[#0c1512]"
+      <div className="flex items-center gap-2">
+        <Link
+          href="/pro"
+          className="flex h-8 shrink-0 cursor-pointer items-center gap-1 rounded-full bg-gradient-to-r from-questly-gold to-amber-400 px-2.5 text-[11.5px] font-semibold text-[#3a2a05] shadow-sm ring-1 ring-white/40 transition-transform active:scale-95"
         >
-          {nome.charAt(0).toUpperCase()}
-        </button>
+          <Crown size={13} strokeWidth={2.5} className="fill-current" />
+          {ehPro ? "Pro" : "Seja Pro"}
+        </Link>
+
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setAberto((v) => !v)}
+            aria-label="Conta"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white dark:text-[#0c1512]"
+          >
+            {nome.charAt(0).toUpperCase()}
+          </button>
 
         <AnimatePresence>
           {aberto && (
@@ -63,15 +72,6 @@ export function MobileHeader({
                     <span className="block truncate text-xs text-muted-foreground">{curso}</span>
                   )}
                 </div>
-                <div className="mx-1 my-1 h-px bg-border" />
-                <Link
-                  href="/pro"
-                  onClick={() => setAberto(false)}
-                  className="flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 text-left text-[13.5px] font-medium text-questly-gold transition-colors hover:bg-muted"
-                >
-                  <Crown size={15} strokeWidth={1.75} />
-                  {ehPro ? "Questly Pro" : "Seja Pro"}
-                </Link>
                 {isAdmin && (
                   <>
                     <div className="mx-1 my-1 h-px bg-border" />
@@ -98,7 +98,8 @@ export function MobileHeader({
               </motion.div>
             </>
           )}
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
       </div>
     </header>
   );
