@@ -1,19 +1,52 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Swords } from "lucide-react";
+import {
+  Atom,
+  BookOpen,
+  Brain,
+  Calculator,
+  Check,
+  Dna,
+  FlaskConical,
+  Globe,
+  Landmark,
+  MessageCircle,
+  Swords,
+  type LucideIcon,
+} from "lucide-react";
 import type { DisciplinaPratica } from "@/lib/disciplinas/disciplinas-data";
 
-// Mesma rotação de cores de acento usada na Trilha/Dashboard — cada
-// disciplina tem "sua" cor, mas em card sóbrio (redesign 2026-07).
-const CORES = [
-  "var(--questly-blue)",
-  "var(--questly-purple)",
-  "var(--questly-orange)",
-  "var(--questly-green)",
-  "var(--questly-gold)",
-  "var(--questly-red)",
+// Mesmos tiles sólidos vibrantes do grid de "Listas de Questões"
+// (components/questoes/disciplina-navegar-grid.tsx) — pedido explícito do
+// usuário pra bater visualmente com aquela página (CORES/iconePorNome
+// duplicados de propósito, mesma convenção do resto do repo).
+const CORES: [string, string][] = [
+  ["#5b7cf0", "#3a52c4"], // azul
+  ["#f0555a", "#c93338"], // vermelho
+  ["#3fbf78", "#279357"], // verde
+  ["#9b6ff0", "#7443d6"], // roxo
+  ["#c07a3a", "#96591f"], // marrom
+  ["#f0a23f", "#d67c1a"], // laranja
+  ["#2fb6c9", "#1a8c9c"], // teal
+  ["#4a4f5c", "#2c2f38"], // grafite
 ];
+
+const ICONES: [RegExp, LucideIcon][] = [
+  [/matemátic|cálculo|algebr/i, Calculator],
+  [/física/i, Atom],
+  [/bio/i, Dna],
+  [/quí?mic/i, FlaskConical],
+  [/geografi/i, Globe],
+  [/históri/i, Landmark],
+  [/portugu|linguage|literatur|redaç/i, MessageCircle],
+  [/filosofi|sociologi|human/i, Brain],
+];
+
+function iconePorNome(nome: string): LucideIcon {
+  const achado = ICONES.find(([re]) => re.test(nome));
+  return achado ? achado[1] : BookOpen;
+}
 
 export function DisciplinaPicker({
   disciplinas,
@@ -25,10 +58,11 @@ export function DisciplinaPicker({
   onSelecionar: (subjectId: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {disciplinas.map((d, i) => {
         const ativa = d.subjectId === selecionada;
-        const cor = CORES[i % CORES.length];
+        const [corA, corB] = CORES[i % CORES.length];
+        const Icone = iconePorNome(d.nome);
         return (
           <motion.button
             key={d.subjectId}
@@ -37,34 +71,31 @@ export function DisciplinaPicker({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: i * 0.04 }}
-            whileTap={{ scale: 0.99 }}
-            className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 text-left transition-colors ${
-              ativa ? "bg-muted/40" : "border-border hover:border-foreground/15"
+            whileTap={{ scale: 0.97 }}
+            className={`group relative flex aspect-square cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl p-3 text-center shadow-md shadow-black/10 transition-transform duration-200 will-change-transform hover:-translate-y-1 hover:shadow-lg ${
+              ativa ? "ring-2 ring-foreground ring-offset-2 ring-offset-card" : ""
             }`}
-            style={ativa ? { borderColor: `color-mix(in oklab, ${cor} 55%, transparent)` } : undefined}
+            style={{ background: `radial-gradient(circle at 50% 40%, ${corA}, ${corB})` }}
           >
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[14px] font-semibold"
-              style={{ color: cor, background: `color-mix(in oklab, ${cor} 12%, transparent)` }}
-            >
-              {d.nome.charAt(0).toUpperCase()}
-            </span>
-            <span className="min-w-0">
-              <b className="block truncate text-[13.5px] font-semibold leading-tight tracking-tight">
-                {d.nome}
-              </b>
-              <span className="mt-0.5 flex items-center gap-1 text-[11.5px] text-muted-foreground">
-                {d.bossNome ? (
-                  <>
-                    <Swords size={11} strokeWidth={1.75} className="shrink-0 text-questly-orange" />
-                    <span className="tnum truncate">
-                      {d.bossNome} · {d.diasAteProva}d
-                    </span>
-                  </>
-                ) : (
-                  "Sem prova marcada"
-                )}
+            <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 transition-[box-shadow] group-hover:ring-white/25" />
+            {ativa && (
+              <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-white text-questly-green shadow-sm">
+                <Check size={12} strokeWidth={3} />
               </span>
+            )}
+            <Icone size={30} strokeWidth={1.6} className="mb-2 text-white/90" />
+            <span className="line-clamp-2 text-[13px] font-bold leading-tight text-white">
+              {d.nome}
+            </span>
+            <span className="mt-1 flex items-center gap-1 text-[10.5px] font-medium text-white/75">
+              {d.bossNome ? (
+                <>
+                  <Swords size={10} strokeWidth={2} className="shrink-0" />
+                  <span className="tnum truncate">{d.diasAteProva}d</span>
+                </>
+              ) : (
+                "Sem prova"
+              )}
             </span>
           </motion.button>
         );
