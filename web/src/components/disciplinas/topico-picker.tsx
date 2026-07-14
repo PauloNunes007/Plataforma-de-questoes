@@ -1,6 +1,6 @@
 "use client";
 
-import { Target } from "lucide-react";
+import { FileText, Target } from "lucide-react";
 import type { TopicoPratica } from "@/lib/disciplinas/disciplinas-data";
 
 function tierDoTopico(t: TopicoPratica): { cor: string; label: string } {
@@ -56,7 +56,7 @@ export function TopicoPicker({
               key={t.id}
               type="button"
               onClick={() => onToggle(t.id)}
-              title={tier.label}
+              title={`${tier.label} · ${t.totalQuestoes} questão${t.totalQuestoes === 1 ? "" : "ões"}`}
               aria-pressed={ativo}
               className={`cursor-pointer rounded-xl border p-3 text-left transition-colors ${
                 ativo
@@ -68,8 +68,9 @@ export function TopicoPicker({
                 <span className="text-[12.5px] font-medium leading-snug tracking-tight">{t.nome}</span>
                 <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${tier.cor}`} />
               </div>
-              <span className="tnum mt-1 block text-[10.5px] text-muted-foreground">
-                {t.totalQuestoes} questão{t.totalQuestoes === 1 ? "" : "ões"}
+              <span className="mt-1 flex items-center gap-1 text-[10.5px] text-muted-foreground">
+                <FileText size={10} strokeWidth={1.9} />
+                <span className="tnum">{t.totalQuestoes}</span>
               </span>
             </button>
           );
