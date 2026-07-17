@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { listarMateriasComQuestoes } from "@/lib/disciplinas/disciplinas-data";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
 
 export const metadata: Metadata = {
@@ -30,5 +31,10 @@ export default async function OnboardingPage() {
     redirect("/dashboard");
   }
 
-  return <OnboardingWizard nomeInicial={profile?.nome ?? ""} />;
+  // O app ainda não sabe em que semestre o aluno está — em vez de só uma
+  // lista curada por curso (que pode não ter conteúdo real ainda), sugere
+  // o que já tem questões prontas no banco, pra ele escolher livremente.
+  const materiasComQuestoes = await listarMateriasComQuestoes(supabase);
+
+  return <OnboardingWizard nomeInicial={profile?.nome ?? ""} materiasComQuestoes={materiasComQuestoes} />;
 }

@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 export default async function ListasDaDisciplinaPage({
   params,
 }: {
-  params: Promise<{ subjectId: string }>;
+  params: Promise<{ materiaId: string }>;
 }) {
-  const { subjectId } = await params;
+  const { materiaId } = await params;
   const supabase = await createClient();
   const {
     data: { user },
@@ -23,7 +23,7 @@ export default async function ListasDaDisciplinaPage({
   if (!user) return null;
 
   const disciplinas = await carregarDisciplinasPratica(supabase, user);
-  const disciplina = disciplinas.find((d) => d.subjectId === subjectId);
+  const disciplina = disciplinas.find((d) => d.materiaId === materiaId);
 
   if (!disciplina) {
     return (
@@ -36,9 +36,7 @@ export default async function ListasDaDisciplinaPage({
     );
   }
 
-  const topicos = disciplina.materiaId
-    ? await carregarTopicosPratica(supabase, user, disciplina.materiaId)
-    : [];
+  const topicos = await carregarTopicosPratica(supabase, user, disciplina.materiaId);
 
   return (
     <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
@@ -49,11 +47,18 @@ export default async function ListasDaDisciplinaPage({
         voltarLabel="Listas de Questões"
       />
 
-      {!disciplina.materiaId ? (
-        <p className="py-4 text-center text-sm text-muted-foreground">
-          Essa disciplina ainda não está ligada a um banco de questões. Cadastre-a em Configurações.
+      {!disciplina.matriculada && (
+        <p className="surface px-4 py-3 text-sm text-muted-foreground">
+          Você ainda não tem <b className="text-foreground">{disciplina.nome}</b> nas suas disciplinas — pode
+          praticar à vontade mesmo assim. Se quiser acompanhar provas e progresso dela, adicione em{" "}
+          <Link href="/configuracoes" className="font-medium text-questly-green">
+            Configurações
+          </Link>
+          .
         </p>
-      ) : topicos.length === 0 ? (
+      )}
+
+      {topicos.length === 0 ? (
         <p className="py-4 text-center text-sm text-muted-foreground">
           Essa disciplina ainda não tem questões cadastradas.
         </p>

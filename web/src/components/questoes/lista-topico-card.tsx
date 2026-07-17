@@ -29,7 +29,7 @@ export function ListaTopicoCard({
   topico,
   index,
 }: {
-  subjectId: string;
+  subjectId: string | null;
   disciplinaNome: string;
   topico: TopicoPratica;
   index: number;

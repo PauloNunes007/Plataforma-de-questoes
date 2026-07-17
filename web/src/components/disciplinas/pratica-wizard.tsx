@@ -22,7 +22,7 @@ const LABEL_DIFICULDADE: Record<string, string> = { facil: "Fácil", medio: "Mé
 export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[] }) {
   const router = useRouter();
 
-  const [subjectId, setSubjectId] = useState<string | null>(null);
+  const [materiaId, setMateriaId] = useState<string | null>(null);
   const [topicos, setTopicos] = useState<TopicoPratica[]>([]);
   const [carregandoTopicos, setCarregandoTopicos] = useState(false);
   const [topicosSelecionados, setTopicosSelecionados] = useState<Set<string>>(new Set());
@@ -34,14 +34,14 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
   const [erro, setErro] = useState<string | null>(null);
   const passosRef = useRef<HTMLDivElement>(null);
 
-  const disciplina = disciplinas.find((d) => d.subjectId === subjectId) || null;
+  const disciplina = disciplinas.find((d) => d.materiaId === materiaId) || null;
 
   // No celular os passos 2/3 abrem ABAIXO da grade de disciplinas — sem o
   // scroll o aluno toca numa disciplina e não vê nada acontecer (parece
   // bug). O timeout dá tempo do passo 2 montar antes de rolar até ele.
   function escolherDisciplina(id: string | null) {
-    setSubjectId(id);
-    if (id && id !== subjectId) {
+    setMateriaId(id);
+    if (id && id !== materiaId) {
       setTimeout(() => {
         passosRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 90);
@@ -50,20 +50,19 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
 
   useEffect(() => {
     async function carregarTopicos() {
-      if (!subjectId || !disciplina || !disciplina.materiaId) {
+      if (!materiaId) {
         setTopicos([]);
         return;
       }
       setCarregandoTopicos(true);
       setTopicosSelecionados(new Set());
       setDificuldades(new Set());
-      const dados = await buscarTopicosPraticaAction(disciplina.materiaId);
+      const dados = await buscarTopicosPraticaAction(materiaId);
       setTopicos(dados);
       setCarregandoTopicos(false);
     }
     carregarTopicos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subjectId]);
+  }, [materiaId]);
 
   const topicIdsAtivos =
     topicosSelecionados.size > 0 ? Array.from(topicosSelecionados) : topicos.map((t) => t.id);
@@ -87,11 +86,11 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
   }, [topicIdsKey, dificuldadesKey, quantidade]);
 
   async function comecarPratica() {
-    if (!subjectId) return;
+    if (!materiaId) return;
     setIniciando(true);
     setErro(null);
     const { missaoId } = await iniciarPraticaLivreAction({
-      subjectId,
+      subjectId: disciplina?.subjectId ?? null,
       topicIds: topicIdsAtivos,
       dificuldades: dificuldadesArr,
       quantidade,
@@ -110,15 +109,15 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
         <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
           <BookOpen size={18} strokeWidth={1.75} className="text-muted-foreground" />
         </span>
-        <p className="mb-1 text-[15px] font-medium">Você ainda não tem disciplinas</p>
+        <p className="mb-1 text-[15px] font-medium">Ainda não há questões no banco</p>
         <p className="mb-5 max-w-[360px] text-sm text-muted-foreground">
-          Configure suas disciplinas pra começar a praticar.
+          Assim que houver questões cadastradas em alguma disciplina, elas aparecem aqui pra prática.
         </p>
         <Link
           href="/onboarding"
           className="inline-flex items-center rounded-xl bg-questly-green px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
         >
-          Configurar agora
+          Configurar minhas disciplinas
         </Link>
       </div>
     );
@@ -127,21 +126,25 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
   const topicosLabel = topicosSelecionados.size === 0 ? "Todos os tópicos" : `${topicosSelecionados.size} selecionado(s)`;
   const dificuldadeLabel = dificuldadesArr.length === 0 ? "Todas" : dificuldadesArr.map((d) => LABEL_DIFICULDADE[d] || d).join(", ");
   const quantidadeLabel = quantidade === "todas" ? "Todas disponíveis" : `${quantidade} questões`;
-  const podeComecar = Boolean(subjectId) && topicos.length > 0 && (previa?.total ?? 0) > 0 && !carregandoPrevia;
+  const podeComecar = Boolean(materiaId) && topicos.length > 0 && (previa?.total ?? 0) > 0 && !carregandoPrevia;
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 pb-24 xl:grid-cols-[minmax(0,1fr)_340px] xl:pb-0">
       <div className="flex flex-col gap-6">
         <div className="surface p-5 sm:p-6">
-          <PassoTitulo numero={1} titulo="Escolha a disciplina" descricao="Todas as suas disciplinas cadastradas." />
-          <DisciplinaPicker disciplinas={disciplinas} selecionada={subjectId} onSelecionar={escolherDisciplina} />
+          <PassoTitulo
+            numero={1}
+            titulo="Escolha a disciplina"
+            descricao="Suas disciplinas primeiro — depois, tudo que já tem questões prontas no banco."
+          />
+          <DisciplinaPicker disciplinas={disciplinas} selecionada={materiaId} onSelecionar={escolherDisciplina} />
         </div>
 
         <AnimatePresence mode="wait">
-          {subjectId && (
+          {materiaId && (
             <motion.div
               ref={passosRef}
-              key={subjectId}
+              key={materiaId}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -162,9 +165,7 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
                   </div>
                 ) : topicos.length === 0 ? (
                   <p className="py-4 text-center text-sm text-muted-foreground">
-                    {disciplina?.materiaId
-                      ? "Essa disciplina ainda não tem questões cadastradas."
-                      : "Essa disciplina ainda não está ligada a um banco de questões. Cadastre-a em Configurações."}
+                    Essa disciplina ainda não tem questões cadastradas.
                   </p>
                 ) : (
                   <TopicoPicker
@@ -230,7 +231,7 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
       {/* Barra de ação fixa no celular (< xl): no mobile o Resumo fica no
           fim da página e o aluno não enxerga o botão de começar — esta
           barra deixa a ação principal sempre visível, acima da bottom nav. */}
-      {subjectId && (
+      {materiaId && (
         <div className="fixed inset-x-0 bottom-[calc(56px+env(safe-area-inset-bottom))] z-30 border-t border-border bg-background/95 px-4 py-2.5 backdrop-blur-xl lg:bottom-0 xl:hidden">
           <div className="mx-auto flex w-full max-w-[640px] items-center justify-between gap-3">
             <div className="min-w-0">

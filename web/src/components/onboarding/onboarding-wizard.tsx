@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, X } from "lucide-react";
+import { Check, Sparkles, X } from "lucide-react";
 import {
   salvarCampanhaAction,
   verificarUsernameAction,
   type DisciplinaInput,
   type ProvaInput,
 } from "@/lib/onboarding/actions";
+import type { MateriaComQuestoes } from "@/lib/disciplinas/disciplinas-data";
 import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cursos/registro";
 import { CursoReveal } from "@/components/onboarding/curso-reveal";
 import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
@@ -126,28 +127,47 @@ function Chip({
   active,
   onClick,
   children,
+  totalQuestoes,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  /** Quando presente, mostra um selo "✓ N questões" — sinaliza disciplina
+   *  com prática real já disponível no banco (ver passo 5 do wizard). */
+  totalQuestoes?: number;
 }) {
   return (
     <motion.button
       type="button"
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className={`rounded-full border-2 px-4.5 py-2.5 text-sm font-bold transition-colors ${
+      className={`flex items-center gap-1.5 rounded-full border-2 px-4.5 py-2.5 text-sm font-bold transition-colors ${
         active
           ? "border-questly-green bg-questly-green-light text-questly-green-dark"
           : "border-border bg-card text-muted-foreground hover:border-questly-green"
       }`}
     >
       {children}
+      {totalQuestoes != null && (
+        <span
+          className={`tnum shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
+            active ? "bg-questly-green/20 text-questly-green-dark" : "bg-questly-green-light text-questly-green-dark"
+          }`}
+        >
+          ✓ {totalQuestoes}
+        </span>
+      )}
     </motion.button>
   );
 }
 
-export function OnboardingWizard({ nomeInicial = "" }: { nomeInicial?: string }) {
+export function OnboardingWizard({
+  nomeInicial = "",
+  materiasComQuestoes = [],
+}: {
+  nomeInicial?: string;
+  materiasComQuestoes?: MateriaComQuestoes[];
+}) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
@@ -313,6 +333,7 @@ export function OnboardingWizard({ nomeInicial = "" }: { nomeInicial?: string })
                   garantirDiscCfg={garantirDiscCfg}
                   identidade={identidade}
                   adicionarDisciplinas={adicionarDisciplinas}
+                  materiasComQuestoes={materiasComQuestoes}
                 />
               </motion.div>
             )}
@@ -345,6 +366,7 @@ function StepContent({
   garantirDiscCfg,
   identidade,
   adicionarDisciplinas,
+  materiasComQuestoes,
 }: {
   step: number;
   state: WizardState;
@@ -353,6 +375,7 @@ function StepContent({
   garantirDiscCfg: (nome: string) => DiscCfg;
   identidade: CursoIdentidade;
   adicionarDisciplinas: (nomes: string[]) => void;
+  materiasComQuestoes: MateriaComQuestoes[];
 }) {
   switch (step) {
     case 1:
@@ -459,6 +482,13 @@ function StepContent({
     case 5: {
       const reconhecido = cursoReconhecido(identidade);
       const sugeridas = reconhecido ? identidade.disciplinasNucleo : DISCIPLINAS_SUGERIDAS;
+      // Mapa nome→contagem pra badge de "já tem questões" nos chips — como o
+      // app ainda não sabe o semestre do aluno, isso é mais confiável que só
+      // a lista curada por curso (que pode incluir disciplina sem conteúdo
+      // ainda, ou deixar de fora conteúdo real de outro período).
+      const contagemPorNome = new Map(materiasComQuestoes.map((m) => [m.nome.toLowerCase(), m.totalQuestoes]));
+      const nomesComQuestoes = materiasComQuestoes.map((m) => m.nome);
+      const todasAsOpcoes = Array.from(new Set([...nomesComQuestoes, ...sugeridas, ...state.disciplinas]));
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -467,6 +497,15 @@ function StepContent({
           <p className="mb-4 text-sm font-semibold text-muted-foreground">
             Cada uma vira uma campanha paralela. Escolha quantas quiser.
           </p>
+          {nomesComQuestoes.length > 0 && (
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-questly-green/30 bg-questly-green-light px-3 py-2">
+              <Sparkles size={15} strokeWidth={2} className="shrink-0 text-questly-green-dark" />
+              <span className="min-w-0 flex-1 text-xs font-semibold text-questly-green-dark">
+                Ainda não sabemos seu semestre — as marcadas com <b>✓ questões</b> já têm prática pronta,
+                pode escolher à vontade.
+              </span>
+            </div>
+          )}
           {reconhecido && (
             <div className="mb-4 flex items-center gap-2 rounded-xl border border-border px-3 py-2" style={{ background: `linear-gradient(100deg, ${identidade.corA}12, transparent 75%)` }}>
               <span
@@ -489,11 +528,12 @@ function StepContent({
             </div>
           )}
           <div className="flex flex-wrap gap-2.5">
-            {Array.from(new Set([...sugeridas, ...state.disciplinas])).map((nome) => (
+            {todasAsOpcoes.map((nome) => (
               <Chip
                 key={nome}
                 active={state.disciplinas.includes(nome)}
                 onClick={() => setState((s) => ({ ...s, disciplinas: toggleEm(s.disciplinas, nome) }))}
+                totalQuestoes={contagemPorNome.get(nome.toLowerCase())}
               >
                 {nome}
               </Chip>

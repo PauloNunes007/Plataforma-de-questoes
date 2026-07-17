@@ -55,19 +55,19 @@ export function DisciplinaPicker({
 }: {
   disciplinas: DisciplinaPratica[];
   selecionada: string | null;
-  onSelecionar: (subjectId: string) => void;
+  onSelecionar: (materiaId: string) => void;
 }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {disciplinas.map((d, i) => {
-        const ativa = d.subjectId === selecionada;
+        const ativa = d.materiaId === selecionada;
         const [corA, corB] = CORES[i % CORES.length];
         const Icone = iconePorNome(d.nome);
         return (
           <motion.button
-            key={d.subjectId}
+            key={d.materiaId}
             type="button"
-            onClick={() => onSelecionar(d.subjectId)}
+            onClick={() => onSelecionar(d.materiaId)}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: i * 0.04 }}
@@ -83,6 +83,11 @@ export function DisciplinaPicker({
                 <Check size={12} strokeWidth={3} />
               </span>
             )}
+            {!d.matriculada && (
+              <span className="absolute top-2 left-2 rounded-full bg-black/25 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wide text-white/85 backdrop-blur-sm">
+                Descobrir
+              </span>
+            )}
             <Icone size={30} strokeWidth={1.6} className="mb-2 text-white/90" />
             <span className="line-clamp-2 text-[13px] font-bold leading-tight text-white">
               {d.nome}
@@ -93,8 +98,10 @@ export function DisciplinaPicker({
                   <Swords size={10} strokeWidth={2} className="shrink-0" />
                   <span className="tnum truncate">{d.diasAteProva}d</span>
                 </>
-              ) : (
+              ) : d.matriculada ? (
                 "Sem prova"
+              ) : (
+                "Não cadastrada"
               )}
             </span>
           </motion.button>

@@ -50,7 +50,9 @@ export async function calcularPreviaPraticaAction(
 }
 
 export async function iniciarPraticaLivreAction(input: {
-  subjectId: string;
+  /** null quando a disciplina não é uma das do aluno (só descoberta no
+   *  banco) — missions.subject_id é nullable justamente pra esse caso. */
+  subjectId: string | null;
   topicIds: string[];
   dificuldades: string[];
   quantidade: number | "todas";
