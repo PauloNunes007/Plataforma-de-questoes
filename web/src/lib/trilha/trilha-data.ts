@@ -17,9 +17,11 @@ import {
 import {
   QUESTLY_FORCA_RISCO,
   questlyForcaNaProva,
-  questlyProjetarProva,
   questlyRetencaoEfetiva,
 } from "@/lib/questly/motor-aprovacao";
+// projeção via rede neural quando há modelo ativo em ml_modelos; sem
+// modelo, projetarProvaComRede é exatamente questlyProjetarProva.
+import { carregarModeloAtivo, projetarProvaComRede, type ModeloAtivo } from "@/lib/ml/inferencia";
 // reaproveita a constante já exportada por chance-aprovacao.ts em vez de
 // duplicar o literal — mantém em sincronia com COBERTURA_TOPICO_QUESTOES
 // (mission-engine.ts) e COBERTURA_TOPICO (js/trilha.js legado)
@@ -86,6 +88,9 @@ export type CaminhoDisciplina = {
   bossId: string | null;
   bossNome: string | null;
   bossData: string | null;
+  // escopo da prova (bosses.topico_ids): quais tópicos caem NESTA prova.
+  // null = não definido → projeção/risco caem no fallback (ementa toda).
+  bossTopicoIds: string[] | null;
   diasAteProva: number | null;
   preparoPercentual: number;
   chanceAprovacao: number | null;
@@ -150,23 +155,40 @@ function derivarInteligencia(
 
 // Projeção agregada da disciplina pro dia da prova, no mesmo espírito do
 // dashboard: média das forças dos tópicos NÃO pulados (denominador igual
-// ao da chance de aprovação). Sem Boss futuro → sem nota.
+// ao da chance de aprovação), restrita ao ESCOPO da prova quando o aluno
+// marcou o que cai (bosses.topico_ids). Sem Boss futuro → sem nota.
 function projetarDisciplina(
   progressoPorTopico: Record<string, ProgressoRow>,
   topicoIds: string[],
   estadoPorTopico: Record<string, EstadoTopico>,
   dataProvaMs: number | null,
   agoraMs: number,
+  modeloMl: ModeloAtivo | null,
+  escopoProva: Set<string> | null,
 ): ProjecaoTrilha {
   if (dataProvaMs == null) return { notaProjetada: null, emRisco: 0 };
   const entradas = topicoIds
     .filter((id) => estadoPorTopico[id] !== "pulado")
+    .filter((id) => !escopoProva || escopoProva.has(id))
     .map((id) => ({ id, ...(progressoPorTopico[id] || {}) }));
-  const { notaProjetada, emRisco } = questlyProjetarProva(entradas, dataProvaMs, agoraMs);
+  const { notaProjetada, emRisco } = projetarProvaComRede(modeloMl, entradas, dataProvaMs, agoraMs);
   return { notaProjetada, emRisco: emRisco.length };
 }
 
-type BossRow = { id: string; nome: string; data_prova: string; preparo_percentual: number | null };
+type BossRow = {
+  id: string;
+  nome: string;
+  data_prova: string;
+  preparo_percentual: number | null;
+  topico_ids?: string[] | null;
+};
+
+// Escopo da prova como Set, ou null quando o aluno ainda não marcou o
+// que cai (aí tudo conta — comportamento anterior à migração).
+function escopoDaProva(boss: BossRow | null): Set<string> | null {
+  if (!boss?.topico_ids || boss.topico_ids.length === 0) return null;
+  return new Set(boss.topico_ids);
+}
 
 function classificarEstado(progresso: ProgressoRow | undefined, temQuestoes: boolean): EstadoTopico {
   const status = progresso?.status || "pendente";
@@ -195,13 +217,15 @@ export async function carregarMapaTrilha(
 ): Promise<RegiaoMapa[]> {
   const { data: subjectsRaw } = await supabase
     .from("subjects")
-    .select("id, nome, materia_id, bosses(id, nome, data_prova, preparo_percentual)")
+    .select("id, nome, materia_id, bosses(id, nome, data_prova, preparo_percentual, topico_ids)")
     .eq("user_id", user.id)
     .order("nome");
   const subjects = subjectsRaw || [];
   if (subjects.length === 0) return [];
 
   const pro = await alunoEhPro(supabase, user.id);
+  // Carregado uma vez por request (a projeção é Pro-gated, então só pra Pro).
+  const modeloMl = pro ? await carregarModeloAtivo(supabase) : null;
 
   const materiaIds = Array.from(new Set(subjects.map((s) => s.materia_id).filter(Boolean))) as string[];
 
@@ -251,7 +275,15 @@ export async function carregarMapaTrilha(
       if (estado === "pulado") pulados++;
     });
 
-    const projecao = projetarDisciplina(progressoPorTopico, topicoIds, estadoPorTopico, dataProvaMs, agoraMs);
+    const projecao = projetarDisciplina(
+      progressoPorTopico,
+      topicoIds,
+      estadoPorTopico,
+      dataProvaMs,
+      agoraMs,
+      modeloMl,
+      escopoDaProva(proximoBoss),
+    );
 
     return {
       subjectId: s.id,
@@ -280,7 +312,7 @@ export async function carregarCaminhoDisciplina(
 ): Promise<CaminhoDisciplina | null> {
   const { data: subject } = await supabase
     .from("subjects")
-    .select("id, nome, materia_id, chance_aprovacao, bosses(id, nome, data_prova, preparo_percentual)")
+    .select("id, nome, materia_id, chance_aprovacao, bosses(id, nome, data_prova, preparo_percentual, topico_ids)")
     .eq("id", subjectId)
     .eq("user_id", user.id)
     .single();
@@ -325,6 +357,7 @@ export async function carregarCaminhoDisciplina(
   const proximoBoss = bossMaisProximo(subject.bosses as BossRow[]);
   const dataProvaMs = proximoBoss ? new Date(proximoBoss.data_prova).getTime() : null;
   const agoraMs = Date.now();
+  const escopoProva = escopoDaProva(proximoBoss);
 
   let fronteiraId: string | null = null;
   const estadoPorTopico: Record<string, EstadoTopico> = {};
@@ -333,6 +366,8 @@ export async function carregarCaminhoDisciplina(
     const estado = classificarEstado(progresso, Boolean(temQuestao[t.id]));
     estadoPorTopico[t.id] = estado;
     if (fronteiraId === null && estado === "pendente") fronteiraId = t.id;
+    // tópico fora do escopo da prova não ganha força/selo de risco pro dia D
+    const dataProvaDoTopico = !escopoProva || escopoProva.has(t.id) ? dataProvaMs : null;
     return {
       id: t.id,
       nome: t.nome,
@@ -340,7 +375,7 @@ export async function carregarCaminhoDisciplina(
       ordem: t.ordem,
       estado,
       ehFronteira: false,
-      ...derivarInteligencia(progresso, estado, dataProvaMs, agoraMs),
+      ...derivarInteligencia(progresso, estado, dataProvaDoTopico, agoraMs),
     };
   });
   topicos.forEach((t) => {
@@ -357,7 +392,15 @@ export async function carregarCaminhoDisciplina(
   const pulados = topicos.filter((t) => t.estado === "pulado").length;
 
   const projecao = pro
-    ? projetarDisciplina(progressoPorTopico, topicoIds, estadoPorTopico, dataProvaMs, agoraMs)
+    ? projetarDisciplina(
+        progressoPorTopico,
+        topicoIds,
+        estadoPorTopico,
+        dataProvaMs,
+        agoraMs,
+        await carregarModeloAtivo(supabase),
+        escopoProva,
+      )
     : { notaProjetada: null, emRisco: 0 };
 
   return {
@@ -366,6 +409,7 @@ export async function carregarCaminhoDisciplina(
     bossId: proximoBoss?.id || null,
     bossNome: proximoBoss?.nome || null,
     bossData: proximoBoss?.data_prova || null,
+    bossTopicoIds: proximoBoss?.topico_ids?.length ? proximoBoss.topico_ids : null,
     diasAteProva: proximoBoss ? diasAte(proximoBoss.data_prova) : null,
     preparoPercentual: proximoBoss?.preparo_percentual || 0,
     chanceAprovacao: subject.chance_aprovacao != null ? Math.round(subject.chance_aprovacao) : null,

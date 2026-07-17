@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { DashboardData } from "@/lib/questly/dashboard-data";
 import { MissionBanner } from "./mission-banner";
 import { BossSiegeMeter } from "./boss-siege-meter";
+import { GpsAprovacaoCard } from "./gps-aprovacao-card";
 import { CalendarRailCard, SubjectsRailCard } from "./right-rail";
 import { XpDiarioCard } from "./xp-diario-card";
 import { MetasCard } from "./metas-card";
@@ -55,6 +56,14 @@ export function DashboardView({ dados }: { dados: DashboardData }) {
                 dayTicker={dados.dayTicker}
                 missoesPendentesIds={missoesPendentesIds}
               />
+
+              {dados.bossAlvo && (
+                <GpsAprovacaoCard
+                  rota={dados.bossAlvo.rota}
+                  subjectId={dados.bossAlvo.subjectId}
+                  subjectNome={dados.bossAlvo.subjectNome}
+                />
+              )}
             </div>
 
             <aside className="flex min-w-0 flex-col gap-6">

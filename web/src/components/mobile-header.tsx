@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Crown, LogOut, ShieldAlert } from "lucide-react";
+import { Crown, GraduationCap, LogOut, ShieldAlert } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "@/components/logo";
 import { ProBadge } from "@/components/plano/pro-ui";
@@ -96,6 +96,20 @@ export function MobileHeader({
                     </span>
                   )}
                 </div>
+                {/* Modo Aprovação: feature de conta única, só o admin vê. */}
+                {isAdmin && (
+                  <>
+                    <div className="mx-1 my-1 h-px bg-border" />
+                    <Link
+                      href="/aprovacao"
+                      onClick={() => setAberto(false)}
+                      className="flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 text-left text-[13.5px] font-medium text-questly-orange transition-colors hover:bg-muted"
+                    >
+                      <GraduationCap size={15} strokeWidth={1.75} />
+                      Modo Aprovação
+                    </Link>
+                  </>
+                )}
                 {isAdmin && (
                   <>
                     <div className="mx-1 my-1 h-px bg-border" />

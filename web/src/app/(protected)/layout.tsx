@@ -5,6 +5,7 @@ import { ehPro } from "@/lib/plano/plano";
 import { Sidebar } from "@/components/sidebar";
 import { MobileHeader } from "@/components/mobile-header";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { BotaoErroRapido } from "@/components/aprovacao/botao-erro-rapido";
 
 export default async function ProtectedLayout({
   children,
@@ -53,6 +54,9 @@ export default async function ProtectedLayout({
       {/* pb-16 abre espaço pra MobileBottomNav (fixed, ~56px + safe-area)
           não tampar o fim da página em telas < lg. */}
       <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>
+      {/* Modo Aprovação (feature de conta única): registrar um erro de
+          qualquer página do app — só a conta admin vê. */}
+      {isAdmin && <BotaoErroRapido />}
       <MobileBottomNav />
     </div>
   );

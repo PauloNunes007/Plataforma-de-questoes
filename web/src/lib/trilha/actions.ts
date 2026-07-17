@@ -87,12 +87,15 @@ export async function iniciarPraticaTopicoAction(subjectId: string, topicoId: st
 
 // cria ou atualiza o Boss da disciplina direto da página de trilha, sem
 // mandar o aluno pra Configurações — insert quando ainda não há prova
-// futura cadastrada (bossId null), update quando já existe
+// futura cadastrada (bossId null), update quando já existe.
+// topicoIds = escopo da prova ("o que cai?"); lista vazia vira null
+// (escopo não definido → projeção cai no fallback cai_na_prova).
 export async function salvarProvaTrilhaAction(input: {
   subjectId: string;
   bossId: string | null;
   nome: string;
   dataProva: string;
+  topicoIds?: string[] | null;
 }) {
   const supabase = await createClient();
   const {
@@ -100,9 +103,14 @@ export async function salvarProvaTrilhaAction(input: {
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sessão expirada." };
 
+  const payload: Record<string, unknown> = { nome: input.nome, data_prova: input.dataProva };
+  if (input.topicoIds !== undefined) {
+    payload.topico_ids = input.topicoIds && input.topicoIds.length > 0 ? input.topicoIds : null;
+  }
+
   const { error } = input.bossId
-    ? await supabase.from("bosses").update({ nome: input.nome, data_prova: input.dataProva }).eq("id", input.bossId)
-    : await supabase.from("bosses").insert({ subject_id: input.subjectId, nome: input.nome, data_prova: input.dataProva });
+    ? await supabase.from("bosses").update(payload).eq("id", input.bossId)
+    : await supabase.from("bosses").insert({ subject_id: input.subjectId, ...payload });
 
   if (error) {
     console.error("Erro ao salvar prova:", error);

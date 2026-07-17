@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { questlyEhMestre, questlyXpDaQuestao } from "@/lib/questly/shared";
+import { QUESTLY_MAESTRIA_MULT_XP, questlyEhMestre, questlyXpDaQuestao } from "@/lib/questly/shared";
 import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
 import { atualizarStreakEDailyLog, atualizarXpELiga } from "@/lib/questly/economia";
 import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
@@ -28,6 +28,18 @@ export async function registrarRespostaAction(input: {
   } = await supabase.auth.getUser();
   if (!user) return { attemptId: null };
 
+  // Corretude é decidida NO SERVIDOR comparando a resposta marcada com o
+  // gabarito no banco — nunca confiar no `input.correta` do cliente (o
+  // questao-runner calcula localmente só pra feedback imediato). Sem isso,
+  // qualquer um marcava tudo como certo, inflando maestria/BKT e os
+  // contadores globais tentativas_total/acertos_total (dados da rede neural).
+  const { data: questaoGabarito } = await supabase
+    .from("questions")
+    .select("gabarito")
+    .eq("id", input.questionId)
+    .maybeSingle();
+  const correta = questaoGabarito?.gabarito != null && input.respostaMarcada === questaoGabarito.gabarito;
+
   const { data: attempt, error: attemptError } = await supabase
     .from("question_attempts")
     .insert({
@@ -35,7 +47,7 @@ export async function registrarRespostaAction(input: {
       question_id: input.questionId,
       mission_id: input.missaoId,
       resposta_marcada: input.respostaMarcada,
-      correta: input.correta,
+      correta,
       tempo_gasto_seg: input.tempoSeg,
       tentativa_num: 1,
     })
@@ -54,7 +66,7 @@ export async function registrarRespostaAction(input: {
     const numAnterior = progresso?.num_questoes_respondidas || 0;
     const taxaAnterior = progresso?.taxa_acerto ?? 0;
     const novoNum = numAnterior + 1;
-    const novaTaxa = (taxaAnterior * numAnterior + (input.correta ? 1 : 0)) / novoNum;
+    const novaTaxa = (taxaAnterior * numAnterior + (correta ? 1 : 0)) / novoNum;
 
     // Motor de aprovação: evolui maestria (BKT) e estabilidade (revisão
     // espaçada) a partir do estado persistido. Semeia no cold-start com
@@ -66,7 +78,7 @@ export async function registrarRespostaAction(input: {
       ultimaRevisao: progresso?.ultima_revisao ?? null,
       taxaAnterior,
       numAnterior,
-      acertou: input.correta,
+      acertou: correta,
       agoraMs: Date.now(),
     });
 
@@ -90,14 +102,31 @@ export async function registrarRespostaAction(input: {
     : input.tempoSeg;
   // `questions` só é escrita pelo admin (RLS de segurança) — a recalibração do
   // tempo médio, que qualquer aluno dispara ao responder, roda via service_role
-  // no servidor (o user já foi validado acima).
-  const { error: tempoError } = await createAdminClient()
+  // no servidor (o user já foi validado acima). Na mesma escrita, os contadores
+  // globais tentativas_total/acertos_total (feature "taxa da questão" da rede
+  // neural — supabase_rede_neural.sql).
+  const admin = createAdminClient();
+  const { data: statsQuestao } = await admin
     .from("questions")
-    .update({ tempo_medio_seg: novoTempoMedio })
+    .select("tentativas_total, acertos_total")
+    .eq("id", input.questionId)
+    .maybeSingle();
+  const { error: tempoError } = await admin
+    .from("questions")
+    .update({
+      tempo_medio_seg: novoTempoMedio,
+      tentativas_total: (statsQuestao?.tentativas_total ?? 0) + 1,
+      acertos_total: (statsQuestao?.acertos_total ?? 0) + (correta ? 1 : 0),
+    })
     .eq("id", input.questionId);
-  if (tempoError) console.error("Erro ao recalibrar tempo médio da questão:", tempoError);
+  if (tempoError) {
+    // Banco ainda sem supabase_rede_neural.sql (colunas novas ausentes):
+    // não pode custar a recalibração do tempo médio, que já existia.
+    console.error("Erro ao atualizar estatísticas da questão:", tempoError);
+    await admin.from("questions").update({ tempo_medio_seg: novoTempoMedio }).eq("id", input.questionId);
+  }
 
-  return { attemptId: attempt?.id ?? null, novoTempoMedio };
+  return { attemptId: attempt?.id ?? null, novoTempoMedio, correta };
 }
 
 export async function classificarMotivoErroAction(attemptId: string, motivo: string) {
@@ -123,56 +152,149 @@ export type FinalizarMissaoResultado = {
   recapResultado: { dominou: boolean; taxa: number } | null;
   novosMestresNomes: string[];
   desafio: DesafioRecuperacao | null;
+  placar: { acertos: number; erros: number; xpGanho: number };
 };
+
+// Recomputa acertos/erros/XP da missão SÓ a partir de dados autoritativos do
+// servidor: as tentativas gravadas pra esta missão, regradas pelo gabarito no
+// banco, com XP calculado pelas mesmas regras do cliente (peso por
+// dificuldade, metade em questão já acertada antes, ×1.5 em tópico Mestre).
+// O cliente não tem voz aqui — é isso que impede forjar xp_total/ranking.
+async function recomputarPlacarMissao(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  missao: { id: string; question_ids: string[] | null },
+): Promise<{ acertos: number; erros: number; xpGanho: number }> {
+  const { data: tentativas } = await supabase
+    .from("question_attempts")
+    .select("question_id, resposta_marcada, id")
+    .eq("user_id", userId)
+    .eq("mission_id", missao.id)
+    .order("id", { ascending: true });
+
+  // Última resposta marcada por questão (uma tentativa por questão no fluxo
+  // normal; se houver mais de uma, a mais recente vale).
+  const respostaPorQuestao = new Map<string, string>();
+  (tentativas || []).forEach((t) => respostaPorQuestao.set(t.question_id, t.resposta_marcada));
+
+  // Só pontua as questões que a missão realmente contém (missions.question_ids
+  // é fixado na criação). Missões antigas sem question_ids caem pras questões
+  // efetivamente respondidas nesta missão.
+  const idsMissao = Array.isArray(missao.question_ids) ? missao.question_ids : [];
+  const idsParaAvaliar = idsMissao.length > 0 ? idsMissao : Array.from(respostaPorQuestao.keys());
+  if (idsParaAvaliar.length === 0) return { acertos: 0, erros: 0, xpGanho: 0 };
+
+  const { data: questoes } = await supabase
+    .from("questions")
+    .select("id, gabarito, dificuldade, topic_id")
+    .in("id", idsParaAvaliar);
+
+  // Questões já acertadas em OUTRA missão pagam metade (anti-farming).
+  const { data: acertosPrevios } = await supabase
+    .from("question_attempts")
+    .select("question_id")
+    .eq("user_id", userId)
+    .eq("correta", true)
+    .neq("mission_id", missao.id)
+    .in("question_id", idsParaAvaliar);
+  const jaAcertadasAntes = new Set((acertosPrevios || []).map((a) => a.question_id));
+
+  // Tópicos atualmente Mestres (bônus ×1.5). Reconstruir o estado exato "no
+  // início da missão" não é necessário: o multiplicador é limitado (1.5×) e a
+  // diferença não é explorável — o que importa é o teto vir de dado real.
+  const topicIds = Array.from(new Set((questoes || []).map((q) => q.topic_id).filter(Boolean))) as string[];
+  const mestres = new Set<string>();
+  if (topicIds.length > 0) {
+    const { data: progs } = await supabase
+      .from("aluno_topico_progresso")
+      .select("topico_id, taxa_acerto, num_questoes_respondidas")
+      .eq("user_id", userId)
+      .in("topico_id", topicIds);
+    (progs || []).forEach((p) => {
+      if (questlyEhMestre(p)) mestres.add(p.topico_id);
+    });
+  }
+
+  let acertos = 0;
+  let erros = 0;
+  let xpGanho = 0;
+  for (const q of questoes || []) {
+    const marcada = respostaPorQuestao.get(q.id);
+    if (marcada == null) continue; // questão da missão que o aluno não respondeu
+    if (marcada !== q.gabarito) {
+      erros += 1;
+      continue;
+    }
+    acertos += 1;
+    let xp = questlyXpDaQuestao(q);
+    if (jaAcertadasAntes.has(q.id)) xp = Math.max(1, Math.round(xp / 2));
+    if (q.topic_id && mestres.has(q.topic_id)) xp = Math.round(xp * QUESTLY_MAESTRIA_MULT_XP);
+    xpGanho += xp;
+  }
+
+  return { acertos, erros, xpGanho };
+}
 
 export async function finalizarMissaoAction(input: {
   missaoId: string;
-  subjectId: string | null;
-  recapTopicoId: string | null;
-  avulsa: boolean;
-  acertos: number;
-  erros: number;
-  xpGanho: number;
   tempoGastoMinMissao: number;
-  topicIdsDasPerguntas: string[];
   topicosMestreInicioIds: string[];
 }): Promise<FinalizarMissaoResultado> {
+  const vazio = { recapResultado: null, novosMestresNomes: [], desafio: null, placar: { acertos: 0, erros: 0, xpGanho: 0 } };
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { recapResultado: null, novosMestresNomes: [], desafio: null };
+  if (!user) return vazio;
+
+  // Carrega a missão do banco (RLS garante que é do próprio aluno) — subject,
+  // recap, avulsa e question_ids vêm daqui, NÃO do cliente, pra ninguém apontar
+  // um recap pra tópico arbitrário nem inflar o conjunto de questões pontuadas.
+  const { data: missao } = await supabase
+    .from("missions")
+    .select("id, subject_id, recap_topico_id, avulsa, concluida, question_ids, topic_ids")
+    .eq("id", input.missaoId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!missao) return vazio;
+
+  // Anti-replay: uma missão já concluída não concede XP de novo (fechava o
+  // farm de chamar finalizarMissaoAction repetidas vezes na mesma missão).
+  if (missao.concluida) return vazio;
+
+  const placar = await recomputarPlacarMissao(supabase, user.id, missao);
 
   await supabase
     .from("missions")
     .update({ concluida: true, tempo_gasto_min: input.tempoGastoMinMissao })
-    .eq("id", input.missaoId);
+    .eq("id", missao.id)
+    .eq("user_id", user.id);
 
   // XP/liga/streak vivem em colunas protegidas de `profiles` (só service_role
   // escreve — supabase_seguranca_hardening.sql). Essas duas rodam via cliente
   // admin; o resto (recap/métricas/missão) fica no cliente do usuário porque
   // são writes owner-scoped em tabelas não protegidas.
   const admin = createAdminClient();
-  await atualizarXpELiga(admin, user.id, input.acertos, input.erros, input.xpGanho);
+  await atualizarXpELiga(admin, user.id, placar.acertos, placar.erros, placar.xpGanho);
   await atualizarStreakEDailyLog(admin, user.id);
-  const recapResultado = await avaliarRecap(supabase, user.id, input.recapTopicoId, input.acertos, input.erros);
-  if (input.subjectId) {
-    await atualizarMetricasSubject(supabase, user.id, input.subjectId);
+  const recapResultado = await avaliarRecap(supabase, user.id, missao.recap_topico_id, placar.acertos, placar.erros);
+  if (missao.subject_id) {
+    await atualizarMetricasSubject(supabase, user.id, missao.subject_id);
   }
+  const topicIdsDasPerguntas = (Array.isArray(missao.topic_ids) ? missao.topic_ids : []) as string[];
   const novosMestresNomes = await celebrarNovasMaestrias(
     supabase,
     user.id,
-    input.topicIdsDasPerguntas,
+    topicIdsDasPerguntas,
     input.topicosMestreInicioIds,
   );
-  const desafio = input.avulsa ? null : await prepararDesafioRecuperacao(supabase, user.id);
+  const desafio = missao.avulsa ? null : await prepararDesafioRecuperacao(supabase, user.id);
 
-  return { recapResultado, novosMestresNomes, desafio };
+  return { recapResultado, novosMestresNomes, desafio, placar };
 }
 
-// atualizarXpELiga/atualizarStreakEDailyLog moraram aqui até a Arena de
-// Xadrez precisar delas também — agora vivem em lib/questly/economia.ts
-// (sem "use server", pra não virarem endpoints).
+// atualizarXpELiga/atualizarStreakEDailyLog vivem em lib/questly/economia.ts
+// (sem "use server", pra não virarem endpoints invocáveis do browser).
 
 async function avaliarRecap(
   supabase: Awaited<ReturnType<typeof createClient>>,

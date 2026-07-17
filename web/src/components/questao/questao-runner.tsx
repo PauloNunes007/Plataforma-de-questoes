@@ -232,21 +232,18 @@ export function QuestaoRunner({
     const tempoMin = Math.max(1, Math.round((Date.now() - tempoInicioMissaoMs.current) / 60000));
     setTempoGastoMinMissao(tempoMin);
 
-    const topicIdsDasPerguntas = Array.from(new Set(perguntasState.map((p) => p.topic_id).filter(Boolean))) as string[];
-
     const resultado = await finalizarMissaoAction({
       missaoId: missao.id,
-      subjectId: missao.subject_id,
-      recapTopicoId: missao.recap_topico_id,
-      avulsa: missao.avulsa,
-      acertos,
-      erros,
-      xpGanho,
       tempoGastoMinMissao: tempoMin,
-      topicIdsDasPerguntas,
       topicosMestreInicioIds: Array.from(topicosMestreInicio.current),
     });
 
+    // O servidor é a autoridade: XP/acertos/erros são recomputados lá a partir
+    // das tentativas reais. A tela de resultado mostra o que foi de fato
+    // concedido (o placar local era só otimista/imediato).
+    setAcertos(resultado.placar.acertos);
+    setErros(resultado.placar.erros);
+    setXpGanho(resultado.placar.xpGanho);
     setResultadoExtra(resultado);
     setFinalizando(false);
     setView("resultado");

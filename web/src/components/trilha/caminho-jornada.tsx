@@ -10,8 +10,8 @@
 // inteligentes). Substitui o quest-log vertical de caminho-disciplina.tsx.
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
-import { Castle, Flag, Sparkles } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Castle, Flag, Sparkles, X } from "lucide-react";
 import type { CaminhoDisciplina as CaminhoDisciplinaData } from "@/lib/trilha/trilha-data";
 import {
   buscarCaminhoDisciplinaAction,
@@ -72,9 +72,24 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selId, setSelId] = useState<string | null>(null);
+  // No celular o painel de detalhe vira um bottom sheet (o rail lateral só
+  // existe no desktop — sem isso, tocar num nó "não fazia nada": o painel
+  // renderizava abaixo do mapa inteiro, fora da tela). Só abre em toque
+  // explícito do aluno, nunca na seleção padrão da fronteira.
+  const [sheetAberto, setSheetAberto] = useState(false);
 
   const { topicos, progresso } = caminho;
   const fronteiraIdx = topicos.findIndex((t) => t.ehFronteira);
+
+  // trava o scroll da página enquanto o sheet está aberto
+  useEffect(() => {
+    if (!sheetAberto) return;
+    const anterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = anterior;
+    };
+  }, [sheetAberto]);
 
   // seleção padrão: a fronteira; senão o 1º tópico. Persiste entre
   // refetches se o tópico ainda existir.
@@ -122,21 +137,26 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
             topicos={topicos}
             fronteiraIdx={fronteiraIdx}
             selId={selecionado?.id ?? null}
-            onSelect={setSelId}
+            onSelect={(id) => {
+              setSelId(id);
+              setSheetAberto(true);
+            }}
             bossNome={caminho.bossNome}
             diasAteProva={caminho.diasAteProva}
           />
 
           <div className="flex flex-col gap-4 xl:sticky xl:top-7">
             {selecionado && (
-              <PainelTopico
-                topico={selecionado}
-                numero={selIdx + 1}
-                pending={pendingId === selecionado.id}
-                onSkip={() => marcar(selecionado.id, "pulado")}
-                onUndo={() => marcar(selecionado.id, "pendente")}
-                onPraticar={() => praticar(selecionado.id)}
-              />
+              <div className="hidden xl:block">
+                <PainelTopico
+                  topico={selecionado}
+                  numero={selIdx + 1}
+                  pending={pendingId === selecionado.id}
+                  onSkip={() => marcar(selecionado.id, "pulado")}
+                  onUndo={() => marcar(selecionado.id, "pendente")}
+                  onPraticar={() => praticar(selecionado.id)}
+                />
+              </div>
             )}
             <BossEncontro
               subjectId={caminho.subjectId}
@@ -146,11 +166,62 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
               diasAteProva={caminho.diasAteProva}
               preparoPercentual={caminho.preparoPercentual}
               chanceAprovacao={caminho.chanceAprovacao}
+              topicosEmenta={caminho.topicos.map((t) => ({ id: t.id, nome: t.nome }))}
+              bossTopicoIds={caminho.bossTopicoIds}
               onSalvo={onSalvo}
             />
           </div>
         </div>
       )}
+
+      {/* Bottom sheet do tópico (só < xl) — mesma PainelTopico do rail */}
+      <AnimatePresence>
+        {sheetAberto && selecionado && (
+          <div className="fixed inset-0 z-50 xl:hidden" role="dialog" aria-modal="true" aria-label={`Detalhes da missão ${selIdx + 1}: ${selecionado.nome}`}>
+            <motion.button
+              type="button"
+              aria-label="Fechar detalhes"
+              className="absolute inset-0 h-full w-full cursor-pointer bg-black/50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              onClick={() => setSheetAberto(false)}
+            />
+            <motion.div
+              className="absolute inset-x-0 bottom-0 max-h-[82dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-background px-3 pt-2 shadow-[0_-12px_40px_rgba(0,0,0,0.25)]"
+              style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 420, damping: 40 }}
+            >
+              <div className="sticky top-0 z-10 flex items-center justify-between bg-background pb-1 pt-1.5">
+                <span className="pointer-events-none absolute left-1/2 top-2 h-1.5 w-10 -translate-x-1/2 rounded-full bg-muted-foreground/25" />
+                <span className="px-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                  Detalhes da missão
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSheetAberto(false)}
+                  aria-label="Fechar"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <X size={17} strokeWidth={2} />
+                </button>
+              </div>
+              <PainelTopico
+                topico={selecionado}
+                numero={selIdx + 1}
+                pending={pendingId === selecionado.id}
+                onSkip={() => marcar(selecionado.id, "pulado")}
+                onUndo={() => marcar(selecionado.id, "pendente")}
+                onPraticar={() => praticar(selecionado.id)}
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -2,10 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { questlyGarantirSemanaLiga } from "@/lib/questly/liga";
 
 // Economia de gamificação — os writes de XP/liga/streak em `profiles`.
-// Extraído de lib/questao/actions.ts pra ser reutilizado pela Arena de
-// Xadrez (lib/xadrez/actions.ts) SEM virar Server Action: este arquivo não
-// tem "use server" de propósito — exportar essas funções de um arquivo
-// "use server" as tornaria endpoints invocáveis direto do browser.
+// Extraído de lib/questao/actions.ts pra poder ser reutilizado por outros
+// fluxos SEM virar Server Action: este arquivo não tem "use server" de
+// propósito — exportar essas funções de um arquivo "use server" as
+// tornaria endpoints invocáveis direto do browser.
 //
 // As colunas tocadas aqui são protegidas pelo trigger
 // questly_proteger_colunas_profile (supabase_seguranca_hardening.sql):

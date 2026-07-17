@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Crown, LogOut, ShieldAlert } from "lucide-react";
+import { Crown, GraduationCap, LogOut, ShieldAlert } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { NAV_ITEMS } from "@/components/nav-items";
 import { ProBadge } from "@/components/plano/pro-ui";
@@ -58,6 +58,27 @@ export function Sidebar({ nome, username, curso, fotoUrl, isAdmin, ehPro }: Side
           );
         })}
       </nav>
+
+      {/* Modo Aprovação (vestibular): feature de conta única — só a conta
+          admin vê (mesmo gate do link de admin abaixo). Fora dos 5
+          NAV_ITEMS porque essa lista é compartilhada com as 5 abas fixas
+          da MobileBottomNav. */}
+      {isAdmin && (
+      <div className="mt-3">
+        <Link
+          href="/aprovacao"
+          aria-current={pathname.startsWith("/aprovacao") ? "page" : undefined}
+          className={`group relative flex h-9 items-center gap-3 rounded-lg px-2.5 text-[13.5px] font-medium transition-colors duration-150 ${
+            pathname.startsWith("/aprovacao")
+              ? "bg-questly-orange/15 text-questly-orange"
+              : "text-muted-foreground hover:bg-questly-orange/10 hover:text-questly-orange"
+          }`}
+        >
+          <GraduationCap size={18} strokeWidth={pathname.startsWith("/aprovacao") ? 2 : 1.75} />
+          Modo Aprovação
+        </Link>
+      </div>
+      )}
 
       <div className="mt-3">
         <Link

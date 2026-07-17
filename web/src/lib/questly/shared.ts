@@ -23,6 +23,9 @@ export type Boss = {
   nome: string;
   data_prova: string;
   preparo_percentual?: number | null;
+  // escopo da prova (supabase_prova_topicos.sql): quais tópicos caem NESTA
+  // prova. null/vazio = não definido → projeções usam todos os cai_na_prova.
+  topico_ids?: string[] | null;
 };
 
 export function questlyNormalizarDia(d: string): string {

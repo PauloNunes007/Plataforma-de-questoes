@@ -22,11 +22,8 @@ export default async function TrilhaPage() {
       <header>
         <h1 className="font-heading text-[22px] font-semibold tracking-tight">Minha trilha</h1>
         <p className="mt-0.5 max-w-[640px] text-sm leading-relaxed text-muted-foreground">
-          O mundo da sua campanha: cada disciplina é uma ilha com sua própria jornada serpenteante até o
-          Boss. Você caminha do <b className="font-medium text-foreground">Início</b> até a prova, e o mascote
-          fica no ponto onde você está. Clique num nó pra ver os detalhes — e marque o que já sabe:{" "}
-          <b className="font-medium text-foreground">Já sei</b> pula o tópico sem XP, ou faça um{" "}
-          <b className="font-medium text-foreground">recap</b> rápido pra provar que domina.
+          Toque numa disciplina pra abrir a jornada dela até a prova. Cada parada é um tópico da
+          ementa — toque numa parada pra ver detalhes, praticar ou marcar o que você já sabe.
         </p>
       </header>
 

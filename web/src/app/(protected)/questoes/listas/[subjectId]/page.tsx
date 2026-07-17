@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { carregarDisciplinasPratica, carregarTopicosPratica } from "@/lib/disciplinas/disciplinas-data";
 import { ListaTopicoCard } from "@/components/questoes/lista-topico-card";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
   title: "Questly — Listas de Questões",
@@ -41,18 +42,12 @@ export default async function ListasDaDisciplinaPage({
 
   return (
     <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
-      <header>
-        <Link
-          href="/questoes/listas"
-          className="mb-2 inline-block text-xs font-medium text-muted-foreground hover:text-foreground"
-        >
-          ← Disciplinas
-        </Link>
-        <h1 className="font-heading text-[22px] font-semibold tracking-tight">{disciplina.nome}</h1>
-        <p className="mt-0.5 text-sm text-muted-foreground">
-          Cada tópico é uma lista pronta — clique em Começar pra praticar todas as questões dele.
-        </p>
-      </header>
+      <PageHeader
+        titulo={disciplina.nome}
+        descricao="Cada tópico é uma lista pronta — toque em Começar pra praticar todas as questões dele."
+        voltarHref="/questoes/listas"
+        voltarLabel="Listas de Questões"
+      />
 
       {!disciplina.materiaId ? (
         <p className="py-4 text-center text-sm text-muted-foreground">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Map as MapIcon } from "lucide-react";
@@ -17,6 +17,7 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
   const [selecionada, setSelecionada] = useState<string | null>(null);
   const [caminho, setCaminho] = useState<CaminhoDisciplinaData | null>(null);
   const [carregando, setCarregando] = useState(false);
+  const caminhoRef = useRef<HTMLDivElement>(null);
 
   // com uma única disciplina não há mapa pra escolher — já abre a trilha dela
   useEffect(() => {
@@ -24,7 +25,7 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function selecionar(subjectId: string) {
+  async function selecionar(subjectId: string, rolarAteAJornada = false) {
     if (subjectId === selecionada) {
       setSelecionada(null);
       setCaminho(null);
@@ -32,6 +33,14 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
     }
     setSelecionada(subjectId);
     setCarregando(true);
+    // No celular a jornada abre ABAIXO da grade de ilhas — sem esse scroll o
+    // aluno toca na disciplina e "nada acontece" (o conteúdo fica fora da
+    // tela e parece bug). O timeout dá tempo do skeleton montar.
+    if (rolarAteAJornada) {
+      setTimeout(() => {
+        caminhoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 90);
+    }
     const dados = await buscarCaminhoDisciplinaAction(subjectId);
     setCaminho(dados);
     setCarregando(false);
@@ -87,9 +96,14 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
   return (
     <>
       {regioes.length > 1 && (
-        <MundoIlhas regioes={regioesAtualizadas} selecionada={selecionada} onSelecionar={selecionar} />
+        <MundoIlhas
+          regioes={regioesAtualizadas}
+          selecionada={selecionada}
+          onSelecionar={(id) => selecionar(id, true)}
+        />
       )}
 
+      <div ref={caminhoRef} className={selecionada ? "scroll-mt-20 lg:scroll-mt-6" : "hidden"}>
       <AnimatePresence mode="wait">
         {selecionada && (
           <motion.div
@@ -118,6 +132,7 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { carregarDisciplinasPratica } from "@/lib/disciplinas/disciplinas-data";
 import { DisciplinaNavegarGrid } from "@/components/questoes/disciplina-navegar-grid";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
   title: "Questly — Listas de Questões",
@@ -21,12 +22,12 @@ export default async function ListasDeQuestoesPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
-      <header>
-        <h1 className="font-heading text-[22px] font-semibold tracking-tight">Listas de Questões</h1>
-        <p className="mt-0.5 max-w-[620px] text-sm leading-relaxed text-muted-foreground">
-          Escolha uma disciplina pra ver seus tópicos como listas prontas de questões.
-        </p>
-      </header>
+      <PageHeader
+        titulo="Listas de Questões"
+        descricao="Escolha uma disciplina pra ver seus tópicos como listas prontas de questões."
+        voltarHref="/questoes"
+        voltarLabel="Questões"
+      />
 
       {disciplinas.length === 0 ? (
         <div className="surface flex flex-col items-center px-6 py-10 text-center">

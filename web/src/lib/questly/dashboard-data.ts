@@ -17,7 +17,8 @@ import {
 } from "./shared";
 import { questlyGerarMissoesDoDia, type Mission, type Subject } from "./mission-engine";
 import { questlyGarantirSemanaLiga, QUESTLY_LIGA_INFO, type EstadoLiga } from "./liga";
-import { questlyProjetarProva } from "./motor-aprovacao";
+import { carregarModeloAtivo, forcaTopicoComRede, projetarProvaComRede } from "@/lib/ml/inferencia";
+import { questlyRotaAprovacao, type RotaAprovacao, type TopicoRota } from "./rota-aprovacao";
 import { ehPro } from "@/lib/plano/plano";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
@@ -54,6 +55,7 @@ export type ProfileRow = {
 export type MissionCardData = Mission & { mestre: boolean };
 
 export type BossAlvo = {
+  subjectId: string;
   subjectNome: string;
   bossNome: string;
   dataProva: string;
@@ -62,6 +64,11 @@ export type BossAlvo = {
   chanceAprovacao: number | null;
   notaProjetada: number | null; // nota esperada na prova se nada mudar (motor)
   emRiscoCount: number; // tópicos que chegam fracos no dia D
+  rota: RotaAprovacao | null; // GPS: onde investir os minutos de hoje
+  // escopo da prova (bosses.topico_ids): o aluno marcou o que cai?
+  // false = projeção/GPS estão assumindo a ementa inteira (menos preciso)
+  escopoDefinido: boolean;
+  escopoTopicos: number | null; // quantos tópicos caem, quando definido
 };
 
 export type SubjectListItem = {
@@ -170,7 +177,7 @@ export async function carregarDadosDashboard(
 
   const { data: subjectsRaw } = await supabase
     .from("subjects")
-    .select("*, bosses(id, nome, data_prova, preparo_percentual)")
+    .select("*, bosses(id, nome, data_prova, preparo_percentual, topico_ids)")
     .eq("user_id", user.id);
   const subjects = (subjectsRaw || []) as Subject[];
 
@@ -256,17 +263,26 @@ export async function carregarDadosDashboard(
     .sort((a, b) => new Date(a.boss.data_prova).getTime() - new Date(b.boss.data_prova).getTime())[0];
 
   // Projeção pra data da prova (motor): que nota o aluno tira no dia D
-  // se nada mudar, e quantos tópicos chegam fracos lá. Escopo: tópicos
-  // que caem na prova da matéria do boss-alvo, sem os 'pulado'.
+  // se nada mudar, e quantos tópicos chegam fracos lá. Escopo: o que o
+  // aluno marcou que CAI NESTA prova (bosses.topico_ids) — sem escopo
+  // definido, fallback pra flag global cai_na_prova da ementa (menos
+  // preciso; o card avisa). Sempre sem os 'pulado'.
   let notaProjetada: number | null = null;
   let emRiscoCount = 0;
+  let rota: RotaAprovacao | null = null;
+  const escopoProva =
+    alvo?.boss.topico_ids && alvo.boss.topico_ids.length > 0 ? new Set(alvo.boss.topico_ids) : null;
   if (alvo && alvo.subject.materia_id) {
-    const { data: topicosProva } = await supabase
+    const { data: topicosMateria } = await supabase
       .from("topicos")
-      .select("id")
-      .eq("materia_id", alvo.subject.materia_id)
-      .eq("cai_na_prova", true);
-    const idsProva = (topicosProva || []).map((t) => t.id);
+      .select("id, nome, cai_na_prova")
+      .eq("materia_id", alvo.subject.materia_id);
+    const topicosProva = (topicosMateria || []).filter((t) =>
+      escopoProva ? escopoProva.has(t.id) : t.cai_na_prova,
+    );
+    const idsProva = topicosProva.map((t) => t.id);
+    const nomePorId: Record<string, string> = {};
+    topicosProva.forEach((t) => (nomePorId[t.id] = t.nome));
     if (idsProva.length > 0) {
       const { data: progProva } = await supabase
         .from("aluno_topico_progresso")
@@ -287,18 +303,58 @@ export async function carregarDadosDashboard(
       const topicosParaProjecao = idsProva
         .map((id) => ({ id, ...(progPorId[id] || {}) }))
         .filter((t) => t.status !== "pulado");
-      const projecao = questlyProjetarProva(
-        topicosParaProjecao,
-        new Date(alvo.boss.data_prova).getTime(),
-        Date.now(),
-      );
+      // Rede neural quando há modelo ativo (venceu o baseline na validação);
+      // sem modelo, projetarProvaComRede É questlyProjetarProva — zero mudança.
+      const modeloMl = await carregarModeloAtivo(supabase);
+      const dataProvaMs = new Date(alvo.boss.data_prova).getTime();
+      const agoraMs = Date.now();
+      const projecao = projetarProvaComRede(modeloMl, topicosParaProjecao, dataProvaMs, agoraMs);
       notaProjetada = projecao.notaProjetada;
       emRiscoCount = projecao.emRisco.length;
+
+      // ---- GPS: rota Δnota/min pros minutos de hoje ----
+      // Precisa de tempo médio + nº de questões por tópico (só tópicos
+      // com questão entram na rota — os demais seguem na projeção).
+      const { data: questoesProva } = await supabase
+        .from("questions")
+        .select("topic_id, tempo_medio_seg")
+        .in("topic_id", idsProva);
+      const statsPorTopico: Record<string, { total: number; somaSeg: number; comDado: number }> = {};
+      (questoesProva || []).forEach((q) => {
+        const s = (statsPorTopico[q.topic_id] ||= { total: 0, somaSeg: 0, comDado: 0 });
+        s.total += 1;
+        if (q.tempo_medio_seg) {
+          s.somaSeg += q.tempo_medio_seg;
+          s.comDado += 1;
+        }
+      });
+
+      const topicosRota: TopicoRota[] = topicosParaProjecao.map((t) => {
+        const s = statsPorTopico[t.id];
+        return {
+          ...t,
+          nome: nomePorId[t.id] || "Tópico",
+          questoesDisponiveis: s?.total ?? 0,
+          tempoMedioSeg: s && s.comDado > 0 ? s.somaSeg / s.comDado : null,
+        };
+      });
+
+      // Orçamento = tempo diário configurado (com piso/teto sensatos);
+      // é uma recomendação pro dia, não um contrato.
+      const tempoRotaMin = Math.min(180, Math.max(15, profile?.tempo_diario_min || 60));
+      rota = questlyRotaAprovacao({
+        topicos: topicosRota,
+        dataProvaMs,
+        agoraMs,
+        tempoDisponivelMin: tempoRotaMin,
+        calcularForca: (t) => forcaTopicoComRede(modeloMl, t, dataProvaMs, agoraMs),
+      });
     }
   }
 
   const bossAlvo: BossAlvo | null = alvo
     ? {
+        subjectId: alvo.subject.id,
         subjectNome: alvo.subject.nome,
         bossNome: alvo.boss.nome,
         dataProva: alvo.boss.data_prova,
@@ -307,6 +363,9 @@ export async function carregarDadosDashboard(
         chanceAprovacao: alvo.subject.chance_aprovacao != null ? Math.round(alvo.subject.chance_aprovacao) : null,
         notaProjetada,
         emRiscoCount,
+        rota,
+        escopoDefinido: escopoProva != null,
+        escopoTopicos: escopoProva ? escopoProva.size : null,
       }
     : null;
 

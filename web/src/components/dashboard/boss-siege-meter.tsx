@@ -135,7 +135,7 @@ export function BossSiegeMeter({
           />
         </div>
 
-        <div className="mt-2 mb-5 text-xs text-muted-foreground">
+        <div className="mt-2 text-xs text-muted-foreground">
           {temProjecao && (
             <span className="tnum">{Math.round(bossAlvo.preparoPercentual)}% do conteúdo coberto</span>
           )}
@@ -143,7 +143,27 @@ export function BossSiegeMeter({
           {bossAlvo.chanceAprovacao != null && (
             <span className="tnum">chance de aprovação {bossAlvo.chanceAprovacao}%</span>
           )}
+          {temProjecao && bossAlvo.escopoDefinido && bossAlvo.escopoTopicos != null && (
+            <span className="tnum"> · prova cobre {bossAlvo.escopoTopicos} tópicos</span>
+          )}
         </div>
+
+        {/* sem escopo definido a projeção assume a ementa inteira — puxa o
+            aluno pro dado obrigatório em vez de exibir precisão falsa */}
+        {temProjecao && !bossAlvo.escopoDefinido ? (
+          <Link
+            href="/trilha"
+            className="mb-5 mt-3 flex items-start gap-2 rounded-lg bg-questly-orange-light px-3 py-2 text-xs leading-relaxed text-questly-orange-dark transition-all hover:brightness-95"
+          >
+            <AlertTriangle size={14} strokeWidth={2} className="mt-0.5 shrink-0" />
+            <span>
+              <span className="font-semibold">Marque o que cai nessa prova</span> na trilha — a
+              projeção está assumindo a ementa inteira.
+            </span>
+          </Link>
+        ) : (
+          <div className="mb-5" />
+        )}
 
         {/* Régua de ritmo: passado → hoje → até o boss */}
         <div className="flex items-end justify-between gap-1.5 border-t border-border pt-4 sm:justify-start sm:gap-3">

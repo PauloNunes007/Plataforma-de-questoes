@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen } from "lucide-react";
 import type { DisciplinaPratica, TopicoPratica } from "@/lib/disciplinas/disciplinas-data";
 import {
   buscarTopicosPraticaAction,
@@ -32,8 +32,21 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
   const [carregandoPrevia, setCarregandoPrevia] = useState(false);
   const [iniciando, setIniciando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const passosRef = useRef<HTMLDivElement>(null);
 
   const disciplina = disciplinas.find((d) => d.subjectId === subjectId) || null;
+
+  // No celular os passos 2/3 abrem ABAIXO da grade de disciplinas — sem o
+  // scroll o aluno toca numa disciplina e não vê nada acontecer (parece
+  // bug). O timeout dá tempo do passo 2 montar antes de rolar até ele.
+  function escolherDisciplina(id: string | null) {
+    setSubjectId(id);
+    if (id && id !== subjectId) {
+      setTimeout(() => {
+        passosRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 90);
+    }
+  }
 
   useEffect(() => {
     async function carregarTopicos() {
@@ -117,22 +130,23 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
   const podeComecar = Boolean(subjectId) && topicos.length > 0 && (previa?.total ?? 0) > 0 && !carregandoPrevia;
 
   return (
-    <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid grid-cols-1 items-start gap-6 pb-24 xl:grid-cols-[minmax(0,1fr)_340px] xl:pb-0">
       <div className="flex flex-col gap-6">
         <div className="surface p-5 sm:p-6">
           <PassoTitulo numero={1} titulo="Escolha a disciplina" descricao="Todas as suas disciplinas cadastradas." />
-          <DisciplinaPicker disciplinas={disciplinas} selecionada={subjectId} onSelecionar={setSubjectId} />
+          <DisciplinaPicker disciplinas={disciplinas} selecionada={subjectId} onSelecionar={escolherDisciplina} />
         </div>
 
         <AnimatePresence mode="wait">
           {subjectId && (
             <motion.div
+              ref={passosRef}
               key={subjectId}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
-              className="flex flex-col gap-6"
+              className="flex scroll-mt-20 flex-col gap-6 lg:scroll-mt-6"
             >
               <div className="surface p-5 sm:p-6">
                 <PassoTitulo
@@ -212,6 +226,42 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
         iniciando={iniciando}
         onComecar={comecarPratica}
       />
+
+      {/* Barra de ação fixa no celular (< xl): no mobile o Resumo fica no
+          fim da página e o aluno não enxerga o botão de começar — esta
+          barra deixa a ação principal sempre visível, acima da bottom nav. */}
+      {subjectId && (
+        <div className="fixed inset-x-0 bottom-[calc(56px+env(safe-area-inset-bottom))] z-30 border-t border-border bg-background/95 px-4 py-2.5 backdrop-blur-xl lg:bottom-0 xl:hidden">
+          <div className="mx-auto flex w-full max-w-[640px] items-center justify-between gap-3">
+            <div className="min-w-0">
+              {carregandoPrevia ? (
+                <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+              ) : previa && previa.total > 0 ? (
+                <>
+                  <p className="tnum truncate text-[13px] font-semibold">
+                    {previa.total} questão{previa.total === 1 ? "" : "ões"}
+                    <span className="font-medium text-questly-gold-dark"> · +{previa.xpEstimado} XP</span>
+                  </p>
+                  {previa.tempoEstimadoMin != null && (
+                    <p className="tnum text-[11px] text-muted-foreground">~{previa.tempoEstimadoMin} min</p>
+                  )}
+                </>
+              ) : (
+                <p className="text-[12px] text-muted-foreground">Nenhuma questão com esse filtro.</p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={comecarPratica}
+              disabled={!podeComecar || iniciando}
+              className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-questly-green px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40 dark:text-[#0c1512]"
+            >
+              {iniciando ? "Preparando..." : "Começar"}
+              {!iniciando && <ArrowRight size={15} strokeWidth={2.25} />}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

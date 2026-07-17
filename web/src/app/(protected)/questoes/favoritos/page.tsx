@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { carregarFavoritos } from "@/lib/anotacoes/dados";
 import { MinhasQuestoesLista } from "@/components/questoes/minhas-questoes-lista";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
   title: "Questly — Favoritos",
@@ -18,10 +19,12 @@ export default async function FavoritosPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
-      <header>
-        <h1 className="font-heading text-[22px] font-semibold tracking-tight">Questões favoritas</h1>
-        <p className="mt-0.5 text-sm text-muted-foreground">Organizadas por disciplina e tópico.</p>
-      </header>
+      <PageHeader
+        titulo="Questões favoritas"
+        descricao="Organizadas por disciplina e tópico."
+        voltarHref="/questoes"
+        voltarLabel="Questões"
+      />
       <MinhasQuestoesLista itens={itens} agruparPorDisciplina criterioRemocao="favorito" />
     </div>
   );
