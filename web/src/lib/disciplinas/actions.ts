@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { questlyEmbaralhar, questlyXpDaQuestao } from "@/lib/questly/shared";
+import { questlyEmbaralhar, questlyHojeISO, questlyXpDaQuestao } from "@/lib/questly/shared";
 import { carregarTopicosPratica, type TopicoPratica } from "./disciplinas-data";
 
 export async function buscarTopicosPraticaAction(materiaId: string): Promise<TopicoPratica[]> {
@@ -90,7 +90,7 @@ export async function iniciarPraticaLivreAction(input: {
     .insert({
       user_id: user.id,
       subject_id: input.subjectId,
-      data: new Date().toISOString().slice(0, 10),
+      data: questlyHojeISO(),
       topic_ids: input.topicIds,
       question_ids: questionIds,
       qtd_questoes: qtdQuestoes,

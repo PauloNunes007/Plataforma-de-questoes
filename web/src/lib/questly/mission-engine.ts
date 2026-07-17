@@ -8,6 +8,7 @@ import {
   QUESTLY_DIAS_SEMANA,
   QUESTLY_RETENCAO_LIMIAR,
   questlyEmbaralhar,
+  questlyHojeISO,
   questlyNormalizarDia,
   questlyXpDaQuestao,
 } from "./shared";
@@ -134,7 +135,7 @@ export async function questlyGerarMissoesDoDia(
     }
   }
 
-  const hojeStr = new Date().toISOString().slice(0, 10);
+  const hojeStr = questlyHojeISO();
   const { data: missoesExistentes } = await supabase
     .from("missions")
     .select("*, subjects(nome)")
@@ -375,7 +376,7 @@ export async function questlyGerarMissaoParaSubject(
     .insert({
       user_id: user.id,
       subject_id: subject.id,
-      data: new Date().toISOString().slice(0, 10),
+      data: questlyHojeISO(),
       topic_ids: topicIds,
       question_ids: questionIds,
       qtd_questoes: qtdQuestoes,

@@ -131,6 +131,16 @@ export function toISODate(d: Date): string {
   );
 }
 
+// Data de HOJE (YYYY-MM-DD) no fuso LOCAL do dispositivo. Não use
+// new Date().toISOString().slice(0,10): isso devolve a data em UTC e, à noite
+// no Brasil (UTC-3), já rolou pro dia seguinte — então daily_log, missão do dia
+// e heatmap caíam no dia errado, e discordavam do dia da semana escolhido pela
+// grade (que usa Date.getDay(), local). Toda "data de hoje" persistida/comparada
+// no app passa por aqui.
+export function questlyHojeISO(): string {
+  return toISODate(new Date());
+}
+
 export function fmtDataCurta(d: Date): string {
   return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0");
 }

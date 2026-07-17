@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { QUESTLY_MAESTRIA_MULT_XP, questlyEhMestre, questlyXpDaQuestao } from "@/lib/questly/shared";
+import { QUESTLY_MAESTRIA_MULT_XP, questlyEhMestre, questlyHojeISO, questlyXpDaQuestao, toISODate } from "@/lib/questly/shared";
 import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
 import { atualizarStreakEDailyLog, atualizarXpELiga } from "@/lib/questly/economia";
 import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
@@ -141,7 +141,9 @@ const DESAFIO_DIAS_SEM_TOCAR = 7;
 export type DesafioRecuperacao = {
   topicoId: string;
   topicoNome: string;
-  subjectId: string;
+  /** null quando o aluno não tem essa matéria como subject — missions.subject_id
+   *  é nullable; nunca usar "" aqui (uuid inválido quebra o insert). */
+  subjectId: string | null;
   questaoId: string;
   diasSemTocar: number;
   tempoMedioSeg: number | null;
@@ -379,7 +381,7 @@ async function atualizarMetricasSubject(
     .from("daily_logs")
     .select("estudou")
     .eq("user_id", userId)
-    .gte("data", janelaInicio.toISOString().slice(0, 10));
+    .gte("data", toISODate(janelaInicio));
   const diasEstudados = (logs || []).filter((l) => l.estudou).length;
 
   const errosPorMotivo: Record<string, number> = {};
@@ -484,7 +486,7 @@ async function prepararDesafioRecuperacao(
   return {
     topicoId: topico.id,
     topicoNome: topico.nome,
-    subjectId: meuSubject?.id || "",
+    subjectId: meuSubject?.id ?? null,
     questaoId: questaoDesafio.id,
     diasSemTocar,
     tempoMedioSeg: questaoDesafio.tempo_medio_seg,
@@ -493,7 +495,7 @@ async function prepararDesafioRecuperacao(
 }
 
 export async function aceitarDesafioAction(input: {
-  subjectId: string;
+  subjectId: string | null;
   topicoId: string;
   questaoId: string;
   tempoMedioSeg: number | null;
@@ -510,7 +512,7 @@ export async function aceitarDesafioAction(input: {
     .insert({
       user_id: user.id,
       subject_id: input.subjectId,
-      data: new Date().toISOString().slice(0, 10),
+      data: questlyHojeISO(),
       topic_ids: [input.topicoId],
       question_ids: [input.questaoId],
       qtd_questoes: 1,

@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { questlyEmbaralhar, questlyXpDaQuestao } from "@/lib/questly/shared";
+import { questlyEmbaralhar, questlyHojeISO, questlyXpDaQuestao } from "@/lib/questly/shared";
 import { carregarCaminhoDisciplina } from "./trilha-data";
 
 export async function buscarCaminhoDisciplinaAction(subjectId: string) {
@@ -65,7 +65,7 @@ export async function iniciarPraticaTopicoAction(subjectId: string, topicoId: st
     .insert({
       user_id: user.id,
       subject_id: subjectId,
-      data: new Date().toISOString().slice(0, 10),
+      data: questlyHojeISO(),
       topic_ids: [topicoId],
       question_ids: questionIds,
       qtd_questoes: escolhidas.length,

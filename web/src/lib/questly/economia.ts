@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { questlyGarantirSemanaLiga } from "@/lib/questly/liga";
+import { addDias, questlyHojeISO, toISODate } from "@/lib/questly/shared";
 
 // Economia de gamificação — os writes de XP/liga/streak em `profiles`.
 // Extraído de lib/questao/actions.ts pra poder ser reutilizado por outros
@@ -43,7 +44,8 @@ export async function atualizarXpELiga(
 }
 
 export async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId: string) {
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = questlyHojeISO();
+  const ontem = toISODate(addDias(new Date(), -1));
 
   const { data: logHoje } = await supabase
     .from("daily_logs")
@@ -54,9 +56,21 @@ export async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId:
 
   await supabase.from("daily_logs").upsert({ user_id: userId, data: hoje, estudou: true }, { onConflict: "user_id,data" });
 
+  // Só mexe no streak na PRIMEIRA vez que estuda hoje (missões seguintes do
+  // mesmo dia não contam de novo).
   if (!logHoje) {
+    // Streak = dias CONSECUTIVOS. Se ontem também teve estudo, continua a
+    // sequência; se não, hoje reinicia em 1. Antes o contador só somava e nunca
+    // zerava, então o "🔥 streak" na verdade era o total de dias estudados.
+    const { data: logOntem } = await supabase
+      .from("daily_logs")
+      .select("estudou")
+      .eq("user_id", userId)
+      .eq("data", ontem)
+      .maybeSingle();
+
     const { data: profile } = await supabase.from("profiles").select("streak_atual").eq("id", userId).single();
-    const novoStreak = (profile?.streak_atual || 0) + 1;
+    const novoStreak = logOntem?.estudou ? (profile?.streak_atual || 0) + 1 : 1;
     await supabase.from("profiles").update({ streak_atual: novoStreak }).eq("id", userId);
   }
 }

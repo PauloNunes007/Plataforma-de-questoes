@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { questlySalvarRotina } from "@/lib/questly/rotina-engine";
+import { questlyHojeISO } from "@/lib/questly/shared";
 
 export type Boss = { id: string; nome: string; data_prova: string };
 export type SubjectComBosses = { id: string; nome: string; nota_desejada: number; bosses: Boss[] };
@@ -234,7 +235,7 @@ export async function adicionarProvaAction(subjectId: string, proximoNumero: num
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sessão expirada." };
 
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = questlyHojeISO();
   const { error } = await supabase
     .from("bosses")
     .insert({ subject_id: subjectId, nome: `P${proximoNumero}`, data_prova: hoje });

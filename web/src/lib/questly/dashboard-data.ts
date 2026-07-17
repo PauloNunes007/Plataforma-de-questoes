@@ -431,7 +431,7 @@ export async function carregarDadosDashboard(
     .from("daily_logs")
     .select("data, estudou")
     .eq("user_id", user.id)
-    .gte("data", dezDiasAtras.toISOString().slice(0, 10));
+    .gte("data", toISODate(dezDiasAtras));
   const porData: Record<string, boolean> = {};
   (logs || []).forEach((l) => {
     porData[l.data] = l.estudou;
@@ -440,7 +440,7 @@ export async function carregarDadosDashboard(
   for (let i = 9; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    streakHeat.push(Boolean(porData[d.toISOString().slice(0, 10)]));
+    streakHeat.push(Boolean(porData[toISODate(d)]));
   }
 
   // ---- Calendário do mês ----
@@ -463,8 +463,8 @@ export async function carregarDadosDashboard(
     });
   });
 
-  const inicioMesStr = primeiroDia.toISOString().slice(0, 10);
-  const fimMesStr = new Date(ano, mes + 1, 0).toISOString().slice(0, 10);
+  const inicioMesStr = toISODate(primeiroDia);
+  const fimMesStr = toISODate(new Date(ano, mes + 1, 0));
   const { data: logsMes } = await supabase
     .from("daily_logs")
     .select("data, estudou")
@@ -481,7 +481,7 @@ export async function carregarDadosDashboard(
   // também (só escapa em transições de mês, aceitável pra essa feature).
   const tarefasPorData = await carregarTarefasIntervalo(supabase, user, inicioMesStr, fimMesStr);
 
-  const hojeCalStr = agora.toISOString().slice(0, 10);
+  const hojeCalStr = toISODate(agora);
   const tarefasHoje = tarefasPorData[hojeCalStr] || [];
   const days: CalDay[] = [];
   for (let dia = 1; dia <= totalDias; dia++) {

@@ -8,7 +8,7 @@
 // primeiro).
 
 import { createClient } from "@/lib/supabase/server";
-import { questlyEmbaralhar, questlyXpDaQuestao } from "@/lib/questly/shared";
+import { questlyEmbaralhar, questlyHojeISO, questlyXpDaQuestao } from "@/lib/questly/shared";
 
 const MAX_PASSOS = 10;
 const MAX_QUESTOES_POR_PASSO = 15;
@@ -63,7 +63,7 @@ export async function seguirRotaAction(input: {
     .insert({
       user_id: user.id,
       subject_id: input.subjectId,
-      data: new Date().toISOString().slice(0, 10),
+      data: questlyHojeISO(),
       topic_ids: Array.from(new Set(escolhidas.map((q) => q.topic_id))),
       question_ids: escolhidas.map((q) => q.id),
       qtd_questoes: escolhidas.length,
