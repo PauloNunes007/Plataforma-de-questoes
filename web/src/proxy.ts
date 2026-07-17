@@ -19,6 +19,12 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // /auth/confirm é alcançado pelo link do email SEM sessão ainda — é ele
+  // quem cria a sessão. Redirecionar pro /login aqui mataria a confirmação.
+  if (pathname.startsWith("/auth/")) {
+    return supabaseResponse;
+  }
+
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
 
   if (!user && !isPublicRoute) {

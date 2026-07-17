@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { questlyNormalizarDia } from "@/lib/questly/shared";
 
 // Portado de salvarCampanha() em questly_onboarding.html — grava
@@ -13,6 +14,7 @@ export type ProvaInput = { nome: string; data: string };
 export type DisciplinaInput = { nome: string; nota: number; provas: ProvaInput[] };
 
 export type SalvarCampanhaInput = {
+  nome: string;
   curso: string;
   universidade: string | null;
   semestre: number | null;
@@ -73,18 +75,28 @@ export async function salvarCampanhaAction(
     if (colisao) return { error: "Esse username já está em uso. Volte e escolha outro." };
   }
 
+  const nome = input.nome.trim();
+  if (!nome) return { error: "Diga como podemos te chamar." };
+
+  // Upsert (não update): se a linha do profile ainda não existe — signup por
+  // confirmação de email pode chegar aqui sem ela — um update casaria 0 linhas
+  // em silêncio e o onboarding inteiro "salvaria" sem salvar nada.
   const { error: profileError } = await supabase
     .from("profiles")
-    .update({
-      curso: input.curso,
-      universidade: input.universidade || null,
-      semestre: input.semestre,
-      nivel_conhecimento: input.nivel,
-      dias_disponiveis: input.dias,
-      tempo_diario_min: input.tempoDiarioMin,
-      ...(username ? { username, username_alterado_em: new Date().toISOString() } : {}),
-    })
-    .eq("id", user.id);
+    .upsert(
+      {
+        id: user.id,
+        nome,
+        curso: input.curso,
+        universidade: input.universidade || null,
+        semestre: input.semestre,
+        nivel_conhecimento: input.nivel,
+        dias_disponiveis: input.dias,
+        tempo_diario_min: input.tempoDiarioMin,
+        ...(username ? { username, username_alterado_em: new Date().toISOString() } : {}),
+      },
+      { onConflict: "id" },
+    );
 
   if (profileError) {
     // 23505 = unique_violation (corrida perdida pro índice único).
@@ -94,8 +106,20 @@ export async function salvarCampanhaAction(
   }
 
   const diasNormalizados = input.dias.map(questlyNormalizarDia);
+  const disciplinasComFalha: string[] = [];
+
+  // Idempotência: disciplina que o aluno já tem não é recriada — rodar o
+  // onboarding de novo (ou um retry após erro parcial) não pode duplicar
+  // subjects (aparecia em dobro nas listas/abas). Case-insensitive, mesmo
+  // critério do índice único de supabase_onboarding_rls.sql.
+  const { data: subjectsExistentes } = await supabase
+    .from("subjects")
+    .select("nome")
+    .eq("user_id", user.id);
+  const nomesExistentes = new Set((subjectsExistentes ?? []).map((s) => s.nome.trim().toLowerCase()));
 
   for (const disc of input.disciplinas) {
+    if (nomesExistentes.has(disc.nome.trim().toLowerCase())) continue;
     let materiaId: string | null = null;
     const { data: materiaExistente } = await supabase
       .from("materias")
@@ -106,15 +130,23 @@ export async function salvarCampanhaAction(
     if (materiaExistente) {
       materiaId = materiaExistente.id;
     } else {
-      const { data: materiaNova, error: materiaError } = await supabase
-        .from("materias")
-        .insert({ nome: disc.nome })
-        .select()
-        .single();
-      if (materiaError) {
-        console.error("Erro ao criar matéria", disc.nome, materiaError);
-      } else {
-        materiaId = materiaNova.id;
+      // Pós-hardening, INSERT em materias é admin-only (RLS) — mas o onboarding
+      // precisa criar a taxonomia pra disciplinas fora do seed. Escrita
+      // controlada (só o nome digitado) via service_role; sem a env, degrada
+      // pra subject sem materia_id em vez de quebrar o cadastro.
+      try {
+        const { data: materiaNova, error: materiaError } = await createAdminClient()
+          .from("materias")
+          .insert({ nome: disc.nome })
+          .select()
+          .single();
+        if (materiaError) {
+          console.error("Erro ao criar matéria", disc.nome, materiaError);
+        } else {
+          materiaId = materiaNova.id;
+        }
+      } catch (e) {
+        console.error("Sem service_role pra criar matéria", disc.nome, e);
       }
     }
 
@@ -131,21 +163,40 @@ export async function salvarCampanhaAction(
 
     if (subjectError || !subject) {
       console.error("Erro ao criar disciplina", disc.nome, subjectError);
+      disciplinasComFalha.push(disc.nome);
       continue;
     }
 
-    await supabase.from("campaigns").insert({ user_id: user.id, subject_id: subject.id });
+    const { error: campanhaError } = await supabase
+      .from("campaigns")
+      .insert({ user_id: user.id, subject_id: subject.id });
+    // Não-fatal: campaigns é só o vínculo legado, nada no app lê — mas o erro
+    // precisa aparecer no log (era engolido; ver supabase_onboarding_rls.sql).
+    if (campanhaError) console.error("Erro ao criar campaign", disc.nome, campanhaError);
 
     if (diasNormalizados.length > 0) {
-      await supabase.from("rotina_semanal").insert(
+      const { error: rotinaError } = await supabase.from("rotina_semanal").insert(
         diasNormalizados.map((dia) => ({ user_id: user.id, subject_id: subject.id, dia_semana: dia })),
       );
+      if (rotinaError) console.error("Erro ao criar rotina", disc.nome, rotinaError);
     }
 
     const provasValidas = disc.provas.filter((p) => p.data);
     for (const p of provasValidas) {
-      await supabase.from("bosses").insert({ subject_id: subject.id, nome: p.nome, data_prova: p.data });
+      const { error: bossError } = await supabase
+        .from("bosses")
+        .insert({ subject_id: subject.id, nome: p.nome, data_prova: p.data });
+      if (bossError) console.error("Erro ao criar prova", disc.nome, p.nome, bossError);
     }
+  }
+
+  if (disciplinasComFalha.length === input.disciplinas.length && input.disciplinas.length > 0) {
+    return { error: "Não foi possível salvar suas disciplinas. Tente novamente." };
+  }
+  if (disciplinasComFalha.length > 0) {
+    return {
+      error: `Algumas disciplinas não foram salvas (${disciplinasComFalha.join(", ")}). Você pode adicioná-las depois em Configurações.`,
+    };
   }
 
   return { error: null };

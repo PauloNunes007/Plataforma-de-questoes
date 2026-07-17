@@ -186,6 +186,25 @@ export function LoginForm() {
           </TabsContent>
 
           <TabsContent value="signup">
+            {signUpState?.success ? (
+              <div className="flex flex-col items-center py-10 text-center">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-questly-green-light text-3xl">
+                  📬
+                </div>
+                <h2 className="mb-2 font-heading text-xl font-semibold tracking-tight">
+                  Confira seu email
+                </h2>
+                <p className="max-w-[320px] text-sm font-semibold text-muted-foreground">
+                  Enviamos um link de confirmação pra sua caixa de entrada. Clique nele e você já cai
+                  direto na configuração da sua campanha.
+                </p>
+                <p className="mt-4 max-w-[320px] text-xs font-semibold text-muted-foreground">
+                  Não chegou? Olhe o spam — ou tente entrar com email e senha, que a gente reenvia o
+                  link automaticamente.
+                </p>
+              </div>
+            ) : (
+              <>
             <h2 className="mb-1 font-heading text-xl font-semibold tracking-tight">
               Comece sua campanha
             </h2>
@@ -260,12 +279,6 @@ export function LoginForm() {
                   {signUpState.error}
                 </p>
               )}
-              {signUpState?.success && (
-                <p className="rounded-lg bg-questly-green-light px-3 py-2 text-sm font-semibold text-questly-green-dark">
-                  {signUpState.success}
-                </p>
-              )}
-
               <Button type="submit" className="h-12 w-full cursor-pointer text-[15px]" disabled={signUpPending}>
                 {signUpPending ? "Criando conta..." : "Criar conta e começar"}
               </Button>
@@ -274,6 +287,8 @@ export function LoginForm() {
                 Política de privacidade.
               </p>
             </form>
+              </>
+            )}
           </TabsContent>
         </Tabs>
       </div>

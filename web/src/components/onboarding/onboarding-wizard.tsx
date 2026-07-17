@@ -56,6 +56,7 @@ type DiscCfg = { nota: number; provas: ProvaInput[] };
 
 type WizardState = {
   curso: string;
+  nome: string;
   username: string;
   usernameStatus: UsernameStatus;
   universidade: string;
@@ -69,6 +70,7 @@ type WizardState = {
 
 const ESTADO_INICIAL: WizardState = {
   curso: "",
+  nome: "",
   username: "",
   usernameStatus: "idle",
   universidade: "",
@@ -80,15 +82,18 @@ const ESTADO_INICIAL: WizardState = {
   nivel: null,
 };
 
-// Passo 2 (username) é pulável — só bloqueia o "Continuar" quando o aluno
-// digitou algo mas ainda não chegou num veredito "disponível" (evita
-// mandar pro backend um @ que a checagem em tempo real já rejeitou).
+// Passo 2 pede o nome (obrigatório) e o @ (opcional) — o @ só bloqueia o
+// "Continuar" quando o aluno digitou algo mas ainda não chegou num veredito
+// "disponível" (evita mandar pro backend um @ já rejeitado em tempo real).
 function ehValido(step: number, s: WizardState): boolean {
   switch (step) {
     case 1:
       return s.curso.trim().length > 0;
     case 2:
-      return s.usernameStatus === "idle" || s.usernameStatus === "disponivel";
+      return (
+        s.nome.trim().length > 0 &&
+        (s.usernameStatus === "idle" || s.usernameStatus === "disponivel")
+      );
     case 4:
       return s.semestre !== null;
     case 5:
@@ -142,11 +147,11 @@ function Chip({
   );
 }
 
-export function OnboardingWizard() {
+export function OnboardingWizard({ nomeInicial = "" }: { nomeInicial?: string }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
-  const [state, setState] = useState<WizardState>(ESTADO_INICIAL);
+  const [state, setState] = useState<WizardState>({ ...ESTADO_INICIAL, nome: nomeInicial });
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState(false);
@@ -201,6 +206,7 @@ export function OnboardingWizard() {
     const tempoOpcao = TEMPO_OPCOES.find((t) => t.label === state.tempoLabel);
 
     const resultado = await salvarCampanhaAction({
+      nome: state.nome.trim(),
       curso: state.curso,
       username: state.usernameStatus === "disponivel" ? state.username.trim().toLowerCase() : null,
       universidade: state.universidade || null,
@@ -224,7 +230,9 @@ export function OnboardingWizard() {
   }
 
   const podeContinuar = ehValido(step, state);
-  const mostrarPular = step === 2 || step === 3 || step === 6;
+  // Passo 2 deixou de ser pulável: o nome é obrigatório (o @ continua opcional
+  // dentro do próprio passo — basta deixar em branco).
+  const mostrarPular = step === 3 || step === 6;
 
   if (mostrarTour) {
     return <TourPlataforma identidade={acento} onFinalizar={() => router.push("/dashboard")} />;
@@ -370,11 +378,24 @@ function StepContent({
     case 2:
       return (
         <div>
-          <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">Escolha seu @ de usuário</h2>
+          <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">Como podemos te chamar?</h2>
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
-            É como você aparece no ranking pros outros alunos. Único, e dá pra trocar depois em Configurações
-            (a cada 15 dias) — se preferir, pule e escolha mais tarde.
+            Seu nome aparece no dashboard; o @ é sua identidade pública no ranking — único, e dá pra trocar
+            depois em Configurações (a cada 15 dias). Se preferir, deixe o @ em branco e escolha mais tarde.
           </p>
+          <label className="mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
+            Nome
+          </label>
+          <input
+            autoFocus
+            value={state.nome}
+            onChange={(e) => setState((s) => ({ ...s, nome: e.target.value }))}
+            placeholder="Ex: Paulo"
+            className="mb-5 w-full rounded-2xl border-2 border-border px-4 py-4 text-[15px] font-semibold outline-none focus:border-questly-blue"
+          />
+          <label className="mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
+            @ de usuário <span className="font-bold normal-case tracking-normal">(opcional)</span>
+          </label>
           <UsernameField
             value={state.username}
             status={state.usernameStatus}
@@ -598,6 +619,7 @@ function StepContent({
     case 10: {
       const tempoOpcao = TEMPO_OPCOES.find((t) => t.label === state.tempoLabel);
       const rows: [string, string][] = [
+        ["Nome", state.nome.trim() || "—"],
         ["Curso", state.curso || "—"],
         ["Username", state.usernameStatus === "disponivel" ? `@${state.username}` : "não escolhido ainda"],
         ["Universidade", state.universidade || "não informado"],
@@ -707,7 +729,6 @@ function UsernameField({
           @
         </span>
         <input
-          autoFocus
           value={value}
           maxLength={20}
           onChange={(e) => onChange(e.target.value.toLowerCase().replace(/\s+/g, ""))}

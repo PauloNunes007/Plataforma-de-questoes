@@ -1,33 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { garantirProfile, destinoPosLogin } from "@/lib/auth/perfil";
 
 export type AuthFormState = {
   error?: string;
   success?: string;
 } | null;
-
-// Espelha questlyGarantirProfile (js/supabase-client.js): cria a linha em
-// "profiles" na primeira vez que o usuário aparece autenticado — cobre o
-// caso de confirmação de email, onde o cadastro não tem sessão ainda.
-async function garantirProfile(supabase: SupabaseClient, user: User) {
-  const { data: existente } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (existente) return;
-
-  const nome =
-    (user.user_metadata?.nome as string | undefined) ||
-    user.email?.split("@")[0] ||
-    "Aluno(a)";
-
-  await supabase.from("profiles").insert({ id: user.id, nome });
-}
 
 export async function signInAction(
   _prevState: AuthFormState,
@@ -47,12 +27,24 @@ export async function signInAction(
   });
 
   if (error || !data.user) {
+    // Sem essa distinção, quem criou conta e não confirmou o email via
+    // "Email ou senha incorretos", desistia e o profile nunca nascia.
+    // Já reenvia um link novo — o original pode ter expirado.
+    if (error?.code === "email_not_confirmed") {
+      await supabase.auth.resend({ type: "signup", email }).catch(() => {});
+      return {
+        error:
+          "Sua conta ainda não foi confirmada. Acabamos de reenviar o link pro seu email — clique nele e tente entrar de novo.",
+      };
+    }
     return { error: "Email ou senha incorretos." };
   }
 
   await garantirProfile(supabase, data.user);
 
-  redirect("/dashboard");
+  // Onboarding é obrigatório antes de acessar a plataforma: sem curso
+  // salvo, a campanha ainda não foi configurada.
+  redirect(await destinoPosLogin(supabase, data.user.id));
 }
 
 export async function signUpAction(

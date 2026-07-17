@@ -29,6 +29,13 @@ export default async function ProtectedLayout({
     .eq("id", user.id)
     .maybeSingle();
 
+  // Onboarding obrigatório: sem curso salvo (inclui profile ainda inexistente),
+  // nenhuma página da plataforma abre — a campanha precisa existir primeiro.
+  // O inverso (já configurado → /dashboard) fica no guard de /onboarding.
+  if (!profile?.curso) {
+    redirect("/onboarding");
+  }
+
   const nome = profile?.nome || user.email?.split("@")[0] || "Aluno(a)";
   const isAdmin = user.email === ADMIN_EMAIL;
   const pro = ehPro(profile);

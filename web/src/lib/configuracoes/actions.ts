@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { questlySalvarRotina } from "@/lib/questly/rotina-engine";
 
 export type Boss = { id: string; nome: string; data_prova: string };
@@ -144,17 +145,36 @@ export async function criarDisciplinaAction(nome: string) {
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sessão expirada." };
 
+  // Sem checagem, adicionar de novo duplicava a disciplina em todas as listas.
+  const { data: jaExiste } = await supabase
+    .from("subjects")
+    .select("id")
+    .eq("user_id", user.id)
+    .ilike("nome", nome.trim())
+    .maybeSingle();
+  if (jaExiste) return { error: "Você já tem essa disciplina." };
+
   let materiaId: string | null = null;
   const { data: materiaExistente } = await supabase.from("materias").select("id").eq("nome", nome).maybeSingle();
   if (materiaExistente) {
     materiaId = materiaExistente.id;
   } else {
-    const { data: materiaNova, error: materiaError } = await supabase
-      .from("materias")
-      .insert({ nome })
-      .select()
-      .single();
-    if (!materiaError) materiaId = materiaNova.id;
+    // Pós-hardening, INSERT em materias é admin-only — mesma rota
+    // service_role do onboarding (lib/onboarding/actions.ts).
+    try {
+      const { data: materiaNova, error: materiaError } = await createAdminClient()
+        .from("materias")
+        .insert({ nome })
+        .select()
+        .single();
+      if (materiaError) {
+        console.error("Erro ao criar matéria", nome, materiaError);
+      } else {
+        materiaId = materiaNova.id;
+      }
+    } catch (e) {
+      console.error("Sem service_role pra criar matéria", nome, e);
+    }
   }
 
   const { data: subject, error: subjectError } = await supabase
@@ -164,6 +184,8 @@ export async function criarDisciplinaAction(nome: string) {
     .single();
 
   if (subjectError || !subject) {
+    // 23505: perdeu a corrida pro índice único de supabase_onboarding_rls.sql.
+    if (subjectError?.code === "23505") return { error: "Você já tem essa disciplina." };
     console.error("Erro ao criar disciplina:", subjectError);
     return { error: "Não foi possível adicionar essa disciplina." };
   }

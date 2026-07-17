@@ -7,7 +7,13 @@ export const metadata: Metadata = {
   title: "Questly — Entrar ou criar conta",
 };
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ confirmacao?: string }>;
+}) {
+  const { confirmacao } = await searchParams;
+
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-background px-5 py-8">
       {/* glows na mesma linguagem visual da landing — profundidade sem poluir */}
@@ -21,7 +27,13 @@ export default function LoginPage() {
         <Logo />
       </Link>
 
-      <div className="relative z-10 flex flex-1 items-center justify-center py-6">
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 py-6">
+        {confirmacao === "invalida" && (
+          <div className="w-full max-w-4xl rounded-2xl border border-questly-orange/40 bg-questly-orange/10 px-5 py-3.5 text-sm font-semibold text-questly-orange-dark dark:text-questly-orange">
+            Esse link de confirmação é inválido ou já expirou. Entre com seu email e senha — se a conta
+            ainda não estiver confirmada, a gente reenvia um link novo na hora.
+          </div>
+        )}
         <LoginForm />
       </div>
     </main>
