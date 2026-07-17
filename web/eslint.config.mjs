@@ -12,9 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Assets estáticos vendorizados (ex.: o loader do Stockfish em
-    // public/stockfish/) — código de terceiros minificado, não é nosso pra
-    // lintar.
+    // Assets estáticos (imagens, arquivos vendorizados) — não é código
+    // nosso pra lintar.
     "public/**",
   ]),
 ]);
