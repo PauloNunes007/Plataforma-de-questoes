@@ -7,8 +7,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Flame, Zap, Medal, ArrowRight } from "lucide-react";
+import { Flame, Zap, Medal, ArrowRight, Timer } from "lucide-react";
 import type { EstadoLiga, Liga } from "@/lib/questly/liga";
+import { useFoco, formatarDuracaoCurta } from "@/components/foco/foco-provider";
 
 type LigaVisual = (EstadoLiga & { icone: string; nomeExibicao: string }) | null;
 
@@ -33,6 +34,7 @@ type Painel = "streak" | "xp" | "liga";
 
 export function StatStrip({ streakAtual, streakHeat, xpTotal, nivel, xpPorNivel, liga }: StatStripProps) {
   const [aberto, setAberto] = useState<Painel | null>(null);
+  const foco = useFoco();
 
   const xpNoNivel = xpTotal % xpPorNivel;
   const pctNivel = Math.min(100, (xpNoNivel / xpPorNivel) * 100);
@@ -42,7 +44,7 @@ export function StatStrip({ streakAtual, streakHeat, xpTotal, nivel, xpPorNivel,
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
         <Tile
           ativo={aberto === "streak"}
           onClick={() => alternar("streak")}
@@ -50,6 +52,14 @@ export function StatStrip({ streakAtual, streakHeat, xpTotal, nivel, xpPorNivel,
           iconeBg="bg-questly-orange-light"
           valor={String(streakAtual)}
           rotulo={streakAtual === 1 ? "dia seguido" : "dias seguidos"}
+        />
+        <Tile
+          ativo={false}
+          onClick={foco.abrirBarra}
+          icone={<Timer size={17} strokeWidth={1.9} className="text-questly-blue" />}
+          iconeBg="bg-questly-blue/10"
+          valor={foco.montado && foco.focoHojeSeg > 0 ? formatarDuracaoCurta(foco.focoHojeSeg) : "0min"}
+          rotulo="de foco hoje"
         />
         <Tile
           ativo={aberto === "xp"}

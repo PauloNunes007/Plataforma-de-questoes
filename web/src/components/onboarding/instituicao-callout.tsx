@@ -7,7 +7,7 @@
 // disciplinas à campanha. Debounce + aria-live; estado honesto quando não temos.
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { BadgeCheck, ChevronDown, Loader2, Plus } from "lucide-react";
+import { BadgeCheck, ChevronDown, Loader2, Plus, Timer } from "lucide-react";
 import { validarInstituicaoAction, type ResultadoInstituicao } from "@/lib/cursos/actions";
 
 type Props = {
@@ -93,7 +93,17 @@ export function InstituicaoCallout({ universidade, disciplinasSelecionadas, onAd
               </div>
             </div>
 
-            <p className="px-4 pt-2.5 text-[11.5px] font-medium text-muted-foreground">
+            <div className="mx-4 mt-3 flex items-center gap-2.5 rounded-xl border border-questly-green/30 bg-card px-3 py-2.5">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-questly-green-light text-questly-green-dark">
+                <Timer size={16} strokeWidth={2} aria-hidden />
+              </span>
+              <p className="text-[11.5px] font-medium leading-snug text-muted-foreground">
+                <b className="font-bold text-foreground">Você desbloqueou os Simulados:</b> monte provas
+                cronometradas com questões reais de {resultado.nomeExibicao} de anos anteriores.
+              </p>
+            </div>
+
+            <p className="px-4 pt-3 text-[11.5px] font-medium text-muted-foreground">
               Toque numa disciplina pra adicioná-la à sua campanha:
             </p>
 

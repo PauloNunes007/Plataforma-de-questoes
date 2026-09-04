@@ -2,8 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { ehPro } from "@/lib/plano/plano";
-import { Sidebar } from "@/components/sidebar";
-import { MobileHeader } from "@/components/mobile-header";
+import { carregarFocoHojeSeg } from "@/lib/foco/foco-data";
+import { FocoProvider } from "@/components/foco/foco-provider";
+import { FocoBar } from "@/components/foco/foco-bar";
+import { TopNav } from "@/components/top-nav";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { BotaoErroRapido } from "@/components/aprovacao/botao-erro-rapido";
 
@@ -39,32 +41,31 @@ export default async function ProtectedLayout({
   const nome = profile?.nome || user.email?.split("@")[0] || "Aluno(a)";
   const isAdmin = user.email === ADMIN_EMAIL;
   const pro = ehPro(profile);
+  const focoHojeSeg = await carregarFocoHojeSeg(supabase, user.id);
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
-      <Sidebar
-        nome={nome}
-        username={profile?.username ?? null}
-        curso={profile?.curso ?? null}
-        fotoUrl={profile?.foto_url ?? null}
-        isAdmin={isAdmin}
-        ehPro={pro}
-      />
-      <MobileHeader
-        nome={nome}
-        username={profile?.username ?? null}
-        curso={profile?.curso ?? null}
-        fotoUrl={profile?.foto_url ?? null}
-        isAdmin={isAdmin}
-        ehPro={pro}
-      />
-      {/* pb-16 abre espaço pra MobileBottomNav (fixed, ~56px + safe-area)
-          não tampar o fim da página em telas < lg. */}
-      <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>
-      {/* Modo Aprovação (feature de conta única): registrar um erro de
-          qualquer página do app — só a conta admin vê. */}
-      {isAdmin && <BotaoErroRapido />}
-      <MobileBottomNav />
-    </div>
+    <FocoProvider focoHojeSegInicial={focoHojeSeg}>
+      <div className="flex min-h-screen flex-col">
+        {/* Header horizontal + barra de Foco logo abaixo (redesign 2026-09). */}
+        <TopNav
+          nome={nome}
+          username={profile?.username ?? null}
+          curso={profile?.curso ?? null}
+          fotoUrl={profile?.foto_url ?? null}
+          isAdmin={isAdmin}
+          ehPro={pro}
+        />
+        <FocoBar />
+
+        {/* pb-16 abre espaço pra MobileBottomNav (fixed) não tampar o fim da
+            página em telas < lg. */}
+        <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>
+
+        {/* Modo Aprovação (feature de conta única): registrar um erro de
+            qualquer página do app — só a conta admin vê. */}
+        {isAdmin && <BotaoErroRapido />}
+        <MobileBottomNav />
+      </div>
+    </FocoProvider>
   );
 }

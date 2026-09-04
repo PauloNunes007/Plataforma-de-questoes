@@ -27,6 +27,109 @@ export type GrupoLiga = {
   hint: string;
 };
 
+// ---- Ranking GLOBAL (Geral por XP total / Semana por XP da semana) ----
+// Diferente da Divisão (liga da semana): aqui é o Top 100 de TODA a
+// plataforma + a posição do próprio aluno mesmo fora do Top 100, igual aos
+// prints da referência. `profiles` é world-readable sob RLS, então dá pra
+// ranquear cross-user honestamente (mesmo princípio do "Comparativo").
+export type RankingGlobalRow = {
+  id: string;
+  nome: string;
+  username: string | null;
+  fotoUrl: string | null;
+  xp: number;
+  nivel: number;
+  liga: Liga;
+  questoesTotal: number;
+  posicao: number;
+  ehVoce: boolean;
+};
+
+export type ModoGlobal = "geral" | "semana";
+
+export type RankingGlobal = {
+  modo: ModoGlobal;
+  linhas: RankingGlobalRow[];
+  voce: RankingGlobalRow | null;
+  posicaoVoce: number;
+  foraDoTop: boolean;
+  totalAlunos: number;
+};
+
+const LIMITE_TOP = 100;
+
+export async function carregarRankingGlobal(
+  supabase: SupabaseClient,
+  user: { id: string },
+  modo: ModoGlobal,
+): Promise<RankingGlobal> {
+  const coluna = modo === "geral" ? "xp_total" : "xp_semana";
+
+  const [{ data: topRaw }, { data: meuPerfil }, { count: total }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total")
+      .order(coluna, { ascending: false })
+      .limit(LIMITE_TOP),
+    supabase
+      .from("profiles")
+      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total")
+      .eq("id", user.id)
+      .maybeSingle(),
+    supabase.from("profiles").select("id", { count: "exact", head: true }),
+  ]);
+
+  const valor = (p: { xp_total?: number; xp_semana?: number }) =>
+    (modo === "geral" ? p.xp_total : p.xp_semana) || 0;
+
+  const linhas: RankingGlobalRow[] = (topRaw || []).map((p, i) => ({
+    id: p.id,
+    nome: p.nome || "Aluno(a)",
+    username: p.username || null,
+    fotoUrl: p.foto_url,
+    xp: valor(p),
+    nivel: p.nivel || 1,
+    liga: (p.liga as Liga) || QUESTLY_LIGAS[0],
+    questoesTotal: p.questoes_total || 0,
+    posicao: i + 1,
+    ehVoce: p.id === user.id,
+  }));
+
+  // Posição do aluno: quantos têm métrica estritamente maior (+1). Empates
+  // ficam na mesma faixa — mesma convenção de ranking por competição.
+  let posicaoVoce = 0;
+  let voce: RankingGlobalRow | null = null;
+  if (meuPerfil) {
+    const meuValor = valor(meuPerfil);
+    const { count: acima } = await supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .gt(coluna, meuValor);
+    posicaoVoce = (acima || 0) + 1;
+    voce = {
+      id: meuPerfil.id,
+      nome: meuPerfil.nome || "Aluno(a)",
+      username: meuPerfil.username || null,
+      fotoUrl: meuPerfil.foto_url,
+      xp: meuValor,
+      nivel: meuPerfil.nivel || 1,
+      liga: (meuPerfil.liga as Liga) || QUESTLY_LIGAS[0],
+      questoesTotal: meuPerfil.questoes_total || 0,
+      posicao: posicaoVoce,
+      ehVoce: true,
+    };
+  }
+
+  return {
+    modo,
+    linhas,
+    voce,
+    posicaoVoce,
+    foraDoTop: posicaoVoce > LIMITE_TOP,
+    totalAlunos: total || linhas.length,
+  };
+}
+
 export type DadosRanking = {
   liga: Liga;
   ligaNome: string;

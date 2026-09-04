@@ -130,22 +130,25 @@
 }
 
 .dark {
-  --background: oklch(0.165 0.01 262);
+  /* Redesign 2026-09: fundo mais escuro (quase preto azulado) e card num
+     cinza-frio um pouco mais claro, pra os cartões "pularem" do fundo como
+     no print da referência; hairline um tico mais visível. */
+  --background: oklch(0.145 0.009 262);
   --foreground: oklch(0.93 0.004 257);
-  --card: oklch(0.203 0.011 262);
+  --card: oklch(0.223 0.012 262);
   --card-foreground: oklch(0.93 0.004 257);
-  --popover: oklch(0.225 0.012 262);
+  --popover: oklch(0.235 0.013 262);
   --popover-foreground: oklch(0.93 0.004 257);
   --primary: var(--questly-green);
   --primary-foreground: oklch(0.14 0.01 262);
-  --secondary: oklch(0.26 0.012 262);
+  --secondary: oklch(0.27 0.012 262);
   --secondary-foreground: oklch(0.9 0.004 257);
-  --muted: oklch(0.245 0.012 262);
-  --muted-foreground: oklch(0.66 0.01 257);
-  --accent: oklch(0.26 0.012 262);
+  --muted: oklch(0.255 0.012 262);
+  --muted-foreground: oklch(0.68 0.01 257);
+  --accent: oklch(0.27 0.012 262);
   --accent-foreground: oklch(0.93 0.004 257);
   --destructive: var(--questly-red);
-  --border: oklch(1 0 0 / 8%);
+  --border: oklch(1 0 0 / 11%);
   --input: oklch(1 0 0 / 12%);
   --ring: var(--questly-green);
   --chart-1: var(--questly-green);

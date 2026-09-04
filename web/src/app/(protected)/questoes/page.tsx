@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Layers, ListChecks, NotebookPen, Star } from "lucide-react";
+import { ArrowRight, Clock, Layers, ListChecks, NotebookPen, Star, Timer } from "lucide-react";
 import { HubTiltCard } from "@/components/questoes/hub-tilt-card";
 
 // Hub sem fetch — cada sub-rota trata seu próprio empty-state (sem
@@ -40,6 +40,38 @@ export default function QuestoesPage() {
           descricao="Escolha uma disciplina e pratique tópico por tópico, com listas já prontas."
         />
       </div>
+
+      {/* Simulados — prova cronometrada no estilo da universidade do aluno */}
+      <Link
+        href="/simulados"
+        className="group surface relative flex items-center gap-4 overflow-hidden p-5 transition-all hover:border-questly-green/30 hover:shadow-md"
+      >
+        <Timer
+          size={120}
+          strokeWidth={1}
+          className="pointer-events-none absolute -right-4 -top-4 text-questly-green/[0.06] transition-transform group-hover:scale-110"
+          aria-hidden
+        />
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-questly-green text-white shadow-sm dark:text-[#0c1512]">
+          <Clock size={24} strokeWidth={2} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="text-[15px] font-bold">Simulados</p>
+            <span className="rounded-full bg-questly-green-light px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-questly-green-dark">
+              Sua universidade
+            </span>
+          </div>
+          <p className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">
+            Monte uma prova cronometrada com questões reais de anos anteriores e veja seu resultado.
+          </p>
+        </div>
+        <ArrowRight
+          size={18}
+          strokeWidth={2}
+          className="relative shrink-0 text-muted-foreground/50 transition-all group-hover:translate-x-0.5 group-hover:text-foreground"
+        />
+      </Link>
 
       <div>
         <span className="mb-2.5 block text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">

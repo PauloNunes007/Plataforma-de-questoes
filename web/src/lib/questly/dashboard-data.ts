@@ -50,6 +50,7 @@ export type ProfileRow = {
   dias_disponiveis: string[] | null;
   tempo_diario_min: number | null;
   foto_url: string | null;
+  liga: string | null;
 };
 
 export type MissionCardData = Mission & { mestre: boolean };

@@ -7,7 +7,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { QUESTLY_LIGAS, QUESTLY_LIGA_INFO, questlySegundaDaSemana, type Liga } from "@/lib/questly/liga";
 import { calcularDistintivos, type Distintivo } from "@/lib/ranking/badges";
-import { buscarGrupoLiga, type GrupoLiga } from "@/lib/ranking/ranking-data";
+import {
+  buscarGrupoLiga,
+  carregarRankingGlobal,
+  type GrupoLiga,
+  type ModoGlobal,
+  type RankingGlobal,
+} from "@/lib/ranking/ranking-data";
 
 export type CardUsuario = {
   nome: string;
@@ -92,4 +98,14 @@ export async function buscarRankingLigaAction(liga: Liga): Promise<GrupoLiga> {
 
   const semanaInicio = questlySegundaDaSemana(new Date());
   return buscarGrupoLiga(supabase, liga, semanaInicio, user.id);
+}
+
+// Ranking global (Geral/Semana): troca de aba busca sem recarregar a página.
+export async function buscarRankingGlobalAction(modo: ModoGlobal): Promise<RankingGlobal | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  return carregarRankingGlobal(supabase, user, modo);
 }

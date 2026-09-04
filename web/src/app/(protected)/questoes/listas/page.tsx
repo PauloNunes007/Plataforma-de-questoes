@@ -3,7 +3,9 @@ import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { carregarDisciplinasPratica } from "@/lib/disciplinas/disciplinas-data";
+import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { DisciplinaNavegarGrid } from "@/components/questoes/disciplina-navegar-grid";
+import { ContinuarCard } from "@/components/retomar/continuar-card";
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
@@ -18,7 +20,10 @@ export default async function ListasDeQuestoesPage() {
 
   if (!user) return null;
 
-  const disciplinas = await carregarDisciplinasPratica(supabase, user);
+  const [disciplinas, retomar] = await Promise.all([
+    carregarDisciplinasPratica(supabase, user),
+    carregarRetomar(supabase, user.id),
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
@@ -28,6 +33,8 @@ export default async function ListasDeQuestoesPage() {
         voltarHref="/questoes"
         voltarLabel="Questões"
       />
+
+      <ContinuarCard info={retomar} />
 
       {disciplinas.length === 0 ? (
         <div className="surface flex flex-col items-center px-6 py-10 text-center">

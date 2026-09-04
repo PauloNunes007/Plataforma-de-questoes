@@ -1,0 +1,727 @@
+[
+ {
+  "ch": 1,
+  "subtopico": "Unidades SI e padrões",
+  "dificuldade": "facil",
+  "enunciado": "A definição atual do metro padrão de comprimento é baseada em",
+  "alternativas": {
+   "a": "a distância entre o equador e o polo norte da Terra.",
+   "b": "a distância entre a Terra e o Sol.",
+   "c": "a distância percorrida pela luz no vácuo.",
+   "d": "o comprimento de um objeto específico guardado na França."
+  },
+  "gabarito": "c",
+  "resolucao": "Desde 1983 o metro é definido a partir da velocidade da luz: é a distância que a luz percorre no vácuo em $\\frac{1}{299\\,792\\,458}$ de segundo. Adota-se essa definição porque a velocidade da luz no vácuo é uma constante universal, tornando o padrão reprodutível em qualquer laboratório sem depender de um objeto físico. A alternativa (d) descreve a antiga barra de platina-irídio, hoje abandonada."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Unidades SI e padrões",
+  "dificuldade": "facil",
+  "enunciado": "A definição atual do segundo padrão de tempo é baseada em",
+  "alternativas": {
+   "a": "a frequência da radiação emitida por átomos de césio.",
+   "b": "a taxa de rotação da Terra.",
+   "c": "a duração de um ano.",
+   "d": "a oscilação de um pêndulo específico guardado na França."
+  },
+  "gabarito": "a",
+  "resolucao": "O segundo é definido pela frequência de uma transição do césio-133: $1\\ \\text{s}$ corresponde a exatamente $9\\,192\\,631\\,770$ oscilações da radiação emitida nessa transição. Relógios atômicos de césio fornecem um padrão de tempo muito mais estável e reprodutível que a rotação da Terra (que varia levemente) ou a duração do ano."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Unidades SI e padrões",
+  "dificuldade": "facil",
+  "enunciado": "A definição do quilograma padrão de massa (à época) é baseada em",
+  "alternativas": {
+   "a": "a massa da Terra.",
+   "b": "a massa do Sol.",
+   "c": "a massa de um objeto específico guardado na França.",
+   "d": "a massa de um átomo de césio-133."
+  },
+  "gabarito": "c",
+  "resolucao": "Na definição vigente à época deste banco, o quilograma era a massa de um cilindro específico de platina-irídio guardado no Bureau Internacional de Pesos e Medidas, em Sèvres, França — o único padrão SI ainda baseado num objeto físico. (Desde 2019 o quilograma passou a ser definido pela constante de Planck, mas a alternativa que descreve o protótipo é a correta aqui.)"
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades (comparação)",
+  "dificuldade": "facil",
+  "enunciado": "Se uma mulher pesa $125\\ \\text{lb}$ (libras), sua massa expressa em quilogramas é $x\\ \\text{kg}$, onde $x$ é",
+  "alternativas": {
+   "a": "menor que 125.",
+   "b": "maior que 125."
+  },
+  "gabarito": "a",
+  "resolucao": "$1\\ \\text{lb}\\approx 0{,}454\\ \\text{kg}$, ou seja, menos de $1\\ \\text{kg}$. Assim $125\\ \\text{lb}\\times 0{,}454\\ \\text{kg/lb}\\approx 56{,}7\\ \\text{kg}$. Como $56{,}7<125$, temos $x<125$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades (comparação)",
+  "dificuldade": "facil",
+  "enunciado": "Se uma árvore tem $15\\ \\text{m}$ de altura, sua altura expressa em pés (ft) é $x\\ \\text{ft}$, onde $x$ é",
+  "alternativas": {
+   "a": "menor que 15.",
+   "b": "maior que 15."
+  },
+  "gabarito": "b",
+  "resolucao": "$1\\ \\text{m}\\approx 3{,}28\\ \\text{ft}$, então cada metro vale mais de um pé: $15\\ \\text{m}\\times 3{,}28\\ \\text{ft/m}\\approx 49{,}2\\ \\text{ft}$. Como $49{,}2>15$, temos $x>15$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades (comparação)",
+  "dificuldade": "facil",
+  "enunciado": "Se uma flor tem $6{,}5\\ \\text{cm}$ de largura, sua largura expressa em milímetros é $x\\ \\text{mm}$, onde $x$ é",
+  "alternativas": {
+   "a": "menor que 6,5.",
+   "b": "maior que 6,5."
+  },
+  "gabarito": "b",
+  "resolucao": "$1\\ \\text{cm}=10\\ \\text{mm}$, então $6{,}5\\ \\text{cm}=65\\ \\text{mm}$. Como $65>6{,}5$, temos $x>6{,}5$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades (comparação)",
+  "dificuldade": "facil",
+  "enunciado": "Se uma ária de ópera dura $5{,}75\\ \\text{min}$, sua duração expressa em segundos é $x\\ \\text{s}$, onde $x$ é",
+  "alternativas": {
+   "a": "menor que 5,75.",
+   "b": "maior que 5,75."
+  },
+  "gabarito": "b",
+  "resolucao": "$1\\ \\text{min}=60\\ \\text{s}$, logo $5{,}75\\ \\text{min}=345\\ \\text{s}$. Como $345>5{,}75$, temos $x>5{,}75$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Sistema métrico",
+  "dificuldade": "facil",
+  "enunciado": "Os cientistas usam o sistema métrico principalmente porque ele é mais preciso que o sistema inglês.",
+  "alternativas": {
+   "a": "Verdadeiro",
+   "b": "Falso"
+  },
+  "gabarito": "b",
+  "resolucao": "Falso. O sistema métrico não é intrinsecamente mais preciso — a precisão depende do instrumento de medida, não do sistema de unidades. A vantagem do sistema métrico é ser decimal (conversões por potências de 10) e de adoção internacional, o que simplifica cálculos e comunicação, mas isso não tem relação com exatidão."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos (conceito)",
+  "dificuldade": "facil",
+  "enunciado": "Ao somar dois números, o número de algarismos significativos da soma é igual ao número de algarismos significativos do menos preciso dos números somados.",
+  "alternativas": {
+   "a": "Verdadeiro",
+   "b": "Falso"
+  },
+  "gabarito": "b",
+  "resolucao": "Falso. Na adição/subtração o que importa não é a quantidade de algarismos significativos, e sim as casas decimais: o resultado deve ter tantas casas decimais quanto o termo com menos casas decimais. Por exemplo, $1{,}1+2{,}345=3{,}4$ (uma casa decimal), embora $2{,}345$ tenha 4 significativos. A regra de contar significativos vale para multiplicação e divisão."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos (conceito)",
+  "dificuldade": "facil",
+  "enunciado": "Ao determinar o número de algarismos significativos de um número, os zeros à esquerda da vírgula nunca são contados.",
+  "alternativas": {
+   "a": "Verdadeiro",
+   "b": "Falso"
+  },
+  "gabarito": "b",
+  "resolucao": "Falso. Zeros à esquerda do primeiro algarismo não nulo (como em $0{,}0025$) não contam, mas zeros situados entre dígitos significativos contam mesmo estando à esquerda da vírgula — por exemplo, em $205$ o zero conta (3 significativos). A regra correta é: zeros à esquerda de todo dígito não nulo não contam; zeros entre significativos e zeros à direita (com vírgula) contam."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Notação científica",
+  "dificuldade": "facil",
+  "enunciado": "Converta $1{,}2\\times 10^{-3}$ para notação decimal.",
+  "alternativas": {
+   "a": "1,200",
+   "b": "0,1200",
+   "c": "0,0120",
+   "d": "0,0012",
+   "e": "0,00012"
+  },
+  "gabarito": "d",
+  "resolucao": "$1{,}2\\times 10^{-3}$ significa deslocar a vírgula 3 casas para a esquerda: $1{,}2\\to 0{,}12\\to 0{,}012\\to 0{,}0012$. Portanto $1{,}2\\times10^{-3}=0{,}0012$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Notação científica",
+  "dificuldade": "facil",
+  "enunciado": "Escreva o número $7{,}35\\times 10^{-5}$ por extenso, com vírgula decimal e o número correto de zeros.",
+  "alternativas": {
+   "a": "0,00000735",
+   "b": "0,0000735",
+   "c": "0,000735",
+   "d": "0,00735",
+   "e": "0,0735"
+  },
+  "gabarito": "b",
+  "resolucao": "Deslocamos a vírgula 5 casas para a esquerda a partir de $7{,}35$: $7{,}35\\times10^{-5}=0{,}0000735$ (quatro zeros entre a vírgula e o algarismo 7)."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Notação científica",
+  "dificuldade": "facil",
+  "enunciado": "$0{,}0001776$ também pode ser expresso como",
+  "alternativas": {
+   "a": "$1{,}776\\times 10^{-3}$.",
+   "b": "$1{,}776\\times 10^{-4}$.",
+   "c": "$17{,}72\\times 10^{4}$.",
+   "d": "$1772\\times 10^{5}$.",
+   "e": "$177{,}2\\times 10^{7}$."
+  },
+  "gabarito": "b",
+  "resolucao": "Em notação científica deslocamos a vírgula até restar um único dígito não nulo antes dela: $0{,}0001776=1{,}776\\times10^{-4}$ (a vírgula andou 4 casas para a direita, daí o expoente $-4$)."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Notação científica",
+  "dificuldade": "medio",
+  "enunciado": "$0{,}00325\\times 10^{-8}\\ \\text{cm}$ também pode ser expresso, em mm, como",
+  "alternativas": {
+   "a": "$3{,}25\\times 10^{-12}\\ \\text{mm}$.",
+   "b": "$3{,}25\\times 10^{-11}\\ \\text{mm}$.",
+   "c": "$3{,}25\\times 10^{-10}\\ \\text{mm}$.",
+   "d": "$3{,}25\\times 10^{-9}\\ \\text{mm}$.",
+   "e": "$3{,}25\\times 10^{-8}\\ \\text{mm}$."
+  },
+  "gabarito": "c",
+  "resolucao": "Primeiro, em notação científica: $0{,}00325\\times10^{-8}=3{,}25\\times10^{-3}\\times10^{-8}=3{,}25\\times10^{-11}\\ \\text{cm}$. Convertendo cm$\\to$mm ($1\\ \\text{cm}=10\\ \\text{mm}$): $3{,}25\\times10^{-11}\\ \\text{cm}\\times10\\ \\frac{\\text{mm}}{\\text{cm}}=3{,}25\\times10^{-10}\\ \\text{mm}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "facil",
+  "enunciado": "Se, em um universo paralelo, $\\pi$ valesse $3{,}14149$, expresse esse $\\pi$ com quatro algarismos significativos.",
+  "alternativas": {
+   "a": "3,141",
+   "b": "3,142",
+   "c": "3,1415",
+   "d": "3,1414"
+  },
+  "gabarito": "a",
+  "resolucao": "Quatro algarismos significativos: mantemos $3{,}141$ e olhamos o dígito seguinte ($4$) para arredondar. Como $4<5$, arredonda-se para baixo: $3{,}14149\\to 3{,}141$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "facil",
+  "enunciado": "O número $0{,}003010$ tem",
+  "alternativas": {
+   "a": "7 algarismos significativos.",
+   "b": "6 algarismos significativos.",
+   "c": "4 algarismos significativos.",
+   "d": "2 algarismos significativos."
+  },
+  "gabarito": "c",
+  "resolucao": "Zeros à esquerda ($0{,}003$) não contam; a contagem começa no primeiro dígito não nulo. Em $0{,}003010$ os significativos são $3$, $0$, $1$, $0$: o zero entre o 3 e o 1 conta, e o zero final (à direita, depois da vírgula) também conta. Total: 4 algarismos significativos."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é o valor de $0{,}674 \\div 0{,}74$ com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "0,91",
+   "b": "0,911",
+   "c": "0,9108",
+   "d": "0,9"
+  },
+  "gabarito": "a",
+  "resolucao": "$0{,}674\\div0{,}74=0{,}9108\\ldots$ Na divisão, o resultado tem tantos algarismos significativos quanto o fator com menos significativos: $0{,}674$ tem 3 e $0{,}74$ tem 2, então o resultado fica com 2 significativos: $0{,}91$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é o valor de $\\pi(8{,}104)^{2}$, escrito com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "206,324",
+   "b": "206,323",
+   "c": "206,3",
+   "d": "206",
+   "e": "200"
+  },
+  "gabarito": "c",
+  "resolucao": "$\\pi\\times(8{,}104)^2=\\pi\\times 65{,}674\\ldots=206{,}32\\ldots$ O fator com menos significativos é $8{,}104$ (4 significativos; $\\pi$ é exato). Logo o resultado fica com 4 significativos: $206{,}3$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é a soma de $1123$ e $10{,}3$ escrita com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "$1{,}13\\times 10^{3}$",
+   "b": "1133,3000",
+   "c": "$1{,}1\\times 10^{3}$",
+   "d": "1133,3",
+   "e": "1133"
+  },
+  "gabarito": "e",
+  "resolucao": "$1123+10{,}3=1133{,}3$. Na soma vale a regra das casas decimais: $1123$ não tem casas decimais (é o termo menos preciso), então o resultado é arredondado ao inteiro mais próximo: $1133$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é a soma $1{,}53 + 2{,}786 + 3{,}3$ escrita com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "8",
+   "b": "7,6",
+   "c": "7,62",
+   "d": "7,616",
+   "e": "7,6160"
+  },
+  "gabarito": "b",
+  "resolucao": "$1{,}53+2{,}786+3{,}3=7{,}616$. O termo com menos casas decimais é $3{,}3$ (1 casa), então o resultado fica com 1 casa decimal: $7{,}6$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é a diferença entre $103{,}5$ e $102{,}24$ escrita com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "1",
+   "b": "1,3",
+   "c": "1,26",
+   "d": "1,260",
+   "e": "1,2600"
+  },
+  "gabarito": "b",
+  "resolucao": "$103{,}5-102{,}24=1{,}26$. O termo com menos casas decimais é $103{,}5$ (1 casa), então o resultado tem 1 casa decimal: $1{,}26\\to 1{,}3$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é o produto de $11{,}24$ e $1{,}95$ escrito com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "22",
+   "b": "21,9",
+   "c": "21,92",
+   "d": "21,918",
+   "e": "21,9180"
+  },
+  "gabarito": "b",
+  "resolucao": "$11{,}24\\times1{,}95=21{,}918$. O fator com menos significativos é $1{,}95$ (3 significativos), então o resultado tem 3: $21{,}9$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é o resultado de $1{,}58 \\div 3{,}793$ escrito com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "$4{,}1656\\times 10^{-1}$",
+   "b": "$4{,}166\\times 10^{-1}$",
+   "c": "$4{,}17\\times 10^{-1}$",
+   "d": "$4{,}2\\times 10^{-1}$",
+   "e": "$4\\times 10^{-1}$"
+  },
+  "gabarito": "c",
+  "resolucao": "$1{,}58\\div3{,}793=0{,}41656\\ldots$ O fator com menos significativos é $1{,}58$ (3), logo 3 significativos no resultado: $0{,}417=4{,}17\\times10^{-1}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "dificil",
+  "enunciado": "Qual é o valor de $34 + (3)\\times(1{,}2465)$ escrito com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "37,7",
+   "b": "37,74",
+   "c": "$4\\times 10^{1}$",
+   "d": "38",
+   "e": "37,7395"
+  },
+  "gabarito": "d",
+  "resolucao": "Efetuamos a multiplicação: $3\\times1{,}2465=3{,}7395$. Somando: $34+3{,}7395=37{,}7395$. Como $34$ não tem casas decimais (termo menos preciso na soma), arredondamos ao inteiro: $38$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "dificil",
+  "enunciado": "Qual é o valor de $56 + \\dfrac{32{,}00}{1{,}2465 + 3{,}45}$ escrito com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "62,8",
+   "b": "62,812",
+   "c": "62,81",
+   "d": "63",
+   "e": "62,8123846"
+  },
+  "gabarito": "d",
+  "resolucao": "Ordem das operações: soma no denominador $1{,}2465+3{,}45=4{,}6965$; divisão $32{,}00/4{,}6965=6{,}813$; soma final $56+6{,}813=62{,}813$. Como $56$ não tem casas decimais, o resultado é arredondado ao inteiro: $63$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "Some $3685\\ \\text{g}$ e $66{,}8\\ \\text{kg}$ e expresse a resposta em miligramas (mg).",
+  "alternativas": {
+   "a": "$7{,}05\\times 10^{7}\\ \\text{mg}$",
+   "b": "$7{,}05\\times 10^{4}\\ \\text{mg}$",
+   "c": "$7{,}05\\times 10^{5}\\ \\text{mg}$",
+   "d": "$7{,}05\\times 10^{6}\\ \\text{mg}$"
+  },
+  "gabarito": "a",
+  "resolucao": "Converta para a mesma unidade: $66{,}8\\ \\text{kg}=66\\,800\\ \\text{g}$. Soma: $3685+66\\,800=70\\,485\\ \\text{g}\\approx 7{,}05\\times10^{4}\\ \\text{g}$. Em miligramas ($1\\ \\text{g}=10^{3}\\ \\text{mg}$): $7{,}05\\times10^{4}\\times10^{3}=7{,}05\\times10^{7}\\ \\text{mg}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Notação científica",
+  "dificuldade": "medio",
+  "enunciado": "Expresse $(4{,}3\\times 10^{6})^{-1/2}$ em notação científica.",
+  "alternativas": {
+   "a": "$4{,}8\\times 10^{-4}$",
+   "b": "$2{,}1\\times 10^{3}$",
+   "c": "$2{,}1\\times 10^{-5}$",
+   "d": "$2{,}1\\times 10^{4}$"
+  },
+  "gabarito": "a",
+  "resolucao": "$(4{,}3\\times10^{6})^{-1/2}=\\dfrac{1}{\\sqrt{4{,}3\\times10^{6}}}=\\dfrac{1}{\\sqrt{4{,}3}\\times10^{3}}=\\dfrac{1}{2{,}074\\times10^{3}}=4{,}8\\times10^{-4}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "Qual é o valor de $0{,}205^{2/3}$, expresso com o número correto de algarismos significativos?",
+  "alternativas": {
+   "a": "0,348",
+   "b": "0,35",
+   "c": "0,3",
+   "d": "0,3477"
+  },
+  "gabarito": "a",
+  "resolucao": "$0{,}205^{2/3}=\\left(0{,}205^{2}\\right)^{1/3}=\\sqrt[3]{0{,}042025}=0{,}3477\\ldots$ Como a base $0{,}205$ tem 3 algarismos significativos, o resultado fica com 3: $0{,}348$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Algarismos significativos",
+  "dificuldade": "medio",
+  "enunciado": "O comprimento e a largura de um retângulo são $1{,}125\\ \\text{m}$ e $0{,}606\\ \\text{m}$. Multiplicando, a calculadora dá $0{,}68175$. Arredondando corretamente, a área deve ser escrita como",
+  "alternativas": {
+   "a": "$0{,}7\\ \\text{m}^{2}$.",
+   "b": "$0{,}68\\ \\text{m}^{2}$.",
+   "c": "$0{,}682\\ \\text{m}^{2}$.",
+   "d": "$0{,}6818\\ \\text{m}^{2}$.",
+   "e": "$0{,}68175\\ \\text{m}^{2}$."
+  },
+  "gabarito": "c",
+  "resolucao": "$1{,}125\\times0{,}606=0{,}68175\\ \\text{m}^2$. O fator com menos algarismos significativos é $0{,}606$ (3 significativos), então a área tem 3: $0{,}682\\ \\text{m}^2$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "São dadas as equivalências exatas: $1\\ \\text{m}=100\\ \\text{cm}$, $1\\ \\text{in}=2{,}54\\ \\text{cm}$ e $1\\ \\text{ft}=12\\ \\text{in}$. Se a tela de um computador tem área de $1{,}27\\ \\text{ft}^{2}$, essa área é mais próxima de",
+  "alternativas": {
+   "a": "$0{,}00284\\ \\text{m}^{2}$.",
+   "b": "$0{,}0465\\ \\text{m}^{2}$.",
+   "c": "$0{,}118\\ \\text{m}^{2}$.",
+   "d": "$0{,}284\\ \\text{m}^{2}$.",
+   "e": "$4{,}65\\ \\text{m}^{2}$."
+  },
+  "gabarito": "c",
+  "resolucao": "$1\\ \\text{ft}=12\\ \\text{in}\\times2{,}54\\ \\frac{\\text{cm}}{\\text{in}}=30{,}48\\ \\text{cm}=0{,}3048\\ \\text{m}$, logo $1\\ \\text{ft}^2=(0{,}3048)^2=0{,}0929\\ \\text{m}^2$. Então $1{,}27\\ \\text{ft}^2\\times0{,}0929\\ \\frac{\\text{m}^2}{\\text{ft}^2}=0{,}118\\ \\text{m}^2$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "Além de $1\\ \\text{m}=39{,}37\\ \\text{in}$, são dadas: $1\\ \\text{milha}=5280\\ \\text{ft}$, $1\\ \\text{ft}=12\\ \\text{in}$, $1\\ \\text{h}=60\\ \\text{min}$ e $1\\ \\text{min}=60\\ \\text{s}$. Se uma partícula tem velocidade de $8{,}4\\ \\text{milhas/h}$, sua velocidade, em m/s, é mais próxima de",
+  "alternativas": {
+   "a": "$3{,}8\\ \\text{m/s}$.",
+   "b": "$3{,}0\\ \\text{m/s}$.",
+   "c": "$3{,}4\\ \\text{m/s}$.",
+   "d": "$4{,}1\\ \\text{m/s}$.",
+   "e": "$4{,}5\\ \\text{m/s}$."
+  },
+  "gabarito": "a",
+  "resolucao": "$1\\ \\text{milha}=5280\\ \\text{ft}\\times12\\ \\frac{\\text{in}}{\\text{ft}}=63\\,360\\ \\text{in}=\\dfrac{63\\,360}{39{,}37}\\ \\text{m}=1609\\ \\text{m}$. Então $8{,}4\\ \\frac{\\text{milhas}}{\\text{h}}\\times1609\\ \\frac{\\text{m}}{\\text{milha}}\\times\\dfrac{1\\ \\text{h}}{3600\\ \\text{s}}=3{,}76\\ \\text{m/s}\\approx 3{,}8\\ \\text{m/s}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "facil",
+  "enunciado": "Um levantador de peso consegue erguer $171\\ \\text{kg}$ no supino. Quantos miligramas (mg) são?",
+  "alternativas": {
+   "a": "$1{,}71\\times 10^{8}\\ \\text{mg}$",
+   "b": "$1{,}71\\times 10^{9}\\ \\text{mg}$",
+   "c": "$1{,}71\\times 10^{7}\\ \\text{mg}$",
+   "d": "$1{,}71\\times 10^{6}\\ \\text{mg}$"
+  },
+  "gabarito": "a",
+  "resolucao": "$1\\ \\text{kg}=10^{3}\\ \\text{g}=10^{6}\\ \\text{mg}$. Portanto $171\\ \\text{kg}=171\\times10^{6}\\ \\text{mg}=1{,}71\\times10^{8}\\ \\text{mg}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "Quantos nanossegundos um computador leva para efetuar um cálculo se ele realiza $6{,}7\\times 10^{7}$ cálculos por segundo?",
+  "alternativas": {
+   "a": "15 ns",
+   "b": "67 ns",
+   "c": "11 ns",
+   "d": "65 ns"
+  },
+  "gabarito": "a",
+  "resolucao": "Tempo por cálculo: $\\dfrac{1}{6{,}7\\times10^{7}\\ \\text{s}^{-1}}=1{,}49\\times10^{-8}\\ \\text{s}$. Em nanossegundos ($1\\ \\text{ns}=10^{-9}\\ \\text{s}$): $1{,}49\\times10^{-8}\\ \\text{s}=14{,}9\\ \\text{ns}\\approx 15\\ \\text{ns}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "facil",
+  "enunciado": "O menor comprimento de onda da luz visível é aproximadamente $400\\ \\text{nm}$. Expresse esse comprimento de onda em centímetros.",
+  "alternativas": {
+   "a": "$4\\times 10^{-5}\\ \\text{cm}$",
+   "b": "$4\\times 10^{-7}\\ \\text{cm}$",
+   "c": "$4\\times 10^{-9}\\ \\text{cm}$",
+   "d": "$4\\times 10^{-11}\\ \\text{cm}$",
+   "e": "$400\\times 10^{-11}\\ \\text{cm}$"
+  },
+  "gabarito": "a",
+  "resolucao": "$400\\ \\text{nm}=400\\times10^{-9}\\ \\text{m}=4\\times10^{-7}\\ \\text{m}$. Em centímetros ($1\\ \\text{m}=100\\ \\text{cm}$): $4\\times10^{-7}\\times10^{2}=4\\times10^{-5}\\ \\text{cm}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "facil",
+  "enunciado": "O comprimento de onda de certo laser é $0{,}35$ micrômetros, onde $1\\ \\mu\\text{m}=1\\times 10^{-6}\\ \\text{m}$. Expresse esse comprimento de onda em nanômetros.",
+  "alternativas": {
+   "a": "$3{,}5\\times 10^{2}\\ \\text{nm}$",
+   "b": "$3{,}5\\times 10^{3}\\ \\text{nm}$",
+   "c": "$3{,}5\\times 10^{1}\\ \\text{nm}$",
+   "d": "$3{,}5\\times 10^{4}\\ \\text{nm}$"
+  },
+  "gabarito": "a",
+  "resolucao": "$0{,}35\\ \\mu\\text{m}=0{,}35\\times10^{-6}\\ \\text{m}=3{,}5\\times10^{-7}\\ \\text{m}$. Em nanômetros ($1\\ \\text{nm}=10^{-9}\\ \\text{m}$): $\\dfrac{3{,}5\\times10^{-7}}{10^{-9}}=3{,}5\\times10^{2}\\ \\text{nm}=350\\ \\text{nm}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "Um disco CD-ROM armazena cerca de $6{,}0\\times 10^{2}$ megabytes de informação, onde $10^{6}$ bytes $=1$ megabyte. Se uma palavra média ocupa $9{,}0$ bytes, quantas palavras cabem em um disco?",
+  "alternativas": {
+   "a": "$6{,}7\\times 10^{7}$ palavras",
+   "b": "$5{,}4\\times 10^{9}$ palavras",
+   "c": "$2{,}1\\times 10^{7}$ palavras",
+   "d": "$2{,}0\\times 10^{9}$ palavras"
+  },
+  "gabarito": "a",
+  "resolucao": "Total de bytes: $6{,}0\\times10^{2}\\ \\text{MB}\\times10^{6}\\ \\frac{\\text{bytes}}{\\text{MB}}=6{,}0\\times10^{8}\\ \\text{bytes}$. Número de palavras: $\\dfrac{6{,}0\\times10^{8}}{9{,}0}=6{,}7\\times10^{7}$ palavras."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "Um terreno tem $5{,}8$ acres. Quantos metros quadrados ele contém? $[1\\ \\text{acre}=43\\,560\\ \\text{ft}^{2}]$",
+  "alternativas": {
+   "a": "$2{,}3\\times 10^{4}\\ \\text{m}^{2}$",
+   "b": "$7{,}1\\times 10^{3}\\ \\text{m}^{2}$",
+   "c": "$7{,}0\\times 10^{4}\\ \\text{m}^{2}$",
+   "d": "$5{,}0\\times 10^{4}\\ \\text{m}^{2}$"
+  },
+  "gabarito": "a",
+  "resolucao": "$5{,}8\\ \\text{acres}\\times43\\,560\\ \\frac{\\text{ft}^2}{\\text{acre}}=2{,}526\\times10^{5}\\ \\text{ft}^2$. Com $1\\ \\text{ft}^2=(0{,}3048\\ \\text{m})^2=0{,}0929\\ \\text{m}^2$: $2{,}526\\times10^{5}\\times0{,}0929=2{,}3\\times10^{4}\\ \\text{m}^2$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "Uma pessoa em dieta perde $1{,}6\\ \\text{kg}$ em uma semana. Quantos microgramas por segundo $(\\mu\\text{g/s})$ ela perde?",
+  "alternativas": {
+   "a": "$2{,}6\\times 10^{3}\\ \\mu\\text{g/s}$",
+   "b": "$1{,}6\\times 10^{5}\\ \\mu\\text{g/s}$",
+   "c": "$44\\ \\mu\\text{g/s}$",
+   "d": "$6{,}4\\times 10^{4}\\ \\mu\\text{g/s}$"
+  },
+  "gabarito": "a",
+  "resolucao": "$1{,}6\\ \\text{kg}=1{,}6\\times10^{9}\\ \\mu\\text{g}$ (pois $1\\ \\text{kg}=10^{3}\\ \\text{g}=10^{9}\\ \\mu\\text{g}$). Uma semana em segundos: $7\\times24\\times3600=6{,}05\\times10^{5}\\ \\text{s}$. Taxa: $\\dfrac{1{,}6\\times10^{9}}{6{,}05\\times10^{5}}=2{,}6\\times10^{3}\\ \\mu\\text{g/s}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "Converta uma velocidade de $4{,}50\\ \\text{km/h}$ para ft/min. $(1{,}00\\ \\text{m}=3{,}28\\ \\text{ft})$",
+  "alternativas": {
+   "a": "0,246 ft/min",
+   "b": "82,3 ft/min",
+   "c": "165 ft/min",
+   "d": "246 ft/min",
+   "e": "886 ft/min"
+  },
+  "gabarito": "d",
+  "resolucao": "$4{,}50\\ \\text{km/h}=4500\\ \\text{m/h}\\times3{,}28\\ \\frac{\\text{ft}}{\\text{m}}=14\\,760\\ \\text{ft/h}$. Por minuto: $\\dfrac{14\\,760}{60}=246\\ \\text{ft/min}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Conversão de unidades",
+  "dificuldade": "medio",
+  "enunciado": "O exaustor de um fogão puxa $600\\ \\text{CFM}$ (pés cúbicos por minuto) pelo filtro. Dado $1{,}00\\ \\text{in}=2{,}54\\ \\text{cm}$, quantos metros cúbicos por segundo o exaustor puxa?",
+  "alternativas": {
+   "a": "$0{,}283\\ \\text{m}^{3}/\\text{s}$",
+   "b": "$0{,}328\\ \\text{m}^{3}/\\text{s}$",
+   "c": "$3{,}05\\ \\text{m}^{3}/\\text{s}$",
+   "d": "$32{,}8\\ \\text{m}^{3}/\\text{s}$"
+  },
+  "gabarito": "a",
+  "resolucao": "$1\\ \\text{ft}=12\\ \\text{in}\\times2{,}54\\ \\frac{\\text{cm}}{\\text{in}}=30{,}48\\ \\text{cm}=0{,}3048\\ \\text{m}$, então $1\\ \\text{ft}^3=(0{,}3048)^3=0{,}02832\\ \\text{m}^3$. $600\\ \\frac{\\text{ft}^3}{\\text{min}}\\times0{,}02832\\ \\frac{\\text{m}^3}{\\text{ft}^3}=16{,}99\\ \\frac{\\text{m}^3}{\\text{min}}$; dividindo por $60$: $0{,}283\\ \\text{m}^3/\\text{s}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "facil",
+  "enunciado": "A massa de uma mulher adulta típica é mais próxima de",
+  "alternativas": {
+   "a": "20 kg.",
+   "b": "35 kg.",
+   "c": "75 kg.",
+   "d": "150 kg."
+  },
+  "gabarito": "c",
+  "resolucao": "Uma mulher adulta típica tem massa da ordem de algumas dezenas de quilogramas. Entre as opções, $75\\ \\text{kg}$ é a estimativa mais razoável ($20$ e $35\\ \\text{kg}$ são baixos demais para um adulto, e $150\\ \\text{kg}$ é alto demais como valor típico)."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "facil",
+  "enunciado": "A altura do teto (pé-direito) de uma casa, apartamento ou quarto típico é mais próxima de",
+  "alternativas": {
+   "a": "100 cm.",
+   "b": "200 cm.",
+   "c": "400 cm.",
+   "d": "500 cm."
+  },
+  "gabarito": "b",
+  "resolucao": "Um pé-direito residencial típico é de cerca de $2{,}4$–$2{,}7\\ \\text{m}$. Entre as opções, $200\\ \\text{cm}=2\\ \\text{m}$ é a mais próxima ($400$ e $500\\ \\text{cm}$ seriam altos demais, e $100\\ \\text{cm}$ baixo demais)."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "medio",
+  "enunciado": "Aproximadamente quantas vezes um coração humano médio bate em um ano?",
+  "alternativas": {
+   "a": "$4\\times 10^{5}$",
+   "b": "$4\\times 10^{6}$",
+   "c": "$4\\times 10^{7}$",
+   "d": "$4\\times 10^{8}$",
+   "e": "$4\\times 10^{9}$"
+  },
+  "gabarito": "c",
+  "resolucao": "Frequência cardíaca típica $\\approx 70\\ \\frac{\\text{batimentos}}{\\text{min}}$. Por ano: $70\\times60\\times24\\times365\\approx 3{,}7\\times10^{7}$ batimentos, isto é, da ordem de $4\\times10^{7}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "medio",
+  "enunciado": "Aproximadamente quantas vezes um coração humano médio bate durante toda a vida?",
+  "alternativas": {
+   "a": "$3\\times 10^{11}$",
+   "b": "$3\\times 10^{10}$",
+   "c": "$3\\times 10^{9}$",
+   "d": "$3\\times 10^{8}$",
+   "e": "$3\\times 10^{7}$"
+  },
+  "gabarito": "c",
+  "resolucao": "Com $\\approx 4\\times10^{7}$ batimentos por ano (item anterior) e uma vida de $\\sim 75$ anos: $4\\times10^{7}\\times75\\approx 3\\times10^{9}$ batimentos."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "medio",
+  "enunciado": "Aproximadamente quantas moedas (de $\\sim 1{,}5\\ \\text{mm}$ de espessura) você teria que empilhar para alcançar um teto típico de $8$ pés?",
+  "alternativas": {
+   "a": "$2\\times 10^{2}$",
+   "b": "$2\\times 10^{3}$",
+   "c": "$2\\times 10^{4}$",
+   "d": "$2\\times 10^{5}$",
+   "e": "$2\\times 10^{6}$"
+  },
+  "gabarito": "b",
+  "resolucao": "Uma moeda tem espessura de cerca de $1{,}5\\ \\text{mm}=1{,}5\\times10^{-3}\\ \\text{m}$; o teto de $8\\ \\text{ft}\\approx 2{,}4\\ \\text{m}$. Número de moedas: $\\dfrac{2{,}4}{1{,}5\\times10^{-3}}\\approx 1{,}6\\times10^{3}\\approx 2\\times10^{3}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "facil",
+  "enunciado": "Estime o número de vezes que a Terra girará em torno do próprio eixo durante a vida de um ser humano.",
+  "alternativas": {
+   "a": "$3\\times 10^{4}$",
+   "b": "$3\\times 10^{5}$",
+   "c": "$3\\times 10^{6}$",
+   "d": "$3\\times 10^{7}$",
+   "e": "$3\\times 10^{8}$"
+  },
+  "gabarito": "a",
+  "resolucao": "A Terra dá uma volta em torno do eixo por dia. Em $\\sim 75$ anos: $75\\times365\\approx 2{,}7\\times10^{4}\\approx 3\\times10^{4}$ rotações."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "dificil",
+  "enunciado": "Estime o número de moedas que caberiam em uma caixa de $1$ pé de comprimento por $1$ pé de largura por $1$ pé de altura.",
+  "alternativas": {
+   "a": "$5\\times 10^{2}$",
+   "b": "$5\\times 10^{3}$",
+   "c": "$5\\times 10^{4}$",
+   "d": "$5\\times 10^{5}$",
+   "e": "$5\\times 10^{6}$"
+  },
+  "gabarito": "c",
+  "resolucao": "Volume da caixa: $1\\ \\text{ft}^3\\approx 2{,}83\\times10^{4}\\ \\text{cm}^3$. Uma moeda tem $\\sim 1{,}9\\ \\text{cm}$ de diâmetro e $\\sim 0{,}15\\ \\text{cm}$ de espessura, com volume $\\approx\\pi(0{,}95)^2(0{,}15)\\approx 0{,}43\\ \\text{cm}^3$. Assim $\\dfrac{2{,}83\\times10^{4}}{0{,}43}\\approx 6\\times10^{4}$; considerando o empacotamento imperfeito, da ordem de $5\\times10^{4}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Estimativas de ordem de grandeza",
+  "dificuldade": "medio",
+  "enunciado": "Uma maratona tem $26$ milhas e $385$ jardas ($\\approx 42{,}2\\ \\text{km}$). Estime quantas passadas seriam necessárias para completá-la, supondo um valor razoável para o comprimento médio da passada.",
+  "alternativas": {
+   "a": "$4{,}5\\times 10^{4}$ passadas",
+   "b": "$4{,}5\\times 10^{3}$ passadas",
+   "c": "$4{,}5\\times 10^{5}$ passadas",
+   "d": "$4{,}5\\times 10^{6}$ passadas"
+  },
+  "gabarito": "a",
+  "resolucao": "A maratona mede $\\approx 42{,}2\\ \\text{km}=4{,}22\\times10^{4}\\ \\text{m}$. Uma passada média mede cerca de $0{,}9\\ \\text{m}$ ($\\approx 3\\ \\text{ft}$). Número de passadas: $\\dfrac{4{,}22\\times10^{4}}{0{,}9}\\approx 4{,}5\\times10^{4}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Análise dimensional",
+  "dificuldade": "dificil",
+  "enunciado": "O período de um pêndulo é o tempo de uma oscilação completa. Se as únicas grandezas de que o período depende são a aceleração da gravidade $g$ e o comprimento do pêndulo $\\ell$, a que combinação de $g$ e $\\ell$ o período deve ser proporcional? (Aceleração tem unidades SI de $\\text{m}\\cdot\\text{s}^{-2}$.)",
+  "alternativas": {
+   "a": "$g/\\ell$",
+   "b": "$g\\ell^{2}$",
+   "c": "$g\\ell$",
+   "d": "$\\ell/g$",
+   "e": "$\\sqrt{\\ell/g}$"
+  },
+  "gabarito": "e",
+  "resolucao": "Suponha $T\\propto g^{a}\\ell^{b}$. As dimensões são $[g]=\\text{m}\\cdot\\text{s}^{-2}$ e $[\\ell]=\\text{m}$, com $[T]=\\text{s}$. Então $\\text{s}=(\\text{m}\\cdot\\text{s}^{-2})^{a}(\\text{m})^{b}=\\text{m}^{a+b}\\,\\text{s}^{-2a}$. Igualando expoentes: tempo $\\Rightarrow -2a=1\\Rightarrow a=-\\tfrac12$; comprimento $\\Rightarrow a+b=0\\Rightarrow b=\\tfrac12$. Logo $T\\propto g^{-1/2}\\ell^{1/2}=\\sqrt{\\ell/g}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Análise dimensional",
+  "dificuldade": "dificil",
+  "enunciado": "A velocidade de um pulso em uma corda depende da tensão $F$ e da densidade linear $\\mu$ (massa por comprimento). Tensão tem unidades SI de $\\text{kg}\\cdot\\text{m}\\cdot\\text{s}^{-2}$ e a densidade linear tem $\\text{kg}\\cdot\\text{m}^{-1}$. A que combinação de $F$ e $\\mu$ a velocidade deve ser proporcional?",
+  "alternativas": {
+   "a": "$\\sqrt{F/\\mu}$",
+   "b": "$\\sqrt{\\mu/F}$",
+   "c": "$\\mu/F$",
+   "d": "$\\sqrt{\\mu F}$",
+   "e": "$F/\\mu$"
+  },
+  "gabarito": "a",
+  "resolucao": "Suponha $v\\propto F^{a}\\mu^{b}$, com $[v]=\\text{m}\\cdot\\text{s}^{-1}$, $[F]=\\text{kg}\\cdot\\text{m}\\cdot\\text{s}^{-2}$ e $[\\mu]=\\text{kg}\\cdot\\text{m}^{-1}$. Então $\\text{m}\\cdot\\text{s}^{-1}=\\text{kg}^{a+b}\\,\\text{m}^{a-b}\\,\\text{s}^{-2a}$. Massa: $a+b=0$; tempo: $-2a=-1\\Rightarrow a=\\tfrac12$, logo $b=-\\tfrac12$ (o comprimento confere: $a-b=1$). Portanto $v\\propto F^{1/2}\\mu^{-1/2}=\\sqrt{F/\\mu}$."
+ },
+ {
+  "ch": 1,
+  "subtopico": "Análise dimensional",
+  "dificuldade": "medio",
+  "enunciado": "A posição $x$, em metros, de um objeto é dada por $x = A + Bt + Ct^{2}$, onde $t$ é o tempo em segundos. Quais são as unidades SI de $A$, $B$ e $C$?",
+  "alternativas": {
+   "a": "m, m, m",
+   "b": "m, s, s",
+   "c": "$\\text{m},\\ \\text{s},\\ \\text{s}^{2}$",
+   "d": "$\\text{m},\\ \\text{m/s},\\ \\text{m/s}^{2}$",
+   "e": "$\\text{m/s},\\ \\text{m/s}^{2},\\ \\text{m/s}^{3}$"
+  },
+  "gabarito": "d",
+  "resolucao": "Cada termo da soma tem de ter a mesma dimensão de $x$ (metros). $A$ está sozinho, então $[A]=\\text{m}$. Em $Bt$, com $[t]=\\text{s}$, é preciso $[B]\\cdot\\text{s}=\\text{m}\\Rightarrow [B]=\\text{m/s}$. Em $Ct^2$, $[C]\\cdot\\text{s}^2=\\text{m}\\Rightarrow [C]=\\text{m/s}^2$."
+ }
+]

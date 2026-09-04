@@ -6,8 +6,14 @@
 // e tópico daquela universidade — pra mostrar um selo de verificação (padrão
 // "Trust & Authority") e deixar o aluno já escolher as disciplinas dali.
 // `questions` é leitura pública pra autenticado (ver CLAUDE.md), então roda no
-// cliente SSR normal.
+// cliente SSR normal. A regra de casamento de texto→instituição mora em
+// lib/cursos/instituicao.ts (helpers puros, reusados pelo módulo de simulados).
 import { createClient } from "@/lib/supabase/server";
+import {
+  acronimoInstituicao,
+  combinaInstituicao,
+  normalizarInstituicao,
+} from "@/lib/cursos/instituicao";
 
 export type TopicoInstituicao = { nome: string; questoes: number };
 export type DisciplinaInstituicao = {
@@ -29,40 +35,8 @@ const VAZIO: ResultadoInstituicao = {
   disciplinas: [],
 };
 
-const STOPWORDS = new Set(["de", "da", "do", "das", "dos", "e", "em", "the", "of"]);
-
-function normalizar(texto: string): string {
-  return texto
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, " ");
-}
-
-function acronimo(nomeNormalizado: string): string {
-  return nomeNormalizado
-    .split(" ")
-    .filter((w) => w && !STOPWORDS.has(w))
-    .map((w) => w[0])
-    .join("");
-}
-
-// Casa o texto do aluno com um valor de instituição do banco. Cobre acrônimo
-// ("uff" ⇄ "universidade federal fluminense"), igualdade e substring.
-function combina(entradaNorm: string, entradaAcr: string, instNorm: string): boolean {
-  if (!entradaNorm || !instNorm) return false;
-  if (entradaNorm === instNorm) return true;
-  const instAcr = acronimo(instNorm);
-  if (entradaNorm.length >= 2 && entradaNorm === instAcr) return true;
-  if (entradaAcr.length >= 2 && entradaAcr === instAcr) return true;
-  if (entradaNorm.length >= 3 && instNorm.includes(entradaNorm)) return true;
-  if (instNorm.length >= 3 && entradaNorm.includes(instNorm)) return true;
-  return false;
-}
-
 export async function validarInstituicaoAction(texto: string): Promise<ResultadoInstituicao> {
-  const entradaNorm = normalizar(texto || "");
+  const entradaNorm = normalizarInstituicao(texto || "");
   if (entradaNorm.length < 2) return VAZIO;
 
   const supabase = await createClient();
@@ -77,12 +51,12 @@ export async function validarInstituicaoAction(texto: string): Promise<Resultado
 
   if (error || !linhas) return VAZIO;
 
-  const entradaAcr = acronimo(entradaNorm);
+  const entradaAcr = acronimoInstituicao(entradaNorm);
   const instituicoesCasadas = new Set<string>();
   for (const l of linhas as { instituicao: string | null }[]) {
     const raw = (l.instituicao || "").trim();
     if (!raw) continue;
-    if (combina(entradaNorm, entradaAcr, normalizar(raw))) instituicoesCasadas.add(raw);
+    if (combinaInstituicao(entradaNorm, entradaAcr, normalizarInstituicao(raw))) instituicoesCasadas.add(raw);
   }
 
   if (instituicoesCasadas.size === 0) return VAZIO;

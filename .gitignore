@@ -7,7 +7,7 @@ web/.env*.local
 web/.env
 web/*.tsbuildinfo
 web/next-env.d.ts
-
+LX-2022 _ 09_03_2022.apkg
 # OS
 .DS_Store
 Thumbs.db

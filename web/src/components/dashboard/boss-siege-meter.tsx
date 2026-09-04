@@ -66,18 +66,16 @@ export function BossSiegeMeter({
   // sem dados ainda (cold-start), o card recua pro preparo (cobertura).
   const temProjecao = bossAlvo.notaProjetada != null;
   const valorPrincipal = bossAlvo.notaProjetada ?? Math.round(bossAlvo.preparoPercentual);
-  const corValor =
+  const corStroke =
     valorPrincipal >= 70
-      ? "text-questly-green"
+      ? "var(--questly-green)"
       : valorPrincipal >= 50
-        ? "text-questly-orange"
-        : "text-questly-red";
-  const corBarra =
-    valorPrincipal >= 70
-      ? "bg-questly-green"
-      : valorPrincipal >= 50
-        ? "bg-questly-orange"
-        : "bg-questly-red";
+        ? "var(--questly-orange)"
+        : "var(--questly-red)";
+
+  const RAIO = 52;
+  const CIRC = 2 * Math.PI * RAIO;
+  const offset = CIRC - (Math.min(100, valorPrincipal) / 100) * CIRC;
 
   return (
     <div className="surface relative overflow-hidden rounded-2xl p-5 sm:p-6">
@@ -100,70 +98,90 @@ export function BossSiegeMeter({
           </span>
         </div>
 
-        <h2 className="font-heading text-xl font-semibold tracking-tight">{bossAlvo.bossNome}</h2>
-        <p className="mb-5 text-sm text-muted-foreground">{bossAlvo.subjectNome}</p>
-
-        {/* PROTAGONISTA: nota projetada pro dia da prova */}
-        <div className="mb-2 flex items-end justify-between gap-4">
-          <div>
-            <span className={`tnum block font-heading text-[44px] font-semibold leading-none tracking-tight ${corValor}`}>
-              {valorPrincipal}
-              <span className="text-[22px] font-medium text-muted-foreground">%</span>
-            </span>
-            <span className="mt-1.5 block text-xs text-muted-foreground">
-              {temProjecao ? "nota projetada pro dia da prova" : "preparo (conteúdo coberto)"}
-            </span>
+        {/* Medidor circular (nota projetada) + info — UI nova do Boss */}
+        <div className="mb-5 flex flex-col gap-5 sm:flex-row sm:items-center">
+          <div className="relative flex h-[128px] w-[128px] shrink-0 items-center justify-center self-center sm:self-start">
+            <div
+              className="pointer-events-none absolute inset-2 rounded-full opacity-20 blur-xl"
+              style={{ background: corStroke }}
+            />
+            <svg viewBox="0 0 128 128" className="h-full w-full -rotate-90">
+              <circle cx="64" cy="64" r={RAIO} fill="none" stroke="var(--muted)" strokeWidth="11" />
+              <motion.circle
+                cx="64"
+                cy="64"
+                r={RAIO}
+                fill="none"
+                stroke={corStroke}
+                strokeWidth="11"
+                strokeLinecap="round"
+                strokeDasharray={CIRC}
+                initial={{ strokeDashoffset: CIRC }}
+                animate={{ strokeDashoffset: offset }}
+                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </svg>
+            <div className="absolute flex flex-col items-center">
+              <span className="tnum font-heading text-[34px] font-bold leading-none" style={{ color: corStroke }}>
+                {valorPrincipal}
+                <span className="text-[18px]">%</span>
+              </span>
+              <span className="mt-1 max-w-[86px] text-center text-[10px] leading-tight text-muted-foreground">
+                {temProjecao ? "nota projetada" : "conteúdo coberto"}
+              </span>
+            </div>
           </div>
-          {temProjecao && bossAlvo.emRiscoCount > 0 && (
-            <Link
-              href="/trilha"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-questly-orange-light px-3 py-1.5 text-xs font-medium text-questly-orange-dark transition-colors hover:brightness-95"
-            >
-              <AlertTriangle size={13} strokeWidth={2} />
-              <span className="tnum">{bossAlvo.emRiscoCount}</span>
-              {bossAlvo.emRiscoCount === 1 ? "tópico em risco" : "tópicos em risco"}
-            </Link>
-          )}
-        </div>
 
-        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-          <motion.div
-            className={`h-full rounded-full ${corBarra}`}
-            initial={{ width: 0 }}
-            animate={{ width: `${Math.min(100, valorPrincipal)}%` }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-heading text-xl font-semibold tracking-tight">{bossAlvo.bossNome}</h2>
+            <p className="text-sm text-muted-foreground">{bossAlvo.subjectNome}</p>
 
-        <div className="mt-2 text-xs text-muted-foreground">
-          {temProjecao && (
-            <span className="tnum">{Math.round(bossAlvo.preparoPercentual)}% do conteúdo coberto</span>
-          )}
-          {temProjecao && bossAlvo.chanceAprovacao != null && " · "}
-          {bossAlvo.chanceAprovacao != null && (
-            <span className="tnum">chance de aprovação {bossAlvo.chanceAprovacao}%</span>
-          )}
-          {temProjecao && bossAlvo.escopoDefinido && bossAlvo.escopoTopicos != null && (
-            <span className="tnum"> · prova cobre {bossAlvo.escopoTopicos} tópicos</span>
-          )}
-        </div>
+            {temProjecao && bossAlvo.emRiscoCount > 0 && (
+              <Link
+                href="/trilha"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-questly-red-light px-3 py-1.5 text-xs font-semibold text-questly-red-dark transition-colors hover:brightness-95"
+              >
+                <AlertTriangle size={13} strokeWidth={2} />
+                <span className="tnum">{bossAlvo.emRiscoCount}</span>
+                {bossAlvo.emRiscoCount === 1 ? "tópico em risco" : "tópicos em risco"}
+              </Link>
+            )}
 
-        {/* sem escopo definido a projeção assume a ementa inteira — puxa o
-            aluno pro dado obrigatório em vez de exibir precisão falsa */}
-        {temProjecao && !bossAlvo.escopoDefinido ? (
-          <Link
-            href="/trilha"
-            className="mb-5 mt-3 flex items-start gap-2 rounded-lg bg-questly-orange-light px-3 py-2 text-xs leading-relaxed text-questly-orange-dark transition-all hover:brightness-95"
-          >
-            <AlertTriangle size={14} strokeWidth={2} className="mt-0.5 shrink-0" />
-            <span>
-              <span className="font-semibold">Marque o que cai nessa prova</span> na trilha — a
-              projeção está assumindo a ementa inteira.
-            </span>
-          </Link>
-        ) : (
-          <div className="mb-5" />
-        )}
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+              {temProjecao && (
+                <span className="tnum inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-questly-blue" />
+                  {Math.round(bossAlvo.preparoPercentual)}% coberto
+                </span>
+              )}
+              {bossAlvo.chanceAprovacao != null && (
+                <span className="tnum inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-questly-green" />
+                  chance {bossAlvo.chanceAprovacao}%
+                </span>
+              )}
+              {temProjecao && bossAlvo.escopoDefinido && bossAlvo.escopoTopicos != null && (
+                <span className="tnum inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-questly-purple" />
+                  {bossAlvo.escopoTopicos} tópicos na prova
+                </span>
+              )}
+            </div>
+
+            {temProjecao && !bossAlvo.escopoDefinido && (
+              <Link
+                href="/trilha"
+                className="mt-3 flex items-start gap-2 rounded-lg bg-questly-orange-light px-3 py-2 text-xs leading-relaxed text-questly-orange-dark transition-all hover:brightness-95"
+              >
+                <AlertTriangle size={14} strokeWidth={2} className="mt-0.5 shrink-0" />
+                <span>
+                  <span className="font-semibold">Marque o que cai nessa prova</span> na trilha — a
+                  projeção está assumindo a ementa inteira.
+                </span>
+              </Link>
+            )}
+          </div>
+        </div>
 
         {/* Régua de ritmo: passado → hoje → até o boss */}
         <div className="flex items-end justify-between gap-1.5 border-t border-border pt-4 sm:justify-start sm:gap-3">

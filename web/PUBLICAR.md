@@ -1,4 +1,4 @@
-# Publicar a Questly (Vercel + Supabase + Mercado Pago)
+ # Publicar a Questly (Vercel + Supabase + Mercado Pago)
 
 Guia passo a passo pra colocar o app no ar de graça e mandar pros amigos.
 Ordem importa: **1) banco → 2) deploy → 3) pagamento**.
