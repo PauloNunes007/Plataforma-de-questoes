@@ -21,7 +21,7 @@ import type { Erro } from "@/lib/aprovacao/tipos";
 // bucket erros-imagens via Server Action.
 
 const CAMPO =
-  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-questly-green/60 focus:ring-2 focus:ring-questly-green/15";
+  "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-questly-green/60 focus:ring-2 focus:ring-questly-green/15";
 
 function Rotulo({ children }: { children: React.ReactNode }) {
   return <span className="mb-1 block text-[12px] font-semibold text-muted-foreground">{children}</span>;

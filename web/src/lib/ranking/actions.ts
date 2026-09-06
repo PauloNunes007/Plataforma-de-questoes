@@ -15,6 +15,9 @@ import {
   type RankingGlobal,
 } from "@/lib/ranking/ranking-data";
 
+// Amostra mínima pra exibir acertabilidade no card público.
+const MIN_QUESTOES_ACERTABILIDADE = 10;
+
 export type CardUsuario = {
   nome: string;
   /** @handle público — o card mostra ele quando existe (nome é fallback). */
@@ -29,6 +32,10 @@ export type CardUsuario = {
   nivel: number;
   streakAtual: number;
   questoesTotal: number;
+  /** acertos vitalícios (profiles.acertos_total) */
+  acertosTotal: number;
+  /** acertabilidade em %, null enquanto o aluno não respondeu nada */
+  pctAcerto: number | null;
   disciplinas: string[];
   distintivos: Distintivo[];
 };
@@ -36,12 +43,16 @@ export type CardUsuario = {
 export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuario | null> {
   const supabase = await createClient();
 
-  const [{ data: profile }, { data: subjects }, { data: historico }] = await Promise.all([
+  const [{ data: profile }, { data: perfilAcertos }, { data: subjects }, { data: historico }] = await Promise.all([
     supabase
       .from("profiles")
       .select("nome, username, curso, semestre, foto_url, liga, xp_semana, xp_total, nivel, streak_atual, questoes_total")
       .eq("id", userId)
       .single(),
+    // acertos_total é coluna nova (supabase_acertos_publicos.sql) — lida
+    // separada pra que um banco sem a migração ainda renderize o card,
+    // só sem a linha de acertabilidade.
+    supabase.from("profiles").select("acertos_total").eq("id", userId).maybeSingle(),
     supabase.from("subjects").select("nome").eq("user_id", userId).order("nome"),
     supabase.from("historico_semanal").select("liga").eq("user_id", userId),
   ]);
@@ -55,6 +66,9 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
 
   const disciplinas = (subjects || []).map((s) => s.nome);
   const info = QUESTLY_LIGA_INFO[ligaAtual] || QUESTLY_LIGA_INFO.bronze;
+
+  const questoesTotal = profile.questoes_total || 0;
+  const acertosTotal = (perfilAcertos as { acertos_total?: number } | null)?.acertos_total ?? null;
 
   const distintivos = calcularDistintivos({
     nivel: profile.nivel || 1,
@@ -77,6 +91,13 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
     nivel: profile.nivel || 1,
     streakAtual: profile.streak_atual || 0,
     questoesTotal: profile.questoes_total || 0,
+    acertosTotal: acertosTotal ?? 0,
+    // Só mostra a acertabilidade com amostra mínima: 1 acerto em 1 questão
+    // vira "100%" e isso é ruído, não conquista.
+    pctAcerto:
+      acertosTotal != null && questoesTotal >= MIN_QUESTOES_ACERTABILIDADE
+        ? Math.round((acertosTotal / questoesTotal) * 100)
+        : null,
     disciplinas,
     // só os conquistados no card público — ver pedido do usuário: ninguém
     // quer ver a lista de "distintivos que os outros não têm" na cara.

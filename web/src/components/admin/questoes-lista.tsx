@@ -11,7 +11,7 @@ import type { Materia, Topico } from "@/lib/importar/types";
 const PAGE_SIZE = 20;
 
 const INPUT =
-  "rounded-lg border border-border bg-background px-3 py-2 text-[13px] outline-none transition-colors focus:border-questly-purple focus:ring-4 focus:ring-questly-purple/10";
+  "rounded-lg border border-input bg-background px-3 py-2 text-[13px] outline-none transition-colors focus:border-questly-purple focus:ring-4 focus:ring-questly-purple/10";
 
 const CHIP_DIFICULDADE: Record<string, string> = {
   facil: "bg-questly-green-light text-questly-green-dark",

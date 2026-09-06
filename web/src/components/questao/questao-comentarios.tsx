@@ -144,7 +144,7 @@ function Composer({
         rows={compacto ? 1 : 2}
         maxLength={2000}
         placeholder={placeholder}
-        className="min-h-[44px] flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-green/50 focus:ring-4 focus:ring-questly-green/10"
+        className="min-h-[44px] flex-1 resize-none rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-green/50 focus:ring-4 focus:ring-questly-green/10"
       />
       {onCancelar && (
         <button
@@ -211,7 +211,7 @@ function ComentarioItem({
                 onChange={(e) => setTextoEdicao(e.target.value)}
                 rows={2}
                 maxLength={2000}
-                className="w-full resize-y rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-questly-green/50 focus:ring-4 focus:ring-questly-green/10"
+                className="w-full resize-y rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:border-questly-green/50 focus:ring-4 focus:ring-questly-green/10"
               />
               <div className="mt-1.5 flex gap-2">
                 <button

@@ -246,7 +246,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
                 max={tetoQtd || SIMULADO_QTD_MAX}
                 value={quantidade}
                 onChange={(e) => setQuantidade(Number(e.target.value) || SIMULADO_QTD_MIN)}
-                className="tnum w-16 rounded-lg border border-border bg-card px-2 py-1.5 text-center text-sm font-bold outline-none focus:border-questly-green"
+                className="tnum w-16 rounded-lg border border-input bg-background px-2 py-1.5 text-center text-sm font-bold outline-none focus:border-questly-green"
               />
             </label>
           </div>

@@ -210,7 +210,7 @@ function ObraCard({
               min={0}
               value={pagina}
               onChange={(e) => setPagina(e.target.value)}
-              className="h-9 w-full rounded-lg border border-border bg-background px-2 text-[13px] outline-none focus:border-questly-green/60"
+              className="h-9 w-full rounded-lg border border-input bg-background px-2 text-[13px] outline-none focus:border-questly-green/60"
             />
           </label>
           <label className="block flex-1">
@@ -220,7 +220,7 @@ function ObraCard({
               min={1}
               value={total}
               onChange={(e) => setTotal(e.target.value)}
-              className="h-9 w-full rounded-lg border border-border bg-background px-2 text-[13px] outline-none focus:border-questly-green/60"
+              className="h-9 w-full rounded-lg border border-input bg-background px-2 text-[13px] outline-none focus:border-questly-green/60"
             />
           </label>
           <button
@@ -308,7 +308,7 @@ function FichamentoEditor({
             onChange={(e) => mudar(campo.chave, e.target.value)}
             rows={3}
             placeholder={campo.dica}
-            className="w-full resize-y rounded-lg border border-border bg-background px-3 py-2 text-[13px] leading-relaxed outline-none transition-colors focus:border-questly-purple/50 focus:ring-2 focus:ring-questly-purple/10"
+            className="w-full resize-y rounded-lg border border-input bg-background px-3 py-2 text-[13px] leading-relaxed outline-none transition-colors focus:border-questly-purple/50 focus:ring-2 focus:ring-questly-purple/10"
           />
         </label>
       ))}

@@ -1,0 +1,458 @@
+[
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento contínuo",
+    "dificuldade": "facil",
+    "enunciado": "Seja $f(x)=\\dfrac{x^3-8}{x-2}$ para $x\\neq 2$ e $f(2)=a$. Determine $a$ para que $f$ seja contínua em $x=2$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$6$",
+      "c": "$8$",
+      "d": "$12$",
+      "e": "$0$"
+    },
+    "gabarito": "d",
+    "resolucao": "Fatorando a diferença de cubos, $x^3-8=(x-2)\\left(x^2+2x+4\\right)$. Para $x\\neq 2$ vale $f(x)=x^2+2x+4$, cujo limite em $x=2$ é $4+4+4=12$. A continuidade exige $a=12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Teorema do Valor Intermediário e contagem de raízes",
+    "dificuldade": "medio",
+    "enunciado": "Quantas raízes reais a equação $x^4-4x+1=0$ possui no intervalo $[0,2]$?",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$0$",
+      "d": "$3$",
+      "e": "$4$"
+    },
+    "gabarito": "b",
+    "resolucao": "Seja $f(x)=x^4-4x+1$. Temos $f(0)=1>0$, $f(1)=-2<0$ e $f(2)=9>0$: pelo TVI há pelo menos uma raiz em $(0,1)$ e outra em $(1,2)$. Como $f'(x)=4x^3-4$ se anula apenas em $x=1$ dentro de $[0,2]$, a função é monótona em cada subintervalo e não pode ter mais raízes. São exatamente $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição de derivada com radical",
+    "dificuldade": "medio",
+    "enunciado": "Usando a definição de derivada, calcule $f'(1)$ para $f(x)=\\sqrt{3x+1}$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{4}$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$3$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela definição, $f'(1)=\\lim_{h\\to0}\\dfrac{\\sqrt{4+3h}-2}{h}$. Multiplicando pelo conjugado: $\\dfrac{(4+3h)-4}{h\\left(\\sqrt{4+3h}+2\\right)}=\\dfrac{3}{\\sqrt{4+3h}+2}$. Fazendo $h\\to 0$, obtém-se $\\dfrac{3}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Reta normal ao gráfico",
+    "dificuldade": "medio",
+    "enunciado": "Determine a ordenada do ponto em que a reta normal ao gráfico de $y=x^2+1$ no ponto $(1,2)$ intercepta o eixo $y$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$\\dfrac{5}{2}$",
+      "d": "$-\\dfrac{5}{2}$",
+      "e": "$5$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como $y'=2x$, a tangente em $(1,2)$ tem inclinação $2$ e a normal, $-\\dfrac12$. A normal é $y-2=-\\dfrac12(x-1)$, ou seja, $y=-\\dfrac{x}{2}+\\dfrac52$. Em $x=0$: $y=\\dfrac52$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Regra do quociente com identidades trigonométricas",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\operatorname{sen}x}{1+\\cos x}$. Calcule $f'\\!\\left(\\dfrac{\\pi}{3}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$\\dfrac{3}{2}$",
+      "d": "$1$",
+      "e": "$\\dfrac{2}{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela regra do quociente, $f'(x)=\\dfrac{\\cos x(1+\\cos x)+\\operatorname{sen}^2x}{(1+\\cos x)^2}$. Usando $\\cos^2x+\\operatorname{sen}^2x=1$, o numerador vira $1+\\cos x$, e portanto $f'(x)=\\dfrac{1}{1+\\cos x}$. Em $x=\\dfrac{\\pi}{3}$, com $\\cos=\\dfrac12$: $f'=\\dfrac{1}{3/2}=\\dfrac23$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita em cônica",
+    "dificuldade": "medio",
+    "enunciado": "A curva $x^2+xy+y^2=7$ passa pelo ponto $(1,2)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-\\dfrac{5}{4}$",
+      "b": "$-\\dfrac{4}{5}$",
+      "c": "$\\dfrac{4}{5}$",
+      "d": "$-1$",
+      "e": "$-\\dfrac{2}{5}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Derivando implicitamente: $2x+y+xy'+2yy'=0$, logo $y'(x+2y)=-(2x+y)$ e $y'=-\\dfrac{2x+y}{x+2y}$. Em $(1,2)$: $y'=-\\dfrac{2+2}{1+4}=-\\dfrac45$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivada segunda de produto",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=e^{-x}\\operatorname{sen}x$. Calcule $f''(0)$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$-1$",
+      "d": "$-2$",
+      "e": "$1$"
+    },
+    "gabarito": "d",
+    "resolucao": "Derivando, $f'(x)=e^{-x}\\left(\\cos x-\\operatorname{sen}x\\right)$. Derivando de novo: $f''(x)=e^{-x}\\left(-\\operatorname{sen}x-\\cos x\\right)-e^{-x}\\left(\\cos x-\\operatorname{sen}x\\right)=-2e^{-x}\\cos x$. Em $x=0$: $f''(0)=-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Taxas relacionadas com volume",
+    "dificuldade": "medio",
+    "enunciado": "Um balão esférico é inflado à taxa constante de $100$ cm³/s. Determine a taxa de variação do raio no instante em que ele mede $5{,}0$ cm.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{\\pi}$ cm/s",
+      "b": "$\\dfrac{1}{2\\pi}$ cm/s",
+      "c": "$\\pi$ cm/s",
+      "d": "$\\dfrac{4}{\\pi}$ cm/s",
+      "e": "$\\dfrac{2}{\\pi}$ cm/s"
+    },
+    "gabarito": "a",
+    "resolucao": "De $V=\\dfrac43\\pi r^3$ segue $\\dfrac{dV}{dt}=4\\pi r^2\\dfrac{dr}{dt}$. Com $\\dfrac{dV}{dt}=100$ e $r=5$: $100=4\\pi(25)\\dfrac{dr}{dt}=100\\pi\\dfrac{dr}{dt}$, de onde $\\dfrac{dr}{dt}=\\dfrac{1}{\\pi}$ cm/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Otimização com restrição geométrica",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a maior área possível de um retângulo inscrito em um semicírculo de raio $2$, com um dos lados sobre o diâmetro.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$2\\sqrt2$",
+      "c": "$4$",
+      "d": "$8$",
+      "e": "$2\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com o retângulo de base $2x$ e altura $\\sqrt{4-x^2}$, a área é $A(x)=2x\\sqrt{4-x^2}$. Maximizar $A$ equivale a maximizar $A^2=4x^2\\left(4-x^2\\right)$. Pondo $u=x^2$, a parábola $4u(4-u)$ tem máximo em $u=2$, onde vale $16$. Logo $A=4$, atingido com $x=\\sqrt2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Regra de L'Hospital em forma infinito menos infinito",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\lim_{x\\to 0}\\left(\\dfrac{1}{x}-\\dfrac{1}{\\operatorname{sen}x}\\right)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\infty$",
+      "d": "$-1$",
+      "e": "$0$"
+    },
+    "gabarito": "e",
+    "resolucao": "Reduzindo ao mesmo denominador, o limite é $\\lim_{x\\to0}\\dfrac{\\operatorname{sen}x-x}{x\\operatorname{sen}x}$, da forma $\\tfrac00$. Aplicando L'Hospital: $\\lim\\dfrac{\\cos x-1}{\\operatorname{sen}x+x\\cos x}$, ainda $\\tfrac00$. Aplicando de novo: $\\lim\\dfrac{-\\operatorname{sen}x}{2\\cos x-x\\operatorname{sen}x}=\\dfrac{0}{2}=0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Ponto de inflexão",
+    "dificuldade": "medio",
+    "enunciado": "Determine a ordenada do ponto de inflexão do gráfico de $f(x)=x^3-6x^2+9x$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$4$",
+      "d": "$-2$",
+      "e": "$6$"
+    },
+    "gabarito": "b",
+    "resolucao": "Temos $f''(x)=6x-12$, que se anula em $x=2$ e muda de sinal ali (côncava para baixo antes, para cima depois), caracterizando inflexão. A ordenada é $f(2)=8-24+18=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de Riemann com deslocamento",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\lim_{n\\to\\infty}\\displaystyle\\sum_{i=1}^{n}\\dfrac{1}{n}\\left(1+\\dfrac{i}{n}\\right)^3$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$\\dfrac{15}{2}$",
+      "c": "$\\dfrac{5}{4}$",
+      "d": "$\\dfrac{15}{4}$",
+      "e": "$3$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $\\Delta x=\\dfrac1n$ e $x_i=\\dfrac{i}{n}$ em $[0,1]$, a soma é a de Riemann de $f(x)=(1+x)^3$. Logo o limite é $\\int_0^1(1+x)^3dx=\\left[\\dfrac{(1+x)^4}{4}\\right]_0^1=\\dfrac{16-1}{4}=\\dfrac{15}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Paridade do integrando",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\displaystyle\\int_{-\\pi/2}^{\\pi/2}\\left(x^5\\cos x+3\\right)dx$.",
+    "alternativas": {
+      "a": "$3\\pi$",
+      "b": "$0$",
+      "c": "$6\\pi$",
+      "d": "$3$",
+      "e": "$\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "A função $x^5\\cos x$ é ímpar (ímpar vezes par), e o intervalo é simétrico, logo sua integral é nula. Resta $\\int_{-\\pi/2}^{\\pi/2}3\\,dx=3\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com logaritmo",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_1^{e}\\dfrac{\\ln x}{x}\\,dx$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$e$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$2$",
+      "e": "$\\dfrac{e}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Faça $u=\\ln x$, de modo que $du=\\dfrac{dx}{x}$. Os limites viram $u(1)=0$ e $u(e)=1$, e a integral fica $\\int_0^1 u\\,du=\\left[\\dfrac{u^2}{2}\\right]_0^1=\\dfrac12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "TFC com limite superior composto",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_0^{\\operatorname{sen}x}\\sqrt{1+t^2}\\,dt$. Calcule $F'\\!\\left(\\dfrac{\\pi}{6}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt5}{2}$",
+      "b": "$\\dfrac{\\sqrt3}{2}$",
+      "c": "$\\dfrac{\\sqrt{15}}{2}$",
+      "d": "$\\dfrac{\\sqrt5}{4}$",
+      "e": "$\\dfrac{\\sqrt{15}}{4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo TFC com a regra da cadeia, $F'(x)=\\sqrt{1+\\operatorname{sen}^2x}\\cdot\\cos x$. Em $x=\\dfrac{\\pi}{6}$: $\\operatorname{sen}x=\\dfrac12$, logo $\\sqrt{1+\\tfrac14}=\\dfrac{\\sqrt5}{2}$, e $\\cos x=\\dfrac{\\sqrt3}{2}$. O produto é $\\dfrac{\\sqrt{15}}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre cúbica e reta",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada por $y=x$ e $y=x^3$ no primeiro quadrante.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{1}{4}$",
+      "c": "$\\dfrac{1}{3}$",
+      "d": "$\\dfrac{3}{4}$",
+      "e": "$\\dfrac{1}{12}$"
+    },
+    "gabarito": "b",
+    "resolucao": "As curvas se cruzam em $x=0$ e $x=1$, e em $(0,1)$ vale $x\\ge x^3$. A área é $\\int_0^1\\left(x-x^3\\right)dx=\\left[\\dfrac{x^2}{2}-\\dfrac{x^4}{4}\\right]_0^1=\\dfrac12-\\dfrac14=\\dfrac14$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume pelo método das cascas",
+    "dificuldade": "dificil",
+    "enunciado": "A região limitada por $y=x^2$, $y=0$ e $x=2$ gira em torno do eixo $y$. Calcule o volume gerado.",
+    "alternativas": {
+      "a": "$8\\pi$",
+      "b": "$4\\pi$",
+      "c": "$16\\pi$",
+      "d": "$\\dfrac{32\\pi}{5}$",
+      "e": "$2\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo método das cascas cilíndricas, $V=2\\pi\\int_0^2 x\\cdot f(x)\\,dx=2\\pi\\int_0^2 x\\cdot x^2dx=2\\pi\\left[\\dfrac{x^4}{4}\\right]_0^2=2\\pi\\cdot 4=8\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada do arco-seno",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y=\\operatorname{arcsen}(2x)$. Calcule $\\dfrac{dy}{dx}$ em $x=\\dfrac14$.",
+    "alternativas": {
+      "a": "$\\dfrac{2\\sqrt3}{3}$",
+      "b": "$\\dfrac{4}{3}$",
+      "c": "$2$",
+      "d": "$\\dfrac{4\\sqrt3}{3}$",
+      "e": "$\\dfrac{\\sqrt3}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela regra da cadeia, $\\dfrac{dy}{dx}=\\dfrac{2}{\\sqrt{1-4x^2}}$. Em $x=\\dfrac14$: $4x^2=\\dfrac14$, logo $\\sqrt{1-\\tfrac14}=\\dfrac{\\sqrt3}{2}$ e $\\dfrac{dy}{dx}=\\dfrac{2}{\\sqrt3/2}=\\dfrac{4}{\\sqrt3}=\\dfrac{4\\sqrt3}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada da função logarítmica",
+    "dificuldade": "facil",
+    "enunciado": "Seja $f(x)=\\ln\\left(x^2+1\\right)$. Calcule $f'(2)$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{5}$",
+      "b": "$\\dfrac{5}{4}$",
+      "c": "$\\dfrac{4}{5}$",
+      "d": "$\\dfrac{1}{5}$",
+      "e": "$4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela regra da cadeia, $f'(x)=\\dfrac{2x}{x^2+1}$. Em $x=2$: $f'(2)=\\dfrac{4}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Integração por partes com logaritmo",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_1^{e}\\ln x\\,dx$.",
+    "alternativas": {
+      "a": "$e$",
+      "b": "$1$",
+      "c": "$e-1$",
+      "d": "$0$",
+      "e": "$2$"
+    },
+    "gabarito": "b",
+    "resolucao": "Tome $u=\\ln x$ e $dv=dx$, logo $du=\\dfrac{dx}{x}$ e $v=x$. Então $\\int\\ln x\\,dx=x\\ln x-\\int dx=x\\ln x-x$. Avaliando: $(e-e)-(0-1)=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Substituição trigonométrica com arco-seno",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_0^{\\sqrt3}\\dfrac{dx}{\\sqrt{4-x^2}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{3}$",
+      "b": "$\\dfrac{\\pi}{6}$",
+      "c": "$\\dfrac{\\pi}{2}$",
+      "d": "$\\dfrac{\\pi}{4}$",
+      "e": "$\\dfrac{2\\pi}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $x=2\\operatorname{sen}\\theta$ obtém-se a primitiva $\\operatorname{arcsen}\\dfrac{x}{2}$. Avaliando de $0$ a $\\sqrt3$: $\\operatorname{arcsen}\\dfrac{\\sqrt3}{2}-\\operatorname{arcsen}0=\\dfrac{\\pi}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Frações parciais com dois fatores lineares",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_0^1\\dfrac{x+2}{(x+1)(x+3)}\\,dx$.",
+    "alternativas": {
+      "a": "$\\ln\\dfrac{8}{3}$",
+      "b": "$\\dfrac{1}{2}\\ln\\dfrac{3}{8}$",
+      "c": "$\\dfrac{1}{2}\\ln 8$",
+      "d": "$\\dfrac{1}{2}\\ln\\dfrac{4}{3}$",
+      "e": "$\\dfrac{1}{2}\\ln\\dfrac{8}{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Escrevendo $\\dfrac{x+2}{(x+1)(x+3)}=\\dfrac{A}{x+1}+\\dfrac{B}{x+3}$, vem $x+2=A(x+3)+B(x+1)$. Em $x=-1$: $1=2A\\Rightarrow A=\\tfrac12$; em $x=-3$: $-1=-2B\\Rightarrow B=\\tfrac12$. Logo a integral é $\\dfrac12\\left[\\ln(x+1)+\\ln(x+3)\\right]_0^1=\\dfrac12\\left(\\ln 2+\\ln 4-\\ln 3\\right)=\\dfrac12\\ln\\dfrac{8}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Integral em toda a semirreta",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\displaystyle\\int_0^{\\infty}\\dfrac{dx}{1+x^2}$, caso convirja.",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$\\dfrac{\\pi}{4}$",
+      "c": "$\\dfrac{\\pi}{2}$",
+      "d": "$2\\pi$",
+      "e": "divergente"
+    },
+    "gabarito": "c",
+    "resolucao": "A primitiva é $\\operatorname{arctg}x$, logo $\\int_0^{b}\\dfrac{dx}{1+x^2}=\\operatorname{arctg}b$. Fazendo $b\\to\\infty$, o limite é $\\dfrac{\\pi}{2}$, e a integral converge.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Singularidade na origem",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_0^1\\dfrac{dx}{x^{2/3}}$, caso convirja.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$2$",
+      "d": "$3$",
+      "e": "divergente"
+    },
+    "gabarito": "d",
+    "resolucao": "O integrando é ilimitado em $x\\to 0^+$, mas o expoente $p=\\tfrac23<1$ garante convergência. De fato, $\\int_a^1 x^{-2/3}dx=\\left[3x^{1/3}\\right]_a^1=3-3a^{1/3}$, cujo limite quando $a\\to 0^+$ é $3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

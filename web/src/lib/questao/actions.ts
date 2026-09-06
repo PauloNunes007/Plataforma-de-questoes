@@ -2,7 +2,13 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { QUESTLY_MAESTRIA_MULT_XP, questlyEhMestre, questlyHojeISO, questlyXpDaQuestao, toISODate } from "@/lib/questly/shared";
+import {
+  questlyEhMestre,
+  questlyHojeISO,
+  questlyXpDaQuestao,
+  questlyXpDaResposta,
+  toISODate,
+} from "@/lib/questly/shared";
 import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
 import { atualizarStreakEDailyLog, atualizarXpELiga } from "@/lib/questly/economia";
 import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
@@ -26,7 +32,7 @@ export async function registrarRespostaAction(input: {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { attemptId: null };
+  if (!user) return { attemptId: null, novoTempoMedio: null, correta: false, questoesHoje: 0 };
 
   // Corretude é decidida NO SERVIDOR comparando a resposta marcada com o
   // gabarito no banco — nunca confiar no `input.correta` do cliente (o
@@ -126,7 +132,19 @@ export async function registrarRespostaAction(input: {
     await admin.from("questions").update({ tempo_medio_seg: novoTempoMedio }).eq("id", input.questionId);
   }
 
-  return { attemptId: attempt?.id ?? null, novoTempoMedio, correta };
+  // Questões respondidas HOJE, pra UI celebrar os marcos do dia (10, 15,
+  // 25...). O fuso do servidor é fixado em America/Sao_Paulo
+  // (next.config.ts), então a meia-noite local aqui é a mesma que a do
+  // aluno. Head-count: conta sem trazer linha nenhuma.
+  const inicioDoDia = new Date();
+  inicioDoDia.setHours(0, 0, 0, 0);
+  const { count: questoesHoje } = await supabase
+    .from("question_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", inicioDoDia.toISOString());
+
+  return { attemptId: attempt?.id ?? null, novoTempoMedio, correta, questoesHoje: questoesHoje ?? 0 };
 }
 
 export async function classificarMotivoErroAction(attemptId: string, motivo: string) {
@@ -159,9 +177,11 @@ export type FinalizarMissaoResultado = {
 
 // Recomputa acertos/erros/XP da missão SÓ a partir de dados autoritativos do
 // servidor: as tentativas gravadas pra esta missão, regradas pelo gabarito no
-// banco, com XP calculado pelas mesmas regras do cliente (peso por
-// dificuldade, metade em questão já acertada antes, ×1.5 em tópico Mestre).
-// O cliente não tem voz aqui — é isso que impede forjar xp_total/ranking.
+// banco, com XP calculado por questlyXpDaResposta — a MESMA função que o
+// cliente usa pra animar o ganho na tela (peso por dificuldade, metade em
+// questão já acertada antes, ×1.5 em tópico Mestre, multiplicador de combo,
+// consolação no erro inédito). O cliente não tem voz aqui — é isso que
+// impede forjar xp_total/ranking.
 async function recomputarPlacarMissao(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
@@ -169,37 +189,47 @@ async function recomputarPlacarMissao(
 ): Promise<{ acertos: number; erros: number; xpGanho: number }> {
   const { data: tentativas } = await supabase
     .from("question_attempts")
-    .select("question_id, resposta_marcada, id")
+    .select("question_id, resposta_marcada, created_at")
     .eq("user_id", userId)
     .eq("mission_id", missao.id)
-    .order("id", { ascending: true });
+    .order("created_at", { ascending: true });
 
-  // Última resposta marcada por questão (uma tentativa por questão no fluxo
-  // normal; se houver mais de uma, a mais recente vale).
+  // ORDEM DE RESPOSTA, não a ordem da missão: o combo de acertos seguidos é
+  // sequencial, então o servidor revive a sessão na mesma ordem em que o
+  // aluno respondeu — é o que faz o placar recomputado bater com o que ele
+  // viu na tela. (No fluxo normal há uma tentativa por questão; se houver
+  // mais de uma, a última resposta vale e a posição é a da primeira.)
+  const ordemResposta: string[] = [];
   const respostaPorQuestao = new Map<string, string>();
-  (tentativas || []).forEach((t) => respostaPorQuestao.set(t.question_id, t.resposta_marcada));
+  for (const t of tentativas || []) {
+    if (!respostaPorQuestao.has(t.question_id)) ordemResposta.push(t.question_id);
+    respostaPorQuestao.set(t.question_id, t.resposta_marcada);
+  }
 
   // Só pontua as questões que a missão realmente contém (missions.question_ids
   // é fixado na criação). Missões antigas sem question_ids caem pras questões
   // efetivamente respondidas nesta missão.
-  const idsMissao = Array.isArray(missao.question_ids) ? missao.question_ids : [];
-  const idsParaAvaliar = idsMissao.length > 0 ? idsMissao : Array.from(respostaPorQuestao.keys());
+  const idsMissao = new Set(Array.isArray(missao.question_ids) ? missao.question_ids : []);
+  const idsParaAvaliar = idsMissao.size > 0 ? ordemResposta.filter((id) => idsMissao.has(id)) : ordemResposta;
   if (idsParaAvaliar.length === 0) return { acertos: 0, erros: 0, xpGanho: 0 };
 
   const { data: questoes } = await supabase
     .from("questions")
     .select("id, gabarito, dificuldade, topic_id")
     .in("id", idsParaAvaliar);
+  const questaoPorId = new Map((questoes || []).map((q) => [q.id, q]));
 
-  // Questões já acertadas em OUTRA missão pagam metade (anti-farming).
-  const { data: acertosPrevios } = await supabase
+  // Histórico da questão FORA desta missão: quem já foi acertada paga metade
+  // (anti-farming) e quem já foi tentada não paga mais a consolação do erro
+  // (senão dava pra farmar XP repetindo lista e errando de propósito).
+  const { data: tentativasPrevias } = await supabase
     .from("question_attempts")
-    .select("question_id")
+    .select("question_id, correta")
     .eq("user_id", userId)
-    .eq("correta", true)
     .neq("mission_id", missao.id)
     .in("question_id", idsParaAvaliar);
-  const jaAcertadasAntes = new Set((acertosPrevios || []).map((a) => a.question_id));
+  const jaTentadasAntes = new Set((tentativasPrevias || []).map((a) => a.question_id));
+  const jaAcertadasAntes = new Set((tentativasPrevias || []).filter((a) => a.correta).map((a) => a.question_id));
 
   // Tópicos atualmente Mestres (bônus ×1.5). Reconstruir o estado exato "no
   // início da missão" não é necessário: o multiplicador é limitado (1.5×) e a
@@ -220,18 +250,24 @@ async function recomputarPlacarMissao(
   let acertos = 0;
   let erros = 0;
   let xpGanho = 0;
-  for (const q of questoes || []) {
-    const marcada = respostaPorQuestao.get(q.id);
-    if (marcada == null) continue; // questão da missão que o aluno não respondeu
-    if (marcada !== q.gabarito) {
-      erros += 1;
-      continue;
-    }
-    acertos += 1;
-    let xp = questlyXpDaQuestao(q);
-    if (jaAcertadasAntes.has(q.id)) xp = Math.max(1, Math.round(xp / 2));
-    if (q.topic_id && mestres.has(q.topic_id)) xp = Math.round(xp * QUESTLY_MAESTRIA_MULT_XP);
-    xpGanho += xp;
+  let acertosSeguidos = 0;
+  for (const questaoId of idsParaAvaliar) {
+    const q = questaoPorId.get(questaoId);
+    const marcada = respostaPorQuestao.get(questaoId);
+    if (!q || marcada == null) continue; // questão da missão que o aluno não respondeu
+    const correta = marcada === q.gabarito;
+    acertosSeguidos = correta ? acertosSeguidos + 1 : 0;
+    if (correta) acertos += 1;
+    else erros += 1;
+
+    xpGanho += questlyXpDaResposta({
+      dificuldade: q.dificuldade,
+      correta,
+      jaAcertouAntes: jaAcertadasAntes.has(q.id),
+      jaTentouAntes: jaTentadasAntes.has(q.id),
+      topicoMestre: !!q.topic_id && mestres.has(q.topic_id),
+      acertosSeguidos,
+    });
   }
 
   return { acertos, erros, xpGanho };

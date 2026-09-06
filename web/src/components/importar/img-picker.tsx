@@ -140,7 +140,7 @@ export function ImgPicker({
             onChange(v || null);
           }}
           placeholder="ou cole uma URL de imagem"
-          className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
+          className="rounded-lg border border-input bg-background px-2.5 py-1.5 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
         />
         <p className="text-[10.5px] text-muted-foreground">dica: clique na miniatura e cole (Ctrl+V) uma imagem copiada</p>
         {enviando && <p className="text-[10.5px] font-semibold text-questly-green-dark">Enviando...</p>}

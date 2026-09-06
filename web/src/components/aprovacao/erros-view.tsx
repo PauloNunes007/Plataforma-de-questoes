@@ -41,7 +41,7 @@ const COR_TIPO: Record<string, string> = {
 };
 
 const CAMPO_FILTRO =
-  "h-9 rounded-lg border border-border bg-background px-2.5 text-[13px] outline-none transition-colors focus:border-questly-green/60";
+  "h-9 rounded-lg border border-input bg-background px-2.5 text-[13px] outline-none transition-colors focus:border-questly-green/60";
 
 type Aba = "refazer" | "todos" | "arquivados";
 

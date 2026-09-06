@@ -9,7 +9,7 @@
 // mouse com tilt 3D, como uma carta segurada na mão.
 import { useRef } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
-import { Flame, Medal, Target, X, Zap } from "lucide-react";
+import { Crosshair, Flame, Medal, Target, X, Zap } from "lucide-react";
 import { RankAvatar } from "@/components/ranking/avatar";
 import {
   LIGA_CARD_BG,
@@ -211,8 +211,22 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
             descricao="questões respondidas na carreira"
             valor={card.questoesTotal}
             unidade=""
-            semDivisor
+            semDivisor={card.pctAcerto == null}
           />
+          {/* Acertabilidade — só aparece com amostra mínima (ver
+              MIN_QUESTOES_ACERTABILIDADE): "100%" em 2 questões não diz
+              nada sobre ninguém. */}
+          {card.pctAcerto != null && (
+            <Ataque
+              icone={<Crosshair size={13} strokeWidth={2.25} />}
+              corEnergia="bg-questly-green"
+              nome="Mira precisa"
+              descricao={`${card.acertosTotal.toLocaleString("pt-BR")} acertos em ${card.questoesTotal.toLocaleString("pt-BR")} questões`}
+              valor={card.pctAcerto}
+              unidade="%"
+              semDivisor
+            />
+          )}
         </div>
 
         {/* distintivos conquistados — só os que o aluno tem */}

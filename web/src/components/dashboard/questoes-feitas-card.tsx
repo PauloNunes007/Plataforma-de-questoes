@@ -18,6 +18,15 @@ export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
       <div className="mb-4 flex items-center gap-2">
         <ClipboardList size={17} strokeWidth={1.9} className="text-questly-green" />
         <h3 className="font-heading text-[15px] font-semibold tracking-tight">Questões feitas</h3>
+        <span className="text-[11px] text-muted-foreground">na vida toda</span>
+        {totalQuestoes > 0 && (
+          <span
+            className={`tnum ml-auto shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-bold ${corAproveitamento(pctAcerto)}`}
+            title="Aproveitamento: acertos ÷ questões respondidas"
+          >
+            {pctAcerto}% de acerto
+          </span>
+        )}
       </div>
 
       {totalQuestoes === 0 ? (
@@ -75,6 +84,15 @@ export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
       )}
     </div>
   );
+}
+
+// Faixas do aproveitamento — verde a partir de 70% (nota de aprovação na
+// maioria das disciplinas), âmbar entre 50 e 70, vermelho abaixo disso.
+// Sem julgamento no texto: a cor já diz, e o número é o do aluno.
+function corAproveitamento(pct: number) {
+  if (pct >= 70) return "bg-questly-green-light text-questly-green-dark";
+  if (pct >= 50) return "bg-questly-gold-light text-questly-gold-dark";
+  return "bg-questly-red-light text-questly-red-dark";
 }
 
 function LinhaLegenda({

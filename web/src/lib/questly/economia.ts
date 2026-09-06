@@ -27,20 +27,46 @@ export async function atualizarXpELiga(
     .select("xp_total, questoes_total")
     .eq("id", userId)
     .single();
+  // Lida à parte porque a coluna é nova (supabase_acertos_publicos.sql):
+  // num banco que ainda não rodou a migração este select falha, e não pode
+  // levar junto o xp_total — que é o que de fato não pode se perder.
+  const { data: perfilAcertos } = await supabase
+    .from("profiles")
+    .select("acertos_total")
+    .eq("id", userId)
+    .maybeSingle();
   const novoXpTotal = (profile?.xp_total || 0) + xpGanho;
   const novoXpSemana = (estado?.xp_semana || 0) + xpGanho;
   const novasQuestoesSemana = (estado?.questoes_semana || 0) + (acertos + erros);
   const novasQuestoesTotal = (profile?.questoes_total || 0) + (acertos + erros);
+  const novosAcertosTotal = (perfilAcertos?.acertos_total || 0) + acertos;
 
-  await supabase
+  const { error } = await supabase
     .from("profiles")
     .update({
       xp_total: novoXpTotal,
       xp_semana: novoXpSemana,
       questoes_semana: novasQuestoesSemana,
       questoes_total: novasQuestoesTotal,
+      acertos_total: novosAcertosTotal,
     })
     .eq("id", userId);
+
+  // Banco ainda sem supabase_acertos_publicos.sql (coluna acertos_total
+  // ausente): a economia inteira não pode cair por causa da estatística
+  // pública nova — repete o update sem ela.
+  if (error) {
+    console.error("Erro ao atualizar XP/liga (tentando sem acertos_total):", error);
+    await supabase
+      .from("profiles")
+      .update({
+        xp_total: novoXpTotal,
+        xp_semana: novoXpSemana,
+        questoes_semana: novasQuestoesSemana,
+        questoes_total: novasQuestoesTotal,
+      })
+      .eq("id", userId);
+  }
 }
 
 export async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId: string) {

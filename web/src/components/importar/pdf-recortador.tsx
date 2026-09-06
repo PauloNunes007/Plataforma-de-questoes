@@ -364,7 +364,7 @@ export function PdfRecortador({
                   const v = e.target.value;
                   setAlvo(v === "enunciado" ? { tipo: "enunciado" } : { tipo: "alt", letra: v.slice(4) as Letra });
                 }}
-                className="rounded-lg border border-border bg-card px-2 py-1 text-xs font-medium outline-none focus:border-questly-green"
+                className="rounded-lg border border-input bg-background px-2 py-1 text-xs font-medium outline-none focus:border-questly-green"
               >
                 <option value="enunciado">Enunciado</option>
                 {LETRAS_ALTERNATIVA.map((l) => (
@@ -393,7 +393,7 @@ export function PdfRecortador({
                   setIndiceArquivo(Number(e.target.value));
                   setPagina(1);
                 }}
-                className="max-w-[220px] truncate rounded-lg border border-border bg-card px-2 py-1 text-xs font-medium outline-none focus:border-questly-green"
+                className="max-w-[220px] truncate rounded-lg border border-input bg-background px-2 py-1 text-xs font-medium outline-none focus:border-questly-green"
               >
                 {arquivos.map((a, i) => (
                   <option key={a.nome} value={i}>

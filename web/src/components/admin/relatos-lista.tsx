@@ -46,7 +46,7 @@ export function RelatosLista({ relatosIniciais }: { relatosIniciais: RelatoAdmin
 
       {relatos.length === 0 ? (
         <div className="surface flex flex-col items-center gap-3 px-6 py-16 text-center">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-questly-green-light text-questly-green">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-questly-green-light text-questly-green-dark">
             <CircleCheck size={24} strokeWidth={1.9} />
           </span>
           <p className="text-sm font-medium">Tudo em dia</p>

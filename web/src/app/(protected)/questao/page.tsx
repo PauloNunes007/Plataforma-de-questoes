@@ -80,16 +80,19 @@ export default async function QuestaoPage({
 
   const perguntas = questlyEmbaralhar(questoes).slice(0, missao.qtd_questoes || questoes.length);
 
-  const { data: acertosAnteriores } = await supabase
+  // Histórico do aluno nessas questões: já acertou (paga metade) e já
+  // tentou (erro repetido não paga mais a consolação) — as duas regras de
+  // XP saem da MESMA leitura, ver questlyXpDaResposta.
+  const { data: tentativasAnteriores } = await supabase
     .from("question_attempts")
-    .select("question_id")
+    .select("question_id, correta")
     .eq("user_id", user.id)
-    .eq("correta", true)
     .in(
       "question_id",
       perguntas.map((p) => p.id),
     );
-  const jaAcertadasAntesIds = (acertosAnteriores || []).map((a) => a.question_id);
+  const jaAcertadasAntesIds = (tentativasAnteriores || []).filter((a) => a.correta).map((a) => a.question_id);
+  const jaTentadasAntesIds = (tentativasAnteriores || []).map((a) => a.question_id);
 
   const topicIdsDasPerguntas = Array.from(new Set(perguntas.map((p) => p.topic_id).filter(Boolean))) as string[];
   let topicosMestreInicioIds: string[] = [];
@@ -153,6 +156,7 @@ export default async function QuestaoPage({
       }}
       perguntas={perguntas}
       jaAcertadasAntesIds={jaAcertadasAntesIds}
+      jaTentadasAntesIds={jaTentadasAntesIds}
       topicosMestreInicioIds={topicosMestreInicioIds}
       favoritosIniciaisIds={favoritosIniciaisIds}
       notasIniciais={notasIniciais}

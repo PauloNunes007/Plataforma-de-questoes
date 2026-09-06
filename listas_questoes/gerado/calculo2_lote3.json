@@ -1,0 +1,458 @@
+[
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação separável com condição inicial",
+    "dificuldade": "medio",
+    "enunciado": "Resolva o problema de valor inicial $\\dfrac{dy}{dx}=\\dfrac{x+1}{y}$, com $y(0)=2$, e calcule $y(2)$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$2\\sqrt2$",
+      "c": "$2\\sqrt3$",
+      "d": "$6$",
+      "e": "$3$"
+    },
+    "gabarito": "c",
+    "resolucao": "Separando: $y\\,dy=(x+1)\\,dx$. Integrando, $\\dfrac{y^2}{2}=\\dfrac{x^2}{2}+x+C$. Com $y(0)=2$: $2=C$, logo $y^2=x^2+2x+4$. Em $x=2$: $y^2=4+4+4=12$, e como $y(0)>0$ a solução é contínua e positiva, $y=\\sqrt{12}=2\\sqrt3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação linear não homogênea",
+    "dificuldade": "medio",
+    "enunciado": "Resolva $y'-y=e^{2x}$ com $y(0)=3$ e calcule $y(\\ln 2)$.",
+    "alternativas": {
+      "a": "$8$",
+      "b": "$4$",
+      "c": "$6$",
+      "d": "$12$",
+      "e": "$10$"
+    },
+    "gabarito": "a",
+    "resolucao": "O fator integrante é $e^{-x}$, e $\\left(ye^{-x}\\right)'=e^{x}$, logo $ye^{-x}=e^{x}+C$ e $y=e^{2x}+Ce^{x}$. De $y(0)=3$: $1+C=3\\Rightarrow C=2$. Em $x=\\ln 2$, com $e^{x}=2$ e $e^{2x}=4$: $y=4+4=8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Modelo de crescimento exponencial",
+    "dificuldade": "medio",
+    "enunciado": "Uma cultura de bactérias cresce segundo $\\dfrac{dP}{dt}=kP$. Se $P(0)=1000$ e $P(2)=4000$, determine $P(3)$, com $t$ em horas.",
+    "alternativas": {
+      "a": "$2000$",
+      "b": "$4000$",
+      "c": "$6000$",
+      "d": "$8000$",
+      "e": "$16000$"
+    },
+    "gabarito": "d",
+    "resolucao": "A solução é $P(t)=1000e^{kt}$. De $P(2)=4000$ vem $e^{2k}=4$, ou seja, $e^{k}=2$ e $k=\\ln 2$. Então $P(t)=1000\\cdot 2^{t}$ e $P(3)=1000\\cdot 8=8000$. A população dobra a cada hora.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Decaimento radioativo",
+    "dificuldade": "facil",
+    "enunciado": "Um isótopo radioativo tem meia-vida de $5$ anos. Determine a fração da massa inicial que ainda resta após $15$ anos.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{8}$",
+      "c": "$\\dfrac{1}{16}$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "O decaimento obedece a $m(t)=m_0e^{-\\lambda t}$, e a meia-vida significa que a massa se reduz à metade a cada $5$ anos. Em $15$ anos passam-se $3$ meias-vidas, logo resta $\\left(\\dfrac12\\right)^3=\\dfrac18$ da massa inicial.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Raízes reais simétricas",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y$ a solução de $y''-4y=0$ com $y(0)=2$ e $y'(0)=0$. Calcule $y\\!\\left(\\dfrac{\\ln 2}{2}\\right)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$4$",
+      "d": "$5$",
+      "e": "$\\dfrac{5}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "As raízes de $r^2-4=0$ são $\\pm 2$, logo $y=Ae^{2x}+Be^{-2x}$. As condições dão $A+B=2$ e $2A-2B=0$, isto é, $A=B=1$ e $y=e^{2x}+e^{-2x}$. Em $x=\\dfrac{\\ln 2}{2}$, temos $e^{2x}=2$ e $e^{-2x}=\\dfrac12$, logo $y=\\dfrac52$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Oscilação amortecida",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y$ a solução de $y''+2y'+5y=0$ com $y(0)=1$ e $y'(0)=-1$. Calcule $y\\!\\left(\\dfrac{\\pi}{2}\\right)$.",
+    "alternativas": {
+      "a": "$-e^{-\\pi/2}$",
+      "b": "$e^{-\\pi/2}$",
+      "c": "$-e^{-\\pi}$",
+      "d": "$0$",
+      "e": "$-2e^{-\\pi/2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "As raízes de $r^2+2r+5=0$ são $-1\\pm 2i$, logo $y=e^{-x}\\left(A\\cos 2x+B\\operatorname{sen}2x\\right)$. De $y(0)=1$ vem $A=1$; derivando e avaliando em $0$: $-A+2B=-1$, o que dá $B=0$. Assim $y=e^{-x}\\cos 2x$ e $y\\!\\left(\\tfrac{\\pi}{2}\\right)=e^{-\\pi/2}\\cos\\pi=-e^{-\\pi/2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Coeficientes a determinar com termo polinomial",
+    "dificuldade": "medio",
+    "enunciado": "Determine uma solução particular de $y''+y=x^2$.",
+    "alternativas": {
+      "a": "$x^2$",
+      "b": "$x^2+2$",
+      "c": "$x^2-2$",
+      "d": "$\\dfrac{x^2}{2}-1$",
+      "e": "$x^2-2x$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como o termo forçante é polinomial de grau $2$ e $r=0$ não é raiz de $r^2+1=0$, tente $y_p=Ax^2+Bx+C$. Então $y_p''=2A$ e $y_p''+y_p=Ax^2+Bx+(2A+C)$. Igualando a $x^2$: $A=1$, $B=0$ e $2+C=0$, ou seja, $C=-2$. Logo $y_p=x^2-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Amortecimento crítico",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y$ a solução de $y''+4y'+4y=0$ com $y(0)=1$ e $y'(0)=0$. Calcule $y(1)$.",
+    "alternativas": {
+      "a": "$e^{-2}$",
+      "b": "$3e^{-2}$",
+      "c": "$2e^{-2}$",
+      "d": "$3e^{2}$",
+      "e": "$5e^{-2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A característica $r^2+4r+4=(r+2)^2$ tem raiz dupla $r=-2$ (amortecimento crítico), logo $y=(A+Bx)e^{-2x}$. De $y(0)=1$ vem $A=1$; de $y'(0)=B-2A=0$ vem $B=2$. Assim $y=(1+2x)e^{-2x}$ e $y(1)=3e^{-2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Comprimento de hélice circular",
+    "dificuldade": "facil",
+    "enunciado": "Calcule o comprimento da curva $\\mathbf{r}(t)=\\left(3\\cos t,\\ 3\\operatorname{sen}t,\\ 4t\\right)$ para $t$ de $0$ a $2\\pi$.",
+    "alternativas": {
+      "a": "$5\\pi$",
+      "b": "$8\\pi$",
+      "c": "$6\\pi$",
+      "d": "$10\\pi$",
+      "e": "$20\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Temos $\\mathbf{r}'(t)=\\left(-3\\operatorname{sen}t,\\ 3\\cos t,\\ 4\\right)$, de módulo $\\sqrt{9+16}=5$, constante. Logo $L=\\int_0^{2\\pi}5\\,dt=10\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Comprimento com integrando que vira quadrado perfeito",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento de $\\mathbf{r}(t)=\\left(e^{t},\\ e^{-t},\\ \\sqrt2\\,t\\right)$ para $t$ de $0$ a $1$.",
+    "alternativas": {
+      "a": "$e-e^{-1}$",
+      "b": "$e+e^{-1}$",
+      "c": "$\\sqrt2\\left(e-1\\right)$",
+      "d": "$e-1$",
+      "e": "$2\\left(e-1\\right)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $\\mathbf{r}'=\\left(e^{t},-e^{-t},\\sqrt2\\right)$, temos $\\left\\|\\mathbf{r}'\\right\\|^2=e^{2t}+e^{-2t}+2=\\left(e^{t}+e^{-t}\\right)^2$, logo $\\left\\|\\mathbf{r}'\\right\\|=e^{t}+e^{-t}$. Então $L=\\int_0^1\\left(e^{t}+e^{-t}\\right)dt=\\left[e^{t}-e^{-t}\\right]_0^1=e-e^{-1}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Vetor velocidade em curva paramétrica",
+    "dificuldade": "facil",
+    "enunciado": "Uma partícula percorre a elipse $\\mathbf{r}(t)=\\left(2\\cos t,\\ 3\\operatorname{sen}t\\right)$. Calcule sua rapidez em $t=\\dfrac{\\pi}{2}$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$\\sqrt{13}$",
+      "c": "$2$",
+      "d": "$\\sqrt5$",
+      "e": "$6$"
+    },
+    "gabarito": "c",
+    "resolucao": "Derivando, $\\mathbf{r}'(t)=\\left(-2\\operatorname{sen}t,\\ 3\\cos t\\right)$. Em $t=\\dfrac{\\pi}{2}$: $\\operatorname{sen}=1$ e $\\cos=0$, logo $\\mathbf{r}'=(-2,0)$ e a rapidez é $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Vetor tangente unitário",
+    "dificuldade": "medio",
+    "enunciado": "Seja $\\mathbf{r}(t)=\\left(t^2,\\ t^3\\right)$. Determine a primeira componente do vetor tangente unitário em $t=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{3\\sqrt{13}}{13}$",
+      "b": "$\\dfrac{2}{3}$",
+      "c": "$\\dfrac{\\sqrt{13}}{13}$",
+      "d": "$2$",
+      "e": "$\\dfrac{2\\sqrt{13}}{13}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Temos $\\mathbf{r}'(t)=\\left(2t,\\ 3t^2\\right)$, que em $t=1$ vale $(2,3)$, de módulo $\\sqrt{13}$. O tangente unitário é $\\mathbf{T}=\\dfrac{(2,3)}{\\sqrt{13}}$, cuja primeira componente é $\\dfrac{2}{\\sqrt{13}}=\\dfrac{2\\sqrt{13}}{13}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Reta interseção de dois planos",
+    "dificuldade": "medio",
+    "enunciado": "Determine um vetor diretor da reta obtida pela interseção dos planos $x+y+z=3$ e $x-y=1$.",
+    "alternativas": {
+      "a": "$(1,-1,2)$",
+      "b": "$(1,1,-2)$",
+      "c": "$(1,1,2)$",
+      "d": "$(2,1,-1)$",
+      "e": "$(1,-1,0)$"
+    },
+    "gabarito": "b",
+    "resolucao": "A reta é perpendicular a ambas as normais, então seu vetor diretor é $\\vec{n}_1\\times\\vec{n}_2$ com $\\vec{n}_1=(1,1,1)$ e $\\vec{n}_2=(1,-1,0)$. O produto vetorial é $\\left(1\\cdot 0-1\\cdot(-1),\\ 1\\cdot 1-1\\cdot 0,\\ 1\\cdot(-1)-1\\cdot 1\\right)=(1,1,-2)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Distância entre planos paralelos",
+    "dificuldade": "facil",
+    "enunciado": "Determine a distância entre os planos paralelos $2x-y+2z=6$ e $2x-y+2z=12$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$6$",
+      "c": "$3$",
+      "d": "$1$",
+      "e": "$18$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para planos $ax+by+cz=d_1$ e $ax+by+cz=d_2$, a distância é $\\dfrac{\\left|d_2-d_1\\right|}{\\sqrt{a^2+b^2+c^2}}$. Aqui $\\dfrac{\\left|12-6\\right|}{\\sqrt{4+1+4}}=\\dfrac{6}{3}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Seção plana de elipsoide",
+    "dificuldade": "medio",
+    "enunciado": "Determine a área da região limitada pela curva obtida ao seccionar o elipsoide $\\dfrac{x^2}{4}+\\dfrac{y^2}{9}+\\dfrac{z^2}{16}=1$ pelo plano $y=0$.",
+    "alternativas": {
+      "a": "$4\\pi$",
+      "b": "$6\\pi$",
+      "c": "$12\\pi$",
+      "d": "$8\\pi$",
+      "e": "$16\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Fazendo $y=0$, resta $\\dfrac{x^2}{4}+\\dfrac{z^2}{16}=1$, uma elipse de semieixos $a=2$ e $b=4$. Sua área é $\\pi ab=\\pi(2)(4)=8\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Superfície de revolução: cone",
+    "dificuldade": "medio",
+    "enunciado": "A reta $z=2x$, com $x\\ge 0$, contida no plano $xz$, gira em torno do eixo $z$. Determine a equação da superfície gerada.",
+    "alternativas": {
+      "a": "$z=4\\left(x^2+y^2\\right)$",
+      "b": "$z^2=x^2+y^2$",
+      "c": "$z^2=4\\left(x^2+y^2\\right)$",
+      "d": "$z^2=2\\left(x^2+y^2\\right)$",
+      "e": "$4z^2=x^2+y^2$"
+    },
+    "gabarito": "c",
+    "resolucao": "Na rotação em torno do eixo $z$, a abscissa $x$ da geratriz é substituída pela distância ao eixo, $r=\\sqrt{x^2+y^2}$. De $z=2x$ vem $z=2\\sqrt{x^2+y^2}$ e, elevando ao quadrado, $z^2=4\\left(x^2+y^2\\right)$ — um cone circular reto.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Derivada parcial mista",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x,y)=x^3y^2+e^{xy}$. Calcule $\\dfrac{\\partial^2 f}{\\partial y\\,\\partial x}(0,1)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$2$",
+      "d": "$6$",
+      "e": "$-1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Primeiro, $f_x=3x^2y^2+y\\,e^{xy}$. Derivando em relação a $y$: $f_{xy}=6x^2y+e^{xy}+xy\\,e^{xy}$. Em $(0,1)$, os termos com fator $x$ se anulam e resta $e^{0}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Gradiente e taxa máxima de variação",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x,y)=x^2y+y^3$. Determine a taxa máxima de variação de $f$ no ponto $(1,2)$.",
+    "alternativas": {
+      "a": "$13$",
+      "b": "$\\sqrt{17}$",
+      "c": "$\\sqrt{170}$",
+      "d": "$17$",
+      "e": "$\\sqrt{185}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A taxa máxima de variação é o módulo do gradiente. Como $\\nabla f=\\left(2xy,\\ x^2+3y^2\\right)$, em $(1,2)$ temos $\\nabla f=(4,13)$, de módulo $\\sqrt{16+169}=\\sqrt{185}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Regra da cadeia com duas variáveis independentes",
+    "dificuldade": "medio",
+    "enunciado": "Sejam $z=x^2+y^2$, $x=s+t$ e $y=s-t$. Calcule $\\dfrac{\\partial z}{\\partial s}$ em $s=1$ (para qualquer $t$).",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$4$",
+      "c": "$8$",
+      "d": "$0$",
+      "e": "$1$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela regra da cadeia, $\\dfrac{\\partial z}{\\partial s}=2x\\dfrac{\\partial x}{\\partial s}+2y\\dfrac{\\partial y}{\\partial s}=2x+2y=2(s+t)+2(s-t)=4s$. A dependência em $t$ se cancela, e em $s=1$ o valor é $4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Reta normal a uma superfície",
+    "dificuldade": "medio",
+    "enunciado": "Determine um vetor normal à superfície $z=xy$ no ponto $(1,1,1)$.",
+    "alternativas": {
+      "a": "$(1,1,1)$",
+      "b": "$(1,-1,-1)$",
+      "c": "$(-1,1,1)$",
+      "d": "$(1,1,-1)$",
+      "e": "$(0,0,1)$"
+    },
+    "gabarito": "d",
+    "resolucao": "Escreva a superfície como nível de $F(x,y,z)=xy-z$. O gradiente é $\\nabla F=(y,\\ x,\\ -1)$, sempre normal às superfícies de nível. Em $(1,1,1)$: $\\nabla F=(1,1,-1)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Mínimo por completamento de quadrados",
+    "dificuldade": "facil",
+    "enunciado": "Determine o valor mínimo de $f(x,y)=x^2+y^2-4x+6y+13$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$13$",
+      "c": "$-13$",
+      "d": "$1$",
+      "e": "$-1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Completando os quadrados, $f(x,y)=(x-2)^2+(y+3)^2+13-4-9=(x-2)^2+(y+3)^2$. Como soma de quadrados, o mínimo é $0$, atingido em $(2,-3)$ — o mesmo ponto crítico que $\\nabla f=0$ fornece.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Teste da segunda derivada em sistema não linear",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x,y)=x^3-3xy+y^3$. Determine o valor de $f$ em seu ponto de mínimo local.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$-1$",
+      "d": "$-3$",
+      "e": "$3$"
+    },
+    "gabarito": "c",
+    "resolucao": "De $f_x=3x^2-3y=0$ vem $y=x^2$; de $f_y=-3x+3y^2=0$ vem $x=y^2$. Substituindo, $x=x^4$, logo $x=0$ ou $x=1$, dando os pontos $(0,0)$ e $(1,1)$. O hessiano é $D=f_{xx}f_{yy}-f_{xy}^2=36xy-9$. Em $(0,0)$: $D=-9<0$, sela. Em $(1,1)$: $D=27>0$ com $f_{xx}=6>0$, mínimo local, e $f(1,1)=1-3+1=-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Multiplicadores de Lagrange com restrição linear",
+    "dificuldade": "medio",
+    "enunciado": "Determine o valor mínimo de $f(x,y)=x^2+y^2$ sujeito a $x+2y=10$.",
+    "alternativas": {
+      "a": "$10$",
+      "b": "$5$",
+      "c": "$25$",
+      "d": "$100$",
+      "e": "$20$"
+    },
+    "gabarito": "e",
+    "resolucao": "De $\\nabla f=\\lambda\\nabla g$ vem $(2x,2y)=\\lambda(1,2)$, ou seja, $y=2x$. Na restrição: $x+4x=10\\Rightarrow x=2$ e $y=4$. Então $f=4+16=20$. Geometricamente, é o quadrado da distância da origem à reta: $\\dfrac{10^2}{1^2+2^2}=20$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Extremo em região fechada circular",
+    "dificuldade": "medio",
+    "enunciado": "Determine o valor máximo de $f(x,y)=xy$ no disco $x^2+y^2\\le 1$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$2$",
+      "e": "$\\dfrac{\\sqrt2}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "No interior, $\\nabla f=(y,x)=0$ só em $(0,0)$, onde $f=0$. Na fronteira, com $x=\\cos\\theta$ e $y=\\operatorname{sen}\\theta$, temos $f=\\cos\\theta\\operatorname{sen}\\theta=\\dfrac{\\operatorname{sen}2\\theta}{2}$, cujo máximo é $\\dfrac12$. Como $\\dfrac12>0$, o máximo no disco é $\\dfrac12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

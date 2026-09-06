@@ -16,6 +16,7 @@ import {
   Dices,
   Dna,
   Dumbbell,
+  Flame,
   FlaskConical,
   Globe,
   Landmark,
@@ -32,7 +33,9 @@ import { MathText } from "@/components/questao/math-text";
 import { QuestaoAcoes } from "@/components/questao/questao-acoes";
 import { QuestaoComentarios } from "@/components/questao/questao-comentarios";
 import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
-import { QUESTLY_MAESTRIA_MULT_XP, questlyXpDaQuestao } from "@/lib/questly/shared";
+import { questlyDegrauCombo, questlyMultiplicadorCombo, questlyXpDaResposta } from "@/lib/questly/shared";
+import { questlyMarcoAtingido, type MarcoDiario } from "@/lib/questly/marcos";
+import { Insignia } from "@/components/insignias/insignia";
 import {
   aceitarDesafioAction,
   classificarMotivoErroAction,
@@ -51,6 +54,8 @@ type EstadoPergunta = {
   attemptId: string | null;
   motivoErro: string | null;
   xpConcedido: number;
+  /** acertos seguidos NO MOMENTO desta resposta (0 se errou) */
+  combo: number;
 };
 
 const MOTIVOS_ERRO = [
@@ -84,6 +89,7 @@ function estadoInicial(): EstadoPergunta {
     attemptId: null,
     motivoErro: null,
     xpConcedido: 0,
+    combo: 0,
   };
 }
 
@@ -91,6 +97,7 @@ export function QuestaoRunner({
   missao,
   perguntas,
   jaAcertadasAntesIds,
+  jaTentadasAntesIds,
   topicosMestreInicioIds,
   favoritosIniciaisIds,
   notasIniciais,
@@ -101,6 +108,7 @@ export function QuestaoRunner({
   missao: MissaoResumo;
   perguntas: Pergunta[];
   jaAcertadasAntesIds: string[];
+  jaTentadasAntesIds: string[];
   topicosMestreInicioIds: string[];
   favoritosIniciaisIds: string[];
   notasIniciais: Record<string, string>;
@@ -120,12 +128,19 @@ export function QuestaoRunner({
   const [resultadoExtra, setResultadoExtra] = useState<FinalizarMissaoResultado | null>(null);
   const [tempoGastoMinMissao, setTempoGastoMinMissao] = useState(0);
   const [flash, setFlash] = useState<{ tipo: "ok" | "bad"; key: number } | null>(null);
-  const [xpFloat, setXpFloat] = useState<{ xp: number; key: number } | null>(null);
+  const [xpFloat, setXpFloat] = useState<{ xp: number; key: number; tipo: "ok" | "bad" } | null>(null);
+  // Combo = acertos seguidos na sessão. Fica em state (e não só em ref)
+  // porque a barra do topo mostra ele ao vivo.
+  const [combo, setCombo] = useState(0);
+  const [melhorCombo, setMelhorCombo] = useState(0);
+  const [marco, setMarco] = useState<{ marco: MarcoDiario; key: number } | null>(null);
   const [desafioAceitando, setDesafioAceitando] = useState(false);
   const [favoritos, setFavoritos] = useState<Set<string>>(new Set(favoritosIniciaisIds));
   const [notas, setNotas] = useState<Record<string, string>>(notasIniciais);
 
   const jaAcertadasAntes = useRef(new Set(jaAcertadasAntesIds));
+  const jaTentadasAntes = useRef(new Set(jaTentadasAntesIds));
+  const comboRef = useRef(0);
   const topicosMestreInicio = useRef(new Set(topicosMestreInicioIds));
   const tempoInicioMissaoMs = useRef(0);
   const tempoInicioPergunta = useRef(new Map<number, number>());
@@ -168,26 +183,35 @@ export function QuestaoRunner({
     const inicio = tempoInicioPergunta.current.get(indiceAtual) ?? Date.now();
     const tempoSeg = Math.round((Date.now() - inicio) / 1000);
 
-    let xpPergunta = 0;
-    if (correta) {
-      xpPergunta = questlyXpDaQuestao(pergunta);
-      if (jaAcertadasAntes.current.has(pergunta.id)) xpPergunta = Math.max(1, Math.round(xpPergunta / 2));
-      if (pergunta.topic_id && topicosMestreInicio.current.has(pergunta.topic_id)) {
-        xpPergunta = Math.round(xpPergunta * QUESTLY_MAESTRIA_MULT_XP);
-      }
-      setAcertos((a) => a + 1);
-      setXpGanho((x) => x + xpPergunta);
-    } else {
-      setErros((e) => e + 1);
-    }
+    // Combo: acerto avança a sequência, erro zera na hora.
+    const acertosSeguidos = correta ? comboRef.current + 1 : 0;
+    comboRef.current = acertosSeguidos;
+    setCombo(acertosSeguidos);
+    setMelhorCombo((m) => Math.max(m, acertosSeguidos));
 
-    atualizarEstado(indiceAtual, { respondida: true, correta, xpConcedido: xpPergunta });
+    // Mesma função que o servidor usa pra recomputar o placar autoritativo
+    // (lib/questao/actions.ts) — o número que sobe na tela é o que entra no
+    // XP total. Errar também paga (consolação), desde que seja a primeira
+    // vez que o aluno encara essa questão.
+    const xpPergunta = questlyXpDaResposta({
+      dificuldade: pergunta.dificuldade,
+      correta,
+      jaAcertouAntes: jaAcertadasAntes.current.has(pergunta.id),
+      jaTentouAntes: jaTentadasAntes.current.has(pergunta.id),
+      topicoMestre: !!pergunta.topic_id && topicosMestreInicio.current.has(pergunta.topic_id),
+      acertosSeguidos,
+    });
 
-    if (correta) {
-      setFlash({ tipo: "ok", key: Date.now() });
-      setXpFloat({ xp: xpPergunta, key: Date.now() });
-    } else {
-      setFlash({ tipo: "bad", key: Date.now() });
+    if (correta) setAcertos((a) => a + 1);
+    else setErros((e) => e + 1);
+    setXpGanho((x) => x + xpPergunta);
+    jaTentadasAntes.current.add(pergunta.id);
+
+    atualizarEstado(indiceAtual, { respondida: true, correta, xpConcedido: xpPergunta, combo: acertosSeguidos });
+
+    setFlash({ tipo: correta ? "ok" : "bad", key: Date.now() });
+    if (xpPergunta > 0) {
+      setXpFloat({ xp: xpPergunta, key: Date.now(), tipo: correta ? "ok" : "bad" });
     }
 
     const resultado = await registrarRespostaAction({
@@ -201,6 +225,12 @@ export function QuestaoRunner({
     });
 
     atualizarEstado(indiceAtual, { attemptId: resultado.attemptId });
+
+    // Marco do dia (10/15/25/...): a contagem vem do servidor, então conta
+    // questão respondida em QUALQUER missão de hoje, não só nesta sessão.
+    const marcoAgora = questlyMarcoAtingido(resultado.questoesHoje ?? 0);
+    if (marcoAgora) setMarco({ marco: marcoAgora, key: Date.now() });
+
     if (resultado.novoTempoMedio != null) {
       setPerguntasState((prev) =>
         prev.map((p, i) => (i === indiceAtual ? { ...p, tempo_medio_seg: resultado.novoTempoMedio! } : p)),
@@ -299,6 +329,7 @@ export function QuestaoRunner({
         acertos={acertos}
         erros={erros}
         xpGanho={xpGanho}
+        melhorCombo={melhorCombo}
         tempoGastoMinMissao={tempoGastoMinMissao}
         tempoPrevistoMin={missao.tempo_previsto_min}
         resultadoExtra={resultadoExtra}
@@ -319,6 +350,7 @@ export function QuestaoRunner({
     <div className="relative mx-auto flex min-h-screen max-w-[980px] flex-col px-4 py-4 sm:px-6 sm:py-6">
       <FlashOverlay flash={flash} />
       <XpFloatOverlay xpFloat={xpFloat} anchorRef={correctBtnRef} />
+      <MarcoOverlay marco={marco} onFechar={() => setMarco(null)} />
 
       <div className="mb-6 flex items-center gap-3 sm:gap-4">
         <Link
@@ -336,9 +368,27 @@ export function QuestaoRunner({
             transition={{ duration: 0.35, ease: "easeOut" }}
           />
         </div>
-        <div className="tnum flex shrink-0 items-center gap-1 text-xs font-semibold text-questly-gold-dark sm:text-[13px]">
-          <Zap size={13} strokeWidth={2} />
-          +{xpGanho} XP
+        <div className="flex shrink-0 items-center gap-2">
+          <AnimatePresence>
+            {combo >= 3 && (
+              <motion.span
+                key={combo}
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.7 }}
+                transition={{ type: "spring", stiffness: 420, damping: 20 }}
+                title={`${combo} acertos seguidos — XP em ${questlyMultiplicadorCombo(combo).toFixed(2).replace(".", ",")}x`}
+                className="tnum inline-flex items-center gap-1 rounded-full bg-questly-orange-light px-2 py-0.5 text-[11px] font-bold text-questly-orange-dark sm:text-xs"
+              >
+                <Flame size={12} strokeWidth={2.4} />
+                {combo} seguidos · {questlyMultiplicadorCombo(combo).toString().replace(".", ",")}x
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <div className="tnum flex items-center gap-1 text-xs font-semibold text-questly-gold-dark sm:text-[13px]">
+            <Zap size={13} strokeWidth={2} />
+            +{xpGanho} XP
+          </div>
         </div>
       </div>
 
@@ -573,6 +623,7 @@ function FeedbackArea({
   ehAdmin: boolean;
 }) {
   const [mostrarResolucao, setMostrarResolucao] = useState(false);
+  const degrauAtingido = estado.correta ? questlyDegrauCombo(estado.combo) : null;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
@@ -588,12 +639,52 @@ function FeedbackArea({
         ) : (
           <XCircle size={20} strokeWidth={2} className="shrink-0" />
         )}
-        <span>
+        <span className="min-w-0 flex-1">
           {estado.correta
             ? "Isso aí! Resposta certa."
             : `Não foi dessa vez — a certa era a ${pergunta.gabarito.toUpperCase()}.`}
         </span>
+        {estado.xpConcedido > 0 && (
+          <span
+            className={`tnum inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[12.5px] font-bold ${
+              estado.correta
+                ? "bg-questly-gold-light text-questly-gold-dark"
+                : "bg-background/70 text-muted-foreground"
+            }`}
+          >
+            <Zap size={12} strokeWidth={2.4} />+{estado.xpConcedido} XP
+          </span>
+        )}
       </div>
+
+      {/* A linha abaixo do banner é o feedback do ESFORÇO: no acerto, o
+          estado do combo; no erro, o porquê de ainda ter vindo XP. */}
+      {estado.correta && estado.combo >= 2 && (
+        <p className="mb-4 -mt-1 flex items-center gap-1.5 px-1 text-[12.5px] text-muted-foreground">
+          <Flame size={13} strokeWidth={2.2} className="shrink-0 text-questly-orange" />
+          {degrauAtingido ? (
+            <span>
+              <b className="font-semibold text-foreground">{degrauAtingido.rotulo}</b> — {estado.combo} acertos
+              seguidos. XP em {questlyMultiplicadorCombo(estado.combo).toString().replace(".", ",")}x enquanto a
+              sequência durar.
+            </span>
+          ) : (
+            <span>
+              {estado.combo} acertos seguidos
+              {questlyMultiplicadorCombo(estado.combo) > 1
+                ? ` · XP em ${questlyMultiplicadorCombo(estado.combo).toString().replace(".", ",")}x`
+                : " — mais um e o combo começa a pagar."}
+            </span>
+          )}
+        </p>
+      )}
+
+      {!estado.correta && estado.xpConcedido > 0 && (
+        <p className="mb-4 -mt-1 px-1 text-[12.5px] text-muted-foreground">
+          Você levou <b className="font-semibold text-foreground">{estado.xpConcedido} XP</b> por ter encarado a
+          questão — errar tentando também constrói repertório. Acertar paga bem mais.
+        </p>
+      )}
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         {pergunta.resolucao && (
@@ -699,11 +790,70 @@ function FlashOverlay({ flash }: { flash: { tipo: "ok" | "bad"; key: number } | 
   );
 }
 
+// Marco do dia: cartão que desce do topo quando o aluno cruza 10/15/25...
+// questões respondidas HOJE. Some sozinho em 5s (ou no clique) e nunca
+// bloqueia a tela — a sessão continua rolando atrás dele.
+function MarcoOverlay({
+  marco,
+  onFechar,
+}: {
+  marco: { marco: MarcoDiario; key: number } | null;
+  onFechar: () => void;
+}) {
+  useEffect(() => {
+    if (!marco) return;
+    const t = setTimeout(onFechar, 5200);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marco?.key]);
+
+  return (
+    <AnimatePresence>
+      {marco && (
+        <motion.div
+          key={marco.key}
+          className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-4"
+          initial={{ opacity: 0, y: -28, scale: 0.94 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.96 }}
+          transition={{ type: "spring", stiffness: 300, damping: 24 }}
+        >
+          <button
+            type="button"
+            onClick={onFechar}
+            className="pointer-events-auto flex w-full max-w-[440px] cursor-pointer items-center gap-3.5 rounded-2xl border border-border bg-card/95 px-4 py-3.5 text-left shadow-2xl shadow-black/15 backdrop-blur-md"
+          >
+            <motion.span
+              className="shrink-0"
+              initial={{ rotate: -14, scale: 0.6 }}
+              animate={{ rotate: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 320, damping: 14, delay: 0.08 }}
+            >
+              <Insignia nome={marco.marco.insignia} tom={marco.marco.tom} size={44} />
+            </motion.span>
+            <span className="min-w-0">
+              <span className="block text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                Marco do dia
+              </span>
+              <span className="block font-heading text-[15.5px] font-semibold leading-tight tracking-tight">
+                {marco.marco.titulo}
+              </span>
+              <span className="mt-0.5 block text-[12.5px] leading-snug text-muted-foreground">
+                {marco.marco.mensagem}
+              </span>
+            </span>
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function XpFloatOverlay({
   xpFloat,
   anchorRef,
 }: {
-  xpFloat: { xp: number; key: number } | null;
+  xpFloat: { xp: number; key: number; tipo: "ok" | "bad" } | null;
   anchorRef: RefObject<HTMLDivElement | null>;
 }) {
   const [pos, setPos] = useState({ left: 0, top: 0 });
@@ -721,10 +871,16 @@ function XpFloatOverlay({
     <AnimatePresence>
       <motion.div
         key={xpFloat.key}
-        className="tnum pointer-events-none fixed z-50 font-heading text-lg font-semibold text-questly-gold"
-        style={{ left: pos.left, top: pos.top, textShadow: "0 2px 10px rgba(201,147,10,0.35)" }}
+        className={`tnum pointer-events-none fixed z-50 font-heading font-semibold ${
+          xpFloat.tipo === "ok" ? "text-lg text-questly-gold" : "text-[15px] text-muted-foreground"
+        }`}
+        style={{
+          left: pos.left,
+          top: pos.top,
+          textShadow: xpFloat.tipo === "ok" ? "0 2px 10px rgba(201,147,10,0.35)" : "none",
+        }}
         initial={{ opacity: 0, y: 0, scale: 0.6 }}
-        animate={{ opacity: [0, 1, 1, 0], y: -70, scale: 1 }}
+        animate={{ opacity: [0, 1, 1, 0], y: xpFloat.tipo === "ok" ? -70 : -46, scale: 1 }}
         transition={{ duration: 1.1, ease: "easeOut" }}
       >
         +{xpFloat.xp} XP
@@ -737,6 +893,7 @@ function ResultView({
   acertos,
   erros,
   xpGanho,
+  melhorCombo,
   tempoGastoMinMissao,
   tempoPrevistoMin,
   resultadoExtra,
@@ -746,6 +903,7 @@ function ResultView({
   acertos: number;
   erros: number;
   xpGanho: number;
+  melhorCombo: number;
   tempoGastoMinMissao: number;
   tempoPrevistoMin: number | null;
   resultadoExtra: FinalizarMissaoResultado | null;
@@ -805,8 +963,16 @@ function ResultView({
           <StatBox valor={`${tempoGastoMinMissao} min`} label="tempo gasto" cor="text-questly-blue-dark" />
         </div>
         {tempoPrevistoMin != null && (
-          <p className="tnum mb-5 mt-1 text-xs text-muted-foreground">previsto: ~{tempoPrevistoMin} min</p>
+          <p className="tnum mb-1 mt-1 text-xs text-muted-foreground">previsto: ~{tempoPrevistoMin} min</p>
         )}
+
+        {melhorCombo >= 3 && (
+          <p className="tnum mb-5 mt-2 inline-flex items-center gap-1.5 rounded-full bg-questly-orange-light px-3 py-1 text-[12.5px] font-semibold text-questly-orange-dark">
+            <Flame size={13} strokeWidth={2.4} />
+            Melhor sequência: {melhorCombo} acertos seguidos
+          </p>
+        )}
+        {melhorCombo < 3 && <div className="mb-5" />}
 
         {resultadoExtra && resultadoExtra.novosMestresNomes.length > 0 && (
           <div className="surface-gold mb-4 rounded-xl p-4 text-left">

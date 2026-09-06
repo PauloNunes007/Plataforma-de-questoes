@@ -1,0 +1,458 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Quantização da carga elétrica",
+    "dificuldade": "facil",
+    "enunciado": "Um corpo inicialmente neutro perde $5{,}0\\times 10^{12}$ elétrons por atrito. Sabendo que $e=1{,}6\\times 10^{-19}$ C, determine sua carga elétrica final.",
+    "alternativas": {
+      "a": "$-0{,}80\\ \\mu$C",
+      "b": "$+0{,}80\\ \\mu$C",
+      "c": "$+8{,}0\\ \\mu$C",
+      "d": "$+1{,}6\\ \\mu$C",
+      "e": "$+0{,}16\\ \\mu$C"
+    },
+    "gabarito": "b",
+    "resolucao": "Perder elétrons deixa o corpo positivo. Pela quantização, $Q=ne=\\left(5{,}0\\times 10^{12}\\right)\\left(1{,}6\\times 10^{-19}\\right)=8{,}0\\times 10^{-7}$ C $=+0{,}80\\ \\mu$C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Dependência da força com a distância",
+    "dificuldade": "facil",
+    "enunciado": "Duas cargas puntiformes separadas por $30$ cm se repelem com força de $8{,}0$ N. Determine a força de repulsão quando a separação passa a $60$ cm.",
+    "alternativas": {
+      "a": "$4{,}0$ N",
+      "b": "$16$ N",
+      "c": "$8{,}0$ N",
+      "d": "$2{,}0$ N",
+      "e": "$32$ N"
+    },
+    "gabarito": "d",
+    "resolucao": "A lei de Coulomb dá $F\\propto\\dfrac{1}{r^2}$. Dobrar a distância divide a força por $2^2=4$, logo $F'=\\dfrac{8{,}0}{4}=2{,}0$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Superposição em cargas colineares",
+    "dificuldade": "dificil",
+    "enunciado": "Três cargas estão sobre um eixo: $q_1=+1{,}0\\ \\mu$C em $x=0$, $q_2=-2{,}0\\ \\mu$C em $x=0{,}10$ m e $q_3=+3{,}0\\ \\mu$C em $x=0{,}20$ m. Determine o módulo da força resultante sobre $q_2$. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$3{,}6$ N",
+      "b": "$7{,}2$ N",
+      "c": "$1{,}8$ N",
+      "d": "$5{,}4$ N",
+      "e": "$0$"
+    },
+    "gabarito": "a",
+    "resolucao": "A força de $q_1$ sobre $q_2$ é atrativa e aponta para $-x$: $F_{12}=\\dfrac{9{,}0\\times 10^{9}\\left(1{,}0\\times 10^{-6}\\right)\\left(2{,}0\\times 10^{-6}\\right)}{(0{,}10)^2}=1{,}8$ N. A de $q_3$ sobre $q_2$ também é atrativa, mas aponta para $+x$: $F_{32}=\\dfrac{9{,}0\\times 10^{9}\\left(2{,}0\\times 10^{-6}\\right)\\left(3{,}0\\times 10^{-6}\\right)}{(0{,}10)^2}=5{,}4$ N. A resultante é $5{,}4-1{,}8=3{,}6$ N, no sentido $+x$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Campo de carga puntiforme",
+    "dificuldade": "facil",
+    "enunciado": "Determine o módulo do campo elétrico produzido por uma carga de $2{,}0\\ \\mu$C a $30$ cm de distância. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$6{,}0\\times 10^{4}$ N/C",
+      "b": "$1{,}8\\times 10^{5}$ N/C",
+      "c": "$2{,}0\\times 10^{4}$ N/C",
+      "d": "$6{,}7\\times 10^{4}$ N/C",
+      "e": "$2{,}0\\times 10^{5}$ N/C"
+    },
+    "gabarito": "e",
+    "resolucao": "Para uma carga puntiforme, $E=\\dfrac{kQ}{r^2}=\\dfrac{9{,}0\\times 10^{9}\\left(2{,}0\\times 10^{-6}\\right)}{(0{,}30)^2}=\\dfrac{1{,}8\\times 10^{4}}{0{,}090}=2{,}0\\times 10^{5}$ N/C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Força sobre carga negativa",
+    "dificuldade": "facil",
+    "enunciado": "Uma carga de $-3{,}0\\ \\mu$C é colocada em uma região de campo elétrico uniforme de módulo $4{,}0\\times 10^{4}$ N/C. Determine o módulo da força elétrica sobre ela.",
+    "alternativas": {
+      "a": "$1{,}2$ N",
+      "b": "$0{,}012$ N",
+      "c": "$0{,}12$ N",
+      "d": "$12$ N",
+      "e": "$1{,}3\\times 10^{10}$ N"
+    },
+    "gabarito": "c",
+    "resolucao": "O módulo é $F=\\left|q\\right|E=\\left(3{,}0\\times 10^{-6}\\right)\\left(4{,}0\\times 10^{4}\\right)=0{,}12$ N. Por a carga ser negativa, a força tem sentido oposto ao do campo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Experimento da gota de óleo",
+    "dificuldade": "dificil",
+    "enunciado": "Uma gotícula de óleo de massa $1{,}6\\times 10^{-15}$ kg fica em equilíbrio dentro de um campo elétrico vertical de $1{,}0\\times 10^{4}$ N/C. Adotando $g=10$ m/s² e $e=1{,}6\\times 10^{-19}$ C, determine o número de elétrons em excesso na gota.",
+    "alternativas": {
+      "a": "$10$",
+      "b": "$1$",
+      "c": "$100$",
+      "d": "$16$",
+      "e": "$1000$"
+    },
+    "gabarito": "a",
+    "resolucao": "O equilíbrio exige $qE=mg$, logo $q=\\dfrac{mg}{E}=\\dfrac{\\left(1{,}6\\times 10^{-15}\\right)(10)}{1{,}0\\times 10^{4}}=1{,}6\\times 10^{-18}$ C. Como a carga é quantizada, $n=\\dfrac{1{,}6\\times 10^{-18}}{1{,}6\\times 10^{-19}}=10$ elétrons. É a essência do experimento de Millikan.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Condutor em equilíbrio eletrostático",
+    "dificuldade": "dificil",
+    "enunciado": "Uma casca esférica condutora de raio $10$ cm possui carga $4{,}0\\ \\mu$C distribuída em sua superfície. Determine o potencial elétrico em um ponto a $5{,}0$ cm do centro. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$1{,}8\\times 10^{5}$ V",
+      "b": "$7{,}2\\times 10^{5}$ V",
+      "c": "$3{,}6\\times 10^{6}$ V",
+      "d": "$3{,}6\\times 10^{5}$ V",
+      "e": "$1{,}4\\times 10^{7}$ V"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela lei de Gauss, o campo é nulo dentro da casca: a superfície gaussiana de raio $5{,}0$ cm não envolve carga alguma. Campo nulo implica potencial constante em toda a região interna, e por continuidade esse valor é o da própria superfície: $V=\\dfrac{kQ}{R}=\\dfrac{9{,}0\\times 10^{9}\\left(4{,}0\\times 10^{-6}\\right)}{0{,}10}=3{,}6\\times 10^{5}$ V. Atenção: usa-se o raio da casca, $R=0{,}10$ m, e não a distância $0{,}050$ m ao centro.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Simetria planar",
+    "dificuldade": "medio",
+    "enunciado": "Um plano infinito não condutor tem densidade superficial de carga $\\sigma=8{,}85\\times 10^{-9}$ C/m². Adotando $\\varepsilon_0=8{,}85\\times 10^{-12}$ C²/(N·m²), determine o módulo do campo elétrico nas proximidades do plano.",
+    "alternativas": {
+      "a": "$1000$ N/C",
+      "b": "$500$ N/C",
+      "c": "$250$ N/C",
+      "d": "$2000$ N/C",
+      "e": "$125$ N/C"
+    },
+    "gabarito": "b",
+    "resolucao": "Aplicando a lei de Gauss a um cilindro que atravessa o plano, o fluxo sai pelas duas tampas, o que dá $E=\\dfrac{\\sigma}{2\\varepsilon_0}=\\dfrac{8{,}85\\times 10^{-9}}{2\\left(8{,}85\\times 10^{-12}\\right)}=500$ N/C. O campo é uniforme e não depende da distância ao plano.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Campo uniforme entre placas",
+    "dificuldade": "facil",
+    "enunciado": "As placas paralelas de um capacitor estão separadas por $2{,}0$ mm e submetidas a uma diferença de potencial de $100$ V. Determine o módulo do campo elétrico entre elas.",
+    "alternativas": {
+      "a": "$2{,}0\\times 10^{2}$ V/m",
+      "b": "$5{,}0\\times 10^{3}$ V/m",
+      "c": "$2{,}0\\times 10^{5}$ V/m",
+      "d": "$5{,}0\\times 10^{2}$ V/m",
+      "e": "$5{,}0\\times 10^{4}$ V/m"
+    },
+    "gabarito": "e",
+    "resolucao": "Para campo uniforme, $E=\\dfrac{U}{d}=\\dfrac{100}{2{,}0\\times 10^{-3}}=5{,}0\\times 10^{4}$ V/m. A relação vem de $U=\\int\\vec{E}\\cdot d\\vec{\\ell}$ com $\\vec{E}$ constante e paralelo ao deslocamento.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Aceleração de elétron por diferença de potencial",
+    "dificuldade": "dificil",
+    "enunciado": "Um elétron parte do repouso e é acelerado por uma diferença de potencial de $100$ V. Usando $e=1{,}6\\times 10^{-19}$ C e $m=9{,}11\\times 10^{-31}$ kg, determine sua velocidade final.",
+    "alternativas": {
+      "a": "$1{,}9\\times 10^{6}$ m/s",
+      "b": "$3{,}5\\times 10^{13}$ m/s",
+      "c": "$5{,}9\\times 10^{6}$ m/s",
+      "d": "$1{,}2\\times 10^{7}$ m/s",
+      "e": "$4{,}2\\times 10^{5}$ m/s"
+    },
+    "gabarito": "c",
+    "resolucao": "O trabalho do campo vira energia cinética: $eU=\\dfrac{mv^2}{2}$, logo $v=\\sqrt{\\dfrac{2eU}{m}}=\\sqrt{\\dfrac{2\\left(1{,}6\\times 10^{-19}\\right)(100)}{9{,}11\\times 10^{-31}}}=\\sqrt{3{,}5\\times 10^{13}}\\approx 5{,}9\\times 10^{6}$ m/s — cerca de $2\\%$ da velocidade da luz, o que ainda dispensa correção relativística.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Associação em paralelo",
+    "dificuldade": "facil",
+    "enunciado": "Três capacitores, de $2{,}0\\ \\mu$F, $3{,}0\\ \\mu$F e $5{,}0\\ \\mu$F, são ligados em paralelo a uma fonte de $20$ V. Determine a carga total armazenada.",
+    "alternativas": {
+      "a": "$200\\ \\mu$C",
+      "b": "$20\\ \\mu$C",
+      "c": "$100\\ \\mu$C",
+      "d": "$21{,}5\\ \\mu$C",
+      "e": "$600\\ \\mu$C"
+    },
+    "gabarito": "a",
+    "resolucao": "Em paralelo as capacitâncias se somam: $C_{eq}=2{,}0+3{,}0+5{,}0=10\\ \\mu$F. Todos ficam sob a mesma tensão, logo $Q=C_{eq}U=\\left(10\\times 10^{-6}\\right)(20)=2{,}0\\times 10^{-4}$ C $=200\\ \\mu$C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Capacitor de placas paralelas no vácuo",
+    "dificuldade": "medio",
+    "enunciado": "Um capacitor de placas paralelas no vácuo tem área de $100$ cm² e separação de $0{,}50$ mm. Adotando $\\varepsilon_0=8{,}85\\times 10^{-12}$ F/m, determine sua capacitância.",
+    "alternativas": {
+      "a": "$8{,}9\\times 10^{-11}$ F",
+      "b": "$1{,}8\\times 10^{-8}$ F",
+      "c": "$4{,}4\\times 10^{-10}$ F",
+      "d": "$1{,}8\\times 10^{-10}$ F",
+      "e": "$8{,}9\\times 10^{-13}$ F"
+    },
+    "gabarito": "d",
+    "resolucao": "Convertendo, $A=100$ cm² $=1{,}0\\times 10^{-2}$ m² e $d=5{,}0\\times 10^{-4}$ m. Então $C=\\dfrac{\\varepsilon_0A}{d}=\\dfrac{\\left(8{,}85\\times 10^{-12}\\right)\\left(1{,}0\\times 10^{-2}\\right)}{5{,}0\\times 10^{-4}}=1{,}77\\times 10^{-10}$ F, ou cerca de $177$ pF.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Carga transportada pela corrente",
+    "dificuldade": "facil",
+    "enunciado": "Uma corrente constante de $2{,}5$ A percorre um condutor durante $4{,}0$ minutos. Determine a carga total que atravessa uma seção reta do fio.",
+    "alternativas": {
+      "a": "$10$ C",
+      "b": "$600$ C",
+      "c": "$150$ C",
+      "d": "$60$ C",
+      "e": "$1{,}0$ C"
+    },
+    "gabarito": "b",
+    "resolucao": "Para corrente constante, $Q=I\\Delta t$. Convertendo o tempo, $4{,}0$ min $=240$ s, logo $Q=2{,}5(240)=600$ C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Variação da resistência com a temperatura",
+    "dificuldade": "medio",
+    "enunciado": "Um resistor de $100\\ \\Omega$ a $20\\,^{\\circ}$C tem coeficiente de temperatura $\\alpha=4{,}0\\times 10^{-3}\\ ^{\\circ}$C$^{-1}$. Determine sua resistência a $70\\,^{\\circ}$C.",
+    "alternativas": {
+      "a": "$104\\ \\Omega$",
+      "b": "$140\\ \\Omega$",
+      "c": "$100{,}2\\ \\Omega$",
+      "d": "$80\\ \\Omega$",
+      "e": "$120\\ \\Omega$"
+    },
+    "gabarito": "e",
+    "resolucao": "Usando $R=R_0\\left(1+\\alpha\\Delta T\\right)$ com $\\Delta T=70-20=50\\,^{\\circ}$C: $R=100\\left[1+\\left(4{,}0\\times 10^{-3}\\right)(50)\\right]=100(1+0{,}20)=120\\ \\Omega$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Condutividade e resistividade",
+    "dificuldade": "facil",
+    "enunciado": "Um material tem resistividade $\\rho=2{,}0\\times 10^{-8}\\ \\Omega\\cdot$m. Determine sua condutividade elétrica.",
+    "alternativas": {
+      "a": "$2{,}0\\times 10^{8}$ S/m",
+      "b": "$5{,}0\\times 10^{-8}$ S/m",
+      "c": "$5{,}0\\times 10^{7}$ S/m",
+      "d": "$2{,}0\\times 10^{-8}$ S/m",
+      "e": "$5{,}0\\times 10^{8}$ S/m"
+    },
+    "gabarito": "c",
+    "resolucao": "A condutividade é o inverso da resistividade: $\\sigma=\\dfrac{1}{\\rho}=\\dfrac{1}{2{,}0\\times 10^{-8}}=5{,}0\\times 10^{7}$ S/m — valor típico de um bom condutor metálico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Resistores iguais em paralelo",
+    "dificuldade": "facil",
+    "enunciado": "Três resistores de $6{,}0\\ \\Omega$ cada são ligados em paralelo. Determine a resistência equivalente.",
+    "alternativas": {
+      "a": "$2{,}0\\ \\Omega$",
+      "b": "$18\\ \\Omega$",
+      "c": "$3{,}0\\ \\Omega$",
+      "d": "$0{,}50\\ \\Omega$",
+      "e": "$6{,}0\\ \\Omega$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para $n$ resistores iguais em paralelo, $R_{eq}=\\dfrac{R}{n}=\\dfrac{6{,}0}{3}=2{,}0\\ \\Omega$. A equivalente em paralelo é sempre menor que a menor das resistências associadas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Energia dissipada por efeito Joule",
+    "dificuldade": "medio",
+    "enunciado": "Um resistor de $10\\ \\Omega$ é percorrido por corrente de $3{,}0$ A durante $2{,}0$ minutos. Determine a energia dissipada.",
+    "alternativas": {
+      "a": "$180$ J",
+      "b": "$90$ J",
+      "c": "$1{,}8\\times 10^{3}$ J",
+      "d": "$1{,}08\\times 10^{4}$ J",
+      "e": "$3{,}6\\times 10^{3}$ J"
+    },
+    "gabarito": "d",
+    "resolucao": "A potência dissipada é $P=Ri^2=10(3{,}0)^2=90$ W. Em $\\Delta t=120$ s, a energia é $E=P\\Delta t=90(120)=1{,}08\\times 10^{4}$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Divisor de tensão",
+    "dificuldade": "facil",
+    "enunciado": "Dois resistores, $R_1=3{,}0\\ \\Omega$ e $R_2=9{,}0\\ \\Omega$, são ligados em série a uma fonte ideal de $12$ V. Determine a diferença de potencial em $R_2$.",
+    "alternativas": {
+      "a": "$3{,}0$ V",
+      "b": "$9{,}0$ V",
+      "c": "$6{,}0$ V",
+      "d": "$12$ V",
+      "e": "$4{,}0$ V"
+    },
+    "gabarito": "b",
+    "resolucao": "A corrente é $i=\\dfrac{12}{3{,}0+9{,}0}=1{,}0$ A, logo $U_2=R_2i=9{,}0$ V. Equivalentemente, pelo divisor de tensão, $U_2=U\\dfrac{R_2}{R_1+R_2}=12\\cdot\\dfrac{9}{12}=9{,}0$ V.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Lei de Faraday com campo variável",
+    "dificuldade": "medio",
+    "enunciado": "Uma espira plana de área $0{,}020$ m² está imersa em um campo magnético perpendicular ao seu plano, que decresce uniformemente de $0{,}50$ T a zero em $0{,}10$ s. Determine o módulo da força eletromotriz induzida.",
+    "alternativas": {
+      "a": "$1{,}0$ V",
+      "b": "$0{,}010$ V",
+      "c": "$0{,}50$ V",
+      "d": "$0{,}0010$ V",
+      "e": "$0{,}10$ V"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela lei de Faraday, $\\left|\\varepsilon\\right|=\\left|\\dfrac{d\\Phi}{dt}\\right|=A\\left|\\dfrac{dB}{dt}\\right|=0{,}020\\cdot\\dfrac{0{,}50}{0{,}10}=0{,}020(5{,}0)=0{,}10$ V. Pela lei de Lenz, a corrente induzida circula de modo a se opor à diminuição do fluxo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Força eletromotriz de movimento",
+    "dificuldade": "facil",
+    "enunciado": "Uma barra condutora de $0{,}50$ m desliza perpendicularmente a um campo magnético uniforme de $0{,}20$ T, com velocidade de $4{,}0$ m/s perpendicular tanto à barra quanto ao campo. Determine a fem induzida.",
+    "alternativas": {
+      "a": "$0{,}10$ V",
+      "b": "$1{,}0$ V",
+      "c": "$0{,}40$ V",
+      "d": "$0{,}80$ V",
+      "e": "$4{,}0$ V"
+    },
+    "gabarito": "c",
+    "resolucao": "Para a barra deslizante, $\\varepsilon=B\\ell v=0{,}20(0{,}50)(4{,}0)=0{,}40$ V. Essa fem resulta da força magnética $q\\vec{v}\\times\\vec{B}$ que separa as cargas ao longo da barra.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Energia armazenada em indutor",
+    "dificuldade": "medio",
+    "enunciado": "Um indutor de $0{,}50$ H é percorrido por corrente de $3{,}0$ A. Determine a energia magnética armazenada.",
+    "alternativas": {
+      "a": "$2{,}25$ J",
+      "b": "$0{,}75$ J",
+      "c": "$4{,}5$ J",
+      "d": "$1{,}5$ J",
+      "e": "$9{,}0$ J"
+    },
+    "gabarito": "a",
+    "resolucao": "A energia armazenada no campo magnético do indutor é $U=\\dfrac12Li^2=\\dfrac12(0{,}50)(3{,}0)^2=\\dfrac12(0{,}50)(9{,}0)=2{,}25$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Frequência de oscilação do circuito LC",
+    "dificuldade": "medio",
+    "enunciado": "Um circuito LC ideal é formado por um indutor de $1{,}0$ H e um capacitor de $1{,}0\\ \\mu$F. Determine a frequência angular das oscilações.",
+    "alternativas": {
+      "a": "$10$ rad/s",
+      "b": "$1{,}0\\times 10^{6}$ rad/s",
+      "c": "$100$ rad/s",
+      "d": "$1{,}0\\times 10^{3}$ rad/s",
+      "e": "$1{,}0\\times 10^{-6}$ rad/s"
+    },
+    "gabarito": "d",
+    "resolucao": "No circuito LC ideal a carga oscila harmonicamente com $\\omega=\\dfrac{1}{\\sqrt{LC}}=\\dfrac{1}{\\sqrt{\\left(1{,}0\\right)\\left(1{,}0\\times 10^{-6}\\right)}}=\\dfrac{1}{1{,}0\\times 10^{-3}}=1{,}0\\times 10^{3}$ rad/s. A energia migra periodicamente do capacitor para o indutor e vice-versa.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Impedância de circuito RLC série",
+    "dificuldade": "medio",
+    "enunciado": "Em um circuito RLC série, $R=30\\ \\Omega$, a reatância indutiva vale $80\\ \\Omega$ e a capacitiva, $40\\ \\Omega$. Determine a impedância do circuito.",
+    "alternativas": {
+      "a": "$150\\ \\Omega$",
+      "b": "$50\\ \\Omega$",
+      "c": "$70\\ \\Omega$",
+      "d": "$110\\ \\Omega$",
+      "e": "$30\\ \\Omega$"
+    },
+    "gabarito": "b",
+    "resolucao": "A reatância líquida é $X=X_L-X_C=80-40=40\\ \\Omega$. No diagrama de fasores, $R$ e $X$ são catetos e a impedância é a hipotenusa: $Z=\\sqrt{R^2+X^2}=\\sqrt{900+1600}=\\sqrt{2500}=50\\ \\Omega$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Valor eficaz em corrente alternada",
+    "dificuldade": "facil",
+    "enunciado": "Uma tensão alternada senoidal tem valor de pico de $311$ V. Determine seu valor eficaz.",
+    "alternativas": {
+      "a": "$311$ V",
+      "b": "$440$ V",
+      "c": "$156$ V",
+      "d": "$127$ V",
+      "e": "$220$ V"
+    },
+    "gabarito": "e",
+    "resolucao": "Para uma onda senoidal, $V_{ef}=\\dfrac{V_{max}}{\\sqrt2}=\\dfrac{311}{1{,}414}\\approx 220$ V. O valor eficaz é aquele que produziria a mesma potência média de uma tensão contínua de igual valor — daí a rede de $220$ V ter picos de cerca de $311$ V.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

@@ -65,7 +65,7 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
                 {active && (
                   <motion.span
                     layoutId="topnav-active"
-                    className="absolute inset-0 rounded-full bg-gradient-to-br from-questly-green via-emerald-500 to-questly-blue shadow-[0_2px_12px_-2px_var(--questly-green)]"
+                    className="absolute inset-0 rounded-full bg-gradient-to-br from-questly-green to-questly-blue shadow-[0_2px_12px_-2px_var(--questly-green)]"
                     transition={{ type: "spring", stiffness: 400, damping: 32 }}
                   />
                 )}

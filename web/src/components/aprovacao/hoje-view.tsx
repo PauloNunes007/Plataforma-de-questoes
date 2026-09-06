@@ -366,7 +366,7 @@ function CardMetas({ hoje, metasIniciais }: { hoje: string; metasIniciais: MetaM
                 min={0}
                 value={campo.valor}
                 onChange={(e) => campo.set(e.target.value)}
-                className="h-9 w-full rounded-lg border border-border bg-background px-2.5 text-[13px] outline-none focus:border-questly-green/60"
+                className="h-9 w-full rounded-lg border border-input bg-background px-2.5 text-[13px] outline-none focus:border-questly-green/60"
               />
             </label>
           ))}

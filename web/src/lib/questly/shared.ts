@@ -49,6 +49,71 @@ export function questlyXpDaQuestao(q: { dificuldade?: string | null } | null | u
   return (q?.dificuldade && QUESTLY_XP_POR_DIFICULDADE[q.dificuldade]) || 5;
 }
 
+// XP de participação (errou, mas tentou). Zero XP por erro pune justamente
+// o comportamento que a gente quer: encarar questão difícil. Aqui o erro
+// paga uma fração pequena do acerto — o suficiente pra sessão nunca render
+// nada, mas longe de competir com acertar (um acerto vale ~5x um erro).
+//
+// Só vale na PRIMEIRA vez que o aluno encara aquela questão: repetir uma
+// questão já tentada errando de novo paga 0, senão vira farm de ranking.
+export const QUESTLY_XP_ERRO_FRACAO = 0.2;
+
+export function questlyXpDoErro(q: { dificuldade?: string | null } | null | undefined) {
+  return Math.max(1, Math.round(questlyXpDaQuestao(q) * QUESTLY_XP_ERRO_FRACAO));
+}
+
+// Combo: acertos SEGUIDOS dentro da mesma sessão valem progressivamente
+// mais. É reforço de razão variável em cima de um comportamento real
+// (manter precisão em sequência é mais difícil que acertar uma isolada),
+// não XP de graça — errar zera o combo na hora.
+export const QUESTLY_COMBO_DEGRAUS: { seguidos: number; mult: number; rotulo: string }[] = [
+  { seguidos: 3, mult: 1.15, rotulo: "Em ritmo" },
+  { seguidos: 5, mult: 1.3, rotulo: "Embalado" },
+  { seguidos: 8, mult: 1.5, rotulo: "Em chamas" },
+  { seguidos: 12, mult: 1.75, rotulo: "Imparável" },
+];
+
+/** Multiplicador do combo. `seguidos` JÁ inclui a resposta atual. */
+export function questlyMultiplicadorCombo(seguidos: number): number {
+  let mult = 1;
+  for (const d of QUESTLY_COMBO_DEGRAUS) {
+    if (seguidos >= d.seguidos) mult = d.mult;
+  }
+  return mult;
+}
+
+/** Degrau de combo atingido EXATAMENTE agora (pra celebrar uma vez só). */
+export function questlyDegrauCombo(seguidos: number) {
+  return QUESTLY_COMBO_DEGRAUS.find((d) => d.seguidos === seguidos) ?? null;
+}
+
+export type EntradaXpResposta = {
+  dificuldade?: string | null;
+  correta: boolean;
+  /** já acertou essa questão em OUTRA missão (anti-farming: paga metade) */
+  jaAcertouAntes: boolean;
+  /** já tentou essa questão antes (erro repetido não paga consolação) */
+  jaTentouAntes: boolean;
+  /** o tópico já era Mestre no início da missão (bônus 1.5x) */
+  topicoMestre: boolean;
+  /** acertos seguidos INCLUINDO esta resposta (0 quando errou) */
+  acertosSeguidos: number;
+};
+
+// FONTE ÚNICA da regra de XP por resposta. O cliente usa pra mostrar o
+// ganho na hora e o servidor usa pra recomputar o placar de forma
+// autoritativa (lib/questao/actions.ts) — as duas pontas TÊM que sair do
+// mesmo lugar, senão o número que anima na tela não é o que entra no
+// ranking.
+export function questlyXpDaResposta(e: EntradaXpResposta): number {
+  if (!e.correta) return e.jaTentouAntes ? 0 : questlyXpDoErro(e);
+
+  let xp = questlyXpDaQuestao(e);
+  if (e.jaAcertouAntes) xp = Math.max(1, Math.round(xp / 2));
+  if (e.topicoMestre) xp = Math.round(xp * QUESTLY_MAESTRIA_MULT_XP);
+  return Math.max(1, Math.round(xp * questlyMultiplicadorCombo(e.acertosSeguidos)));
+}
+
 // Mastery learning: "Mestre" num tópico com taxa_acerto >= 90% e volume
 // mínimo de 20 questões respondidas.
 export const QUESTLY_MAESTRIA_TAXA = 0.9;

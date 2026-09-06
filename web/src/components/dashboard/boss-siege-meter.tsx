@@ -214,7 +214,7 @@ export function BossSiegeMeter({
                   <span
                     className={`flex h-9 w-9 items-center justify-center rounded-xl border transition-colors ${
                       dia.estado === "feito"
-                        ? "border-transparent bg-questly-green-light text-questly-green"
+                        ? "border-transparent bg-questly-green-light text-questly-green-dark"
                         : dia.estado === "perdido"
                           ? "border-border bg-transparent text-muted-foreground/40"
                           : isHoje

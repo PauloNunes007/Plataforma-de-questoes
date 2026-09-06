@@ -16,7 +16,7 @@ import type { EscadaItem, Simulado } from "@/lib/aprovacao/tipos";
 // (uma linha por disciplina — sem dependência de chart lib).
 
 const CAMPO =
-  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-questly-green/60";
+  "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-questly-green/60";
 
 const CORES_DISCIPLINA: Record<string, string> = {
   Matemática: "#2fc44c",

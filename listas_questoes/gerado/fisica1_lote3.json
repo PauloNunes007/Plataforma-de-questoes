@@ -1,0 +1,458 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Soma de vetores no espaço",
+    "dificuldade": "facil",
+    "enunciado": "Sejam $\\vec{A}=(3,-4,12)$ e $\\vec{B}=(-3,4,1)$. Determine o módulo de $\\vec{A}+\\vec{B}$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$17$",
+      "c": "$13$",
+      "d": "$\\sqrt{26}$",
+      "e": "$1$"
+    },
+    "gabarito": "c",
+    "resolucao": "Somando componente a componente, $\\vec{A}+\\vec{B}=(0,0,13)$. Seu módulo é $\\sqrt{0^2+0^2+13^2}=13$. Note que as componentes $x$ e $y$ se cancelam exatamente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Direção de um vetor no plano",
+    "dificuldade": "facil",
+    "enunciado": "Determine o ângulo que o vetor $\\vec{v}=\\left(-1,\\ \\sqrt3\\right)$ forma com o semieixo $x$ positivo, medido no sentido anti-horário.",
+    "alternativas": {
+      "a": "$120^{\\circ}$",
+      "b": "$60^{\\circ}$",
+      "c": "$150^{\\circ}$",
+      "d": "$30^{\\circ}$",
+      "e": "$240^{\\circ}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O módulo é $\\left|\\vec{v}\\right|=\\sqrt{1+3}=2$, logo $\\cos\\theta=-\\dfrac12$ e $\\operatorname{sen}\\theta=\\dfrac{\\sqrt3}{2}$. Cosseno negativo e seno positivo colocam o vetor no segundo quadrante, o que dá $\\theta=120^{\\circ}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Componente de um vetor em uma direção",
+    "dificuldade": "medio",
+    "enunciado": "Determine a componente do vetor $\\vec{A}=(5,10)$ na direção do vetor $\\vec{B}=(3,4)$.",
+    "alternativas": {
+      "a": "$55$",
+      "b": "$\\dfrac{55}{13}$",
+      "c": "$5$",
+      "d": "$22$",
+      "e": "$11$"
+    },
+    "gabarito": "e",
+    "resolucao": "A componente escalar de $\\vec{A}$ na direção de $\\vec{B}$ é $\\dfrac{\\vec{A}\\cdot\\vec{B}}{\\left|\\vec{B}\\right|}$. Com $\\vec{A}\\cdot\\vec{B}=15+40=55$ e $\\left|\\vec{B}\\right|=\\sqrt{9+16}=5$, o valor é $\\dfrac{55}{5}=11$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Três blocos em contato",
+    "dificuldade": "medio",
+    "enunciado": "Três blocos, de $1{,}0$ kg, $2{,}0$ kg e $3{,}0$ kg, encostados nessa ordem sobre uma superfície horizontal sem atrito, são empurrados por uma força horizontal de $12$ N aplicada no primeiro. Determine o módulo da força que o segundo bloco exerce sobre o terceiro.",
+    "alternativas": {
+      "a": "$4{,}0$ N",
+      "b": "$6{,}0$ N",
+      "c": "$2{,}0$ N",
+      "d": "$12$ N",
+      "e": "$10$ N"
+    },
+    "gabarito": "b",
+    "resolucao": "Para o conjunto, $a=\\dfrac{12}{1{,}0+2{,}0+3{,}0}=2{,}0$ m/s². Isolando o terceiro bloco, a única força horizontal sobre ele é a de contato com o segundo: $F=m_3a=3{,}0\\cdot 2{,}0=6{,}0$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Corpos ligados com atrito na mesa",
+    "dificuldade": "dificil",
+    "enunciado": "Um bloco de $2{,}0$ kg está sobre uma mesa horizontal com coeficiente de atrito cinético $0{,}25$ e é ligado por um fio ideal, passando por uma polia na borda, a um bloco de $3{,}0$ kg pendurado. Adotando $g=10$ m/s², determine a tração no fio.",
+    "alternativas": {
+      "a": "$10$ N",
+      "b": "$30$ N",
+      "c": "$20$ N",
+      "d": "$15$ N",
+      "e": "$5{,}0$ N"
+    },
+    "gabarito": "d",
+    "resolucao": "A força de atrito sobre o bloco da mesa é $f=\\mu m_1g=0{,}25(2{,}0)(10)=5{,}0$ N. Para o sistema, $a=\\dfrac{m_2g-f}{m_1+m_2}=\\dfrac{30-5{,}0}{5{,}0}=5{,}0$ m/s². Isolando o bloco da mesa: $T-f=m_1a\\Rightarrow T=5{,}0+2{,}0(5{,}0)=15$ N. Conferindo pelo pendurado: $30-T=3{,}0(5{,}0)\\Rightarrow T=15$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Força normal em elevador acelerado",
+    "dificuldade": "facil",
+    "enunciado": "Uma pessoa de $60$ kg está sobre uma balança no piso de um elevador que sobe com aceleração de $2{,}0$ m/s². Adotando $g=10$ m/s², determine a força normal indicada pela balança.",
+    "alternativas": {
+      "a": "$720$ N",
+      "b": "$600$ N",
+      "c": "$480$ N",
+      "d": "$120$ N",
+      "e": "$660$ N"
+    },
+    "gabarito": "a",
+    "resolucao": "Com o eixo positivo para cima, a segunda lei dá $N-mg=ma$, logo $N=m(g+a)=60(10+2{,}0)=720$ N. Pela terceira lei, a pessoa comprime a balança com essa mesma intensidade — daí a sensação de \"peso maior\".",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Força média em uma colisão",
+    "dificuldade": "medio",
+    "enunciado": "Uma bola de $0{,}50$ kg tem sua velocidade alterada em $20$ m/s durante um choque que dura $0{,}010$ s. Determine o módulo da força média sobre a bola.",
+    "alternativas": {
+      "a": "$100$ N",
+      "b": "$250$ N",
+      "c": "$500$ N",
+      "d": "$2000$ N",
+      "e": "$1000$ N"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo teorema do impulso e do momento, $F_{m}\\Delta t=m\\Delta v$, logo $F_m=\\dfrac{m\\Delta v}{\\Delta t}=\\dfrac{0{,}50\\cdot 20}{0{,}010}=1000$ N. É por isso que aumentar o tempo de colisão (air bag, luva acolchoada) reduz tanto a força.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Centro de massa de duas partículas",
+    "dificuldade": "facil",
+    "enunciado": "Duas partículas, de $2{,}0$ kg e $3{,}0$ kg, ocupam as posições $x=0$ e $x=5{,}0$ m sobre um eixo. Determine a posição do centro de massa do sistema.",
+    "alternativas": {
+      "a": "$2{,}0$ m",
+      "b": "$2{,}5$ m",
+      "c": "$3{,}0$ m",
+      "d": "$3{,}5$ m",
+      "e": "$1{,}5$ m"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela definição, $x_{cm}=\\dfrac{m_1x_1+m_2x_2}{m_1+m_2}=\\dfrac{2{,}0(0)+3{,}0(5{,}0)}{5{,}0}=\\dfrac{15}{5{,}0}=3{,}0$ m. O centro de massa fica mais próximo da partícula mais pesada, como esperado.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Coeficiente de restituição",
+    "dificuldade": "medio",
+    "enunciado": "Uma bola é solta de uma altura de $1{,}25$ m e, após colidir com o solo, retorna a $0{,}45$ m. Determine o coeficiente de restituição da colisão.",
+    "alternativas": {
+      "a": "$0{,}36$",
+      "b": "$0{,}60$",
+      "c": "$0{,}80$",
+      "d": "$0{,}45$",
+      "e": "$0{,}75$"
+    },
+    "gabarito": "b",
+    "resolucao": "As velocidades imediatamente antes e depois do choque valem $v=\\sqrt{2gh}$ e $v'=\\sqrt{2gh'}$, logo $e=\\dfrac{v'}{v}=\\sqrt{\\dfrac{h'}{h}}=\\sqrt{\\dfrac{0{,}45}{1{,}25}}=\\sqrt{0{,}36}=0{,}60$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Pêndulo e conservação de energia",
+    "dificuldade": "medio",
+    "enunciado": "Um pêndulo de comprimento $1{,}6$ m é abandonado do repouso com o fio formando $60^{\\circ}$ com a vertical. Adotando $g=10$ m/s², determine a velocidade da massa ao passar pelo ponto mais baixo.",
+    "alternativas": {
+      "a": "$2{,}0$ m/s",
+      "b": "$5{,}7$ m/s",
+      "c": "$3{,}2$ m/s",
+      "d": "$4{,}0$ m/s",
+      "e": "$8{,}0$ m/s"
+    },
+    "gabarito": "d",
+    "resolucao": "A altura de queda é $h=L\\left(1-\\cos 60^{\\circ}\\right)=1{,}6(1-0{,}5)=0{,}80$ m. Pela conservação da energia, $\\dfrac{v^2}{2}=gh$, logo $v=\\sqrt{2(10)(0{,}80)}=\\sqrt{16}=4{,}0$ m/s. A massa não influi no resultado.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Lei de Hooke e energia potencial elástica",
+    "dificuldade": "facil",
+    "enunciado": "Uma força de $50$ N comprime certa mola em $0{,}20$ m. Determine a energia potencial elástica armazenada nessa compressão.",
+    "alternativas": {
+      "a": "$5{,}0$ J",
+      "b": "$10$ J",
+      "c": "$2{,}5$ J",
+      "d": "$250$ J",
+      "e": "$1{,}0$ J"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela lei de Hooke, $k=\\dfrac{F}{x}=\\dfrac{50}{0{,}20}=250$ N/m. A energia armazenada é $U=\\dfrac12kx^2=\\dfrac12(250)(0{,}20)^2=\\dfrac12(250)(0{,}040)=5{,}0$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Partição entre energia cinética e potencial",
+    "dificuldade": "medio",
+    "enunciado": "Um corpo é lançado verticalmente para cima a $20$ m/s. Adotando $g=10$ m/s² e desprezando a resistência do ar, determine a altura em que sua energia cinética iguala sua energia potencial gravitacional.",
+    "alternativas": {
+      "a": "$5{,}0$ m",
+      "b": "$20$ m",
+      "c": "$10$ m",
+      "d": "$15$ m",
+      "e": "$2{,}5$ m"
+    },
+    "gabarito": "c",
+    "resolucao": "A energia mecânica total por unidade de massa é $\\dfrac{v_0^2}{2}=\\dfrac{400}{2}=200$ J/kg, conservada. Quando $K=U$, cada uma vale metade do total, isto é, $U=100$ J/kg. De $U=gh$ vem $h=\\dfrac{100}{10}=10$ m — exatamente metade da altura máxima, que é $20$ m.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho para deformar uma mola",
+    "dificuldade": "medio",
+    "enunciado": "Determine o trabalho necessário para distender de $0$ a $0{,}30$ m uma mola de constante elástica $400$ N/m.",
+    "alternativas": {
+      "a": "$120$ J",
+      "b": "$36$ J",
+      "c": "$60$ J",
+      "d": "$12$ J",
+      "e": "$18$ J"
+    },
+    "gabarito": "e",
+    "resolucao": "Como a força elástica é variável, $W=\\displaystyle\\int_0^{0{,}30}kx\\,dx=\\dfrac{kx^2}{2}=\\dfrac{400(0{,}30)^2}{2}=\\dfrac{400(0{,}090)}{2}=18$ J. Usar $F_{max}\\cdot d=120\\cdot 0{,}30=36$ J seria o erro de tratar a força como constante.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho da força peso em plano inclinado",
+    "dificuldade": "facil",
+    "enunciado": "Um bloco de $5{,}0$ kg desliza $4{,}0$ m ao longo de um plano inclinado de $30^{\\circ}$ com a horizontal. Adotando $g=10$ m/s², determine o trabalho realizado pela força peso.",
+    "alternativas": {
+      "a": "$200$ J",
+      "b": "$100$ J",
+      "c": "$173$ J",
+      "d": "$50$ J",
+      "e": "$0$"
+    },
+    "gabarito": "b",
+    "resolucao": "O trabalho do peso depende apenas do desnível vertical: $h=d\\operatorname{sen}30^{\\circ}=4{,}0(0{,}50)=2{,}0$ m. Então $W=mgh=5{,}0(10)(2{,}0)=100$ J, positivo por o bloco descer. O peso é conservativo: o caminho não importa.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Potência média de um motor",
+    "dificuldade": "facil",
+    "enunciado": "Um motor eleva uma carga de $200$ kg a uma altura de $15$ m em $30$ s, com velocidade praticamente constante. Adotando $g=10$ m/s², determine a potência média desenvolvida.",
+    "alternativas": {
+      "a": "$1{,}0$ kW",
+      "b": "$2{,}0$ kW",
+      "c": "$100$ W",
+      "d": "$500$ W",
+      "e": "$30$ kW"
+    },
+    "gabarito": "a",
+    "resolucao": "O trabalho contra a gravidade é $W=mgh=200(10)(15)=3{,}0\\times 10^{4}$ J. A potência média é $P=\\dfrac{W}{\\Delta t}=\\dfrac{3{,}0\\times 10^{4}}{30}=1000$ W $=1{,}0$ kW.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Momento de inércia de sistema de partículas",
+    "dificuldade": "facil",
+    "enunciado": "Três partículas de $2{,}0$ kg cada estão fixas a $0{,}50$ m de um eixo de rotação, por hastes de massa desprezível. Determine o momento de inércia do sistema em relação a esse eixo.",
+    "alternativas": {
+      "a": "$0{,}50$ kg·m²",
+      "b": "$3{,}0$ kg·m²",
+      "c": "$1{,}0$ kg·m²",
+      "d": "$1{,}5$ kg·m²",
+      "e": "$6{,}0$ kg·m²"
+    },
+    "gabarito": "d",
+    "resolucao": "Para partículas, $I=\\sum m_ir_i^2$. Como todas têm a mesma massa e a mesma distância, $I=3\\left(2{,}0\\right)\\left(0{,}50\\right)^2=3(2{,}0)(0{,}25)=1{,}5$ kg·m².",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Energia cinética de rotação",
+    "dificuldade": "facil",
+    "enunciado": "Um volante de momento de inércia $0{,}50$ kg·m² gira a $20$ rad/s. Determine sua energia cinética de rotação.",
+    "alternativas": {
+      "a": "$10$ J",
+      "b": "$50$ J",
+      "c": "$100$ J",
+      "d": "$200$ J",
+      "e": "$5{,}0$ J"
+    },
+    "gabarito": "c",
+    "resolucao": "A energia cinética de rotação é $K=\\dfrac12I\\omega^2=\\dfrac12(0{,}50)(20)^2=\\dfrac12(0{,}50)(400)=100$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Momento angular de uma partícula",
+    "dificuldade": "medio",
+    "enunciado": "Uma partícula de $0{,}20$ kg move-se em linha reta a $10$ m/s, passando a uma distância perpendicular de $3{,}0$ m de um ponto $O$. Determine o módulo de seu momento angular em relação a $O$.",
+    "alternativas": {
+      "a": "$2{,}0$ kg·m²/s",
+      "b": "$6{,}0$ kg·m²/s",
+      "c": "$30$ kg·m²/s",
+      "d": "$0{,}60$ kg·m²/s",
+      "e": "$60$ kg·m²/s"
+    },
+    "gabarito": "b",
+    "resolucao": "O momento angular é $L=\\left|\\vec{r}\\times\\vec{p}\\right|=mvd$, em que $d$ é a distância perpendicular (o braço) entre a reta do movimento e o ponto. Assim $L=0{,}20(10)(3{,}0)=6{,}0$ kg·m²/s. Mesmo em movimento retilíneo o momento angular em relação a um ponto fora da reta é não nulo — e constante.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Lei da gravitação universal",
+    "dificuldade": "medio",
+    "enunciado": "Determine o módulo da força gravitacional entre duas esferas homogêneas de $100$ kg e $200$ kg, cujos centros distam $2{,}0$ m. Use $G=6{,}67\\times 10^{-11}$ N·m²/kg².",
+    "alternativas": {
+      "a": "$1{,}3\\times 10^{-6}$ N",
+      "b": "$6{,}7\\times 10^{-7}$ N",
+      "c": "$3{,}3\\times 10^{-6}$ N",
+      "d": "$1{,}7\\times 10^{-7}$ N",
+      "e": "$3{,}3\\times 10^{-7}$ N"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela lei da gravitação, $F=G\\dfrac{m_1m_2}{r^2}=6{,}67\\times 10^{-11}\\cdot\\dfrac{100\\cdot 200}{(2{,}0)^2}=6{,}67\\times 10^{-11}\\cdot 5000\\approx 3{,}3\\times 10^{-7}$ N. O valor minúsculo mostra por que a gravitação só é perceptível quando um dos corpos tem massa astronômica.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Período de órbita rasante",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o período de um satélite em órbita circular rasante à superfície terrestre, com $R_T=6{,}4\\times 10^{6}$ m e $g=10$ m/s².",
+    "alternativas": {
+      "a": "$84$ min",
+      "b": "$24$ h",
+      "c": "$42$ min",
+      "d": "$168$ min",
+      "e": "$12$ h"
+    },
+    "gabarito": "a",
+    "resolucao": "Na órbita rasante, a gravidade fornece a resultante centrípeta: $g=\\dfrac{4\\pi^2R_T}{T^2}$, de onde $T=2\\pi\\sqrt{\\dfrac{R_T}{g}}=2\\pi\\sqrt{\\dfrac{6{,}4\\times 10^{6}}{10}}=2\\pi\\sqrt{6{,}4\\times 10^{5}}=2\\pi(800)\\approx 5{,}0\\times 10^{3}$ s, isto é, cerca de $84$ minutos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Variação da energia potencial gravitacional",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o trabalho necessário para levar um corpo de $1000$ kg da superfície da Terra até uma altitude igual ao raio terrestre, desprezando a rotação e a resistência do ar. Use $R_T=6{,}4\\times 10^{6}$ m e $g=10$ m/s².",
+    "alternativas": {
+      "a": "$6{,}4\\times 10^{10}$ J",
+      "b": "$1{,}6\\times 10^{10}$ J",
+      "c": "$6{,}4\\times 10^{7}$ J",
+      "d": "$3{,}2\\times 10^{10}$ J",
+      "e": "$1{,}3\\times 10^{11}$ J"
+    },
+    "gabarito": "d",
+    "resolucao": "A energia potencial é $U=-\\dfrac{GMm}{r}$. Indo de $r=R_T$ a $r=2R_T$: $\\Delta U=GMm\\left(\\dfrac{1}{R_T}-\\dfrac{1}{2R_T}\\right)=\\dfrac{GMm}{2R_T}$. Usando $GM=gR_T^2$: $\\Delta U=\\dfrac{mgR_T}{2}=\\dfrac{1000(10)\\left(6{,}4\\times 10^{6}\\right)}{2}=3{,}2\\times 10^{10}$ J. Usar $mgh$ daria $6{,}4\\times 10^{10}$ J, errado porque $g$ não é constante nessa escala.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Frequência do oscilador massa-mola",
+    "dificuldade": "medio",
+    "enunciado": "Um bloco de $0{,}20$ kg preso a uma mola de constante $80$ N/m oscila em MHS. Determine a frequência do movimento.",
+    "alternativas": {
+      "a": "$20$ Hz",
+      "b": "$0{,}31$ Hz",
+      "c": "$3{,}2$ Hz",
+      "d": "$6{,}3$ Hz",
+      "e": "$400$ Hz"
+    },
+    "gabarito": "c",
+    "resolucao": "A frequência angular é $\\omega=\\sqrt{\\dfrac{k}{m}}=\\sqrt{\\dfrac{80}{0{,}20}}=\\sqrt{400}=20$ rad/s. A frequência é $f=\\dfrac{\\omega}{2\\pi}=\\dfrac{20}{6{,}28}\\approx 3{,}2$ Hz.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Aceleração máxima no MHS",
+    "dificuldade": "facil",
+    "enunciado": "Um oscilador harmônico simples tem frequência angular $20$ rad/s e amplitude $0{,}050$ m. Determine o módulo de sua aceleração máxima.",
+    "alternativas": {
+      "a": "$1{,}0$ m/s²",
+      "b": "$20$ m/s²",
+      "c": "$10$ m/s²",
+      "d": "$400$ m/s²",
+      "e": "$2{,}0$ m/s²"
+    },
+    "gabarito": "b",
+    "resolucao": "No MHS, $a=-\\omega^2x$, de modo que o módulo máximo ocorre nos extremos, onde $\\left|x\\right|=A$: $a_{max}=\\omega^2A=(20)^2(0{,}050)=400(0{,}050)=20$ m/s².",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Pêndulo simples em outro planeta",
+    "dificuldade": "medio",
+    "enunciado": "Um pêndulo simples tem período de $2{,}0$ s na Terra, onde $g=10$ m/s². Determine seu período em um planeta cuja gravidade é $2{,}5$ m/s².",
+    "alternativas": {
+      "a": "$1{,}0$ s",
+      "b": "$8{,}0$ s",
+      "c": "$2{,}0$ s",
+      "d": "$0{,}50$ s",
+      "e": "$4{,}0$ s"
+    },
+    "gabarito": "e",
+    "resolucao": "Como $T=2\\pi\\sqrt{\\dfrac{L}{g}}$ e o comprimento não muda, $T\\propto\\dfrac{1}{\\sqrt{g}}$. Reduzir $g$ por um fator $4$ multiplica o período por $\\sqrt4=2$, logo $T'=2\\left(2{,}0\\right)=4{,}0$ s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

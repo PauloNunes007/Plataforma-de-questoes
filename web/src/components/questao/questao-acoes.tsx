@@ -221,7 +221,7 @@ export function QuestaoAcoes({
                     onChange={(e) => setDetalhe(e.target.value)}
                     rows={2}
                     placeholder="Quer detalhar? (opcional)"
-                    className="mb-3 w-full resize-y rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-red/50 focus:ring-4 focus:ring-questly-red/10"
+                    className="mb-3 w-full resize-y rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-red/50 focus:ring-4 focus:ring-questly-red/10"
                   />
                   <div className="flex justify-end">
                     <button

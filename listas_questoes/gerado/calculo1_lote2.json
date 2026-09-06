@@ -1,0 +1,686 @@
+[
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Descontinuidade removível",
+    "dificuldade": "facil",
+    "enunciado": "Seja $f(x)=\\dfrac{\\sqrt{x+2}-2}{x-2}$ para $x\\neq 2$ e $f(2)=a$. Determine o valor de $a$ que torna $f$ contínua em $x=2$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$1$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$4$",
+      "e": "$0$"
+    },
+    "gabarito": "c",
+    "resolucao": "Para $x\\neq 2$, multiplique numerador e denominador pelo conjugado: $\\dfrac{\\sqrt{x+2}-2}{x-2}\\cdot\\dfrac{\\sqrt{x+2}+2}{\\sqrt{x+2}+2}=\\dfrac{(x+2)-4}{(x-2)\\left(\\sqrt{x+2}+2\\right)}=\\dfrac{x-2}{(x-2)\\left(\\sqrt{x+2}+2\\right)}=\\dfrac{1}{\\sqrt{x+2}+2}$. Logo $\\lim_{x\\to 2}f(x)=\\dfrac{1}{\\sqrt{4}+2}=\\dfrac{1}{4}$. A continuidade em $x=2$ exige $f(2)=\\lim_{x\\to 2}f(x)$, ou seja, $a=\\dfrac14$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Função definida por partes",
+    "dificuldade": "medio",
+    "enunciado": "Considere $f(x)=\\begin{cases}3x+a,& x<1\\\\ x^2-2,& 1\\le x<3\\\\ bx+5,& x\\ge 3\\end{cases}$. Sabendo que $f$ é contínua em $\\mathbb{R}$, calcule $a+b$.",
+    "alternativas": {
+      "a": "$-\\dfrac{2}{3}$",
+      "b": "$-\\dfrac{10}{3}$",
+      "c": "$\\dfrac{10}{3}$",
+      "d": "$-4$",
+      "e": "$\\dfrac{2}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Continuidade em $x=1$: $\\lim_{x\\to1^-}f(x)=3+a$ e $\\lim_{x\\to1^+}f(x)=1-2=-1$. Assim $3+a=-1\\Rightarrow a=-4$. Continuidade em $x=3$: $\\lim_{x\\to3^-}f(x)=9-2=7$ e $\\lim_{x\\to3^+}f(x)=3b+5$. Assim $3b+5=7\\Rightarrow b=\\dfrac{2}{3}$. Portanto $a+b=-4+\\dfrac{2}{3}=-\\dfrac{10}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Extensão contínua e limites trigonométricos",
+    "dificuldade": "medio",
+    "enunciado": "Sejam $f(x)=\\dfrac{\\operatorname{sen}(3x)}{x}$ com $f(0)=k$ e $g(x)=\\dfrac{1-\\cos(2x)}{x^2}$ com $g(0)=m$. Se ambas são contínuas em $x=0$, calcule $k+m$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$4$",
+      "d": "$6$",
+      "e": "$5$"
+    },
+    "gabarito": "e",
+    "resolucao": "Para $f$: $\\lim_{x\\to0}\\dfrac{\\operatorname{sen}(3x)}{x}=\\lim_{x\\to0}3\\cdot\\dfrac{\\operatorname{sen}(3x)}{3x}=3\\cdot 1=3$, logo $k=3$. Para $g$: use $1-\\cos(2x)=2\\operatorname{sen}^2(x)$, de onde $\\dfrac{1-\\cos(2x)}{x^2}=2\\left(\\dfrac{\\operatorname{sen}x}{x}\\right)^2\\to 2$, logo $m=2$. Portanto $k+m=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Teorema do Valor Intermediário",
+    "dificuldade": "facil",
+    "enunciado": "A função $f(x)=x^3+x-3$ é contínua em $\\mathbb{R}$. Em qual dos intervalos abaixo o Teorema do Valor Intermediário garante a existência de uma raiz de $f$?",
+    "alternativas": {
+      "a": "$(-1,0)$",
+      "b": "$(0,1)$",
+      "c": "$\\left(\\dfrac{3}{2},2\\right)$",
+      "d": "$\\left(1,\\dfrac{3}{2}\\right)$",
+      "e": "$\\left(2,\\dfrac{5}{2}\\right)$"
+    },
+    "gabarito": "d",
+    "resolucao": "Avalie $f$ nos extremos. $f(-1)=-5$, $f(0)=-3$, $f(1)=1+1-3=-1$, $f\\!\\left(\\tfrac32\\right)=\\tfrac{27}{8}+\\tfrac32-3=\\tfrac{15}{8}>0$, $f(2)=8+2-3=7$. A única troca de sinal entre os intervalos listados ocorre em $\\left(1,\\tfrac32\\right)$, onde $f(1)<0<f\\!\\left(\\tfrac32\\right)$. Pelo TVI, existe $c\\in\\left(1,\\tfrac32\\right)$ com $f(c)=0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição de derivada como limite",
+    "dificuldade": "medio",
+    "enunciado": "Usando exclusivamente a definição $f'(a)=\\lim_{h\\to 0}\\dfrac{f(a+h)-f(a)}{h}$, calcule $f'(1)$ para $f(x)=\\dfrac{1}{2x+1}$.",
+    "alternativas": {
+      "a": "$-\\dfrac{2}{9}$",
+      "b": "$-\\dfrac{1}{9}$",
+      "c": "$\\dfrac{2}{9}$",
+      "d": "$-\\dfrac{2}{3}$",
+      "e": "$-\\dfrac{1}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Temos $f(1)=\\dfrac13$ e $f(1+h)=\\dfrac{1}{2h+3}$. Então $\\dfrac{f(1+h)-f(1)}{h}=\\dfrac{1}{h}\\left(\\dfrac{1}{2h+3}-\\dfrac13\\right)=\\dfrac{1}{h}\\cdot\\dfrac{3-(2h+3)}{3(2h+3)}=\\dfrac{-2h}{3h(2h+3)}=\\dfrac{-2}{3(2h+3)}$. Fazendo $h\\to 0$: $f'(1)=\\dfrac{-2}{9}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Reta tangente ao gráfico",
+    "dificuldade": "medio",
+    "enunciado": "A reta tangente ao gráfico de $y=x^3-3x+1$ no ponto de abscissa positiva em que a tangente é paralela à reta $y=9x$ tem equação $y=9x+n$. Determine $n$.",
+    "alternativas": {
+      "a": "$-9$",
+      "b": "$-3$",
+      "c": "$-15$",
+      "d": "$3$",
+      "e": "$15$"
+    },
+    "gabarito": "c",
+    "resolucao": "Paralelismo exige $y'=9$. Como $y'=3x^2-3$, temos $3x^2-3=9\\Rightarrow x^2=4\\Rightarrow x=\\pm 2$. A abscissa positiva é $x=2$, onde $y=8-6+1=3$. A tangente é $y-3=9(x-2)$, isto é, $y=9x-15$. Logo $n=-15$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Diferenciabilidade e continuidade",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\begin{cases}x^2,& x\\le 1\\\\ ax+b,& x>1\\end{cases}$. Sabendo que $f$ é derivável em $x=1$, calcule o produto $ab$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$-2$",
+      "c": "$-1$",
+      "d": "$1$",
+      "e": "$3$"
+    },
+    "gabarito": "b",
+    "resolucao": "Derivabilidade implica continuidade, logo $1=a+b$. Igualando as derivadas laterais em $x=1$: pela esquerda $\\left.2x\\right|_{x=1}=2$, pela direita $a$. Assim $a=2$ e $b=1-2=-1$. Portanto $ab=-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Regra do produto com regra da cadeia",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^2\\operatorname{sen}(3x)$. Calcule $f'\\!\\left(\\dfrac{\\pi}{6}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{6}$",
+      "b": "$\\dfrac{\\pi}{2}$",
+      "c": "$\\dfrac{\\pi^2}{12}$",
+      "d": "$\\dfrac{\\pi}{3}$",
+      "e": "$0$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela regra do produto com a cadeia: $f'(x)=2x\\operatorname{sen}(3x)+3x^2\\cos(3x)$. Em $x=\\dfrac{\\pi}{6}$ temos $3x=\\dfrac{\\pi}{2}$, logo $\\operatorname{sen}\\!\\left(\\tfrac{\\pi}{2}\\right)=1$ e $\\cos\\!\\left(\\tfrac{\\pi}{2}\\right)=0$. Assim $f'\\!\\left(\\tfrac{\\pi}{6}\\right)=2\\cdot\\dfrac{\\pi}{6}\\cdot 1+0=\\dfrac{\\pi}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita",
+    "dificuldade": "medio",
+    "enunciado": "A curva $x^3+y^3=6xy$ (fólio de Descartes) passa pelo ponto $(3,3)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-1$",
+      "b": "$1$",
+      "c": "$-3$",
+      "d": "$0$",
+      "e": "$3$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando implicitamente: $3x^2+3y^2y'=6y+6xy'$. Isolando, $y'\\left(3y^2-6x\\right)=6y-3x^2$, ou seja, $y'=\\dfrac{2y-x^2}{y^2-2x}$. Em $(3,3)$: $y'=\\dfrac{6-9}{9-6}=-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivadas de ordem superior",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $y=\\dfrac{x}{x^2+1}$. Calcule $y''(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$-\\dfrac{1}{4}$",
+      "c": "$-1$",
+      "d": "$0$",
+      "e": "$-\\dfrac{1}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela regra do quociente, $y'=\\dfrac{\\left(x^2+1\\right)-x\\cdot 2x}{\\left(x^2+1\\right)^2}=\\dfrac{1-x^2}{\\left(x^2+1\\right)^2}$. Derivando de novo com $u=1-x^2$ e $v=\\left(x^2+1\\right)^2$, temos $u'=-2x$ e $v'=4x\\left(x^2+1\\right)$, de onde $y''=\\dfrac{-2x\\left(x^2+1\\right)-4x\\left(1-x^2\\right)}{\\left(x^2+1\\right)^3}=\\dfrac{2x^3-6x}{\\left(x^2+1\\right)^3}$. Em $x=1$: $y''(1)=\\dfrac{2-6}{8}=-\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Regra da cadeia com radical e tangente",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{1+\\operatorname{tg}(2x)}$. Calcule $f'(0)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$1$",
+      "c": "$2$",
+      "d": "$\\dfrac{1}{4}$",
+      "e": "$4$"
+    },
+    "gabarito": "b",
+    "resolucao": "Aplicando a regra da cadeia duas vezes: $f'(x)=\\dfrac{1}{2\\sqrt{1+\\operatorname{tg}(2x)}}\\cdot 2\\sec^2(2x)=\\dfrac{\\sec^2(2x)}{\\sqrt{1+\\operatorname{tg}(2x)}}$. Em $x=0$: $\\operatorname{tg}0=0$ e $\\sec^2 0=1$, logo $f'(0)=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Taxas relacionadas",
+    "dificuldade": "medio",
+    "enunciado": "Uma escada de $5{,}0$ m está apoiada em uma parede vertical. A base da escada é afastada da parede a $0{,}60$ m/s. Com que rapidez o topo da escada desce no instante em que a base está a $3{,}0$ m da parede?",
+    "alternativas": {
+      "a": "$0{,}30$ m/s",
+      "b": "$0{,}60$ m/s",
+      "c": "$0{,}45$ m/s",
+      "d": "$0{,}80$ m/s",
+      "e": "$1{,}25$ m/s"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $x$ a distância da base à parede e $y$ a altura do topo, vale $x^2+y^2=25$. Derivando em relação ao tempo: $2x\\dfrac{dx}{dt}+2y\\dfrac{dy}{dt}=0$. Quando $x=3$, $y=\\sqrt{25-9}=4$. Substituindo $\\dfrac{dx}{dt}=0{,}60$: $3(0{,}60)+4\\dfrac{dy}{dt}=0\\Rightarrow\\dfrac{dy}{dt}=-0{,}45$ m/s. O sinal negativo indica descida; a rapidez é $0{,}45$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Problemas de otimização",
+    "dificuldade": "medio",
+    "enunciado": "De uma folha quadrada de $12$ cm de lado recortam-se quadrados iguais nos quatro cantos, dobrando-se as abas para formar uma caixa sem tampa. Qual é o volume máximo, em cm³, dessa caixa?",
+    "alternativas": {
+      "a": "$128$",
+      "b": "$96$",
+      "c": "$108$",
+      "d": "$144$",
+      "e": "$160$"
+    },
+    "gabarito": "a",
+    "resolucao": "Sendo $x$ o lado do quadrado recortado, $V(x)=x(12-2x)^2$ com $0<x<6$. Derivando: $V'(x)=(12-2x)^2-4x(12-2x)=(12-2x)\\left[(12-2x)-4x\\right]=(12-2x)(12-6x)$. Os zeros são $x=6$ (descartado) e $x=2$. Como $V'>0$ em $(0,2)$ e $V'<0$ em $(2,6)$, $x=2$ é máximo. Logo $V(2)=2\\cdot 8^2=128$ cm³.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Regra de L'Hospital",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\lim_{x\\to 0}\\dfrac{e^{2x}-1-2x}{x^2}$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$1$",
+      "d": "$2$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "A forma é $\\tfrac00$. Primeira aplicação de L'Hospital: $\\lim_{x\\to0}\\dfrac{2e^{2x}-2}{2x}$, ainda $\\tfrac00$. Segunda aplicação: $\\lim_{x\\to0}\\dfrac{4e^{2x}}{2}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Máximos e mínimos absolutos em intervalo fechado",
+    "dificuldade": "medio",
+    "enunciado": "Determine o valor máximo absoluto de $f(x)=x^3-3x^2-9x+5$ no intervalo $[-2,4]$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$5$",
+      "c": "$-15$",
+      "d": "$27$",
+      "e": "$10$"
+    },
+    "gabarito": "e",
+    "resolucao": "$f'(x)=3x^2-6x-9=3(x-3)(x+1)$, com pontos críticos $x=-1$ e $x=3$, ambos em $[-2,4]$. Avaliando: $f(-2)=3$; $f(-1)=10$; $f(3)=-22$; $f(4)=-15$. O maior valor é $10$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Teorema do Valor Médio",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^3-x$ em $[0,2]$. Determine o valor de $c\\in(0,2)$ garantido pelo Teorema do Valor Médio.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt3}{3}$",
+      "b": "$\\dfrac{2\\sqrt3}{3}$",
+      "c": "$\\dfrac{4}{3}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$\\sqrt3$"
+    },
+    "gabarito": "b",
+    "resolucao": "A taxa média é $\\dfrac{f(2)-f(0)}{2-0}=\\dfrac{6-0}{2}=3$. O TVM exige $f'(c)=3$, isto é, $3c^2-1=3\\Rightarrow c^2=\\dfrac43\\Rightarrow c=\\dfrac{2}{\\sqrt3}=\\dfrac{2\\sqrt3}{3}\\approx 1{,}15$, que pertence a $(0,2)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Limite de somas de Riemann",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\lim_{n\\to\\infty}\\displaystyle\\sum_{i=1}^{n}\\dfrac{1}{n}\\sqrt{\\dfrac{i}{n}}$ reconhecendo a soma de Riemann correspondente.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{2}{3}$",
+      "d": "$1$",
+      "e": "$\\dfrac{3}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com a partição uniforme de $[0,1]$, $\\Delta x=\\dfrac1n$ e $x_i=\\dfrac{i}{n}$, a soma é exatamente $\\sum_{i=1}^{n}f(x_i)\\Delta x$ com $f(x)=\\sqrt{x}$. Logo o limite vale $\\displaystyle\\int_0^1\\sqrt{x}\\,dx=\\left[\\dfrac{2}{3}x^{3/2}\\right]_0^1=\\dfrac{2}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Simetria do integrando",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\displaystyle\\int_{-2}^{2}\\left(x^3+3x^2\\right)dx$.",
+    "alternativas": {
+      "a": "$16$",
+      "b": "$8$",
+      "c": "$0$",
+      "d": "$24$",
+      "e": "$32$"
+    },
+    "gabarito": "a",
+    "resolucao": "A função $x^3$ é ímpar e o intervalo é simétrico, logo $\\int_{-2}^{2}x^3dx=0$. Resta $\\int_{-2}^{2}3x^2dx=\\left[x^3\\right]_{-2}^{2}=8-(-8)=16$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Propriedades da integral definida",
+    "dificuldade": "medio",
+    "enunciado": "Sabendo que $\\displaystyle\\int_0^3 f(x)\\,dx=7$ e $\\displaystyle\\int_0^5 f(x)\\,dx=12$, calcule $\\displaystyle\\int_3^5\\left[2f(x)-3\\right]dx$.",
+    "alternativas": {
+      "a": "$-2$",
+      "b": "$6$",
+      "c": "$10$",
+      "d": "$4$",
+      "e": "$16$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela aditividade, $\\int_3^5 f=\\int_0^5 f-\\int_0^3 f=12-7=5$. Então $\\int_3^5\\left[2f(x)-3\\right]dx=2\\cdot 5-3(5-3)=10-6=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Integração por substituição",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_0^2 2x\\sqrt{x^2+1}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{3}\\left(5\\sqrt5+1\\right)$",
+      "b": "$\\dfrac{2}{3}\\left(5\\sqrt5-1\\right)$",
+      "c": "$\\dfrac{1}{3}\\left(5\\sqrt5-1\\right)$",
+      "d": "$\\dfrac{3}{2}\\left(5\\sqrt5-1\\right)$",
+      "e": "$5\\sqrt5-1$"
+    },
+    "gabarito": "b",
+    "resolucao": "Faça $u=x^2+1$, de modo que $du=2x\\,dx$. Os limites viram $u(0)=1$ e $u(2)=5$. Assim a integral é $\\int_1^5 \\sqrt{u}\\,du=\\left[\\dfrac{2}{3}u^{3/2}\\right]_1^5=\\dfrac{2}{3}\\left(5\\sqrt5-1\\right)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Teorema Fundamental do Cálculo com limite variável",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_1^{x^2}\\left(t^3+1\\right)dt$. Calcule $F'(2)$.",
+    "alternativas": {
+      "a": "$65$",
+      "b": "$68$",
+      "c": "$130$",
+      "d": "$520$",
+      "e": "$260$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela primeira parte do TFC combinada com a regra da cadeia, se $F(x)=\\int_1^{g(x)}h(t)\\,dt$ então $F'(x)=h\\!\\left(g(x)\\right)g'(x)$. Aqui $h(t)=t^3+1$ e $g(x)=x^2$, logo $F'(x)=\\left(x^6+1\\right)2x$. Em $x=2$: $F'(2)=65\\cdot 4=260$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Teorema do valor médio para integrais",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^2$ em $[0,3]$. Determine o valor $c\\in(0,3)$ dado pelo teorema do valor médio para integrais.",
+    "alternativas": {
+      "a": "$\\sqrt3$",
+      "b": "$\\sqrt2$",
+      "c": "$\\dfrac{3}{2}$",
+      "d": "$3$",
+      "e": "$\\dfrac{9}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O valor médio é $\\dfrac{1}{3-0}\\int_0^3 x^2dx=\\dfrac13\\left[\\dfrac{x^3}{3}\\right]_0^3=3$. O teorema garante $c$ com $f(c)=3$, ou seja, $c^2=3\\Rightarrow c=\\sqrt3\\approx 1{,}73\\in(0,3)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre duas curvas",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada pelas curvas $y=x^2$ e $y=2x-x^2$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{6}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{3}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$1$"
+    },
+    "gabarito": "c",
+    "resolucao": "As curvas se cruzam quando $x^2=2x-x^2\\Rightarrow 2x^2-2x=0\\Rightarrow x=0$ ou $x=1$. Em $(0,1)$ vale $2x-x^2\\ge x^2$. Logo a área é $\\int_0^1\\left(2x-2x^2\\right)dx=\\left[x^2-\\dfrac{2x^3}{3}\\right]_0^1=1-\\dfrac23=\\dfrac13$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume de sólido de revolução",
+    "dificuldade": "facil",
+    "enunciado": "A região limitada por $y=\\sqrt{x}$, $y=0$ e $x=4$ gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$4\\pi$",
+      "b": "$8\\pi$",
+      "c": "$16\\pi$",
+      "d": "$\\dfrac{32\\pi}{3}$",
+      "e": "$\\dfrac{64\\pi}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo método dos discos, $V=\\pi\\int_0^4\\left(\\sqrt{x}\\right)^2dx=\\pi\\int_0^4 x\\,dx=\\pi\\left[\\dfrac{x^2}{2}\\right]_0^4=8\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco",
+    "dificuldade": "medio",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\dfrac{2}{3}x^{3/2}$ de $x=0$ a $x=3$.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{3}$",
+      "b": "$\\dfrac{8}{3}$",
+      "c": "$\\dfrac{16}{3}$",
+      "d": "$\\dfrac{14}{3}$",
+      "e": "$\\dfrac{28}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Como $y'=x^{1/2}$, temos $\\sqrt{1+\\left(y'\\right)^2}=\\sqrt{1+x}$. Assim $L=\\int_0^3\\sqrt{1+x}\\,dx=\\left[\\dfrac{2}{3}(1+x)^{3/2}\\right]_0^3=\\dfrac{2}{3}\\left(8-1\\right)=\\dfrac{14}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^3+2x+1$, que é inversível em $\\mathbb{R}$, e seja $g=f^{-1}$. Calcule $g'(4)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{5}$",
+      "b": "$\\dfrac{1}{4}$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$4$",
+      "e": "$5$"
+    },
+    "gabarito": "a",
+    "resolucao": "Procure $a$ com $f(a)=4$: $a=1$, pois $1+2+1=4$. Como $f'(x)=3x^2+2$, temos $f'(1)=5$. Pelo teorema da função inversa, $g'(4)=\\dfrac{1}{f'\\!\\left(g(4)\\right)}=\\dfrac{1}{f'(1)}=\\dfrac{1}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada de trigonométrica inversa",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y=\\operatorname{arctg}\\left(\\sqrt{x}\\right)$, com $x>0$. Calcule $\\dfrac{dy}{dx}$ em $x=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{8}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$1$",
+      "e": "$2$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela regra da cadeia, $\\dfrac{dy}{dx}=\\dfrac{1}{1+\\left(\\sqrt{x}\\right)^2}\\cdot\\dfrac{1}{2\\sqrt{x}}=\\dfrac{1}{2\\sqrt{x}\\,(1+x)}$. Em $x=1$: $\\dfrac{1}{2\\cdot 1\\cdot 2}=\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivação logarítmica",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{\\ln x}$, com $x>0$. Calcule $f'(e)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$e$",
+      "c": "$\\dfrac{2}{e}$",
+      "d": "$2e$",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Tome logaritmos: $\\ln f(x)=\\left(\\ln x\\right)^2$. Derivando, $\\dfrac{f'(x)}{f(x)}=\\dfrac{2\\ln x}{x}$. Em $x=e$: $f(e)=e^{\\ln e}=e$ e $\\dfrac{2\\ln e}{e}=\\dfrac{2}{e}$. Portanto $f'(e)=e\\cdot\\dfrac{2}{e}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Integração por partes",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_0^1 x\\,e^{2x}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{e^2-1}{4}$",
+      "b": "$\\dfrac{e^2+1}{4}$",
+      "c": "$\\dfrac{e^2+1}{2}$",
+      "d": "$\\dfrac{e^2-1}{2}$",
+      "e": "$\\dfrac{e^2}{4}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Tome $u=x$ e $dv=e^{2x}dx$, logo $du=dx$ e $v=\\dfrac{e^{2x}}{2}$. Então $\\int_0^1 xe^{2x}dx=\\left[\\dfrac{xe^{2x}}{2}\\right]_0^1-\\dfrac12\\int_0^1 e^{2x}dx=\\dfrac{e^2}{2}-\\dfrac{e^2-1}{4}=\\dfrac{e^2+1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Substituição trigonométrica",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_0^2\\dfrac{dx}{\\left(x^2+4\\right)^{3/2}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{8}$",
+      "b": "$\\dfrac{1}{4}$",
+      "c": "$\\dfrac{\\sqrt2}{4}$",
+      "d": "$\\dfrac{\\sqrt2}{8}$",
+      "e": "$\\dfrac{\\sqrt2}{16}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Faça $x=2\\operatorname{tg}\\theta$, logo $dx=2\\sec^2\\theta\\,d\\theta$ e $\\left(x^2+4\\right)^{3/2}=8\\sec^3\\theta$. A integral vira $\\dfrac14\\int\\cos\\theta\\,d\\theta=\\dfrac{\\operatorname{sen}\\theta}{4}$. Como $\\operatorname{sen}\\theta=\\dfrac{x}{\\sqrt{x^2+4}}$, o resultado é $\\left[\\dfrac{x}{4\\sqrt{x^2+4}}\\right]_0^2=\\dfrac{2}{4\\sqrt8}=\\dfrac{\\sqrt2}{8}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Frações parciais",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_2^3\\dfrac{dx}{x^2-1}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}\\ln\\dfrac{3}{2}$",
+      "b": "$\\ln\\dfrac{3}{2}$",
+      "c": "$\\dfrac{1}{2}\\ln\\dfrac{2}{3}$",
+      "d": "$\\dfrac{1}{2}\\ln 6$",
+      "e": "$\\dfrac{1}{2}\\ln 3$"
+    },
+    "gabarito": "a",
+    "resolucao": "Decompondo, $\\dfrac{1}{x^2-1}=\\dfrac{1}{2}\\left(\\dfrac{1}{x-1}-\\dfrac{1}{x+1}\\right)$. Assim a integral é $\\dfrac12\\left[\\ln\\left|\\dfrac{x-1}{x+1}\\right|\\right]_2^3=\\dfrac12\\left(\\ln\\dfrac{2}{4}-\\ln\\dfrac{1}{3}\\right)=\\dfrac12\\left(\\ln\\dfrac12+\\ln 3\\right)=\\dfrac12\\ln\\dfrac{3}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Técnicas de Integração",
+    "subtopico": "Potências de seno e cosseno",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_0^{\\pi/2}\\operatorname{sen}^3x\\,\\cos^2x\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{15}$",
+      "b": "$\\dfrac{1}{5}$",
+      "c": "$\\dfrac{2}{15}$",
+      "d": "$\\dfrac{4}{15}$",
+      "e": "$\\dfrac{2}{5}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Escreva $\\operatorname{sen}^3x=\\left(1-\\cos^2x\\right)\\operatorname{sen}x$ e faça $u=\\cos x$, $du=-\\operatorname{sen}x\\,dx$. Os limites viram $u(0)=1$ e $u(\\pi/2)=0$, e a integral fica $\\int_0^1\\left(u^2-u^4\\right)du=\\dfrac13-\\dfrac15=\\dfrac{2}{15}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Integral em intervalo infinito",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\displaystyle\\int_1^{\\infty}\\dfrac{dx}{x^{3/2}}$, caso convirja.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$1$",
+      "c": "$\\dfrac{3}{2}$",
+      "d": "divergente",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Como $p=\\tfrac32>1$, a integral converge. De fato, $\\int_1^{b}x^{-3/2}dx=\\left[-2x^{-1/2}\\right]_1^{b}=2-\\dfrac{2}{\\sqrt{b}}$. Fazendo $b\\to\\infty$, o limite é $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Integrando ilimitado no extremo",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_0^{1}\\ln x\\,dx$, caso convirja.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$-1$",
+      "c": "$0$",
+      "d": "$-2$",
+      "e": "divergente"
+    },
+    "gabarito": "b",
+    "resolucao": "O integrando é ilimitado quando $x\\to 0^+$. Uma primitiva é $x\\ln x-x$, obtida por partes. Então $\\int_a^1\\ln x\\,dx=\\left[x\\ln x-x\\right]_a^1=-1-\\left(a\\ln a-a\\right)$. Como $\\lim_{a\\to0^+}a\\ln a=0$, o limite é $-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Integral imprópria com exponencial",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_0^{\\infty}x\\,e^{-2x}\\,dx$, caso convirja.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$1$",
+      "d": "$2$",
+      "e": "divergente"
+    },
+    "gabarito": "a",
+    "resolucao": "Por partes com $u=x$ e $dv=e^{-2x}dx$: $\\int x e^{-2x}dx=-\\dfrac{x e^{-2x}}{2}-\\dfrac{e^{-2x}}{4}$. Avaliando de $0$ a $b$ e fazendo $b\\to\\infty$ (ambos os termos tendem a zero, pois a exponencial domina), sobra $-\\left(0-\\dfrac14\\right)=\\dfrac14$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Imprópria",
+    "subtopico": "Integral imprópria com logaritmo",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_2^{\\infty}\\dfrac{dx}{x\\left(\\ln x\\right)^2}$, caso convirja.",
+    "alternativas": {
+      "a": "$\\ln 2$",
+      "b": "$\\dfrac{1}{2\\ln 2}$",
+      "c": "$\\dfrac{2}{\\ln 2}$",
+      "d": "$\\dfrac{1}{\\ln 2}$",
+      "e": "divergente"
+    },
+    "gabarito": "d",
+    "resolucao": "Substitua $u=\\ln x$, $du=\\dfrac{dx}{x}$. Os limites viram $u=\\ln 2$ e $u\\to\\infty$, e a integral fica $\\int_{\\ln 2}^{\\infty}\\dfrac{du}{u^2}=\\left[-\\dfrac{1}{u}\\right]_{\\ln 2}^{\\infty}=\\dfrac{1}{\\ln 2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

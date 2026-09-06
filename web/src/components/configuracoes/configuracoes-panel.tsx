@@ -83,7 +83,7 @@ const BTN_SECUNDARIO =
   "inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50";
 
 const INPUT_BASE =
-  "w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20";
+  "w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20";
 
 type ProfileMin = {
   nome: string | null;
@@ -979,13 +979,13 @@ function ProvasCard({
                     <input
                       defaultValue={b.nome}
                       onBlur={(e) => atualizarProva(b.id, { nome: e.target.value })}
-                      className="w-[70px] rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-medium outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
+                      className="w-[70px] rounded-lg border border-input bg-background px-2.5 py-2 text-xs font-medium outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
                     />
                     <input
                       type="date"
                       defaultValue={b.data_prova ? String(b.data_prova).slice(0, 10) : ""}
                       onBlur={(e) => atualizarProva(b.id, { data_prova: e.target.value })}
-                      className="tnum flex-1 rounded-lg border border-border bg-card px-2.5 py-2 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
+                      className="tnum flex-1 rounded-lg border border-input bg-background px-2.5 py-2 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
                     />
                     <button
                       type="button"

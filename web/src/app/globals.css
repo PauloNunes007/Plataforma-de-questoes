@@ -47,6 +47,16 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
+  /* Sobrescreve a escala de sombra do Tailwind pela do design system, pra que
+     `shadow-sm`/`shadow-md`/`shadow-lg`/`shadow-xl` já usados no app fiquem
+     suaves no claro e fundos no escuro, sem tocar em cada componente. */
+  --shadow-xs: var(--elev-xs);
+  --shadow-sm: var(--elev-sm);
+  --shadow-md: var(--elev-md);
+  --shadow-lg: var(--elev-lg);
+  --shadow-xl: var(--elev-xl);
+  --shadow-2xl: var(--elev-xl);
+
   /* Paleta de gamificação Questly — mesma SEMÂNTICA do app legado
      (verde = marca/sucesso, âmbar/laranja = boss/prova, ouro = maestria,
      violeta = liga/XP, vermelho = risco), mas retonalizada pra uma
@@ -74,23 +84,29 @@
 }
 
 :root {
-  --background: oklch(0.988 0.002 247);
-  --foreground: oklch(0.22 0.015 257);
+  /* Tema CLARO — repasse 2026-09 ("fintech premium, sem cansar a vista").
+     Regra central: a TELA nunca é branca, o CARTÃO é. Antes o fundo era
+     quase branco (0.988) e o card branco puro, então nada se separava e a
+     luminância média da tela ficava altíssima (fadiga visual). Agora o
+     canvas é um cinza-azulado suave e o branco vira a superfície elevada,
+     que "pula" do fundo com o hairline + a escala de sombra abaixo. */
+  --background: oklch(0.967 0.005 250);
+  --foreground: oklch(0.235 0.022 259);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.015 257);
+  --card-foreground: oklch(0.235 0.022 259);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.015 257);
+  --popover-foreground: oklch(0.235 0.022 259);
   --primary: var(--questly-green);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.955 0.004 247);
-  --secondary-foreground: oklch(0.32 0.015 257);
-  --muted: oklch(0.962 0.004 247);
-  --muted-foreground: oklch(0.5 0.014 257);
-  --accent: oklch(0.955 0.004 247);
-  --accent-foreground: oklch(0.28 0.015 257);
+  --secondary: oklch(0.948 0.005 250);
+  --secondary-foreground: oklch(0.33 0.019 259);
+  --muted: oklch(0.952 0.005 250);
+  --muted-foreground: oklch(0.505 0.016 258);
+  --accent: oklch(0.945 0.006 250);
+  --accent-foreground: oklch(0.29 0.02 259);
   --destructive: var(--questly-red);
-  --border: oklch(0.915 0.005 247);
-  --input: oklch(0.905 0.005 247);
+  --border: oklch(0.912 0.006 250);
+  --input: oklch(0.893 0.007 250);
   --ring: var(--questly-green);
   --chart-1: var(--questly-green);
   --chart-2: var(--questly-purple);
@@ -98,35 +114,53 @@
   --chart-4: var(--questly-blue);
   --chart-5: var(--questly-gold);
   --radius: 0.75rem;
-  --sidebar: oklch(0.975 0.003 247);
-  --sidebar-foreground: oklch(0.28 0.015 257);
+  --sidebar: oklch(0.963 0.005 250);
+  --sidebar-foreground: oklch(0.29 0.02 259);
   --sidebar-primary: var(--questly-green);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.94 0.005 247);
-  --sidebar-accent-foreground: oklch(0.22 0.015 257);
-  --sidebar-border: oklch(0.915 0.005 247);
+  --sidebar-accent: oklch(0.935 0.006 250);
+  --sidebar-accent-foreground: oklch(0.235 0.022 259);
+  --sidebar-border: oklch(0.912 0.006 250);
   --sidebar-ring: var(--questly-green);
 
-  --questly-green: #0e9f6e;
-  --questly-green-dark: #0b7a56;
-  --questly-green-deep: #085e43;
-  --questly-green-light: #e3f5ee;
+  /* Escala de elevação — sombra TINGIDA de azul-ardósia (rgb 16 24 40), não
+     preta: preto puro sobre fundo frio acinzenta e "suja" o cartão. Camadas
+     duplas (contato curto + difusão larga) são o que dá o ar caro; opacidade
+     baixa é o que evita o peso. Ficam expostas como --shadow-* no @theme,
+     então TODO `shadow-sm/md/lg/xl` do app já usa esta escala e responde ao
+     tema. */
+  --elev-xs: 0 1px 2px 0 rgb(16 24 40 / 0.05);
+  --elev-sm: 0 1px 3px 0 rgb(16 24 40 / 0.06), 0 1px 2px -1px rgb(16 24 40 / 0.05);
+  --elev-md: 0 4px 8px -2px rgb(16 24 40 / 0.07), 0 2px 4px -2px rgb(16 24 40 / 0.04);
+  --elev-lg: 0 12px 20px -6px rgb(16 24 40 / 0.09), 0 4px 8px -4px rgb(16 24 40 / 0.04);
+  --elev-xl: 0 24px 40px -12px rgb(16 24 40 / 0.14), 0 8px 16px -8px rgb(16 24 40 / 0.05);
+
+  /* Marca no CLARO — aprofundada até passar no WCAG AA sobre branco. O verde
+     antigo (#0e9f6e) dava só 3.39:1 com texto branco, ou seja: os ~70 CTAs
+     `bg-questly-green text-white` reprovavam em texto normal e, sobre cartão
+     branco, o tom lia como "menta doce" em vez de sério. Os pares aferidos
+     (sobre --card branco): verde 4.64, verde-dark 6.37, azul 5.37, roxo 4.64,
+     laranja-dark 5.02, vermelho-dark 5.70, ouro-dark 5.06. */
+  --questly-green: #0a855c;
+  --questly-green-dark: #076d4b;
+  --questly-green-deep: #05543a;
+  --questly-green-light: #e4f5ed;
   --questly-blue: #5b5bd6;
   --questly-blue-dark: #4747b3;
-  --questly-blue-light: #e9e9fb;
+  --questly-blue-light: #ececfb;
   --questly-orange: #d97706;
   --questly-orange-dark: #b45309;
-  --questly-orange-light: #fbf0dc;
-  --questly-red: #dc4747;
+  --questly-orange-light: #fdf2e0;
+  --questly-red: #d94848;
   --questly-red-dark: #b93838;
-  --questly-red-light: #fbe7e7;
-  --questly-gold: #c9930a;
-  --questly-gold-dark: #a37708;
-  --questly-gold-light: #faf1d6;
-  --questly-purple: #8b5cf6;
-  --questly-locked: #e4e7ec;
-  --questly-locked-dark: #cdd2da;
-  --questly-locked-ic: #98a1b0;
+  --questly-red-light: #fde9e9;
+  --questly-gold: #c08b08;
+  --questly-gold-dark: #8f6806;
+  --questly-gold-light: #fbf4dd;
+  --questly-purple: #7c5ce6;
+  --questly-locked: #dfe3ea;
+  --questly-locked-dark: #c8cdd6;
+  --questly-locked-ic: #929bab;
 }
 
 .dark {
@@ -164,6 +198,14 @@
   --sidebar-accent-foreground: oklch(0.93 0.004 257);
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: var(--questly-green);
+
+  /* Escala de elevação (escuro) — sombra preta e mais funda; no escuro a
+     separação vem principalmente do contraste card/fundo, a sombra só ancora. */
+  --elev-xs: 0 1px 2px 0 rgb(0 0 0 / 0.18);
+  --elev-sm: 0 1px 3px 0 rgb(0 0 0 / 0.22), 0 1px 2px -1px rgb(0 0 0 / 0.18);
+  --elev-md: 0 4px 10px -2px rgb(0 0 0 / 0.34), 0 2px 4px -2px rgb(0 0 0 / 0.24);
+  --elev-lg: 0 14px 24px -8px rgb(0 0 0 / 0.5), 0 4px 8px -4px rgb(0 0 0 / 0.3);
+  --elev-xl: 0 28px 48px -14px rgb(0 0 0 / 0.6), 0 8px 16px -8px rgb(0 0 0 / 0.35);
 
   --questly-green: #2dd4a0;
   --questly-green-dark: #4be0b3;
@@ -206,7 +248,13 @@
     @apply font-heading tracking-tight;
   }
   ::selection {
-    background: color-mix(in oklab, var(--questly-green) 25%, transparent);
+    background: color-mix(in oklab, var(--questly-green) 22%, transparent);
+  }
+  /* Foco visível e consistente nos dois temas (WCAG 2.4.7) sem o halo duro
+     do outline padrão do browser. */
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--ring) 70%, transparent);
+    outline-offset: 2px;
   }
   /* Scrollbar discreta, coerente com o tema */
   * {
@@ -224,13 +272,26 @@
   .kicker {
     @apply text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground;
   }
-  /* Superfície padrão de card do redesign: hairline + elevação mínima */
+  /* Superfície padrão de card do redesign: hairline + elevação da escala.
+     No claro ela é o que separa o branco do card do canvas cinza; no escuro
+     o contraste já separa e a sombra só ancora. */
   .surface {
     @apply rounded-2xl border border-border bg-card;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+    box-shadow: var(--elev-sm);
   }
-  .dark .surface {
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  /* Card que o usuário clica: sobe um degrau na escala, sem mexer no layout. */
+  .surface-interativa {
+    @apply rounded-2xl border border-border bg-card transition-[box-shadow,border-color] duration-200;
+    box-shadow: var(--elev-sm);
+  }
+  .surface-interativa:hover {
+    box-shadow: var(--elev-md);
+    border-color: color-mix(in oklab, var(--foreground) 14%, var(--border));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .surface-interativa {
+      transition: none;
+    }
   }
   /* Realce de borda com gradiente sutil (pontos-chave apenas) */
   .surface-brand {

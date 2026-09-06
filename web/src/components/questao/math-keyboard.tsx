@@ -179,7 +179,7 @@ export function MathKeyboard({
         onChange={(e) => onChange(e.target.value)}
         rows={minRows}
         placeholder={placeholder}
-        className="w-full resize-y rounded-xl border border-border bg-background px-3.5 py-3 text-sm leading-relaxed outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-green focus:ring-4 focus:ring-questly-green/10"
+        className="w-full resize-y rounded-xl border border-input bg-background px-3.5 py-3 text-sm leading-relaxed outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-green focus:ring-4 focus:ring-questly-green/10"
       />
 
       {temConteudo && (

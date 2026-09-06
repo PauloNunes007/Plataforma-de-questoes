@@ -52,7 +52,7 @@ function PainelSetup() {
           onChange={(e) => foco.setObjetivo(e.target.value)}
           placeholder="No que você vai focar? (ex.: Cálculo — derivadas)"
           aria-label="Objetivo do foco"
-          className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-blue focus:ring-2 focus:ring-questly-blue/20"
+          className="min-w-0 flex-1 rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-blue focus:ring-2 focus:ring-questly-blue/20"
         />
 
         {/* Seletor de cor da sessão */}
@@ -122,7 +122,7 @@ function PainelSetup() {
                 value={foco.alvoMin}
                 onChange={(e) => foco.setAlvoMin(Number(e.target.value) || 1)}
                 aria-label="Minutos do timer"
-                className="tnum w-14 rounded-lg border border-border bg-background px-2 py-1.5 text-center text-[13px] outline-none"
+                className="tnum w-14 rounded-lg border border-input bg-background px-2 py-1.5 text-center text-[13px] outline-none"
               />
               <span className="text-[12px] text-muted-foreground">min</span>
             </div>
@@ -295,7 +295,7 @@ function CelebracaoOverlay() {
             onClick={foco.limparCelebracao}
             className="relative block w-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-popover p-4 text-left shadow-2xl"
           >
-            <span className="pointer-events-none absolute -right-6 -top-8 h-28 w-28 rounded-full opacity-30 blur-2xl" style={{ background: cel.cor }} />
+            <span className="pointer-events-none absolute -right-6 -top-8 h-28 w-28 rounded-full opacity-[0.13] blur-2xl dark:opacity-30" style={{ background: cel.cor }} />
             <div className="relative flex items-center gap-3">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-inner" style={{ backgroundColor: `${cel.cor}22` }}>
                 <Insignia nome={cel.insignia} tom="rubi" size={26} nua />

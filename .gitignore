@@ -14,3 +14,6 @@ Thumbs.db
 
 # Claude Code local config/tooling (not app code)
 .claude/
+
+# Snapshot regeneravel do banco usado pela validacao das questoes geradas
+listas_questoes/gerado/_snapshot_*.json

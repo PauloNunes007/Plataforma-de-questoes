@@ -45,13 +45,13 @@ export function HeroBanner({
   const cor = LIGA_COR[liga];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="surface relative overflow-hidden">
       {/* brilhos de fundo (vida + cor, dark-first) */}
       <div
-        className="pointer-events-none absolute -left-16 -top-24 h-64 w-64 rounded-full opacity-30 blur-3xl"
+        className="pointer-events-none absolute -left-16 -top-24 h-64 w-64 rounded-full opacity-[0.12] blur-3xl dark:opacity-30"
         style={{ background: cor }}
       />
-      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-56 w-56 rounded-full bg-questly-blue/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-56 w-56 rounded-full bg-questly-blue/8 blur-3xl dark:bg-questly-blue/20" />
 
       <div className="relative flex flex-col gap-5 p-4 sm:p-5 lg:flex-row lg:items-center lg:gap-6">
         {/* Emblema + perfil */}
@@ -182,8 +182,8 @@ function StatCard({
 }) {
   return (
     <div
-      className={`flex min-w-[120px] flex-col gap-1 rounded-xl border border-border bg-background/60 p-3 backdrop-blur-sm transition-colors ${
-        interativo ? "cursor-pointer hover:border-foreground/20 hover:bg-background/80" : ""
+      className={`flex min-w-[120px] flex-col gap-1 rounded-xl border border-border bg-background/70 p-3 backdrop-blur-sm transition-colors dark:bg-background/60 ${
+        interativo ? "cursor-pointer hover:border-foreground/20 hover:bg-background" : ""
       }`}
     >
       {children}

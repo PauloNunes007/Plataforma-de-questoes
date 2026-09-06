@@ -93,12 +93,12 @@ export function TarefasDoDiaCard({
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 placeholder="Nome da tarefa"
-                className="w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
+                className="w-full rounded-lg border border-input bg-background px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
               />
               <select
                 value={subjectId}
                 onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
+                className="w-full rounded-lg border border-input bg-background px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
               >
                 <option value="">Sem disciplina</option>
                 {subjects.map((s) => (
@@ -112,7 +112,7 @@ export function TarefasDoDiaCard({
                 onChange={(e) => setDescricao(e.target.value)}
                 placeholder="Descrição (opcional)"
                 rows={2}
-                className="w-full resize-none rounded-lg border border-border bg-card px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
+                className="w-full resize-none rounded-lg border border-input bg-background px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
               />
               <button
                 type="button"

@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { Play } from "lucide-react";
 import type { RetomarInfo } from "@/lib/retomar/retomar-data";
+import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 
 // Card "Continuar de onde parou" (inspirado no "Continuar estudando" da print):
 // retoma a missão em andamento com barra de progresso. Renderiza nada quando
 // não há missão parcial. Server component — só um Link, sem estado.
+//
+// A cor NÃO é fixa: vem de corDaDisciplina(), a mesma função que pinta o
+// header do card de questão. Assim o cartão que convida a voltar já tem a
+// cara da disciplina que vai abrir — antes tudo era roxo, e a lista de
+// Cálculo era visualmente idêntica à de Química.
 export function ContinuarCard({ info }: { info: RetomarInfo }) {
   if (!info) return null;
 
@@ -14,9 +20,13 @@ export function ContinuarCard({ info }: { info: RetomarInfo }) {
       ? "Lista em andamento"
       : "Missão do dia em andamento";
   const titulo = info.subjectNome || (info.avulsa ? "Prática livre" : "Sua missão");
+  const cor = corDaDisciplina(info.subjectNome);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-questly-purple via-indigo-500 to-questly-blue p-5 text-white shadow-lg shadow-questly-purple/20 sm:p-6">
+    <div
+      className="relative overflow-hidden rounded-2xl p-5 text-white shadow-lg shadow-black/10 sm:p-6"
+      style={{ background: cor.gradiente }}
+    >
       <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
       <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="flex min-w-0 flex-1 items-center gap-3.5">
@@ -38,7 +48,8 @@ export function ContinuarCard({ info }: { info: RetomarInfo }) {
 
         <Link
           href={`/questao?missao=${info.missaoId}`}
-          className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-white px-4 text-sm font-semibold text-questly-purple shadow-sm transition-transform hover:brightness-105 active:scale-95"
+          className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-white px-4 text-sm font-semibold shadow-sm transition-transform hover:brightness-105 active:scale-95"
+          style={{ color: cor.para }}
         >
           <Play size={15} strokeWidth={2.5} fill="currentColor" />
           Continuar estudando

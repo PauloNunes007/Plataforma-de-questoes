@@ -1,0 +1,553 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Produto vetorial",
+    "dificuldade": "medio",
+    "enunciado": "Dados $\\vec{A}=2\\hat{\\imath}-\\hat{\\jmath}+3\\hat{k}$ e $\\vec{B}=\\hat{\\imath}+2\\hat{\\jmath}-\\hat{k}$, determine $\\vec{A}\\times\\vec{B}$.",
+    "alternativas": {
+      "a": "$(5,-5,5)$",
+      "b": "$(-5,5,5)$",
+      "c": "$(-5,-5,5)$",
+      "d": "$(5,5,-5)$",
+      "e": "$(-5,5,-5)$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo determinante simbólico, a componente $x$ é $A_yB_z-A_zB_y=(-1)(-1)-(3)(2)=1-6=-5$; a componente $y$ é $A_zB_x-A_xB_z=(3)(1)-(2)(-1)=3+2=5$; a componente $z$ é $A_xB_y-A_yB_x=(2)(2)-(-1)(1)=4+1=5$. Logo $\\vec{A}\\times\\vec{B}=(-5,5,5)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Decomposição em componentes e resultante",
+    "dificuldade": "medio",
+    "enunciado": "Sobre um corpo atuam duas forças coplanares: $\\vec{F}_1$, de módulo $200$ N, formando $30^{\\circ}$ com o eixo $x$ positivo, e $\\vec{F}_2$, de módulo $100$ N, apontando no sentido $-y$. Determine o módulo da força resultante.",
+    "alternativas": {
+      "a": "$200$ N",
+      "b": "$100$ N",
+      "c": "$100\\sqrt3$ N",
+      "d": "$300$ N",
+      "e": "$100\\sqrt2$ N"
+    },
+    "gabarito": "c",
+    "resolucao": "Decompondo: $\\vec{F}_1=\\left(200\\cos 30^{\\circ},\\ 200\\operatorname{sen}30^{\\circ}\\right)=\\left(100\\sqrt3,\\ 100\\right)$ N e $\\vec{F}_2=(0,-100)$ N. Somando, $\\vec{R}=\\left(100\\sqrt3,\\ 0\\right)$ N, cujo módulo é $100\\sqrt3\\approx 173$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Vetores e Sistemas de Coordenadas",
+    "subtopico": "Produto escalar e ângulo entre vetores",
+    "dificuldade": "medio",
+    "enunciado": "Determine o ângulo entre $\\vec{A}=(1,2,2)$ e $\\vec{B}=(2,-1,2)$.",
+    "alternativas": {
+      "a": "$\\arccos\\left(\\dfrac{2}{9}\\right)$",
+      "b": "$\\arccos\\left(\\dfrac{1}{3}\\right)$",
+      "c": "$\\arccos\\left(\\dfrac{8}{9}\\right)$",
+      "d": "$\\arccos\\left(\\dfrac{4}{9}\\right)$",
+      "e": "$\\arccos\\left(\\dfrac{4}{3}\\right)$"
+    },
+    "gabarito": "d",
+    "resolucao": "O produto escalar é $\\vec{A}\\cdot\\vec{B}=1(2)+2(-1)+2(2)=4$. Os módulos são $\\left|\\vec{A}\\right|=\\sqrt{1+4+4}=3$ e $\\left|\\vec{B}\\right|=\\sqrt{4+1+4}=3$. Assim $\\cos\\theta=\\dfrac{4}{3\\cdot 3}=\\dfrac{4}{9}$, ou seja, $\\theta=\\arccos\\left(\\dfrac49\\right)\\approx 63{,}6^{\\circ}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Força de contato entre blocos",
+    "dificuldade": "facil",
+    "enunciado": "Dois blocos, de massas $m_1=3{,}0$ kg e $m_2=2{,}0$ kg, estão encostados um no outro sobre uma superfície horizontal sem atrito. Uma força horizontal de $10$ N é aplicada em $m_1$, empurrando o conjunto. Determine o módulo da força que $m_1$ exerce sobre $m_2$.",
+    "alternativas": {
+      "a": "$2{,}0$ N",
+      "b": "$4{,}0$ N",
+      "c": "$5{,}0$ N",
+      "d": "$6{,}0$ N",
+      "e": "$10$ N"
+    },
+    "gabarito": "b",
+    "resolucao": "Tratando o conjunto como um único corpo: $a=\\dfrac{F}{m_1+m_2}=\\dfrac{10}{5{,}0}=2{,}0$ m/s². Isolando $m_2$, a única força horizontal sobre ele é a de contato: $F_{12}=m_2a=2{,}0\\cdot 2{,}0=4{,}0$ N. Pela terceira lei, $m_2$ empurra $m_1$ com $4{,}0$ N no sentido oposto.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Máquina de Atwood",
+    "dificuldade": "medio",
+    "enunciado": "Em uma máquina de Atwood ideal (fio e polia de massas desprezíveis, sem atrito), penduram-se $m_1=2{,}0$ kg e $m_2=6{,}0$ kg. Adotando $g=10$ m/s², determine a tração no fio.",
+    "alternativas": {
+      "a": "$30$ N",
+      "b": "$20$ N",
+      "c": "$40$ N",
+      "d": "$60$ N",
+      "e": "$80$ N"
+    },
+    "gabarito": "a",
+    "resolucao": "A aceleração do sistema é $a=\\dfrac{\\left(m_2-m_1\\right)g}{m_1+m_2}=\\dfrac{4{,}0\\cdot 10}{8{,}0}=5{,}0$ m/s². Isolando $m_1$ (que sobe): $T-m_1g=m_1a\\Rightarrow T=m_1(g+a)=2{,}0\\cdot 15=30$ N. Conferindo com $m_2$, que desce: $T=m_2(g-a)=6{,}0\\cdot 5{,}0=30$ N. Note que $T$ não é nem $m_1g=20$ N nem $m_2g=60$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Corpos ligados por fio e polia",
+    "dificuldade": "medio",
+    "enunciado": "Um bloco de $2{,}0$ kg repousa sobre uma mesa horizontal sem atrito e é ligado por um fio ideal, que passa por uma polia na borda da mesa, a um bloco de $3{,}0$ kg pendurado. Adotando $g=10$ m/s², determine a tração no fio após a liberação do sistema.",
+    "alternativas": {
+      "a": "$12$ N",
+      "b": "$18$ N",
+      "c": "$30$ N",
+      "d": "$20$ N",
+      "e": "$6{,}0$ N"
+    },
+    "gabarito": "a",
+    "resolucao": "Para o sistema, a única força motora é o peso do bloco pendurado: $a=\\dfrac{m_2g}{m_1+m_2}=\\dfrac{3{,}0\\cdot 10}{5{,}0}=6{,}0$ m/s². Isolando o bloco da mesa, a tração é a única força horizontal: $T=m_1a=2{,}0\\cdot 6{,}0=12$ N.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica",
+    "dificuldade": "medio",
+    "enunciado": "Um corpo de $2{,}0$ kg move-se a $6{,}0$ m/s e colide frontalmente com outro de $4{,}0$ kg em repouso, ficando os dois grudados. Determine a energia cinética dissipada na colisão.",
+    "alternativas": {
+      "a": "$12$ J",
+      "b": "$18$ J",
+      "c": "$24$ J",
+      "d": "$36$ J",
+      "e": "$6{,}0$ J"
+    },
+    "gabarito": "c",
+    "resolucao": "Conservação do momento: $2{,}0\\cdot 6{,}0=6{,}0\\,v\\Rightarrow v=2{,}0$ m/s. A energia cinética inicial é $K_i=\\dfrac12(2{,}0)(6{,}0)^2=36$ J e a final é $K_f=\\dfrac12(6{,}0)(2{,}0)^2=12$ J. A energia dissipada é $36-12=24$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Impulso e variação do momento",
+    "dificuldade": "facil",
+    "enunciado": "Uma bola de $0{,}20$ kg atinge perpendicularmente uma parede a $10$ m/s e ricocheteia, no sentido oposto, a $8{,}0$ m/s. Determine o módulo do impulso aplicado pela parede na bola.",
+    "alternativas": {
+      "a": "$0{,}40$ N·s",
+      "b": "$1{,}6$ N·s",
+      "c": "$2{,}0$ N·s",
+      "d": "$3{,}0$ N·s",
+      "e": "$3{,}6$ N·s"
+    },
+    "gabarito": "e",
+    "resolucao": "O teorema do impulso e do momento dá $J=\\Delta p=m\\left(v_f-v_i\\right)$. Adotando como positivo o sentido de saída, $v_i=-10$ m/s e $v_f=+8{,}0$ m/s, logo $J=0{,}20\\left[8{,}0-(-10)\\right]=0{,}20\\cdot 18=3{,}6$ N·s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Explosão e conservação do momento",
+    "dificuldade": "facil",
+    "enunciado": "Um corpo de $6{,}0$ kg, inicialmente em repouso, explode em dois fragmentos. Um deles, de $2{,}0$ kg, sai a $9{,}0$ m/s para leste. Determine o módulo da velocidade do outro fragmento.",
+    "alternativas": {
+      "a": "$2{,}25$ m/s",
+      "b": "$3{,}0$ m/s",
+      "c": "$4{,}5$ m/s",
+      "d": "$9{,}0$ m/s",
+      "e": "$18$ m/s"
+    },
+    "gabarito": "c",
+    "resolucao": "O momento total antes é nulo e deve permanecer nulo. O fragmento de $2{,}0$ kg carrega $p=2{,}0\\cdot 9{,}0=18$ kg·m/s para leste, então o outro, de $6{,}0-2{,}0=4{,}0$ kg, carrega $18$ kg·m/s para oeste. Logo $v=\\dfrac{18}{4{,}0}=4{,}5$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Momento em duas dimensões",
+    "dificuldade": "medio",
+    "enunciado": "Dois discos de $0{,}50$ kg deslizam sem atrito sobre um plano horizontal: um a $4{,}0$ m/s no sentido $+x$ e outro a $3{,}0$ m/s no sentido $+y$. Eles colidem e ficam grudados. Determine o módulo da velocidade do conjunto após a colisão.",
+    "alternativas": {
+      "a": "$1{,}75$ m/s",
+      "b": "$2{,}5$ m/s",
+      "c": "$3{,}5$ m/s",
+      "d": "$5{,}0$ m/s",
+      "e": "$7{,}0$ m/s"
+    },
+    "gabarito": "b",
+    "resolucao": "O momento total é $\\vec{p}=\\left(0{,}50\\cdot 4{,}0,\\ 0{,}50\\cdot 3{,}0\\right)=(2{,}0,\\ 1{,}5)$ kg·m/s. Como a massa final é $1{,}0$ kg, $\\vec{v}=(2{,}0,\\ 1{,}5)$ m/s, de módulo $\\sqrt{2{,}0^2+1{,}5^2}=\\sqrt{6{,}25}=2{,}5$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Energia potencial elástica",
+    "dificuldade": "facil",
+    "enunciado": "Uma mola de constante elástica $200$ N/m é comprimida em $0{,}10$ m e, ao ser solta, lança um bloco de $0{,}50$ kg sobre uma superfície horizontal sem atrito. Determine a velocidade do bloco ao perder contato com a mola.",
+    "alternativas": {
+      "a": "$0{,}50$ m/s",
+      "b": "$1{,}0$ m/s",
+      "c": "$2{,}0$ m/s",
+      "d": "$2{,}8$ m/s",
+      "e": "$4{,}0$ m/s"
+    },
+    "gabarito": "c",
+    "resolucao": "A energia armazenada é $U=\\dfrac12kx^2=\\dfrac12(200)(0{,}10)^2=1{,}0$ J. Sem atrito, toda ela vira energia cinética: $\\dfrac12mv^2=1{,}0\\Rightarrow v=\\sqrt{\\dfrac{2\\cdot 1{,}0}{0{,}50}}=\\sqrt4=2{,}0$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Colisão elástica unidimensional",
+    "dificuldade": "medio",
+    "enunciado": "Um corpo de $2{,}0$ kg move-se a $5{,}0$ m/s e colide elasticamente e frontalmente com um corpo de $3{,}0$ kg em repouso. Determine a velocidade do corpo de $3{,}0$ kg após a colisão.",
+    "alternativas": {
+      "a": "$1{,}0$ m/s",
+      "b": "$2{,}0$ m/s",
+      "c": "$3{,}0$ m/s",
+      "d": "$4{,}0$ m/s",
+      "e": "$5{,}0$ m/s"
+    },
+    "gabarito": "d",
+    "resolucao": "Para colisão elástica com alvo em repouso, $v_2'=\\dfrac{2m_1}{m_1+m_2}v_1=\\dfrac{2(2{,}0)}{5{,}0}(5{,}0)=4{,}0$ m/s. Conferindo com o projétil, $v_1'=\\dfrac{m_1-m_2}{m_1+m_2}v_1=-1{,}0$ m/s: o momento total é $2{,}0(-1{,}0)+3{,}0(4{,}0)=10$ kg·m/s, igual ao inicial, e a energia cinética também se conserva em $25$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Conservação de energia com atrito",
+    "dificuldade": "medio",
+    "enunciado": "Um bloco parte do repouso e desce um plano inclinado de altura $3{,}0$ m, com $\\operatorname{sen}\\theta=0{,}60$ e $\\cos\\theta=0{,}80$. O coeficiente de atrito cinético é $0{,}30$ e $g=10$ m/s². Determine a velocidade do bloco na base do plano.",
+    "alternativas": {
+      "a": "$6{,}0$ m/s",
+      "b": "$4{,}0$ m/s",
+      "c": "$5{,}0$ m/s",
+      "d": "$7{,}7$ m/s",
+      "e": "$8{,}0$ m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "O comprimento do plano é $L=\\dfrac{h}{\\operatorname{sen}\\theta}=\\dfrac{3{,}0}{0{,}60}=5{,}0$ m. Por unidade de massa, a energia liberada pela gravidade é $gh=30$ J/kg e o trabalho do atrito é $\\mu g\\cos\\theta\\,L=0{,}30\\cdot 10\\cdot 0{,}80\\cdot 5{,}0=12$ J/kg. Assim $\\dfrac{v^2}{2}=30-12=18\\Rightarrow v^2=36\\Rightarrow v=6{,}0$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho de força variável",
+    "dificuldade": "facil",
+    "enunciado": "Uma força horizontal de módulo $F(x)=3x^2$ (em newtons, com $x$ em metros) atua sobre um corpo que se desloca de $x=0$ a $x=2{,}0$ m. Determine o trabalho realizado.",
+    "alternativas": {
+      "a": "$4{,}0$ J",
+      "b": "$6{,}0$ J",
+      "c": "$12$ J",
+      "d": "$24$ J",
+      "e": "$8{,}0$ J"
+    },
+    "gabarito": "e",
+    "resolucao": "Para força variável ao longo do deslocamento, $W=\\displaystyle\\int_0^{2}F(x)\\,dx=\\int_0^{2}3x^2dx=\\left[x^3\\right]_0^{2}=8{,}0$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Teorema do trabalho e energia cinética",
+    "dificuldade": "medio",
+    "enunciado": "Um bloco de $4{,}0$ kg, lançado a $10$ m/s sobre uma superfície horizontal, percorre $12{,}5$ m até parar. Adotando $g=10$ m/s², determine o coeficiente de atrito cinético entre o bloco e a superfície.",
+    "alternativas": {
+      "a": "$0{,}20$",
+      "b": "$0{,}25$",
+      "c": "$0{,}50$",
+      "d": "$0{,}40$",
+      "e": "$0{,}80$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pelo teorema do trabalho e energia cinética, $W_{at}=\\Delta K=0-\\dfrac12(4{,}0)(10)^2=-200$ J. Como $W_{at}=-\\mu mgd=-\\mu(4{,}0)(10)(12{,}5)=-500\\mu$, temos $500\\mu=200\\Rightarrow\\mu=0{,}40$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Potência mecânica",
+    "dificuldade": "facil",
+    "enunciado": "Um guindaste eleva uma carga de $500$ kg com velocidade constante de $0{,}40$ m/s. Adotando $g=10$ m/s², determine a potência desenvolvida pelo guindaste.",
+    "alternativas": {
+      "a": "$2{,}0$ kW",
+      "b": "$200$ W",
+      "c": "$1{,}0$ kW",
+      "d": "$5{,}0$ kW",
+      "e": "$20$ kW"
+    },
+    "gabarito": "a",
+    "resolucao": "Com velocidade constante, a força aplicada equilibra o peso: $F=mg=500\\cdot 10=5000$ N. A potência é $P=Fv=5000\\cdot 0{,}40=2000$ W $=2{,}0$ kW.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho de força constante em deslocamento vetorial",
+    "dificuldade": "facil",
+    "enunciado": "Uma força constante $\\vec{F}=\\left(4\\hat{\\imath}-3\\hat{\\jmath}\\right)$ N atua sobre uma partícula durante o deslocamento $\\vec{d}=\\left(2\\hat{\\imath}+5\\hat{\\jmath}\\right)$ m. Determine o trabalho realizado.",
+    "alternativas": {
+      "a": "$-23$ J",
+      "b": "$-7{,}0$ J",
+      "c": "$0$",
+      "d": "$7{,}0$ J",
+      "e": "$23$ J"
+    },
+    "gabarito": "b",
+    "resolucao": "Para força constante, $W=\\vec{F}\\cdot\\vec{d}=(4)(2)+(-3)(5)=8-15=-7{,}0$ J. O sinal negativo indica que a força tem componente contrária ao deslocamento.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Momento de inércia e torque",
+    "dificuldade": "medio",
+    "enunciado": "Um disco homogêneo de $2{,}0$ kg e raio $0{,}50$ m gira em torno de seu eixo central. Aplica-se um torque resultante de $1{,}0$ N·m. Determine a aceleração angular do disco.",
+    "alternativas": {
+      "a": "$0{,}25$ rad/s²",
+      "b": "$1{,}0$ rad/s²",
+      "c": "$2{,}0$ rad/s²",
+      "d": "$4{,}0$ rad/s²",
+      "e": "$8{,}0$ rad/s²"
+    },
+    "gabarito": "d",
+    "resolucao": "O momento de inércia do disco em torno do eixo central é $I=\\dfrac12MR^2=\\dfrac12(2{,}0)(0{,}50)^2=0{,}25$ kg·m². Pela segunda lei de Newton para rotações, $\\tau=I\\alpha\\Rightarrow\\alpha=\\dfrac{1{,}0}{0{,}25}=4{,}0$ rad/s².",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Rolamento sem deslizamento",
+    "dificuldade": "dificil",
+    "enunciado": "Um cilindro maciço e homogêneo parte do repouso e rola sem deslizar por uma rampa, descendo uma altura de $1{,}2$ m. Adotando $g=10$ m/s², determine a velocidade do centro de massa na base.",
+    "alternativas": {
+      "a": "$2{,}0$ m/s",
+      "b": "$3{,}5$ m/s",
+      "c": "$4{,}0$ m/s",
+      "d": "$4{,}6$ m/s",
+      "e": "$4{,}9$ m/s"
+    },
+    "gabarito": "c",
+    "resolucao": "No rolamento sem deslizamento, $K=\\dfrac12Mv^2+\\dfrac12I\\omega^2$ com $I=\\dfrac12MR^2$ e $\\omega=\\dfrac{v}{R}$, o que dá $K=\\dfrac34Mv^2$. Igualando a $Mgh$: $\\dfrac34v^2=gh\\Rightarrow v=\\sqrt{\\dfrac{4gh}{3}}=\\sqrt{\\dfrac{4(10)(1{,}2)}{3}}=\\sqrt{16}=4{,}0$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Conservação do momento angular",
+    "dificuldade": "medio",
+    "enunciado": "Uma patinadora gira com momento de inércia $6{,}0$ kg·m² a $2{,}0$ rad/s. Ao encolher os braços, seu momento de inércia cai para $2{,}0$ kg·m². Determine sua energia cinética de rotação final.",
+    "alternativas": {
+      "a": "$6{,}0$ J",
+      "b": "$12$ J",
+      "c": "$18$ J",
+      "d": "$24$ J",
+      "e": "$36$ J"
+    },
+    "gabarito": "e",
+    "resolucao": "Sem torque externo, $L=I\\omega$ se conserva: $6{,}0(2{,}0)=2{,}0\\,\\omega_f\\Rightarrow\\omega_f=6{,}0$ rad/s. A energia cinética final é $K_f=\\dfrac12I_f\\omega_f^2=\\dfrac12(2{,}0)(6{,}0)^2=36$ J (a inicial era $12$ J; a diferença vem do trabalho muscular).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Equilíbrio estático",
+    "dificuldade": "medio",
+    "enunciado": "Uma barra homogênea de $4{,}0$ m e $20$ kg está apoiada em dois suportes, $A$ e $B$, situados nas extremidades. Um bloco de $30$ kg é colocado a $1{,}0$ m do apoio $A$. Adotando $g=10$ m/s², determine a reação normal no apoio $A$.",
+    "alternativas": {
+      "a": "$175$ N",
+      "b": "$250$ N",
+      "c": "$400$ N",
+      "d": "$500$ N",
+      "e": "$325$ N"
+    },
+    "gabarito": "e",
+    "resolucao": "Tomando os torques em relação ao apoio $B$ (que elimina $N_B$), com a barra tendo peso aplicado no centro, a $2{,}0$ m de $B$, e o bloco a $3{,}0$ m de $B$: $N_A(4{,}0)=20(10)(2{,}0)+30(10)(3{,}0)=400+900=1300$. Logo $N_A=325$ N (e $N_B=500-325=175$ N, fechando o equilíbrio vertical).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Aceleração da gravidade com a altitude",
+    "dificuldade": "facil",
+    "enunciado": "Na superfície da Terra a aceleração da gravidade vale $10$ m/s². Determine seu valor a uma altitude igual ao raio terrestre.",
+    "alternativas": {
+      "a": "$1{,}25$ m/s²",
+      "b": "$2{,}5$ m/s²",
+      "c": "$3{,}3$ m/s²",
+      "d": "$5{,}0$ m/s²",
+      "e": "$10$ m/s²"
+    },
+    "gabarito": "b",
+    "resolucao": "A aceleração varia com $g'=\\dfrac{GM}{(R+h)^2}=g\\left(\\dfrac{R}{R+h}\\right)^2$. Com $h=R$: $g'=g\\left(\\dfrac{R}{2R}\\right)^2=\\dfrac{g}{4}=2{,}5$ m/s².",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Velocidade orbital",
+    "dificuldade": "medio",
+    "enunciado": "Um satélite descreve órbita circular de raio $r=2R_T$ em torno da Terra, com $R_T=6{,}4\\times 10^{6}$ m e $g=10$ m/s² na superfície. Determine a velocidade orbital do satélite.",
+    "alternativas": {
+      "a": "$2{,}8$ km/s",
+      "b": "$4{,}0$ km/s",
+      "c": "$8{,}0$ km/s",
+      "d": "$11{,}2$ km/s",
+      "e": "$5{,}7$ km/s"
+    },
+    "gabarito": "e",
+    "resolucao": "Na órbita circular, a gravitação fornece a resultante centrípeta: $\\dfrac{GMm}{r^2}=\\dfrac{mv^2}{r}\\Rightarrow v=\\sqrt{\\dfrac{GM}{r}}$. Usando $GM=gR_T^2$ e $r=2R_T$: $v=\\sqrt{\\dfrac{gR_T}{2}}=\\sqrt{\\dfrac{10\\cdot 6{,}4\\times 10^{6}}{2}}=\\sqrt{3{,}2\\times 10^{7}}\\approx 5{,}7\\times 10^{3}$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Terceira lei de Kepler",
+    "dificuldade": "facil",
+    "enunciado": "Um planeta hipotético descreve órbita circular em torno do Sol com raio quatro vezes maior que o da órbita da Terra. Determine seu período de revolução.",
+    "alternativas": {
+      "a": "$8$ anos",
+      "b": "$2$ anos",
+      "c": "$4$ anos",
+      "d": "$16$ anos",
+      "e": "$64$ anos"
+    },
+    "gabarito": "a",
+    "resolucao": "A terceira lei de Kepler dá $\\dfrac{T^2}{r^3}$ constante, logo $T\\propto r^{3/2}$. Com $r'=4r$: $T'=4^{3/2}T=8T$. Como o período da Terra é $1$ ano, $T'=8$ anos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Gravitação",
+    "subtopico": "Energia em órbita",
+    "dificuldade": "dificil",
+    "enunciado": "Qual é o trabalho mínimo necessário para levar um satélite de $500$ kg da superfície da Terra até uma órbita circular de raio $2R_T$? Use $R_T=6{,}4\\times 10^{6}$ m, $g=10$ m/s² e despreze a rotação terrestre.",
+    "alternativas": {
+      "a": "$8{,}0\\times 10^{9}$ J",
+      "b": "$1{,}6\\times 10^{10}$ J",
+      "c": "$2{,}4\\times 10^{10}$ J",
+      "d": "$3{,}2\\times 10^{10}$ J",
+      "e": "$6{,}4\\times 10^{10}$ J"
+    },
+    "gabarito": "c",
+    "resolucao": "A energia mecânica em repouso na superfície é $E_i=-\\dfrac{GMm}{R_T}$. Na órbita circular de raio $r$, $E_f=-\\dfrac{GMm}{2r}=-\\dfrac{GMm}{4R_T}$. Então $W=E_f-E_i=GMm\\left(\\dfrac{1}{R_T}-\\dfrac{1}{4R_T}\\right)=\\dfrac{3}{4}\\dfrac{GMm}{R_T}=\\dfrac34 gR_Tm$. Numericamente, $W=0{,}75\\cdot 10\\cdot 6{,}4\\times 10^{6}\\cdot 500=2{,}4\\times 10^{10}$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Período do pêndulo simples",
+    "dificuldade": "facil",
+    "enunciado": "Determine o período de um pêndulo simples de comprimento $1{,}0$ m, para pequenas oscilações, adotando $g=10$ m/s².",
+    "alternativas": {
+      "a": "$0{,}50$ s",
+      "b": "$1{,}0$ s",
+      "c": "$3{,}1$ s",
+      "d": "$2{,}0$ s",
+      "e": "$6{,}3$ s"
+    },
+    "gabarito": "d",
+    "resolucao": "Para pequenas amplitudes, $T=2\\pi\\sqrt{\\dfrac{L}{g}}=2\\pi\\sqrt{\\dfrac{1{,}0}{10}}=2\\pi(0{,}316)\\approx 1{,}99$ s, ou seja, aproximadamente $2{,}0$ s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Velocidade máxima no MHS",
+    "dificuldade": "medio",
+    "enunciado": "Um bloco de $0{,}50$ kg preso a uma mola de constante $200$ N/m oscila em MHS com amplitude de $0{,}040$ m sobre superfície sem atrito. Determine a velocidade máxima do bloco.",
+    "alternativas": {
+      "a": "$0{,}80$ m/s",
+      "b": "$0{,}20$ m/s",
+      "c": "$0{,}40$ m/s",
+      "d": "$1{,}6$ m/s",
+      "e": "$8{,}0$ m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "A frequência angular é $\\omega=\\sqrt{\\dfrac{k}{m}}=\\sqrt{\\dfrac{200}{0{,}50}}=\\sqrt{400}=20$ rad/s. A velocidade máxima ocorre na posição de equilíbrio: $v_{max}=\\omega A=20(0{,}040)=0{,}80$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Energia no MHS",
+    "dificuldade": "medio",
+    "enunciado": "Um oscilador massa-mola tem constante elástica $100$ N/m e amplitude $0{,}10$ m. Determine a energia cinética do bloco no instante em que ele passa pela posição $x=\\dfrac{A}{2}$.",
+    "alternativas": {
+      "a": "$0{,}125$ J",
+      "b": "$0{,}250$ J",
+      "c": "$0{,}500$ J",
+      "d": "$0{,}750$ J",
+      "e": "$0{,}375$ J"
+    },
+    "gabarito": "e",
+    "resolucao": "A energia mecânica total é $E=\\dfrac12kA^2=\\dfrac12(100)(0{,}10)^2=0{,}50$ J. Em $x=0{,}050$ m, a energia potencial é $U=\\dfrac12kx^2=\\dfrac12(100)(0{,}050)^2=0{,}125$ J. Logo $K=E-U=0{,}50-0{,}125=0{,}375$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física I",
+    "topico": "Oscilações",
+    "subtopico": "Oscilação vertical massa-mola",
+    "dificuldade": "medio",
+    "enunciado": "Ao pendurar um bloco em uma mola vertical, ela se distende $0{,}050$ m até o novo equilíbrio. Adotando $g=10$ m/s², determine o período das pequenas oscilações verticais desse sistema.",
+    "alternativas": {
+      "a": "$0{,}10$ s",
+      "b": "$0{,}44$ s",
+      "c": "$0{,}22$ s",
+      "d": "$0{,}89$ s",
+      "e": "$1{,}4$ s"
+    },
+    "gabarito": "b",
+    "resolucao": "No equilíbrio, $k\\Delta\\ell=mg$, ou seja, $\\dfrac{k}{m}=\\dfrac{g}{\\Delta\\ell}$. Então $\\omega=\\sqrt{\\dfrac{g}{\\Delta\\ell}}=\\sqrt{\\dfrac{10}{0{,}050}}=\\sqrt{200}\\approx 14{,}1$ rad/s e $T=\\dfrac{2\\pi}{\\omega}\\approx 0{,}44$ s. Note que a massa não precisa ser conhecida.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

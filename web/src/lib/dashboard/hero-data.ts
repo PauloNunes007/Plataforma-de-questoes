@@ -36,16 +36,19 @@ export async function carregarHeroDashboard(
     await Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }).gt("xp_total", meuXp),
       supabase.from("profiles").select("id", { count: "exact", head: true }),
+      // A coluna é `correta` (não `acertou`) — com o nome errado o count
+      // voltava null e o donut de "Questões feitas" ficava zerado pra
+      // todo mundo, inclusive pra quem já tinha centenas de tentativas.
       supabase
         .from("question_attempts")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
-        .eq("acertou", true),
+        .eq("correta", true),
       supabase
         .from("question_attempts")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
-        .eq("acertou", false),
+        .eq("correta", false),
       supabase.from("subjects").select("id").eq("user_id", user.id),
     ]);
 

@@ -1,0 +1,591 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Força entre duas cargas puntiformes",
+    "dificuldade": "facil",
+    "enunciado": "Duas cargas puntiformes, $q_1=+3{,}0\\ \\mu$C e $q_2=-4{,}0\\ \\mu$C, estão separadas por $30$ cm no vácuo. Adotando $k=9{,}0\\times 10^{9}$ N·m²/C², determine o módulo da força eletrostática entre elas.",
+    "alternativas": {
+      "a": "$0{,}12$ N",
+      "b": "$1{,}2$ N",
+      "c": "$3{,}6$ N",
+      "d": "$12$ N",
+      "e": "$0{,}36$ N"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela lei de Coulomb, $F=k\\dfrac{\\left|q_1q_2\\right|}{r^2}=9{,}0\\times 10^{9}\\cdot\\dfrac{\\left(3{,}0\\times 10^{-6}\\right)\\left(4{,}0\\times 10^{-6}\\right)}{\\left(0{,}30\\right)^2}=\\dfrac{9{,}0\\times 10^{9}\\cdot 1{,}2\\times 10^{-11}}{0{,}090}=\\dfrac{0{,}108}{0{,}090}=1{,}2$ N, atrativa por serem cargas de sinais opostos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Princípio da superposição",
+    "dificuldade": "medio",
+    "enunciado": "Três cargas iguais a $+2{,}0\\ \\mu$C ocupam os vértices de um triângulo equilátero de lado $10$ cm. Adotando $k=9{,}0\\times 10^{9}$ N·m²/C², determine o módulo da força elétrica resultante sobre uma delas.",
+    "alternativas": {
+      "a": "$3{,}1$ N",
+      "b": "$3{,}6$ N",
+      "c": "$7{,}2$ N",
+      "d": "$6{,}2$ N",
+      "e": "$10{,}8$ N"
+    },
+    "gabarito": "d",
+    "resolucao": "Cada uma das outras cargas exerce $F=k\\dfrac{q^2}{r^2}=9{,}0\\times 10^{9}\\cdot\\dfrac{\\left(2{,}0\\times 10^{-6}\\right)^2}{\\left(0{,}10\\right)^2}=3{,}6$ N. As duas forças formam entre si $60^{\\circ}$, logo a resultante é $R=2F\\cos 30^{\\circ}=2(3{,}6)(0{,}866)\\approx 6{,}2$ N, dirigida ao longo da bissetriz, para fora do triângulo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Posição de equilíbrio eletrostático",
+    "dificuldade": "medio",
+    "enunciado": "Duas cargas positivas, $Q_1=9q$ e $Q_2=q$, estão fixas sobre uma reta, separadas por $40$ cm. Determine a que distância de $Q_1$ deve ser colocada uma terceira carga para que a força resultante sobre ela seja nula.",
+    "alternativas": {
+      "a": "$0{,}10$ m",
+      "b": "$0{,}15$ m",
+      "c": "$0{,}20$ m",
+      "d": "$0{,}36$ m",
+      "e": "$0{,}30$ m"
+    },
+    "gabarito": "e",
+    "resolucao": "O ponto de equilíbrio fica entre as cargas. Sendo $x$ a distância a $Q_1$, exige-se $\\dfrac{9q}{x^2}=\\dfrac{q}{(0{,}40-x)^2}$. Extraindo a raiz quadrada, $\\dfrac{3}{x}=\\dfrac{1}{0{,}40-x}$, ou seja, $3(0{,}40-x)=x\\Rightarrow 1{,}2=4x\\Rightarrow x=0{,}30$ m.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Campo nulo de duas cargas",
+    "dificuldade": "medio",
+    "enunciado": "Uma carga $q_1=+8{,}0\\ \\mu$C está em $x=0$ e uma carga $q_2=-2{,}0\\ \\mu$C está em $x=0{,}60$ m. Determine a coordenada $x$ do ponto do eixo em que o campo elétrico resultante é nulo.",
+    "alternativas": {
+      "a": "$0{,}40$ m",
+      "b": "$0{,}90$ m",
+      "c": "$1{,}2$ m",
+      "d": "$1{,}8$ m",
+      "e": "$0{,}60$ m"
+    },
+    "gabarito": "c",
+    "resolucao": "Cargas de sinais opostos só têm campo nulo fora do segmento, do lado da carga de menor módulo, isto é, $x>0{,}60$ m. A condição é $\\dfrac{8{,}0}{x^2}=\\dfrac{2{,}0}{(x-0{,}60)^2}$, e extraindo a raiz, $\\dfrac{2}{x}=\\dfrac{1}{x-0{,}60}$, ou $2(x-0{,}60)=x\\Rightarrow x=1{,}2$ m.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Movimento de partícula carregada em campo uniforme",
+    "dificuldade": "dificil",
+    "enunciado": "Um elétron entra paralelamente às placas de um capacitor, com velocidade $2{,}0\\times 10^{6}$ m/s, em uma região de campo uniforme de $100$ N/C perpendicular a essa velocidade. As placas têm $4{,}0$ cm de comprimento. Usando $e=1{,}6\\times 10^{-19}$ C e $m=9{,}1\\times 10^{-31}$ kg, determine o desvio vertical do elétron ao sair da região.",
+    "alternativas": {
+      "a": "$0{,}35$ mm",
+      "b": "$1{,}8$ mm",
+      "c": "$7{,}0$ mm",
+      "d": "$35$ mm",
+      "e": "$3{,}5$ mm"
+    },
+    "gabarito": "e",
+    "resolucao": "O movimento é análogo ao de um projétil. O tempo dentro das placas é $t=\\dfrac{L}{v}=\\dfrac{0{,}040}{2{,}0\\times 10^{6}}=2{,}0\\times 10^{-8}$ s. A aceleração transversal é $a=\\dfrac{eE}{m}=\\dfrac{1{,}6\\times 10^{-19}\\cdot 100}{9{,}1\\times 10^{-31}}\\approx 1{,}76\\times 10^{13}$ m/s². Então $y=\\dfrac12at^2=\\dfrac12\\left(1{,}76\\times 10^{13}\\right)\\left(4{,}0\\times 10^{-16}\\right)\\approx 3{,}5\\times 10^{-3}$ m $=3{,}5$ mm.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Torque sobre dipolo elétrico",
+    "dificuldade": "medio",
+    "enunciado": "Um dipolo elétrico é formado por cargas $\\pm 2{,}0$ nC separadas por $2{,}0$ cm e está imerso em um campo uniforme de $5{,}0\\times 10^{5}$ N/C. Determine o torque máximo sobre o dipolo.",
+    "alternativas": {
+      "a": "$2{,}0\\times 10^{-5}$ N·m",
+      "b": "$4{,}0\\times 10^{-5}$ N·m",
+      "c": "$1{,}0\\times 10^{-5}$ N·m",
+      "d": "$2{,}0\\times 10^{-6}$ N·m",
+      "e": "$8{,}0\\times 10^{-5}$ N·m"
+    },
+    "gabarito": "a",
+    "resolucao": "O momento de dipolo é $p=qd=\\left(2{,}0\\times 10^{-9}\\right)\\left(2{,}0\\times 10^{-2}\\right)=4{,}0\\times 10^{-11}$ C·m. Como $\\tau=pE\\operatorname{sen}\\theta$, o máximo ocorre em $\\theta=90^{\\circ}$: $\\tau_{max}=pE=\\left(4{,}0\\times 10^{-11}\\right)\\left(5{,}0\\times 10^{5}\\right)=2{,}0\\times 10^{-5}$ N·m.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Campo no eixo de um anel carregado",
+    "dificuldade": "dificil",
+    "enunciado": "Um anel fino de raio $0{,}10$ m tem carga total $5{,}0$ nC uniformemente distribuída. Determine o módulo do campo elétrico em um ponto do eixo situado a $0{,}10$ m do centro. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$8{,}0\\times 10^{2}$ N/C",
+      "b": "$1{,}6\\times 10^{3}$ N/C",
+      "c": "$2{,}2\\times 10^{3}$ N/C",
+      "d": "$3{,}2\\times 10^{3}$ N/C",
+      "e": "$4{,}5\\times 10^{3}$ N/C"
+    },
+    "gabarito": "b",
+    "resolucao": "Por simetria só sobrevive a componente axial: $E=\\dfrac{kQx}{\\left(x^2+R^2\\right)^{3/2}}$. Com $x=R=0{,}10$ m, $x^2+R^2=0{,}020$ m² e $\\left(0{,}020\\right)^{3/2}\\approx 2{,}83\\times 10^{-3}$. O numerador é $9{,}0\\times 10^{9}\\cdot 5{,}0\\times 10^{-9}\\cdot 0{,}10=4{,}5$. Logo $E\\approx\\dfrac{4{,}5}{2{,}83\\times 10^{-3}}\\approx 1{,}6\\times 10^{3}$ N/C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Esfera condutora carregada",
+    "dificuldade": "facil",
+    "enunciado": "Uma esfera condutora de raio $10$ cm tem carga $6{,}0\\ \\mu$C uniformemente distribuída em sua superfície. Determine o módulo do campo elétrico em um ponto a $20$ cm do centro. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$6{,}75\\times 10^{5}$ N/C",
+      "b": "$2{,}7\\times 10^{6}$ N/C",
+      "c": "$5{,}4\\times 10^{6}$ N/C",
+      "d": "$1{,}35\\times 10^{6}$ N/C",
+      "e": "$0$"
+    },
+    "gabarito": "d",
+    "resolucao": "Fora de uma distribuição esférica, a lei de Gauss mostra que o campo é o de uma carga puntiforme no centro: $E=\\dfrac{kQ}{r^2}=\\dfrac{9{,}0\\times 10^{9}\\cdot 6{,}0\\times 10^{-6}}{\\left(0{,}20\\right)^2}=\\dfrac{5{,}4\\times 10^{4}}{0{,}040}=1{,}35\\times 10^{6}$ N/C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Simetria cilíndrica: fio infinito",
+    "dificuldade": "facil",
+    "enunciado": "Um fio retilíneo muito longo tem densidade linear de carga $\\lambda=5{,}0\\ \\mu$C/m. Determine o módulo do campo elétrico a $10$ cm do fio. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$4{,}5\\times 10^{5}$ N/C",
+      "b": "$9{,}0\\times 10^{4}$ N/C",
+      "c": "$9{,}0\\times 10^{5}$ N/C",
+      "d": "$1{,}8\\times 10^{6}$ N/C",
+      "e": "$4{,}5\\times 10^{6}$ N/C"
+    },
+    "gabarito": "c",
+    "resolucao": "Aplicando a lei de Gauss a um cilindro coaxial, $E=\\dfrac{\\lambda}{2\\pi\\varepsilon_0 r}=\\dfrac{2k\\lambda}{r}$. Substituindo, $E=\\dfrac{2\\left(9{,}0\\times 10^{9}\\right)\\left(5{,}0\\times 10^{-6}\\right)}{0{,}10}=\\dfrac{9{,}0\\times 10^{4}}{0{,}10}=9{,}0\\times 10^{5}$ N/C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Campo interno de esfera isolante",
+    "dificuldade": "medio",
+    "enunciado": "Uma esfera isolante de raio $20$ cm tem carga $8{,}0$ nC uniformemente distribuída em todo o seu volume. Determine o módulo do campo elétrico a $10$ cm do centro. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$450$ N/C",
+      "b": "$1800$ N/C",
+      "c": "$3600$ N/C",
+      "d": "$0$",
+      "e": "$900$ N/C"
+    },
+    "gabarito": "e",
+    "resolucao": "A superfície gaussiana de raio $r<R$ envolve apenas a fração $\\dfrac{r^3}{R^3}$ da carga, o que leva a $E=\\dfrac{kQr}{R^3}$. Substituindo: $E=\\dfrac{9{,}0\\times 10^{9}\\cdot 8{,}0\\times 10^{-9}\\cdot 0{,}10}{\\left(0{,}20\\right)^3}=\\dfrac{7{,}2}{8{,}0\\times 10^{-3}}=900$ N/C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Fluxo através de superfície fechada",
+    "dificuldade": "medio",
+    "enunciado": "Uma superfície fechada envolve duas cargas puntiformes, de $+5{,}0$ nC e $-3{,}0$ nC. Adotando $\\varepsilon_0=8{,}85\\times 10^{-12}$ C²/(N·m²), determine o fluxo elétrico total através dessa superfície.",
+    "alternativas": {
+      "a": "$226$ N·m²/C",
+      "b": "$339$ N·m²/C",
+      "c": "$565$ N·m²/C",
+      "d": "$904$ N·m²/C",
+      "e": "$0$"
+    },
+    "gabarito": "a",
+    "resolucao": "A lei de Gauss depende apenas da carga interna líquida: $q_{int}=5{,}0-3{,}0=2{,}0$ nC. Assim $\\Phi=\\dfrac{q_{int}}{\\varepsilon_0}=\\dfrac{2{,}0\\times 10^{-9}}{8{,}85\\times 10^{-12}}\\approx 226$ N·m²/C, independentemente da forma da superfície ou da posição das cargas dentro dela.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Potencial de cargas puntiformes",
+    "dificuldade": "medio",
+    "enunciado": "Em um ponto $P$, uma carga $q_1=+4{,}0\\ \\mu$C está a $20$ cm e uma carga $q_2=-1{,}0\\ \\mu$C está a $10$ cm. Determine o potencial elétrico resultante em $P$. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$4{,}5\\times 10^{4}$ V",
+      "b": "$9{,}0\\times 10^{4}$ V",
+      "c": "$1{,}8\\times 10^{5}$ V",
+      "d": "$2{,}7\\times 10^{5}$ V",
+      "e": "$0$"
+    },
+    "gabarito": "b",
+    "resolucao": "O potencial é escalar e se soma algebricamente: $V=k\\left(\\dfrac{q_1}{r_1}+\\dfrac{q_2}{r_2}\\right)=9{,}0\\times 10^{9}\\left(\\dfrac{4{,}0\\times 10^{-6}}{0{,}20}-\\dfrac{1{,}0\\times 10^{-6}}{0{,}10}\\right)=9{,}0\\times 10^{9}\\left(2{,}0\\times 10^{-5}-1{,}0\\times 10^{-5}\\right)=9{,}0\\times 10^{4}$ V.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Trabalho e diferença de potencial",
+    "dificuldade": "medio",
+    "enunciado": "Uma carga de $2{,}0\\ \\mu$C é transportada, sem variação de energia cinética, de um ponto $A$ com potencial $100$ V até um ponto $B$ com potencial $-50$ V. Determine o trabalho realizado pelo agente externo.",
+    "alternativas": {
+      "a": "$+3{,}0\\times 10^{-4}$ J",
+      "b": "$-1{,}0\\times 10^{-4}$ J",
+      "c": "$-3{,}0\\times 10^{-4}$ J",
+      "d": "$+1{,}0\\times 10^{-4}$ J",
+      "e": "$-3{,}0\\times 10^{-3}$ J"
+    },
+    "gabarito": "c",
+    "resolucao": "Sem variação de energia cinética, o trabalho externo iguala a variação de energia potencial: $W_{ext}=\\Delta U=q\\left(V_B-V_A\\right)=\\left(2{,}0\\times 10^{-6}\\right)\\left(-50-100\\right)=-3{,}0\\times 10^{-4}$ J. O sinal negativo indica que o campo elétrico é que realiza trabalho positivo no processo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Relação entre campo e potencial",
+    "dificuldade": "dificil",
+    "enunciado": "O potencial elétrico em uma região é $V(x,y,z)=3x^2y-2z$, com $V$ em volts e as coordenadas em metros. Determine o módulo do campo elétrico no ponto $(1,2,0)$.",
+    "alternativas": {
+      "a": "$12$ V/m",
+      "b": "$13$ V/m",
+      "c": "$\\sqrt{148}$ V/m",
+      "d": "$\\sqrt{153}$ V/m",
+      "e": "$\\sqrt{157}$ V/m"
+    },
+    "gabarito": "e",
+    "resolucao": "O campo é o oposto do gradiente: $\\vec{E}=-\\nabla V=\\left(-6xy,\\ -3x^2,\\ 2\\right)$. Em $(1,2,0)$: $\\vec{E}=(-12,\\ -3,\\ 2)$ V/m. Seu módulo é $\\sqrt{144+9+4}=\\sqrt{157}\\approx 12{,}5$ V/m.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Energia potencial de um sistema de cargas",
+    "dificuldade": "medio",
+    "enunciado": "Três cargas iguais a $+1{,}0\\ \\mu$C são fixadas nos vértices de um triângulo equilátero de lado $10$ cm. Determine a energia potencial elétrica do sistema. Use $k=9{,}0\\times 10^{9}$ N·m²/C².",
+    "alternativas": {
+      "a": "$0{,}09$ J",
+      "b": "$0{,}18$ J",
+      "c": "$0{,}27$ J",
+      "d": "$0{,}54$ J",
+      "e": "$0{,}90$ J"
+    },
+    "gabarito": "c",
+    "resolucao": "Há três pares de cargas, cada um contribuindo com $\\dfrac{kq^2}{a}$. Assim $U=3\\dfrac{kq^2}{a}=3\\cdot\\dfrac{9{,}0\\times 10^{9}\\left(1{,}0\\times 10^{-6}\\right)^2}{0{,}10}=3\\cdot\\dfrac{9{,}0\\times 10^{-3}}{0{,}10}=0{,}27$ J.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Associação em série",
+    "dificuldade": "medio",
+    "enunciado": "Dois capacitores, de $3{,}0\\ \\mu$F e $6{,}0\\ \\mu$F, são ligados em série a uma fonte de $12$ V. Determine a diferença de potencial no capacitor de $3{,}0\\ \\mu$F.",
+    "alternativas": {
+      "a": "$2{,}0$ V",
+      "b": "$4{,}0$ V",
+      "c": "$6{,}0$ V",
+      "d": "$8{,}0$ V",
+      "e": "$12$ V"
+    },
+    "gabarito": "d",
+    "resolucao": "Em série, $\\dfrac{1}{C_{eq}}=\\dfrac13+\\dfrac16=\\dfrac12$, logo $C_{eq}=2{,}0\\ \\mu$F e a carga comum é $Q=C_{eq}V=24\\ \\mu$C. No capacitor de $3{,}0\\ \\mu$F: $V_1=\\dfrac{Q}{C_1}=\\dfrac{24}{3{,}0}=8{,}0$ V (e $V_2=4{,}0$ V, somando os $12$ V da fonte).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Capacitor de placas paralelas com dielétrico",
+    "dificuldade": "medio",
+    "enunciado": "Um capacitor de placas paralelas tem área $0{,}020$ m² e separação $1{,}0$ mm, com um dielétrico de constante $\\kappa=3{,}0$ preenchendo o espaço entre as placas. Adotando $\\varepsilon_0=8{,}85\\times 10^{-12}$ F/m, determine sua capacitância.",
+    "alternativas": {
+      "a": "$5{,}3\\times 10^{-12}$ F",
+      "b": "$1{,}8\\times 10^{-10}$ F",
+      "c": "$2{,}7\\times 10^{-10}$ F",
+      "d": "$5{,}3\\times 10^{-10}$ F",
+      "e": "$1{,}6\\times 10^{-9}$ F"
+    },
+    "gabarito": "d",
+    "resolucao": "Com dielétrico, $C=\\dfrac{\\kappa\\varepsilon_0A}{d}=\\dfrac{3{,}0\\left(8{,}85\\times 10^{-12}\\right)\\left(0{,}020\\right)}{1{,}0\\times 10^{-3}}=\\dfrac{5{,}31\\times 10^{-13}}{1{,}0\\times 10^{-3}}=5{,}3\\times 10^{-10}$ F, ou seja, cerca de $0{,}53$ nF.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Energia armazenada e redistribuição de carga",
+    "dificuldade": "dificil",
+    "enunciado": "Um capacitor de $10\\ \\mu$F é carregado sob $100$ V e, em seguida, desligado da fonte e ligado em paralelo a outro capacitor idêntico, inicialmente descarregado. Determine a energia dissipada no processo.",
+    "alternativas": {
+      "a": "$12{,}5$ mJ",
+      "b": "$25$ mJ",
+      "c": "$50$ mJ",
+      "d": "$100$ mJ",
+      "e": "$0$"
+    },
+    "gabarito": "b",
+    "resolucao": "A energia inicial é $U_i=\\dfrac12CV^2=\\dfrac12\\left(10\\times 10^{-6}\\right)\\left(100\\right)^2=0{,}050$ J. A carga $Q=1{,}0\\times 10^{-3}$ C se conserva e passa a se distribuir por $C_{eq}=20\\ \\mu$F, resultando em $V_f=50$ V. Então $U_f=\\dfrac12\\left(20\\times 10^{-6}\\right)\\left(50\\right)^2=0{,}025$ J. A energia dissipada (por efeito Joule nos fios) é $0{,}050-0{,}025=25$ mJ.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Resistividade e resistência de um fio",
+    "dificuldade": "facil",
+    "enunciado": "Um fio de cobre de $20$ m de comprimento tem seção reta de $2{,}0$ mm². Sabendo que a resistividade do cobre é $1{,}7\\times 10^{-8}\\ \\Omega\\cdot$m, determine sua resistência.",
+    "alternativas": {
+      "a": "$0{,}017\\ \\Omega$",
+      "b": "$0{,}34\\ \\Omega$",
+      "c": "$0{,}17\\ \\Omega$",
+      "d": "$1{,}7\\ \\Omega$",
+      "e": "$3{,}4\\ \\Omega$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela segunda lei de Ohm, $R=\\rho\\dfrac{L}{A}$. Convertendo a área para $2{,}0\\times 10^{-6}$ m²: $R=\\dfrac{1{,}7\\times 10^{-8}\\cdot 20}{2{,}0\\times 10^{-6}}=\\dfrac{3{,}4\\times 10^{-7}}{2{,}0\\times 10^{-6}}=0{,}17\\ \\Omega$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Densidade de corrente",
+    "dificuldade": "facil",
+    "enunciado": "Uma corrente de $6{,}0$ A percorre um condutor de seção reta $3{,}0$ mm². Determine o módulo da densidade de corrente.",
+    "alternativas": {
+      "a": "$5{,}0\\times 10^{5}$ A/m²",
+      "b": "$2{,}0\\times 10^{3}$ A/m²",
+      "c": "$1{,}8\\times 10^{6}$ A/m²",
+      "d": "$2{,}0\\times 10^{6}$ A/m²",
+      "e": "$2{,}0\\times 10^{9}$ A/m²"
+    },
+    "gabarito": "d",
+    "resolucao": "Para corrente uniformemente distribuída, $J=\\dfrac{I}{A}=\\dfrac{6{,}0}{3{,}0\\times 10^{-6}}=2{,}0\\times 10^{6}$ A/m².",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Velocidade de deriva",
+    "dificuldade": "medio",
+    "enunciado": "Um fio de cobre com seção reta de $2{,}0$ mm² conduz $10$ A. Sabendo que a densidade de portadores é $n=8{,}5\\times 10^{28}$ elétrons/m³ e que $e=1{,}6\\times 10^{-19}$ C, determine a velocidade de deriva dos elétrons.",
+    "alternativas": {
+      "a": "$1{,}8\\times 10^{-4}$ m/s",
+      "b": "$7{,}4\\times 10^{-4}$ m/s",
+      "c": "$3{,}7\\times 10^{-3}$ m/s",
+      "d": "$2{,}7\\times 10^{3}$ m/s",
+      "e": "$3{,}7\\times 10^{-4}$ m/s"
+    },
+    "gabarito": "e",
+    "resolucao": "De $I=nqAv_d$ vem $v_d=\\dfrac{I}{nqA}$. Substituindo: $v_d=\\dfrac{10}{\\left(8{,}5\\times 10^{28}\\right)\\left(1{,}6\\times 10^{-19}\\right)\\left(2{,}0\\times 10^{-6}\\right)}=\\dfrac{10}{2{,}72\\times 10^{4}}\\approx 3{,}7\\times 10^{-4}$ m/s. É uma velocidade muito pequena, o que ilustra que o sinal elétrico não se propaga pelo deslocamento dos portadores.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Potência e resistência",
+    "dificuldade": "facil",
+    "enunciado": "Um chuveiro elétrico de $4400$ W opera em $220$ V. Determine sua resistência elétrica em funcionamento.",
+    "alternativas": {
+      "a": "$11\\ \\Omega$",
+      "b": "$5{,}5\\ \\Omega$",
+      "c": "$20\\ \\Omega$",
+      "d": "$22\\ \\Omega$",
+      "e": "$44\\ \\Omega$"
+    },
+    "gabarito": "a",
+    "resolucao": "De $P=\\dfrac{V^2}{R}$ vem $R=\\dfrac{V^2}{P}=\\dfrac{\\left(220\\right)^2}{4400}=\\dfrac{48400}{4400}=11\\ \\Omega$. A corrente correspondente é $I=\\dfrac{P}{V}=20$ A.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Associação série-paralelo",
+    "dificuldade": "medio",
+    "enunciado": "Uma fonte ideal de $24$ V alimenta um resistor $R_1=4{,}0\\ \\Omega$ em série com a associação em paralelo de $R_2=6{,}0\\ \\Omega$ e $R_3=12\\ \\Omega$. Determine a corrente que atravessa $R_3$.",
+    "alternativas": {
+      "a": "$0{,}50$ A",
+      "b": "$1{,}0$ A",
+      "c": "$1{,}5$ A",
+      "d": "$2{,}0$ A",
+      "e": "$3{,}0$ A"
+    },
+    "gabarito": "b",
+    "resolucao": "A associação paralela vale $\\dfrac{6\\cdot 12}{6+12}=4{,}0\\ \\Omega$, logo $R_{eq}=4{,}0+4{,}0=8{,}0\\ \\Omega$ e a corrente total é $I=\\dfrac{24}{8{,}0}=3{,}0$ A. A tensão sobre o paralelo é $3{,}0\\cdot 4{,}0=12$ V, de onde $I_3=\\dfrac{12}{12}=1{,}0$ A (e $I_2=2{,}0$ A).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Fem e resistência interna",
+    "dificuldade": "facil",
+    "enunciado": "Uma bateria de fem $12$ V e resistência interna $0{,}50\\ \\Omega$ alimenta um resistor externo de $5{,}5\\ \\Omega$. Determine a tensão nos terminais da bateria.",
+    "alternativas": {
+      "a": "$1{,}0$ V",
+      "b": "$6{,}0$ V",
+      "c": "$10$ V",
+      "d": "$11$ V",
+      "e": "$12$ V"
+    },
+    "gabarito": "d",
+    "resolucao": "A corrente é $I=\\dfrac{\\varepsilon}{R+r}=\\dfrac{12}{5{,}5+0{,}50}=2{,}0$ A. A tensão nos terminais é $U=\\varepsilon-rI=12-\\left(0{,}50\\right)\\left(2{,}0\\right)=11$ V.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Circuito RC em carga",
+    "dificuldade": "medio",
+    "enunciado": "Em um circuito RC série, um capacitor de $5{,}0\\ \\mu$F descarregado é ligado por meio de um resistor de $2{,}0$ M$\\Omega$ a uma fonte de $10$ V. Determine a carga do capacitor após $10$ s.",
+    "alternativas": {
+      "a": "$5{,}0\\ \\mu$C",
+      "b": "$18\\ \\mu$C",
+      "c": "$25\\ \\mu$C",
+      "d": "$32\\ \\mu$C",
+      "e": "$50\\ \\mu$C"
+    },
+    "gabarito": "d",
+    "resolucao": "A constante de tempo é $\\tau=RC=\\left(2{,}0\\times 10^{6}\\right)\\left(5{,}0\\times 10^{-6}\\right)=10$ s e a carga final seria $Q_{max}=C\\varepsilon=50\\ \\mu$C. Como $Q(t)=Q_{max}\\left(1-e^{-t/\\tau}\\right)$, em $t=\\tau$: $Q=50\\left(1-e^{-1}\\right)\\approx 50(0{,}632)\\approx 32\\ \\mu$C.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Leis de Kirchhoff em circuito de duas malhas",
+    "dificuldade": "dificil",
+    "enunciado": "Entre os nós $A$ e $B$ há três ramos em paralelo: (i) uma fem de $12$ V em série com $2{,}0\\ \\Omega$; (ii) uma fem de $6{,}0$ V em série com $3{,}0\\ \\Omega$; (iii) um resistor de $6{,}0\\ \\Omega$. Os polos positivos das duas fontes estão voltados para $A$. Determine a corrente que atravessa o resistor de $6{,}0\\ \\Omega$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{3}$ A",
+      "b": "$1$ A",
+      "c": "$\\dfrac{4}{3}$ A",
+      "d": "$2$ A",
+      "e": "$\\dfrac{8}{3}$ A"
+    },
+    "gabarito": "c",
+    "resolucao": "Chame $V=V_A-V_B$ e aplique a lei dos nós em $A$: $\\dfrac{12-V}{2}+\\dfrac{6-V}{3}=\\dfrac{V}{6}$. Multiplicando por $6$: $36-3V+12-2V=V$, ou seja, $48=6V\\Rightarrow V=8{,}0$ V. A corrente no resistor de $6{,}0\\ \\Omega$ é $\\dfrac{8{,}0}{6{,}0}=\\dfrac43$ A. Conferindo: o ramo (i) entrega $\\dfrac{12-8}{2}=2$ A e o ramo (ii) recebe $\\dfrac{8-6}{3}=\\dfrac23$ A, e $2-\\dfrac23=\\dfrac43$ A.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Força magnética sobre carga em movimento",
+    "dificuldade": "facil",
+    "enunciado": "Uma carga de $2{,}0\\ \\mu$C move-se a $3{,}0\\times 10^{5}$ m/s perpendicularmente a um campo magnético uniforme de $0{,}40$ T. Determine o módulo da força magnética sobre a carga.",
+    "alternativas": {
+      "a": "$0{,}24$ N",
+      "b": "$0{,}024$ N",
+      "c": "$0{,}12$ N",
+      "d": "$0{,}48$ N",
+      "e": "$2{,}4$ N"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $\\vec{v}\\perp\\vec{B}$, vale $F=qvB=\\left(2{,}0\\times 10^{-6}\\right)\\left(3{,}0\\times 10^{5}\\right)\\left(0{,}40\\right)=0{,}24$ N, com direção perpendicular ao plano formado por $\\vec{v}$ e $\\vec{B}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Raio da trajetória circular",
+    "dificuldade": "medio",
+    "enunciado": "Um próton ($m=1{,}67\\times 10^{-27}$ kg, $q=1{,}6\\times 10^{-19}$ C) entra perpendicularmente em um campo magnético uniforme de $0{,}50$ T com velocidade $2{,}0\\times 10^{6}$ m/s. Determine o raio de sua trajetória circular.",
+    "alternativas": {
+      "a": "$1{,}0$ cm",
+      "b": "$2{,}1$ cm",
+      "c": "$8{,}4$ cm",
+      "d": "$42$ cm",
+      "e": "$4{,}2$ cm"
+    },
+    "gabarito": "e",
+    "resolucao": "A força magnética é a resultante centrípeta: $qvB=\\dfrac{mv^2}{r}$, logo $r=\\dfrac{mv}{qB}=\\dfrac{\\left(1{,}67\\times 10^{-27}\\right)\\left(2{,}0\\times 10^{6}\\right)}{\\left(1{,}6\\times 10^{-19}\\right)\\left(0{,}50\\right)}=\\dfrac{3{,}34\\times 10^{-21}}{8{,}0\\times 10^{-20}}\\approx 0{,}042$ m $=4{,}2$ cm.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Campo de um fio retilíneo longo",
+    "dificuldade": "facil",
+    "enunciado": "Determine o módulo do campo magnético a $5{,}0$ cm de um fio retilíneo muito longo percorrido por corrente de $10$ A. Use $\\mu_0=4\\pi\\times 10^{-7}$ T·m/A.",
+    "alternativas": {
+      "a": "$4{,}0\\times 10^{-6}$ T",
+      "b": "$2{,}0\\times 10^{-5}$ T",
+      "c": "$4{,}0\\times 10^{-5}$ T",
+      "d": "$8{,}0\\times 10^{-5}$ T",
+      "e": "$1{,}0\\times 10^{-4}$ T"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela lei de Ampère, $B=\\dfrac{\\mu_0I}{2\\pi r}=\\dfrac{\\left(2\\times 10^{-7}\\right)\\left(10\\right)}{0{,}050}=\\dfrac{2{,}0\\times 10^{-6}}{0{,}050}=4{,}0\\times 10^{-5}$ T. As linhas de campo são circunferências concêntricas ao fio.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Campo no interior de um solenoide",
+    "dificuldade": "medio",
+    "enunciado": "Um solenoide longo tem $2000$ espiras por metro e é percorrido por corrente de $3{,}0$ A. Determine o módulo do campo magnético em seu interior. Use $\\mu_0=4\\pi\\times 10^{-7}$ T·m/A.",
+    "alternativas": {
+      "a": "$7{,}5\\times 10^{-4}$ T",
+      "b": "$2{,}4\\times 10^{-3}$ T",
+      "c": "$3{,}8\\times 10^{-3}$ T",
+      "d": "$7{,}5\\times 10^{-3}$ T",
+      "e": "$1{,}5\\times 10^{-2}$ T"
+    },
+    "gabarito": "d",
+    "resolucao": "No interior de um solenoide longo o campo é uniforme e vale $B=\\mu_0nI=\\left(4\\pi\\times 10^{-7}\\right)\\left(2000\\right)\\left(3{,}0\\right)\\approx 7{,}5\\times 10^{-3}$ T.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Torque sobre espira percorrida por corrente",
+    "dificuldade": "medio",
+    "enunciado": "Uma bobina plana de $50$ espiras, área $0{,}010$ m², conduz corrente de $2{,}0$ A em um campo magnético uniforme de $0{,}30$ T. Determine o torque máximo sobre a bobina.",
+    "alternativas": {
+      "a": "$0{,}03$ N·m",
+      "b": "$0{,}30$ N·m",
+      "c": "$0{,}15$ N·m",
+      "d": "$0{,}60$ N·m",
+      "e": "$3{,}0$ N·m"
+    },
+    "gabarito": "b",
+    "resolucao": "O momento de dipolo magnético é $\\mu=NIA=50\\left(2{,}0\\right)\\left(0{,}010\\right)=1{,}0$ A·m². Como $\\tau=\\mu B\\operatorname{sen}\\theta$, o máximo (com o plano da bobina paralelo ao campo) é $\\tau_{max}=\\mu B=1{,}0\\left(0{,}30\\right)=0{,}30$ N·m.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

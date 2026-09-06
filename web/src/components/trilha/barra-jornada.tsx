@@ -117,7 +117,7 @@ export function BarraJornada({
             onChange={(e) => onBusca(e.target.value)}
             placeholder="Buscar parada na ementa..."
             aria-label="Buscar parada na ementa"
-            className="h-9 w-full rounded-xl border border-border bg-background pl-8 pr-8 text-[13px] outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-green"
+            className="h-9 w-full rounded-xl border border-input bg-background pl-8 pr-8 text-[13px] outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-questly-green"
           />
           {busca !== "" && (
             <button
