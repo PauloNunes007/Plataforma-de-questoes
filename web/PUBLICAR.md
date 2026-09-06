@@ -47,6 +47,27 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
 5. Clique **Deploy**. Pronto — a URL `https://...vercel.app` é o que você manda
    pros amigos.
 
+> ⚠️ **`SUPABASE_SERVICE_ROLE_KEY` também é usada no BUILD.** A landing (`/`) é
+> pré-renderizada com as contagens reais do banco (`lib/landing/stats.ts`) — a
+> policy de `questions` só libera leitura pra autenticado, então a chave anônima
+> traria zero. Sem a variável no ambiente de build, a página **não quebra**
+> (cai num piso conservador), mas os números ficam desatualizados. Ela é
+> revalidada de hora em hora (`export const revalidate = 3600`).
+
+> 📣 **Antes de divulgar o link**, confira que estes três respondem 200 no
+> domínio publicado: `/robots.txt`, `/sitemap.xml` e `/opengraph-image`. Eles são
+> pedidos **sem sessão** (crawler do Google, bot do WhatsApp) e por isso estão
+> isentos do guard em `src/proxy.ts` (`ARQUIVOS_PUBLICOS`). Se algum devolver
+> 307, o link colado no grupo da turma aparece sem título e sem imagem.
+
+### Campanha de lançamento (UFF)
+
+O recorte editorial da landing mora em **`src/lib/landing/campanha.ts`**. Quando
+a prova de Física passar, edite lá (ou ponha `ativa: false`) e a fita do topo, a
+seção dedicada, o selo do hero, o painel do /login e o FAQ voltam sozinhos ao
+discurso geral — nenhum JSX precisa ser tocado. Os números NÃO ficam nesse
+arquivo: vêm do banco em tempo real.
+
 > Sem `MP_ACCESS_TOKEN` o app **funciona igual**, só que o botão "Assinar" cai no
 > fluxo manual (registra a intenção e você confirma em `/admin/assinaturas`).
 > Nenhum dado seu aparece em nenhum dos dois casos.

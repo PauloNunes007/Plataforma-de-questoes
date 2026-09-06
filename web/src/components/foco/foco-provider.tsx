@@ -11,11 +11,12 @@ import {
 } from "react";
 import { registrarSessaoFocoAction } from "@/lib/foco/actions";
 import { toISODate } from "@/lib/questly/shared";
+import type { NomeInsignia } from "@/components/insignias/insignia";
 
 export type ModoFoco = "cronometro" | "timer";
 type EstadoFoco = "parado" | "rodando" | "pausado";
 
-export type Celebracao = { titulo: string; sub: string; cor: string };
+export type Celebracao = { titulo: string; sub: string; cor: string; insignia: NomeInsignia };
 
 // Cores predefinidas pra personalizar a sessão de foco (pedido do usuário).
 export const CORES_FOCO = [
@@ -277,32 +278,34 @@ export function formatarDuracaoCurta(seg: number): string {
 }
 
 // Frase comemorativa no fim da sessão — SEMPRE baseada no total do dia
-// (pedido do usuário: "UAU! 6 HORAS DE FOCO"). Escala de emoji/tom conforme
-// as horas acumuladas.
+// (pedido do usuário: "UAU! 6 HORAS DE FOCO"). A escala agora é de MATERIAL:
+// o brasão sobe de chama → raio → cometa → troféu conforme as horas
+// acumuladas, no lugar dos emojis que enfeitavam o título antes.
 export function fraseFoco(totalSeg: number, cor: string): Celebracao {
   const h = Math.floor(totalSeg / 3600);
   const m = Math.round((totalSeg % 3600) / 60);
 
   if (totalSeg < 25 * 60) {
     return {
-      titulo: "Foco concluído! 💪",
+      titulo: "Foco concluído!",
+      insignia: "chama",
       sub: `${Math.max(1, Math.round(totalSeg / 60))} min de foco hoje — todo minuto conta.`,
       cor,
     };
   }
   if (h < 1) {
-    return { titulo: `Boa! ${m} min de foco hoje 🔥`, sub: "Você está construindo o hábito.", cor };
+    return { titulo: `Boa! ${m} min de foco hoje`, sub: "Você está construindo o hábito.", cor, insignia: "chama" };
   }
 
-  const emoji = h >= 6 ? "🤯" : h >= 4 ? "🚀" : h >= 2 ? "⚡" : "🔥";
+  const insignia: NomeInsignia = h >= 6 ? "trofeu" : h >= 4 ? "cometa" : h >= 2 ? "raio" : "chama";
   const tempo = m > 0 ? `${h}h${String(m).padStart(2, "0")}` : `${h}h`;
   const sub =
     h >= 6
-      ? "Maratona lendária. Descansa que você merece! 🏆"
+      ? "Maratona lendária. Descansa que você merece."
       : h >= 4
         ? "Que sessão monstra! Orgulho desse foco."
         : h >= 2
           ? "Ritmo de aprovado. Segue assim!"
           : "Mandou muito bem hoje.";
-  return { titulo: `UAU! ${tempo} DE FOCO HOJE ${emoji}`, sub, cor };
+  return { titulo: `UAU! ${tempo} DE FOCO HOJE`, sub, cor, insignia };
 }

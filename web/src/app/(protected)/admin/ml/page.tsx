@@ -5,7 +5,7 @@ import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { ModeloMl, type ModeloRow } from "@/components/admin/modelo-ml";
 
 export const metadata: Metadata = {
-  title: "Questly — Modelo",
+  title: "Modelo",
 };
 
 // O treino roda dentro de uma Server Action desta rota (dataset completo

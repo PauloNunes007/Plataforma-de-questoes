@@ -32,7 +32,7 @@ export function ComparativoCard({ comparativo }: { comparativo: ComparativoSeman
           </div>
         ) : (
           <p className="text-[13px] leading-snug text-muted-foreground">
-            Pontue esta semana pra ver como você se compara com os outros alunos. Toda questão conta. 💪
+            Pontue esta semana pra ver como você se compara com os outros alunos. Toda questão conta.
           </p>
         )}
       </div>

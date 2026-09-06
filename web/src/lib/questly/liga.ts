@@ -8,12 +8,16 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export const QUESTLY_LIGAS = ["bronze", "prata", "ouro", "platina", "diamante"] as const;
 export type Liga = (typeof QUESTLY_LIGAS)[number];
 
-export const QUESTLY_LIGA_INFO: Record<Liga, { nome: string; icone: string }> = {
-  bronze: { nome: "Bronze", icone: "🥉" },
-  prata: { nome: "Prata", icone: "🥈" },
-  ouro: { nome: "Ouro", icone: "🥇" },
-  platina: { nome: "Platina", icone: "💠" },
-  diamante: { nome: "Diamante", icone: "💎" },
+// Só o nome: o rosto de uma liga é o escudo alado vetorial
+// (components/ranking/liga-emblema.tsx), não um emoji de medalha — que mudava
+// de desenho a cada sistema operacional e não combinava com metal nenhum da
+// paleta. Quem precisa do visual importa LigaEmblema / LIGA_COR.
+export const QUESTLY_LIGA_INFO: Record<Liga, { nome: string }> = {
+  bronze: { nome: "Bronze" },
+  prata: { nome: "Prata" },
+  ouro: { nome: "Ouro" },
+  platina: { nome: "Platina" },
+  diamante: { nome: "Diamante" },
 };
 
 const QUESTLY_FRACAO_PROMOCAO = 0.3;

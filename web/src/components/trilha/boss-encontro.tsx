@@ -11,7 +11,7 @@
 // a nota projetada e a rota do GPS assumem a ementa inteira, e uma P1
 // parcial sai com a nota esmagada por tópicos que nem caem.
 import { useState } from "react";
-import { Castle, ListChecks, Pencil, Swords, TriangleAlert } from "lucide-react";
+import { Castle, Check, ListChecks, Pencil, Swords, TriangleAlert } from "lucide-react";
 import { salvarProvaTrilhaAction } from "@/lib/trilha/actions";
 
 export type TopicoEscopo = { id: string; nome: string };
@@ -153,7 +153,7 @@ export function BossEncontro({
                             : "border-border bg-background"
                         }`}
                       >
-                        {marcado && "✓"}
+                        {marcado && <Check className="size-3" strokeWidth={3.5} />}
                       </span>
                       <span className="min-w-0 flex-1 truncate">{t.nome}</span>
                     </button>

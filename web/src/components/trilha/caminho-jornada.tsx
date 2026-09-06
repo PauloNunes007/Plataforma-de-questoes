@@ -11,16 +11,26 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Castle, Flag, Sparkles, X } from "lucide-react";
+import { Castle, Flag, Gauge, Sparkles, X } from "lucide-react";
 import type { CaminhoDisciplina as CaminhoDisciplinaData } from "@/lib/trilha/trilha-data";
 import {
   buscarCaminhoDisciplinaAction,
   iniciarPraticaTopicoAction,
+  iniciarRevisaoRelampagoAction,
   mudarStatusTopicoAction,
 } from "@/lib/trilha/actions";
 import { BossEncontro } from "./boss-encontro";
 import { CenarioTrilha } from "./cenario-trilha";
 import { COR_ESTADO, NoJornada, PainelTopico } from "./no-jornada";
+import {
+  BarraJornada,
+  ListaJornada,
+  casaBusca,
+  casaFiltro,
+  type FiltroJornada,
+  type ModoJornada,
+} from "./barra-jornada";
+import { PlanoDeAtaque } from "./plano-ataque";
 
 const ROW_H = 136; // distância vertical entre nós (folga pro cenário)
 // PAD_TOP precisa comportar mascote (72px) + bandeira de largada quando a
@@ -77,9 +87,29 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
   // renderizava abaixo do mapa inteiro, fora da tela). Só abre em toque
   // explícito do aluno, nunca na seleção padrão da fronteira.
   const [sheetAberto, setSheetAberto] = useState(false);
+  // barra de comando: busca, filtro por estado e mapa ↔ lista
+  const [filtro, setFiltro] = useState<FiltroJornada>("tudo");
+  const [busca, setBusca] = useState("");
+  const [modo, setModo] = useState<ModoJornada>("mapa");
+  const [revisandoTudo, setRevisandoTudo] = useState(false);
+  const areaRef = useRef<HTMLDivElement>(null);
 
   const { topicos, progresso } = caminho;
   const fronteiraIdx = topicos.findIndex((t) => t.ehFronteira);
+
+  const itens = topicos.map((t, i) => ({ topico: t, numero: i + 1 }));
+  // filtro NÃO remove nós do mapa (isso quebraria a ordem curricular e o
+  // traçado da estrada) — ele apaga o que não bate; na lista ele filtra
+  const visiveisIds = new Set(
+    itens.filter(({ topico }) => casaFiltro(topico, filtro) && casaBusca(topico, busca)).map(({ topico }) => topico.id),
+  );
+  const itensLista = itens.filter(({ topico }) => visiveisIds.has(topico.id));
+
+  // rola até uma parada específica (mapa ou lista usam o mesmo data-no)
+  function irAte(topicoId: string) {
+    const alvo = areaRef.current?.querySelector<HTMLElement>(`[data-no="${topicoId}"]`);
+    alvo?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 
   // trava o scroll da página enquanto o sheet está aberto
   useEffect(() => {
@@ -113,14 +143,32 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
     setPendingId(null);
   }
 
-  async function praticar(topicoId: string) {
+  async function praticar(topicoId: string, qtd = 5) {
     setPendingId(topicoId);
-    const { missaoId } = await iniciarPraticaTopicoAction(caminho.subjectId, topicoId);
+    const { missaoId } = await iniciarPraticaTopicoAction(caminho.subjectId, topicoId, qtd);
     if (missaoId) {
       router.push(`/questao?missao=${missaoId}`);
       return;
     }
     setPendingId(null);
+  }
+
+  // uma missão só cobrindo todos os tópicos atrasados (ver plano de ataque)
+  async function revisarTudo(topicoIds: string[]) {
+    setRevisandoTudo(true);
+    const { missaoId } = await iniciarRevisaoRelampagoAction(caminho.subjectId, topicoIds, 10);
+    if (missaoId) {
+      router.push(`/questao?missao=${missaoId}`);
+      return;
+    }
+    setRevisandoTudo(false);
+  }
+
+  // abre uma parada (do plano de ataque ou da lista) e leva o olho até ela
+  function abrirTopico(topicoId: string, rolar = true) {
+    setSelId(topicoId);
+    setSheetAberto(true);
+    if (rolar) setTimeout(() => irAte(topicoId), 60);
   }
 
   return (
@@ -133,19 +181,55 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
         </div>
       ) : (
         <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_352px]">
-          <MapaVale
-            topicos={topicos}
-            fronteiraIdx={fronteiraIdx}
-            selId={selecionado?.id ?? null}
-            onSelect={(id) => {
-              setSelId(id);
-              setSheetAberto(true);
-            }}
-            bossNome={caminho.bossNome}
-            diasAteProva={caminho.diasAteProva}
-          />
+          <div ref={areaRef} className="flex min-w-0 flex-col gap-3">
+            <BarraJornada
+              topicos={topicos}
+              filtro={filtro}
+              onFiltro={setFiltro}
+              busca={busca}
+              onBusca={setBusca}
+              modo={modo}
+              onModo={setModo}
+              visiveis={visiveisIds.size}
+              temFronteira={fronteiraIdx >= 0}
+              onIrParaFronteira={() => {
+                const fronteira = topicos[fronteiraIdx];
+                if (fronteira) abrirTopico(fronteira.id);
+              }}
+            />
+
+            {modo === "mapa" ? (
+              <MapaVale
+                topicos={topicos}
+                fronteiraIdx={fronteiraIdx}
+                selId={selecionado?.id ?? null}
+                atenuados={visiveisIds}
+                filtrando={filtro !== "tudo" || busca.trim() !== ""}
+                onSelect={(id) => {
+                  setSelId(id);
+                  setSheetAberto(true);
+                }}
+                bossNome={caminho.bossNome}
+                diasAteProva={caminho.diasAteProva}
+              />
+            ) : (
+              <ListaJornada
+                itens={itensLista}
+                selId={selecionado?.id ?? null}
+                onSelect={(id) => abrirTopico(id, false)}
+              />
+            )}
+          </div>
 
           <div className="flex flex-col gap-4 xl:sticky xl:top-7">
+            <PlanoDeAtaque
+              topicos={topicos}
+              pendingId={pendingId}
+              revisandoTudo={revisandoTudo}
+              onPraticar={(id) => praticar(id, 5)}
+              onSelecionar={(id) => abrirTopico(id)}
+              onRevisarTudo={revisarTudo}
+            />
             {selecionado && (
               <div className="hidden xl:block">
                 <PainelTopico
@@ -154,7 +238,7 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
                   pending={pendingId === selecionado.id}
                   onSkip={() => marcar(selecionado.id, "pulado")}
                   onUndo={() => marcar(selecionado.id, "pendente")}
-                  onPraticar={() => praticar(selecionado.id)}
+                  onPraticar={(qtd) => praticar(selecionado.id, qtd)}
                 />
               </div>
             )}
@@ -216,7 +300,7 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
                 pending={pendingId === selecionado.id}
                 onSkip={() => marcar(selecionado.id, "pulado")}
                 onUndo={() => marcar(selecionado.id, "pendente")}
-                onPraticar={() => praticar(selecionado.id)}
+                onPraticar={(qtd) => praticar(selecionado.id, qtd)}
               />
             </motion.div>
           </div>
@@ -257,7 +341,52 @@ function CabecalhoJornada({ caminho }: { caminho: CaminhoDisciplinaData }) {
         <Contador valor={progresso.naFila} rotulo="na fila" />
         <Contador valor={progresso.total} rotulo="missões na trilha" />
       </div>
+
+      <Ritmo naFila={progresso.naFila} diasAteProva={caminho.diasAteProva} />
     </div>
+  );
+}
+
+// Ritmo necessário: quantas paradas por semana pra fechar a ementa antes da
+// prova. É aritmética explícita (paradas restantes ÷ semanas restantes), não
+// previsão — por isso o texto diz "pra fechar a ementa", não "pra passar".
+function Ritmo({ naFila, diasAteProva }: { naFila: number; diasAteProva: number | null }) {
+  if (diasAteProva == null || diasAteProva <= 0) return null;
+
+  if (naFila === 0) {
+    return (
+      <p className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-questly-green-light px-2.5 py-1.5 text-[11.5px] font-medium text-questly-green-dark">
+        <Gauge size={12.5} strokeWidth={2.25} />
+        Ementa percorrida — agora é revisar e consolidar até o dia da prova.
+      </p>
+    );
+  }
+
+  const semanas = diasAteProva / 7;
+  const porSemana = naFila / semanas;
+  const texto =
+    porSemana <= 7
+      ? `${porSemana.toFixed(1).replace(".", ",").replace(",0", "")} paradas por semana`
+      : `${Math.ceil(naFila / diasAteProva)} paradas por dia`;
+
+  const apertado = porSemana > 7;
+
+  return (
+    <p
+      className={`mt-2.5 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium ${
+        apertado
+          ? "bg-questly-red-light text-questly-red-dark"
+          : "bg-muted text-muted-foreground"
+      }`}
+      title="Paradas que faltam ÷ semanas até a prova"
+    >
+      <Gauge size={12.5} strokeWidth={2.25} />
+      Ritmo pra fechar a ementa: <b className="tnum font-semibold">{texto}</b>
+      <span className="opacity-70">
+        ({naFila} {naFila === 1 ? "parada" : "paradas"} em {diasAteProva}{" "}
+        {diasAteProva === 1 ? "dia" : "dias"})
+      </span>
+    </p>
   );
 }
 
@@ -297,6 +426,8 @@ function MapaVale({
   topicos,
   fronteiraIdx,
   selId,
+  atenuados,
+  filtrando,
   onSelect,
   bossNome,
   diasAteProva,
@@ -304,6 +435,9 @@ function MapaVale({
   topicos: CaminhoDisciplinaData["topicos"];
   fronteiraIdx: number;
   selId: string | null;
+  // ids que BATEM no filtro/busca ativos (os outros são apagados)
+  atenuados: Set<string>;
+  filtrando: boolean;
   onSelect: (id: string) => void;
   bossNome: string | null;
   diasAteProva: number | null;
@@ -393,7 +527,8 @@ function MapaVale({
         {topicos.map((t, i) => (
           <motion.div
             key={t.id}
-            className="absolute z-10"
+            data-no={t.id}
+            className="absolute z-10 scroll-mt-40"
             style={{ left: `${xPct(i)}%`, top: yPx(i), transform: "translate(-50%,-50%)" }}
             initial={reduzir ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -403,6 +538,7 @@ function MapaVale({
               topico={t}
               numero={i + 1}
               selecionado={t.id === selId}
+              atenuado={filtrando && !atenuados.has(t.id)}
               onSelect={() => onSelect(t.id)}
             />
           </motion.div>

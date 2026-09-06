@@ -1,4 +1,5 @@
 import { CheckCircle2, XCircle, ClipboardList } from "lucide-react";
+import { Insignia } from "@/components/insignias/insignia";
 import type { HeroDados } from "@/lib/dashboard/hero-data";
 
 // Card "Questões feitas" — donut de acertos/erros da vida toda (releitura do
@@ -20,9 +21,12 @@ export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
       </div>
 
       {totalQuestoes === 0 ? (
-        <p className="py-6 text-center text-sm text-muted-foreground">
-          Você ainda não respondeu questões. Cumpra uma missão pra começar a preencher isto. 🎯
-        </p>
+        <div className="flex flex-col items-center gap-2.5 py-5 text-center">
+          <Insignia nome="alvo" tom="esmeralda" size={46} apagada />
+          <p className="max-w-[34ch] text-sm text-muted-foreground">
+            Você ainda não respondeu questões. Cumpra uma missão pra começar a preencher isto.
+          </p>
+        </div>
       ) : (
         <div className="flex items-center gap-5">
           {/* Donut */}

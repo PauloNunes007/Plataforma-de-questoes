@@ -4,7 +4,7 @@ import { carregarDadosRanking, carregarRankingGlobal } from "@/lib/ranking/ranki
 import { RankingView } from "@/components/ranking/ranking-view";
 
 export const metadata: Metadata = {
-  title: "Questly — Ranking",
+  title: "Ranking",
 };
 
 export default async function RankingPage() {
@@ -21,7 +21,7 @@ export default async function RankingPage() {
   ]);
 
   return (
-    <div className="mx-auto flex w-full max-w-[680px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto flex w-full max-w-[880px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
       <header>
         <h1 className="font-heading text-[22px] font-semibold tracking-tight">Ranking</h1>
         <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">

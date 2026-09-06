@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronDown, Pause, Play, Square, X } from "lucide-react";
+import { Insignia } from "@/components/insignias/insignia";
 import { useFoco, formatarRelogio, formatarDuracaoCurta, CORES_FOCO } from "./foco-provider";
 
 const MINUTOS_RAPIDOS = [15, 25, 50] as const;
@@ -296,8 +297,8 @@ function CelebracaoOverlay() {
           >
             <span className="pointer-events-none absolute -right-6 -top-8 h-28 w-28 rounded-full opacity-30 blur-2xl" style={{ background: cel.cor }} />
             <div className="relative flex items-center gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-2xl shadow-inner" style={{ backgroundColor: `${cel.cor}22` }}>
-                🎯
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-inner" style={{ backgroundColor: `${cel.cor}22` }}>
+                <Insignia nome={cel.insignia} tom="rubi" size={26} nua />
               </span>
               <div className="min-w-0">
                 <p className="font-heading text-[15px] font-bold leading-tight" style={{ color: cel.cor }}>

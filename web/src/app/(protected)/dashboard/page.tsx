@@ -9,7 +9,7 @@ import { DashboardView } from "@/components/dashboard/dashboard-view";
 import { ContinuarCard } from "@/components/retomar/continuar-card";
 
 export const metadata: Metadata = {
-  title: "Questly — Dashboard",
+  title: "Início",
 };
 
 export default async function DashboardPage() {

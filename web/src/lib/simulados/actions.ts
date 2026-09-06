@@ -5,6 +5,7 @@ import { questlyEmbaralhar } from "@/lib/questly/shared";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { ehPro } from "@/lib/plano/plano";
 import { instituicoesDoAluno } from "./simulados-data";
+import { nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
 import {
   SIMULADO_FREE_LIMITE_SEMANA,
   clampQuantidade,
@@ -73,7 +74,7 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
   const escolhidas = questlyEmbaralhar(candidatas).slice(0, Math.min(quantidade, candidatas.length));
   const questionIds = escolhidas.map((q) => q.id);
 
-  const nomeInstituicao = casadas.sort((a, b) => b.length - a.length)[0];
+  const nomeInstituicao = nomeExibicaoInstituicao(casadas);
   const materiaNomes = (input.materiaNomes || []).filter(Boolean);
   const titulo =
     materiaNomes.length === 1

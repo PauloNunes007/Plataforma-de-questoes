@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { listarMateriasComQuestoes } from "@/lib/disciplinas/disciplinas-data";
+import { listarInstituicoesComQuestoes } from "@/lib/cursos/actions";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
 
 export const metadata: Metadata = {
-  title: "Questly — Configure sua campanha",
+  title: "Configure sua campanha",
 };
 
 export default async function OnboardingPage() {
@@ -34,7 +35,16 @@ export default async function OnboardingPage() {
   // O app ainda não sabe em que semestre o aluno está — em vez de só uma
   // lista curada por curso (que pode não ter conteúdo real ainda), sugere
   // o que já tem questões prontas no banco, pra ele escolher livremente.
-  const materiasComQuestoes = await listarMateriasComQuestoes(supabase);
+  const [materiasComQuestoes, instituicoesComQuestoes] = await Promise.all([
+    listarMateriasComQuestoes(supabase),
+    listarInstituicoesComQuestoes(),
+  ]);
 
-  return <OnboardingWizard nomeInicial={profile?.nome ?? ""} materiasComQuestoes={materiasComQuestoes} />;
+  return (
+    <OnboardingWizard
+      nomeInicial={profile?.nome ?? ""}
+      materiasComQuestoes={materiasComQuestoes}
+      instituicoesComQuestoes={instituicoesComQuestoes}
+    />
+  );
 }

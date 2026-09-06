@@ -79,7 +79,7 @@ export function PlanosView(props: PlanosViewProps) {
           Questly Pro
         </span>
         <h1 className="mt-3 font-heading text-[26px] font-semibold tracking-tight sm:text-[30px]">
-          {props.jaEhPro ? "Você é Questly Pro 🎉" : "Destrave o semestre inteiro"}
+          {props.jaEhPro ? "Você é Questly Pro" : "Destrave o semestre inteiro"}
         </h1>
         <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
           {props.jaEhPro

@@ -132,8 +132,9 @@ export function MissoesCard({
             Cumprir missão
           </Link>
         ) : (
-          <span className="flex-1 rounded-xl bg-muted px-3 py-2 text-center text-[13px] font-medium text-muted-foreground">
-            Tudo feito por hoje 🎉
+          <span className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-muted px-3 py-2 text-center text-[13px] font-medium text-muted-foreground">
+            <CheckCircle2 size={14} strokeWidth={2.4} className="text-questly-green" />
+            Tudo feito por hoje
           </span>
         )}
         <button

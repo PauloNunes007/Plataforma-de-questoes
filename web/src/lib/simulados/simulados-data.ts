@@ -3,7 +3,7 @@
 // é dono-only (RLS) — então tudo aqui já roda no cliente SSR normal do usuário.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Pergunta } from "@/lib/questao/types";
-import { instituicoesQueCasam } from "@/lib/cursos/instituicao";
+import { instituicoesQueCasam, nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
 import { ehPro } from "@/lib/plano/plano";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { SIMULADO_FREE_LIMITE_SEMANA } from "./constantes";
@@ -116,7 +116,7 @@ export async function carregarOpcoesSimulado(
     .sort((a, b) => b.questoes - a.questoes || a.nome.localeCompare(b.nome));
 
   const totalQuestoes = materias.reduce((s, m) => s + m.questoes, 0);
-  const nomeInstituicao = casadas.sort((a, b) => b.length - a.length)[0];
+  const nomeInstituicao = nomeExibicaoInstituicao(casadas);
 
   return {
     universidade,

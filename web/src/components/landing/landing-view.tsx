@@ -6,6 +6,11 @@
 // responsiva ao usuário: cards com tilt 3D no ponteiro, mascote flutuante
 // com parallax, barras do preview animadas — tudo gated por
 // prefers-reduced-motion.
+//
+// Os números que aparecem aqui vêm do banco de verdade (page.tsx →
+// carregarStatsBanco) — a landing nunca inventa contagem. O recorte de
+// campanha (lançamento pra UFF) mora em lib/landing/campanha.ts e desenha em
+// components/landing/campanha-uff.tsx.
 import Link from "next/link";
 import Image from "next/image";
 import { type ComponentType, type ReactNode, useMemo } from "react";
@@ -23,8 +28,10 @@ import {
   CalendarClock,
   Check,
   Compass,
+  FileText,
   Flame,
   Layers,
+  Library,
   LineChart,
   Microscope,
   RefreshCcw,
@@ -39,6 +46,12 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
+import { CAMPANHA } from "@/lib/landing/campanha";
+import { arredondarPraBaixo, type StatsBanco } from "@/lib/landing/stats";
+import { RECURSOS_FREE, RECURSOS_PRO, type ItemPlano } from "@/lib/plano/plano";
+import { FitaCampanha, SecaoCampanha, SeloCampanhaHero } from "./campanha-uff";
+import { SimuladosShowcase } from "./simulados-showcase";
+import { Faq } from "./faq";
 
 /* Link estilizado como botão — o Button do app (base-ui) não tem `asChild`,
    então aplicamos as variantes direto num <Link>/<a>. */
@@ -148,17 +161,11 @@ function TiltCard({
 /* ------------------------------------------------------------- conteúdo */
 
 const NAV = [
+  { label: CAMPANHA.instituicao, href: `#${CAMPANHA.ancora}`, destaque: true },
+  { label: "Simulados", href: "#simulados" },
   { label: "Método", href: "#metodo" },
   { label: "Recursos", href: "#recursos" },
-  { label: "Ciência", href: "#ciencia" },
   { label: "Preços", href: "#precos" },
-];
-
-const STATS = [
-  { valor: "1", sufixo: "plano por dia", legenda: "montado pelo motor, não por você às 23h59" },
-  { valor: "∞", sufixo: "provas", legenda: "equilibradas ao mesmo tempo, sem uma comer a outra" },
-  { valor: "5", sufixo: "mecânicas", legenda: "de ciência da aprendizagem trabalhando por você" },
-  { valor: "0", sufixo: "achismo", legenda: "cada questão recalibra o que vem depois" },
 ];
 
 const RECURSOS: {
@@ -172,6 +179,18 @@ const RECURSOS: {
     cor: "text-questly-green",
     titulo: "Acordou? Já tem plano.",
     desc: "Nada de encarar o caderno sem saber por onde começar. Todo dia a Questly monta sua missão — do tamanho certo pro tempo que você tem.",
+  },
+  {
+    icon: FileText,
+    cor: "text-questly-blue",
+    titulo: "Simulados cronometrados",
+    desc: "Prova de verdade, com relógio correndo e questões das provas antigas da sua universidade. No fim, boletim e revisão questão a questão.",
+  },
+  {
+    icon: Library,
+    cor: "text-questly-purple",
+    titulo: "Questões de provas antigas",
+    desc: "Enunciado digitado do original, fórmulas renderizadas e figuras recortadas da própria prova — com resolução passo a passo em todas.",
   },
   {
     icon: Swords,
@@ -220,6 +239,12 @@ const RECURSOS: {
     cor: "text-questly-orange",
     titulo: "Vício do bom",
     desc: "Cada questão vale XP pela dificuldade. Manter o fogo do streak aceso vira hábito — e hábito é o que passa de ano.",
+  },
+  {
+    icon: Layers,
+    cor: "text-questly-green",
+    titulo: "Suas anotações, no lugar certo",
+    desc: "Favorite a questão que te derrubou, escreva a sua própria resolução e volte nela na véspera — tudo guardado junto da questão.",
   },
 ];
 
@@ -278,33 +303,9 @@ const PASSOS: { n: string; titulo: string; desc: string }[] = [
   },
 ];
 
-type PlanoFeature = { texto: string; incluso: boolean };
-
-const PLANO_GRATIS: PlanoFeature[] = [
-  { texto: "Até 2 disciplinas ativas por vez", incluso: true },
-  { texto: "Missão do dia (até 15 questões diárias)", incluso: true },
-  { texto: "Boss por prova e trilha curricular", incluso: true },
-  { texto: "Streak, XP e ligas semanais", incluso: true },
-  { texto: "Grade semanal automática por peso", incluso: false },
-  { texto: "Projeção pro dia da prova", incluso: false },
-  { texto: "Repetição espaçada + maestria (BKT)", incluso: false },
-  { texto: "Autópsia do erro e estatísticas avançadas", incluso: false },
-];
-
-const PLANO_PRO: PlanoFeature[] = [
-  { texto: "Disciplinas e provas ilimitadas", incluso: true },
-  { texto: "Missões diárias sem teto de questões", incluso: true },
-  { texto: "Grade semanal automática, equilibrada por peso", incluso: true },
-  { texto: "Projeção pro dia da prova: sua nota estimada no dia D", incluso: true },
-  { texto: "Repetição espaçada + maestria (BKT) por tópico", incluso: true },
-  { texto: "Autópsia do erro: descubra por que errou e corrija o padrão", incluso: true },
-  { texto: "Prática livre ilimitada focada nos seus pontos fracos", incluso: true },
-  { texto: "Estatísticas avançadas: comparativo, percentil e recordes", incluso: true },
-];
-
 /* ------------------------------------------------------------------ view */
 
-export function LandingView() {
+export function LandingView({ stats }: { stats: StatsBanco }) {
   const reduzir = useReducedMotion();
   const glows = useMemo(
     () => (
@@ -317,26 +318,55 @@ export function LandingView() {
     [],
   );
 
+  const NUMEROS = [
+    {
+      valor: arredondarPraBaixo(stats.total),
+      sufixo: "questões",
+      legenda: "de provas antigas e listas, com resolução passo a passo",
+    },
+    {
+      valor: arredondarPraBaixo(stats.instituicao),
+      sufixo: `de provas da ${CAMPANHA.instituicao}`,
+      legenda: "digitadas do original, tópico a tópico",
+    },
+    {
+      valor: "1",
+      sufixo: "plano por dia",
+      legenda: "montado pelo motor, não por você às 23h59",
+    },
+    {
+      valor: "0",
+      sufixo: "achismo",
+      legenda: "cada questão recalibra o que vem depois",
+    },
+  ];
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       {glows}
 
+      <FitaCampanha />
+
       {/* ---------------------------------------------------------- header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5">
           <Logo />
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-0.5 md:flex">
             {NAV.map((n) => (
               <a
                 key={n.href}
                 href={n.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground ${
+                  n.destaque
+                    ? "text-questly-green-dark dark:text-questly-green"
+                    : "text-muted-foreground"
+                }`}
               >
                 {n.label}
               </a>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <BtnLink href="/login" variant="ghost" size="sm" className="hidden sm:inline-flex">
               Entrar
             </BtnLink>
@@ -346,10 +376,27 @@ export function LandingView() {
             </BtnLink>
           </div>
         </div>
+
+        {/* nav do mobile: rolagem horizontal em vez de esconder tudo */}
+        <nav className="flex gap-1 overflow-x-auto border-t border-border/50 px-4 py-2 md:hidden [scrollbar-width:none]">
+          {NAV.map((n) => (
+            <a
+              key={n.href}
+              href={n.href}
+              className={`shrink-0 rounded-full px-3 py-1.5 text-[13px] font-medium ${
+                n.destaque
+                  ? "bg-questly-green/12 text-questly-green-dark dark:text-questly-green"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {n.label}
+            </a>
+          ))}
+        </nav>
       </header>
 
       {/* ------------------------------------------------------------ hero */}
-      <section className="relative mx-auto max-w-6xl px-5 pt-16 pb-20 sm:pt-24">
+      <section className="relative mx-auto max-w-6xl px-5 pt-14 pb-20 sm:pt-20">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <motion.span
@@ -358,8 +405,7 @@ export function LandingView() {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 rounded-full border border-questly-green/30 bg-questly-green/10 px-3 py-1 text-xs font-medium text-questly-green-dark dark:text-questly-green"
             >
-              <Sparkles className="size-3.5" />
-              O copiloto da sua aprovação
+              <Sparkles className="size-3.5" />O copiloto da sua aprovação
             </motion.span>
 
             <motion.h1
@@ -380,11 +426,15 @@ export function LandingView() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty"
             >
-              A Questly transforma o caos de um semestre cheio de matérias numa{" "}
-              <strong className="font-semibold text-foreground">missão por dia</strong>. O motor
-              equilibra suas disciplinas por urgência, ponto fraco e meta de nota — pra você chegar
-              preparado em <em className="font-medium text-foreground not-italic">todas</em> as
-              provas, não só na que está batendo na porta.
+              Uma <strong className="font-semibold text-foreground">missão por dia</strong>,{" "}
+              <strong className="font-semibold text-foreground">simulados cronometrados</strong> e{" "}
+              <strong className="font-semibold text-foreground">
+                questões das provas antigas da sua universidade
+              </strong>
+              . O motor equilibra suas disciplinas por urgência, ponto fraco e meta de nota — pra
+              você chegar preparado em{" "}
+              <em className="font-medium text-foreground not-italic">todas</em> as provas, não só na
+              que está batendo na porta.
             </motion.p>
 
             <motion.div
@@ -393,12 +443,12 @@ export function LandingView() {
               transition={{ duration: 0.6, delay: 0.18 }}
               className="mt-8 flex flex-wrap items-center gap-3"
             >
-              <BtnLink href="/login" size="lg" className="h-11 px-6 text-[15px]">
+              <BtnLink href="/login" size="lg" className="h-12 px-6 text-[15px]">
                 Criar conta grátis
                 <ArrowRight />
               </BtnLink>
-              <BtnLink href="#metodo" size="lg" variant="outline" className="h-11 px-6 text-[15px]">
-                Ver como funciona
+              <BtnLink href="#simulados" size="lg" variant="outline" className="h-12 px-6 text-[15px]">
+                Ver os simulados
               </BtnLink>
             </motion.div>
 
@@ -411,6 +461,8 @@ export function LandingView() {
               <ShieldCheck className="size-4 text-questly-green" />
               Grátis pra começar · sem cartão de crédito
             </motion.p>
+
+            <SeloCampanhaHero stats={stats} />
           </div>
 
           {/* preview mockup */}
@@ -427,9 +479,9 @@ export function LandingView() {
           viewport={{ once: true, margin: "-60px" }}
           className="mt-20 grid grid-cols-2 gap-4 border-t border-border/60 pt-10 lg:grid-cols-4"
         >
-          {STATS.map((s) => (
+          {NUMEROS.map((s) => (
             <motion.div key={s.legenda} variants={item}>
-              <dt className="flex items-baseline gap-1.5">
+              <dt className="flex flex-wrap items-baseline gap-x-1.5">
                 <span className="tnum text-3xl font-semibold tracking-tight sm:text-4xl">
                   {s.valor}
                 </span>
@@ -441,8 +493,14 @@ export function LandingView() {
         </motion.dl>
       </section>
 
+      {/* ------------------------------------------------------- campanha */}
+      <SecaoCampanha stats={stats} />
+
+      {/* ------------------------------------------------------ simulados */}
+      <SimuladosShowcase stats={stats} />
+
       {/* --------------------------------------------------------- método */}
-      <section id="metodo" className="relative border-t border-border/60 bg-muted/30 py-24">
+      <section id="metodo" className="relative scroll-mt-16 border-t border-border/60 bg-muted/30 py-24">
         <div className="mx-auto max-w-6xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
@@ -489,7 +547,7 @@ export function LandingView() {
       <MascoteBand />
 
       {/* -------------------------------------------------------- recursos */}
-      <section id="recursos" className="relative py-24">
+      <section id="recursos" className="relative scroll-mt-16 py-24">
         <div className="mx-auto max-w-6xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
@@ -529,7 +587,7 @@ export function LandingView() {
       </section>
 
       {/* --------------------------------------------------------- ciência */}
-      <section id="ciencia" className="relative border-y border-border/60 bg-muted/30 py-24">
+      <section id="ciencia" className="relative scroll-mt-16 border-y border-border/60 bg-muted/30 py-24">
         <div className="mx-auto max-w-6xl px-5">
           <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
             <Revelar>
@@ -574,15 +632,15 @@ export function LandingView() {
       </section>
 
       {/* ---------------------------------------------------------- preços */}
-      <section id="precos" className="relative py-24">
+      <section id="precos" className="relative scroll-mt-16 py-24">
         <div className="mx-auto max-w-5xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               Comece de graça. Destrave tudo por menos que um lanche.
             </h2>
             <p className="mt-4 text-lg text-muted-foreground text-pretty">
-              O plano grátis já te faz passar numa matéria. O Pro é pra quem quer o semestre inteiro
-              sob controle — e dormir tranquilo na véspera da prova.
+              O plano grátis já monta seu semestre inteiro e te dá um simulado por semana. O Pro é
+              pra quem quer simular sem limite e enxergar a nota antes da prova.
             </p>
           </Revelar>
 
@@ -597,7 +655,7 @@ export function LandingView() {
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  O suficiente pra sentir o método na pele.
+                  O método completo, sem prazo de validade.
                 </p>
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="tnum text-4xl font-semibold tracking-tight">R$ 0</span>
@@ -607,7 +665,7 @@ export function LandingView() {
                   Criar conta grátis
                 </BtnLink>
                 <ul className="mt-7 space-y-3">
-                  {PLANO_GRATIS.map((f) => (
+                  {RECURSOS_FREE.map((f) => (
                     <FeatureLinha key={f.texto} {...f} />
                   ))}
                 </ul>
@@ -644,12 +702,12 @@ export function LandingView() {
                   <ArrowRight />
                 </BtnLink>
                 <ul className="mt-7 space-y-3">
-                  {PLANO_PRO.map((f) => (
+                  {RECURSOS_PRO.map((f) => (
                     <FeatureLinha key={f.texto} {...f} />
                   ))}
                 </ul>
                 <p className="mt-6 text-xs text-muted-foreground">
-                  Tudo do grátis, sem os limites — e o que de fato vira o jogo na reta final.
+                  Sem fidelidade no mensal. Cancele quando quiser, direto nas configurações.
                 </p>
               </div>
             </Revelar>
@@ -657,8 +715,11 @@ export function LandingView() {
         </div>
       </section>
 
+      {/* ------------------------------------------------------------- faq */}
+      <Faq />
+
       {/* ------------------------------------------------------- final CTA */}
-      <section className="relative px-5 pb-24">
+      <section className="relative px-5 py-24">
         <Revelar className="mx-auto max-w-4xl">
           <div className="surface-brand relative overflow-hidden rounded-[2rem] px-8 py-14 text-center sm:px-14">
             <div
@@ -683,23 +744,59 @@ export function LandingView() {
       </section>
 
       {/* --------------------------------------------------------- footer */}
-      <footer className="border-t border-border/60 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 sm:flex-row">
-          <Logo />
-          <p className="text-sm text-muted-foreground">
+      <footer className="border-t border-border/60 py-12">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
+            <div className="max-w-xs">
+              <Logo />
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground text-pretty">
+                Plano de estudos, simulados e questões de provas antigas pra universitário que
+                precisa passar em todas as matérias do semestre.
+              </p>
+            </div>
+            <div className="flex gap-12">
+              <div>
+                <p className="text-[13px] font-semibold">Plataforma</p>
+                <div className="mt-3 flex flex-col gap-2">
+                  {NAV.map((n) => (
+                    <a
+                      key={n.href}
+                      href={n.href}
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {n.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-[13px] font-semibold">Conta</p>
+                <div className="mt-3 flex flex-col gap-2">
+                  <Link
+                    href="/login"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Entrar
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Criar conta
+                  </Link>
+                  <a
+                    href="#faq"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Dúvidas
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="mt-10 border-t border-border/60 pt-6 text-xs text-muted-foreground">
             © {new Date().getFullYear()} Questly · Estude o que importa.
           </p>
-          <div className="flex items-center gap-1">
-            {NAV.map((n) => (
-              <a
-                key={n.href}
-                href={n.href}
-                className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {n.label}
-              </a>
-            ))}
-          </div>
         </div>
       </footer>
     </div>
@@ -708,7 +805,7 @@ export function LandingView() {
 
 /* ------------------------------------------------------- subcomponentes */
 
-function FeatureLinha({ texto, incluso }: PlanoFeature) {
+function FeatureLinha({ texto, incluso }: ItemPlano) {
   return (
     <li className="flex items-start gap-3">
       <span
@@ -824,8 +921,8 @@ function MascoteBand() {
 function HeroPreview() {
   const reduzir = useReducedMotion();
   const barras = [
-    { nome: "Cálculo II", pct: 46, cor: "bg-questly-green", tag: "prova em 6d" },
-    { nome: "Física I", pct: 32, cor: "bg-questly-blue", tag: "ponto fraco" },
+    { nome: "Física I", pct: 46, cor: "bg-questly-green", tag: "prova em 6d" },
+    { nome: "Cálculo II", pct: 32, cor: "bg-questly-blue", tag: "ponto fraco" },
     { nome: "Álgebra Linear", pct: 22, cor: "bg-questly-purple", tag: "meta 9,0" },
   ];
   return (
@@ -837,12 +934,13 @@ function HeroPreview() {
               Q
             </span>
             <div>
-              <p className="text-sm font-semibold leading-tight">Missão de hoje</p>
+              <p className="text-sm leading-tight font-semibold">Missão de hoje</p>
               <p className="text-xs text-muted-foreground">3 disciplinas equilibradas</p>
             </div>
           </div>
-          <span className="tnum rounded-full bg-questly-orange/12 px-2.5 py-1 text-xs font-semibold text-questly-orange-dark dark:text-questly-orange">
-            🔥 12 dias
+          <span className="tnum flex items-center gap-1 rounded-full bg-questly-orange/12 px-2.5 py-1 text-xs font-semibold text-questly-orange-dark dark:text-questly-orange">
+            <Flame className="size-3.5" />
+            12 dias
           </span>
         </div>
 
@@ -870,7 +968,7 @@ function HeroPreview() {
         <div className="mt-5 grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-questly-orange/25 bg-questly-orange/8 p-3">
             <div className="flex items-center gap-1.5 text-xs font-medium text-questly-orange-dark dark:text-questly-orange">
-              <Swords className="size-3.5" /> Boss: P1 de Cálculo
+              <Swords className="size-3.5" /> Boss: P1 de Física
             </div>
             <p className="tnum mt-1.5 text-2xl font-semibold">68%</p>
             <p className="text-[11px] text-muted-foreground">preparo atual</p>
@@ -900,8 +998,8 @@ function HeroPreview() {
 function PesoVisual() {
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
   const grade = [
-    { nome: "Cálculo II", cor: "bg-questly-green", dias: [0, 1, 2, 4, 5], peso: "urgente" },
-    { nome: "Física I", cor: "bg-questly-blue", dias: [0, 2, 4], peso: "ponto fraco" },
+    { nome: "Física I", cor: "bg-questly-green", dias: [0, 1, 2, 4, 5], peso: "urgente" },
+    { nome: "Cálculo II", cor: "bg-questly-blue", dias: [0, 2, 4], peso: "ponto fraco" },
     { nome: "Álgebra", cor: "bg-questly-purple", dias: [1, 3, 5], peso: "meta alta" },
     { nome: "Química", cor: "bg-questly-orange", dias: [3, 6], peso: "prova longe" },
   ];

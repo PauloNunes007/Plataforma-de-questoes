@@ -5,15 +5,19 @@ import { motion } from "framer-motion";
 import {
   Eye,
   EyeOff,
+  FileText,
+  Library,
   Lock,
   Mail,
   ShieldCheck,
   Sparkles,
-  Swords,
   Target,
   User,
   type LucideIcon,
 } from "lucide-react";
+import { CAMPANHA } from "@/lib/landing/campanha";
+import { Insignia } from "@/components/insignias/insignia";
+import { arredondarPraBaixo, type StatsBanco } from "@/lib/landing/stats";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,23 +40,29 @@ function calcularForca(senha: string) {
   return score;
 }
 
-const PERKS = [
-  {
-    icon: Target,
-    title: "Missão do dia pronta",
-    desc: "Você nunca decide sozinho o que estudar",
-  },
-  {
-    icon: Swords,
-    title: "Boss por prova",
-    desc: "Progresso calculado pelos assuntos cobrados",
-  },
-  {
-    icon: Sparkles,
-    title: "Chance de aprovação",
-    desc: "Atualizada conforme você estuda",
-  },
-];
+/* O painel da direita é a última prova social antes do cadastro — por isso
+   fala de conteúdo REAL (contagens vindas do banco), não de promessa. */
+function montarPerks(stats: StatsBanco) {
+  return [
+    {
+      icon: FileText,
+      title: "Simulados cronometrados",
+      desc: CAMPANHA.ativa
+        ? `Com questões de provas anteriores da ${CAMPANHA.instituicao}`
+        : "Com questões de provas anteriores da sua universidade",
+    },
+    {
+      icon: Library,
+      title: `${arredondarPraBaixo(stats.total)} questões catalogadas`,
+      desc: "Todas com resolução passo a passo",
+    },
+    {
+      icon: Target,
+      title: "Missão do dia pronta",
+      desc: "Você nunca decide sozinho o que estudar",
+    },
+  ];
+}
 
 /** Ícone à esquerda dentro de um Input — wrapper compartilhado pelos campos
  *  de email/nome/senha, no mesmo espírito de ícone-em-input da landing. */
@@ -94,7 +104,8 @@ function BotaoMostrarSenha({
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ stats }: { stats: StatsBanco }) {
+  const perks = montarPerks(stats);
   const [signInState, signInFormAction, signInPending] = useActionState(
     signInAction,
     initialState,
@@ -188,9 +199,7 @@ export function LoginForm() {
           <TabsContent value="signup">
             {signUpState?.success ? (
               <div className="flex flex-col items-center py-10 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-questly-green-light text-3xl">
-                  📬
-                </div>
+                <Insignia nome="envelope" tom="esmeralda" size={64} className="mb-4" />
                 <h2 className="mb-2 font-heading text-xl font-semibold tracking-tight">
                   Confira seu email
                 </h2>
@@ -308,11 +317,13 @@ export function LoginForm() {
             O que te espera depois de entrar
           </h3>
           <p className="text-sm font-semibold text-white/90">
-            Sua campanha é montada em cima da sua meta de nota.
+            {CAMPANHA.ativa
+              ? `Diga que você é da ${CAMPANHA.instituicao} e o acervo da sua universidade abre na hora.`
+              : "Sua campanha é montada em cima da sua meta de nota."}
           </p>
         </div>
         <div className="relative flex flex-col gap-4">
-          {PERKS.map((perk) => {
+          {perks.map((perk) => {
             const Icon = perk.icon;
             return (
               <div key={perk.title} className="flex items-start gap-3">

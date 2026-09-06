@@ -7,13 +7,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
+  Atom,
   BookOpen,
   Brain,
   Calculator,
   CheckCircle2,
   Crown,
   Dices,
+  Dna,
   Dumbbell,
+  FlaskConical,
+  Globe,
+  Landmark,
+  Lightbulb,
   Lock,
   PartyPopper,
   Search,
@@ -24,6 +30,8 @@ import {
 } from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
 import { QuestaoAcoes } from "@/components/questao/questao-acoes";
+import { QuestaoComentarios } from "@/components/questao/questao-comentarios";
+import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 import { QUESTLY_MAESTRIA_MULT_XP, questlyXpDaQuestao } from "@/lib/questly/shared";
 import {
   aceitarDesafioAction,
@@ -52,6 +60,21 @@ const MOTIVOS_ERRO = [
   { valor: "chute", rotulo: "Chutei", icone: Dices },
 ];
 
+// Componente estático (não uma variável de componente dinâmica) por causa da
+// regra react-hooks/static-components do compilador do React 19 — ver
+// web/CLAUDE.md: nada de `const Icone = mapa(nome)` + `<Icone/>` no render.
+function IconeDisciplina({ nome, className }: { nome: string | null; className?: string }) {
+  const props = { size: 20, strokeWidth: 2, className };
+  if (!nome) return <BookOpen {...props} />;
+  if (/matemátic|cálculo|calculo|algebr|geometri/i.test(nome)) return <Calculator {...props} />;
+  if (/física|fisica|eletromag|mecânic|mecanic/i.test(nome)) return <Atom {...props} />;
+  if (/bio/i.test(nome)) return <Dna {...props} />;
+  if (/quí?mic|quimic/i.test(nome)) return <FlaskConical {...props} />;
+  if (/geografi/i.test(nome)) return <Globe {...props} />;
+  if (/históri|historia|human|filosofi|sociologi/i.test(nome)) return <Landmark {...props} />;
+  return <BookOpen {...props} />;
+}
+
 function estadoInicial(): EstadoPergunta {
   return {
     selecionada: null,
@@ -72,6 +95,8 @@ export function QuestaoRunner({
   favoritosIniciaisIds,
   notasIniciais,
   ehPro,
+  disciplinaNome,
+  ehAdmin,
 }: {
   missao: MissaoResumo;
   perguntas: Pergunta[];
@@ -80,6 +105,8 @@ export function QuestaoRunner({
   favoritosIniciaisIds: string[];
   notasIniciais: Record<string, string>;
   ehPro: boolean;
+  disciplinaNome: string | null;
+  ehAdmin: boolean;
 }) {
   const router = useRouter();
   const [perguntasState, setPerguntasState] = useState(perguntas);
@@ -285,6 +312,9 @@ export function QuestaoRunner({
   const imagensAlternativas = pergunta.alternativas_imagens || {};
   const progressoPct = ((indiceAtual + 1) / perguntasState.length) * 100;
 
+  const nomeDisc = disciplinaNome ?? missao.subjectNome;
+  const cor = corDaDisciplina(nomeDisc);
+
   return (
     <div className="relative mx-auto flex min-h-screen max-w-[980px] flex-col px-4 py-4 sm:px-6 sm:py-6">
       <FlashOverlay flash={flash} />
@@ -300,7 +330,8 @@ export function QuestaoRunner({
         </Link>
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
           <motion.div
-            className="h-full rounded-full bg-questly-green"
+            className="h-full rounded-full"
+            style={{ background: cor.gradiente }}
             animate={{ width: `${progressoPct}%` }}
             transition={{ duration: 0.35, ease: "easeOut" }}
           />
@@ -311,7 +342,26 @@ export function QuestaoRunner({
         </div>
       </div>
 
-      <div className="surface relative overflow-hidden rounded-2xl p-5 sm:p-10">
+      <div className="surface relative overflow-hidden rounded-2xl p-5 pt-0 sm:p-10 sm:pt-0">
+        <div
+          className="relative -mx-5 mb-6 flex items-center gap-3 overflow-hidden px-5 py-4 sm:-mx-10 sm:px-10 sm:py-5"
+          style={{ background: cor.gradiente }}
+        >
+          <div
+            className="pointer-events-none absolute -right-6 -top-10 h-40 w-40 rounded-full opacity-20"
+            style={{ background: "radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%)" }}
+          />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-inset ring-white/25">
+            <IconeDisciplina nome={nomeDisc} className="text-white" />
+          </span>
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70">Disciplina</div>
+            <div className="truncate text-[15px] font-bold leading-tight text-white sm:text-base">
+              {nomeDisc || "Prática livre"}
+            </div>
+          </div>
+        </div>
+
         <div className="tnum kicker mb-2">
           Pergunta {indiceAtual + 1} de {perguntasState.length}
         </div>
@@ -469,10 +519,12 @@ export function QuestaoRunner({
           </button>
         ) : (
           <FeedbackArea
+            key={pergunta.id}
             pergunta={pergunta}
             estado={estado}
             onClassificarMotivo={classificarMotivo}
             ehPro={ehPro}
+            ehAdmin={ehAdmin}
           />
         )}
       </div>
@@ -491,14 +543,16 @@ export function QuestaoRunner({
           type="button"
           disabled={finalizando}
           onClick={handleProximo}
-          className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-questly-green px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-40 dark:text-[#0c1512]"
+          className="group relative inline-flex flex-1 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:shadow-xl hover:shadow-emerald-600/30 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 dark:text-[#04120c]"
+          style={{ background: "linear-gradient(135deg, #10b981, #059669 60%, #047857)" }}
         >
+          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
           {finalizando
             ? "Finalizando..."
             : indiceAtual < perguntasState.length - 1
               ? "Próxima"
               : "Finalizar missão"}
-          {!finalizando && <ArrowRight size={15} strokeWidth={2} />}
+          {!finalizando && <ArrowRight size={15} strokeWidth={2.25} />}
         </button>
       </div>
     </div>
@@ -510,12 +564,16 @@ function FeedbackArea({
   estado,
   onClassificarMotivo,
   ehPro,
+  ehAdmin,
 }: {
   pergunta: Pergunta;
   estado: EstadoPergunta;
   onClassificarMotivo: (motivo: string) => void;
   ehPro: boolean;
+  ehAdmin: boolean;
 }) {
+  const [mostrarResolucao, setMostrarResolucao] = useState(false);
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
       <div
@@ -537,13 +595,39 @@ function FeedbackArea({
         </span>
       </div>
 
-      {pergunta.resolucao && (
-        <div className="mb-4 rounded-xl bg-muted/60 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
-          <b className="font-semibold text-foreground">Resolução:</b>
-          <br />
-          <MathText text={pergunta.resolucao} />
-        </div>
-      )}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {pergunta.resolucao && (
+          <button
+            type="button"
+            onClick={() => setMostrarResolucao((v) => !v)}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-questly-gold/30 bg-questly-gold-light/50 px-4 py-3 text-sm font-semibold text-questly-gold-dark transition-colors hover:bg-questly-gold-light"
+          >
+            <Lightbulb size={15} strokeWidth={2} />
+            {mostrarResolucao ? "Ocultar resolução" : "Ver resolução"}
+          </button>
+        )}
+        <QuestaoComentarios questionId={pergunta.id} ehAdmin={ehAdmin} />
+      </div>
+
+      <AnimatePresence initial={false}>
+        {pergunta.resolucao && mostrarResolucao && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <div className="mb-4 rounded-xl bg-muted/60 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
+              <b className="mb-1 flex items-center gap-1.5 font-semibold text-foreground">
+                <Lightbulb size={14} strokeWidth={2} className="text-questly-gold" />
+                Resolução
+              </b>
+              <MathText text={pergunta.resolucao} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {!estado.correta && !ehPro && (
         <Link

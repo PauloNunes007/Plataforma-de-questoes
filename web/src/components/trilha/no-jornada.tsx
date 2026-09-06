@@ -6,12 +6,15 @@
 // mesmas ações de sempre (Já sei / recap / voltar / treinar) MAIS as
 // camadas inteligentes que já estavam calculadas e escondidas: cobertura,
 // precisão, memória (Ebbinghaus) e projeção pro dia da prova.
+import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   AlertTriangle,
   BrainCircuit,
+  CalendarClock,
   Check,
   Crown,
+  Layers,
   MapPin,
   SkipForward,
   Sparkles,
@@ -106,11 +109,15 @@ export function NoJornada({
   topico,
   numero,
   selecionado,
+  atenuado = false,
   onSelect,
 }: {
   topico: TopicoTrilha;
   numero: number;
   selecionado: boolean;
+  // fora do filtro/busca ativos: continua clicável, mas apaga pro aluno
+  // achar de olho o que ele procurou sem perder a ordem curricular
+  atenuado?: boolean;
   onSelect: () => void;
 }) {
   const reduzir = useReducedMotion();
@@ -121,7 +128,11 @@ export function NoJornada({
   const anel = size + 10;
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div
+      className={`group relative flex flex-col items-center transition-opacity duration-300 ${
+        atenuado ? "opacity-25" : "opacity-100"
+      }`}
+    >
       {/* mascote (corpo inteiro) parado no nó onde o aluno está — a
           "respiração" já vive dentro do próprio Mascote e mantém os pés
           plantados; o offset faz os pés PISAREM na face do marcador (uns
@@ -204,11 +215,21 @@ export function NoJornada({
           </span>
         )}
       </button>
+
+      {/* etiqueta no hover (desktop): dá pra varrer o mapa lendo os nomes
+          sem precisar clicar em cada parada. Fica ABAIXO do nó porque o
+          topo da faixa é ocupado pelo mascote/bandeira de largada. */}
+      <span className="pointer-events-none absolute top-[calc(50%+30px)] z-30 hidden w-max max-w-[150px] -translate-x-0 rounded-lg bg-foreground/90 px-2 py-1 text-center text-[10.5px] font-semibold leading-tight text-background opacity-0 shadow-lg backdrop-blur-sm transition-opacity duration-150 group-hover:opacity-100 sm:block">
+        <span className="tnum opacity-60">{numero}.</span> {topico.nome}
+      </span>
     </div>
   );
 }
 
 // ── Painel de detalhe do tópico selecionado ─────────────────────────
+// tamanhos oferecidos pra prática de um tópico (o backend re-clampa)
+const TAMANHOS_PRATICA = [5, 10, 15, 20];
+
 export function PainelTopico({
   topico,
   numero,
@@ -222,13 +243,20 @@ export function PainelTopico({
   pending: boolean;
   onSkip: () => void;
   onUndo: () => void;
-  onPraticar: () => void;
+  onPraticar: (qtd: number) => void;
 }) {
   const est = visual(topico);
   const badge = BADGE_ESTADO[est];
   const ehFronteira = est === "fronteira";
   const podeAcao = est === "pendente" || est === "fronteira";
   const podeTreinar = est === "coberto" || est === "dominado";
+
+  // opções que cabem no que o banco realmente tem — não adianta oferecer
+  // "20 questões" num tópico com 7
+  const opcoesQtd = TAMANHOS_PRATICA.filter((q) => q <= topico.questoesDisponiveis);
+  if (topico.questoesDisponiveis > 0 && opcoesQtd.length === 0) opcoesQtd.push(topico.questoesDisponiveis);
+  const [qtd, setQtd] = useState(opcoesQtd[0] ?? 5);
+  const qtdEfetiva = Math.min(qtd, Math.max(1, topico.questoesDisponiveis));
 
   return (
     <motion.div
@@ -271,6 +299,32 @@ export function PainelTopico({
         {/* ── camadas inteligentes ── */}
         <CamadasInteligentes topico={topico} est={est} />
 
+        {/* ── tamanho da prática ── */}
+        {opcoesQtd.length > 1 && (podeAcao || podeTreinar || est === "mestre") && (
+          <div className="mt-3.5">
+            <span className="mb-1.5 block text-[11px] font-medium text-muted-foreground">
+              Quantas questões nessa prática?
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {opcoesQtd.map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setQtd(n)}
+                  aria-pressed={qtd === n}
+                  className={`tnum cursor-pointer rounded-lg border px-2.5 py-1 text-[12px] font-semibold transition-all active:scale-[0.98] ${
+                    qtd === n
+                      ? "border-questly-green bg-questly-green-light text-questly-green-dark"
+                      : "border-border text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ── ações (idênticas às de sempre, por estado) ── */}
         <div className="mt-4 flex flex-wrap gap-2">
           {podeAcao && (
@@ -279,7 +333,11 @@ export function PainelTopico({
                 <Check size={13} strokeWidth={2} />
                 Já sei isso
               </MiniBotao>
-              <MiniBotao onClick={onPraticar} disabled={pending} variante="recap">
+              <MiniBotao
+                onClick={() => onPraticar(qtdEfetiva)}
+                disabled={pending || topico.questoesDisponiveis === 0}
+                variante="recap"
+              >
                 <Zap size={13} strokeWidth={2} />
                 {pending ? "Preparando..." : "Fazer recap"}
               </MiniBotao>
@@ -294,7 +352,11 @@ export function PainelTopico({
           )}
 
           {(podeTreinar || (est === "mestre" && topico.memoriaCaindo)) && (
-            <MiniBotao onClick={onPraticar} disabled={pending} variante="treinar">
+            <MiniBotao
+              onClick={() => onPraticar(qtdEfetiva)}
+              disabled={pending || topico.questoesDisponiveis === 0}
+              variante="treinar"
+            >
               <Crown size={13} strokeWidth={2} />
               {pending
                 ? "Preparando..."
@@ -325,6 +387,26 @@ function CamadasInteligentes({ topico, est }: { topico: TopicoTrilha; est: Estad
 
   return (
     <div className="flex flex-col gap-2">
+      {/* fatos duros do tópico: quanto material existe e quando foi a última
+          vez que o aluno praticou (antes, "vazio" era o único sinal de banco
+          e não dava pra saber se um tópico tinha 3 ou 40 questões) */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          <Layers size={11.5} strokeWidth={2} />
+          <span className="tnum">
+            {topico.questoesDisponiveis > 0
+              ? `${topico.questoesDisponiveis} ${topico.questoesDisponiveis === 1 ? "questão" : "questões"} no banco`
+              : "sem questões no banco"}
+          </span>
+        </span>
+        {topico.ultimaRevisao && (
+          <span className="inline-flex items-center gap-1">
+            <CalendarClock size={11.5} strokeWidth={2} />
+            {textoUltimaPratica(topico.ultimaRevisao)}
+          </span>
+        )}
+      </div>
+
       {/* barra de cobertura — só quando o tópico já tem alguma cobertura */}
       {(est === "coberto" || est === "dominado" || est === "mestre" || est === "fronteira") && (
         <div>
@@ -384,12 +466,28 @@ function CamadasInteligentes({ topico, est }: { topico: TopicoTrilha; est: Estad
   );
 }
 
+// "última prática" em linguagem de aluno; a data vem como YYYY-MM-DD (fatiada
+// no server), então comparamos em horário local pra não errar por fuso
+function textoUltimaPratica(iso: string): string {
+  const [a, m, d] = iso.split("-").map(Number);
+  if (!a || !m || !d) return "praticado antes";
+  const quando = new Date(a, m - 1, d).getTime();
+  const hoje = new Date();
+  const hojeMs = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()).getTime();
+  const dias = Math.round((hojeMs - quando) / 86400000);
+  if (dias <= 0) return "praticado hoje";
+  if (dias === 1) return "praticado ontem";
+  if (dias < 30) return `praticado há ${dias} dias`;
+  const meses = Math.round(dias / 30);
+  return `praticado há ${meses} ${meses === 1 ? "mês" : "meses"}`;
+}
+
 function rumoTexto(r: { faltamQuestoes: number; faltaPrecisao: number }): string {
   const partes: string[] = [];
   if (r.faltamQuestoes > 0) partes.push(`+${r.faltamQuestoes} ${r.faltamQuestoes === 1 ? "questão" : "questões"}`);
   if (r.faltaPrecisao > 0) partes.push(`+${Math.round(r.faltaPrecisao * 100)}% de acerto`);
   if (partes.length === 0) return "Você já bateu os requisitos — só falta consolidar.";
-  return `Falta ${partes.join(" e ")} pra cravar o 🏅.`;
+  return `Falta ${partes.join(" e ")} pra cravar a maestria do tópico.`;
 }
 
 const COR_CALLOUT = {

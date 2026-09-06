@@ -9,9 +9,10 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Flame, Zap, Medal, ArrowRight, Timer } from "lucide-react";
 import type { EstadoLiga, Liga } from "@/lib/questly/liga";
+import { LigaEmblema } from "@/components/ranking/liga-emblema";
 import { useFoco, formatarDuracaoCurta } from "@/components/foco/foco-provider";
 
-type LigaVisual = (EstadoLiga & { icone: string; nomeExibicao: string }) | null;
+type LigaVisual = (EstadoLiga & { nomeExibicao: string }) | null;
 
 type StatStripProps = {
   streakAtual: number;
@@ -72,7 +73,13 @@ export function StatStrip({ streakAtual, streakHeat, xpTotal, nivel, xpPorNivel,
         <Tile
           ativo={aberto === "liga"}
           onClick={() => alternar("liga")}
-          icone={<Medal size={17} strokeWidth={1.9} style={{ color: corLiga }} />}
+          icone={
+            liga ? (
+              <LigaEmblema liga={liga.liga} size={24} />
+            ) : (
+              <Medal size={17} strokeWidth={1.9} style={{ color: corLiga }} />
+            )
+          }
           iconeBg="bg-muted"
           valor={liga ? liga.nomeExibicao : "—"}
           rotulo={`${(liga?.xp_semana || 0).toLocaleString("pt-BR")} XP na semana`}

@@ -11,10 +11,12 @@ import {
   type ProvaInput,
 } from "@/lib/onboarding/actions";
 import type { MateriaComQuestoes } from "@/lib/disciplinas/disciplinas-data";
+import type { InstituicaoAgregada } from "@/lib/cursos/instituicao";
 import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cursos/registro";
 import { CursoReveal } from "@/components/onboarding/curso-reveal";
 import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
 import { TourPlataforma } from "@/components/onboarding/tour-plataforma";
+import { Insignia, type NomeInsignia, type TomInsignia } from "@/components/insignias/insignia";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 
 const TOTAL_STEPS = 10;
@@ -47,10 +49,12 @@ const TEMPO_OPCOES: { label: string; minutos: number }[] = [
   { label: "8h ou mais", minutos: 480 },
 ];
 
-const NIVEL_OPCOES = [
-  { valor: "iniciante", icone: "🌱", titulo: "Iniciante", desc: "Ainda travando nos conceitos básicos" },
-  { valor: "intermediario", icone: "⚡", titulo: "Intermediário", desc: "Entendo a matéria, erro nas aplicações" },
-  { valor: "avancado", icone: "🏆", titulo: "Avançado", desc: "Domino o conteúdo, quero manter o ritmo" },
+// Brasões em vez de emoji (ver components/insignias/insignia.tsx): o material
+// sobe junto com o nível declarado, então a escolha já se lê como progressão.
+const NIVEL_OPCOES: { valor: string; insignia: NomeInsignia; tom: TomInsignia; titulo: string; desc: string }[] = [
+  { valor: "iniciante", insignia: "broto", tom: "esmeralda", titulo: "Iniciante", desc: "Ainda travando nos conceitos básicos" },
+  { valor: "intermediario", insignia: "raio", tom: "prata", titulo: "Intermediário", desc: "Entendo a matéria, erro nas aplicações" },
+  { valor: "avancado", insignia: "trofeu", tom: "ouro", titulo: "Avançado", desc: "Domino o conteúdo, quero manter o ritmo" },
 ];
 
 type DiscCfg = { nota: number; provas: ProvaInput[] };
@@ -132,7 +136,7 @@ function Chip({
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
-  /** Quando presente, mostra um selo "✓ N questões" — sinaliza disciplina
+  /** Quando presente, mostra um selo de check + N questões — sinaliza disciplina
    *  com prática real já disponível no banco (ver passo 5 do wizard). */
   totalQuestoes?: number;
 }) {
@@ -154,7 +158,7 @@ function Chip({
             active ? "bg-questly-green/20 text-questly-green-dark" : "bg-questly-green-light text-questly-green-dark"
           }`}
         >
-          ✓ {totalQuestoes}
+          <Check className="inline size-2.5 align-[-1px]" strokeWidth={4} /> {totalQuestoes}
         </span>
       )}
     </motion.button>
@@ -164,9 +168,11 @@ function Chip({
 export function OnboardingWizard({
   nomeInicial = "",
   materiasComQuestoes = [],
+  instituicoesComQuestoes = [],
 }: {
   nomeInicial?: string;
   materiasComQuestoes?: MateriaComQuestoes[];
+  instituicoesComQuestoes?: InstituicaoAgregada[];
 }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -295,7 +301,7 @@ export function OnboardingWizard({
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center py-6 text-center"
               >
-                <div className="mb-3 text-5xl">🎉</div>
+                <Insignia nome="trofeu" tom="ouro" size={64} className="mb-3" />
                 <h2 className="mb-1.5 font-heading text-2xl font-semibold">Campanha criada!</h2>
                 <p className="text-sm font-semibold text-muted-foreground">
                   Sua missão de hoje já está esperando por você no dashboard.
@@ -334,6 +340,7 @@ export function OnboardingWizard({
                   identidade={identidade}
                   adicionarDisciplinas={adicionarDisciplinas}
                   materiasComQuestoes={materiasComQuestoes}
+                  instituicoesComQuestoes={instituicoesComQuestoes}
                 />
               </motion.div>
             )}
@@ -367,6 +374,7 @@ function StepContent({
   identidade,
   adicionarDisciplinas,
   materiasComQuestoes,
+  instituicoesComQuestoes,
 }: {
   step: number;
   state: WizardState;
@@ -376,6 +384,7 @@ function StepContent({
   identidade: CursoIdentidade;
   adicionarDisciplinas: (nomes: string[]) => void;
   materiasComQuestoes: MateriaComQuestoes[];
+  instituicoesComQuestoes: InstituicaoAgregada[];
 }) {
   switch (step) {
     case 1:
@@ -433,15 +442,41 @@ function StepContent({
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">Em qual universidade?</h2>
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
-            Opcional — ajuda a comparar seu ranking com colegas da mesma instituição.
+            É o que libera os simulados com as provas antigas da sua instituição.
           </p>
           <input
             autoFocus
             value={state.universidade}
             onChange={(e) => setState((s) => ({ ...s, universidade: e.target.value }))}
-            placeholder="Ex: UFRJ"
+            placeholder="Ex: UFF"
             className="w-full rounded-2xl border-2 border-border px-4 py-4 text-[15px] font-semibold outline-none focus:border-questly-blue"
           />
+
+          {/* Atalho pras instituições que JÁ têm prova no banco: em vez de
+              adivinhar a grafia, o aluno toca e o selo de verificação abre na
+              hora. Some quando ele já digitou algo. */}
+          {instituicoesComQuestoes.length > 0 && state.universidade.trim().length === 0 && (
+            <div className="mt-4">
+              <p className="mb-2 text-xs font-semibold text-muted-foreground">
+                Já temos provas destas:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {instituicoesComQuestoes.slice(0, 6).map((inst) => (
+                  <button
+                    key={inst.nome}
+                    type="button"
+                    onClick={() => setState((s) => ({ ...s, universidade: inst.nome }))}
+                    className="flex cursor-pointer items-center gap-1.5 rounded-full border-2 border-questly-green/40 bg-questly-green-light/60 px-3 py-1.5 text-[13px] font-bold text-questly-green-dark transition-colors hover:border-questly-green"
+                  >
+                    {inst.nome}
+                    <span className="tnum rounded-full bg-questly-green/20 px-1.5 text-[10.5px] font-bold">
+                      {inst.questoes}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <InstituicaoCallout
             universidade={state.universidade}
             disciplinasSelecionadas={state.disciplinas}
@@ -501,8 +536,8 @@ function StepContent({
             <div className="mb-4 flex items-center gap-2 rounded-xl border border-questly-green/30 bg-questly-green-light px-3 py-2">
               <Sparkles size={15} strokeWidth={2} className="shrink-0 text-questly-green-dark" />
               <span className="min-w-0 flex-1 text-xs font-semibold text-questly-green-dark">
-                Ainda não sabemos seu semestre — as marcadas com <b>✓ questões</b> já têm prática pronta,
-                pode escolher à vontade.
+                Ainda não sabemos seu semestre — as marcadas com o selo de questões já têm prática
+                pronta, pode escolher à vontade.
               </span>
             </div>
           )}
@@ -643,9 +678,7 @@ function StepContent({
                   state.nivel === n.valor ? "border-questly-green bg-questly-green-light" : "border-border"
                 }`}
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-lg">
-                  {n.icone}
-                </div>
+                <Insignia nome={n.insignia} tom={n.tom} size={40} className="shrink-0" />
                 <div>
                   <b className="block font-heading text-sm font-semibold">{n.titulo}</b>
                   <span className="text-xs font-semibold text-muted-foreground">{n.desc}</span>

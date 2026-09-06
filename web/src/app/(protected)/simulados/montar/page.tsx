@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/page-header";
 import { MontadorSimulado } from "@/components/simulados/montador-simulado";
 
 export const metadata: Metadata = {
-  title: "Questly — Montar simulado",
+  title: "Montar simulado",
 };
 
 export default async function MontarSimuladoPage() {

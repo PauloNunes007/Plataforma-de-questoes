@@ -5,10 +5,11 @@ import { createClient } from "@/lib/supabase/server";
 import { questlyEhMestre, questlyEmbaralhar } from "@/lib/questly/shared";
 import { QuestaoRunner } from "@/components/questao/questao-runner";
 import { ehPro } from "@/lib/plano/plano";
+import { ehAdmin } from "@/lib/admin/auth";
 import type { Pergunta } from "@/lib/questao/types";
 
 export const metadata: Metadata = {
-  title: "Questly — Missão",
+  title: "Missão",
 };
 
 function EmptyState({ mensagem }: { mensagem: string }) {
@@ -116,6 +117,30 @@ export default async function QuestaoPage({
     .eq("id", user.id)
     .maybeSingle();
 
+  // Nome da disciplina pro header colorido: prioriza a matéria da missão
+  // (subject), com fallback pra matéria mais comum entre os tópicos das
+  // questões (cobre missão avulsa de matéria não matriculada).
+  let disciplinaNome: string | null = missao.subjects?.nome ?? null;
+  if (!disciplinaNome && topicIdsDasPerguntas.length > 0) {
+    const { data: tops } = await supabase
+      .from("topicos")
+      .select("materia_id, materias(nome)")
+      .in("id", topicIdsDasPerguntas);
+    const contagem = new Map<string, number>();
+    (tops || []).forEach((t) => {
+      const mat = t.materias as { nome: string } | { nome: string }[] | null;
+      const nome = Array.isArray(mat) ? mat[0]?.nome : mat?.nome;
+      if (nome) contagem.set(nome, (contagem.get(nome) ?? 0) + 1);
+    });
+    let melhor = 0;
+    for (const [nome, n] of contagem) {
+      if (n > melhor) {
+        melhor = n;
+        disciplinaNome = nome;
+      }
+    }
+  }
+
   return (
     <QuestaoRunner
       missao={{
@@ -132,6 +157,8 @@ export default async function QuestaoPage({
       favoritosIniciaisIds={favoritosIniciaisIds}
       notasIniciais={notasIniciais}
       ehPro={ehPro(perfilPlano)}
+      disciplinaNome={disciplinaNome}
+      ehAdmin={ehAdmin(user.email)}
     />
   );
 }

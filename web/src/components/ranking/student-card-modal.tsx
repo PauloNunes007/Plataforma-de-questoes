@@ -21,6 +21,7 @@ import {
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import { cursoReconhecido, resolverCurso } from "@/lib/cursos/registro";
 import type { CardUsuario } from "@/lib/ranking/actions";
+import { Insignia } from "@/components/insignias/insignia";
 
 type StudentCardModalProps = {
   card: CardUsuario | null;
@@ -233,7 +234,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
                   transition={{ delay: 0.05 * i, type: "spring", stiffness: 320, damping: 20 }}
                   className="flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1"
                 >
-                  <span className="text-[13px] leading-none">{d.icone}</span>
+                  <Insignia nome={d.insignia} tom={d.tom} size={16} nua />
                   <span className="text-[10px] font-semibold text-white">{d.nome}</span>
                 </motion.div>
               ))}

@@ -5,7 +5,7 @@ import { PraticaWizard } from "@/components/disciplinas/pratica-wizard";
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
-  title: "Questly — Banco de Questões",
+  title: "Banco de Questões",
 };
 
 export default async function BancoDeQuestoesPage() {

@@ -5,7 +5,7 @@ import { MinhasQuestoesLista } from "@/components/questoes/minhas-questoes-lista
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
-  title: "Questly — Minhas anotações",
+  title: "Minhas anotações",
 };
 
 export default async function AnotacoesPage() {

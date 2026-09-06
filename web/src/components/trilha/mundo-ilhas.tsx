@@ -10,6 +10,7 @@ import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-moti
 import {
   AlertTriangle,
   Atom,
+  BrainCircuit,
   BookOpen,
   Brain,
   Calculator,
@@ -160,6 +161,14 @@ function Ilha({
           >
             <AlertTriangle size={10} strokeWidth={2.75} />
             {r.emRisco} em risco
+          </span>
+        ) : r.revisar > 0 ? (
+          <span
+            className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5 text-[9.5px] font-bold text-white backdrop-blur-sm"
+            title={`${r.revisar} tópico(s) com a memória caindo — hora de revisar`}
+          >
+            <BrainCircuit size={10} strokeWidth={2.75} />
+            {r.revisar} revisar
           </span>
         ) : (
           <span />

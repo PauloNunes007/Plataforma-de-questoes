@@ -7,7 +7,7 @@ import { SimuladoRunner } from "@/components/simulados/simulado-runner";
 import { SimuladoResultado } from "@/components/simulados/simulado-resultado";
 
 export const metadata: Metadata = {
-  title: "Questly — Simulado",
+  title: "Simulado",
 };
 
 function EstadoVazio({ mensagem }: { mensagem: string }) {

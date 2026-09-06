@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import {
   Archive,
   ArchiveRestore,
+  Check,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -327,7 +328,8 @@ function ErroCard({
                     onClick={() => onRefeito(etapa)}
                     className="cursor-pointer rounded-full bg-questly-orange px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-95"
                   >
-                    Refiz {ROTULO_ETAPA[etapa]} ✓
+                    Refiz {ROTULO_ETAPA[etapa]}
+                    <Check className="ml-1 inline size-3 align-[-2px]" strokeWidth={3.5} />
                   </button>
                 );
               }

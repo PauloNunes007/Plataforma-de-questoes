@@ -6,7 +6,7 @@ import { listarAssinaturasAdminAction } from "@/lib/admin/actions";
 import { AssinaturasLista } from "@/components/admin/assinaturas-lista";
 
 export const metadata: Metadata = {
-  title: "Questly — Assinaturas",
+  title: "Assinaturas",
 };
 
 export default async function AdminAssinaturasPage() {

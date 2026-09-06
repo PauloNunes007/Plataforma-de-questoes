@@ -1,22 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Trophy, Sparkles } from "lucide-react";
+import { Trophy } from "lucide-react";
 import type { HeroDados } from "@/lib/dashboard/hero-data";
+import { Insignia } from "@/components/insignias/insignia";
 
-// Gradientes vivos rotacionados por posição (dopamina, a pedido).
-const GRADIENTES = [
-  "from-questly-purple to-questly-blue",
-  "from-questly-gold to-amber-400",
-  "from-questly-blue to-cyan-400",
-  "from-questly-green to-emerald-400",
-  "from-questly-orange to-amber-500",
-  "from-pink-500 to-rose-400",
-];
-
-// "Conquistas recentes" (print): número grande de conquistas + fileira de
-// distintivos em ladrilhos hexagonais com brilho. Vem de hero.conquistasLista
-// (derivado de calcularDistintivos — sem tabela nova).
+// "Conquistas recentes": número grande de conquistas + fileira de brasões.
+// Vem de hero.conquistasLista (derivado de calcularDistintivos — sem tabela
+// nova). O ladrilho hexagonal com gradiente por posição saiu: cada insígnia
+// já traz a própria moldura hexagonal no metal da conquista, então o
+// gradiente rotativo só brigava com o material do brasão.
 export function ConquistasRecentesCard({ hero }: { hero: HeroDados }) {
   const lista = hero.conquistasLista;
 
@@ -29,11 +22,10 @@ export function ConquistasRecentesCard({ hero }: { hero: HeroDados }) {
 
       {lista.length === 0 ? (
         <div className="flex items-center gap-3 py-2">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-questly-gold/10">
-            <Sparkles size={20} strokeWidth={1.9} className="text-questly-gold" />
-          </span>
+          <Insignia nome="estrela" tom="ouro" size={44} apagada className="shrink-0" />
           <p className="text-sm text-muted-foreground">
-            Suas conquistas aparecem aqui conforme você evolui — resolva questões e mantenha o streak. 🏅
+            Suas conquistas aparecem aqui conforme você evolui — resolva questões e mantenha o
+            streak pra acender o primeiro brasão.
           </p>
         </div>
       ) : (
@@ -54,12 +46,7 @@ export function ConquistasRecentesCard({ hero }: { hero: HeroDados }) {
                 className="flex w-[68px] shrink-0 flex-col items-center gap-1"
                 title={c.nome}
               >
-                <span
-                  className={`flex h-[52px] w-[52px] items-center justify-center bg-gradient-to-br text-2xl shadow-md ${GRADIENTES[i % GRADIENTES.length]}`}
-                  style={{ clipPath: "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)" }}
-                >
-                  <span className="drop-shadow-sm">{c.icone}</span>
-                </span>
+                <Insignia nome={c.insignia} tom={c.tom} size={52} titulo={c.nome} className="drop-shadow-md" />
                 <span className="w-full truncate text-center text-[10px] font-medium leading-tight text-muted-foreground">
                   {c.nome}
                 </span>

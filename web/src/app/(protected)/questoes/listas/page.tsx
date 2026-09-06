@@ -9,7 +9,7 @@ import { ContinuarCard } from "@/components/retomar/continuar-card";
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
-  title: "Questly — Listas de Questões",
+  title: "Listas de Questões",
 };
 
 export default async function ListasDeQuestoesPage() {

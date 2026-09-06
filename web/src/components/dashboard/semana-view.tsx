@@ -127,7 +127,7 @@ export function SemanaView({ semana, ehPro }: { semana: SemanaResumo; ehPro: boo
                 Faltam <b className="tnum font-bold text-questly-green-dark">{faltamXp} XP</b>
               </>
             ) : (
-              "Meta da semana batida! 🎉"
+              "Meta da semana batida!"
             )}
           </p>
         </motion.div>
@@ -238,7 +238,7 @@ export function SemanaView({ semana, ehPro }: { semana: SemanaResumo; ehPro: boo
               </span>
               <span className="mt-1 text-xs leading-snug text-muted-foreground">
                 {semana.recorde.streakAtual >= semana.recorde.melhorStreak && semana.recorde.melhorStreak > 0
-                  ? "Você está no seu melhor momento! 🔥"
+                  ? "Você está no seu melhor momento."
                   : `Sua maior sequência de dias seguidos estudando.`}
               </span>
             </div>

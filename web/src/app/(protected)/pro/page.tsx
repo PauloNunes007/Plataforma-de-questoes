@@ -5,7 +5,7 @@ import { ehPro } from "@/lib/plano/plano";
 import { PlanosView } from "@/components/plano/planos-view";
 
 export const metadata: Metadata = {
-  title: "Questly Pro",
+  title: "Pro",
 };
 
 export default async function ProPage() {

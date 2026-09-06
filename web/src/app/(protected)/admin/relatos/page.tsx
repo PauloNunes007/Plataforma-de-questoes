@@ -6,7 +6,7 @@ import { listarRelatosAdminAction } from "@/lib/admin/actions";
 import { RelatosLista } from "@/components/admin/relatos-lista";
 
 export const metadata: Metadata = {
-  title: "Questly — Relatos",
+  title: "Relatos",
 };
 
 export default async function AdminRelatosPage() {

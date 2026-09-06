@@ -16,6 +16,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import type { SimuladoResumo, StatusPlanoSimulado } from "@/lib/simulados/simulados-data";
+import type { InstituicaoAgregada } from "@/lib/cursos/instituicao";
 import { EvolucaoChart } from "./evolucao-chart";
 
 type Props = {
@@ -25,6 +26,7 @@ type Props = {
   nomeInstituicao: string | null;
   universidade: string | null;
   totalQuestoes: number;
+  instituicoesDisponiveis: InstituicaoAgregada[];
 };
 
 function fmtData(iso: string): string {
@@ -52,6 +54,7 @@ export function SimuladosLista({
   nomeInstituicao,
   universidade,
   totalQuestoes,
+  instituicoesDisponiveis,
 }: Props) {
   const concluidos = historico.filter((s) => s.status === "concluido");
   const emAndamento = historico.filter((s) => s.status === "em_andamento");
@@ -83,17 +86,56 @@ export function SimuladosLista({
         )}
       </header>
 
-      {/* Sem provas da universidade catalogadas — estado honesto */}
+      {/* Sem provas da universidade catalogadas — estado honesto, mas com
+          saída: mostra QUAIS instituições já têm prova no banco, porque a
+          causa mais comum aqui é a universidade escrita de outro jeito (ou
+          nem preenchida), não a ausência real de conteúdo. */}
       {!reconhecida && (
         <div className="surface flex flex-col items-center gap-3 p-8 text-center">
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
             <FileText size={20} className="text-muted-foreground" strokeWidth={1.75} />
           </span>
           <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-            {universidade
-              ? <>Ainda não temos provas catalogadas de <b className="font-semibold text-foreground">{universidade}</b> pra montar um simulado. Assim que tivermos, ele aparece aqui.</>
-              : <>Defina sua universidade nas <Link href="/configuracoes" className="font-semibold text-questly-green underline-offset-2 hover:underline">Configurações</Link> pra montar simulados com provas dela.</>}
+            {universidade ? (
+              <>
+                Ainda não temos provas catalogadas de{" "}
+                <b className="font-semibold text-foreground">{universidade}</b> pra montar um
+                simulado. Assim que tivermos, ele aparece aqui.
+              </>
+            ) : (
+              <>
+                Você ainda não disse em qual universidade estuda — é isso que libera os simulados
+                com as provas dela.
+              </>
+            )}
           </p>
+
+          {instituicoesDisponiveis.length > 0 && (
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-xs font-semibold text-muted-foreground">
+                Instituições já no banco:
+              </p>
+              <div className="flex flex-wrap justify-center gap-1.5">
+                {instituicoesDisponiveis.slice(0, 6).map((i) => (
+                  <span
+                    key={i.nome}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-questly-green/30 bg-questly-green/10 px-2.5 py-1 text-[12px] font-semibold text-questly-green-dark dark:text-questly-green"
+                  >
+                    {i.nome}
+                    <span className="tnum text-[10.5px] opacity-70">{i.questoes}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <Link
+            href="/configuracoes"
+            className="mt-1 inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-4 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+          >
+            {universidade ? "Corrigir minha universidade" : "Definir minha universidade"}
+            <ArrowRight size={15} strokeWidth={2.5} />
+          </Link>
         </div>
       )}
 

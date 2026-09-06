@@ -58,6 +58,7 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
   const regioesAtualizadas = regioes.map((r) => {
     if (r.subjectId !== caminho?.subjectId) return r;
     const mestres = caminho.topicos.filter((t) => t.estado === "mestre").length;
+    const revisar = caminho.topicos.filter((t) => t.memoriaCaindo).length;
     return {
       ...r,
       bossNome: caminho.bossNome,
@@ -67,6 +68,7 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
       concluidos: caminho.progresso.concluidos,
       pulados: caminho.progresso.pulados,
       mestres,
+      revisar,
       completo: caminho.progresso.total > 0 && caminho.progresso.concluidos + caminho.progresso.pulados === caminho.progresso.total,
       notaProjetada: caminho.projecao.notaProjetada,
       emRisco: caminho.projecao.emRisco,

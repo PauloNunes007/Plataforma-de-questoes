@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { calcularDistintivos } from "@/lib/ranking/badges";
 import { QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
+import type { NomeInsignia, TomInsignia } from "@/components/insignias/insignia";
 
 // Dados extras pro HERO da home (redesign inspirado nos prints): posição no
 // ranking geral, nº de conquistas, e acertos/erros da vida toda pro donut
@@ -11,7 +12,7 @@ export type HeroDados = {
   posicaoGeral: number;
   totalAlunos: number;
   conquistas: number;
-  conquistasLista: { icone: string; nome: string }[];
+  conquistasLista: { insignia: NomeInsignia; tom: TomInsignia; nome: string }[];
   acertos: number;
   erros: number;
   totalQuestoes: number;
@@ -66,7 +67,7 @@ export async function carregarHeroDashboard(
     posicaoGeral: (acima || 0) + 1,
     totalAlunos: total || 1,
     conquistas: conquistados.length,
-    conquistasLista: conquistados.map((d) => ({ icone: d.icone, nome: d.nome })),
+    conquistasLista: conquistados.map((d) => ({ insignia: d.insignia, tom: d.tom, nome: d.nome })),
     acertos: ac,
     erros: er,
     totalQuestoes: tot,

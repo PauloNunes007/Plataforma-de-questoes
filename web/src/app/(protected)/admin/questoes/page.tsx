@@ -7,7 +7,7 @@ import { buscarQuestoesAdminAction, contarRelatosPendentesAction } from "@/lib/a
 import { QuestoesLista } from "@/components/admin/questoes-lista";
 
 export const metadata: Metadata = {
-  title: "Questly — Admin de questões",
+  title: "Admin de questões",
 };
 
 export default async function AdminQuestoesPage() {

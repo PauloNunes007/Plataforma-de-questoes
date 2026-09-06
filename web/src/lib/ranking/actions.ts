@@ -24,7 +24,6 @@ export type CardUsuario = {
   fotoUrl: string | null;
   liga: Liga;
   ligaNome: string;
-  ligaIcone: string;
   xpSemana: number;
   xpTotal: number;
   nivel: number;
@@ -73,7 +72,6 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
     fotoUrl: profile.foto_url,
     liga: ligaAtual,
     ligaNome: info.nome,
-    ligaIcone: info.icone,
     xpSemana: profile.xp_semana || 0,
     xpTotal: profile.xp_total || 0,
     nivel: profile.nivel || 1,

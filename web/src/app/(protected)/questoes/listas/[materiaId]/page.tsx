@@ -6,7 +6,7 @@ import { ListaTopicoCard } from "@/components/questoes/lista-topico-card";
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
-  title: "Questly — Listas de Questões",
+  title: "Listas de Questões",
 };
 
 export default async function ListasDaDisciplinaPage({

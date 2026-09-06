@@ -63,6 +63,10 @@ export type TopicoTrilha = {
   rumoMestre: RumoMestre | null; // só coberto/dominado (mestre já é o teto)
   forcaNaProva: number | null; // 0..1 — força projetada pro dia da prova
   emRiscoProva: boolean; // estudado mas chega fraco no dia D
+  // quantas questões do banco existem pra esse tópico — o aluno decide o
+  // tamanho da prática com esse número na mão (e "vazio" fica honesto)
+  questoesDisponiveis: number;
+  ultimaRevisao: string | null; // ISO da última vez que praticou; null = nunca
 };
 
 export type RegiaoMapa = {
@@ -76,6 +80,9 @@ export type RegiaoMapa = {
   concluidos: number;
   pulados: number;
   mestres: number;
+  // tópicos já estudados cuja memória caiu abaixo do limiar (Ebbinghaus).
+  // Não é Pro-gated: retenção é ciência de memória, não projeção preditiva.
+  revisar: number;
   completo: boolean;
   // resumo preditivo por região (pro selo de risco da ilha)
   notaProjetada: number | null;
@@ -121,7 +128,14 @@ function derivarInteligencia(
   agoraMs: number,
 ): Pick<
   TopicoTrilha,
-  "cobertura" | "precisao" | "retencao" | "memoriaCaindo" | "rumoMestre" | "forcaNaProva" | "emRiscoProva"
+  | "cobertura"
+  | "precisao"
+  | "retencao"
+  | "memoriaCaindo"
+  | "rumoMestre"
+  | "forcaNaProva"
+  | "emRiscoProva"
+  | "ultimaRevisao"
 > {
   const num = progresso?.num_questoes_respondidas || 0;
   const taxa = progresso?.taxa_acerto ?? 0;
@@ -150,7 +164,16 @@ function derivarInteligencia(
     emRiscoProva = forcaNaProva < QUESTLY_FORCA_RISCO;
   }
 
-  return { cobertura, precisao, retencao, memoriaCaindo, rumoMestre, forcaNaProva, emRiscoProva };
+  return {
+    cobertura,
+    precisao,
+    retencao,
+    memoriaCaindo,
+    rumoMestre,
+    forcaNaProva,
+    emRiscoProva,
+    ultimaRevisao: progresso?.ultima_revisao ? String(progresso.ultima_revisao).slice(0, 10) : null,
+  };
 }
 
 // Projeção agregada da disciplina pro dia da prova, no mesmo espírito do
@@ -266,6 +289,7 @@ export async function carregarMapaTrilha(
     let concluidos = 0;
     let pulados = 0;
     let mestres = 0;
+    let revisar = 0;
     const estadoPorTopico: Record<string, EstadoTopico> = {};
     topicoIds.forEach((id) => {
       const estado = classificarEstado(progressoPorTopico[id], Boolean(temQuestaoPorTopico[id]));
@@ -273,6 +297,11 @@ export async function carregarMapaTrilha(
       if (estado === "mestre") mestres++;
       if (estado === "coberto" || estado === "dominado" || estado === "mestre") concluidos++;
       if (estado === "pulado") pulados++;
+      // mesma régua do nó da jornada: tópico tocado cuja retenção caiu
+      if (ESTADOS_TOCADOS.has(estado)) {
+        const r = questlyRetencaoEfetiva(progressoPorTopico[id], agoraMs);
+        if (r != null && r < QUESTLY_RETENCAO_LIMIAR) revisar++;
+      }
     });
 
     const projecao = projetarDisciplina(
@@ -296,6 +325,7 @@ export async function carregarMapaTrilha(
       concluidos,
       pulados,
       mestres,
+      revisar,
       completo: topicoIds.length > 0 && concluidos + pulados === topicoIds.length,
       notaProjetada: pro ? projecao.notaProjetada : null,
       emRisco: pro ? projecao.emRisco : 0,
@@ -334,7 +364,9 @@ export async function carregarCaminhoDisciplina(
   const topicoIds = topicosOrdenados.map((t) => t.id);
 
   let progressoPorTopico: Record<string, ProgressoRow> = {};
-  let temQuestao: Record<string, boolean> = {};
+  // quantas questões existem por tópico (não só "tem/não tem") — o painel
+  // mostra o número e usa ele pra oferecer o tamanho da prática
+  let qtdQuestoes: Record<string, number> = {};
   if (topicoIds.length > 0) {
     const [{ data: progressos }, { data: questoes }] = await Promise.all([
       supabase
@@ -349,9 +381,9 @@ export async function carregarCaminhoDisciplina(
     const pp: Record<string, ProgressoRow> = {};
     (progressos || []).forEach((p) => (pp[p.topico_id] = p));
     progressoPorTopico = pp;
-    const tq: Record<string, boolean> = {};
-    (questoes || []).forEach((q) => (tq[q.topic_id] = true));
-    temQuestao = tq;
+    const tq: Record<string, number> = {};
+    (questoes || []).forEach((q) => (tq[q.topic_id] = (tq[q.topic_id] || 0) + 1));
+    qtdQuestoes = tq;
   }
 
   const proximoBoss = bossMaisProximo(subject.bosses as BossRow[]);
@@ -363,7 +395,7 @@ export async function carregarCaminhoDisciplina(
   const estadoPorTopico: Record<string, EstadoTopico> = {};
   const topicos: TopicoTrilha[] = topicosOrdenados.map((t) => {
     const progresso = progressoPorTopico[t.id];
-    const estado = classificarEstado(progresso, Boolean(temQuestao[t.id]));
+    const estado = classificarEstado(progresso, (qtdQuestoes[t.id] || 0) > 0);
     estadoPorTopico[t.id] = estado;
     if (fronteiraId === null && estado === "pendente") fronteiraId = t.id;
     // tópico fora do escopo da prova não ganha força/selo de risco pro dia D
@@ -375,6 +407,7 @@ export async function carregarCaminhoDisciplina(
       ordem: t.ordem,
       estado,
       ehFronteira: false,
+      questoesDisponiveis: qtdQuestoes[t.id] || 0,
       ...derivarInteligencia(progresso, estado, dataProvaDoTopico, agoraMs),
     };
   });

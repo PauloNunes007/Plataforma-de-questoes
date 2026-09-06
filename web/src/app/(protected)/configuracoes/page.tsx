@@ -5,7 +5,7 @@ import { ConfiguracoesPanel } from "@/components/configuracoes/configuracoes-pan
 import type { SubjectComBosses } from "@/lib/configuracoes/actions";
 
 export const metadata: Metadata = {
-  title: "Questly — Configurações",
+  title: "Configurações",
 };
 
 export default async function ConfiguracoesPage() {

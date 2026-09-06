@@ -55,7 +55,7 @@ export function XpDiarioCard({
       </div>
 
       <p className="mt-3 text-[13px] font-medium">
-        {metas.xpMetaHoje === 0 ? "Sem missão hoje" : pct >= 100 ? "Meta batida! 🎉" : "Hora de começar!"}
+        {metas.xpMetaHoje === 0 ? "Sem missão hoje" : pct >= 100 ? "Meta batida!" : "Hora de começar!"}
       </p>
       <p className="mb-4 text-xs text-muted-foreground">
         {metas.xpMetaHoje === 0

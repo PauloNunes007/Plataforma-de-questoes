@@ -5,7 +5,7 @@ import { MinhasQuestoesLista } from "@/components/questoes/minhas-questoes-lista
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
-  title: "Questly — Favoritos",
+  title: "Favoritos",
 };
 
 export default async function FavoritosPage() {

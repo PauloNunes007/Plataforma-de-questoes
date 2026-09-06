@@ -3,6 +3,22 @@ import { updateSession } from "@/lib/supabase/middleware";
 
 const PUBLIC_ROUTES = ["/", "/login"];
 
+// Arquivos de metadado gerados pelo App Router (robots.txt, sitemap.xml,
+// ícones e o card de preview do link). São pedidos SEM sessão — por crawler do
+// Google e pelo bot do WhatsApp/Instagram quando alguém cola o link num grupo.
+// Sem esta isenção eles levam 307 pro /login: o site fica fora do índice e o
+// link compartilhado aparece sem imagem nem título. Prefixo, não igualdade,
+// porque o Next serve a imagem com querystring/hash de versão.
+const ARQUIVOS_PUBLICOS = [
+  "/robots.txt",
+  "/sitemap.xml",
+  "/opengraph-image",
+  "/twitter-image",
+  "/icon",
+  "/apple-icon",
+  "/manifest.webmanifest",
+];
+
 // Guarda de rota (equivalente ao antigo questlyExigirLogin de
 // js/supabase-client.js, mas no servidor): sem sessão, qualquer rota fora
 // de PUBLIC_ROUTES redireciona pro login; com sessão, /login redireciona
@@ -25,7 +41,8 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse;
   }
 
-  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  const isPublicRoute =
+    PUBLIC_ROUTES.includes(pathname) || ARQUIVOS_PUBLICOS.some((p) => pathname.startsWith(p));
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();

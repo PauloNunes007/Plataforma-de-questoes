@@ -157,7 +157,7 @@ export type DashboardData = {
   todasConcluidas: boolean;
   motivoSemMissao?: string;
   bossAlvo: BossAlvo | null;
-  ligaEstado: (EstadoLiga & { icone: string; nomeExibicao: string }) | null;
+  ligaEstado: (EstadoLiga & { nomeExibicao: string }) | null;
   streakHeat: boolean[];
   dayTicker: DiaTicker[];
   calendar: { monthLabel: string; dowOffset: number; days: CalDay[] };
@@ -420,7 +420,6 @@ export async function carregarDadosDashboard(
   const ligaEstado = estadoLiga
     ? {
         ...estadoLiga,
-        icone: QUESTLY_LIGA_INFO[estadoLiga.liga]?.icone || QUESTLY_LIGA_INFO.bronze.icone,
         nomeExibicao: QUESTLY_LIGA_INFO[estadoLiga.liga]?.nome || QUESTLY_LIGA_INFO.bronze.nome,
       }
     : null;

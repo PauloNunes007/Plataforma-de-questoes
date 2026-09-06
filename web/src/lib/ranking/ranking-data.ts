@@ -41,6 +41,7 @@ export type RankingGlobalRow = {
   nivel: number;
   liga: Liga;
   questoesTotal: number;
+  streakAtual: number;
   posicao: number;
   ehVoce: boolean;
 };
@@ -68,12 +69,12 @@ export async function carregarRankingGlobal(
   const [{ data: topRaw }, { data: meuPerfil }, { count: total }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total")
+      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total, streak_atual")
       .order(coluna, { ascending: false })
       .limit(LIMITE_TOP),
     supabase
       .from("profiles")
-      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total")
+      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total, streak_atual")
       .eq("id", user.id)
       .maybeSingle(),
     supabase.from("profiles").select("id", { count: "exact", head: true }),
@@ -91,6 +92,7 @@ export async function carregarRankingGlobal(
     nivel: p.nivel || 1,
     liga: (p.liga as Liga) || QUESTLY_LIGAS[0],
     questoesTotal: p.questoes_total || 0,
+    streakAtual: p.streak_atual || 0,
     posicao: i + 1,
     ehVoce: p.id === user.id,
   }));
@@ -115,6 +117,7 @@ export async function carregarRankingGlobal(
       nivel: meuPerfil.nivel || 1,
       liga: (meuPerfil.liga as Liga) || QUESTLY_LIGAS[0],
       questoesTotal: meuPerfil.questoes_total || 0,
+      streakAtual: meuPerfil.streak_atual || 0,
       posicao: posicaoVoce,
       ehVoce: true,
     };
@@ -133,11 +136,10 @@ export async function carregarRankingGlobal(
 export type DadosRanking = {
   liga: Liga;
   ligaNome: string;
-  ligaIcone: string;
   xpSemana: number;
   diasAteReset: number;
   semanaInicio: string;
-  ribbon: { liga: Liga; nome: string; icone: string; atual: boolean }[];
+  ribbon: { liga: Liga; nome: string; atual: boolean }[];
   grupo: RankingRow[];
   hint: string;
 };
@@ -208,14 +210,12 @@ export async function carregarDadosRanking(
   return {
     liga: estado.liga,
     ligaNome: info.nome,
-    ligaIcone: info.icone,
     xpSemana: estado.xp_semana || 0,
     diasAteReset: diasAteProximaSegunda(),
     semanaInicio: estado.semana_inicio,
     ribbon: QUESTLY_LIGAS.map((l) => ({
       liga: l,
       nome: QUESTLY_LIGA_INFO[l].nome,
-      icone: QUESTLY_LIGA_INFO[l].icone,
       atual: l === estado.liga,
     })),
     grupo,

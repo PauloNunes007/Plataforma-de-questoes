@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crown, Gem, Globe, Medal, Sprout, TrendingDown, TrendingUp } from "lucide-react";
+import { Crown, Gem, Globe, Sprout, TrendingDown, TrendingUp } from "lucide-react";
 import { RankAvatar } from "@/components/ranking/avatar";
 import { StudentCardModal } from "@/components/ranking/student-card-modal";
 import { LigaEmblema } from "@/components/ranking/liga-emblema";
@@ -15,7 +15,7 @@ import {
   type CardUsuario,
 } from "@/lib/ranking/actions";
 import type { DadosRanking, RankingRow, RankingGlobal, ModoGlobal } from "@/lib/ranking/ranking-data";
-import type { Liga } from "@/lib/questly/liga";
+import { questlySegundaDaSemana, type Liga } from "@/lib/questly/liga";
 
 type Aba = "geral" | "semana" | "divisao";
 
@@ -31,6 +31,21 @@ const POS_METAL = [
   "from-[#d29a6a] to-[#8a5628]",
 ];
 
+// Intervalo da atualização automática do ranking global (estilo "Próxima
+// atualização em MM:SS" da referência) — o dado real (profiles.xp_total/
+// xp_semana) muda a qualquer resposta de qualquer aluno, então o refetch
+// periódico é o que faz a tela se comportar como "ao vivo" sem WebSocket.
+const ATUALIZA_A_CADA_SEG = 180;
+
+function periodoSemanaAtual(): string {
+  const [ano, mes, dia] = questlySegundaDaSemana(new Date()).split("-").map(Number);
+  const inicio = new Date(ano, mes - 1, dia);
+  const fim = new Date(inicio);
+  fim.setDate(inicio.getDate() + 6);
+  const fmt = (d: Date) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return `${fmt(inicio)} a ${fmt(fim)}`;
+}
+
 export function RankingView({ dados, geralInicial }: RankingViewProps) {
   const [card, setCard] = useState<CardUsuario | null>(null);
   const [carregandoCard, setCarregandoCard] = useState(false);
@@ -41,20 +56,69 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
     semana: null,
   });
   const [carregandoGlobal, setCarregandoGlobal] = useState(false);
+  const [segundosRestantes, setSegundosRestantes] = useState(ATUALIZA_A_CADA_SEG);
+  const deadlineRef = useRef(0);
+  const atualizandoRef = useRef(false);
 
   const [ligaSelecionada, setLigaSelecionada] = useState<Liga>(dados.liga);
   const [grupoAtivo, setGrupoAtivo] = useState<RankingRow[]>(dados.grupo);
   const [hintAtivo, setHintAtivo] = useState(dados.hint);
   const [carregandoGrupo, setCarregandoGrupo] = useState(false);
 
+  const buscarGlobal = useCallback(async (modo: ModoGlobal) => {
+    setCarregandoGlobal(true);
+    const res = await buscarRankingGlobalAction(modo);
+    if (res) setGlobais((g) => ({ ...g, [modo]: res }));
+    setCarregandoGlobal(false);
+  }, []);
+
   async function trocarAba(nova: Aba) {
     setAba(nova);
     if ((nova === "geral" || nova === "semana") && !globais[nova]) {
-      setCarregandoGlobal(true);
-      const res = await buscarRankingGlobalAction(nova);
-      if (res) setGlobais((g) => ({ ...g, [nova]: res }));
-      setCarregandoGlobal(false);
+      await buscarGlobal(nova);
     }
+  }
+
+  // Reinicia a contagem regressiva sempre que a aba global muda, e
+  // dispara um refetch silencioso quando ela chega a zero — deadline
+  // em timestamp (não um contador decrementado) pra sobreviver a
+  // re-renders sem drift, mesmo padrão do timer de simulados.
+  useEffect(() => {
+    if (aba !== "geral" && aba !== "semana") return;
+    // Modo capturado num const à parte: o estreitamento de `aba` pra
+    // ModoGlobal não sobrevive dentro de `tick` (closure aninhada).
+    const modo: ModoGlobal = aba;
+    deadlineRef.current = Date.now() + ATUALIZA_A_CADA_SEG * 1000;
+
+    // `tick` é a callback de subscrição do timer (chamada pelo
+    // setInterval) — invocá-la uma vez de cara só antecipa a 1ª leitura,
+    // em vez de deixar o mostrador com o valor cheio por até 1s.
+    function tick() {
+      const restante = Math.max(0, Math.round((deadlineRef.current - Date.now()) / 1000));
+      setSegundosRestantes(restante);
+      if (restante <= 0 && !atualizandoRef.current) {
+        atualizandoRef.current = true;
+        buscarGlobal(modo).then(() => {
+          deadlineRef.current = Date.now() + ATUALIZA_A_CADA_SEG * 1000;
+          atualizandoRef.current = false;
+          tick();
+        });
+      }
+    }
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [aba, buscarGlobal]);
+
+  function atualizarAgora() {
+    if ((aba !== "geral" && aba !== "semana") || atualizandoRef.current) return;
+    atualizandoRef.current = true;
+    buscarGlobal(aba).then(() => {
+      deadlineRef.current = Date.now() + ATUALIZA_A_CADA_SEG * 1000;
+      setSegundosRestantes(ATUALIZA_A_CADA_SEG);
+      atualizandoRef.current = false;
+    });
   }
 
   async function abrirCard(userId: string) {
@@ -119,10 +183,16 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
             subtitulo={
               aba === "geral"
                 ? `Top 100 por XP total · ${globalAtivo.totalAlunos.toLocaleString("pt-BR")} alunos`
-                : "Top 100 por XP conquistado nesta semana"
+                : `Considera a experiência acumulada de ${periodoSemanaAtual()}`
             }
           />
-          <RankingGlobalView dados={globalAtivo} carregando={carregandoGlobal} onAbrirCard={abrirCard} />
+          <RankingGlobalView
+            dados={globalAtivo}
+            carregando={carregandoGlobal}
+            segundosParaAtualizar={segundosRestantes}
+            onAtualizarAgora={atualizarAgora}
+            onAbrirCard={abrirCard}
+          />
         </div>
       )}
       {(aba === "geral" || aba === "semana") && !globalAtivo && (
@@ -173,11 +243,7 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
                     : "border border-border text-muted-foreground hover:bg-muted"
                 }`}
               >
-                <Medal
-                  size={13}
-                  strokeWidth={2}
-                  style={selecionada ? undefined : { color: LIGA_COR[l.liga] }}
-                />
+                <LigaEmblema liga={l.liga} size={16} />
                 {l.nome}
                 {l.atual && (
                   <span
@@ -202,7 +268,7 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
           >
             {/* pódio (top 3) — pedestais ouro/prata/bronze (estilo print) */}
             {podio.length > 0 && (
-              <div className="mb-5 grid grid-cols-3 items-end gap-2 px-1 sm:gap-3">
+              <div className="mb-8 grid grid-cols-3 items-end gap-3 px-1 sm:gap-5">
                 <PodiumSlot
                   aluno={podio[1]}
                   posicao={2}
@@ -246,7 +312,7 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
                 <p className="text-sm text-muted-foreground">Ninguém nessa liga essa semana ainda.</p>
               </div>
             ) : (
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2.5">
                 {resto.map((aluno, i) => (
                   <RankRow
                     key={aluno.id}
@@ -305,9 +371,9 @@ function AbaBtn({
 
 // Altura do pilar por posição (1º mais alto), estilo pódio olímpico da print.
 const PEDESTAL_ALTURA: Record<1 | 2 | 3, string> = {
-  1: "h-24",
-  2: "h-[74px]",
-  3: "h-[58px]",
+  1: "h-28",
+  2: "h-[86px]",
+  3: "h-[68px]",
 };
 
 function PodiumSlot({
@@ -322,7 +388,7 @@ function PodiumSlot({
   onClick: () => void;
 }) {
   const destaque = posicao === 1;
-  const tamanhoAvatar = destaque ? 60 : 48;
+  const tamanhoAvatar = destaque ? 68 : 54;
   const metal = POS_METAL[posicao - 1];
 
   return (
@@ -335,7 +401,7 @@ function PodiumSlot({
       <button
         type="button"
         onClick={onClick}
-        className="group flex cursor-pointer flex-col items-center gap-1.5"
+        className="group flex cursor-pointer flex-col items-center gap-2"
       >
         <div className="relative">
           {destaque && (
@@ -350,6 +416,12 @@ function PodiumSlot({
               </motion.span>
             </>
           )}
+          {/* selo de posição flutuante, sobre o avatar */}
+          <span
+            className={`absolute -left-1.5 -top-1.5 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br text-[11px] font-bold text-white shadow-md ring-2 ring-card ${metal}`}
+          >
+            {posicao}
+          </span>
           <RankAvatar
             nome={aluno.username || aluno.nome}
             fotoUrl={aluno.fotoUrl}
@@ -360,23 +432,23 @@ function PodiumSlot({
                 ? "ring-2 ring-questly-green ring-offset-2 ring-offset-card"
                 : destaque
                   ? "ring-2 ring-questly-gold/70 ring-offset-2 ring-offset-card"
-                  : ""
+                  : "ring-2 ring-white/50 ring-offset-2 ring-offset-card"
             }`}
           />
         </div>
-        <b className="max-w-[92px] truncate text-center text-[11.5px] font-semibold">
+        <b className="max-w-[104px] truncate rounded-full bg-muted px-2.5 py-0.5 text-center text-[12px] font-semibold">
           {aluno.ehVoce ? "Você" : aluno.username ? `@${aluno.username}` : aluno.nome.split(" ")[0]}
         </b>
-        <span className="tnum text-[11px] font-medium text-questly-green-dark">
+        <span className="tnum text-[11.5px] font-medium text-questly-green-dark">
           {aluno.xpSemana.toLocaleString("pt-BR")} XP
         </span>
       </button>
 
       {/* Pilar do pódio */}
       <div
-        className={`relative mt-2 flex w-full items-start justify-center rounded-t-xl bg-gradient-to-b pt-2.5 shadow-[inset_0_2px_6px_rgba(255,255,255,0.35)] ${metal} ${PEDESTAL_ALTURA[posicao]}`}
+        className={`relative mt-3 flex w-full items-start justify-center rounded-t-xl bg-gradient-to-b pt-3 shadow-[inset_0_2px_6px_rgba(255,255,255,0.35)] ${metal} ${PEDESTAL_ALTURA[posicao]}`}
       >
-        <span className="tnum font-heading text-2xl font-bold text-black/45">{posicao}</span>
+        <span className="tnum font-heading text-3xl font-bold text-black/45">{posicao}</span>
       </div>
     </motion.div>
   );
@@ -398,12 +470,12 @@ function PinnedVoce({
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       whileTap={{ scale: 0.99 }}
-      className="mb-4 flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 border-questly-red/50 bg-questly-red-light/40 px-3 py-2.5 text-left"
+      className="mb-5 flex w-full cursor-pointer items-center gap-3.5 rounded-2xl border-2 border-questly-red/50 bg-questly-red-light/40 px-4 py-4 text-left"
     >
       <div className="tnum w-9 shrink-0 text-center">
         <span className="text-[15px] font-bold text-questly-red-dark">{posicao}º</span>
       </div>
-      <RankAvatar nome={aluno.username || aluno.nome} fotoUrl={aluno.fotoUrl} size={38} />
+      <RankAvatar nome={aluno.username || aluno.nome} fotoUrl={aluno.fotoUrl} size={42} />
       <div className="min-w-0 flex-1">
         <b className="block truncate text-[13.5px] font-semibold">
           {aluno.username ? `@${aluno.username}` : aluno.nome}{" "}
@@ -448,7 +520,7 @@ function RankRow({ aluno, posicao, onClick }: { aluno: RankingRow; posicao: numb
       type="button"
       onClick={onClick}
       whileTap={{ scale: 0.99 }}
-      className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors ${
+      className={`flex cursor-pointer items-center gap-3.5 rounded-2xl border px-3.5 py-3.5 text-left transition-colors ${
         aluno.ehVoce
           ? "border-questly-green/40 bg-questly-green-light/60"
           : `border-transparent ${zonaClasse}`
@@ -457,7 +529,7 @@ function RankRow({ aluno, posicao, onClick }: { aluno: RankingRow; posicao: numb
       <div className="tnum w-6 shrink-0 text-center text-[13px] font-semibold text-muted-foreground">
         {posicao}
       </div>
-      <RankAvatar nome={aluno.username || aluno.nome} fotoUrl={aluno.fotoUrl} size={36} />
+      <RankAvatar nome={aluno.username || aluno.nome} fotoUrl={aluno.fotoUrl} size={40} />
       <div className="min-w-0 flex-1">
         <b className="block truncate text-[13px] font-semibold">
           {aluno.username ? `@${aluno.username}` : aluno.nome}

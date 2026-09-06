@@ -4,7 +4,7 @@ import { carregarMapaTrilha } from "@/lib/trilha/trilha-data";
 import { TrilhaView } from "@/components/trilha/trilha-view";
 
 export const metadata: Metadata = {
-  title: "Questly — Minha trilha",
+  title: "Minha trilha",
 };
 
 export default async function TrilhaPage() {

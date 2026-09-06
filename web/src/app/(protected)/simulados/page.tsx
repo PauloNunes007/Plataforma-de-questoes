@@ -5,10 +5,11 @@ import {
   carregarOpcoesSimulado,
   carregarStatusPlano,
 } from "@/lib/simulados/simulados-data";
+import { listarInstituicoesComQuestoes } from "@/lib/cursos/actions";
 import { SimuladosLista } from "@/components/simulados/simulados-lista";
 
 export const metadata: Metadata = {
-  title: "Questly — Simulados",
+  title: "Simulados",
 };
 
 export default async function SimuladosPage() {
@@ -18,10 +19,11 @@ export default async function SimuladosPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [historico, opcoes, status] = await Promise.all([
+  const [historico, opcoes, status, instituicoesDisponiveis] = await Promise.all([
     carregarHistorico(supabase, user),
     carregarOpcoesSimulado(supabase, user),
     carregarStatusPlano(supabase, user),
+    listarInstituicoesComQuestoes(),
   ]);
 
   return (
@@ -32,6 +34,7 @@ export default async function SimuladosPage() {
       nomeInstituicao={opcoes.nomeInstituicao}
       universidade={opcoes.universidade}
       totalQuestoes={opcoes.totalQuestoes}
+      instituicoesDisponiveis={instituicoesDisponiveis}
     />
   );
 }

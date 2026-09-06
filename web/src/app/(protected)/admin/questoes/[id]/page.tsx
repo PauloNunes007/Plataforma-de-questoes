@@ -7,7 +7,7 @@ import { carregarQuestaoAdminAction } from "@/lib/admin/actions";
 import { QuestaoEditor } from "@/components/admin/questao-editor";
 
 export const metadata: Metadata = {
-  title: "Questly — Editar questão",
+  title: "Editar questão",
 };
 
 export default async function EditarQuestaoAdminPage({ params }: { params: Promise<{ id: string }> }) {

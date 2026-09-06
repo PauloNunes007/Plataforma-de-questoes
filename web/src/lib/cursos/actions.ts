@@ -11,8 +11,11 @@
 import { createClient } from "@/lib/supabase/server";
 import {
   acronimoInstituicao,
+  agruparInstituicoes,
   combinaInstituicao,
+  nomeExibicaoInstituicao,
   normalizarInstituicao,
+  type InstituicaoAgregada,
 } from "@/lib/cursos/instituicao";
 
 export type TopicoInstituicao = { nome: string; questoes: number };
@@ -101,8 +104,35 @@ export async function validarInstituicaoAction(texto: string): Promise<Resultado
   const totalQuestoes = disciplinas.reduce((s, d) => s + d.questoes, 0);
   if (totalQuestoes === 0) return VAZIO;
 
-  // Nome de exibição: o valor casado mais descritivo (mais longo).
-  const nomeExibicao = casadas.sort((a, b) => b.length - a.length)[0];
+  // Nome de exibição: a instituição em si, sem o rótulo de edição do banco
+  // ("UFF (1º sem.)" → "UFF").
+  const nomeExibicao = nomeExibicaoInstituicao(casadas);
 
   return { reconhecida: true, nomeExibicao, totalQuestoes, disciplinas };
+}
+
+// Instituições que já têm questões no banco, pro onboarding sugerir em vez de
+// exigir que o aluno acerte a grafia no escuro (e pra ele descobrir na hora
+// que a universidade dele está coberta). Sem `"use client"` em volta: é uma
+// Server Action chamada pelo page.tsx do onboarding.
+export async function listarInstituicoesComQuestoes(): Promise<InstituicaoAgregada[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("questions")
+    .select("instituicao")
+    .not("instituicao", "is", null)
+    .limit(20000);
+  return agruparInstituicoes(
+    (data || []).map((l: { instituicao: string | null }) => l.instituicao),
+  ).filter((i) => ehInstituicaoSugerivel(i.nome));
+}
+
+// Nem todo valor de `questions.instituicao` é uma universidade: o campo também
+// recebeu código de disciplina ("MAT-111") e o rótulo de autoria própria
+// ("Questly"). Sugerir esses como universidade confundiria o aluno.
+function ehInstituicaoSugerivel(nome: string): boolean {
+  const n = nome.trim().toLowerCase();
+  if (n.includes("questly")) return false;
+  if (/^[a-z]{2,5}[\s-]?\d{2,4}$/.test(n)) return false; // código de disciplina
+  return true;
 }
