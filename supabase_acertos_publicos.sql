@@ -17,28 +17,33 @@
 -- trigger — senão qualquer aluno logado escreveria a própria
 -- acertabilidade com a chave anon, como era possível com xp_total antes
 -- do hardening.
+--
+-- BUG corrigido aqui (achado ao rodar supabase_perfil_publico_stats.sql
+-- de novo pelo SQL Editor, depois que o hardening já estava no ar):
+-- o trigger de supabase_seguranca_hardening.sql só libera a escrita pra
+-- `service_role` (o admin client do servidor) ou pro JWT do e-mail admin.
+-- O SQL Editor do Supabase roda sem NENHUM JWT de PostgREST — não é
+-- service_role nem é o admin logado pelo app — então QUALQUER UPDATE
+-- direto em `profiles` que toque uma coluna protegida (inclusive um
+-- simples backfill de migração) batia nesse trigger e falhava com
+-- "Alteração não autorizada de colunas protegidas do profile". Por isso
+-- a função abaixo ganhou um terceiro caminho de bypass, `eh_sql_direto`:
+-- quando `request.jwt.claims` nem existe na sessão, é porque a conexão
+-- não passou pelo PostgREST — só acontece no SQL Editor, no psql direto
+-- ou numa migração, todos os quais já exigem as credenciais do projeto.
+-- Um pedido feito pelo app (chave anon OU service role) sempre passa
+-- pelo PostgREST e sempre carrega um JWT, então esse bypass não reabre o
+-- furo que o trigger existe pra fechar.
+--
+-- A correção do trigger é aplicada ANTES do backfill nesta migração
+-- (mesmo raciocínio: o backfill abaixo faz UPDATE em questoes_total, que
+-- é protegida) — rodar este arquivo sozinho já destrava tudo, sem
+-- precisar reexecutar supabase_perfil_publico_stats.sql à parte.
 -- ============================================================
 
-alter table profiles add column if not exists acertos_total int not null default 0;
-
--- Backfill único a partir do histórico real de tentativas.
-update profiles p
-set acertos_total = coalesce(
-  (select count(*) from question_attempts qa where qa.user_id = p.id and qa.correta),
-  0
-);
-
--- Enquanto estamos aqui: questoes_total pode ter ficado defasado em contas
--- antigas (só é incrementado ao FECHAR missão). Realinha com o histórico.
-update profiles p
-set questoes_total = coalesce(
-  (select count(*) from question_attempts qa where qa.user_id = p.id),
-  0
-);
-
 -- ---------------------------------------------------------------------------
--- Trigger de proteção — mesma função de supabase_seguranca_hardening.sql,
--- agora cobrindo acertos_total. (create or replace: não precisa dropar.)
+-- 1) Corrige o trigger PRIMEIRO — os UPDATEs de backfill logo abaixo
+--    dependem disso pra não baterem no mesmo erro que travou o SQL Editor.
 -- ---------------------------------------------------------------------------
 create or replace function questly_proteger_colunas_profile()
 returns trigger
@@ -48,8 +53,13 @@ declare
   eh_service boolean := current_user = 'service_role'
     or coalesce(auth.jwt() ->> 'role', '') = 'service_role';
   eh_admin boolean := coalesce(auth.jwt() ->> 'email', '') = 'paulocresponunes@gmail.com';
+  -- Sessão sem JWT de PostgREST nenhum = SQL Editor / psql direto /
+  -- migração rodada com as credenciais do projeto. Não é o caminho que
+  -- um aluno logado no app (anon key) ou o servidor (service key)
+  -- percorrem — os dois SEMPRE têm request.jwt.claims setado.
+  eh_sql_direto boolean := current_setting('request.jwt.claims', true) is null;
 begin
-  if eh_service or eh_admin then
+  if eh_service or eh_admin or eh_sql_direto then
     return new;
   end if;
 
@@ -79,3 +89,25 @@ drop trigger if exists trg_questly_proteger_profile on profiles;
 create trigger trg_questly_proteger_profile
   before update on profiles
   for each row execute function questly_proteger_colunas_profile();
+
+-- ---------------------------------------------------------------------------
+-- 2) Coluna nova + backfills (agora sem risco de bater no trigger)
+-- ---------------------------------------------------------------------------
+alter table profiles add column if not exists acertos_total int not null default 0;
+
+-- Backfill único a partir do histórico real de tentativas.
+update profiles p
+set acertos_total = coalesce(
+  (select count(*) from question_attempts qa where qa.user_id = p.id and qa.correta),
+  0
+);
+
+-- Enquanto estamos aqui: questoes_total pode ter ficado defasado em contas
+-- antigas (só é incrementado ao FECHAR missão). Realinha com o histórico —
+-- mesmo UPDATE de supabase_perfil_publico_stats.sql, repetido aqui pra essa
+-- migração não depender de rodar aquela de novo pra se recuperar do bug acima.
+update profiles p
+set questoes_total = coalesce(
+  (select count(*) from question_attempts qa where qa.user_id = p.id),
+  0
+);

@@ -40,9 +40,18 @@ declare
   eh_service boolean := current_user = 'service_role'
     or coalesce(auth.jwt() ->> 'role', '') = 'service_role';
   eh_admin boolean := coalesce(auth.jwt() ->> 'email', '') = 'paulocresponunes@gmail.com';
+  -- Correção retroativa (ver supabase_acertos_publicos.sql): sessão SEM
+  -- NENHUM JWT de PostgREST — só acontece no SQL Editor do Supabase, no
+  -- psql direto ou numa migração, nunca num pedido vindo do app (a chave
+  -- anon e a service key sempre carregam um JWT). Sem isso, qualquer
+  -- migração futura que fizesse UPDATE numa coluna protegida batia neste
+  -- mesmo trigger e falhava com "Alteração não autorizada..." mesmo
+  -- rodando com as credenciais do projeto.
+  eh_sql_direto boolean := current_setting('request.jwt.claims', true) is null;
 begin
-  -- service_role (servidor) e admin podem tudo.
-  if eh_service or eh_admin then
+  -- service_role (servidor), admin, e SQL rodado direto (SQL Editor/psql
+  -- pelo dono do projeto) podem tudo.
+  if eh_service or eh_admin or eh_sql_direto then
     return new;
   end if;
 
