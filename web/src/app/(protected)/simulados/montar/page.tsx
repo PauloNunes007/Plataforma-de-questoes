@@ -29,10 +29,10 @@ export default async function MontarSimuladoPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1000px] px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto w-full max-w-[760px] px-4 py-6 sm:px-6 lg:py-8">
       <PageHeader
         titulo="Montar simulado"
-        descricao={`Questões reais de ${opcoes.nomeInstituicao}, de anos variados, no seu recorte de conteúdo.`}
+        descricao={`Escolha uma disciplina e os tópicos. As questões são provas reais de ${opcoes.nomeInstituicao}.`}
         voltarHref="/simulados"
         voltarLabel="Simulados"
       />

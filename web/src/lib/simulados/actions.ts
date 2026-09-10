@@ -21,10 +21,8 @@ import {
 } from "./constantes";
 
 export type MontarSimuladoInput = {
+  /** tópicos escolhidos — TODOS de uma disciplina só (ver `misturado` abaixo) */
   topicIds: string[];
-  materiaIds: string[];
-  /** só pro título (cosmético) — o servidor não confia nisso pro sorteio */
-  materiaNomes: string[];
   duracaoMin: number;
   quantidade: number;
   /** vazio = todas as dificuldades */
@@ -39,7 +37,7 @@ export type MontarSimuladoInput = {
 
 export type MontarSimuladoResultado =
   | { ok: true; id: string }
-  | { ok: false; erro: "limite" | "sem_instituicao" | "sem_questoes" | "invalido" };
+  | { ok: false; erro: "limite" | "sem_instituicao" | "sem_questoes" | "misturado" | "invalido" };
 
 type Candidata = { id: string; ano: number | null; dificuldade: string | null; topic_id: string | null };
 
@@ -123,33 +121,34 @@ function sortear(
 }
 
 /**
- * Título do simulado: precisa ser reconhecível numa lista de vinte. Uma
- * disciplina só vira o nome dela; várias viram a contagem; e a estratégia entra
- * como sufixo quando não é o sorteio comum — é o que diferencia duas provas
- * montadas no mesmo dia sobre o mesmo conteúdo.
+ * Título do simulado: precisa ser reconhecível numa lista de vinte. Como toda
+ * prova é de UMA disciplina, o nome dela é o escopo; a estratégia entra como
+ * sufixo quando não é o sorteio comum — é o que diferencia duas provas montadas
+ * no mesmo dia sobre o mesmo conteúdo.
  */
 function montarTitulo(
   instituicao: string | null,
-  materiaNomes: string[],
+  materiaNome: string | null,
   estrategia: EstrategiaSimulado,
   duracaoMin: number,
 ): string {
-  const escopo =
-    materiaNomes.length === 1
-      ? materiaNomes[0]
-      : materiaNomes.length > 1
-        ? `${materiaNomes.length} disciplinas`
-        : rotuloDuracao(duracaoMin);
+  const escopo = materiaNome || rotuloDuracao(duracaoMin);
   const sufixo =
     estrategia === "fracos" ? " · pontos fracos" : estrategia === "recentes" ? " · anos recentes" : "";
   return instituicao ? `Simulado ${instituicao} · ${escopo}${sufixo}` : `Simulado · ${escopo}${sufixo}`;
 }
 
 // Cria um simulado: valida o plano (free tem limite semanal, Pro é ilimitado),
-// deriva a instituição do aluno pelo profile (AUTORITATIVO — o cliente não
-// escolhe de que universidade sortear), sorteia questões reais daquela
-// instituição no recorte pedido (tópicos + dificuldade + anos, com a estratégia
-// escolhida) e fixa a ordem de aplicação no registro.
+// deriva a instituição do aluno pelo profile e a DISCIPLINA pelos tópicos
+// (ambos AUTORITATIVOS — o cliente não escolhe de que universidade sortear nem
+// declara de que matéria a prova é), sorteia questões reais daquela instituição
+// no recorte pedido (tópicos + dificuldade + anos, com a estratégia escolhida) e
+// fixa a ordem de aplicação no registro.
+//
+// Regra de produto (2026-09-10): um simulado = UMA disciplina. Misturar matérias
+// numa prova só existe no vestibular; na graduação a prova é de uma disciplina,
+// e a escolha "quais das minhas matérias entram" era a decisão que mais travava
+// o aluno no montador antigo.
 export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<MontarSimuladoResultado> {
   const supabase = await createClient();
   const {
@@ -185,6 +184,21 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
 
   const casadas = await instituicoesDoAluno(supabase, perfil?.universidade ?? null);
   if (casadas.length === 0) return { ok: false, erro: "sem_instituicao" };
+
+  // Disciplina derivada dos próprios tópicos: uma só, sempre.
+  const { data: tops } = await supabase
+    .from("topicos")
+    .select("id, materia_id, materias ( nome )")
+    .in("id", input.topicIds);
+  const linhasTopico = (tops || []) as unknown as {
+    id: string;
+    materia_id: string | null;
+    materias: { nome: string | null } | null;
+  }[];
+  const materiaIds = [...new Set(linhasTopico.map((t) => t.materia_id).filter(Boolean))] as string[];
+  if (materiaIds.length === 0) return { ok: false, erro: "invalido" };
+  if (materiaIds.length > 1) return { ok: false, erro: "misturado" };
+  const materiaNome = linhasTopico.find((t) => t.materias?.nome)?.materias?.nome ?? null;
 
   const { data: brutas } = await supabase
     .from("questions")
@@ -229,12 +243,7 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
   const questionIds = aplicadas.map((q) => q.id);
 
   const nomeInstituicao = nomeExibicaoInstituicao(casadas);
-  const titulo = montarTitulo(
-    nomeInstituicao,
-    (input.materiaNomes || []).filter(Boolean),
-    estrategia,
-    input.duracaoMin,
-  );
+  const titulo = montarTitulo(nomeInstituicao, materiaNome, estrategia, input.duracaoMin);
 
   const { data: criado, error } = await supabase
     .from("simulados_aluno")
@@ -242,7 +251,7 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
       user_id: user.id,
       titulo,
       instituicao: nomeInstituicao,
-      materia_ids: input.materiaIds,
+      materia_ids: materiaIds,
       topico_ids: input.topicIds,
       question_ids: questionIds,
       duracao_min: input.duracaoMin,

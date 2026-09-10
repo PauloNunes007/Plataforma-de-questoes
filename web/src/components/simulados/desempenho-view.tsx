@@ -32,6 +32,7 @@ import { treinarTopicosDoSimuladoAction } from "@/lib/simulados/actions";
 import { CartaoGrafico } from "./graficos/base";
 import { BarrasDesempenho } from "./graficos/barras-desempenho";
 import { LinhaEvolucao } from "./graficos/linha-evolucao";
+import { AnelNota } from "./graficos/anel-nota";
 import { MapaCalor } from "./graficos/mapa-calor";
 import { TendenciaMaterias } from "./graficos/tendencia-materias";
 
@@ -92,12 +93,20 @@ export function DesempenhoView({ dados, podeMontar }: { dados: DesempenhoGeral; 
         voltarLabel="Simulados"
       />
 
-      {/* Linha de indicadores — números, não gráficos: cada um é um valor só */}
+      {/* Última nota em medidor + os indicadores em números. O anel veio do
+          hub /simulados no repasse de 2026-09-10 (o hub ficou só com os três
+          números essenciais): a leitura visual pertence à página de análise. */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
+        className="flex flex-col items-center gap-4 sm:flex-row sm:items-center"
       >
+        {dados.ultimaNota != null && (
+          <div className="shrink-0">
+            <AnelNota nota={dados.ultimaNota} detalhe={`média ${dados.notaMedia.toFixed(1)}`} />
+          </div>
+        )}
+        <div className="grid w-full min-w-0 grid-cols-2 gap-3 sm:grid-cols-3">
         <Indicador
           icone={<Target size={14} />}
           valor={dados.notaMedia.toFixed(1)}
@@ -124,6 +133,7 @@ export function DesempenhoView({ dados, podeMontar }: { dados: DesempenhoGeral; 
           rotulo="tempo em prova"
           detalhe="somando tudo"
         />
+        </div>
       </motion.div>
 
       <CartaoGrafico

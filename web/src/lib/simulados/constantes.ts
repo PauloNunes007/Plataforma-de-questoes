@@ -7,10 +7,14 @@
 // existem porque nem todo simulado é prova inteira: revisar um tópico contra o
 // relógio é o uso mais frequente no meio do semestre.
 export const SIMULADO_DURACOES_MIN = [30, 45, 60, 90, 120, 180, 240] as const;
-export const SIMULADO_DURACAO_PADRAO_MIN = 120;
+
+// O montador simples (2026-09-10) oferece só estas quatro — sete opções de
+// relógio era escolha demais pra uma decisão que o aluno quase nunca quer
+// tomar. O servidor continua aceitando qualquer valor de SIMULADO_DURACOES_MIN.
+export const SIMULADO_DURACOES_SUGERIDAS = [30, 60, 90, 120] as const;
 
 // Quantidades sugeridas de questões (o aluno pode digitar outra até o teto).
-export const SIMULADO_QUANTIDADES = [10, 20, 30, 45] as const;
+export const SIMULADO_QUANTIDADES = [10, 15, 20, 30] as const;
 export const SIMULADO_QTD_PADRAO = 20;
 export const SIMULADO_QTD_MAX = 60;
 export const SIMULADO_QTD_MIN = 5;
@@ -120,6 +124,19 @@ export function ehEstrategiaValida(v: unknown): v is EstrategiaSimulado {
 
 export function ehOrdemValida(v: unknown): v is OrdemSimulado {
   return (ORDENS_SIMULADO as readonly string[]).includes(String(v));
+}
+
+/**
+ * Tempo de prova sugerido pelo tamanho dela: ~3min por questão (o ritmo de uma
+ * prova de graduação), arredondado pra opção mais próxima entre as sugeridas.
+ * Existe pra o aluno não precisar decidir duas coisas — ele escolhe quantas
+ * questões quer e o relógio se ajusta sozinho, mas segue editável.
+ */
+export function duracaoSugerida(quantidade: number): number {
+  const alvo = Math.max(1, quantidade) * 3;
+  return SIMULADO_DURACOES_SUGERIDAS.reduce((melhor, min) =>
+    Math.abs(min - alvo) < Math.abs(melhor - alvo) ? min : melhor,
+  );
 }
 
 /** Rótulo curto de duração ("2h", "90min") — usado no montador e nos resumos. */
