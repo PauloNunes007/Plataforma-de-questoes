@@ -5,6 +5,7 @@ import { Crown, Info, RefreshCw, TrendingUp } from "lucide-react";
 import { RankAvatar } from "@/components/ranking/avatar";
 import { LigaEmblema } from "@/components/ranking/liga-emblema";
 import { LIGA_GRADIENTE } from "@/components/ranking/liga-visual";
+import { PRO_ARO, ProMarcaLinha } from "@/components/ranking/pro-visual";
 import { distintivosResumo } from "@/lib/ranking/badges";
 import type { RankingGlobal, RankingGlobalRow } from "@/lib/ranking/ranking-data";
 import { Insignia } from "@/components/insignias/insignia";
@@ -173,14 +174,19 @@ function PodiumGlobal({
             className={`relative transition-transform group-hover:-translate-y-0.5 ${
               aluno.ehVoce
                 ? "ring-2 ring-questly-green ring-offset-2 ring-offset-card"
-                : destaque
-                  ? "ring-2 ring-questly-gold/70 ring-offset-2 ring-offset-card"
-                  : "ring-2 ring-white/50 ring-offset-2 ring-offset-card"
+                : aluno.pro
+                  ? PRO_ARO
+                  : destaque
+                    ? "ring-2 ring-questly-gold/70 ring-offset-2 ring-offset-card"
+                    : "ring-2 ring-white/50 ring-offset-2 ring-offset-card"
             }`}
           />
         </div>
-        <b className="max-w-[104px] truncate rounded-full bg-muted px-2.5 py-0.5 text-center text-[12px] font-semibold">
-          {aluno.ehVoce ? "Você" : aluno.username ? `@${aluno.username}` : aluno.nome.split(" ")[0]}
+        <b className="flex max-w-[124px] items-center gap-1 truncate rounded-full bg-muted px-2.5 py-0.5 text-center text-[12px] font-semibold">
+          {aluno.pro && <ProMarcaLinha />}
+          <span className="truncate">
+            {aluno.ehVoce ? "Você" : aluno.username ? `@${aluno.username}` : aluno.nome.split(" ")[0]}
+          </span>
         </b>
         <span className="tnum text-[11.5px] font-medium text-questly-gold-dark">
           {aluno.xp.toLocaleString("pt-BR")} XP
@@ -223,9 +229,11 @@ function PinnedVoce({
           fotoUrl={aluno.fotoUrl}
           size={44}
           gradientClassName={LIGA_GRADIENTE[aluno.liga]}
+          className={aluno.pro ? PRO_ARO : ""}
         />
         <div className="min-w-0 flex-1">
-          <b className="block truncate text-[14px] font-semibold">
+          <b className="flex items-center gap-1.5 truncate text-[14px] font-semibold">
+            {aluno.pro && <ProMarcaLinha />}
             {aluno.username ? `@${aluno.username}` : aluno.nome}
             <span className="ml-1.5 rounded-md bg-questly-red/15 px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-questly-red-dark">
               você
@@ -279,9 +287,11 @@ function LinhaGlobal({ aluno, onClick }: { aluno: RankingGlobalRow; onClick: () 
           fotoUrl={aluno.fotoUrl}
           size={38}
           gradientClassName={LIGA_GRADIENTE[aluno.liga]}
+          className={aluno.pro ? PRO_ARO : ""}
         />
         <div className="min-w-0 flex-1">
-          <b className="block truncate text-[13.5px] font-semibold">
+          <b className="flex items-center gap-1.5 truncate text-[13.5px] font-semibold">
+            {aluno.pro && <ProMarcaLinha />}
             {aluno.username ? `@${aluno.username}` : aluno.nome}
             {aluno.ehVoce && <span className="font-normal text-muted-foreground"> (você)</span>}
           </b>

@@ -7,6 +7,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { QUESTLY_LIGAS, QUESTLY_LIGA_INFO, questlySegundaDaSemana, type Liga } from "@/lib/questly/liga";
 import { calcularDistintivos, type Distintivo } from "@/lib/ranking/badges";
+import { ehPro } from "@/lib/plano/plano";
 import {
   buscarGrupoLiga,
   carregarRankingGlobal,
@@ -38,6 +39,14 @@ export type CardUsuario = {
   pctAcerto: number | null;
   disciplinas: string[];
   distintivos: Distintivo[];
+  /** assinante Pro: o card ganha acabamento próprio (moldura prismática,
+   *  holo sempre ligado e a faixa "Edição Pro") — ver student-card-modal. */
+  pro: boolean;
+  /** a liga mais alta que a pessoa já alcançou, do histórico semanal */
+  melhorLigaNome: string;
+  /** só no card Pro: dias seguidos no recorde pessoal de streak não existem
+   *  como coluna, então o "auge" é a melhor liga + o XP total. */
+  xpMedioPorQuestao: number | null;
 };
 
 export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuario | null> {
@@ -46,7 +55,9 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
   const [{ data: profile }, { data: perfilAcertos }, { data: subjects }, { data: historico }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("nome, username, curso, semestre, foto_url, liga, xp_semana, xp_total, nivel, streak_atual, questoes_total")
+      .select(
+        "nome, username, curso, semestre, foto_url, liga, xp_semana, xp_total, nivel, streak_atual, questoes_total, plano, plano_expira_em",
+      )
       .eq("id", userId)
       .single(),
     // acertos_total é coluna nova (supabase_acertos_publicos.sql) — lida
@@ -102,6 +113,10 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
     // só os conquistados no card público — ver pedido do usuário: ninguém
     // quer ver a lista de "distintivos que os outros não têm" na cara.
     distintivos: distintivos.filter((d) => d.conquistado),
+    pro: ehPro(profile),
+    melhorLigaNome: (QUESTLY_LIGA_INFO[melhorLiga] || QUESTLY_LIGA_INFO.bronze).nome,
+    xpMedioPorQuestao:
+      questoesTotal > 0 ? Math.round(((profile.xp_total || 0) / questoesTotal) * 10) / 10 : null,
   };
 }
 

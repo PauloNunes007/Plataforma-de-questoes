@@ -53,6 +53,20 @@ const SESSAO_INICIAL: Sessao = {
 };
 
 const CHAVE_LS = "questly_foco_v1";
+// Batimento gravado a cada tick enquanto roda. Sem ele, fechar a aba com uma
+// sessão rodando e voltar no dia seguinte creditaria as horas em que ninguém
+// estava estudando (o tempo é derivado de `iniciadoEm`).
+const CHAVE_VISTO = "questly_foco_visto_v1";
+// Buraco tolerado entre o último batimento e a volta: F5/navegação levam menos
+// que isso, então a sessão retoma sem perder nada; sumiço maior vira pausa no
+// último instante com sinal de vida.
+const GAP_MAX_MS = 90_000;
+// Depois de iniciar, a barra se recolhe sozinha pra não roubar a tela — o
+// aluno vê que começou e ela sai da frente (hover devolve por um instante).
+const AUTO_COLAPSA_MS = 2400;
+const CELEBRACAO_MS = 5000;
+// Piso pra gravar a sessão: menos que isso é clique sem querer.
+const MIN_SEG_VALIDA = 20;
 
 type FocoContexto = {
   modo: ModoFoco;
@@ -92,6 +106,29 @@ export function useFoco(): FocoContexto {
   return ctx;
 }
 
+function segundosDaSessao(s: Sessao): number {
+  const corrido =
+    s.estado === "rodando" && s.iniciadoEm ? Math.floor((Date.now() - s.iniciadoEm) / 1000) : 0;
+  return s.acumuladoSeg + corrido;
+}
+
+// Reidrata a sessão salva descontando o tempo em que a aba esteve fechada.
+function restaurarSessao(salvo: Sessao, vistoEm: number): Sessao {
+  if (salvo.estado !== "rodando" || !salvo.iniciadoEm) return salvo;
+  const agora = Date.now();
+  // Relógio do sistema pra trás (fuso/ajuste) — não dá pra confiar no delta.
+  if (salvo.iniciadoEm > agora) return { ...salvo, estado: "pausado", iniciadoEm: null };
+  if (vistoEm > 0 && agora - vistoEm <= GAP_MAX_MS) return salvo;
+
+  const ate = Math.min(agora, Math.max(salvo.iniciadoEm, vistoEm));
+  return {
+    ...salvo,
+    estado: "pausado",
+    acumuladoSeg: salvo.acumuladoSeg + Math.floor((ate - salvo.iniciadoEm) / 1000),
+    iniciadoEm: null,
+  };
+}
+
 export function FocoProvider({
   children,
   focoHojeSegInicial = 0,
@@ -114,16 +151,68 @@ export function FocoProvider({
     focoHojeRef.current = focoHojeSeg;
   }, [focoHojeSeg]);
 
+  // Espelho da sessão: as ações leem daqui em vez de fazer efeito colateral
+  // dentro do updater do setState (o React pode chamar o updater duas vezes —
+  // em StrictMode ele chama — e isso gravava a sessão de foco em dobro).
+  const sessaoRef = useRef(sessao);
+  useEffect(() => {
+    sessaoRef.current = sessao;
+  }, [sessao]);
+
+  const autoColapsoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const celebracaoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelarAutoColapso = useCallback(() => {
+    if (autoColapsoRef.current) {
+      clearTimeout(autoColapsoRef.current);
+      autoColapsoRef.current = null;
+    }
+  }, []);
+
+  const limparCelebracao = useCallback(() => {
+    if (celebracaoRef.current) {
+      clearTimeout(celebracaoRef.current);
+      celebracaoRef.current = null;
+    }
+    setCelebracao(null);
+  }, []);
+
+  // Some sozinha depois de alguns segundos. Fica no provider (e não num
+  // useEffect do overlay) porque lá o timeout reiniciava a cada re-render da
+  // barra — que acontece de segundo em segundo.
+  const celebrar = useCallback((c: Celebracao) => {
+    if (celebracaoRef.current) clearTimeout(celebracaoRef.current);
+    setCelebracao(c);
+    celebracaoRef.current = setTimeout(() => {
+      celebracaoRef.current = null;
+      setCelebracao(null);
+    }, CELEBRACAO_MS);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (autoColapsoRef.current) clearTimeout(autoColapsoRef.current);
+      if (celebracaoRef.current) clearTimeout(celebracaoRef.current);
+    },
+    [],
+  );
+
   // Restaura a sessão do localStorage no mount.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMontado(true);
     try {
       const bruto = localStorage.getItem(CHAVE_LS);
-      if (bruto) {
-        const salvo = JSON.parse(bruto) as Partial<Sessao>;
-        setSessao({ ...SESSAO_INICIAL, ...salvo });
-        if (salvo.estado === "rodando" || salvo.estado === "pausado") setBarraAberta(true);
+      if (!bruto) return;
+      const salvo = { ...SESSAO_INICIAL, ...(JSON.parse(bruto) as Partial<Sessao>) };
+      const vistoEm = Number(localStorage.getItem(CHAVE_VISTO)) || 0;
+      const sessaoAtual = restaurarSessao(salvo, vistoEm);
+      setSessao(sessaoAtual);
+      if (sessaoAtual.estado !== "parado") {
+        setBarraAberta(true);
+        // Volta recolhida: quem deu F5 no meio da sessão quer a página, não a
+        // barra ocupando o topo de novo.
+        setColapsada(true);
       }
     } catch {
       /* localStorage indisponível/corrompido — começa limpo */
@@ -139,20 +228,12 @@ export function FocoProvider({
     }
   }, [sessao, montado]);
 
-  const segundosAgora = useCallback((s: Sessao): number => {
-    const corrido =
-      s.estado === "rodando" && s.iniciadoEm
-        ? Math.floor((Date.now() - s.iniciadoEm) / 1000)
-        : 0;
-    return s.acumuladoSeg + corrido;
-  }, []);
-
-  const segundos = segundosAgora(sessao);
+  const segundos = segundosDaSessao(sessao);
   const restanteSeg =
     sessao.modo === "timer" ? Math.max(0, sessao.alvoMin * 60 - segundos) : Infinity;
 
   const persistir = useCallback(async (segFocados: number, modo: ModoFoco, objetivo: string) => {
-    if (segFocados < 20) return;
+    if (segFocados < MIN_SEG_VALIDA) return;
     setFocoHojeSeg((v) => v + segFocados);
     try {
       const res = await registrarSessaoFocoAction({
@@ -167,18 +248,40 @@ export function FocoProvider({
     }
   }, []);
 
-  const iniciar = useCallback(() => {
+  const colapsar = useCallback(() => {
+    cancelarAutoColapso();
+    setColapsada(true);
+  }, [cancelarAutoColapso]);
+
+  const expandir = useCallback(() => {
+    cancelarAutoColapso();
     setColapsada(false);
-    setSessao((s) => ({ ...s, estado: "rodando", iniciadoEm: Date.now(), acumuladoSeg: 0 }));
+  }, [cancelarAutoColapso]);
+
+  const iniciar = useCallback(() => {
+    cancelarAutoColapso();
+    setColapsada(false);
     setBarraAberta(true);
-  }, []);
+    try {
+      localStorage.setItem(CHAVE_VISTO, String(Date.now()));
+    } catch {
+      /* ignora */
+    }
+    setSessao((s) => ({ ...s, estado: "rodando", iniciadoEm: Date.now(), acumuladoSeg: 0 }));
+    autoColapsoRef.current = setTimeout(() => {
+      autoColapsoRef.current = null;
+      setColapsada(true);
+    }, AUTO_COLAPSA_MS);
+  }, [cancelarAutoColapso]);
 
   const pausar = useCallback(() => {
-    setSessao((s) => {
-      if (s.estado !== "rodando") return s;
-      return { ...s, estado: "pausado", acumuladoSeg: segundosAgora(s), iniciadoEm: null };
-    });
-  }, [segundosAgora]);
+    cancelarAutoColapso();
+    setSessao((s) =>
+      s.estado === "rodando"
+        ? { ...s, estado: "pausado", acumuladoSeg: segundosDaSessao(s), iniciadoEm: null }
+        : s,
+    );
+  }, [cancelarAutoColapso]);
 
   const retomar = useCallback(() => {
     setSessao((s) =>
@@ -187,37 +290,49 @@ export function FocoProvider({
   }, []);
 
   const finalizar = useCallback(() => {
+    cancelarAutoColapso();
     setColapsada(false);
-    setSessao((s) => {
-      const seg = segundosAgora(s);
-      if (seg >= 20) {
-        const novoTotal = focoHojeRef.current + seg;
-        setCelebracao(fraseFoco(novoTotal, s.cor));
-      }
-      void persistir(seg, s.modo, s.objetivo);
-      return { ...SESSAO_INICIAL, modo: s.modo, alvoMin: s.alvoMin, cor: s.cor };
-    });
-  }, [segundosAgora, persistir]);
+    const s = sessaoRef.current;
+    if (s.estado === "parado") return;
+    const seg = segundosDaSessao(s);
+    sessaoRef.current = { ...SESSAO_INICIAL, modo: s.modo, alvoMin: s.alvoMin, cor: s.cor };
+    setSessao(sessaoRef.current);
+    if (seg >= MIN_SEG_VALIDA) celebrar(fraseFoco(focoHojeRef.current + seg, s.cor));
+    void persistir(seg, s.modo, s.objetivo);
+  }, [cancelarAutoColapso, celebrar, persistir]);
 
   const descartar = useCallback(() => {
+    cancelarAutoColapso();
     setColapsada(false);
-    setSessao((s) => ({ ...SESSAO_INICIAL, modo: s.modo, alvoMin: s.alvoMin, cor: s.cor }));
-  }, []);
+    const s = sessaoRef.current;
+    sessaoRef.current = { ...SESSAO_INICIAL, modo: s.modo, alvoMin: s.alvoMin, cor: s.cor };
+    setSessao(sessaoRef.current);
+  }, [cancelarAutoColapso]);
 
+  // Relógio: um tick por segundo só enquanto roda. O valor exibido vem de
+  // timestamps (segundosDaSessao), então o tick só força o re-render — e de
+  // quebra grava o batimento que protege contra aba fechada.
+  const { estado, modo, alvoMin } = sessao;
   useEffect(() => {
-    if (sessao.estado !== "rodando") return;
+    if (estado !== "rodando") return;
     const id = setInterval(() => {
-      if (sessao.modo === "timer" && segundosAgora(sessao) >= sessao.alvoMin * 60) {
+      try {
+        localStorage.setItem(CHAVE_VISTO, String(Date.now()));
+      } catch {
+        /* ignora */
+      }
+      if (modo === "timer" && segundosDaSessao(sessaoRef.current) >= alvoMin * 60) {
         finalizar();
         return;
       }
       setTick((t) => (t + 1) % 1_000_000);
     }, 1000);
     return () => clearInterval(id);
-  }, [sessao, segundosAgora, finalizar]);
+  }, [estado, modo, alvoMin, finalizar]);
 
-  const valor = useMemo<FocoContexto>(
-    () => ({
+  const valor = useMemo<FocoContexto>(() => {
+    const ativo = sessao.estado !== "parado";
+    return {
       modo: sessao.modo,
       estado: sessao.estado,
       objetivo: sessao.objetivo,
@@ -231,11 +346,19 @@ export function FocoProvider({
       montado,
       celebracao,
       abrirBarra: () => {
+        cancelarAutoColapso();
         setColapsada(false);
         setBarraAberta(true);
       },
       fecharBarra: () => setBarraAberta(false),
+      // Com sessão rolando, a barra não fecha (perderia o cronômetro de
+      // vista): o botão do header vira recolher/expandir.
       alternarBarra: () => {
+        cancelarAutoColapso();
+        if (ativo) {
+          setColapsada((v) => !v);
+          return;
+        }
         setColapsada(false);
         setBarraAberta((v) => !v);
       },
@@ -249,17 +372,35 @@ export function FocoProvider({
       retomar,
       finalizar,
       descartar,
-      colapsar: () => setColapsada(true),
-      expandir: () => setColapsada(false),
-      limparCelebracao: () => setCelebracao(null),
-    }),
-    [sessao, segundos, restanteSeg, focoHojeSeg, barraAberta, colapsada, montado, celebracao, iniciar, pausar, retomar, finalizar, descartar],
-  );
+      colapsar,
+      expandir,
+      limparCelebracao,
+    };
+  }, [
+    sessao,
+    segundos,
+    restanteSeg,
+    focoHojeSeg,
+    barraAberta,
+    colapsada,
+    montado,
+    celebracao,
+    cancelarAutoColapso,
+    iniciar,
+    pausar,
+    retomar,
+    finalizar,
+    descartar,
+    colapsar,
+    expandir,
+    limparCelebracao,
+  ]);
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;
 }
 
 export function formatarRelogio(seg: number): string {
+  if (!Number.isFinite(seg)) return "--:--";
   const s = Math.max(0, Math.floor(seg));
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);

@@ -28,6 +28,18 @@ export type Boss = {
   topico_ids?: string[] | null;
 };
 
+// Plural em pt-BR sem gambiarra de concatenar sufixo. Colar `"ões"` no fim de
+// "questão" produzia o famoso "86 questãoões" da tela do Banco de Questões:
+// em português o plural troca a terminação, não acrescenta.
+export function plural(n: number, singular: string, plural: string): string {
+  return n === 1 ? singular : plural;
+}
+
+/** "1 questão" / "86 questões" — já com o número formatado em pt-BR. */
+export function contagemQuestoes(n: number): string {
+  return `${n.toLocaleString("pt-BR")} ${plural(n, "questão", "questões")}`;
+}
+
 export function questlyNormalizarDia(d: string): string {
   return d
     .normalize("NFD")

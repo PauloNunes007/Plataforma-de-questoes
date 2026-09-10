@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { contagemQuestoes } from "@/lib/questly/shared";
 import type { DisciplinaPratica, TopicoPratica } from "@/lib/disciplinas/disciplinas-data";
 import {
   buscarTopicosPraticaAction,
@@ -123,10 +124,13 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
     );
   }
 
-  const topicosLabel = topicosSelecionados.size === 0 ? "Todos os tópicos" : `${topicosSelecionados.size} selecionado(s)`;
+  const topicosLabel =
+    topicosSelecionados.size === 0
+      ? "Todos os tópicos"
+      : `${topicosSelecionados.size} ${topicosSelecionados.size === 1 ? "tópico" : "tópicos"}`;
   const dificuldadeLabel = dificuldadesArr.length === 0 ? "Todas" : dificuldadesArr.map((d) => LABEL_DIFICULDADE[d] || d).join(", ");
-  const quantidadeLabel = quantidade === "todas" ? "Todas disponíveis" : `${quantidade} questões`;
-  const podeComecar = Boolean(materiaId) && topicos.length > 0 && (previa?.total ?? 0) > 0 && !carregandoPrevia;
+  const quantidadeLabel = quantidade === "todas" ? "Todas disponíveis" : contagemQuestoes(quantidade);
+  const podeComecar = Boolean(materiaId) && topicos.length > 0 && (previa?.selecionadas ?? 0) > 0 && !carregandoPrevia;
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 pb-24 xl:grid-cols-[minmax(0,1fr)_340px] xl:pb-0">
@@ -237,15 +241,18 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
             <div className="min-w-0">
               {carregandoPrevia ? (
                 <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-              ) : previa && previa.total > 0 ? (
+              ) : previa && previa.selecionadas > 0 ? (
                 <>
                   <p className="tnum truncate text-[13px] font-semibold">
-                    {previa.total} questão{previa.total === 1 ? "" : "ões"}
+                    {contagemQuestoes(previa.selecionadas)}
                     <span className="font-medium text-questly-gold-dark"> · +{previa.xpEstimado} XP</span>
                   </p>
-                  {previa.tempoEstimadoMin != null && (
-                    <p className="tnum text-[11px] text-muted-foreground">~{previa.tempoEstimadoMin} min</p>
-                  )}
+                  <p className="tnum text-[11px] text-muted-foreground">
+                    ~{previa.tempoEstimadoMin} min
+                    {previa.selecionadas < previa.total
+                      ? ` · ${previa.total.toLocaleString("pt-BR")} no banco`
+                      : ""}
+                  </p>
                 </>
               ) : (
                 <p className="text-[12px] text-muted-foreground">Nenhuma questão com esse filtro.</p>

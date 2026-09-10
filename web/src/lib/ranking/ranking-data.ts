@@ -7,6 +7,7 @@
 // pura que decide a virada de verdade.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { questlyGarantirSemanaLiga, questlyDestinoNaLiga, QUESTLY_LIGAS, QUESTLY_LIGA_INFO, type Liga } from "@/lib/questly/liga";
+import { ehPro } from "@/lib/plano/plano";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type RankingRow = {
@@ -20,6 +21,8 @@ export type RankingRow = {
   questoesSemana: number;
   destino: -1 | 0 | 1;
   ehVoce: boolean;
+  /** assinante Pro — o ranking marca com aro dourado (ver components/ranking/pro-visual). */
+  pro: boolean;
 };
 
 export type GrupoLiga = {
@@ -44,6 +47,7 @@ export type RankingGlobalRow = {
   streakAtual: number;
   posicao: number;
   ehVoce: boolean;
+  pro: boolean;
 };
 
 export type ModoGlobal = "geral" | "semana";
@@ -69,12 +73,16 @@ export async function carregarRankingGlobal(
   const [{ data: topRaw }, { data: meuPerfil }, { count: total }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total, streak_atual")
+      .select(
+        "id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total, streak_atual, plano, plano_expira_em",
+      )
       .order(coluna, { ascending: false })
       .limit(LIMITE_TOP),
     supabase
       .from("profiles")
-      .select("id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total, streak_atual")
+      .select(
+        "id, nome, username, foto_url, xp_total, xp_semana, nivel, liga, questoes_total, streak_atual, plano, plano_expira_em",
+      )
       .eq("id", user.id)
       .maybeSingle(),
     supabase.from("profiles").select("id", { count: "exact", head: true }),
@@ -95,6 +103,7 @@ export async function carregarRankingGlobal(
     streakAtual: p.streak_atual || 0,
     posicao: i + 1,
     ehVoce: p.id === user.id,
+    pro: ehPro(p),
   }));
 
   // Posição do aluno: quantos têm métrica estritamente maior (+1). Empates
@@ -120,6 +129,7 @@ export async function carregarRankingGlobal(
       streakAtual: meuPerfil.streak_atual || 0,
       posicao: posicaoVoce,
       ehVoce: true,
+      pro: ehPro(meuPerfil),
     };
   }
 
@@ -163,7 +173,7 @@ export async function buscarGrupoLiga(
 ): Promise<GrupoLiga> {
   const { data: alunos } = await supabase
     .from("profiles")
-    .select("id, nome, username, foto_url, xp_semana, questoes_semana")
+    .select("id, nome, username, foto_url, xp_semana, questoes_semana, plano, plano_expira_em")
     .eq("liga", liga)
     .eq("semana_inicio", semanaInicio)
     .order("xp_semana", { ascending: false });
@@ -181,6 +191,7 @@ export async function buscarGrupoLiga(
     questoesSemana: a.questoes_semana || 0,
     destino: questlyDestinoNaLiga(xps, a.xp_semana || 0, indiceLiga),
     ehVoce: a.id === meuId,
+    pro: ehPro(a),
   }));
 
   let hint: string;

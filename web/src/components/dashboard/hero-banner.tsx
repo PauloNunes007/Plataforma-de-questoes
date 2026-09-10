@@ -18,6 +18,9 @@ type HeroBannerProps = {
   xpPorNivel: number;
   streakAtual: number;
   recordeStreak: number;
+  /** assinante Pro: o retrato ganha aro dourado. Sem selo escrito ao lado do
+   *  perfil (pedido do usuário) — a marca do plano vive no ranking. */
+  pro?: boolean;
 };
 
 // Hero da home: quem é o aluno e onde ele está na progressão. Nada além
@@ -40,6 +43,7 @@ export function HeroBanner({
   xpPorNivel,
   streakAtual,
   recordeStreak,
+  pro = false,
 }: HeroBannerProps) {
   const xpNoNivel = xpTotal % xpPorNivel;
   const pctNivel = Math.min(100, (xpNoNivel / xpPorNivel) * 100);
@@ -69,7 +73,11 @@ export function HeroBanner({
 
           <div className="min-w-0">
             <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-base font-bold text-white ring-2 ring-border dark:text-[#0c1512]">
+              <span
+                className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-base font-bold text-white dark:text-[#0c1512] ${
+                  pro ? "ring-2 ring-questly-gold ring-offset-2 ring-offset-card" : "ring-2 ring-border"
+                }`}
+              >
                 {fotoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={fotoUrl} alt="" className="h-full w-full object-cover" />

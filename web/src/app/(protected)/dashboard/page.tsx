@@ -45,6 +45,7 @@ export default async function DashboardPage() {
         xpPorNivel={XP_POR_NIVEL}
         streakAtual={dados.profile?.streak_atual || 0}
         recordeStreak={dados.semana.recorde.melhorStreak}
+        pro={dados.ehPro}
       />
 
       {/* `retomar` entra no FocoHojeCard (dentro do DashboardView) em vez de

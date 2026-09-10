@@ -8,6 +8,7 @@ import { StudentCardModal } from "@/components/ranking/student-card-modal";
 import { LigaEmblema } from "@/components/ranking/liga-emblema";
 import { RankingGlobalView, GlobalHeader } from "@/components/ranking/ranking-global-view";
 import { LIGA_COR, LIGA_GRADIENTE } from "@/components/ranking/liga-visual";
+import { PRO_ARO, ProMarcaLinha } from "@/components/ranking/pro-visual";
 import {
   buscarCardUsuarioAction,
   buscarRankingLigaAction,
@@ -430,14 +431,19 @@ function PodiumSlot({
             className={`relative transition-transform group-hover:-translate-y-0.5 ${
               aluno.ehVoce
                 ? "ring-2 ring-questly-green ring-offset-2 ring-offset-card"
-                : destaque
-                  ? "ring-2 ring-questly-gold/70 ring-offset-2 ring-offset-card"
-                  : "ring-2 ring-white/50 ring-offset-2 ring-offset-card"
+                : aluno.pro
+                  ? PRO_ARO
+                  : destaque
+                    ? "ring-2 ring-questly-gold/70 ring-offset-2 ring-offset-card"
+                    : "ring-2 ring-white/50 ring-offset-2 ring-offset-card"
             }`}
           />
         </div>
-        <b className="max-w-[104px] truncate rounded-full bg-muted px-2.5 py-0.5 text-center text-[12px] font-semibold">
-          {aluno.ehVoce ? "Você" : aluno.username ? `@${aluno.username}` : aluno.nome.split(" ")[0]}
+        <b className="flex max-w-[124px] items-center gap-1 truncate rounded-full bg-muted px-2.5 py-0.5 text-center text-[12px] font-semibold">
+          {aluno.pro && <ProMarcaLinha />}
+          <span className="truncate">
+            {aluno.ehVoce ? "Você" : aluno.username ? `@${aluno.username}` : aluno.nome.split(" ")[0]}
+          </span>
         </b>
         <span className="tnum text-[11.5px] font-medium text-questly-green-dark">
           {aluno.xpSemana.toLocaleString("pt-BR")} XP
@@ -475,9 +481,15 @@ function PinnedVoce({
       <div className="tnum w-9 shrink-0 text-center">
         <span className="text-[15px] font-bold text-questly-red-dark">{posicao}º</span>
       </div>
-      <RankAvatar nome={aluno.username || aluno.nome} fotoUrl={aluno.fotoUrl} size={42} />
+      <RankAvatar
+        nome={aluno.username || aluno.nome}
+        fotoUrl={aluno.fotoUrl}
+        size={42}
+        className={aluno.pro ? PRO_ARO : ""}
+      />
       <div className="min-w-0 flex-1">
-        <b className="block truncate text-[13.5px] font-semibold">
+        <b className="flex items-center gap-1.5 truncate text-[13.5px] font-semibold">
+          {aluno.pro && <ProMarcaLinha />}
           {aluno.username ? `@${aluno.username}` : aluno.nome}{" "}
           <span className="ml-0.5 rounded-md bg-questly-red/15 px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-questly-red-dark">
             você
@@ -529,9 +541,15 @@ function RankRow({ aluno, posicao, onClick }: { aluno: RankingRow; posicao: numb
       <div className="tnum w-6 shrink-0 text-center text-[13px] font-semibold text-muted-foreground">
         {posicao}
       </div>
-      <RankAvatar nome={aluno.username || aluno.nome} fotoUrl={aluno.fotoUrl} size={40} />
+      <RankAvatar
+        nome={aluno.username || aluno.nome}
+        fotoUrl={aluno.fotoUrl}
+        size={40}
+        className={aluno.pro ? PRO_ARO : ""}
+      />
       <div className="min-w-0 flex-1">
-        <b className="block truncate text-[13px] font-semibold">
+        <b className="flex items-center gap-1.5 truncate text-[13px] font-semibold">
+          {aluno.pro && <ProMarcaLinha />}
           {aluno.username ? `@${aluno.username}` : aluno.nome}
           {aluno.ehVoce && <span className="font-normal text-muted-foreground"> (você)</span>}
         </b>

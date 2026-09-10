@@ -9,7 +9,7 @@
 // mouse com tilt 3D, como uma carta segurada na mão.
 import { useRef } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
-import { Crosshair, Flame, Medal, Target, X, Zap } from "lucide-react";
+import { Crosshair, Crown, Flame, Gauge, Medal, ShieldCheck, Target, X, Zap } from "lucide-react";
 import { RankAvatar } from "@/components/ranking/avatar";
 import {
   LIGA_CARD_BG,
@@ -22,6 +22,7 @@ import { CursoIcone } from "@/components/cursos/curso-icone";
 import { cursoReconhecido, resolverCurso } from "@/lib/cursos/registro";
 import type { CardUsuario } from "@/lib/ranking/actions";
 import { Insignia } from "@/components/insignias/insignia";
+import { PRO_FRAME, ProFoil, ProSelo } from "@/components/ranking/pro-visual";
 
 type StudentCardModalProps = {
   card: CardUsuario | null;
@@ -68,6 +69,7 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
 }
 
 function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void }) {
+  const pro = card.pro;
   const raridade = LIGA_RARIDADE[card.liga];
   const numeroCarta = String(Math.max(1, card.nivel)).padStart(3, "0");
   const curso = resolverCurso(card.curso);
@@ -99,7 +101,9 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
       ref={ref}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={`relative w-full max-w-[370px] rounded-[20px] bg-gradient-to-br p-[10px] shadow-2xl shadow-black/50 ${LIGA_FRAME[card.liga]}`}
+      className={`relative w-full max-w-[370px] rounded-[20px] bg-gradient-to-br p-[10px] shadow-2xl shadow-black/50 ${
+        pro ? PRO_FRAME : LIGA_FRAME[card.liga]
+      }`}
       initial={{ opacity: 0, scale: 0.82, rotateX: -14, y: 24 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 12 }}
@@ -118,8 +122,10 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
       <div
         className={`relative overflow-hidden rounded-[12px] bg-gradient-to-b p-3.5 ${LIGA_CARD_BG[card.liga]}`}
       >
-        {/* brilho holográfico — só nas ligas raras (ouro pra cima) */}
-        {LIGA_HOLO[card.liga] && (
+        {/* foil prismático do assinante — por cima do holo da liga */}
+        {pro && <ProFoil />}
+        {/* brilho holográfico — ligas raras (ouro pra cima) e todo card Pro */}
+        {(LIGA_HOLO[card.liga] || pro) && (
           <motion.div
             className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-transparent via-white/20 to-transparent"
             style={{ width: "55%" }}
@@ -138,6 +144,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
           >
             Liga {card.ligaNome}
           </span>
+          {pro && <ProSelo />}
           <h3 className={`min-w-0 flex-1 truncate font-heading text-[17px] font-bold text-white ${TEXTO_POP}`}>
             {card.username ? `@${card.username}` : card.nome}
           </h3>
@@ -173,7 +180,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
               fotoUrl={card.fotoUrl}
               size={112}
               gradientClassName="from-white/25 to-black/20"
-              className="ring-4 ring-white/30"
+              className={pro ? "ring-4 ring-questly-gold/80" : "ring-4 ring-white/30"}
             />
           </div>
         </div>
@@ -211,7 +218,6 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
             descricao="questões respondidas na carreira"
             valor={card.questoesTotal}
             unidade=""
-            semDivisor={card.pctAcerto == null}
           />
           {/* Acertabilidade — só aparece com amostra mínima (ver
               MIN_QUESTOES_ACERTABILIDADE): "100%" em 2 questões não diz
@@ -224,8 +230,33 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
               descricao={`${card.acertosTotal.toLocaleString("pt-BR")} acertos em ${card.questoesTotal.toLocaleString("pt-BR")} questões`}
               valor={card.pctAcerto}
               unidade="%"
-              semDivisor
             />
+          )}
+
+          {/* Leitura exclusiva do card Pro: o que o assinante já alcançou de
+              auge (melhor liga do histórico) e a eficiência dele em XP por
+              questão. Card grátis não mostra nenhuma das duas. */}
+          {pro && (
+            <>
+              <Ataque
+                icone={<ShieldCheck size={13} strokeWidth={2.25} />}
+                corEnergia="bg-questly-gold"
+                nome={`Auge: Liga ${card.melhorLigaNome}`}
+                descricao="a liga mais alta já alcançada"
+                valor={card.xpTotal}
+                unidade="XP total"
+              />
+              {card.xpMedioPorQuestao != null && (
+                <Ataque
+                  icone={<Gauge size={13} strokeWidth={2.25} />}
+                  corEnergia="bg-questly-blue"
+                  nome="Rendimento"
+                  descricao="XP médio por questão respondida"
+                  valor={card.xpMedioPorQuestao}
+                  unidade="XP/questão"
+                />
+              )}
+            </>
           )}
         </div>
 
@@ -235,10 +266,21 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
             <span className="text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/70">
               Distintivos
             </span>
-            <span className="tnum text-[9.5px] font-bold text-white/70">{card.distintivos.length}</span>
+            <span className="tnum text-[9.5px] font-bold text-white/70">
+              {card.distintivos.length + (pro ? 1 : 0)}
+            </span>
           </div>
-          {card.distintivos.length > 0 ? (
+          {card.distintivos.length > 0 || pro ? (
             <div className="flex flex-wrap gap-1.5">
+              {pro && (
+                <span
+                  title="Assinante Questly Pro"
+                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-questly-gold to-amber-300 px-2.5 py-1 text-[10px] font-bold text-[#3a2a05] ring-1 ring-white/50"
+                >
+                  <Crown size={11} strokeWidth={2.5} className="fill-current" />
+                  Assinante Pro
+                </span>
+              )}
               {card.distintivos.map((d, i) => (
                 <motion.div
                   key={d.id}
@@ -285,7 +327,8 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
         <div className="relative z-10 mt-3 flex items-center justify-between text-[8.5px] italic text-white/55">
           <span>Ilust. Questly</span>
           <span className="tnum not-italic">
-            {raridade.simbolo} {numeroCarta}/100 · {raridade.nome}
+            {pro ? "✦" : raridade.simbolo} {numeroCarta}/100 ·{" "}
+            {pro ? `${raridade.nome} · Edição Pro` : raridade.nome}
           </span>
           <span>© Questly {new Date().getFullYear()}</span>
         </div>
@@ -301,7 +344,6 @@ function Ataque({
   descricao,
   valor,
   unidade,
-  semDivisor,
 }: {
   icone: React.ReactNode;
   corEnergia: string;
@@ -309,10 +351,12 @@ function Ataque({
   descricao: string;
   valor: number;
   unidade: string;
-  semDivisor?: boolean;
 }) {
+  // O divisor some no último "ataque" via `last:` — quais linhas aparecem
+  // depende do plano e da amostra de acertos, então quem sabe qual é a
+  // última é o CSS, não uma prop calculada em cada chamada.
   return (
-    <div className={`flex items-center gap-2.5 py-2 ${semDivisor ? "" : "border-b border-white/12"}`}>
+    <div className="flex items-center gap-2.5 border-b border-white/12 py-2 last:border-b-0">
       <span
         className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white shadow-sm ring-1 ring-white/40 ${corEnergia}`}
       >
@@ -323,7 +367,7 @@ function Ataque({
         <span className="block truncate text-[9.5px] text-white/60">{descricao}</span>
       </span>
       <span className={`tnum shrink-0 font-heading text-lg font-bold text-white ${TEXTO_POP}`}>
-        {valor.toLocaleString("pt-BR")}
+        {valor.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}
         {unidade && <span className="ml-1 text-[10px] font-semibold text-white/70">{unidade}</span>}
       </span>
     </div>

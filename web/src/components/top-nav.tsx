@@ -88,19 +88,21 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
           <ThemeToggle />
           <FocoBotao />
 
-          <Link
-            href="/pro"
-            aria-label={ehPro ? "Questly Pro" : "Seja Pro"}
-            title={ehPro ? "Questly Pro" : "Seja Pro"}
-            className={`hidden h-8 shrink-0 cursor-pointer items-center gap-1 rounded-full px-2.5 text-[12px] font-semibold transition-transform active:scale-95 sm:flex ${
-              ehPro
-                ? "bg-gradient-to-r from-questly-gold to-amber-400 text-[#3a2a05] shadow-sm ring-1 ring-white/40"
-                : "text-questly-gold hover:bg-questly-gold/10"
-            }`}
-          >
-            <Crown size={13} strokeWidth={2.5} className={ehPro ? "fill-current" : ""} />
-            {ehPro ? "Pro" : "Seja Pro"}
-          </Link>
+          {/* Só quem AINDA não é Pro vê o convite aqui. Pra quem já assinou o
+              selo saiu do lado do perfil (pedido do usuário): a identidade Pro
+              agora aparece onde ela é vista pelos outros — no aro dourado do
+              avatar e no card do ranking. */}
+          {!ehPro && (
+            <Link
+              href="/pro"
+              aria-label="Seja Pro"
+              title="Seja Pro"
+              className="hidden h-8 shrink-0 cursor-pointer items-center gap-1 rounded-full px-2.5 text-[12px] font-semibold text-questly-gold transition-transform hover:bg-questly-gold/10 active:scale-95 sm:flex"
+            >
+              <Crown size={13} strokeWidth={2.5} />
+              Seja Pro
+            </Link>
+          )}
 
           <ContaMenu
             nome={nome}
@@ -119,14 +121,21 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
 function FocoBotao() {
   const foco = useFoco();
   const ativo = foco.estado === "rodando" || foco.estado === "pausado";
+  // Com sessão rolando o botão não "fecha" a barra (isso escondia o
+  // cronômetro sem jeito de trazer de volta) — ele recolhe/expande.
+  const titulo = ativo
+    ? foco.colapsada
+      ? "Expandir a sessão de foco"
+      : "Recolher a sessão de foco"
+    : "Sessão de foco";
 
   return (
     <button
       type="button"
       onClick={foco.alternarBarra}
-      aria-label="Foco"
-      aria-pressed={foco.barraAberta || ativo}
-      title="Sessão de foco"
+      aria-label={titulo}
+      aria-pressed={ativo ? !foco.colapsada : foco.barraAberta}
+      title={titulo}
       className={`relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-all active:scale-95 ${
         ativo
           ? "bg-gradient-to-br from-questly-blue to-questly-blue-dark text-white shadow-[0_2px_10px_-2px_var(--questly-blue)]"
@@ -156,7 +165,11 @@ function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavPro
         onClick={() => setAberto((v) => !v)}
         aria-label="Conta"
         aria-expanded={aberto}
-        className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white ring-1 ring-border transition-transform active:scale-95 dark:text-[#0c1512]"
+        className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-[13px] font-semibold text-white transition-transform active:scale-95 dark:text-[#0c1512] ${
+          ehPro
+            ? "ring-2 ring-questly-gold ring-offset-1 ring-offset-background"
+            : "ring-1 ring-border"
+        }`}
       >
         {fotoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
