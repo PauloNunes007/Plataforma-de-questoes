@@ -35,6 +35,13 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
 
   const autosaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finalizouRef = useRef(false);
+  // Cronômetro por questão: `temposRef` acumula os segundos já gastos em cada
+  // questão e `relogioRef` guarda em qual questão o aluno está desde quando.
+  // É best-effort (alimenta só o gráfico de ritmo e o diagnóstico de pressa no
+  // resultado — nada aqui vale nota), então pausar com a aba escondida basta:
+  // sem isso, deixar a prova aberta noutra aba inflaria a questão visível.
+  const temposRef = useRef<Record<string, number>>({ ...(simulado.tempos || {}) });
+  const relogioRef = useRef<{ id: string; desde: number } | null>(null);
   // Espelho sempre-atual das respostas: o auto-finalizar do relógio roda a
   // partir de um closure criado no 1º render; sem o ref, entregaria respostas
   // velhas (o aluno perderia o que marcou depois). Atualizado num efeito
@@ -43,6 +50,21 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
   useEffect(() => {
     respostasRef.current = respostas;
   }, [respostas]);
+
+  // Fecha a contagem da questão corrente e devolve o mapa acumulado.
+  function fecharCronometro(): Record<string, number> {
+    const atual = relogioRef.current;
+    if (atual) {
+      const gasto = (Date.now() - atual.desde) / 1000;
+      if (gasto > 0) temposRef.current[atual.id] = (temposRef.current[atual.id] || 0) + gasto;
+      relogioRef.current = null;
+    }
+    return temposRef.current;
+  }
+
+  function abrirCronometro(questionId: string) {
+    relogioRef.current = { id: questionId, desde: Date.now() };
+  }
 
   // Corrige e encerra no servidor (autoritativo), depois recarrega a página —
   // o Server Component vê status=concluido e renderiza o resultado.
@@ -55,9 +77,28 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
       simulado.duracao_min * 60,
       Math.round((Date.now() - new Date(simulado.iniciado_em).getTime()) / 1000),
     );
-    await finalizarSimuladoAction(simulado.id, respostasRef.current, tempoGastoSeg);
+    await finalizarSimuladoAction(simulado.id, respostasRef.current, tempoGastoSeg, fecharCronometro());
     router.refresh();
   }
+
+  // Cronometragem da questão visível: (re)abre a contagem a cada troca de
+  // questão e fecha ao sair. `visibilitychange` pausa quando a aba some.
+  useEffect(() => {
+    const atual = perguntas[indice];
+    if (!atual || finalizouRef.current) return;
+    abrirCronometro(atual.id);
+
+    function aoTrocarVisibilidade() {
+      if (document.hidden) fecharCronometro();
+      else if (!finalizouRef.current && atual) abrirCronometro(atual.id);
+    }
+    document.addEventListener("visibilitychange", aoTrocarVisibilidade);
+    return () => {
+      document.removeEventListener("visibilitychange", aoTrocarVisibilidade);
+      fecharCronometro();
+    };
+    // abrirCronometro/fecharCronometro só mexem em refs — nada mais a declarar
+  }, [indice, perguntas]);
 
   // Relógio: 1 tick/s. Ao zerar, auto-finaliza com o que estiver marcado.
   useEffect(() => {
@@ -80,7 +121,11 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
     // objeto recém-calculado, não o estado (que só atualiza no próximo render)
     if (autosaveRef.current) clearTimeout(autosaveRef.current);
     autosaveRef.current = setTimeout(() => {
-      salvarRespostasAction(simulado.id, proximo);
+      // snapshot sem fechar a contagem: o aluno segue na mesma questão
+      const parcial = { ...temposRef.current };
+      const atual = relogioRef.current;
+      if (atual) parcial[atual.id] = (parcial[atual.id] || 0) + (Date.now() - atual.desde) / 1000;
+      salvarRespostasAction(simulado.id, proximo, parcial);
     }, 1000);
   }
 

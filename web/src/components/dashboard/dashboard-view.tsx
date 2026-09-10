@@ -14,6 +14,8 @@ import { ComparativoCard } from "./comparativo-card";
 import { SemanaView } from "./semana-view";
 import { DashboardTabs, type AbaDashboard } from "./dashboard-tabs";
 import type { HeroDados } from "@/lib/dashboard/hero-data";
+import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
+import { SimuladosCard } from "./simulados-card";
 
 // Orquestra as abas do dashboard (redesign inspirado nos prints — ver
 // plano). "Hoje" mantém tudo que já existia (MissionBanner, BossSiegeMeter,
@@ -21,7 +23,15 @@ import type { HeroDados } from "@/lib/dashboard/hero-data";
 // (XP diário / Metas / Tarefas do dia); "Semana" é conteúdo novo, mais
 // enxuto (só o que já existe de dado real — sem percentil/recorde
 // inventado, ver semana-view.tsx).
-export function DashboardView({ dados, hero }: { dados: DashboardData; hero: HeroDados }) {
+export function DashboardView({
+  dados,
+  hero,
+  atalhoSimulados,
+}: {
+  dados: DashboardData;
+  hero: HeroDados;
+  atalhoSimulados: AtalhoSimulados;
+}) {
   const [aba, setAba] = useState<AbaDashboard>("hoje");
 
   const missoesPendentesIds = dados.missions.filter((m) => !m.concluida).map((m) => m.id);
@@ -72,6 +82,7 @@ export function DashboardView({ dados, hero }: { dados: DashboardData; hero: Her
 
           {/* Rail — comparativo, calendário e tarefas */}
           <aside className="flex min-w-0 flex-col gap-5">
+            <SimuladosCard atalho={atalhoSimulados} />
             <ComparativoCard comparativo={dados.semana.comparativo} />
             <TarefasDoDiaCard tarefasIniciais={dados.tarefasHoje} hoje={hojeStr} subjects={subjectsResumo} />
             <CalendarRailCard

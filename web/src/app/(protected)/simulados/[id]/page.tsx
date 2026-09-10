@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FileQuestion } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { carregarSimulado } from "@/lib/simulados/simulados-data";
+import { carregarHistorico, carregarSimulado } from "@/lib/simulados/simulados-data";
 import { SimuladoRunner } from "@/components/simulados/simulado-runner";
 import { SimuladoResultado } from "@/components/simulados/simulado-resultado";
 
@@ -41,7 +41,29 @@ export default async function SimuladoPage({ params }: { params: Promise<{ id: s
     return <EstadoVazio mensagem="Esse simulado não tem questões disponíveis." />;
   }
 
-  if (simulado.status === "concluido") return <SimuladoResultado simulado={simulado} />;
+  if (simulado.status === "concluido") {
+    // Comparação com o próprio histórico: só os simulados concluídos ANTES
+    // deste entram, senão a "média anterior" incluiria a nota que está sendo
+    // comparada e o delta ficaria sempre amortecido.
+    const historico = await carregarHistorico(supabase, user);
+    const anteriores = historico
+      .filter((s) => s.status === "concluido" && s.id !== simulado.id && s.criado_em < simulado.criado_em)
+      .map((s) => Number(s.nota ?? 0));
+
+    return (
+      <SimuladoResultado
+        simulado={simulado}
+        contexto={{
+          anteriores: anteriores.length,
+          mediaAnterior:
+            anteriores.length > 0
+              ? Math.round((anteriores.reduce((a, b) => a + b, 0) / anteriores.length) * 10) / 10
+              : null,
+          melhorAnterior: anteriores.length > 0 ? Math.max(...anteriores) : null,
+        }}
+      />
+    );
+  }
   if (simulado.status === "abandonado") {
     return <EstadoVazio mensagem="Esse simulado foi abandonado. Monte um novo pra praticar." />;
   }

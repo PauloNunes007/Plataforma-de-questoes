@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { carregarDadosDashboard, XP_POR_NIVEL } from "@/lib/questly/dashboard-data";
 import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
+import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
 import { QUESTLY_LIGA_INFO, QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
 import { HeroBanner } from "@/components/dashboard/hero-banner";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
@@ -23,9 +24,10 @@ export default async function DashboardPage() {
   if (!user) return null;
 
   const dados = await carregarDadosDashboard(supabase, user);
-  const [retomar, hero] = await Promise.all([
+  const [retomar, hero, atalhoSimulados] = await Promise.all([
     carregarRetomar(supabase, user.id),
     carregarHeroDashboard(supabase, user, dados.profile),
+    carregarAtalhoSimulados(supabase, user),
   ]);
 
   const liga: Liga = (dados.profile?.liga as Liga) || QUESTLY_LIGAS[0];
@@ -49,7 +51,7 @@ export default async function DashboardPage() {
 
       {retomar && <ContinuarCard info={retomar} />}
 
-      <DashboardView dados={dados} hero={hero} />
+      <DashboardView dados={dados} hero={hero} atalhoSimulados={atalhoSimulados} />
     </div>
   );
 }

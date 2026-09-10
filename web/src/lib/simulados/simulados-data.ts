@@ -7,6 +7,15 @@ import { instituicoesQueCasam, nomeExibicaoInstituicao } from "@/lib/cursos/inst
 import { ehPro } from "@/lib/plano/plano";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { SIMULADO_FREE_LIMITE_SEMANA } from "./constantes";
+import {
+  analisarHistorico,
+  montarQuestoesAnalisadas,
+  type ContextoTopico,
+  type QuestaoAnalisada,
+  type QuestaoCrua,
+  type DesempenhoGeral,
+  type SimuladoAnalisado,
+} from "./analise";
 
 export type TopicoSimulado = { id: string; nome: string; questoes: number };
 export type MateriaSimulado = { id: string; nome: string; questoes: number; topicos: TopicoSimulado[] };
@@ -211,14 +220,19 @@ export type SimuladoCompleto = {
   respostas: Record<string, string>;
   iniciado_em: string;
   concluido_em: string | null;
+  criado_em: string;
   tempo_gasto_seg: number | null;
   acertos: number | null;
   total: number | null;
   nota: number | null;
   /** perguntas na ordem de aplicação (question_ids) */
   perguntas: Pergunta[];
-  /** topic_id -> rótulos, pro detalhamento por matéria no resultado */
-  contexto: Record<string, { topico: string; materia: string }>;
+  /** topic_id -> rótulos, pro detalhamento por matéria/tópico no resultado */
+  contexto: Record<string, ContextoTopico>;
+  /** question_id -> segundos gastos (best-effort; pode vir vazio) */
+  tempos: Record<string, number>;
+  /** uma linha por questão, já cruzada com respostas/contexto/tempo */
+  analise: QuestaoAnalisada[];
 };
 
 export async function carregarSimulado(
@@ -236,7 +250,7 @@ export async function carregarSimulado(
 
   const ids: string[] = s.question_ids || [];
   let perguntas: Pergunta[] = [];
-  const contexto: Record<string, { topico: string; materia: string }> = {};
+  const contexto: Record<string, ContextoTopico> = {};
   if (ids.length > 0) {
     const { data } = await supabase.from("questions").select("*").in("id", ids);
     const porId = new Map((data || []).map((q) => [q.id, q as Pergunta]));
@@ -245,19 +259,12 @@ export async function carregarSimulado(
 
     const topicIds = [...new Set(perguntas.map((p) => p.topic_id).filter(Boolean))] as string[];
     if (topicIds.length > 0) {
-      const { data: tops } = await supabase
-        .from("topicos")
-        .select("id, nome, materias!inner ( nome )")
-        .in("id", topicIds);
-      for (const t of (tops || []) as unknown as {
-        id: string;
-        nome: string | null;
-        materias: { nome: string | null } | null;
-      }[]) {
-        contexto[t.id] = { topico: t.nome || "Tópico", materia: t.materias?.nome || "Geral" };
-      }
+      Object.assign(contexto, await carregarContextoTopicos(supabase, topicIds));
     }
   }
+
+  const respostas = (s.respostas || {}) as Record<string, string>;
+  const tempos = normalizarTempos(s.tempos);
 
   return {
     id: s.id,
@@ -267,14 +274,202 @@ export async function carregarSimulado(
     duracao_min: s.duracao_min,
     qtd_questoes: s.qtd_questoes,
     question_ids: ids,
-    respostas: (s.respostas || {}) as Record<string, string>,
+    respostas,
     iniciado_em: s.iniciado_em,
     concluido_em: s.concluido_em,
+    criado_em: s.criado_em,
     tempo_gasto_seg: s.tempo_gasto_seg,
     acertos: s.acertos,
     total: s.total,
     nota: s.nota,
     perguntas,
     contexto,
+    tempos,
+    analise: montarQuestoesAnalisadas(perguntas, respostas, contexto, tempos),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Contexto dos tópicos e tempos — compartilhado por um simulado e pelo agregado
+// ---------------------------------------------------------------------------
+
+/** `tempos` é jsonb livre: filtra pra number positivo e ignora o resto. */
+function normalizarTempos(bruto: unknown): Record<string, number> {
+  const saida: Record<string, number> = {};
+  if (!bruto || typeof bruto !== "object") return saida;
+  for (const [k, v] of Object.entries(bruto as Record<string, unknown>)) {
+    const n = typeof v === "number" ? v : Number(v);
+    if (Number.isFinite(n) && n > 0) saida[k] = Math.round(n);
+  }
+  return saida;
+}
+
+async function carregarContextoTopicos(
+  supabase: SupabaseClient,
+  topicIds: string[],
+): Promise<Record<string, ContextoTopico>> {
+  const contexto: Record<string, ContextoTopico> = {};
+  if (topicIds.length === 0) return contexto;
+  const { data } = await supabase
+    .from("topicos")
+    .select("id, nome, materia_id, materias ( nome )")
+    .in("id", topicIds);
+  for (const t of (data || []) as unknown as {
+    id: string;
+    nome: string | null;
+    materia_id: string | null;
+    materias: { nome: string | null } | null;
+  }[]) {
+    contexto[t.id] = {
+      topico: t.nome || "Tópico",
+      materia: t.materias?.nome || "Geral",
+      materiaId: t.materia_id,
+    };
+  }
+  return contexto;
+}
+
+/** Quantos simulados concluídos entram no agregado (do mais recente pra trás). */
+const MAX_SIMULADOS_AGREGADO = 40;
+
+/**
+ * Desempenho consolidado de TODOS os simulados concluídos do aluno. Faz 3
+ * consultas no total (simulados → questões → tópicos), não uma por simulado:
+ * junta os `question_ids` de todos eles num `in` só.
+ */
+export async function carregarDesempenhoGeral(
+  supabase: SupabaseClient,
+  user: { id: string },
+): Promise<DesempenhoGeral> {
+  const COLUNAS_BASE =
+    "id, titulo, criado_em, nota, acertos, total, tempo_gasto_seg, duracao_min, question_ids, respostas";
+
+  const buscar = (colunas: string) =>
+    supabase
+      .from("simulados_aluno")
+      .select(colunas)
+      .eq("user_id", user.id)
+      .eq("status", "concluido")
+      .order("criado_em", { ascending: false })
+      .limit(MAX_SIMULADOS_AGREGADO);
+
+  // `tempos` só existe depois de supabase_simulados_analytics.sql. Sem ele a
+  // página inteira ficaria vazia por causa de uma coluna de telemetria — então
+  // repete sem ela e a análise sai completa, menos as visões de tempo.
+  const comTempos = await buscar(`${COLUNAS_BASE}, tempos`);
+  const { data: linhas } = comTempos.error ? await buscar(COLUNAS_BASE) : comTempos;
+
+  const simulados = (linhas || []) as unknown as {
+    id: string;
+    titulo: string;
+    criado_em: string;
+    nota: number | null;
+    acertos: number | null;
+    total: number | null;
+    tempo_gasto_seg: number | null;
+    duracao_min: number;
+    question_ids: string[] | null;
+    respostas: Record<string, string> | null;
+    tempos: unknown;
+  }[];
+
+  if (simulados.length === 0) return analisarHistorico([]);
+
+  const idsQuestoes = [...new Set(simulados.flatMap((s) => s.question_ids || []))];
+  const porId = new Map<string, QuestaoCrua>();
+  // `in` com lista gigante estoura o tamanho da URL — busca em blocos.
+  const BLOCO = 300;
+  for (let i = 0; i < idsQuestoes.length; i += BLOCO) {
+    const { data } = await supabase
+      .from("questions")
+      .select("id, topic_id, gabarito, dificuldade, ano, subtopico, tempo_medio_seg")
+      .in("id", idsQuestoes.slice(i, i + BLOCO));
+    for (const q of (data || []) as unknown as QuestaoCrua[]) porId.set(q.id, q);
+  }
+
+  const topicIds = [...new Set([...porId.values()].map((q) => q.topic_id).filter(Boolean))] as string[];
+  const contexto = await carregarContextoTopicos(supabase, topicIds);
+
+  const analisados: SimuladoAnalisado[] = simulados.map((s) => {
+    const questoes = (s.question_ids || []).map((qid) => porId.get(qid)).filter(Boolean) as QuestaoCrua[];
+    return {
+      id: s.id,
+      titulo: s.titulo,
+      criadoEm: s.criado_em,
+      nota: Number(s.nota ?? 0),
+      acertos: s.acertos ?? 0,
+      total: s.total ?? questoes.length,
+      tempoGastoSeg: s.tempo_gasto_seg,
+      duracaoMin: s.duracao_min,
+      questoes: montarQuestoesAnalisadas(questoes, s.respostas || {}, contexto, normalizarTempos(s.tempos)),
+    };
+  });
+
+  return analisarHistorico(analisados);
+}
+
+// ---------------------------------------------------------------------------
+// Atalho da home
+// ---------------------------------------------------------------------------
+
+export type AtalhoSimulados = {
+  /** prova com o relógio correndo — se existe, é a única coisa que importa */
+  emAndamento: { id: string; titulo: string; qtdQuestoes: number; duracaoMin: number } | null;
+  /** últimas notas em ordem cronológica, pro sparkline */
+  notas: { id: string; nota: number; criadoEm: string }[];
+  totalConcluidos: number;
+  media: number | null;
+  ultima: number | null;
+};
+
+/**
+ * Uma consulta só, pro card de atalho no dashboard. Deliberadamente NÃO checa
+ * se a universidade do aluno tem provas no banco (isso custa uma varredura em
+ * `questions`): o card leva pra /simulados, que já dá o estado honesto quando
+ * não há conteúdo — a home não pode pagar essa conta a cada carregamento.
+ */
+export async function carregarAtalhoSimulados(
+  supabase: SupabaseClient,
+  user: { id: string },
+): Promise<AtalhoSimulados> {
+  const { data } = await supabase
+    .from("simulados_aluno")
+    .select("id, titulo, status, nota, criado_em, qtd_questoes, duracao_min")
+    .eq("user_id", user.id)
+    .in("status", ["em_andamento", "concluido"])
+    .order("criado_em", { ascending: false })
+    .limit(12);
+
+  const linhas = (data || []) as unknown as {
+    id: string;
+    titulo: string;
+    status: string;
+    nota: number | null;
+    criado_em: string;
+    qtd_questoes: number;
+    duracao_min: number;
+  }[];
+
+  const emAndamentoLinha = linhas.find((l) => l.status === "em_andamento") || null;
+  const concluidos = linhas.filter((l) => l.status === "concluido");
+  const notas = concluidos
+    .slice(0, 8)
+    .reverse()
+    .map((l) => ({ id: l.id, nota: Number(l.nota ?? 0), criadoEm: l.criado_em }));
+
+  return {
+    emAndamento: emAndamentoLinha
+      ? {
+          id: emAndamentoLinha.id,
+          titulo: emAndamentoLinha.titulo,
+          qtdQuestoes: emAndamentoLinha.qtd_questoes,
+          duracaoMin: emAndamentoLinha.duracao_min,
+        }
+      : null,
+    notas,
+    totalConcluidos: concluidos.length,
+    media:
+      notas.length > 0 ? Math.round((notas.reduce((a, b) => a + b.nota, 0) / notas.length) * 10) / 10 : null,
+    ultima: notas.length > 0 ? notas[notas.length - 1].nota : null,
   };
 }

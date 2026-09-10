@@ -1,246 +1,355 @@
 "use client";
 
-import { useMemo, useState } from "react";
+// Resultado de um simulado. A tela responde, nessa ordem: quanto eu tirei →
+// isso é melhor ou pior que o meu normal → onde exatamente eu perdi ponto →
+// o que eu faço agora → a correção questão a questão.
+//
+// Nada aqui é inventado: todo número sai das questões aplicadas, das respostas
+// e (quando existe) do tempo medido pelo runner. Onde falta dado, a seção diz
+// que falta em vez de mostrar zero.
+
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, CheckCircle2, ChevronDown, Clock, MinusCircle, RotateCcw, Target, XCircle } from "lucide-react";
-import { MathText } from "@/components/questao/math-text";
+import {
+  ArrowLeft,
+  BarChart3,
+  Clock,
+  Gauge,
+  Layers,
+  Lightbulb,
+  Loader2,
+  RotateCcw,
+  Swords,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import type { SimuladoCompleto } from "@/lib/simulados/simulados-data";
+import {
+  PCT_BOM,
+  diagnosticar,
+  fmtSegundos,
+  fmtSegundosPreciso,
+  porDificuldade,
+  porMateria,
+  porTopico,
+  tomDoPct,
+} from "@/lib/simulados/analise";
+import { treinarTopicosDoSimuladoAction } from "@/lib/simulados/actions";
+import { CLASSE_TEXTO_STATUS, CartaoGrafico } from "./graficos/base";
+import { BarrasDesempenho } from "./graficos/barras-desempenho";
+import { RitmoProva } from "./graficos/ritmo-prova";
+import { GabaritoSimulado } from "./gabarito-simulado";
 
-function fmtDuracao(seg: number | null): string {
-  if (!seg && seg !== 0) return "—";
-  const m = Math.round(seg / 60);
-  if (m < 60) return `${m}min`;
-  return `${Math.floor(m / 60)}h${String(m % 60).padStart(2, "0")}`;
+/** Comparação com o próprio histórico — calculada na page, não aqui. */
+export type ContextoResultado = {
+  /** quantos simulados o aluno já tinha concluído ANTES deste */
+  anteriores: number;
+  mediaAnterior: number | null;
+  melhorAnterior: number | null;
+};
+
+function corNota(nota: number): { texto: string; anel: string } {
+  if (nota >= 7) return { texto: "text-questly-green-dark", anel: "var(--color-questly-green)" };
+  if (nota >= 5) return { texto: "text-questly-gold-dark", anel: "var(--color-questly-gold)" };
+  return { texto: "text-questly-red-dark", anel: "var(--color-questly-red)" };
 }
 
-function corNota(nota: number): { text: string; bg: string; ring: string } {
-  if (nota >= 7) return { text: "text-questly-green-dark", bg: "bg-questly-green-light", ring: "var(--color-questly-green)" };
-  if (nota >= 5) return { text: "text-questly-gold-dark", bg: "bg-questly-gold-light", ring: "var(--color-questly-gold)" };
-  return { text: "text-questly-red-dark", bg: "bg-questly-red-light", ring: "var(--color-questly-red)" };
-}
-
-export function SimuladoResultado({ simulado }: { simulado: SimuladoCompleto }) {
-  const [aberta, setAberta] = useState<string | null>(null);
+export function SimuladoResultado({
+  simulado,
+  contexto,
+}: {
+  simulado: SimuladoCompleto;
+  contexto: ContextoResultado;
+}) {
+  const analise = simulado.analise;
   const nota = Number(simulado.nota ?? 0);
-  const acertos = simulado.acertos ?? 0;
-  const total = simulado.total ?? simulado.perguntas.length;
-  const emBranco = simulado.perguntas.filter((p) => !simulado.respostas[p.id]).length;
+  const total = simulado.total ?? analise.length;
+  const acertos = simulado.acertos ?? analise.filter((q) => q.status === "acerto").length;
+  const erros = analise.filter((q) => q.status === "erro").length;
+  const brancos = analise.filter((q) => q.status === "branco").length;
   const cor = corNota(nota);
 
-  // Detalhamento por matéria
-  const porMateria = useMemo(() => {
-    const mapa = new Map<string, { acertos: number; total: number }>();
-    for (const p of simulado.perguntas) {
-      const materia = (p.topic_id && simulado.contexto[p.topic_id]?.materia) || "Geral";
-      const m = mapa.get(materia) || { acertos: 0, total: 0 };
-      m.total += 1;
-      if (simulado.respostas[p.id] === p.gabarito) m.acertos += 1;
-      mapa.set(materia, m);
-    }
-    return [...mapa.entries()]
-      .map(([materia, v]) => ({ materia, ...v, pct: v.total ? Math.round((v.acertos / v.total) * 100) : 0 }))
-      .sort((a, b) => a.pct - b.pct);
-  }, [simulado]);
+  const materias = useMemo(() => porMateria(analise), [analise]);
+  const topicos = useMemo(() => porTopico(analise), [analise]);
+  const dificuldades = useMemo(() => porDificuldade(analise), [analise]);
+  const diag = useMemo(() => diagnosticar(analise), [analise]);
+
+  const topicosParaTreinar = useMemo(
+    () =>
+      [...new Set(analise.filter((q) => q.status !== "acerto" && q.topicoId).map((q) => q.topicoId))].filter(
+        Boolean,
+      ) as string[],
+    [analise],
+  );
 
   const anguloAcertos = total > 0 ? (acertos / total) * 360 : 0;
+  const tempoPorQuestao = simulado.tempo_gasto_seg != null && total > 0 ? simulado.tempo_gasto_seg / total : null;
+  const deltaMedia = contexto.mediaAnterior != null ? Math.round((nota - contexto.mediaAnterior) * 10) / 10 : null;
+  const ehRecorde = contexto.melhorAnterior != null && nota > contexto.melhorAnterior;
 
   return (
-    <div className="mx-auto w-full max-w-[820px] px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto flex w-full max-w-[900px] flex-col gap-5 px-4 py-6 sm:px-6 lg:py-8">
       <Link
         href="/simulados"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+        className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft size={15} /> Simulados
       </Link>
 
-      {/* Cabeçalho do resultado */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="surface p-6 sm:p-8">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Resultado</p>
-        <h1 className="mt-0.5 font-heading text-lg font-bold sm:text-xl">{simulado.titulo}</h1>
+      {/* ---------------- Resultado ---------------- */}
+      <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="surface p-6 sm:p-8">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="kicker">Resultado</span>
+          {ehRecorde && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-questly-gold-light px-2.5 py-0.5 text-[11px] font-bold text-questly-gold-dark">
+              <TrendingUp size={12} /> Sua melhor nota até agora
+            </span>
+          )}
+        </div>
+        <h1 className="mt-1 font-heading text-lg font-bold sm:text-xl">{simulado.titulo}</h1>
 
         <div className="mt-6 flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
-          {/* anel de nota */}
           <div className="relative flex h-32 w-32 shrink-0 items-center justify-center">
             <div
               className="absolute inset-0 rounded-full"
-              style={{ background: `conic-gradient(${cor.ring} ${anguloAcertos}deg, var(--color-muted) 0deg)` }}
+              style={{ background: `conic-gradient(${cor.anel} ${anguloAcertos}deg, var(--color-muted) 0deg)` }}
             />
-            <div className="absolute inset-[10px] rounded-full bg-background" />
+            <div className="absolute inset-[10px] rounded-full bg-card" />
             <div className="relative text-center">
-              <div className={`tnum font-heading text-4xl font-bold leading-none ${cor.text}`}>{nota.toFixed(1)}</div>
+              {/* figura-herói: proporcional, não tabular */}
+              <div className={`font-heading text-[44px] font-bold leading-none ${cor.texto}`}>{nota.toFixed(1)}</div>
               <div className="mt-0.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">de 10</div>
             </div>
           </div>
 
-          {/* números */}
-          <div className="grid flex-1 grid-cols-3 gap-3">
-            <div className={`rounded-xl p-3 text-center ${cor.bg}`}>
-              <div className="tnum font-heading text-2xl font-bold">{acertos}</div>
-              <div className="text-[11px] font-semibold text-muted-foreground">acertos</div>
-            </div>
-            <div className="rounded-xl bg-muted p-3 text-center">
-              <div className="tnum font-heading text-2xl font-bold">{total - acertos}</div>
-              <div className="text-[11px] font-semibold text-muted-foreground">erros</div>
-            </div>
-            <div className="rounded-xl bg-muted p-3 text-center">
-              <div className="tnum flex items-center justify-center gap-1 font-heading text-lg font-bold">
-                <Clock size={15} className="text-muted-foreground" />
-                {fmtDuracao(simulado.tempo_gasto_seg)}
-              </div>
-              <div className="text-[11px] font-semibold text-muted-foreground">tempo</div>
-            </div>
+          <div className="grid flex-1 grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <Tile valor={acertos} rotulo="acertos" tom="bom" />
+            <Tile valor={erros} rotulo="erros" tom="critico" />
+            <Tile valor={brancos} rotulo="em branco" tom="neutro" />
+            <Tile valor={fmtSegundos(simulado.tempo_gasto_seg)} rotulo="tempo total" tom="neutro" icone={<Clock size={13} />} />
           </div>
         </div>
 
-        {emBranco > 0 && (
-          <p className="mt-4 text-center text-xs text-muted-foreground sm:text-left">
-            <MinusCircle size={12} className="mb-0.5 mr-1 inline" />
-            {emBranco} {emBranco === 1 ? "questão ficou em branco" : "questões ficaram em branco"}.
-          </p>
-        )}
+        {/* leitura contra o próprio histórico */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border/60 pt-4 text-[12.5px]">
+          {deltaMedia != null ? (
+            <span className="inline-flex items-center gap-1.5 font-medium">
+              {deltaMedia >= 0 ? (
+                <TrendingUp size={14} className="text-questly-green" />
+              ) : (
+                <TrendingDown size={14} className="text-questly-red" />
+              )}
+              <span className={deltaMedia >= 0 ? "text-questly-green-dark" : "text-questly-red-dark"}>
+                {deltaMedia >= 0 ? "+" : ""}
+                {deltaMedia.toFixed(1)}
+              </span>
+              <span className="text-muted-foreground">
+                em relação à sua média ({contexto.mediaAnterior?.toFixed(1)}) nos {contexto.anteriores} simulados
+                anteriores
+              </span>
+            </span>
+          ) : (
+            <span className="font-medium text-muted-foreground">
+              Este é o seu primeiro simulado concluído — ele vira a sua linha de base para comparar os próximos.
+            </span>
+          )}
+          {tempoPorQuestao != null && (
+            <span className="inline-flex items-center gap-1.5 font-medium text-muted-foreground">
+              <Gauge size={14} /> {fmtSegundosPreciso(tempoPorQuestao)} por questão, na média
+            </span>
+          )}
+        </div>
 
-        <div className="mt-6 flex flex-wrap gap-2.5">
+        <div className="mt-5 flex flex-wrap gap-2.5">
+          {topicosParaTreinar.length > 0 && <BotaoTreinarErros topicIds={topicosParaTreinar} />}
           <Link
             href="/simulados/montar"
-            className="inline-flex items-center gap-2 rounded-xl bg-questly-green px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+            className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-bold text-foreground transition-colors hover:border-questly-green/50"
           >
             <RotateCcw size={15} /> Montar outro
           </Link>
+          <Link
+            href="/simulados/desempenho"
+            className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-bold text-foreground transition-colors hover:border-questly-green/50"
+          >
+            <BarChart3 size={15} /> Desempenho geral
+          </Link>
         </div>
-      </motion.div>
+      </motion.section>
 
-      {/* Desempenho por matéria */}
-      {porMateria.length > 1 && (
-        <section className="surface mt-5 p-5">
-          <div className="mb-3 flex items-center gap-2">
-            <Target size={16} className="text-questly-green" />
-            <h2 className="text-sm font-bold">Desempenho por disciplina</h2>
-          </div>
-          <div className="flex flex-col gap-2.5">
-            {porMateria.map((m) => (
-              <div key={m.materia}>
-                <div className="mb-1 flex items-center justify-between text-[12.5px]">
-                  <span className="font-semibold">{m.materia}</span>
-                  <span className="tnum font-bold text-muted-foreground">
-                    {m.acertos}/{m.total} · {m.pct}%
-                  </span>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div
-                    className={`h-full rounded-full ${m.pct >= 70 ? "bg-questly-green" : m.pct >= 50 ? "bg-questly-gold" : "bg-questly-red"}`}
-                    style={{ width: `${m.pct}%` }}
-                  />
-                </div>
-              </div>
+      {/* ---------------- Diagnóstico ---------------- */}
+      <CartaoGrafico
+        titulo="O que esse simulado diz"
+        descricao="Leitura automática do seu resultado — só entra o que tem dado suficiente para afirmar."
+        icone={<Lightbulb size={16} className="text-questly-gold" />}
+      >
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <CartaoDestaque
+            tom="critico"
+            titulo="Onde o estudo rende mais agora"
+            grupo={diag.fraco}
+            vazio="Nenhum tópico teve questões suficientes nesse simulado para eleger um ponto fraco com honestidade."
+          />
+          <CartaoDestaque
+            tom="bom"
+            titulo="Onde você já está bem"
+            grupo={diag.forte}
+            vazio="Faça um simulado com mais questões por tópico para destacar um ponto forte."
+          />
+        </div>
+
+        {diag.observacoes.length > 0 && (
+          <ul className="mt-4 flex flex-col gap-2">
+            {diag.observacoes.map((o) => (
+              <li key={o} className="flex gap-2 text-[12.5px] leading-relaxed text-muted-foreground">
+                <span aria-hidden className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-questly-green" />
+                {o}
+              </li>
             ))}
-          </div>
-        </section>
+          </ul>
+        )}
+      </CartaoGrafico>
+
+      {/* ---------------- Recortes do desempenho ---------------- */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        {materias.length > 1 && (
+          <CartaoGrafico
+            titulo="Por disciplina"
+            descricao="Da que mais precisa de você para a que menos precisa."
+            icone={<Layers size={16} className="text-questly-green" />}
+          >
+            <BarrasDesempenho grupos={materias} mostrarTempo />
+          </CartaoGrafico>
+        )}
+
+        {dificuldades.length > 1 && (
+          <CartaoGrafico
+            titulo="Por dificuldade"
+            descricao="Cair só nas difíceis é normal; cair nas fáceis é sinal de pressa ou de base."
+            icone={<Target size={16} className="text-questly-green" />}
+          >
+            <BarrasDesempenho grupos={dificuldades} />
+          </CartaoGrafico>
+        )}
+      </div>
+
+      {topicos.length > 1 && (
+        <CartaoGrafico
+          titulo="Por tópico"
+          descricao={`Os tópicos abaixo de ${PCT_BOM}% são a lista de estudo mais curta que existe para a próxima prova.`}
+          icone={<Swords size={16} className="text-questly-green" />}
+        >
+          <BarrasDesempenho grupos={topicos} mostrarSub mostrarTempo />
+        </CartaoGrafico>
       )}
 
-      {/* Revisão questão a questão */}
-      <section className="mt-5">
-        <h2 className="mb-2.5 text-sm font-bold">Gabarito comentado</h2>
-        <div className="flex flex-col gap-2">
-          {simulado.perguntas.map((p, i) => {
-            const marcada = simulado.respostas[p.id];
-            const acertou = marcada === p.gabarito;
-            const expandida = aberta === p.id;
-            const letras = Object.keys(p.alternativas || {}).sort();
-            return (
-              <div key={p.id} className="surface overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setAberta(expandida ? null : p.id)}
-                  aria-expanded={expandida}
-                  className="flex w-full items-center gap-3 p-4 text-left"
-                >
-                  <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                      acertou
-                        ? "bg-questly-green-light text-questly-green-dark"
-                        : marcada
-                          ? "bg-questly-red-light text-questly-red-dark"
-                          : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {acertou ? <CheckCircle2 size={16} /> : marcada ? <XCircle size={16} /> : <MinusCircle size={16} />}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="tnum text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                      Questão {i + 1}
-                    </span>
-                    <span className="line-clamp-1 text-[13px] font-medium text-muted-foreground">
-                      <MathText text={p.enunciado} />
-                    </span>
-                  </span>
-                  <span className="tnum shrink-0 text-[11px] font-bold text-muted-foreground">
-                    {marcada ? `Você: ${marcada.toUpperCase()}` : "Em branco"} · Gab: {p.gabarito.toUpperCase()}
-                  </span>
-                  <ChevronDown size={16} className={`shrink-0 text-muted-foreground transition-transform ${expandida ? "rotate-180" : ""}`} />
-                </button>
+      <CartaoGrafico
+        titulo="Ritmo da prova"
+        descricao="Quanto cada questão custou de tempo, na ordem em que você resolveu."
+        icone={<Clock size={16} className="text-questly-green" />}
+      >
+        <RitmoProva questoes={analise} duracaoMin={simulado.duracao_min} />
+      </CartaoGrafico>
 
-                {expandida && (
-                  <div className="border-t border-border/60 p-4 pt-4">
-                    <div className="mb-4 text-[15px] font-medium leading-relaxed">
-                      <MathText text={p.enunciado} />
-                    </div>
-                    {p.imagem_url && (
-                      <div className="mb-4 flex h-[220px] items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-3">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={p.imagem_url} alt="Imagem da questão" loading="lazy" className="h-full w-full object-contain" />
-                      </div>
-                    )}
-                    <div className="flex flex-col gap-2">
-                      {letras.map((letra) => {
-                        const eGab = letra === p.gabarito;
-                        const eSua = letra === marcada;
-                        return (
-                          <div
-                            key={letra}
-                            className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 text-[14px] ${
-                              eGab
-                                ? "border-questly-green/60 bg-questly-green-light"
-                                : eSua
-                                  ? "border-questly-red/60 bg-questly-red-light"
-                                  : "border-border"
-                            }`}
-                          >
-                            <span
-                              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[12px] font-bold ${
-                                eGab
-                                  ? "bg-questly-green text-white dark:text-[#0c1512]"
-                                  : eSua
-                                    ? "bg-questly-red text-white dark:text-[#2b0a0a]"
-                                    : "bg-muted text-muted-foreground"
-                              }`}
-                            >
-                              {letra.toUpperCase()}
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <MathText text={p.alternativas?.[letra] ?? ""} />
-                            </span>
-                            {eGab && <span className="shrink-0 text-[11px] font-bold text-questly-green-dark">Correta</span>}
-                            {eSua && !eGab && <span className="shrink-0 text-[11px] font-bold text-questly-red-dark">Sua resposta</span>}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {p.resolucao && (
-                      <div className="mt-4 rounded-xl bg-muted/60 p-4">
-                        <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Resolução</p>
-                        <div className="text-[14px] leading-relaxed">
-                          <MathText text={p.resolucao} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
+      {/* ---------------- Gabarito ---------------- */}
+      <GabaritoSimulado perguntas={simulado.perguntas} analise={analise} />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
+function Tile({
+  valor,
+  rotulo,
+  tom,
+  icone,
+}: {
+  valor: React.ReactNode;
+  rotulo: string;
+  tom: "bom" | "critico" | "neutro";
+  icone?: React.ReactNode;
+}) {
+  const fundo =
+    tom === "bom" ? "bg-questly-green-light" : tom === "critico" ? "bg-questly-red-light" : "bg-muted";
+  return (
+    <div className={`rounded-xl p-3 text-center ${fundo}`}>
+      <div className="flex items-center justify-center gap-1 font-heading text-xl font-bold leading-none">
+        {icone}
+        {valor}
+      </div>
+      <div className="mt-1 text-[11px] font-semibold text-muted-foreground">{rotulo}</div>
+    </div>
+  );
+}
+
+function CartaoDestaque({
+  tom,
+  titulo,
+  grupo,
+  vazio,
+}: {
+  tom: "bom" | "critico";
+  titulo: string;
+  grupo: { rotulo: string; sub?: string; acertos: number; total: number; pct: number } | null;
+  vazio: string;
+}) {
+  if (!grupo) {
+    return (
+      <div className="rounded-xl border border-border bg-muted/40 p-4">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{titulo}</p>
+        <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">{vazio}</p>
+      </div>
+    );
+  }
+  const borda = tom === "bom" ? "border-questly-green/40 bg-questly-green-light/50" : "border-questly-red/40 bg-questly-red-light/50";
+  return (
+    <div className={`rounded-xl border p-4 ${borda}`}>
+      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{titulo}</p>
+      <p className="mt-1 text-[15px] font-bold leading-tight">{grupo.rotulo}</p>
+      {grupo.sub && <p className="text-[11.5px] font-medium text-muted-foreground">{grupo.sub}</p>}
+      <p className={`tnum mt-1.5 text-[12.5px] font-bold ${CLASSE_TEXTO_STATUS[tomDoPct(grupo.pct)]}`}>
+        {grupo.acertos} de {grupo.total} · {grupo.pct}%
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Transforma os tópicos errados numa missão avulsa de prática e leva direto
+ * pra ela — o atalho entre "vi o resultado" e "fiz algo com ele".
+ */
+function BotaoTreinarErros({ topicIds }: { topicIds: string[] }) {
+  const router = useRouter();
+  const [pendente, iniciar] = useTransition();
+  const [erro, setErro] = useState(false);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <button
+        type="button"
+        disabled={pendente}
+        onClick={() =>
+          iniciar(async () => {
+            setErro(false);
+            const { missaoId } = await treinarTopicosDoSimuladoAction({ topicIds, quantidade: 10 });
+            if (missaoId) router.push(`/questao?missao=${missaoId}`);
+            else setErro(true);
+          })
+        }
+        className="inline-flex items-center gap-2 rounded-xl bg-questly-green px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-60 dark:text-[#0c1512]"
+      >
+        {pendente ? <Loader2 size={15} className="animate-spin" /> : <Swords size={15} />}
+        {pendente ? "Montando prática…" : "Treinar o que eu errei"}
+      </button>
+      {erro && (
+        <span className="text-[11px] font-medium text-questly-red-dark">
+          Não há questões livres nesses tópicos agora. Tente pelo Banco de Questões.
+        </span>
+      )}
     </div>
   );
 }

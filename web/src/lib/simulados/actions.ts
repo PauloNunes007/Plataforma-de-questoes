@@ -5,6 +5,7 @@ import { questlyEmbaralhar } from "@/lib/questly/shared";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { ehPro } from "@/lib/plano/plano";
 import { instituicoesDoAluno } from "./simulados-data";
+import { iniciarPraticaLivreAction } from "@/lib/disciplinas/actions";
 import { nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
 import {
   SIMULADO_FREE_LIMITE_SEMANA,
@@ -105,20 +106,60 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
   return { ok: true, id: criado.id as string };
 }
 
-// Autossalva as respostas parciais enquanto a prova roda (sobrevive a refresh /
-// queda de conexão). Só mexe num simulado em andamento do próprio aluno.
-export async function salvarRespostasAction(id: string, respostas: Record<string, string>): Promise<void> {
+// Autossalva respostas + tempo por questão enquanto a prova roda (sobrevive a
+// refresh / queda de conexão). Só mexe num simulado em andamento do próprio
+// aluno. `tempos` é best-effort: se vier vazio, não sobrescreve o que já existe.
+export async function salvarRespostasAction(
+  id: string,
+  respostas: Record<string, string>,
+  tempos?: Record<string, number>,
+): Promise<void> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase
+  const limpos = sanearTempos(tempos);
+  const { error } = await supabase
     .from("simulados_aluno")
-    .update({ respostas })
+    .update(limpos ? { respostas, tempos: limpos } : { respostas })
     .eq("id", id)
     .eq("user_id", user.id)
     .eq("status", "em_andamento");
+
+  // Sem supabase_simulados_analytics.sql rodado, `tempos` não existe e o
+  // update inteiro falha — o que perderia as RESPOSTAS do aluno, não só a
+  // telemetria. Repete sem a coluna: o simulado continua funcionando, só sem
+  // o gráfico de ritmo.
+  if (error && limpos && ehColunaAusente(error)) {
+    await supabase
+      .from("simulados_aluno")
+      .update({ respostas })
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .eq("status", "em_andamento");
+  }
+}
+
+/** 42703 = undefined_column no Postgres (migração de analytics não rodada). */
+function ehColunaAusente(erro: { code?: string; message?: string } | null): boolean {
+  return erro?.code === "42703" || Boolean(erro?.message?.includes("tempos"));
+}
+
+// O cliente é quem cronometra cada questão (não dá pra medir isso no servidor),
+// então o valor é saneado antes de entrar no banco: só número finito e positivo,
+// e teto de 4h por questão pra uma aba esquecida aberta não virar um outlier que
+// distorce todo o gráfico de ritmo. Nada aqui vale nota — é só telemetria.
+const TETO_TEMPO_QUESTAO_SEG = 4 * 60 * 60;
+
+function sanearTempos(tempos?: Record<string, number>): Record<string, number> | null {
+  if (!tempos) return null;
+  const saida: Record<string, number> = {};
+  for (const [k, v] of Object.entries(tempos)) {
+    const n = Number(v);
+    if (Number.isFinite(n) && n > 0) saida[k] = Math.min(TETO_TEMPO_QUESTAO_SEG, Math.round(n));
+  }
+  return Object.keys(saida).length > 0 ? saida : null;
 }
 
 export type FinalizarSimuladoResultado =
@@ -132,6 +173,7 @@ export async function finalizarSimuladoAction(
   id: string,
   respostas: Record<string, string>,
   tempoGastoSeg: number,
+  tempos?: Record<string, number>,
 ): Promise<FinalizarSimuladoResultado> {
   const supabase = await createClient();
   const {
@@ -163,20 +205,29 @@ export async function finalizarSimuladoAction(
   }
   const nota = notaSimulado(acertos, total);
 
-  const { error } = await supabase
-    .from("simulados_aluno")
-    .update({
-      status: "concluido",
-      respostas,
-      acertos,
-      total,
-      nota,
-      tempo_gasto_seg: Math.max(0, Math.round(tempoGastoSeg)),
-      concluido_em: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .eq("status", "em_andamento");
+  const limpos = sanearTempos(tempos);
+  const base = {
+    status: "concluido",
+    respostas,
+    acertos,
+    total,
+    nota,
+    tempo_gasto_seg: Math.max(0, Math.round(tempoGastoSeg)),
+    concluido_em: new Date().toISOString(),
+  };
+
+  const aplicar = (patch: Record<string, unknown>) =>
+    supabase
+      .from("simulados_aluno")
+      .update(patch)
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .eq("status", "em_andamento");
+
+  let { error } = await aplicar(limpos ? { ...base, tempos: limpos } : base);
+  // Mesma proteção do autossalvamento: sem a migração de analytics, entregar a
+  // prova não pode falhar por causa de uma coluna de telemetria.
+  if (error && limpos && ehColunaAusente(error)) ({ error } = await aplicar(base));
 
   if (error) {
     console.error("Erro ao finalizar simulado:", error);
@@ -198,4 +249,55 @@ export async function abandonarSimuladoAction(id: string): Promise<void> {
     .eq("id", id)
     .eq("user_id", user.id)
     .eq("status", "em_andamento");
+}
+
+/**
+ * "Treinar o que eu errei": transforma os tópicos onde o aluno tropeçou no
+ * simulado numa missão avulsa de prática livre — o caminho mais curto entre
+ * ver o resultado e fazer alguma coisa com ele.
+ *
+ * O simulado em si continua self-contained (não paga XP nem move o motor de
+ * maestria); quem paga é a PRÁTICA que nasce daqui, e ela é uma missão avulsa
+ * comum, idêntica à que sai do Banco de Questões — nenhuma regra de economia
+ * nova, nenhum caminho novo pra forjar ranking.
+ *
+ * `subject_id` é resolvido no servidor a partir da matéria dos tópicos: se o
+ * aluno cursa a disciplina, a prática fica vinculada a ela; se for uma matéria
+ * que ele só descobriu no banco, vai como null (missions.subject_id é nullable
+ * exatamente pra isso).
+ */
+export async function treinarTopicosDoSimuladoAction(input: {
+  topicIds: string[];
+  quantidade: number;
+}): Promise<{ missaoId: string | null }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { missaoId: null };
+
+  const topicIds = [...new Set((input.topicIds || []).filter(Boolean))].slice(0, 12);
+  if (topicIds.length === 0) return { missaoId: null };
+
+  const { data: tops } = await supabase.from("topicos").select("materia_id").in("id", topicIds);
+  const materiaIds = [...new Set((tops || []).map((t) => t.materia_id).filter(Boolean))] as string[];
+
+  let subjectId: string | null = null;
+  if (materiaIds.length > 0) {
+    const { data: subj } = await supabase
+      .from("subjects")
+      .select("id")
+      .eq("user_id", user.id)
+      .in("materia_id", materiaIds)
+      .limit(1)
+      .maybeSingle();
+    subjectId = subj?.id ?? null;
+  }
+
+  return iniciarPraticaLivreAction({
+    subjectId,
+    topicIds,
+    dificuldades: [],
+    quantidade: Math.max(1, Math.min(30, Math.round(Number(input.quantidade) || 10))),
+  });
 }
