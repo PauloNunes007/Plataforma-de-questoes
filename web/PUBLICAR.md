@@ -1,7 +1,11 @@
  # Publicar a Questly (Vercel + Supabase + Mercado Pago)
 
 Guia passo a passo pra colocar o app no ar de graça e mandar pros amigos.
-Ordem importa: **1) banco → 2) deploy → 3) pagamento**.
+Ordem importa: **1) banco → 2) deploy → 3) pagamento → 4) email**.
+
+> ⚠️ O passo **4) email é obrigatório antes de divulgar o link**. Sem ele, o
+> Supabase manda no máximo **2 emails por hora** — e só para endereços da sua
+> própria equipe. Na prática: nenhum aluno consegue confirmar a conta.
 
 ---
 
@@ -40,6 +44,10 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    | `MP_ACCESS_TOKEN` | Mercado Pago (passo 3) | **SIM** |
    | `MP_WEBHOOK_SECRET` | Mercado Pago (passo 3) | **SIM** |
    | `NEXT_PUBLIC_APP_URL` | a URL do próprio deploy, ex. `https://questly.vercel.app` (sem `/` no fim) | não |
+   | `BREVO_API_KEY` | Brevo (passo 4) | **SIM** |
+   | `EMAIL_REMETENTE` | o endereço verificado na Brevo (passo 4) | não |
+   | `EMAIL_REMETENTE_NOME` | nome que aparece como remetente, ex. `Questly` | não |
+   | `SEND_EMAIL_HOOK_SECRET` | Supabase → Authentication → Hooks (passo 4) | **SIM** |
 
    > `NEXT_PUBLIC_APP_URL` você só sabe depois do primeiro deploy. Faça o deploy,
    > copie a URL que o Vercel deu, coloque na variável e **faça um redeploy**.
@@ -95,6 +103,76 @@ dado seu (CPF, chave Pix, nome) aparece** pro pagante.
 
 > Enquanto quiser testar sem cobrar de verdade, use as **credenciais de teste**
 > do Mercado Pago em vez das de produção (cartões de teste na doc deles).
+
+---
+
+## 4) Email de confirmação (Brevo) — sem limite de 2/hora
+
+**Por que é obrigatório:** o serviço de email embutido do Supabase é de teste.
+Ele manda **2 emails por hora no projeto inteiro** e **só entrega para endereços
+da equipe do projeto**. Com aluno de verdade se cadastrando, ninguém recebe nada
+e a conta nunca é confirmada.
+
+A solução aqui **não é trocar o SMTP do Supabase**: é tirar o envio da mão dele.
+Com o **Send Email Hook** ligado, o Supabase para de mandar email e chama a nossa
+rota `/api/auth/email-hook`, que entrega pela Brevo com o template da Questly
+(código de 6 dígitos + botão). O token continua sendo do Supabase — nós somos só
+o carteiro. Custo: **R$ 0,00** (Brevo grátis = 300 emails/dia, sem cartão).
+
+### 4.1) Conta na Brevo
+
+1. Crie uma conta em **brevo.com** (grátis, sem cartão).
+2. **Senders, Domains & Dedicated IPs → Senders → Add a sender**: cadastre o
+   endereço que vai aparecer como remetente e **confirme pelo email** que a
+   Brevo manda. Sem domínio próprio, pode ser seu email pessoal mesmo.
+3. **SMTP & API → API Keys → Generate a new API key**. Copie — ela só aparece
+   uma vez. É o `BREVO_API_KEY`.
+4. No Vercel, preencha `BREVO_API_KEY`, `EMAIL_REMETENTE` (o endereço do passo 2)
+   e `EMAIL_REMETENTE_NOME`.
+
+> 📬 **Entregabilidade sem domínio próprio.** Mandando de um `@gmail.com` pelos
+> servidores da Brevo, o SPF/DKIM não bate com o gmail.com e uma parte dos emails
+> cai em spam. Funciona, mas quando puder, registre um domínio (`.com.br` sai
+> ~R$40/ano no registro.br), autentique-o na Brevo (3 registros DNS) e troque
+> só o `EMAIL_REMETENTE` — **nenhum código muda**.
+
+### 4.2) Ligar o hook no Supabase
+
+1. Supabase → **Authentication → Hooks → Send Email Hook** → **Enable**.
+2. Tipo: **HTTPS**. URL:
+   ```
+   https://SUA-URL.vercel.app/api/auth/email-hook
+   ```
+3. O Supabase gera um **secret** (`v1,whsec_...`). Copie o valor **inteiro,
+   com o prefixo** → é o `SEND_EMAIL_HOOK_SECRET` no Vercel.
+4. **Redeploy** no Vercel pra pegar as variáveis novas.
+
+### 4.3) Soltar o limite e apertar o código
+
+Ainda no Supabase:
+
+- **Authentication → Rate Limits → "Emails sent per hour"**: com o hook ligado
+  esse número vira configurável. Suba pra algo folgado, mas **não infinito** —
+  ele é o que impede alguém de queimar seus 300 emails/dia da Brevo num script.
+  `100/hora` é um começo sensato.
+- **Authentication → Providers → Email → Email OTP Expiration**: baixe de
+  86400s (24h) para **3600s (1 hora)**. O código de 6 dígitos tem 1 milhão de
+  combinações e o `/verify` do Supabase aceita 30 tentativas por IP a cada 5
+  min; encurtar a validade reduz a janela de chute. (Se preferir ainda mais
+  aperto, dá pra subir o **Email OTP Length** pra 8 dígitos — mais seguro,
+  um pouco mais chato de digitar.)
+
+### 4.4) Testar
+
+Crie uma conta com um email seu que **não** seja o da equipe do Supabase (o ponto
+é justamente provar que passou a chegar em qualquer endereço). Você deve cair em
+`/verificar-email`, receber o email com o código e entrar digitando os 6 dígitos
+— **ou** clicando no botão, inclusive de outro aparelho.
+
+Se der erro no cadastro, o log da rota no Vercel (**Deployments → Functions →
+`/api/auth/email-hook`**) diz exatamente o quê: `401` = secret errado,
+`Brevo respondeu 401` = API key errada, `Brevo respondeu 400` = remetente não
+verificado.
 
 ---
 

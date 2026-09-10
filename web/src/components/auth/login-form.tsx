@@ -16,7 +16,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { CAMPANHA } from "@/lib/landing/campanha";
-import { Insignia } from "@/components/insignias/insignia";
 import { arredondarPraBaixo, type StatsBanco } from "@/lib/landing/stats";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -196,24 +195,10 @@ export function LoginForm({ stats }: { stats: StatsBanco }) {
             </form>
           </TabsContent>
 
+          {/* Cadastrar não mostra mais painel de "confira seu email" aqui: a
+              action redireciona pra /verificar-email, onde o aluno digita o
+              código de 6 dígitos sem sair do fluxo. */}
           <TabsContent value="signup">
-            {signUpState?.success ? (
-              <div className="flex flex-col items-center py-10 text-center">
-                <Insignia nome="envelope" tom="esmeralda" size={64} className="mb-4" />
-                <h2 className="mb-2 font-heading text-xl font-semibold tracking-tight">
-                  Confira seu email
-                </h2>
-                <p className="max-w-[320px] text-sm font-semibold text-muted-foreground">
-                  Enviamos um link de confirmação pra sua caixa de entrada. Clique nele e você já cai
-                  direto na configuração da sua campanha.
-                </p>
-                <p className="mt-4 max-w-[320px] text-xs font-semibold text-muted-foreground">
-                  Não chegou? Olhe o spam — ou tente entrar com email e senha, que a gente reenvia o
-                  link automaticamente.
-                </p>
-              </div>
-            ) : (
-              <>
             <h2 className="mb-1 font-heading text-xl font-semibold tracking-tight">
               Comece sua campanha
             </h2>
@@ -296,8 +281,6 @@ export function LoginForm({ stats }: { stats: StatsBanco }) {
                 Política de privacidade.
               </p>
             </form>
-              </>
-            )}
           </TabsContent>
         </Tabs>
       </div>

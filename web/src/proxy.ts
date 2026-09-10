@@ -1,7 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const PUBLIC_ROUTES = ["/", "/login"];
+// /verificar-email é alcançada por quem JÁ criou a conta mas ainda não
+// confirmou o email — ou seja, sem sessão. Fora desta lista, o guard mandaria
+// o aluno pro /login e o cadastro nunca se completaria.
+const PUBLIC_ROUTES = ["/", "/login", "/verificar-email"];
 
 // Arquivos de metadado gerados pelo App Router (robots.txt, sitemap.xml,
 // ícones e o card de preview do link). São pedidos SEM sessão — por crawler do

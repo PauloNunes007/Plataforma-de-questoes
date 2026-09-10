@@ -212,6 +212,60 @@ migração `supabase_seguranca_hardening.sql` (documentada no root `CLAUDE.md`).
   assinante, a causa é a migração do Pro não ter sido rodada (a query do layout
   falha e `ehPro` cai pra false).
 
+## Confirmação de email — Send Email Hook + Brevo (2026-09-10)
+
+**O problema:** o serviço de email embutido do Supabase manda **2 emails/hora no
+projeto inteiro** e **só entrega para endereços da equipe do projeto**. Ou seja,
+com aluno de verdade se cadastrando, ninguém recebia confirmação. Isso bloqueava
+a venda.
+
+**A solução (não é trocar o SMTP):** o envio saiu do Supabase. Com o **Send Email
+Hook** ligado (Dashboard → Authentication → Hooks, HTTPS), o Supabase **para de
+mandar email** e chama `app/api/auth/email-hook/route.ts`, que entrega pela
+**Brevo** (300 emails/dia no grátis). O teto passa a ser o do provedor e o
+"Emails sent per hour" do Supabase vira configurável. Custo: R$ 0.
+
+**Invariante que não pode ser quebrada:** o Supabase continua dono do token —
+geração, expiração, uso único e `email_confirmed_at`. **Nenhum token é gerado,
+guardado ou validado por código nosso**; não há tabela de códigos. Somos só o
+carteiro. Se alguém for tentar "simplificar" isso escrevendo um OTP próprio numa
+tabela, é regressão de segurança, não simplificação.
+
+- `lib/email/enviar.ts` — adaptador do provedor. **Todo** o que é específico da
+  Brevo mora aqui; trocar por Resend/SES = reescrever `entregarViaBrevo`. Timeout
+  de 4s porque o hook tem orçamento de 5s (o Supabase repete até 3x em 429/503).
+- `lib/email/templates-auth.ts` — HTML dos emails (`signup`, `recovery`,
+  `magiclink`, `invite`, `email_change`). Markup de 2005 **de propósito**: tabela
+  + estilo inline + zero imagem + cores HEX fixas (os tokens CSS do app não
+  existem em cliente de email, e imagem bloqueada num email de segurança destrói
+  a confiança). O switch é **total** — o hook intercepta TODOS os emails de auth,
+  então um tipo sem template viraria email quebrado, não erro de compilação.
+- `app/api/auth/email-hook/route.ts` — verifica a assinatura **Standard Webhooks**
+  (`webhook-id`/`webhook-timestamp`/`webhook-signature`, HMAC sobre
+  `{id}.{timestamp}.{corpo cru}`, chave = base64 **decodificado** depois do
+  `whsec_`) à mão com `node:crypto`, sem a lib `standardwebhooks` — 30 linhas
+  valem menos que uma dependência na porta de entrada de um endpoint público.
+  Precisa do corpo **cru** (`req.text()`): reserializar quebra a assinatura.
+  Falha **fechada** — se a Brevo cai, o signUp devolve erro em vez de dizer
+  "confira seu email" sobre um email que nunca vai chegar.
+- **O link do email aponta pra `/auth/confirm` (nossa rota), não pro
+  `/auth/v1/verify` do Supabase** — `verifyOtp` server-side com `token_hash`
+  funciona de qualquer navegador/aparelho, o que mata o clássico "cliquei no
+  link no celular e caí deslogado".
+- **UX:** `signUpAction` não mostra mais painel de "confira seu email"; ela
+  **redireciona pra `/verificar-email?email=...`** (rota pública em `proxy.ts` —
+  a conta existe mas ainda não tem sessão). Lá o aluno digita 6 dígitos
+  (`components/auth/verificar-email-form.tsx`: colar distribui, backspace anda
+  pra trás, auto-submit no 6º dígito, reenvio com espera de 60s = a janela do
+  próprio Supabase). `signInAction` com `email_not_confirmed` reenvia e manda
+  pra mesma tela em vez de devolver texto de erro.
+- **Anti-chute:** não há throttle nosso — seria estado por instância serverless,
+  ou seja, teatro. A defesa real é do Supabase (`/verify` = 30 req/5min por IP)
+  + **Email OTP Expiration baixado pra 1h** no dashboard (ver `PUBLICAR.md` 4.3).
+- `verificarCodigoAction` tenta `type: "signup"` e cai pra `"email"`: os dois
+  consultam o mesmo token, e errar o tipo devolve "Token has expired or is
+  invalid" — mensagem que faria o aluno jogar fora um código válido.
+
 ## Latência de navegação — a regra das "ondas" (repasse 2026-09-10)
 
 Trocar de tela levava segundos (o caso mais visível: sair de uma questão e voltar
