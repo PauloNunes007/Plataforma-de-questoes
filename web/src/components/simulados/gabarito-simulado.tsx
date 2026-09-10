@@ -32,6 +32,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
+import { FiguraQuestao, figurasDaPergunta, usePrefetchFiguras } from "@/components/questao/figura-questao";
 import type { Pergunta } from "@/lib/questao/types";
 import type { QuestaoAnalisada, StatusQuestao } from "@/lib/simulados/analise";
 import { ROTULO_DIFICULDADE, fmtSegundosPreciso } from "@/lib/simulados/analise";
@@ -113,6 +114,12 @@ export function GabaritoSimulado({
       setIndice(pos >= 0 ? pos : 0);
     },
     [visiveis, indice, perguntas, porId],
+  );
+
+  // Mesma ideia do runner: com o leitor aberto, adianta as figuras das
+  // próximas questões da revisão.
+  usePrefetchFiguras(
+    aberto ? visiveis.slice(indice, indice + 3).flatMap((p) => figurasDaPergunta(p)) : [],
   );
 
   if (analise.length === 0) return null;
@@ -383,15 +390,11 @@ function LeitorGabarito({
               </div>
 
               {pergunta.imagem_url && (
-                <div className="mb-4 flex h-[240px] items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={pergunta.imagem_url}
-                    alt="Imagem da questão"
-                    loading="lazy"
-                    className="h-full w-full object-contain"
-                  />
-                </div>
+                <FiguraQuestao
+                  src={pergunta.imagem_url}
+                  alt="Imagem da questão"
+                  className="mb-4 h-[240px] rounded-xl border border-border p-3"
+                />
               )}
 
               <Alternativas pergunta={pergunta} marcada={item.marcada} />

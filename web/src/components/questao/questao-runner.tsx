@@ -30,6 +30,7 @@ import {
   Zap,
 } from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
+import { FiguraQuestao, figurasDaPergunta, usePrefetchFiguras } from "@/components/questao/figura-questao";
 import { QuestaoAcoes } from "@/components/questao/questao-acoes";
 import { QuestaoComentarios } from "@/components/questao/questao-comentarios";
 import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
@@ -155,6 +156,12 @@ export function QuestaoRunner({
       tempoInicioPergunta.current.set(indiceAtual, Date.now());
     }
   }, [indiceAtual]);
+
+  // Puxa as figuras das duas próximas questões enquanto o aluno responde esta —
+  // é o que faz a imagem já estar pronta quando ele avança (ver figura-questao).
+  usePrefetchFiguras(
+    perguntasState.slice(indiceAtual, indiceAtual + 3).flatMap((p) => figurasDaPergunta(p)),
+  );
 
   const pergunta = perguntasState[indiceAtual];
   const estado = estados[indiceAtual];
@@ -435,7 +442,6 @@ export function QuestaoRunner({
         </div>
 
         <QuestaoAcoes
-          key={pergunta.id}
           questionId={pergunta.id}
           resolucao={pergunta.resolucao}
           favoritado={favoritos.has(pergunta.id)}
@@ -449,18 +455,11 @@ export function QuestaoRunner({
         </div>
 
         {pergunta.imagem_url && (
-          <div className="mb-7 flex h-[280px] items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-3 sm:h-[380px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={pergunta.imagem_url}
-              alt="Imagem da questão"
-              loading="lazy"
-              className="h-full w-full object-contain"
-              onError={(e) => {
-                (e.currentTarget.parentElement as HTMLElement).style.display = "none";
-              }}
-            />
-          </div>
+          <FiguraQuestao
+            src={pergunta.imagem_url}
+            alt="Imagem da questão"
+            className="mb-7 h-[280px] rounded-xl border border-border p-3 sm:h-[380px]"
+          />
         )}
 
         <div className="mb-7 flex flex-col gap-3">
@@ -511,18 +510,11 @@ export function QuestaoRunner({
                 </span>
                 <span className="min-w-0 flex-1 text-[15.5px] font-normal leading-relaxed sm:text-[16px]">
                   {imgAlt && (
-                    <div className="mb-2 flex h-[150px] w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-white p-2">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={imgAlt}
-                        alt={`Imagem da alternativa ${letra.toUpperCase()}`}
-                        loading="lazy"
-                        className="h-full w-full object-contain"
-                        onError={(e) => {
-                          (e.currentTarget.parentElement as HTMLElement).style.display = "none";
-                        }}
-                      />
-                    </div>
+                    <FiguraQuestao
+                      src={imgAlt}
+                      alt={`Imagem da alternativa ${letra.toUpperCase()}`}
+                      className="mb-2 h-[150px] w-full rounded-lg border border-border p-2"
+                    />
                   )}
                   <MathText text={texto} />
                 </span>

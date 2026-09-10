@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlarmClock, ArrowLeft, ArrowRight, CheckCircle2, Flag, Loader2, X } from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
+import { FiguraQuestao, figurasDaPergunta, usePrefetchFiguras } from "@/components/questao/figura-questao";
 import type { SimuladoCompleto } from "@/lib/simulados/simulados-data";
 import { finalizarSimuladoAction, salvarRespostasAction } from "@/lib/simulados/actions";
 
@@ -129,6 +130,10 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
     }, 1000);
   }
 
+  // Prefetch das figuras da questão atual + das duas seguintes (numa prova
+  // cronometrada, esperar imagem custa tempo de prova — ver figura-questao).
+  usePrefetchFiguras(perguntas.slice(indice, indice + 3).flatMap((p) => figurasDaPergunta(p)));
+
   const pergunta = perguntas[indice];
   const letras = pergunta ? Object.keys(pergunta.alternativas || {}).sort() : [];
   const imagensAlternativas = pergunta?.alternativas_imagens || {};
@@ -220,18 +225,11 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
           </div>
 
           {pergunta.imagem_url && (
-            <div className="mb-6 flex h-[260px] items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-3 sm:h-[360px]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={pergunta.imagem_url}
-                alt="Imagem da questão"
-                loading="lazy"
-                className="h-full w-full object-contain"
-                onError={(e) => {
-                  (e.currentTarget.parentElement as HTMLElement).style.display = "none";
-                }}
-              />
-            </div>
+            <FiguraQuestao
+              src={pergunta.imagem_url}
+              alt="Imagem da questão"
+              className="mb-6 h-[260px] rounded-xl border border-border p-3 sm:h-[360px]"
+            />
           )}
 
           <div className="flex flex-col gap-3">
@@ -260,18 +258,11 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
                   </span>
                   <span className="min-w-0 flex-1 text-[15px] font-normal leading-relaxed sm:text-[16px]">
                     {imgAlt && (
-                      <div className="mb-2 flex h-[140px] w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-white p-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={imgAlt}
-                          alt={`Imagem da alternativa ${letra.toUpperCase()}`}
-                          loading="lazy"
-                          className="h-full w-full object-contain"
-                          onError={(e) => {
-                            (e.currentTarget.parentElement as HTMLElement).style.display = "none";
-                          }}
-                        />
-                      </div>
+                      <FiguraQuestao
+                        src={imgAlt}
+                        alt={`Imagem da alternativa ${letra.toUpperCase()}`}
+                        className="mb-2 h-[140px] w-full rounded-lg border border-border p-2"
+                      />
                     )}
                     <MathText text={texto} />
                   </span>

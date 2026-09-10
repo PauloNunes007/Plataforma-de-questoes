@@ -81,6 +81,27 @@ export function QuestaoAcoes({
   const [enviandoReport, setEnviandoReport] = useState(false);
   const [reportEnviado, setReportEnviado] = useState(false);
 
+  // Reseta o estado local quando a questão muda. Isto substitui um
+  // `key={pergunta.id}` no chamador: no QuestaoRunner, trocar de questão
+  // via `key` nesta posição específica da árvore fazia o React montar a
+  // instância nova AO LADO da anterior em vez de substituí-la (bug real,
+  // reproduzido com Playwright — cada questão respondida deixava mais uma
+  // cópia da barra Favoritar/Anotar/Reportar empilhada). Resetar durante o
+  // render (padrão documentado do React pra "ajustar estado quando uma prop
+  // muda" sem `key` nem `useEffect`) dá o mesmo resultado sem o bug.
+  const [questionIdAnterior, setQuestionIdAnterior] = useState(questionId);
+  if (questionId !== questionIdAnterior) {
+    setQuestionIdAnterior(questionId);
+    setPainel(null);
+    setNota(notaInicial || "");
+    setSalvandoNota(false);
+    setNotaSalva(false);
+    setMotivo(null);
+    setDetalhe("");
+    setEnviandoReport(false);
+    setReportEnviado(false);
+  }
+
   const temNota = nota.trim().length > 0;
 
   async function salvarNota() {
