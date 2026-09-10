@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
+import { AlertTriangle, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Insignia } from "@/components/insignias/insignia";
 import { reenviarCodigoAction, verificarCodigoAction } from "@/lib/auth/actions";
@@ -143,7 +143,30 @@ export function VerificarEmailForm({
         </p>
       </div>
 
-      <form ref={formRef} action={verificarFormAction} className="mt-7">
+      {/* O remetente ainda não tem reputação com o Gmail, então o código cai em
+          spam na maioria das vezes. Enquanto isso for verdade, avisar antes é
+          mais honesto (e resolve mais cadastros) do que deixar o aluno esperando
+          um email que ele acha que não chegou. */}
+      <div className="mt-6 flex gap-3 rounded-2xl border-2 border-questly-orange/45 bg-questly-orange-light/60 p-4 text-left">
+        <AlertTriangle
+          size={20}
+          strokeWidth={2.5}
+          className="mt-0.5 shrink-0 text-questly-orange-dark"
+          aria-hidden
+        />
+        <div>
+          <p className="font-heading text-sm font-bold text-questly-orange-dark">
+            Olhe na caixa de spam
+          </p>
+          <p className="mt-1 text-[13px] leading-relaxed font-semibold text-questly-orange-dark/85">
+            O código quase sempre cai em <strong>Spam</strong> ou{" "}
+            <strong>Lixo eletrônico</strong>. Procure por <strong>Questly</strong> e marque como{" "}
+            <strong>&ldquo;Não é spam&rdquo;</strong> — assim os próximos chegam direto.
+          </p>
+        </div>
+      </div>
+
+      <form ref={formRef} action={verificarFormAction} className="mt-6">
         <input type="hidden" name="email" value={email} />
         <input type="hidden" name="codigo" value={codigo} />
 
@@ -185,7 +208,7 @@ export function VerificarEmailForm({
       <form action={reenviarFormAction} className="mt-5 text-center">
         <input type="hidden" name="email" value={email} />
         <p className="text-xs font-semibold text-muted-foreground">
-          Não chegou? Olhe a caixa de spam.
+          Procurou no spam e não achou?
         </p>
         <button
           type="submit"
