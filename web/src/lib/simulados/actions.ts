@@ -11,7 +11,13 @@ import {
   SIMULADO_FREE_LIMITE_SEMANA,
   clampQuantidade,
   ehDuracaoValida,
+  ehEstrategiaValida,
+  ehOrdemValida,
+  normalizarChaveDificuldade,
   notaSimulado,
+  rotuloDuracao,
+  type EstrategiaSimulado,
+  type OrdemSimulado,
 } from "./constantes";
 
 export type MontarSimuladoInput = {
@@ -21,17 +27,129 @@ export type MontarSimuladoInput = {
   materiaNomes: string[];
   duracaoMin: number;
   quantidade: number;
+  /** vazio = todas as dificuldades */
+  dificuldades?: string[];
+  /** vazio = todos os anos catalogados */
+  anos?: number[];
+  /** como sortear dentro do recorte (ver ESTRATEGIAS_SIMULADO) */
+  estrategia?: EstrategiaSimulado;
+  /** ordem de aplicação das questões na prova */
+  ordem?: OrdemSimulado;
 };
 
 export type MontarSimuladoResultado =
   | { ok: true; id: string }
   | { ok: false; erro: "limite" | "sem_instituicao" | "sem_questoes" | "invalido" };
 
+type Candidata = { id: string; ano: number | null; dificuldade: string | null; topic_id: string | null };
+
+const PESO_DIFICULDADE: Record<string, number> = { facil: 0, medio: 1, dificil: 2, outra: 1 };
+
+/**
+ * Sorteio dentro do recorte já filtrado. A estratégia muda QUAIS questões
+ * entram, nunca de onde elas saem (instituição e tópicos continuam sendo
+ * derivados no servidor).
+ *
+ *  - `fracos`: reparte a prova entre os tópicos proporcionalmente a
+ *    (1 − aproveitamento do aluno), pelo método do maior resto — o tópico onde
+ *    ele vai a 30% ganha mais questões que o de 90%, sem nenhum sumir;
+ *  - `recentes`: percorre os anos do mais novo pro mais velho, embaralhando
+ *    dentro de cada ano (ano sem catalogação vai pro fim);
+ *  - `aleatoria`: embaralho limpo (o comportamento original).
+ */
+function sortear(
+  pool: Candidata[],
+  quantidade: number,
+  estrategia: EstrategiaSimulado,
+  fraquezaPorTopico: Map<string, number>,
+): Candidata[] {
+  const alvo = Math.min(quantidade, pool.length);
+  if (alvo <= 0) return [];
+
+  if (estrategia === "recentes") {
+    const anos = [...new Set(pool.map((q) => q.ano ?? -1))].sort((a, b) => b - a);
+    const saida: Candidata[] = [];
+    for (const ano of anos) {
+      if (saida.length >= alvo) break;
+      const doAno = questlyEmbaralhar(pool.filter((q) => (q.ano ?? -1) === ano));
+      saida.push(...doAno.slice(0, alvo - saida.length));
+    }
+    return saida;
+  }
+
+  if (estrategia === "fracos") {
+    const porTopico = new Map<string, Candidata[]>();
+    for (const q of pool) {
+      const k = q.topic_id || "sem-topico";
+      const lista = porTopico.get(k);
+      if (lista) lista.push(q);
+      else porTopico.set(k, [q]);
+    }
+
+    // peso = fraqueza × disponibilidade (um tópico com 2 questões no banco não
+    // pode receber 15 vagas só por ser o mais fraco)
+    const linhas = [...porTopico.entries()].map(([topico, questoes]) => ({
+      questoes: questlyEmbaralhar(questoes),
+      peso: (fraquezaPorTopico.get(topico) ?? 0.5) * Math.min(questoes.length, alvo),
+    }));
+    const somaPeso = linhas.reduce((s, l) => s + l.peso, 0);
+    if (somaPeso <= 0) return questlyEmbaralhar(pool).slice(0, alvo);
+
+    // maior resto (Hamilton) — o mesmo método do rotina-engine
+    const exatos = linhas.map((l) => (l.peso / somaPeso) * alvo);
+    const cotas = exatos.map((e, i) => Math.min(Math.floor(e), linhas[i].questoes.length));
+    let sobra = alvo - cotas.reduce((a, b) => a + b, 0);
+    const ordemResto = exatos
+      .map((e, i) => ({ i, resto: e - Math.floor(e) }))
+      .sort((a, b) => b.resto - a.resto);
+    let voltas = 0;
+    while (sobra > 0 && voltas < linhas.length + 1) {
+      let mudou = false;
+      for (const { i } of ordemResto) {
+        if (sobra === 0) break;
+        if (cotas[i] < linhas[i].questoes.length) {
+          cotas[i] += 1;
+          sobra -= 1;
+          mudou = true;
+        }
+      }
+      if (!mudou) break;
+      voltas += 1;
+    }
+    return linhas.flatMap((l, i) => l.questoes.slice(0, cotas[i]));
+  }
+
+  return questlyEmbaralhar(pool).slice(0, alvo);
+}
+
+/**
+ * Título do simulado: precisa ser reconhecível numa lista de vinte. Uma
+ * disciplina só vira o nome dela; várias viram a contagem; e a estratégia entra
+ * como sufixo quando não é o sorteio comum — é o que diferencia duas provas
+ * montadas no mesmo dia sobre o mesmo conteúdo.
+ */
+function montarTitulo(
+  instituicao: string | null,
+  materiaNomes: string[],
+  estrategia: EstrategiaSimulado,
+  duracaoMin: number,
+): string {
+  const escopo =
+    materiaNomes.length === 1
+      ? materiaNomes[0]
+      : materiaNomes.length > 1
+        ? `${materiaNomes.length} disciplinas`
+        : rotuloDuracao(duracaoMin);
+  const sufixo =
+    estrategia === "fracos" ? " · pontos fracos" : estrategia === "recentes" ? " · anos recentes" : "";
+  return instituicao ? `Simulado ${instituicao} · ${escopo}${sufixo}` : `Simulado · ${escopo}${sufixo}`;
+}
+
 // Cria um simulado: valida o plano (free tem limite semanal, Pro é ilimitado),
 // deriva a instituição do aluno pelo profile (AUTORITATIVO — o cliente não
 // escolhe de que universidade sortear), sorteia questões reais daquela
-// instituição nos tópicos pedidos (anos aleatórios saem de graça do embaralho)
-// e fixa a ordem no registro.
+// instituição no recorte pedido (tópicos + dificuldade + anos, com a estratégia
+// escolhida) e fixa a ordem de aplicação no registro.
 export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<MontarSimuladoResultado> {
   const supabase = await createClient();
   const {
@@ -43,6 +161,10 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
     return { ok: false, erro: "invalido" };
   }
   const quantidade = clampQuantidade(input.quantidade);
+  const estrategia: EstrategiaSimulado = ehEstrategiaValida(input.estrategia) ? input.estrategia : "aleatoria";
+  const ordem: OrdemSimulado = ehOrdemValida(input.ordem) ? input.ordem : "aleatoria";
+  const difsPedidas = new Set((input.dificuldades || []).map((d) => normalizarChaveDificuldade(d)));
+  const anosPedidos = new Set((input.anos || []).filter((a) => Number.isFinite(a)));
 
   const { data: perfil } = await supabase
     .from("profiles")
@@ -64,23 +186,55 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
   const casadas = await instituicoesDoAluno(supabase, perfil?.universidade ?? null);
   if (casadas.length === 0) return { ok: false, erro: "sem_instituicao" };
 
-  const { data: candidatas } = await supabase
+  const { data: brutas } = await supabase
     .from("questions")
-    .select("id")
+    .select("id, ano, dificuldade, topic_id")
     .in("instituicao", casadas)
     .in("topic_id", input.topicIds)
     .limit(5000);
-  if (!candidatas || candidatas.length === 0) return { ok: false, erro: "sem_questoes" };
 
-  const escolhidas = questlyEmbaralhar(candidatas).slice(0, Math.min(quantidade, candidatas.length));
-  const questionIds = escolhidas.map((q) => q.id);
+  let pool = (brutas || []) as Candidata[];
+  if (difsPedidas.size > 0) pool = pool.filter((q) => difsPedidas.has(normalizarChaveDificuldade(q.dificuldade)));
+  if (anosPedidos.size > 0) pool = pool.filter((q) => q.ano != null && anosPedidos.has(q.ano));
+  if (pool.length === 0) return { ok: false, erro: "sem_questoes" };
+
+  // A fraqueza por tópico só é consultada quando a estratégia usa — uma
+  // consulta a menos no caminho comum.
+  const fraqueza = new Map<string, number>();
+  if (estrategia === "fracos") {
+    const { data: prog } = await supabase
+      .from("aluno_topico_progresso")
+      .select("topico_id, taxa_acerto, num_questoes_respondidas")
+      .eq("user_id", user.id)
+      .in("topico_id", input.topicIds.slice(0, 1000));
+    for (const l of (prog || []) as unknown as {
+      topico_id: string;
+      taxa_acerto: number | null;
+      num_questoes_respondidas: number | null;
+    }[]) {
+      // sem amostra, peso neutro: não dá pra chamar de fraco o que nunca foi medido
+      if ((l.num_questoes_respondidas || 0) < 3) continue;
+      fraqueza.set(l.topico_id, Math.max(0.05, 1 - (l.taxa_acerto || 0)));
+    }
+  }
+
+  const escolhidas = sortear(pool, quantidade, estrategia, fraqueza);
+  const aplicadas =
+    ordem === "crescente"
+      ? [...escolhidas].sort(
+          (a, b) =>
+            PESO_DIFICULDADE[normalizarChaveDificuldade(a.dificuldade)] - PESO_DIFICULDADE[normalizarChaveDificuldade(b.dificuldade)],
+        )
+      : questlyEmbaralhar(escolhidas);
+  const questionIds = aplicadas.map((q) => q.id);
 
   const nomeInstituicao = nomeExibicaoInstituicao(casadas);
-  const materiaNomes = (input.materiaNomes || []).filter(Boolean);
-  const titulo =
-    materiaNomes.length === 1
-      ? `Simulado ${nomeInstituicao} · ${materiaNomes[0]}`
-      : `Simulado ${nomeInstituicao}`;
+  const titulo = montarTitulo(
+    nomeInstituicao,
+    (input.materiaNomes || []).filter(Boolean),
+    estrategia,
+    input.duracaoMin,
+  );
 
   const { data: criado, error } = await supabase
     .from("simulados_aluno")

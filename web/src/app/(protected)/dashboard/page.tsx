@@ -7,7 +7,6 @@ import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
 import { QUESTLY_LIGA_INFO, QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
 import { HeroBanner } from "@/components/dashboard/hero-banner";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
-import { ContinuarCard } from "@/components/retomar/continuar-card";
 
 export const metadata: Metadata = {
   title: "Início",
@@ -46,12 +45,17 @@ export default async function DashboardPage() {
         xpPorNivel={XP_POR_NIVEL}
         streakAtual={dados.profile?.streak_atual || 0}
         recordeStreak={dados.semana.recorde.melhorStreak}
-        hero={hero}
       />
 
-      {retomar && <ContinuarCard info={retomar} />}
-
-      <DashboardView dados={dados} hero={hero} atalhoSimulados={atalhoSimulados} />
+      {/* `retomar` entra no FocoHojeCard (dentro do DashboardView) em vez de
+          um cartão próprio: "continuar de onde parou" e "sua missão de hoje"
+          eram dois cartões grandes lado a lado dizendo a mesma coisa. */}
+      <DashboardView
+        dados={dados}
+        hero={hero}
+        atalhoSimulados={atalhoSimulados}
+        retomar={retomar}
+      />
     </div>
   );
 }

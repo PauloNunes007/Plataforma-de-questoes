@@ -2,40 +2,48 @@
 
 import { useState } from "react";
 import type { DashboardData } from "@/lib/questly/dashboard-data";
-import { MissionBanner } from "./mission-banner";
+import type { HeroDados } from "@/lib/dashboard/hero-data";
+import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
+import type { RetomarInfo } from "@/lib/retomar/retomar-data";
+import { FocoHojeCard } from "./foco-hoje-card";
+import { MetricasStrip } from "./metricas-strip";
 import { BossSiegeMeter } from "./boss-siege-meter";
 import { GpsAprovacaoCard } from "./gps-aprovacao-card";
 import { CalendarRailCard } from "./right-rail";
 import { TarefasDoDiaCard } from "./tarefas-do-dia-card";
-import { QuestoesFeitasCard } from "./questoes-feitas-card";
-import { MissoesCard } from "./missoes-card";
-import { ConquistasRecentesCard } from "./conquistas-recentes-card";
-import { ComparativoCard } from "./comparativo-card";
 import { SemanaView } from "./semana-view";
 import { DashboardTabs, type AbaDashboard } from "./dashboard-tabs";
-import type { HeroDados } from "@/lib/dashboard/hero-data";
-import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
 import { SimuladosCard } from "./simulados-card";
 
-// Orquestra as abas do dashboard (redesign inspirado nos prints — ver
-// plano). "Hoje" mantém tudo que já existia (MissionBanner, BossSiegeMeter,
-// calendário, disciplinas) só que empurrado pra baixo de uma nova hero row
-// (XP diário / Metas / Tarefas do dia); "Semana" é conteúdo novo, mais
-// enxuto (só o que já existe de dado real — sem percentil/recorde
-// inventado, ver semana-view.tsx).
+// Orquestra as abas da home.
+//
+// **Repasse de consolidação (2026-09-10)**: a aba "Hoje" tinha onze blocos e
+// três deles repetiam número de outro ("XP de hoje" aparecia duas vezes,
+// conquistas duas, ranking duas), com quatro botões verdes disputando a mesma
+// dobra. O aluno abria a home e não sabia onde olhar. A estrutura agora tem
+// quatro andares, do "o que eu faço agora" pro "o que posso consultar":
+//
+//   1. FocoHojeCard   — a ação. Funde continuar/missões/banner num cartão só;
+//   2. MetricasStrip  — como estou. Funde questões feitas + comparativo + ranking;
+//   3. Boss + GPS     — a prova mais próxima e onde investir os minutos;
+//   4. rail           — simulados, tarefas e calendário (consulta, não ação).
+//
+// "Conquistas recentes" saiu da Hoje e foi pra aba Semana: é retrospecto, não
+// decisão do dia.
 export function DashboardView({
   dados,
   hero,
   atalhoSimulados,
+  retomar,
 }: {
   dados: DashboardData;
   hero: HeroDados;
   atalhoSimulados: AtalhoSimulados;
+  retomar: RetomarInfo;
 }) {
   const [aba, setAba] = useState<AbaDashboard>("hoje");
 
   const missoesPendentesIds = dados.missions.filter((m) => !m.concluida).map((m) => m.id);
-  const proximaMissao = dados.missions.find((m) => !m.concluida) || null;
   const subjectsResumo = dados.subjects.map((s) => ({ id: s.id, nome: s.nome }));
   const hojeStr = dados.calendar.days.find((d) => d.estado === "hoje")?.data || "";
 
@@ -44,59 +52,55 @@ export function DashboardView({
       <DashboardTabs aba={aba} onChange={setAba} />
 
       {aba === "hoje" ? (
-        <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
-          {/* Coluna principal — cards grandes estilo print */}
-          <div className="flex min-w-0 flex-col gap-5">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <MissoesCard
-                metas={dados.metasHoje}
-                semana={dados.semana}
-                proximaMissaoId={proximaMissao?.id || null}
+        <div className="flex flex-col gap-5">
+          <FocoHojeCard
+            retomar={retomar}
+            missions={dados.missions}
+            semMissaoHoje={dados.semMissaoHoje}
+            motivoSemMissao={dados.motivoSemMissao}
+            metas={dados.metasHoje}
+          />
+
+          <MetricasStrip hero={hero} comparativo={dados.semana.comparativo} />
+
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="flex min-w-0 flex-col gap-5">
+              <BossSiegeMeter
+                bossAlvo={dados.bossAlvo}
+                hasSubjects={dados.subjects.length > 0}
+                dayTicker={dados.dayTicker}
+                missoesPendentesIds={missoesPendentesIds}
               />
-              <QuestoesFeitasCard hero={hero} />
+
+              {dados.bossAlvo && (
+                <GpsAprovacaoCard
+                  rota={dados.bossAlvo.rota}
+                  subjectId={dados.bossAlvo.subjectId}
+                  subjectNome={dados.bossAlvo.subjectNome}
+                />
+              )}
             </div>
 
-            <ConquistasRecentesCard hero={hero} />
-
-            <MissionBanner
-              missions={dados.missions}
-              semMissaoHoje={dados.semMissaoHoje}
-              motivoSemMissao={dados.motivoSemMissao}
-            />
-
-            <BossSiegeMeter
-              bossAlvo={dados.bossAlvo}
-              hasSubjects={dados.subjects.length > 0}
-              dayTicker={dados.dayTicker}
-              missoesPendentesIds={missoesPendentesIds}
-            />
-
-            {dados.bossAlvo && (
-              <GpsAprovacaoCard
-                rota={dados.bossAlvo.rota}
-                subjectId={dados.bossAlvo.subjectId}
-                subjectNome={dados.bossAlvo.subjectNome}
+            <aside className="flex min-w-0 flex-col gap-5">
+              <SimuladosCard atalho={atalhoSimulados} />
+              <TarefasDoDiaCard
+                tarefasIniciais={dados.tarefasHoje}
+                hoje={hojeStr}
+                subjects={subjectsResumo}
               />
-            )}
+              <CalendarRailCard
+                monthLabel={dados.calendar.monthLabel}
+                dowOffset={dados.calendar.dowOffset}
+                days={dados.calendar.days}
+                tarefas={dados.tarefasPorData}
+                subjects={subjectsResumo}
+                index={0}
+              />
+            </aside>
           </div>
-
-          {/* Rail — comparativo, calendário e tarefas */}
-          <aside className="flex min-w-0 flex-col gap-5">
-            <SimuladosCard atalho={atalhoSimulados} />
-            <ComparativoCard comparativo={dados.semana.comparativo} />
-            <TarefasDoDiaCard tarefasIniciais={dados.tarefasHoje} hoje={hojeStr} subjects={subjectsResumo} />
-            <CalendarRailCard
-              monthLabel={dados.calendar.monthLabel}
-              dowOffset={dados.calendar.dowOffset}
-              days={dados.calendar.days}
-              tarefas={dados.tarefasPorData}
-              subjects={subjectsResumo}
-              index={0}
-            />
-          </aside>
         </div>
       ) : (
-        <SemanaView semana={dados.semana} ehPro={dados.ehPro} />
+        <SemanaView semana={dados.semana} ehPro={dados.ehPro} hero={hero} />
       )}
     </>
   );

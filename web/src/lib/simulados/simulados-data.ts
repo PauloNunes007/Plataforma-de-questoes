@@ -6,7 +6,13 @@ import type { Pergunta } from "@/lib/questao/types";
 import { instituicoesQueCasam, nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
 import { ehPro } from "@/lib/plano/plano";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
-import { SIMULADO_FREE_LIMITE_SEMANA } from "./constantes";
+import {
+  SIMULADO_FREE_LIMITE_SEMANA,
+  gradeVazia,
+  normalizarChaveDificuldade,
+  type GradeTopico,
+} from "./constantes";
+
 import {
   analisarHistorico,
   montarQuestoesAnalisadas,
@@ -17,19 +23,39 @@ import {
   type SimuladoAnalisado,
 } from "./analise";
 
-export type TopicoSimulado = { id: string; nome: string; questoes: number };
-export type MateriaSimulado = { id: string; nome: string; questoes: number; topicos: TopicoSimulado[] };
+export type { ChaveDificuldade, GradeTopico } from "./constantes";
+
+export type TopicoSimulado = {
+  id: string;
+  nome: string;
+  questoes: number;
+  grade: GradeTopico;
+  /** aproveitamento do aluno neste tópico (0..100), null sem amostra */
+  aproveitamento: number | null;
+  /** quantas questões deste tópico o aluno já respondeu (fora do simulado) */
+  respondidas: number;
+};
+
+export type MateriaSimulado = {
+  id: string;
+  nome: string;
+  questoes: number;
+  topicos: TopicoSimulado[];
+  /** aproveitamento médio do aluno na matéria (ponderado por volume), null sem amostra */
+  aproveitamento: number | null;
+};
 
 // Tudo que o montador precisa: a universidade do aluno, se temos provas dela no
-// banco, e o escopo montável (matérias→tópicos com contagem, só do que tem
-// questão daquela instituição). `instituicoes` fica só no servidor — a action
-// re-deriva pelo profile, então o cliente nunca decide de que universidade
-// sortear.
+// banco, e o escopo montável (matérias→tópicos com contagem e índice de
+// disponibilidade, só do que tem questão daquela instituição). `instituicoes`
+// fica só no servidor — a action re-deriva pelo profile, então o cliente nunca
+// decide de que universidade sortear.
 export type OpcoesSimulado = {
   universidade: string | null;
   reconhecida: boolean;
   nomeInstituicao: string | null;
   totalQuestoes: number;
+  /** anos catalogados no recorte da instituição, do mais recente pro mais antigo */
   anos: number[];
   materias: MateriaSimulado[];
 };
@@ -37,6 +63,7 @@ export type OpcoesSimulado = {
 type LinhaQuestao = {
   id: string;
   ano: number | null;
+  dificuldade: string | null;
   topic_id: string | null;
   topicos: { id: string; nome: string | null; materia_id: string | null; materias: { nome: string | null } | null } | null;
 };
@@ -85,14 +112,16 @@ export async function carregarOpcoesSimulado(
 
   const { data: qs } = await supabase
     .from("questions")
-    .select("id, ano, topic_id, topicos!inner ( id, nome, materia_id, materias!inner ( nome ) )")
+    .select("id, ano, dificuldade, topic_id, topicos!inner ( id, nome, materia_id, materias!inner ( nome ) )")
     .in("instituicao", casadas)
     .limit(8000);
 
-  const porMateria = new Map<
-    string,
-    { nome: string; questoes: number; topicos: Map<string, { nome: string; questoes: number }> }
-  >();
+  type Acc = {
+    nome: string;
+    questoes: number;
+    topicos: Map<string, { nome: string; questoes: number; grade: GradeTopico }>;
+  };
+  const porMateria = new Map<string, Acc>();
   const anos = new Set<number>();
 
   for (const q of (qs || []) as unknown as LinhaQuestao[]) {
@@ -108,20 +137,69 @@ export async function carregarOpcoesSimulado(
       porMateria.set(materiaId, m);
     }
     m.questoes += 1;
-    const tp = m.topicos.get(t.id);
-    if (tp) tp.questoes += 1;
-    else m.topicos.set(t.id, { nome: t.nome || "Tópico", questoes: 1 });
+
+    let tp = m.topicos.get(t.id);
+    if (!tp) {
+      tp = { nome: t.nome || "Tópico", questoes: 0, grade: gradeVazia() };
+      m.topicos.set(t.id, tp);
+    }
+    tp.questoes += 1;
+    const dif = normalizarChaveDificuldade(q.dificuldade);
+    const anoChave = typeof q.ano === "number" ? String(q.ano) : "0";
+    tp.grade[dif][anoChave] = (tp.grade[dif][anoChave] || 0) + 1;
+  }
+
+  // Aproveitamento do aluno por tópico — é o que deixa o montador dizer "você
+  // vai a 42% aqui" e o preset "focar no que erro mais" existir sem chutar.
+  // Owner-only por RLS: o SELECT só devolve as linhas do próprio aluno.
+  const todosTopicos = [...porMateria.values()].flatMap((m) => [...m.topicos.keys()]);
+  const progresso = new Map<string, { pct: number | null; respondidas: number }>();
+  if (todosTopicos.length > 0) {
+    const { data: prog } = await supabase
+      .from("aluno_topico_progresso")
+      .select("topico_id, taxa_acerto, num_questoes_respondidas")
+      .eq("user_id", user.id)
+      .in("topico_id", todosTopicos.slice(0, 1000));
+    for (const linha of (prog || []) as unknown as {
+      topico_id: string;
+      taxa_acerto: number | null;
+      num_questoes_respondidas: number | null;
+    }[]) {
+      const respondidas = linha.num_questoes_respondidas || 0;
+      progresso.set(linha.topico_id, {
+        // Sem amostra não existe aproveitamento — null, nunca 0% (a mesma
+        // regra de honestidade de chance-aprovacao.ts).
+        pct: respondidas >= MIN_AMOSTRA_APROVEITAMENTO ? Math.round((linha.taxa_acerto || 0) * 100) : null,
+        respondidas,
+      });
+    }
   }
 
   const materias: MateriaSimulado[] = [...porMateria.entries()]
-    .map(([id, m]) => ({
-      id,
-      nome: m.nome,
-      questoes: m.questoes,
-      topicos: [...m.topicos.entries()]
-        .map(([tid, t]) => ({ id: tid, nome: t.nome, questoes: t.questoes }))
-        .sort((a, b) => b.questoes - a.questoes || a.nome.localeCompare(b.nome)),
-    }))
+    .map(([id, m]) => {
+      const topicos: TopicoSimulado[] = [...m.topicos.entries()]
+        .map(([tid, t]) => {
+          const p = progresso.get(tid);
+          return {
+            id: tid,
+            nome: t.nome,
+            questoes: t.questoes,
+            grade: t.grade,
+            aproveitamento: p?.pct ?? null,
+            respondidas: p?.respondidas ?? 0,
+          };
+        })
+        .sort((a, b) => b.questoes - a.questoes || a.nome.localeCompare(b.nome));
+
+      const comDado = topicos.filter((t) => t.aproveitamento != null);
+      const peso = comDado.reduce((s, t) => s + t.respondidas, 0);
+      const aproveitamento =
+        peso > 0
+          ? Math.round(comDado.reduce((s, t) => s + (t.aproveitamento || 0) * t.respondidas, 0) / peso)
+          : null;
+
+      return { id, nome: m.nome, questoes: m.questoes, topicos, aproveitamento };
+    })
     .sort((a, b) => b.questoes - a.questoes || a.nome.localeCompare(b.nome));
 
   const totalQuestoes = materias.reduce((s, m) => s + m.questoes, 0);
@@ -132,10 +210,13 @@ export async function carregarOpcoesSimulado(
     reconhecida: totalQuestoes > 0,
     nomeInstituicao,
     totalQuestoes,
-    anos: [...anos].sort((a, b) => a - b),
+    anos: [...anos].sort((a, b) => b - a),
     materias,
   };
 }
+
+/** Amostra mínima pra um tópico ter aproveitamento exibível no montador. */
+const MIN_AMOSTRA_APROVEITAMENTO = 3;
 
 export type StatusPlanoSimulado = {
   ehPro: boolean;
@@ -420,6 +501,9 @@ export type AtalhoSimulados = {
   totalConcluidos: number;
   media: number | null;
   ultima: number | null;
+  melhor: number | null;
+  /** aproveitamento somando acertos/total das provas concluídas (null sem dado) */
+  aproveitamento: number | null;
 };
 
 /**
@@ -434,7 +518,7 @@ export async function carregarAtalhoSimulados(
 ): Promise<AtalhoSimulados> {
   const { data } = await supabase
     .from("simulados_aluno")
-    .select("id, titulo, status, nota, criado_em, qtd_questoes, duracao_min")
+    .select("id, titulo, status, nota, acertos, total, criado_em, qtd_questoes, duracao_min")
     .eq("user_id", user.id)
     .in("status", ["em_andamento", "concluido"])
     .order("criado_em", { ascending: false })
@@ -445,6 +529,8 @@ export async function carregarAtalhoSimulados(
     titulo: string;
     status: string;
     nota: number | null;
+    acertos: number | null;
+    total: number | null;
     criado_em: string;
     qtd_questoes: number;
     duracao_min: number;
@@ -471,5 +557,21 @@ export async function carregarAtalhoSimulados(
     media:
       notas.length > 0 ? Math.round((notas.reduce((a, b) => a + b.nota, 0) / notas.length) * 10) / 10 : null,
     ultima: notas.length > 0 ? notas[notas.length - 1].nota : null,
+    melhor: notas.length > 0 ? Math.max(...notas.map((n) => n.nota)) : null,
+    aproveitamento: calcularAproveitamento(concluidos),
   };
+}
+
+/** Acertos ÷ questões somando as provas concluídas; null se nada foi corrigido. */
+function calcularAproveitamento(
+  concluidos: { acertos: number | null; total: number | null }[],
+): number | null {
+  let acertos = 0;
+  let total = 0;
+  for (const c of concluidos) {
+    if (c.total == null || c.total <= 0) continue;
+    acertos += c.acertos ?? 0;
+    total += c.total;
+  }
+  return total > 0 ? Math.round((acertos / total) * 100) : null;
 }

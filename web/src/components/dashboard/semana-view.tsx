@@ -3,7 +3,9 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Flame, Target, Trophy, Users, Zap } from "lucide-react";
 import type { SemanaResumo } from "@/lib/questly/dashboard-data";
+import type { HeroDados } from "@/lib/dashboard/hero-data";
 import { ProBloqueio } from "@/components/plano/pro-ui";
+import { ConquistasRecentesCard } from "./conquistas-recentes-card";
 
 const RAIO = 46;
 const CIRCUNFERENCIA = 2 * Math.PI * RAIO;
@@ -13,7 +15,15 @@ const CIRCUNFERENCIA = 2 * Math.PI * RAIO;
 // contraste (XP da semana, Streak, Comparativo, Recorde). Os dados de
 // Comparativo/Recorde são reais (percentil cross-user por xp_semana e maior
 // streak histórico do daily_logs) — sem número inventado, ver dashboard-data.ts.
-export function SemanaView({ semana, ehPro }: { semana: SemanaResumo; ehPro: boolean }) {
+export function SemanaView({
+  semana,
+  ehPro,
+  hero,
+}: {
+  semana: SemanaResumo;
+  ehPro: boolean;
+  hero: HeroDados;
+}) {
   const reduzirMovimento = useReducedMotion();
   const diasComEstudo = semana.dias.filter((d) => d.estudou).length;
   const pctXp = Math.min(100, Math.round((semana.xpSemana / semana.metaSemanalXp) * 100));
@@ -245,6 +255,13 @@ export function SemanaView({ semana, ehPro }: { semana: SemanaResumo; ehPro: boo
           </motion.div>
         )}
       </div>
+
+      {/* Conquistas moraram na aba "Hoje" até o repasse de consolidação: são um
+          retrospecto do percurso, não uma decisão do dia — e lá repetiam o
+          contador que o hero já mostrava. */}
+      <motion.div {...entrada(5)}>
+        <ConquistasRecentesCard hero={hero} />
+      </motion.div>
     </div>
   );
 }

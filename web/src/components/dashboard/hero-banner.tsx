@@ -1,13 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronRight, Flame, Award, Zap } from "lucide-react";
+import { Flame, Zap } from "lucide-react";
 import { LigaEmblema } from "@/components/ranking/liga-emblema";
 import { LIGA_COR, LIGA_GRADIENTE } from "@/components/ranking/liga-visual";
 import { FocoHojeChip } from "@/components/foco/foco-bar";
 import type { Liga } from "@/lib/questly/liga";
-import type { HeroDados } from "@/lib/dashboard/hero-data";
 
 type HeroBannerProps = {
   nome: string;
@@ -20,13 +18,17 @@ type HeroBannerProps = {
   xpPorNivel: number;
   streakAtual: number;
   recordeStreak: number;
-  hero: HeroDados;
 };
 
-// Hero da home — releitura do topo dos prints da plataforma de referência,
-// na identidade do Questly: painel escuro premium com brilho da liga, o
-// escudo alado, o perfil e 4 cards de status (Nível/Ranking/Conquistas/
-// Streak). Dark-first, com cores vivas por liga.
+// Hero da home: quem é o aluno e onde ele está na progressão. Nada além
+// disso — o hero é a linha de IDENTIDADE, não um painel de métricas.
+//
+// Ele já teve 4 tiles (Nível/Ranking/Conquistas/Streak) e virou o terceiro
+// lugar da mesma tela a mostrar posição no ranking e nº de conquistas. Ranking
+// foi pra `MetricasStrip` (junto com aproveitamento e percentil, onde compara
+// com os outros números do mesmo tipo) e Conquistas foi pra aba Semana (é um
+// retrospecto, não um dado de agora). Sobram os dois que são progressão pura:
+// nível (com a barra de XP) e streak.
 export function HeroBanner({
   nome,
   fotoUrl,
@@ -38,7 +40,6 @@ export function HeroBanner({
   xpPorNivel,
   streakAtual,
   recordeStreak,
-  hero,
 }: HeroBannerProps) {
   const xpNoNivel = xpTotal % xpPorNivel;
   const pctNivel = Math.min(100, (xpNoNivel / xpPorNivel) * 100);
@@ -96,8 +97,8 @@ export function HeroBanner({
           </div>
         </div>
 
-        {/* Cards de status */}
-        <div className="grid grid-cols-2 gap-2.5 lg:ml-auto lg:grid-cols-4">
+        {/* Progressão — só nível e streak */}
+        <div className="grid grid-cols-2 gap-2.5 lg:ml-auto lg:w-[300px]">
           {/* Nível + barra de XP */}
           <StatCard>
             <div className="flex items-baseline justify-between">
@@ -116,40 +117,6 @@ export function HeroBanner({
             <span className="tnum text-[10px] text-muted-foreground">
               {xpNoNivel.toLocaleString("pt-BR")}/{xpPorNivel.toLocaleString("pt-BR")} XP
             </span>
-          </StatCard>
-
-          {/* Ranking geral */}
-          <Link href="/ranking" className="group">
-            <StatCard interativo>
-              <div className="flex items-baseline justify-between">
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  Ranking
-                </span>
-                <ChevronRight
-                  size={14}
-                  className="text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                  strokeWidth={2.2}
-                />
-              </div>
-              <span className="tnum font-heading text-2xl font-bold leading-none" style={{ color: cor }}>
-                {hero.posicaoGeral.toLocaleString("pt-BR")}º
-              </span>
-              <span className="text-[10px] text-muted-foreground">geral · {ligaNome}</span>
-            </StatCard>
-          </Link>
-
-          {/* Conquistas */}
-          <StatCard>
-            <div className="flex items-baseline justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                Conquistas
-              </span>
-              <Award size={14} className="text-questly-gold" strokeWidth={2.2} />
-            </div>
-            <span className="tnum font-heading text-2xl font-bold leading-none text-questly-gold">
-              {hero.conquistas}
-            </span>
-            <span className="text-[10px] text-muted-foreground">distintivos</span>
           </StatCard>
 
           {/* Streak + recorde */}
@@ -173,19 +140,9 @@ export function HeroBanner({
   );
 }
 
-function StatCard({
-  children,
-  interativo = false,
-}: {
-  children: React.ReactNode;
-  interativo?: boolean;
-}) {
+function StatCard({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={`flex min-w-[120px] flex-col gap-1 rounded-xl border border-border bg-background/70 p-3 backdrop-blur-sm transition-colors dark:bg-background/60 ${
-        interativo ? "cursor-pointer hover:border-foreground/20 hover:bg-background" : ""
-      }`}
-    >
+    <div className="flex min-w-[120px] flex-col gap-1 rounded-xl border border-border bg-background/70 p-3 backdrop-blur-sm dark:bg-background/60">
       {children}
     </div>
   );
