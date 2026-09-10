@@ -4,25 +4,54 @@ import { createClient } from "@/lib/supabase/server";
 import { normalizarTextoDup } from "./logic";
 import type { Materia, QuestionPayload, Topico } from "./types";
 
+type SupabaseServer = Awaited<ReturnType<typeof createClient>>;
+
+// O PostgREST corta TODA resposta em 1000 linhas (max-rows do Supabase), mesmo
+// sem .limit() — e o banco de questões já passou desse teto. Um
+// `select("enunciado")` direto trazia só as 1000 primeiras, o que deixava a
+// checagem de duplicata cega justamente pras questões inseridas mais
+// recentemente: reimportar um pacote recém-adicionado passava batido e
+// duplicava. Daí a paginação por .range(), ordenada por id pra ser estável
+// entre as páginas. Mesma paginação que os scripts em
+// listas_questoes/gerado/scripts/ já fazem.
+const PAGINA_ENUNCIADOS = 1000;
+
+async function buscarTodosEnunciados(supabase: SupabaseServer): Promise<string[]> {
+  const todos: string[] = [];
+  for (let inicio = 0; ; inicio += PAGINA_ENUNCIADOS) {
+    const { data, error } = await supabase
+      .from("questions")
+      .select("enunciado")
+      .order("id")
+      .range(inicio, inicio + PAGINA_ENUNCIADOS - 1);
+    if (error) {
+      console.error("Erro ao carregar enunciados existentes:", error);
+      break;
+    }
+    if (!data || data.length === 0) break;
+    todos.push(...data.map((q) => q.enunciado || ""));
+    if (data.length < PAGINA_ENUNCIADOS) break;
+  }
+  return todos;
+}
+
 export async function carregarDadosImportadorAction(): Promise<{
   materias: Materia[];
   topicos: Topico[];
   enunciadosExistentes: string[];
 }> {
   const supabase = await createClient();
-  const [{ data: materias }, { data: topicos }, { data: questoes }] = await Promise.all([
+  const [{ data: materias }, { data: topicos }, enunciados] = await Promise.all([
     supabase.from("materias").select("id, nome").order("nome"),
     supabase
       .from("topicos")
       .select("id, materia_id, nome, ordem")
       .order("ordem", { ascending: true, nullsFirst: false })
       .order("nome"),
-    supabase.from("questions").select("enunciado"),
+    buscarTodosEnunciados(supabase),
   ]);
 
-  const enunciadosExistentes = (questoes || []).map((q) =>
-    (q.enunciado || "").toLowerCase().replace(/\s+/g, " ").trim(),
-  );
+  const enunciadosExistentes = enunciados.map(normalizarTextoDup);
 
   return { materias: materias || [], topicos: topicos || [], enunciadosExistentes };
 }
@@ -60,8 +89,8 @@ export async function aprovarItemAction(
   // impede uma requisição direta de inserir a mesma questão duas vezes.
   const chaveDup = normalizarTextoDup(payload.enunciado);
   if (chaveDup) {
-    const { data: existentes } = await supabase.from("questions").select("enunciado");
-    const jaExiste = (existentes || []).some((q) => normalizarTextoDup(q.enunciado) === chaveDup);
+    const existentes = await buscarTodosEnunciados(supabase);
+    const jaExiste = existentes.some((e) => normalizarTextoDup(e) === chaveDup);
     if (jaExiste) {
       return { error: "Já existe uma questão com esse enunciado no banco. Edite o enunciado se for uma questão diferente." };
     }
