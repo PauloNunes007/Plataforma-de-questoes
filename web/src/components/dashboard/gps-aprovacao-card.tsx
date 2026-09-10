@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, Clock, Loader2, Route } from "lucide-react";
 import type { RotaAprovacao } from "@/lib/questly/rota-aprovacao";
 import { seguirRotaAction } from "@/lib/gps/actions";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 
 type GpsAprovacaoCardProps = {
   rota: RotaAprovacao | null;
@@ -21,6 +22,8 @@ const MAX_PASSOS_VISIVEIS = 4;
 // verde = ação, como no resto do app.
 export function GpsAprovacaoCard({ rota, subjectId, subjectNome }: GpsAprovacaoCardProps) {
   const router = useRouter();
+  // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
+  const origem = usePathname();
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -38,7 +41,7 @@ export function GpsAprovacaoCard({ rota, subjectId, subjectNome }: GpsAprovacaoC
       passos: rota.passos.map((p) => ({ topicoId: p.topicoId, questoes: p.questoes })),
     });
     if (missaoId) {
-      router.push(`/questao?missao=${missaoId}`);
+      router.push(hrefQuestao(missaoId, origem));
     } else {
       setErro("Não deu pra montar a rota agora. Tenta de novo?");
       setCarregando(false);

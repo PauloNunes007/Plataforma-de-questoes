@@ -9,7 +9,7 @@
 // nó abre o painel de detalhe (mesmas ações de sempre + camadas
 // inteligentes). Substitui o quest-log vertical de caminho-disciplina.tsx.
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Castle, Flag, Gauge, Sparkles, X } from "lucide-react";
 import type { CaminhoDisciplina as CaminhoDisciplinaData } from "@/lib/trilha/trilha-data";
@@ -31,6 +31,7 @@ import {
   type ModoJornada,
 } from "./barra-jornada";
 import { PlanoDeAtaque } from "./plano-ataque";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 
 const ROW_H = 136; // distância vertical entre nós (folga pro cenário)
 // PAD_TOP precisa comportar mascote (72px) + bandeira de largada quando a
@@ -80,6 +81,8 @@ type Props = {
 
 export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
   const router = useRouter();
+  // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
+  const origem = usePathname();
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selId, setSelId] = useState<string | null>(null);
   // No celular o painel de detalhe vira um bottom sheet (o rail lateral só
@@ -147,7 +150,7 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
     setPendingId(topicoId);
     const { missaoId } = await iniciarPraticaTopicoAction(caminho.subjectId, topicoId, qtd);
     if (missaoId) {
-      router.push(`/questao?missao=${missaoId}`);
+      router.push(hrefQuestao(missaoId, origem));
       return;
     }
     setPendingId(null);
@@ -158,7 +161,7 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
     setRevisandoTudo(true);
     const { missaoId } = await iniciarRevisaoRelampagoAction(caminho.subjectId, topicoIds, 10);
     if (missaoId) {
-      router.push(`/questao?missao=${missaoId}`);
+      router.push(hrefQuestao(missaoId, origem));
       return;
     }
     setRevisandoTudo(false);

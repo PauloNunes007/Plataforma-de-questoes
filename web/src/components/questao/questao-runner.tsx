@@ -46,6 +46,7 @@ import {
 } from "@/lib/questao/actions";
 import { alternarFavoritoAction, salvarNotaAction } from "@/lib/anotacoes/actions";
 import type { MissaoResumo, Pergunta } from "@/lib/questao/types";
+import { hrefQuestao, rotuloOrigem } from "@/lib/questao/navegacao";
 
 type EstadoPergunta = {
   selecionada: string | null;
@@ -103,6 +104,7 @@ export function QuestaoRunner({
   favoritosIniciaisIds,
   notasIniciais,
   ehPro,
+  voltarHref,
   disciplinaNome,
   ehAdmin,
 }: {
@@ -114,6 +116,8 @@ export function QuestaoRunner({
   favoritosIniciaisIds: string[];
   notasIniciais: Record<string, string>;
   ehPro: boolean;
+  /** Pra onde o "X" devolve o aluno (ver lib/questao/navegacao.ts). */
+  voltarHref: string;
   disciplinaNome: string | null;
   ehAdmin: boolean;
 }) {
@@ -324,7 +328,9 @@ export function QuestaoRunner({
       dificuldade: resultadoExtra.desafio.dificuldade,
     });
     if (missaoId) {
-      router.push(`/questao?missao=${missaoId}`);
+      // O desafio herda a origem: encadear missões não pode ir apagando o
+      // caminho de volta que o aluno trouxe.
+      router.push(hrefQuestao(missaoId, voltarHref));
     } else {
       setDesafioAceitando(false);
     }
@@ -342,6 +348,7 @@ export function QuestaoRunner({
         resultadoExtra={resultadoExtra}
         desafioAceitando={desafioAceitando}
         onAceitarDesafio={aceitarDesafio}
+        voltarHref={voltarHref}
       />
     );
   }
@@ -361,9 +368,10 @@ export function QuestaoRunner({
 
       <div className="mb-6 flex items-center gap-3 sm:gap-4">
         <Link
-          href="/dashboard"
+          href={voltarHref}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          title="Sair da missão"
+          title={rotuloOrigem(voltarHref)}
+          aria-label={rotuloOrigem(voltarHref)}
         >
           <X size={18} strokeWidth={2} />
         </Link>
@@ -891,6 +899,7 @@ function ResultView({
   resultadoExtra,
   desafioAceitando,
   onAceitarDesafio,
+  voltarHref,
 }: {
   acertos: number;
   erros: number;
@@ -901,6 +910,7 @@ function ResultView({
   resultadoExtra: FinalizarMissaoResultado | null;
   desafioAceitando: boolean;
   onAceitarDesafio: () => void;
+  voltarHref: string;
 }) {
   const total = acertos + erros;
   const taxa = total > 0 ? acertos / total : 0;
@@ -1006,10 +1016,10 @@ function ResultView({
         )}
 
         <Link
-          href="/dashboard"
+          href={voltarHref}
           className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-questly-green px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
         >
-          Voltar ao Dashboard
+          {rotuloOrigem(voltarHref)}
         </Link>
       </motion.div>
     </div>

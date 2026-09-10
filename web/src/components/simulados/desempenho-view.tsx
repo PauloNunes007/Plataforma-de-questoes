@@ -9,7 +9,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -35,6 +35,7 @@ import { LinhaEvolucao } from "./graficos/linha-evolucao";
 import { AnelNota } from "./graficos/anel-nota";
 import { MapaCalor } from "./graficos/mapa-calor";
 import { TendenciaMaterias } from "./graficos/tendencia-materias";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 
 export function DesempenhoView({ dados, podeMontar }: { dados: DesempenhoGeral; podeMontar: boolean }) {
   const pontos = useMemo(
@@ -253,6 +254,8 @@ function Indicador({
 /** Mesma mecânica do "treinar o que eu errei", só que sobre o histórico todo. */
 function BotaoTreinarFracos({ topicIds }: { topicIds: string[] }) {
   const router = useRouter();
+  // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
+  const origem = usePathname();
   const [pendente, iniciar] = useTransition();
   const [erro, setErro] = useState(false);
 
@@ -265,7 +268,7 @@ function BotaoTreinarFracos({ topicIds }: { topicIds: string[] }) {
           iniciar(async () => {
             setErro(false);
             const { missaoId } = await treinarTopicosDoSimuladoAction({ topicIds, quantidade: 12 });
-            if (missaoId) router.push(`/questao?missao=${missaoId}`);
+            if (missaoId) router.push(hrefQuestao(missaoId, origem));
             else setErro(true);
           })
         }

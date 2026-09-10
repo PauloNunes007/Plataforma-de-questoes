@@ -98,6 +98,10 @@ export async function questlyGerarMissoesDoDia(
   supabase: SupabaseClient,
   user: { id: string },
   profile: Profile | null,
+  /** Disciplinas já carregadas pelo chamador (o dashboard lê `subjects` de
+   *  qualquer jeito pro card do Boss). Evita repetir a MESMA query — ver a
+   *  nota de latência no topo de dashboard-data.ts. */
+  subjectsPrefetch?: Subject[] | null,
 ): Promise<MissoesDoDiaResultado> {
   const hojeAbrev = QUESTLY_DIAS_SEMANA[new Date().getDay()];
   if (profile?.dias_disponiveis && profile.dias_disponiveis.length > 0) {
@@ -107,16 +111,33 @@ export async function questlyGerarMissoesDoDia(
     }
   }
 
-  const { data: subjects, error: subjectsError } = await supabase
-    .from("subjects")
-    .select("*, bosses(id, nome, data_prova, preparo_percentual)")
-    .eq("user_id", user.id);
+  const hojeStr = questlyHojeISO();
+
+  // As três leituras são independentes entre si (todas dependem só do
+  // user_id) — em série custavam 3 RTTs até o Supabase antes de qualquer
+  // decisão ser tomada. A grade e as missões de hoje já sobem junto.
+  const [subjectsResultado, rotinaCompleta, missoesHojeResultado] = await Promise.all([
+    subjectsPrefetch
+      ? Promise.resolve({ data: subjectsPrefetch, error: null })
+      : supabase
+          .from("subjects")
+          .select("*, bosses(id, nome, data_prova, preparo_percentual)")
+          .eq("user_id", user.id),
+    questlyBuscarRotinaCompleta(supabase, user.id),
+    supabase
+      .from("missions")
+      .select("*, subjects(nome)")
+      .eq("user_id", user.id)
+      .eq("data", hojeStr)
+      .eq("avulsa", false),
+  ]);
+
+  const { data: subjects, error: subjectsError } = subjectsResultado;
 
   if (subjectsError || !subjects || subjects.length === 0) {
     return { missoes: [], semMissaoHoje: true, motivo: "Nenhuma disciplina configurada ainda." };
   }
 
-  const rotinaCompleta = await questlyBuscarRotinaCompleta(supabase, user.id);
   let subjectsHoje: Subject[];
   if (rotinaCompleta.length === 0) {
     subjectsHoje = [questlyDisciplinaComBossMaisProximo(subjects)];
@@ -135,13 +156,7 @@ export async function questlyGerarMissoesDoDia(
     }
   }
 
-  const hojeStr = questlyHojeISO();
-  const { data: missoesExistentes } = await supabase
-    .from("missions")
-    .select("*, subjects(nome)")
-    .eq("user_id", user.id)
-    .eq("data", hojeStr)
-    .eq("avulsa", false);
+  const { data: missoesExistentes } = missoesHojeResultado;
 
   const subjectIdsComMissao = new Set((missoesExistentes || []).map((m) => m.subject_id));
   const subjectsFaltando = subjectsHoje.filter((s) => !subjectIdsComMissao.has(s.id));
@@ -149,17 +164,22 @@ export async function questlyGerarMissoesDoDia(
   const tempoDiarioMin = profile?.tempo_diario_min || 30;
   const minutosPorSubject = questlyApportionarMinutos(subjectsHoje, tempoDiarioMin);
 
-  const geradas: Mission[] = [];
-  for (const subject of subjectsFaltando) {
-    const resultado = await questlyGerarMissaoParaSubject(
-      supabase,
-      user,
-      profile,
-      subject,
-      minutosPorSubject[subject.id] || tempoDiarioMin,
-    );
-    if (resultado && !("semMissaoHoje" in resultado)) geradas.push(resultado);
-  }
+  // Uma disciplina não depende da outra pra gerar missão — em série, um dia
+  // com 3 disciplinas agendadas pagava 3× a cadeia inteira de queries.
+  const resultados = await Promise.all(
+    subjectsFaltando.map((subject) =>
+      questlyGerarMissaoParaSubject(
+        supabase,
+        user,
+        profile,
+        subject,
+        minutosPorSubject[subject.id] || tempoDiarioMin,
+      ),
+    ),
+  );
+  const geradas: Mission[] = resultados.filter(
+    (r): r is Mission => Boolean(r) && !("semMissaoHoje" in r),
+  );
 
   const missoes = [...(missoesExistentes || []), ...geradas];
 
@@ -195,11 +215,16 @@ export async function questlyGerarMissaoParaSubject(
   }
 
   const topicoIdsDaMateria = topicosMateria.map((t) => t.id);
-  const { data: progressos } = await supabase
-    .from("aluno_topico_progresso")
-    .select("*")
-    .eq("user_id", user.id)
-    .in("topico_id", topicoIdsDaMateria);
+  // Progresso do aluno e "quais tópicos têm questão" saem dos mesmos ids —
+  // nenhuma das duas depende do resultado da outra.
+  const [{ data: progressos }, { data: questoesDaMateria }] = await Promise.all([
+    supabase
+      .from("aluno_topico_progresso")
+      .select("*")
+      .eq("user_id", user.id)
+      .in("topico_id", topicoIdsDaMateria),
+    supabase.from("questions").select("topic_id").in("topic_id", topicoIdsDaMateria),
+  ]);
 
   type ProgressoRow = {
     topico_id: string;
@@ -213,11 +238,6 @@ export async function questlyGerarMissaoParaSubject(
 
   const progressoPorTopico: Record<string, ProgressoRow> = {};
   ((progressos || []) as ProgressoRow[]).forEach((p) => (progressoPorTopico[p.topico_id] = p));
-
-  const { data: questoesDaMateria } = await supabase
-    .from("questions")
-    .select("topic_id")
-    .in("topic_id", topicoIdsDaMateria);
 
   const temQuestao: Record<string, boolean> = {};
   (questoesDaMateria || []).forEach((q) => (temQuestao[q.topic_id] = true));

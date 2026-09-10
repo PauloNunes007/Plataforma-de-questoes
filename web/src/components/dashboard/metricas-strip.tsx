@@ -28,9 +28,10 @@ export function MetricasStrip({
 
   return (
     <motion.section
-      initial={semMovimento ? undefined : { opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      // Com reduced-motion a faixa já nasce no estado final.
+      initial={semMovimento ? "visivel" : "oculto"}
+      animate="visivel"
+      variants={{ visivel: { transition: { staggerChildren: 0.04 } } }}
       className="grid grid-cols-2 gap-3 lg:grid-cols-4"
     >
       {/* Aproveitamento — o número que o aluno mais quer ver, com a barra
@@ -109,6 +110,8 @@ function Celula({
   href?: string;
   children?: React.ReactNode;
 }) {
+  // O tom pinta o NÚMERO e o chip do ícone. A cor nunca é o único sinal: o
+  // valor e o texto de detalhe já dizem a mesma coisa por escrito.
   const cor =
     tom === "bom"
       ? "text-questly-green-dark dark:text-questly-green"
@@ -118,25 +121,51 @@ function Celula({
           ? "text-questly-red-dark"
           : "text-foreground";
 
+  const chip =
+    tom === "bom"
+      ? "bg-questly-green-light text-questly-green-dark dark:text-questly-green"
+      : tom === "atencao"
+        ? "bg-questly-gold-light text-questly-gold-dark"
+        : tom === "critico"
+          ? "bg-questly-red-light text-questly-red-dark"
+          : "bg-muted text-muted-foreground";
+
   const corpo = (
     <>
-      <span className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
-        {icone}
-        <span className="truncate">{rotulo}</span>
-        {href && <ChevronRight size={12} className="ml-auto shrink-0" />}
+      <span className="flex items-center gap-2">
+        <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${chip}`}>
+          {icone}
+        </span>
+        <span className="truncate text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
+          {rotulo}
+        </span>
+        {href && <ChevronRight size={13} className="ml-auto shrink-0 text-muted-foreground" />}
       </span>
-      <p className={`tnum mt-1 font-heading text-[24px] font-bold leading-none ${cor}`}>{valor}</p>
+      <p className={`tnum mt-2 font-heading text-[26px] font-bold leading-none tracking-tight ${cor}`}>
+        {valor}
+      </p>
       <p className="mt-1 truncate text-[11px] font-medium text-muted-foreground">{detalhe}</p>
       {children}
     </>
   );
 
+  const entrada = {
+    oculto: { opacity: 0, y: 8 },
+    visivel: { opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const } },
+  };
+
   if (href) {
     return (
-      <Link href={href} className="surface-interativa block p-3.5">
-        {corpo}
-      </Link>
+      <motion.div variants={entrada}>
+        <Link href={href} className="surface-interativa block h-full p-4">
+          {corpo}
+        </Link>
+      </motion.div>
     );
   }
-  return <div className="surface p-3.5">{corpo}</div>;
+  return (
+    <motion.div variants={entrada} className="surface h-full p-4">
+      {corpo}
+    </motion.div>
+  );
 }

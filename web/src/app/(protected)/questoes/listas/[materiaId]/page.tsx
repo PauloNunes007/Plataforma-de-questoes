@@ -22,7 +22,12 @@ export default async function ListasDaDisciplinaPage({
 
   if (!user) return null;
 
-  const disciplinas = await carregarDisciplinasPratica(supabase, user);
+  // O id da matéria vem da própria rota, então a lista de tópicos não precisa
+  // esperar o catálogo de disciplinas terminar pra saber o que buscar.
+  const [disciplinas, topicos] = await Promise.all([
+    carregarDisciplinasPratica(supabase, user),
+    carregarTopicosPratica(supabase, user, materiaId),
+  ]);
   const disciplina = disciplinas.find((d) => d.materiaId === materiaId);
 
   if (!disciplina) {
@@ -35,8 +40,6 @@ export default async function ListasDaDisciplinaPage({
       </div>
     );
   }
-
-  const topicos = await carregarTopicosPratica(supabase, user, disciplina.materiaId);
 
   return (
     <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">

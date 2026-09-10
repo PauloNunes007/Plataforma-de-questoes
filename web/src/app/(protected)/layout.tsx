@@ -25,11 +25,16 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("nome, username, curso, foto_url, plano, plano_expira_em")
-    .eq("id", user.id)
-    .maybeSingle();
+  // As duas leituras são independentes — em série, o header do app esperava
+  // um round-trip a mais em todo carregamento completo de página.
+  const [{ data: profile }, focoHojeSeg] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("nome, username, curso, foto_url, plano, plano_expira_em")
+      .eq("id", user.id)
+      .maybeSingle(),
+    carregarFocoHojeSeg(supabase, user.id),
+  ]);
 
   // Onboarding obrigatório: sem curso salvo (inclui profile ainda inexistente),
   // nenhuma página da plataforma abre — a campanha precisa existir primeiro.
@@ -41,7 +46,6 @@ export default async function ProtectedLayout({
   const nome = profile?.nome || user.email?.split("@")[0] || "Aluno(a)";
   const isAdmin = user.email === ADMIN_EMAIL;
   const pro = ehPro(profile);
-  const focoHojeSeg = await carregarFocoHojeSeg(supabase, user.id);
 
   return (
     <FocoProvider focoHojeSegInicial={focoHojeSeg}>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   AlertTriangle,
@@ -12,6 +12,7 @@ import {
   Target,
 } from "lucide-react";
 import type { BossAlvo, DiaTicker } from "@/lib/questly/dashboard-data";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 
 type BossSiegeMeterProps = {
   bossAlvo: BossAlvo | null;
@@ -31,6 +32,8 @@ export function BossSiegeMeter({
   missoesPendentesIds,
 }: BossSiegeMeterProps) {
   const router = useRouter();
+  // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
+  const origem = usePathname();
 
   if (!hasSubjects) {
     return (
@@ -56,7 +59,7 @@ export function BossSiegeMeter({
 
   const handleHojeClick = () => {
     if (missoesPendentesIds.length === 1) {
-      router.push(`/questao?missao=${missoesPendentesIds[0]}`);
+      router.push(hrefQuestao(missoesPendentesIds[0], origem));
     } else if (missoesPendentesIds.length > 1) {
       document.getElementById("missoes-do-dia")?.scrollIntoView({ block: "start", behavior: "smooth" });
     }

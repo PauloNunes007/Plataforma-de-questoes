@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { carregarDadosDashboard, XP_POR_NIVEL } from "@/lib/questly/dashboard-data";
+import {
+  carregarDadosDashboard,
+  carregarPerfilDashboard,
+  XP_POR_NIVEL,
+} from "@/lib/questly/dashboard-data";
 import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
 import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
@@ -22,10 +26,15 @@ export default async function DashboardPage() {
   // deveria disparar, mas o TypeScript exige o narrowing.
   if (!user) return null;
 
-  const dados = await carregarDadosDashboard(supabase, user);
-  const [retomar, hero, atalhoSimulados] = await Promise.all([
+  // O hero depende só do perfil, não do dashboard inteiro — lendo o perfil
+  // aqui, uma vez, as quatro cargas rodam de fato em paralelo. Antes, `hero`
+  // estava dentro de um Promise.all que só COMEÇAVA depois de
+  // carregarDadosDashboard() inteiro (missões, projeção, liga, calendário).
+  const perfil = await carregarPerfilDashboard(supabase, user.id);
+  const [dados, retomar, hero, atalhoSimulados] = await Promise.all([
+    carregarDadosDashboard(supabase, user, perfil),
     carregarRetomar(supabase, user.id),
-    carregarHeroDashboard(supabase, user, dados.profile),
+    carregarHeroDashboard(supabase, user, perfil),
     carregarAtalhoSimulados(supabase, user),
   ]);
 

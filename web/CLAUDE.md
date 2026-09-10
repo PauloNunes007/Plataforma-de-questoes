@@ -212,6 +212,84 @@ migração `supabase_seguranca_hardening.sql` (documentada no root `CLAUDE.md`).
   assinante, a causa é a migração do Pro não ter sido rodada (a query do layout
   falha e `ehPro` cai pra false).
 
+## Latência de navegação — a regra das "ondas" (repasse 2026-09-10)
+
+Trocar de tela levava segundos (o caso mais visível: sair de uma questão e voltar
+pra home). A causa não era render nem bundle: era **cascata de queries**. Cada
+`await supabase...` num Server Component é um round-trip; enfileirados, somam.
+`carregarDadosDashboard` sozinha tinha ~16 em série, e a home chegava a ~18.
+
+**Regra ao mexer em qualquer `lib/**/​*-data.ts`:** dentro de uma função de
+carga, só pode existir espera em série quando a query B *precisa do resultado*
+de A. Tudo mais entra num `Promise.all`. A home hoje tem três ondas
+(perfil+disciplinas → missões do dia → todo o resto), e o `page.tsx` roda as
+quatro cargas (dashboard, retomar, hero, simulados) de fato em paralelo — pra
+isso o perfil é lido **uma vez** na página e repassado via `profilePrefetch`,
+porque o hero dependia só dele mas esperava o dashboard inteiro.
+
+Três leituras foram **fundidas** em vez de paralelizadas, porque eram recortes
+do mesmo conjunto — vale o mesmo reflexo antes de adicionar query nova:
+
+- `missions` (ticker de dias + XP da semana) → uma query pela janela mais antiga;
+- `daily_logs` (heatmap de 10 dias + calendário do mês + recorde de streak) → uma
+  query só; a tabela tem uma linha por dia estudado, cabe inteira em memória;
+- comparativo semanal: puxava `xp_semana` de **todos os perfis da base** pra
+  contar quantos estavam na frente — virou dois `count` com `head: true`
+  (O(índice)). Essa era a única que piorava conforme o app crescesse.
+
+`questlyGerarMissoesDoDia` ganhou um 4º parâmetro `subjectsPrefetch` pelo mesmo
+motivo, lê grade+missões-de-hoje em paralelo, e gera as missões das várias
+disciplinas do dia concorrentemente (antes era um `for await`, pagando a cadeia
+inteira por disciplina).
+
+**Middleware:** `proxy.ts` roda em todo request — inclusive nos payloads RSC de
+cada navegação interna e nos prefetch do `<Link>`. `lib/supabase/middleware.ts`
+usa `auth.getClaims()`, não `getUser()`: o projeto assina o JWT com chave
+assimétrica (ES256, JWKS público), então a assinatura é verificada localmente
+via WebCrypto em vez de custar uma chamada ao `/auth/v1/user`. Ele continua
+chamando `getSession()` por dentro, então a renovação de cookie segue igual, e
+cai sozinho no `getUser()` se um dia a chave voltar a ser simétrica. **Não
+trocar de volta por "getUser é o recomendado"** — o recomendado é não confiar no
+cookie sem verificar, e `getClaims` verifica.
+
+## Voltar pra onde veio (`lib/questao/navegacao.ts`)
+
+`/questao` é alcançada por seis caminhos (home, trilha, listas de questões,
+prática livre, revisão de simulado e o próprio desafio de recuperação), e o "X"
+mandava todo mundo pro `/dashboard` — quem estava percorrendo uma lista perdia o
+lugar a cada questão fechada.
+
+O destino de volta viaja **na URL** (`/questao?missao=X&de=/questoes/listas/...`),
+não em estado de cliente: assim sobrevive a refresh e continua deep-linkable.
+
+- quem **abre** a missão usa `hrefQuestao(missaoId, usePathname())`;
+- quem **recebe** usa `origemSegura(params.de)` — que rejeita `//host` e
+  `https://…` (senão é open redirect, o parâmetro é público) e cai em
+  `/dashboard`;
+- o rótulo do botão vem de `rotuloOrigem(href)` ("Voltar pras listas"), porque
+  confirmar o destino antes do clique é metade da correção.
+
+Missão encadeada (o desafio de recuperação) **herda** a origem — encadear não
+pode ir apagando o caminho de volta.
+
+## Home: o painel de ação colorido
+
+A consolidação anterior transformou o "continuar de onde parou" — que era um
+painel inteiro na cor da disciplina — num card branco com um botão colorido, e a
+home perdeu o ponto de fixação. A cor voltou no `FocoHojeCard`: o topo do cartão
+é uma **superfície escura na cor da disciplina** (`corDaDisciplina().gradienteProfundo`),
+com o anel do dia em vidro por cima, e o rodapé neutro segue o tema.
+
+Duas coisas que não devem ser desfeitas sem remedir:
+
+- o painel é escuro **nos dois temas** — é uma capa, não um card que segue o
+  canvas; por isso usa hex literal, já que os tokens de marca invertem no escuro
+  e quebrariam o texto branco;
+- `gradienteProfundo`/`profundo` existem porque os tons claros da paleta (o
+  laranja `#f0a23f`) davam ~2,1:1 com texto branco. Escurecidos por fator fixo,
+  **os oito tons passam AA** (mínimo medido 5,35:1 no painel e 6,85:1 pro tom
+  usado como texto sobre branco no CTA).
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign is the one deliberate exception).

@@ -10,7 +10,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -42,6 +42,7 @@ import { CLASSE_TEXTO_STATUS, CartaoGrafico } from "./graficos/base";
 import { BarrasDesempenho } from "./graficos/barras-desempenho";
 import { RitmoProva } from "./graficos/ritmo-prova";
 import { GabaritoSimulado } from "./gabarito-simulado";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 
 /** Comparação com o próprio histórico — calculada na page, não aqui. */
 export type ContextoResultado = {
@@ -324,6 +325,8 @@ function CartaoDestaque({
  */
 function BotaoTreinarErros({ topicIds }: { topicIds: string[] }) {
   const router = useRouter();
+  // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
+  const origem = usePathname();
   const [pendente, iniciar] = useTransition();
   const [erro, setErro] = useState(false);
 
@@ -336,7 +339,7 @@ function BotaoTreinarErros({ topicIds }: { topicIds: string[] }) {
           iniciar(async () => {
             setErro(false);
             const { missaoId } = await treinarTopicosDoSimuladoAction({ topicIds, quantidade: 10 });
-            if (missaoId) router.push(`/questao?missao=${missaoId}`);
+            if (missaoId) router.push(hrefQuestao(missaoId, origem));
             else setErro(true);
           })
         }

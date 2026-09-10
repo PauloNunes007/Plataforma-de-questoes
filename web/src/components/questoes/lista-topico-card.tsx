@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { FileText, Play, RotateCcw, ScrollText } from "lucide-react";
 import type { TopicoPratica } from "@/lib/disciplinas/disciplinas-data";
 import { iniciarPraticaLivreAction } from "@/lib/disciplinas/actions";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 
 // Card vertical (grid horizontal de várias colunas) — pedido explícito do
 // usuário pra bater com o print de referência: faixa colorida no topo,
@@ -35,6 +36,8 @@ export function ListaTopicoCard({
   index: number;
 }) {
   const router = useRouter();
+  // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
+  const origem = usePathname();
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
   const [corA, corB] = CORES[index % CORES.length];
@@ -50,7 +53,7 @@ export function ListaTopicoCard({
       quantidade: "todas",
     });
     if (missaoId) {
-      router.push(`/questao?missao=${missaoId}`);
+      router.push(hrefQuestao(missaoId, origem));
       return;
     }
     setErro(true);

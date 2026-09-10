@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { Library } from "lucide-react";
 import type { DashboardData } from "@/lib/questly/dashboard-data";
 import type { HeroDados } from "@/lib/dashboard/hero-data";
 import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
@@ -49,7 +51,19 @@ export function DashboardView({
 
   return (
     <>
-      <DashboardTabs aba={aba} onChange={setAba} />
+      {/* A barra de abas ganhou respiro próprio (antes o espaçamento morava
+          dentro do componente das abas, que não é quem decide o ritmo da
+          página) e divide a linha com um atalho pra prática livre. */}
+      <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
+        <DashboardTabs aba={aba} onChange={setAba} />
+        <Link
+          href="/questoes"
+          className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-border bg-card px-4 text-[13px] font-semibold text-muted-foreground shadow-xs transition-colors hover:border-questly-green/45 hover:text-foreground"
+        >
+          <Library size={14} strokeWidth={2.1} />
+          Banco de questões
+        </Link>
+      </div>
 
       {aba === "hoje" ? (
         <div className="flex flex-col gap-5">

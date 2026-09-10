@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { contagemQuestoes } from "@/lib/questly/shared";
@@ -17,11 +17,14 @@ import { DisciplinaPicker } from "./disciplina-picker";
 import { TopicoPicker } from "./topico-picker";
 import { FiltrosPratica } from "./filtros-pratica";
 import { ResumoPratica } from "./resumo-pratica";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 
 const LABEL_DIFICULDADE: Record<string, string> = { facil: "Fácil", medio: "Médio", dificil: "Difícil" };
 
 export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[] }) {
   const router = useRouter();
+  // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
+  const origem = usePathname();
 
   const [materiaId, setMateriaId] = useState<string | null>(null);
   const [topicos, setTopicos] = useState<TopicoPratica[]>([]);
@@ -97,7 +100,7 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
       quantidade,
     });
     if (missaoId) {
-      router.push(`/questao?missao=${missaoId}`);
+      router.push(hrefQuestao(missaoId, origem));
       return;
     }
     setErro("Não foi possível preparar sua prática. Tente outro filtro.");
