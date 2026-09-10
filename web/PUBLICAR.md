@@ -130,11 +130,19 @@ o carteiro. Custo: **R$ 0,00** (Brevo grátis = 300 emails/dia, sem cartão).
 4. No Vercel, preencha `BREVO_API_KEY`, `EMAIL_REMETENTE` (o endereço do passo 2)
    e `EMAIL_REMETENTE_NOME`.
 
-> 📬 **Entregabilidade sem domínio próprio.** Mandando de um `@gmail.com` pelos
-> servidores da Brevo, o SPF/DKIM não bate com o gmail.com e uma parte dos emails
-> cai em spam. Funciona, mas quando puder, registre um domínio (`.com.br` sai
-> ~R$40/ano no registro.br), autentique-o na Brevo (3 registros DNS) e troque
-> só o `EMAIL_REMETENTE` — **nenhum código muda**.
+> 📬 **Entregabilidade sem domínio próprio — leia antes de divulgar.** Mandando
+> de um `@gmail.com` pelos servidores da Brevo, o SPF do gmail.com não autoriza
+> a Brevo e o DKIM é assinado por ela, não pelo gmail.com: nenhum dos dois
+> alinha com o domínio do remetente, e a política DMARC do próprio gmail.com
+> manda quarentenar. Na prática, **para destinatários no Gmail o email cai em
+> spam de forma consistente** — não é "uma parte". Verificado em 2026-09-10.
+>
+> Nenhum ajuste de assunto, conteúdo ou template resolve (o nosso já é o
+> formato mais seguro possível: tabela, sem imagem, com versão texto). A única
+> correção real é domínio próprio (`.com.br` ~R$40/ano no registro.br),
+> autenticado na Brevo com 3 registros DNS; depois muda só o `EMAIL_REMETENTE`
+> — **nenhum código muda**. Enquanto isso não existe, conte com o aviso "olhe
+> a caixa de spam" que já está na tela de verificação.
 
 ### 4.2) Ligar o hook no Supabase
 
@@ -158,9 +166,14 @@ Ainda no Supabase:
 - **Authentication → Providers → Email → Email OTP Expiration**: baixe de
   86400s (24h) para **3600s (1 hora)**. O código de 6 dígitos tem 1 milhão de
   combinações e o `/verify` do Supabase aceita 30 tentativas por IP a cada 5
-  min; encurtar a validade reduz a janela de chute. (Se preferir ainda mais
-  aperto, dá pra subir o **Email OTP Length** pra 8 dígitos — mais seguro,
-  um pouco mais chato de digitar.)
+  min; encurtar a validade reduz a janela de chute.
+
+> ⚠️ **Não mexa no "Email OTP Length".** A tela de verificação renderiza um
+> número fixo de casas (`DIGITOS` em `components/auth/verificar-email-form.tsx`,
+> hoje **6**) e o servidor valida o mesmo tamanho em `verificarCodigoAction`.
+> Subir pra 8 no painel faz chegar um código que **não cabe no formulário** —
+> e nada acusa erro, o aluno só não consegue digitar. Se um dia quiser 8, mude
+> os dois lados juntos.
 
 ### 4.4) Testar
 
@@ -173,6 +186,45 @@ Se der erro no cadastro, o log da rota no Vercel (**Deployments → Functions �
 `/api/auth/email-hook`**) diz exatamente o quê: `401` = secret errado,
 `Brevo respondeu 401` = API key errada, `Brevo respondeu 400` = remetente não
 verificado.
+
+### 4.5) Se "não chega email" e NADA acusa erro
+
+Duas armadilhas fazem o fluxo falhar em silêncio — o Supabase devolve 200, a
+tela diz "confira seu email", e nada chega. Já custaram uma sessão inteira de
+debug; confira as duas antes de procurar em outro lugar.
+
+**a) O rate limit barra ANTES do hook.** Com "Emails sent per hour" ainda no
+padrão (2), o Supabase rejeita com `429 over_email_send_rate_limit` sem sequer
+chamar o hook — então **nenhuma requisição aparece nos logs do Vercel**, o que
+é indistinguível de "hook não configurado". Meia dúzia de testes de cadastro já
+queima a cota. É o passo 4.3; faça-o antes de testar.
+
+**b) A Brevo aceita e recusa depois.** Com o remetente não verificado, a API da
+Brevo devolve **2xx na hora** e só rejeita **assincronamente**
+(`Sending has been rejected because the sender you used ... is not valid`).
+Como `enviarEmail` só enxerga o 2xx, a rota responde 200 e a "falha fechada"
+não cobre esse caso. Sintoma lateral: o widget "300 restantes de 300" da Brevo
+não desce, porque nada foi enviado de fato.
+
+**Diagnóstico que não depende de painel.** Ponha `BREVO_API_KEY` no
+`web/.env.local` (já é gitignored) e consulte a API direto:
+
+```bash
+# Quais remetentes existem e se estão realmente verificados (active)
+curl -s -H "api-key: $BREVO_API_KEY" https://api.brevo.com/v3/senders
+
+# Todo envio tentado nas últimas 24h: requests / delivered / error + motivo
+curl -s -H "api-key: $BREVO_API_KEY" \
+  "https://api.brevo.com/v3/smtp/statistics/events?days=1&limit=30"
+```
+
+Essa segunda chamada é a fonte da verdade — tempo real, ao contrário do widget
+de uso do plano. `delivered` significa que chegou; `error` traz o motivo em
+texto claro.
+
+Um POST sem assinatura em `/api/auth/email-hook` também é um teste útil: `401`
+prova que o `SEND_EMAIL_HOOK_SECRET` está presente no Vercel (se faltasse,
+seria `500` com "Hook de email não configurado no servidor").
 
 ---
 
