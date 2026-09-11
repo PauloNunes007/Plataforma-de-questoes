@@ -1,0 +1,654 @@
+// Lote 3 de Fundamentos de Cálculo e Geometria — 92 questões de nível
+// universitário que levam a matéria de 58 para 150 questões no banco.
+//
+// Calibragem: ZERO questões `facil`. O banco de FCG estava povoado quase só de
+// aplicação direta de fórmula ("raio da circunferência x²+y²-6x+8y=0", "produto
+// escalar de (2,-1) e (3,4)"), o que não mede domínio nenhum. Aqui toda questão
+// exige pelo menos duas etapas encadeadas: estudo de sinal antes da inequação,
+// mudança de variável antes da exponencial, o ramo negativo que o logaritmo
+// esconde, projeção antes da componente ortogonal, produto misto com parâmetro,
+// reversas por produto vetorial.
+//
+// Fonte de estilo: as listas reais da disciplina (listas_questoes/FCG/*.pdf,
+// 2026.1) — usadas como referência de tipo e rigor de exercício, nunca copiadas:
+// os enunciados foram reescritos com outros números e convertidos para múltipla
+// escolha. Funções no estilo Stewart (Pré-cálculo); vetores e geometria
+// analítica no estilo Boulos & Camargo.
+//
+// Rode: node listas_questoes/gerado/scripts/fcg_lote3.mjs
+import { writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const R = String.raw;
+const MATERIA = "Fundamentos de Cálculo e Geometria";
+const LETRAS = ["a", "b", "c", "d", "e"];
+
+// A letra do gabarito vem de uma sequência pré-embaralhada e balanceada
+// (19/19/18/18/18 em 92 questões) em vez de ser escolhida à mão questão a
+// questão — escolher na mão já concentrou quase metade dos gabaritos numa letra.
+function sequenciaDeLetras(n) {
+  const base = [];
+  for (let i = 0; i < n; i++) base.push(LETRAS[i % 5]);
+  let s = 20260912;
+  const rnd = () => (s = (s * 1103515245 + 12345) % 2147483648) / 2147483648;
+  for (let i = base.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [base[i], base[j]] = [base[j], base[i]];
+  }
+  return base;
+}
+
+const brutas = [];
+// correta = texto da alternativa certa; distratores = as outras 4, em ordem.
+const q = (topico, subtopico, dificuldade, enunciado, correta, distratores, resolucao) =>
+  brutas.push({ topico, subtopico, dificuldade, enunciado, correta, distratores, resolucao });
+
+// ===========================================================================
+// 1. FUNÇÕES EM R
+// ===========================================================================
+q("Funções em R", "Domínio máximo com radical e logaritmo", "dificil",
+  R`Determine o domínio máximo de $f(x)=\dfrac{\sqrt{x^{2}-5x+6}}{\ln(4-x)}$.`,
+  R`$\left(-\infty,2\right]\cup\left(3,4\right)$`,
+  [R`$\left(-\infty,2\right]\cup\left[3,4\right)$`, R`$\left(-\infty,2\right)\cup\left(3,4\right)$`, R`$\left(-\infty,2\right]\cup\left(3,4\right]$`, R`$\left(-\infty,3\right)\cup\left(3,4\right)$`],
+  R`Três condições se acumulam. O radicando pede $x^{2}-5x+6=(x-2)(x-3)\geq0$, isto é $x\leq2$ ou $x\geq3$. O logaritmo pede $4-x>0$, ou seja $x<4$. E o denominador não pode zerar: $\ln(4-x)=0$ quando $4-x=1$, isto é $x=3$ — exatamente o extremo que o radical havia liberado. Interseccionando as três, sobra $\left(-\infty,2\right]\cup\left(3,4\right)$.`);
+
+q("Funções em R", "Inequação racional com duas frações", "dificil",
+  R`Resolva a inequação $\dfrac{1-x}{x}\leq\dfrac{x-3}{4-x}$.`,
+  R`$\left(-\infty,0\right)\cup\left[2,4\right)$`,
+  [R`$\left(-\infty,0\right]\cup\left[2,4\right)$`, R`$\left(-\infty,0\right)\cup\left(2,4\right)$`, R`$\left(0,2\right]\cup\left(4,+\infty\right)$`, R`$\left(-\infty,0\right)\cup\left[2,4\right]$`],
+  R`Nunca multiplique cruzado aqui: o sinal dos denominadores é desconhecido. Passe tudo para um lado sobre o denominador comum $x(4-x)$. O numerador fica $(1-x)(4-x)-x(x-3)=x^{2}-5x+4-x^{2}+3x=-2(x-2)$, de modo que a inequação vira $\dfrac{-2(x-2)}{x(4-x)}\leq0$, ou ainda $\dfrac{x-2}{x(x-4)}\leq0$. O quadro de sinais com os pontos $0$, $2$ e $4$ dá negativo em $\left(-\infty,0\right)$ e em $\left(2,4\right)$; $x=2$ entra por anular a expressão, e $0$ e $4$ saem por anularem o denominador.`);
+
+q("Funções em R", "Inequação com três módulos", "dificil",
+  R`Resolva a inequação $\left|x-1\right|+\left|x+2\right|\leq2\left|x\right|$.`,
+  R`$\left(-\infty,-\dfrac{3}{2}\right]$`,
+  [R`$\left(-\infty,-2\right]$`, R`$\left(-\infty,-\dfrac{1}{2}\right]$`, R`$\left[-\dfrac{3}{2},+\infty\right)$`, R`$\left[-2,-\dfrac{3}{2}\right]$`],
+  R`Os pontos de quebra são $-2$, $0$ e $1$. Em $x<-2$ a inequação vira $-2x-1\leq-2x$, isto é $-1\leq0$, verdadeira sempre. Em $-2\leq x<0$ ela vira $3\leq-2x$, ou $x\leq-\dfrac{3}{2}$. Em $0\leq x<1$ vira $3\leq2x$, incompatível com $x<1$. Em $x\geq1$ vira $2x+1\leq2x$, falsa. Reunindo os trechos aproveitáveis, a solução é $\left(-\infty,-\dfrac{3}{2}\right]$.`);
+
+q("Funções em R", "Equação modular quadrática", "medio",
+  R`Determine o número de soluções reais da equação $\left|x^{2}-4x\right|=3$.`,
+  R`$4$`,
+  [R`$2$`, R`$3$`, R`$1$`, R`$0$`],
+  R`A equação se desdobra em duas. De $x^{2}-4x=3$ vem $x^{2}-4x-3=0$, com discriminante $28>0$: as raízes $2\pm\sqrt{7}$ satisfazem $x^{2}-4x\geq0$, como o módulo exige. De $x^{2}-4x=-3$ vem $x^{2}-4x+3=0$, de raízes $1$ e $3$, ambas com $x^{2}-4x=-3\leq0$, também compatíveis. Nenhuma raiz é descartada e nenhuma se repete: são $4$ soluções.`);
+
+q("Funções em R", "Estudo de sinal no lançamento vertical", "medio",
+  R`Uma bola lançada verticalmente para cima a partir do solo tem altura $y=-5t^{2}+20t$, com $y$ em metros e $t$ em segundos. Um observador está numa janela situada a $15$ m do solo. Determine o intervalo de tempo decorrido entre as duas passagens da bola pela altura da janela.`,
+  R`$2$ s`,
+  [R`$1$ s`, R`$3$ s`, R`$\dfrac{3}{2}$ s`, R`$4$ s`],
+  R`Igualando a altura à da janela, $-5t^{2}+20t=15$, isto é $t^{2}-4t+3=0$, de raízes $t=1$ e $t=3$ — a subida e a descida. O intervalo pedido é $3-1=2$ s. A altura máxima é $20$ m, no vértice $t=2$, de modo que a janela a $15$ m é mesmo cruzada duas vezes.`);
+
+q("Funções em R", "Raízes de polinômio cúbico e relações de Girard", "dificil",
+  R`Determine a soma dos quadrados das raízes reais de $2x^{3}-3x^{2}-11x+6=0$.`,
+  R`$\dfrac{53}{4}$`,
+  [R`$\dfrac{45}{4}$`, R`$\dfrac{61}{4}$`, R`$\dfrac{13}{4}$`, R`$\dfrac{49}{4}$`],
+  R`Pelo teste das raízes racionais, $x=3$ anula o polinômio, e a divisão dá $2x^{3}-3x^{2}-11x+6=(x-3)\left(2x^{2}+3x-2\right)=(x-3)(2x-1)(x+2)$, de raízes $3$, $\dfrac{1}{2}$ e $-2$. Sem fatorar, o mesmo sai de Girard: $\sum x_{i}=\dfrac{3}{2}$ e $\sum_{i<j}x_{i}x_{j}=-\dfrac{11}{2}$, logo $\sum x_{i}^{2}=\left(\dfrac{3}{2}\right)^{2}-2\left(-\dfrac{11}{2}\right)=\dfrac{53}{4}$.`);
+
+q("Funções em R", "Divisibilidade de polinômios", "medio",
+  R`O polinômio $p(x)=x^{3}+ax^{2}+bx+6$ é divisível por $x^{2}+x-2$. Determine o produto $ab$.`,
+  R`$10$`,
+  [R`$-10$`, R`$7$`, R`$-7$`, R`$6$`],
+  R`Como $x^{2}+x-2=(x-1)(x+2)$, a divisibilidade equivale a $p(1)=0$ e $p(-2)=0$. A primeira dá $1+a+b+6=0$, isto é $a+b=-7$; a segunda dá $-8+4a-2b+6=0$, isto é $2a-b=1$. Somando as duas, $3a=-6$, logo $a=-2$ e $b=-5$, e $ab=10$.`);
+
+q("Funções em R", "Equação exponencial por mudança de variável", "dificil",
+  R`Determine a soma das soluções reais de $2^{2x+1}-9\cdot2^{x}+4=0$.`,
+  R`$1$`,
+  [R`$2$`, R`$-1$`, R`$3$`, R`$0$`],
+  R`Escreva $2^{2x+1}=2\left(2^{x}\right)^{2}$ e ponha $u=2^{x}>0$: a equação vira $2u^{2}-9u+4=0$, de raízes $u=4$ e $u=\dfrac{1}{2}$, ambas positivas e portanto admissíveis. Voltando, $2^{x}=4$ dá $x=2$ e $2^{x}=\dfrac{1}{2}$ dá $x=-1$. A soma é $1$.`);
+
+q("Funções em R", "Inequação exponencial com mudança de variável", "dificil",
+  R`Resolva a inequação $\left(\dfrac{1}{9}\right)^{x}-4\left(\dfrac{1}{3}\right)^{x}+3\leq0$.`,
+  R`$\left[-1,0\right]$`,
+  [R`$\left[0,1\right]$`, R`$\left[-1,1\right]$`, R`$\left[-3,-1\right]$`, R`$\left[0,3\right]$`],
+  R`Com $u=\left(\dfrac{1}{3}\right)^{x}=3^{-x}>0$, o primeiro termo é $u^{2}$ e a inequação vira $u^{2}-4u+3\leq0$, isto é $1\leq u\leq3$. Como $3^{-x}$ é decrescente em $x$, de $3^{0}\leq3^{-x}\leq3^{1}$ vem $0\leq-x\leq1$, ou seja $-1\leq x\leq0$.`);
+
+q("Funções em R", "Equação logarítmica com bases diferentes", "dificil",
+  R`Determine a soma das soluções reais de $\log_{2}(x+2)-\log_{4}\left(x^{2}\right)=1$.`,
+  R`$\dfrac{4}{3}$`,
+  [R`$2$`, R`$-\dfrac{2}{3}$`, R`$\dfrac{2}{3}$`, R`$\dfrac{8}{3}$`],
+  R`O domínio é $x>-2$ com $x\neq0$ — note que $x$ negativo é permitido, pois o logaritmo incide sobre $x^{2}$. Mudando a base, $\log_{4}\left(x^{2}\right)=\dfrac{\log_{2}x^{2}}{2}=\log_{2}\left|x\right|$, e a equação vira $\log_{2}\dfrac{x+2}{\left|x\right|}=1$, isto é $x+2=2\left|x\right|$. Para $x>0$ isso dá $x=2$; para $-2<x<0$ dá $x+2=-2x$, ou $x=-\dfrac{2}{3}$. Quem esquece o ramo negativo perde metade da resposta: a soma é $2-\dfrac{2}{3}=\dfrac{4}{3}$.`);
+
+q("Funções em R", "Equação trigonométrica redutível a quadrática", "dificil",
+  R`Determine a soma de todas as soluções de $2\cos^{2}x=1+\operatorname{sen}x$ no intervalo $\left[0,2\pi\right)$.`,
+  R`$\dfrac{5\pi}{2}$`,
+  [R`$\dfrac{3\pi}{2}$`, R`$2\pi$`, R`$\dfrac{7\pi}{2}$`, R`$3\pi$`],
+  R`Usando $\cos^{2}x=1-\operatorname{sen}^{2}x$, a equação vira $2\operatorname{sen}^{2}x+\operatorname{sen}x-1=0$, de raízes $\operatorname{sen}x=\dfrac{1}{2}$ e $\operatorname{sen}x=-1$. No intervalo dado, a primeira fornece $x=\dfrac{\pi}{6}$ e $x=\dfrac{5\pi}{6}$; a segunda, $x=\dfrac{3\pi}{2}$. A soma é $\dfrac{\pi}{6}+\dfrac{5\pi}{6}+\dfrac{3\pi}{2}=\dfrac{5\pi}{2}$.`);
+
+q("Funções em R", "Identidade trigonométrica com soma conhecida", "dificil",
+  R`Sabendo que $\operatorname{sen}x+\cos x=\dfrac{1}{5}$, com $x\in\left(0,\pi\right)$, calcule $\operatorname{sen}x-\cos x$.`,
+  R`$\dfrac{7}{5}$`,
+  [R`$-\dfrac{7}{5}$`, R`$\dfrac{5}{7}$`, R`$\dfrac{24}{25}$`, R`$\dfrac{49}{25}$`],
+  R`Elevando ao quadrado, $1+2\operatorname{sen}x\cos x=\dfrac{1}{25}$, logo $2\operatorname{sen}x\cos x=-\dfrac{24}{25}$. Então $\left(\operatorname{sen}x-\cos x\right)^{2}=1-2\operatorname{sen}x\cos x=\dfrac{49}{25}$, de modo que a diferença vale $\pm\dfrac{7}{5}$. O sinal se decide pelo quadrante: em $\left(0,\pi\right)$ tem-se $\operatorname{sen}x>0$, e o produto negativo força $\cos x<0$, donde a diferença é positiva, $\dfrac{7}{5}$.`);
+
+q("Funções em R", "Período fundamental de soma trigonométrica", "dificil",
+  R`Determine o período fundamental de $f(x)=\operatorname{sen}(2x)\cos(2x)+\cos^{2}(3x)$.`,
+  R`$\pi$`,
+  [R`$\dfrac{\pi}{2}$`, R`$\dfrac{\pi}{3}$`, R`$2\pi$`, R`$\dfrac{\pi}{6}$`],
+  R`Linearize as duas parcelas: $\operatorname{sen}(2x)\cos(2x)=\dfrac{\operatorname{sen}(4x)}{2}$, de período $\dfrac{\pi}{2}$, e $\cos^{2}(3x)=\dfrac{1+\cos(6x)}{2}$, de período $\dfrac{\pi}{3}$. O período da soma é o menor múltiplo comum dos dois: $\pi=2\cdot\dfrac{\pi}{2}=3\cdot\dfrac{\pi}{3}$.`);
+
+q("Funções em R", "Iteração de função homográfica", "medio",
+  R`Seja $f(x)=\dfrac{x}{x-1}$, definida para $x\neq1$. Calcule $\left(f\circ f\circ f\right)(3)$.`,
+  R`$\dfrac{3}{2}$`,
+  [R`$3$`, R`$\dfrac{2}{3}$`, R`$\dfrac{1}{2}$`, R`$\dfrac{5}{2}$`],
+  R`Vale a pena calcular $f\circ f$ primeiro: $f\left(\dfrac{x}{x-1}\right)=\dfrac{\frac{x}{x-1}}{\frac{x}{x-1}-1}=\dfrac{x}{x-(x-1)}=x$. Ou seja, $f$ é uma involução, e portanto $f\circ f\circ f=f$. Basta então $f(3)=\dfrac{3}{2}$.`);
+
+q("Funções em R", "Domínio de função composta", "dificil",
+  R`Sejam $f(x)=\sqrt{x-1}$ e $g(x)=x^{2}-4x$. Determine o domínio máximo de $f\circ g$.`,
+  R`$\left(-\infty,2-\sqrt{5}\right]\cup\left[2+\sqrt{5},+\infty\right)$`,
+  [R`$\left[2-\sqrt{5},2+\sqrt{5}\right]$`, R`$\left(-\infty,2-\sqrt{5}\right)\cup\left(2+\sqrt{5},+\infty\right)$`, R`$\left(-\infty,0\right]\cup\left[4,+\infty\right)$`, R`$\left[2-\sqrt{3},2+\sqrt{3}\right]$`],
+  R`Tem-se $\left(f\circ g\right)(x)=\sqrt{x^{2}-4x-1}$, de modo que a condição é $x^{2}-4x-1\geq0$. As raízes do trinômio são $x=2\pm\sqrt{5}$ e a parábola tem concavidade para cima, logo ele é não negativo fora do intervalo entre as raízes, com os extremos incluídos.`);
+
+q("Funções em R", "Equação em função definida por partes", "medio",
+  R`Seja $f(x)=x^{2}-3$ para $x<2$ e $f(x)=2x-3$ para $x\geq2$. Determine a soma de todas as soluções reais de $f(x)=1$.`,
+  R`$0$`,
+  [R`$2$`, R`$4$`, R`$-2$`, R`$-4$`],
+  R`Cada ramo precisa ser resolvido dentro do seu próprio domínio. No ramo $x<2$, de $x^{2}-3=1$ vem $x=\pm2$, e só $x=-2$ é admissível. No ramo $x\geq2$, de $2x-3=1$ vem $x=2$, que é admissível. A soma das soluções é $-2+2=0$.`);
+
+q("Funções em R", "Decaimento exponencial e meia-vida", "dificil",
+  R`O plutônio decai de forma que sua massa cai à metade a cada $86$ anos. Determine a fração da massa inicial que resta após $215$ anos.`,
+  R`$\dfrac{\sqrt{2}}{8}$`,
+  [R`$\dfrac{\sqrt{2}}{4}$`, R`$\dfrac{\sqrt{2}}{16}$`, R`$\dfrac{1}{8}$`, R`$\dfrac{3\sqrt{2}}{8}$`],
+  R`O modelo é $m(t)=m_{0}\left(\dfrac{1}{2}\right)^{t/86}$. Como $\dfrac{215}{86}=\dfrac{5}{2}$, a fração restante é $2^{-5/2}=\dfrac{1}{4\sqrt{2}}=\dfrac{\sqrt{2}}{8}$. O expoente fracionário é o ponto da questão: em $215$ anos cabem duas meias-vidas e meia, não duas nem três.`);
+
+q("Funções em R", "Inequação com radical", "dificil",
+  R`Resolva a inequação $\sqrt{x+5}>x-1$.`,
+  R`$\left[-5,4\right)$`,
+  [R`$\left(-5,4\right)$`, R`$\left[-5,4\right]$`, R`$\left[-1,4\right)$`, R`$\left[4,+\infty\right)$`],
+  R`O domínio é $x\geq-5$. Se $x<1$, o lado direito é negativo e a raiz, não negativa: a desigualdade vale automaticamente em $\left[-5,1\right)$. Se $x\geq1$, os dois lados são não negativos e pode-se elevar ao quadrado: $x+5>x^{2}-2x+1$, isto é $x^{2}-3x-4<0$, ou $-1<x<4$; cruzando com $x\geq1$, fica $\left[1,4\right)$. A união dos dois casos é $\left[-5,4\right)$.`);
+
+q("Funções em R", "Setor circular com perímetro e área dados", "dificil",
+  R`Um setor circular tem perímetro $24$ cm e área $32$ cm². Determine o maior valor possível para o raio.`,
+  R`$8$ cm`,
+  [R`$4$ cm`, R`$6$ cm`, R`$12$ cm`, R`$16$ cm`],
+  R`Com raio $r$ e ângulo central $\theta$ em radianos, o arco mede $r\theta$, de modo que o perímetro é $2r+r\theta=24$ e a área, $\dfrac{r^{2}\theta}{2}=32$. Da área vem $r\theta=\dfrac{64}{r}$; substituindo no perímetro, $2r+\dfrac{64}{r}=24$, isto é $r^{2}-12r+32=0$, de raízes $r=4$ e $r=8$. Ambas são geometricamente válidas (dão $\theta=4$ e $\theta=1$ radianos), e a maior é $8$ cm.`);
+
+// ===========================================================================
+// 2. FUNÇÃO INVERSA
+// ===========================================================================
+q("Função Inversa", "Inversa de função homográfica", "medio",
+  R`Seja $f(x)=\dfrac{2x-3}{x+1}$, definida para $x\neq-1$. Calcule $f^{-1}(3)$.`,
+  R`$-6$`,
+  [R`$-3$`, R`$6$`, R`$3$`, R`$-\dfrac{1}{6}$`],
+  R`Calcular $f^{-1}(3)$ é achar o $x$ com $f(x)=3$, sem precisar inverter a função inteira: $\dfrac{2x-3}{x+1}=3$ dá $2x-3=3x+3$, logo $x=-6$. O valor é admissível porque $-6\neq-1$. Invertendo por completo daria $f^{-1}(y)=\dfrac{y+3}{2-y}$, que em $y=3$ devolve o mesmo $-6$.`);
+
+q("Função Inversa", "Inversa de uma composta", "medio",
+  R`Sejam $f(x)=2x+1$ e $g(x)=x^{3}-1$. Determine $\left(g\circ f\right)^{-1}(7)$.`,
+  R`$\dfrac{1}{2}$`,
+  [R`$\dfrac{3}{2}$`, R`$1$`, R`$-\dfrac{1}{2}$`, R`$\dfrac{1}{4}$`],
+  R`Tem-se $\left(g\circ f\right)(x)=(2x+1)^{3}-1$. Resolver $\left(g\circ f\right)(x)=7$ equivale a $(2x+1)^{3}=8$, isto é $2x+1=2$ e $x=\dfrac{1}{2}$. O mesmo sai de $\left(g\circ f\right)^{-1}=f^{-1}\circ g^{-1}$: $g^{-1}(7)=2$ e $f^{-1}(2)=\dfrac{1}{2}$ — note a inversão da ordem.`);
+
+q("Função Inversa", "Restrição de domínio para inverter", "medio",
+  R`Seja $f(x)=x^{2}-6x+5$, restrita ao intervalo $\left[3,+\infty\right)$, onde é injetora. Calcule $f^{-1}(0)+f^{-1}(12)$.`,
+  R`$12$`,
+  [R`$8$`, R`$10$`, R`$14$`, R`$6$`],
+  R`Completando o quadrado, $f(x)=(x-3)^{2}-4$, de modo que em $\left[3,+\infty\right)$ vale $f^{-1}(y)=3+\sqrt{y+4}$ — é o ramo com a raiz positiva que a restrição seleciona. Então $f^{-1}(0)=3+2=5$ e $f^{-1}(12)=3+4=7$, cuja soma é $12$. As outras raízes, $1$ e $-1$, caem fora do domínio restrito.`);
+
+q("Função Inversa", "Inversa de função logarítmica", "medio",
+  R`Seja $f(x)=\log_{3}(2x-1)$, definida para $x>\dfrac{1}{2}$. Calcule $f^{-1}(2)+f^{-1}(0)$.`,
+  R`$6$`,
+  [R`$5$`, R`$7$`, R`$4$`, R`$11$`],
+  R`Isolando $x$ em $y=\log_{3}(2x-1)$, vem $3^{y}=2x-1$ e $f^{-1}(y)=\dfrac{3^{y}+1}{2}$. Logo $f^{-1}(2)=\dfrac{9+1}{2}=5$ e $f^{-1}(0)=\dfrac{1+1}{2}=1$, e a soma é $6$.`);
+
+q("Função Inversa", "Equação com seno hiperbólico", "dificil",
+  R`Sabendo que $\operatorname{senh}x=\dfrac{e^{x}-e^{-x}}{2}$, resolva a equação $\operatorname{senh}x=\dfrac{3}{4}$.`,
+  R`$\ln 2$`,
+  [R`$\ln 3$`, R`$\ln\dfrac{3}{2}$`, R`$\ln 4$`, R`$\dfrac{\ln 2}{2}$`],
+  R`Pondo $u=e^{x}>0$, a equação vira $\dfrac{u-\frac{1}{u}}{2}=\dfrac{3}{4}$, isto é $2u^{2}-3u-2=0$, de raízes $u=2$ e $u=-\dfrac{1}{2}$. A raiz negativa é descartada porque $e^{x}>0$, e resta $e^{x}=2$, ou $x=\ln 2$.`);
+
+q("Função Inversa", "Identidade hiperbólica de arco duplo", "dificil",
+  R`Sabendo que $\cosh x=\dfrac{5}{4}$ com $x>0$, calcule $\operatorname{senh}(2x)$.`,
+  R`$\dfrac{15}{8}$`,
+  [R`$\dfrac{15}{16}$`, R`$\dfrac{3}{4}$`, R`$\dfrac{25}{16}$`, R`$\dfrac{7}{8}$`],
+  R`Da identidade fundamental $\cosh^{2}x-\operatorname{senh}^{2}x=1$ vem $\operatorname{senh}^{2}x=\dfrac{25}{16}-1=\dfrac{9}{16}$; como $x>0$, o seno hiperbólico é positivo e vale $\dfrac{3}{4}$. Usando $\operatorname{senh}(2x)=2\operatorname{senh}x\cosh x$, o resultado é $2\cdot\dfrac{3}{4}\cdot\dfrac{5}{4}=\dfrac{15}{8}$.`);
+
+q("Função Inversa", "Cosseno do arco duplo de um arco-seno", "medio",
+  R`Calcule $\cos\left(2\arcsin\dfrac{3}{5}\right)$.`,
+  R`$\dfrac{7}{25}$`,
+  [R`$\dfrac{24}{25}$`, R`$-\dfrac{7}{25}$`, R`$\dfrac{16}{25}$`, R`$\dfrac{18}{25}$`],
+  R`Chame $\theta=\arcsin\dfrac{3}{5}$, de modo que $\operatorname{sen}\theta=\dfrac{3}{5}$. Pela fórmula do arco duplo na forma que só depende do seno, $\cos 2\theta=1-2\operatorname{sen}^{2}\theta=1-2\cdot\dfrac{9}{25}=\dfrac{7}{25}$.`);
+
+q("Função Inversa", "Soma de dois arcos-tangentes", "dificil",
+  R`Calcule $\operatorname{arctg}\dfrac{1}{2}+\operatorname{arctg}\dfrac{1}{3}$.`,
+  R`$\dfrac{\pi}{4}$`,
+  [R`$\dfrac{\pi}{3}$`, R`$\dfrac{\pi}{6}$`, R`$\dfrac{5\pi}{12}$`, R`$\dfrac{\pi}{2}$`],
+  R`Sejam $\alpha$ e $\beta$ os dois arcos, ambos em $\left(0,\dfrac{\pi}{2}\right)$. Então $\operatorname{tg}(\alpha+\beta)=\dfrac{\frac{1}{2}+\frac{1}{3}}{1-\frac{1}{2}\cdot\frac{1}{3}}=\dfrac{\frac{5}{6}}{\frac{5}{6}}=1$. Como a soma está em $\left(0,\pi\right)$ e sua tangente é $1$, ela só pode ser $\dfrac{\pi}{4}$.`);
+
+q("Função Inversa", "Tangente da soma de arcos inversos", "dificil",
+  R`Calcule $\operatorname{tg}\left(\arcsin\dfrac{4}{5}+\operatorname{arctg}\dfrac{5}{12}\right)$.`,
+  R`$\dfrac{63}{16}$`,
+  [R`$\dfrac{16}{63}$`, R`$\dfrac{33}{56}$`, R`$\dfrac{56}{33}$`, R`$\dfrac{21}{16}$`],
+  R`Se $\alpha=\arcsin\dfrac{4}{5}$, o triângulo $3$–$4$–$5$ dá $\cos\alpha=\dfrac{3}{5}$ e $\operatorname{tg}\alpha=\dfrac{4}{3}$. Com $\operatorname{tg}\beta=\dfrac{5}{12}$, a fórmula da tangente da soma fornece $\dfrac{\frac{4}{3}+\frac{5}{12}}{1-\frac{4}{3}\cdot\frac{5}{12}}=\dfrac{\frac{21}{12}}{\frac{4}{9}}=\dfrac{63}{16}$.`);
+
+q("Função Inversa", "Domínio de arco-seno composto", "medio",
+  R`Determine o domínio máximo de $f(x)=\arcsin\left(\dfrac{x-1}{2}\right)$.`,
+  R`$\left[-1,3\right]$`,
+  [R`$\left[-2,2\right]$`, R`$\left[-1,1\right]$`, R`$\left[0,2\right]$`, R`$\left[-3,1\right]$`],
+  R`O arco-seno só aceita argumentos em $\left[-1,1\right]$, logo é preciso $-1\leq\dfrac{x-1}{2}\leq1$. Multiplicando por $2$, $-2\leq x-1\leq2$, e somando $1$, $-1\leq x\leq3$.`);
+
+q("Função Inversa", "Inversa de função definida por partes", "medio",
+  R`Seja $f(x)=x+1$ para $x<0$ e $f(x)=x^{2}+1$ para $x\geq0$. Calcule $f^{-1}(5)+f^{-1}(-1)$.`,
+  R`$0$`,
+  [R`$4$`, R`$-4$`, R`$2$`, R`$6$`],
+  R`Cada valor precisa ser procurado no ramo compatível. Para $5$: no ramo $x\geq0$, $x^{2}+1=5$ dá $x=2$ (a raiz $-2$ não pertence a esse ramo); no ramo $x<0$, $x+1=5$ daria $x=4$, incompatível. Para $-1$: o ramo $x\geq0$ tem imagem $\left[1,+\infty\right)$ e não alcança $-1$; no ramo $x<0$, $x+1=-1$ dá $x=-2$. A soma é $2-2=0$.`);
+
+q("Função Inversa", "Maior intervalo de injetividade", "medio",
+  R`Determine o maior valor de $a$ para o qual $f(x)=x^{2}+4x+3$ é injetora em $\left(-\infty,a\right]$.`,
+  R`$-2$`,
+  [R`$2$`, R`$-4$`, R`$0$`, R`$-1$`],
+  R`Completando o quadrado, $f(x)=(x+2)^{2}-1$: a parábola é decrescente até o vértice $x=-2$ e crescente depois. Um intervalo $\left(-\infty,a\right]$ preserva a injetividade enquanto não ultrapassar o vértice, pois qualquer $a>-2$ já contém dois pontos simétricos com a mesma imagem. O maior valor é $a=-2$.`);
+
+q("Função Inversa", "Equação com logaritmo de base variável", "medio",
+  R`Resolva a equação $\log_{x}(2x+3)=2$.`,
+  R`$3$`,
+  [R`$-1$`, R`$1$`, R`$9$`, R`$5$`],
+  R`Pela definição de logaritmo, $x^{2}=2x+3$, isto é $x^{2}-2x-3=0$, de raízes $x=3$ e $x=-1$. A base de um logaritmo precisa ser positiva e diferente de $1$, o que elimina $x=-1$. Resta $x=3$, e de fato $\log_{3}9=2$.`);
+
+q("Função Inversa", "Inversa de composta com exponencial e logaritmo", "dificil",
+  R`Sejam $f(x)=e^{2x}$ e $g(x)=\ln(x+1)$, com $x>-1$. Determine $\left(f\circ g\right)^{-1}(9)$.`,
+  R`$2$`,
+  [R`$8$`, R`$3$`, R`$4$`, R`$1$`],
+  R`Simplifique a composta antes de inverter: $\left(f\circ g\right)(x)=e^{2\ln(x+1)}=(x+1)^{2}$, válida para $x>-1$. De $(x+1)^{2}=9$ vem $x+1=\pm3$, e só $x+1=3$ respeita o domínio, logo $x=2$.`);
+
+q("Função Inversa", "Inversa de função cúbica estritamente crescente", "medio",
+  R`Seja $f(x)=x^{3}+3x-2$, bijetora de $\mathbb{R}$ em $\mathbb{R}$. Calcule $f^{-1}(2)+f^{-1}(-6)$.`,
+  R`$0$`,
+  [R`$2$`, R`$-2$`, R`$1$`, R`$4$`],
+  R`Não há fórmula fechada cômoda para a inversa, mas não é preciso: basta resolver $f(x)=2$ e $f(x)=-6$. De $x^{3}+3x-4=0$, $x=1$ é raiz e o fator restante $x^{2}+x+4$ não tem raiz real, logo $f^{-1}(2)=1$. De $x^{3}+3x+4=0$, $x=-1$ é raiz e o fator $x^{2}-x+4$ também não tem raiz real, logo $f^{-1}(-6)=-1$. A soma é $0$.`);
+
+q("Função Inversa", "Mudança de base de logaritmo", "dificil",
+  R`Sabendo que $\log_{2}3=a$, escreva $\log_{6}24$ em função de $a$.`,
+  R`$\dfrac{3+a}{1+a}$`,
+  [R`$\dfrac{a+3}{a}$`, R`$\dfrac{3a+1}{a+1}$`, R`$\dfrac{a+1}{a+3}$`, R`$\dfrac{3+a}{2+a}$`],
+  R`Mude tudo para a base $2$: $\log_{6}24=\dfrac{\log_{2}24}{\log_{2}6}$. No numerador, $24=2^{3}\cdot3$, logo $\log_{2}24=3+a$; no denominador, $6=2\cdot3$, logo $\log_{2}6=1+a$. O quociente é $\dfrac{3+a}{1+a}$.`);
+
+q("Função Inversa", "Inversa do argumento do seno hiperbólico", "dificil",
+  R`Seja $f(x)=\ln\left(x+\sqrt{x^{2}+1}\right)$, bijetora de $\mathbb{R}$ em $\mathbb{R}$. Calcule $f^{-1}(\ln 3)$.`,
+  R`$\dfrac{4}{3}$`,
+  [R`$\dfrac{3}{4}$`, R`$\dfrac{5}{3}$`, R`$\dfrac{8}{3}$`, R`$\dfrac{2}{3}$`],
+  R`De $y=\ln\left(x+\sqrt{x^{2}+1}\right)$ vem $e^{y}=x+\sqrt{x^{2}+1}$ e, racionalizando, $e^{-y}=\sqrt{x^{2}+1}-x$. Subtraindo as duas, $e^{y}-e^{-y}=2x$, isto é $f^{-1}(y)=\dfrac{e^{y}-e^{-y}}{2}$ — a inversa é o seno hiperbólico. Em $y=\ln 3$: $\dfrac{3-\frac{1}{3}}{2}=\dfrac{4}{3}$.`);
+
+q("Função Inversa", "Logaritmos recíprocos na mesma equação", "dificil",
+  R`Determine o produto das soluções reais de $\log_{2}x+\log_{x}2=\dfrac{5}{2}$.`,
+  R`$4\sqrt{2}$`,
+  [R`$2\sqrt{2}$`, R`$8\sqrt{2}$`, R`$4$`, R`$\dfrac{\sqrt{2}}{2}$`],
+  R`Como $\log_{x}2=\dfrac{1}{\log_{2}x}$, pondo $t=\log_{2}x$ a equação vira $t+\dfrac{1}{t}=\dfrac{5}{2}$, isto é $2t^{2}-5t+2=0$, de raízes $t=2$ e $t=\dfrac{1}{2}$. Voltando, $x=4$ e $x=\sqrt{2}$, ambas no domínio ($x>0$, $x\neq1$). O produto é $4\sqrt{2}$.`);
+
+q("Função Inversa", "Arco-seno igual ao dobro de um arco-tangente", "dificil",
+  R`Determine o valor de $x$ que satisfaz $\arcsin x=2\operatorname{arctg}\dfrac{1}{3}$.`,
+  R`$\dfrac{3}{5}$`,
+  [R`$\dfrac{4}{5}$`, R`$\dfrac{2}{3}$`, R`$\dfrac{3}{4}$`, R`$\dfrac{1}{3}$`],
+  R`Seja $\theta=\operatorname{arctg}\dfrac{1}{3}$, de modo que $\operatorname{tg}\theta=\dfrac{1}{3}$. Pela fórmula do seno do arco duplo em função da tangente, $\operatorname{sen}2\theta=\dfrac{2\operatorname{tg}\theta}{1+\operatorname{tg}^{2}\theta}=\dfrac{\frac{2}{3}}{\frac{10}{9}}=\dfrac{3}{5}$. Como $2\theta$ está em $\left(0,\dfrac{\pi}{2}\right)$, ele pertence à imagem do arco-seno, e $x=\dfrac{3}{5}$.`);
+
+// ===========================================================================
+// 3. CLASSES DE FUNÇÕES E SEUS GRÁFICOS
+// ===========================================================================
+q("Classes de Funções e seus Gráficos", "Decomposição em parte par e parte ímpar", "dificil",
+  R`Toda função real se escreve de modo único como soma de uma função par $P$ e uma ímpar $I$. Para $f(x)=x^{3}+2x^{2}-x+5$, calcule $P(2)+I(1)$.`,
+  R`$13$`,
+  [R`$12$`, R`$14$`, R`$8$`, R`$18$`],
+  R`As partes são $P(x)=\dfrac{f(x)+f(-x)}{2}$ e $I(x)=\dfrac{f(x)-f(-x)}{2}$. Como $f(-x)=-x^{3}+2x^{2}+x+5$, resulta $P(x)=2x^{2}+5$ (os termos de grau par) e $I(x)=x^{3}-x$ (os de grau ímpar). Então $P(2)=13$ e $I(1)=0$, cuja soma é $13$.`);
+
+q("Classes de Funções e seus Gráficos", "Imagem de combinação de seno e cosseno", "dificil",
+  R`Determine a imagem da função $f(x)=3\operatorname{sen}x-4\cos x+2$.`,
+  R`$\left[-3,7\right]$`,
+  [R`$\left[-5,5\right]$`, R`$\left[-1,5\right]$`, R`$\left[-7,3\right]$`, R`$\left[-2,6\right]$`],
+  R`Escreva $3\operatorname{sen}x-4\cos x=R\operatorname{sen}(x-\varphi)$ com $R=\sqrt{3^{2}+4^{2}}=5$, o que é sempre possível e faz a expressão percorrer todo o intervalo $\left[-5,5\right]$. Somando a constante, a imagem é $\left[-5+2,5+2\right]=\left[-3,7\right]$.`);
+
+q("Classes de Funções e seus Gráficos", "Máximo de função racional limitada", "dificil",
+  R`Determine o valor máximo de $f(x)=\dfrac{2x}{x^{2}+1}$.`,
+  R`$1$`,
+  [R`$2$`, R`$\dfrac{1}{2}$`, R`$\dfrac{1}{4}$`, R`$4$`],
+  R`Sem derivar: $f(x)=k$ tem solução real quando $kx^{2}-2x+k=0$ admite raiz, isto é quando $4-4k^{2}\geq0$, ou $-1\leq k\leq1$. Logo a imagem é $\left[-1,1\right]$ e o máximo é $1$, atingido em $x=1$. O mesmo sai de $\left(x-1\right)^{2}\geq0$, que dá $x^{2}+1\geq2x$.`);
+
+q("Classes de Funções e seus Gráficos", "Ponto correspondente após transformações", "dificil",
+  R`O ponto $\left(2,-3\right)$ pertence ao gráfico de $f$. Determine as coordenadas do ponto correspondente no gráfico de $g(x)=-2f(3-x)+1$.`,
+  R`$\left(1,7\right)$`,
+  [R`$\left(1,-5\right)$`, R`$\left(5,7\right)$`, R`$\left(-1,7\right)$`, R`$\left(1,5\right)$`],
+  R`A abscissa vem de dentro para fora: para que $g$ use o valor $f(2)$, é preciso $3-x=2$, isto é $x=1$. A ordenada segue as operações externas na ordem em que aparecem: $g(1)=-2f(2)+1=-2(-3)+1=7$. O ponto é $\left(1,7\right)$.`);
+
+q("Classes de Funções e seus Gráficos", "Período de função modular", "medio",
+  R`Determine o período fundamental de $f(x)=\left|\cos(3x)\right|$.`,
+  R`$\dfrac{\pi}{3}$`,
+  [R`$\dfrac{2\pi}{3}$`, R`$\dfrac{\pi}{6}$`, R`$\pi$`, R`$\dfrac{\pi}{2}$`],
+  R`A função $\cos(3x)$ tem período $\dfrac{2\pi}{3}$, mas o módulo rebate a meia-onda negativa sobre a positiva e corta o período pela metade: $\left|\cos\left(3\left(x+\dfrac{\pi}{3}\right)\right)\right|=\left|\cos(3x+\pi)\right|=\left|-\cos(3x)\right|=\left|\cos(3x)\right|$. Nenhum valor menor funciona, logo o período é $\dfrac{\pi}{3}$.`);
+
+q("Classes de Funções e seus Gráficos", "Monotonicidade de função com módulo", "dificil",
+  R`Determine o menor valor de $a$ para o qual $f(x)=x^{2}-4\left|x\right|+3$ é crescente em $\left[a,+\infty\right)$.`,
+  R`$2$`,
+  [R`$0$`, R`$4$`, R`$-2$`, R`$1$`],
+  R`Para $x\geq0$ vale $f(x)=x^{2}-4x+3=(x-2)^{2}-1$, decrescente até $x=2$ e crescente depois. Para $x<0$ vale $f(x)=x^{2}+4x+3$, cujo comportamento não importa para intervalos do tipo $\left[a,+\infty\right)$ com $a\geq0$; e qualquer $a<2$ incluiria um trecho decrescente. O menor valor é $a=2$.`);
+
+q("Classes de Funções e seus Gráficos", "Raízes de equação biquadrada com módulo", "medio",
+  R`Determine o número de raízes reais de $x^{2}-6\left|x\right|+8=0$.`,
+  R`$4$`,
+  [R`$2$`, R`$3$`, R`$1$`, R`$0$`],
+  R`Como $x^{2}=\left|x\right|^{2}$, a substituição $u=\left|x\right|\geq0$ dá $u^{2}-6u+8=0$, de raízes $u=2$ e $u=4$, ambas não negativas. Cada uma devolve dois valores de $x$, a saber $\pm2$ e $\pm4$, e o gráfico é simétrico em relação ao eixo $y$. São $4$ raízes.`);
+
+q("Classes de Funções e seus Gráficos", "Equação com módulo de trinômio", "dificil",
+  R`Determine o número de soluções reais de $\left|x^{2}-4x+3\right|=1$.`,
+  R`$3$`,
+  [R`$4$`, R`$2$`, R`$1$`, R`$0$`],
+  R`De $x^{2}-4x+3=1$ vem $x^{2}-4x+2=0$, com discriminante $8>0$: duas soluções, $2\pm\sqrt{2}$. De $x^{2}-4x+3=-1$ vem $x^{2}-4x+4=0$, isto é $(x-2)^{2}=0$: uma única solução, $x=2$, porque a raiz é dupla. Graficamente, a reta $y=1$ corta o gráfico de $\left|x^{2}-4x+3\right|$ duas vezes e tangencia o pico rebatido uma vez. São $3$ soluções.`);
+
+q("Classes de Funções e seus Gráficos", "Mínimo após translação e homotetia", "medio",
+  R`Seja $f(x)=x^{2}-2x$ e $g(x)=2f(x-1)+3$. Determine o valor mínimo de $g$.`,
+  R`$1$`,
+  [R`$3$`, R`$-1$`, R`$2$`, R`$5$`],
+  R`A translação horizontal não altera o valor mínimo, só o ponto onde ele ocorre. Como $f(x)=(x-1)^{2}-1$ tem mínimo $-1$, o mínimo de $g$ é $2\cdot(-1)+3=1$ — a homotetia vertical multiplica o valor extremo por $2$ e a translação vertical soma $3$. Ele ocorre em $x=2$.`);
+
+q("Classes de Funções e seus Gráficos", "Simetria do gráfico de uma quadrática", "medio",
+  R`Uma função quadrática $f$ satisfaz $f(1+x)=f(1-x)$ para todo $x$ real, com $f(0)=5$ e $f(3)=2$. Calcule $f(-1)$.`,
+  R`$2$`,
+  [R`$5$`, R`$-1$`, R`$8$`, R`$0$`],
+  R`A condição $f(1+x)=f(1-x)$ diz que o gráfico é simétrico em relação à reta vertical $x=1$, isto é, pontos equidistantes de $1$ têm a mesma imagem. Como $-1$ e $3$ estão ambos a distância $2$ de $1$, vale $f(-1)=f(3)=2$. O dado $f(0)=5$ serve só para fixar a função (que é $f(x)=-x^{2}+2x+5$).`);
+
+q("Classes de Funções e seus Gráficos", "Paridade de combinações de funções", "medio",
+  R`Sejam $f$ ímpar e $g$ par, ambas definidas em $\mathbb{R}$, e $h(x)=f\left(g(x)\right)+g\left(f(x)\right)$. Sabendo que $h(3)=7$, calcule $h(-3)$.`,
+  R`$7$`,
+  [R`$-7$`, R`$0$`, R`$14$`, R`$1$`],
+  R`Analise cada parcela. Como $g$ é par, $f\left(g(-x)\right)=f\left(g(x)\right)$. Como $f$ é ímpar e $g$ é par, $g\left(f(-x)\right)=g\left(-f(x)\right)=g\left(f(x)\right)$. Ambas as parcelas são pares, logo $h$ é par e $h(-3)=h(3)=7$.`);
+
+q("Classes de Funções e seus Gráficos", "Função exponencial determinada por dois pontos", "medio",
+  R`O gráfico de $f(x)=C\cdot a^{x}$, com $C>0$ e $a>0$, passa pelos pontos $\left(1,6\right)$ e $\left(3,24\right)$. Calcule $f(5)$.`,
+  R`$96$`,
+  [R`$48$`, R`$72$`, R`$120$`, R`$192$`],
+  R`Dividindo as condições, $\dfrac{Ca^{3}}{Ca}=a^{2}=\dfrac{24}{6}=4$, logo $a=2$ (positivo) e $C=3$. Então $f(5)=3\cdot2^{5}=96$. Mais rápido ainda: como $a^{2}=4$, cada avanço de duas unidades em $x$ quadruplica o valor, e $f(5)=4f(3)=96$.`);
+
+q("Classes de Funções e seus Gráficos", "Imagem de função racional par", "dificil",
+  R`Determine a imagem da função $f(x)=\dfrac{x^{2}-1}{x^{2}+1}$.`,
+  R`$\left[-1,1\right)$`,
+  [R`$\left(-1,1\right)$`, R`$\left(-1,1\right]$`, R`$\left[-1,1\right]$`, R`$\left[0,1\right)$`],
+  R`Escreva $f(x)=1-\dfrac{2}{x^{2}+1}$. Como $x^{2}+1$ percorre $\left[1,+\infty\right)$, a fração $\dfrac{2}{x^{2}+1}$ percorre $\left(0,2\right]$, atingindo $2$ em $x=0$ e nunca chegando a $0$. Logo $f$ percorre $\left[-1,1\right)$: o valor $-1$ é atingido, o valor $1$ é apenas assíntota.`);
+
+q("Classes de Funções e seus Gráficos", "Interseção de dois gráficos com módulo", "medio",
+  R`Determine a soma das abscissas dos pontos de interseção dos gráficos de $y=\left|x-2\right|$ e $y=3-\left|x\right|$.`,
+  R`$2$`,
+  [R`$\dfrac{5}{2}$`, R`$-\dfrac{1}{2}$`, R`$3$`, R`$\dfrac{3}{2}$`],
+  R`Separe pelos pontos de quebra $0$ e $2$. Para $x<0$: $2-x=3+x$ dá $x=-\dfrac{1}{2}$, compatível. Para $0\leq x<2$: $2-x=3-x$ é impossível — nesse trecho os gráficos são paralelos. Para $x\geq2$: $x-2=3-x$ dá $x=\dfrac{5}{2}$, compatível. A soma é $-\dfrac{1}{2}+\dfrac{5}{2}=2$.`);
+
+q("Classes de Funções e seus Gráficos", "Imagem de função homográfica", "medio",
+  R`Determine a imagem da função $f(x)=\dfrac{2x+1}{x-3}$, definida para $x\neq3$.`,
+  R`$\mathbb{R}\setminus\left\{2\right\}$`,
+  [R`$\mathbb{R}\setminus\left\{3\right\}$`, R`$\mathbb{R}\setminus\left\{-2\right\}$`, R`$\mathbb{R}$`, R`$\mathbb{R}\setminus\left\{\dfrac{1}{3}\right\}$`],
+  R`Resolva $y=\dfrac{2x+1}{x-3}$ em $x$: $y(x-3)=2x+1$ dá $x(y-2)=3y+1$, isto é $x=\dfrac{3y+1}{y-2}$, possível para todo $y$ exceto $y=2$. O valor excluído é justamente a assíntota horizontal, que a divisão $f(x)=2+\dfrac{7}{x-3}$ deixa explícita.`);
+
+q("Classes de Funções e seus Gráficos", "Composição de compressão e translação", "dificil",
+  R`O gráfico de $g$ é obtido do gráfico de $f$ comprimindo-o horizontalmente por um fator $3$ (isto é, passando a $y=f(3x)$) e, em seguida, transladando-o $2$ unidades para a esquerda. Sabendo que $f(6)=5$, determine a abscissa $x$ para a qual $g(x)=5$.`,
+  R`$0$`,
+  [R`$2$`, R`$-2$`, R`$4$`, R`$16$`],
+  R`A compressão dá $h(x)=f(3x)$; a translação de $2$ para a esquerda substitui $x$ por $x+2$, produzindo $g(x)=h(x+2)=f\left(3(x+2)\right)$. Para reaproveitar o dado $f(6)=5$, basta $3(x+2)=6$, isto é $x=0$. O erro comum é aplicar a translação antes da compressão, o que daria $3x+2=6$.`);
+
+q("Classes de Funções e seus Gráficos", "Período de soma de funções trigonométricas", "medio",
+  R`Determine o período fundamental de $f(x)=\operatorname{sen}\left(\dfrac{x}{2}\right)+\cos\left(\dfrac{x}{3}\right)$.`,
+  R`$12\pi$`,
+  [R`$6\pi$`, R`$4\pi$`, R`$2\pi$`, R`$24\pi$`],
+  R`As parcelas têm períodos $\dfrac{2\pi}{1/2}=4\pi$ e $\dfrac{2\pi}{1/3}=6\pi$. O período da soma é o menor valor que é múltiplo inteiro de ambos: $12\pi=3\cdot4\pi=2\cdot6\pi$.`);
+
+q("Classes de Funções e seus Gráficos", "Simetria funcional numa soma finita", "dificil",
+  R`Seja $f(x)=\dfrac{4^{x}}{4^{x}+2}$. Calcule $f\left(\dfrac{1}{10}\right)+f\left(\dfrac{2}{10}\right)+\cdots+f\left(\dfrac{9}{10}\right)$.`,
+  R`$\dfrac{9}{2}$`,
+  [R`$4$`, R`$5$`, R`$9$`, R`$\dfrac{7}{2}$`],
+  R`A função tem a simetria $f(x)+f(1-x)=1$: de fato, $f(1-x)=\dfrac{4/4^{x}}{4/4^{x}+2}=\dfrac{2}{4^{x}+2}$, que somado a $\dfrac{4^{x}}{4^{x}+2}$ dá $1$. Agrupando os nove termos em quatro pares que somam $1$ — $\left(\dfrac{1}{10},\dfrac{9}{10}\right)$, $\left(\dfrac{2}{10},\dfrac{8}{10}\right)$, $\left(\dfrac{3}{10},\dfrac{7}{10}\right)$ e $\left(\dfrac{4}{10},\dfrac{6}{10}\right)$ — sobra o termo central $f\left(\dfrac{1}{2}\right)=\dfrac{1}{2}$. O total é $\dfrac{9}{2}$.`);
+
+// ===========================================================================
+// 4. VETORES E RETAS NO PLANO
+// ===========================================================================
+q("Vetores e Retas no Plano", "Vetor projeção ortogonal", "medio",
+  R`Determine o vetor projeção ortogonal de $\vec{u}=\left(5,2\right)$ sobre $\vec{v}=\left(3,-1\right)$.`,
+  R`$\left(\dfrac{39}{10},-\dfrac{13}{10}\right)$`,
+  [R`$\left(\dfrac{13}{10},-\dfrac{39}{10}\right)$`, R`$\left(\dfrac{39}{5},-\dfrac{13}{5}\right)$`, R`$\left(\dfrac{3}{10},-\dfrac{1}{10}\right)$`, R`$\left(\dfrac{13\sqrt{10}}{10},-\dfrac{13\sqrt{10}}{10}\right)$`],
+  R`A projeção é $\operatorname{proj}_{\vec{v}}\vec{u}=\dfrac{\vec{u}\cdot\vec{v}}{\left|\vec{v}\right|^{2}}\vec{v}$. Aqui $\vec{u}\cdot\vec{v}=15-2=13$ e $\left|\vec{v}\right|^{2}=10$, logo o vetor é $\dfrac{13}{10}\left(3,-1\right)=\left(\dfrac{39}{10},-\dfrac{13}{10}\right)$. Dividir por $\left|\vec{v}\right|$ em vez de $\left|\vec{v}\right|^{2}$ é o erro clássico: aquilo dá o comprimento da projeção, não o vetor.`);
+
+q("Vetores e Retas no Plano", "Componente ortogonal na decomposição", "dificil",
+  R`Decomponha $\vec{u}=\left(3,5\right)$ na soma de um vetor paralelo a $\vec{v}=\left(1,2\right)$ com um vetor ortogonal a $\vec{v}$. Determine a componente ortogonal.`,
+  R`$\left(\dfrac{2}{5},-\dfrac{1}{5}\right)$`,
+  [R`$\left(\dfrac{13}{5},\dfrac{26}{5}\right)$`, R`$\left(-\dfrac{2}{5},\dfrac{1}{5}\right)$`, R`$\left(\dfrac{1}{5},-\dfrac{2}{5}\right)$`, R`$\left(\dfrac{2}{5},\dfrac{1}{5}\right)$`],
+  R`A componente paralela é $\dfrac{\vec{u}\cdot\vec{v}}{\left|\vec{v}\right|^{2}}\vec{v}=\dfrac{13}{5}\left(1,2\right)=\left(\dfrac{13}{5},\dfrac{26}{5}\right)$, e a ortogonal é o que sobra: $\vec{u}-\left(\dfrac{13}{5},\dfrac{26}{5}\right)=\left(\dfrac{2}{5},-\dfrac{1}{5}\right)$. A conferência é imediata: $\left(\dfrac{2}{5},-\dfrac{1}{5}\right)\cdot\left(1,2\right)=\dfrac{2}{5}-\dfrac{2}{5}=0$.`);
+
+q("Vetores e Retas no Plano", "Área de triângulo com vértice sobre uma reta", "dificil",
+  R`Sejam $A=\left(5,0\right)$ e $B=\left(3,4\right)$. Um ponto $C$ pertence à reta $x+4y-5=0$ e o triângulo $ABC$ tem área $7$. Determine a soma das abscissas dos possíveis pontos $C$.`,
+  R`$10$`,
+  [R`$8$`, R`$12$`, R`$6$`, R`$14$`],
+  R`Parametrize $C$ pela ordenada: da reta, $C=\left(5-4b,b\right)$. Então $\overrightarrow{AB}=\left(-2,4\right)$ e $\overrightarrow{AC}=\left(-4b,b\right)$, cujo determinante vale $(-2)(b)-(4)(-4b)=14b$. A área é $\dfrac{\left|14b\right|}{2}=7\left|b\right|$, e impor $7\left|b\right|=7$ dá $b=\pm1$, isto é $C=\left(1,1\right)$ ou $C=\left(9,-1\right)$. A soma das abscissas é $10$.`);
+
+q("Vetores e Retas no Plano", "Circunferência tangente a uma reta", "medio",
+  R`Determine o raio da circunferência de centro $\left(3,-1\right)$ que é tangente à reta $4x-3y+2=0$.`,
+  R`$\dfrac{17}{5}$`,
+  [R`$\dfrac{13}{5}$`, R`$\dfrac{7}{5}$`, R`$\dfrac{17}{25}$`, R`$\dfrac{11}{5}$`],
+  R`Tangência significa que a distância do centro à reta é exatamente o raio. Pela fórmula da distância de ponto a reta, $r=\dfrac{\left|4\cdot3-3\cdot(-1)+2\right|}{\sqrt{4^{2}+(-3)^{2}}}=\dfrac{\left|12+3+2\right|}{5}=\dfrac{17}{5}$.`);
+
+q("Vetores e Retas no Plano", "Comprimento de corda determinada por uma reta", "dificil",
+  R`A reta $y=x+1$ corta a circunferência $x^{2}+y^{2}=25$ em dois pontos. Determine o comprimento da corda assim determinada.`,
+  R`$7\sqrt{2}$`,
+  [R`$6\sqrt{2}$`, R`$\dfrac{7\sqrt{2}}{2}$`, R`$7$`, R`$14$`],
+  R`Em vez de resolver o sistema, use a relação entre raio, distância ao centro e semicorda. A distância da origem à reta $x-y+1=0$ é $\dfrac{1}{\sqrt{2}}$, de modo que a semicorda mede $\sqrt{25-\dfrac{1}{2}}=\sqrt{\dfrac{49}{2}}=\dfrac{7}{\sqrt{2}}$. A corda é o dobro: $\dfrac{14}{\sqrt{2}}=7\sqrt{2}$.`);
+
+q("Vetores e Retas no Plano", "Simétrico de um ponto em relação a uma reta", "dificil",
+  R`Determine o simétrico do ponto $P=\left(4,1\right)$ em relação à reta $x-2y+3=0$.`,
+  R`$\left(2,5\right)$`,
+  [R`$\left(5,2\right)$`, R`$\left(-2,5\right)$`, R`$\left(2,-5\right)$`, R`$\left(0,3\right)$`],
+  R`O vetor normal da reta é $\vec{n}=\left(1,-2\right)$, com $\left|\vec{n}\right|^{2}=5$. Como $4-2+3=5$, o deslocamento até o pé da perpendicular é $\dfrac{5}{5}\vec{n}=\vec{n}$, e o simétrico é $P-2\vec{n}=\left(4,1\right)-2\left(1,-2\right)=\left(2,5\right)$. Conferindo: o ponto médio $\left(3,3\right)$ satisfaz $3-6+3=0$, e o segmento tem a direção da normal.`);
+
+q("Vetores e Retas no Plano", "Bissetriz do ângulo agudo entre duas retas", "dificil",
+  R`Determine a equação da bissetriz do ângulo agudo formado pelas retas $3x-4y=0$ e $5x+12y=0$.`,
+  R`$x-8y=0$`,
+  [R`$8x+y=0$`, R`$x+8y=0$`, R`$8x-y=0$`, R`$2x-y=0$`],
+  R`As duas bissetrizes saem de $\dfrac{\left|3x-4y\right|}{5}=\dfrac{\left|5x+12y\right|}{13}$, que se desdobra em $x-8y=0$ e $8x+y=0$ (perpendiculares entre si, como esperado). Para escolher a do ângulo agudo, some os versores das direções das retas: $\dfrac{\left(4,3\right)}{5}+\dfrac{\left(12,-5\right)}{13}$ tem coordenadas positivas e inclinação $\dfrac{1}{8}$, compatível com $x-8y=0$.`);
+
+q("Vetores e Retas no Plano", "Tangente do ângulo entre duas retas", "medio",
+  R`Determine a tangente do ângulo agudo formado pelas retas $2x-y+3=0$ e $x+3y-1=0$.`,
+  R`$7$`,
+  [R`$\dfrac{1}{7}$`, R`$5$`, R`$\dfrac{5}{7}$`, R`$\dfrac{7}{5}$`],
+  R`Os coeficientes angulares são $m_{1}=2$ e $m_{2}=-\dfrac{1}{3}$. Pela fórmula do ângulo entre retas, $\operatorname{tg}\theta=\left|\dfrac{m_{1}-m_{2}}{1+m_{1}m_{2}}\right|=\left|\dfrac{2+\frac{1}{3}}{1-\frac{2}{3}}\right|=\dfrac{\frac{7}{3}}{\frac{1}{3}}=7$.`);
+
+q("Vetores e Retas no Plano", "Distância entre retas paralelas", "medio",
+  R`Determine a distância entre as retas paralelas $3x-4y+7=0$ e $6x-8y-5=0$.`,
+  R`$\dfrac{19}{10}$`,
+  [R`$\dfrac{9}{10}$`, R`$\dfrac{12}{5}$`, R`$\dfrac{2}{5}$`, R`$\dfrac{19}{5}$`],
+  R`Antes de comparar os termos independentes é obrigatório igualar os coeficientes: dividindo a segunda por $2$, ela vira $3x-4y-\dfrac{5}{2}=0$. A distância é então $\dfrac{\left|7+\frac{5}{2}\right|}{\sqrt{3^{2}+4^{2}}}=\dfrac{\frac{19}{2}}{5}=\dfrac{19}{10}$.`);
+
+q("Vetores e Retas no Plano", "Quarto vértice de um paralelogramo", "medio",
+  R`Num paralelogramo $ABCD$, são dados $A=\left(1,2\right)$, $B=\left(5,3\right)$ e $C=\left(6,7\right)$. Determine o vértice $D$.`,
+  R`$\left(2,6\right)$`,
+  [R`$\left(10,8\right)$`, R`$\left(2,-6\right)$`, R`$\left(6,2\right)$`, R`$\left(0,6\right)$`],
+  R`Num paralelogramo $ABCD$ os lados opostos são vetores iguais: $\overrightarrow{AD}=\overrightarrow{BC}$. Como $\overrightarrow{BC}=\left(1,4\right)$, vem $D=A+\left(1,4\right)=\left(2,6\right)$. Equivalentemente, as diagonais $AC$ e $BD$ têm o mesmo ponto médio $\left(\dfrac{7}{2},\dfrac{9}{2}\right)$, o que devolve o mesmo $D$.`);
+
+q("Vetores e Retas no Plano", "Ortocentro de um triângulo", "dificil",
+  R`Determine o ortocentro do triângulo de vértices $A=\left(0,0\right)$, $B=\left(4,0\right)$ e $C=\left(1,3\right)$.`,
+  R`$\left(1,1\right)$`,
+  [R`$\left(1,3\right)$`, R`$\left(\dfrac{5}{3},1\right)$`, R`$\left(2,1\right)$`, R`$\left(\dfrac{5}{3},\dfrac{4}{3}\right)$`],
+  R`Basta cruzar duas alturas. A altura por $A$ é perpendicular a $\overrightarrow{BC}=\left(-3,3\right)$, logo tem equação $-3x+3y=0$, isto é $y=x$. A altura por $C$ é perpendicular a $\overrightarrow{AB}=\left(4,0\right)$, logo é a vertical $x=1$. A interseção é $\left(1,1\right)$ — que não deve ser confundida com o baricentro, $\left(\dfrac{5}{3},1\right)$.`);
+
+q("Vetores e Retas no Plano", "Circunferência circunscrita a triângulo retângulo", "medio",
+  R`Determine o raio da circunferência que passa pelos pontos $\left(0,0\right)$, $\left(6,0\right)$ e $\left(0,8\right)$.`,
+  R`$5$`,
+  [R`$10$`, R`$4$`, R`$6$`, R`$8$`],
+  R`Os vetores $\left(6,0\right)$ e $\left(0,8\right)$ são ortogonais, de modo que o ângulo em $\left(0,0\right)$ é reto. Pelo recíproco do teorema do ângulo inscrito, a hipotenusa é diâmetro: seu comprimento é $\sqrt{36+64}=10$ e o raio é $5$. O centro é o ponto médio $\left(3,4\right)$, equidistante dos três pontos.`);
+
+q("Vetores e Retas no Plano", "Parâmetro para ângulo dado entre vetores", "dificil",
+  R`Determine a soma dos valores de $m$ para os quais o ângulo entre $\vec{u}=\left(1,m\right)$ e $\vec{v}=\left(2,1\right)$ mede $45°$.`,
+  R`$\dfrac{8}{3}$`,
+  [R`$3$`, R`$-\dfrac{1}{3}$`, R`$\dfrac{10}{3}$`, R`$\dfrac{2}{3}$`],
+  R`De $\cos 45°=\dfrac{\vec{u}\cdot\vec{v}}{\left|\vec{u}\right|\left|\vec{v}\right|}$ vem $\dfrac{2+m}{\sqrt{1+m^{2}}\sqrt{5}}=\dfrac{\sqrt{2}}{2}$. Elevando ao quadrado (e guardando a condição $2+m>0$, para o ângulo ser agudo), $4(2+m)^{2}=10\left(1+m^{2}\right)$, isto é $3m^{2}-8m-3=0$, de raízes $m=3$ e $m=-\dfrac{1}{3}$. Ambas satisfazem $2+m>0$, e a soma é $\dfrac{8}{3}$.`);
+
+q("Vetores e Retas no Plano", "Área de quadrilátero pelo determinante", "medio",
+  R`Determine a área do quadrilátero de vértices $\left(0,0\right)$, $\left(5,1\right)$, $\left(6,5\right)$ e $\left(1,4\right)$, nessa ordem.`,
+  R`$19$`,
+  [R`$38$`, R`$21$`, R`$17$`, R`$20$`],
+  R`Como $\left(6,5\right)=\left(5,1\right)+\left(1,4\right)$, o quadrilátero é o paralelogramo gerado por $\vec{u}=\left(5,1\right)$ e $\vec{v}=\left(1,4\right)$, cuja área é o módulo do determinante: $\left|5\cdot4-1\cdot1\right|=19$. A fórmula do laço (shoelace) dá o mesmo valor.`);
+
+q("Vetores e Retas no Plano", "Reta perpendicular a uma reta paramétrica", "medio",
+  R`A reta $\ell$ passa por $A=\left(2,-1\right)$ e é perpendicular à reta $m:\left(x,y\right)=\left(-1,2\right)+t\left(1,1\right)$. Determine a ordenada do ponto em que $\ell$ corta o eixo $y$.`,
+  R`$1$`,
+  [R`$-1$`, R`$3$`, R`$2$`, R`$0$`],
+  R`O vetor diretor de $m$ é $\left(1,1\right)$, que funciona como vetor normal de $\ell$. Logo $\ell$ tem equação $x+y=c$ e, passando por $A$, $c=2-1=1$, isto é $x+y=1$. Fazendo $x=0$, a ordenada é $1$.`);
+
+q("Vetores e Retas no Plano", "Distância de ponto a reta paramétrica", "medio",
+  R`Determine a distância do ponto $P=\left(3,4\right)$ à reta $r:\left(x,y\right)=\left(1,0\right)+t\left(2,1\right)$.`,
+  R`$\dfrac{6\sqrt{5}}{5}$`,
+  [R`$\dfrac{3\sqrt{5}}{5}$`, R`$\dfrac{6\sqrt{5}}{25}$`, R`$\dfrac{2\sqrt{5}}{5}$`, R`$\dfrac{6}{5}$`],
+  R`Tome $A=\left(1,0\right)$ na reta, de modo que $\overrightarrow{AP}=\left(2,4\right)$. A área do paralelogramo gerado por $\overrightarrow{AP}$ e o diretor $\vec{d}=\left(2,1\right)$ é $\left|2\cdot1-4\cdot2\right|=6$, e a distância é essa área dividida pela base: $\dfrac{6}{\sqrt{5}}=\dfrac{6\sqrt{5}}{5}$.`);
+
+q("Vetores e Retas no Plano", "Corda comum a duas circunferências", "dificil",
+  R`Determine o comprimento da corda comum às circunferências $x^{2}+y^{2}=16$ e $\left(x-4\right)^{2}+y^{2}=16$.`,
+  R`$4\sqrt{3}$`,
+  [R`$2\sqrt{3}$`, R`$4\sqrt{2}$`, R`$8$`, R`$6\sqrt{3}$`],
+  R`Subtraindo as duas equações, os termos quadráticos se cancelam e sobra o eixo radical $8x-16=0$, isto é $x=2$ — a reta que contém a corda comum. Substituindo na primeira circunferência, $y^{2}=12$, de modo que os pontos são $\left(2,\pm2\sqrt{3}\right)$ e a corda mede $4\sqrt{3}$.`);
+
+q("Vetores e Retas no Plano", "Norma da diferença a partir da norma da soma", "dificil",
+  R`Sejam $\vec{u}$ e $\vec{v}$ vetores do plano com $\left|\vec{u}\right|=3$, $\left|\vec{v}\right|=4$ e $\left|\vec{u}+\vec{v}\right|=6$. Calcule $\left|\vec{u}-\vec{v}\right|$.`,
+  R`$\sqrt{14}$`,
+  [R`$\sqrt{10}$`, R`$\sqrt{26}$`, R`$\sqrt{7}$`, R`$2\sqrt{5}$`],
+  R`De $\left|\vec{u}+\vec{v}\right|^{2}=\left|\vec{u}\right|^{2}+2\vec{u}\cdot\vec{v}+\left|\vec{v}\right|^{2}$ vem $36=9+16+2\vec{u}\cdot\vec{v}$, logo $\vec{u}\cdot\vec{v}=\dfrac{11}{2}$. Então $\left|\vec{u}-\vec{v}\right|^{2}=9+16-11=14$ e a norma é $\sqrt{14}$. A identidade do paralelogramo dá o mesmo: $\left|\vec{u}+\vec{v}\right|^{2}+\left|\vec{u}-\vec{v}\right|^{2}=2\left(9+16\right)$.`);
+
+// ===========================================================================
+// 5. VETORES NO ESPAÇO E GEOMETRIA SÓLIDA
+// ===========================================================================
+q("Vetores no Espaço e Geometria Sólida", "Produto misto com parâmetro e volume dado", "dificil",
+  R`Dados $A=\left(1,-2,3\right)$, $B=\left(2,-1,-4\right)$, $C=\left(0,2,0\right)$ e $D=\left(-1,m,1\right)$, determine a soma dos valores de $m$ para os quais o paralelepípedo de arestas $AB$, $AC$ e $AD$ tem volume $20$.`,
+  R`$8$`,
+  [R`$4$`, R`$12$`, R`$6$`, R`$10$`],
+  R`As arestas são $\overrightarrow{AB}=\left(1,1,-7\right)$, $\overrightarrow{AC}=\left(-1,4,-3\right)$ e $\overrightarrow{AD}=\left(-2,m+2,-2\right)$. O produto misto é o determinante dessas três linhas, que vale $10m-40$. Impondo $\left|10m-40\right|=20$, vêm $m=6$ e $m=2$ — o módulo é essencial, senão metade da resposta se perde. A soma é $8$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Coplanaridade por produto misto nulo", "dificil",
+  R`Determine $k$ para que os pontos $A=\left(1,1,1\right)$, $B=\left(2,3,4\right)$, $C=\left(0,1,k\right)$ e $D=\left(1,0,2\right)$ sejam coplanares.`,
+  R`$-4$`,
+  [R`$4$`, R`$-2$`, R`$0$`, R`$-6$`],
+  R`Quatro pontos são coplanares quando os três vetores que partem de um deles têm produto misto nulo. Com $\overrightarrow{AB}=\left(1,2,3\right)$, $\overrightarrow{AC}=\left(-1,0,k-1\right)$ e $\overrightarrow{AD}=\left(0,-1,1\right)$, o determinante vale $k+4$. Anulando, $k=-4$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Distância entre retas reversas", "dificil",
+  R`Determine a distância entre as retas reversas $r:\left(1,0,0\right)+t\left(1,1,0\right)$ e $s:\left(0,1,1\right)+u\left(0,1,1\right)$.`,
+  R`$\dfrac{\sqrt{3}}{3}$`,
+  [R`$\dfrac{\sqrt{3}}{2}$`, R`$\dfrac{2\sqrt{3}}{3}$`, R`$\dfrac{\sqrt{2}}{2}$`, R`$\dfrac{1}{3}$`],
+  R`A direção comum perpendicular é $\vec{n}=\left(1,1,0\right)\times\left(0,1,1\right)=\left(1,-1,1\right)$. Tomando $\vec{w}=\left(0,1,1\right)-\left(1,0,0\right)=\left(-1,1,1\right)$, a distância é a projeção de $\vec{w}$ sobre $\vec{n}$: $\dfrac{\left|\vec{w}\cdot\vec{n}\right|}{\left|\vec{n}\right|}=\dfrac{1}{\sqrt{3}}=\dfrac{\sqrt{3}}{3}$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Ângulo entre reta e plano", "dificil",
+  R`Determine o seno do ângulo entre a reta de vetor diretor $\vec{d}=\left(1,2,2\right)$ e o plano $2x-y+2z=5$.`,
+  R`$\dfrac{4}{9}$`,
+  [R`$\dfrac{5}{9}$`, R`$\dfrac{7}{9}$`, R`$\dfrac{1}{3}$`, R`$\dfrac{8}{9}$`],
+  R`O ângulo entre reta e plano é o complementar do ângulo entre o diretor e a normal $\vec{n}=\left(2,-1,2\right)$, de modo que $\operatorname{sen}\theta=\dfrac{\left|\vec{d}\cdot\vec{n}\right|}{\left|\vec{d}\right|\left|\vec{n}\right|}$ — com seno, não cosseno. Aqui $\vec{d}\cdot\vec{n}=2-2+4=4$ e ambas as normas valem $3$, logo $\operatorname{sen}\theta=\dfrac{4}{9}$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Circunferência de interseção esfera-plano", "dificil",
+  R`A esfera $x^{2}+y^{2}+z^{2}-4x+2y-6z+5=0$ intersecta o plano $x=4$ segundo uma circunferência. Determine o raio dessa circunferência.`,
+  R`$\sqrt{5}$`,
+  [R`$\sqrt{7}$`, R`$\sqrt{3}$`, R`$2$`, R`$2\sqrt{2}$`],
+  R`Completando os quadrados, a esfera é $\left(x-2\right)^{2}+\left(y+1\right)^{2}+\left(z-3\right)^{2}=9$, de centro $\left(2,-1,3\right)$ e raio $3$. A distância do centro ao plano $x=4$ é $2$, e o raio da circunferência sai do teorema de Pitágoras no triângulo formado pelo raio da esfera, essa distância e o raio procurado: $\sqrt{9-4}=\sqrt{5}$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Distância da origem ao plano por três pontos", "dificil",
+  R`Determine a distância da origem ao plano que passa por $A=\left(1,0,2\right)$, $B=\left(2,1,0\right)$ e $C=\left(0,3,1\right)$.`,
+  R`$\dfrac{13\sqrt{2}}{10}$`,
+  [R`$\dfrac{13\sqrt{2}}{5}$`, R`$\dfrac{13\sqrt{2}}{50}$`, R`$\dfrac{13}{50}$`, R`$\dfrac{\sqrt{2}}{10}$`],
+  R`A normal é $\overrightarrow{AB}\times\overrightarrow{AC}=\left(1,1,-2\right)\times\left(-1,3,-1\right)=\left(5,3,4\right)$, e o plano fica $5x+3y+4z=13$, como confirma qualquer um dos três pontos. A distância da origem é $\dfrac{\left|-13\right|}{\sqrt{25+9+16}}=\dfrac{13}{5\sqrt{2}}=\dfrac{13\sqrt{2}}{10}$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Reta interseção de dois planos", "dificil",
+  R`A reta $r$ é a interseção dos planos $3x+y-z=3$ e $x+y+z=7$. Determine a abscissa do ponto em que $r$ fura o plano $y=1$.`,
+  R`$2$`,
+  [R`$-2$`, R`$4$`, R`$0$`, R`$6$`],
+  R`O diretor de $r$ é $\left(3,1,-1\right)\times\left(1,1,1\right)=\left(2,-4,2\right)$, proporcional a $\left(1,-2,1\right)$. Fazendo $z=0$ no sistema, $3x+y=3$ e $x+y=7$ dão $x=-2$ e $y=9$, isto é $P=\left(-2,9,0\right)$. Na parametrização $\left(-2+t,9-2t,t\right)$, a condição $y=1$ dá $t=4$ e abscissa $x=2$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Reta contida em um plano", "dificil",
+  R`A reta $x=3+4t$, $y=1-4t$, $z=-3+t$ está contida no plano $Ax+2y-4z+D=0$. Determine $A+D$.`,
+  R`$-20$`,
+  [R`$-26$`, R`$20$`, R`$-14$`, R`$26$`],
+  R`Estar contida exige duas coisas. Primeiro, o diretor $\left(4,-4,1\right)$ deve ser ortogonal à normal $\left(A,2,-4\right)$: $4A-8-4=0$, logo $A=3$. Segundo, um ponto da reta deve satisfazer a equação: com $t=0$, o ponto $\left(3,1,-3\right)$ dá $9+2+12+D=0$, logo $D=-23$. Só o paralelismo não basta — sem a segunda condição a reta poderia ser paralela ao plano. A soma é $-20$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Área de triângulo no espaço", "dificil",
+  R`Determine a área do triângulo de vértices $A=\left(2,1,3\right)$, $B=\left(-1,2,8\right)$ e $C=\left(4,3,1\right)$.`,
+  R`$2\sqrt{14}$`,
+  [R`$4\sqrt{14}$`, R`$\sqrt{14}$`, R`$2\sqrt{7}$`, R`$6\sqrt{14}$`],
+  R`Com $\overrightarrow{AB}=\left(-3,1,5\right)$ e $\overrightarrow{AC}=\left(2,2,-2\right)$, o produto vetorial é $\left(-12,4,-8\right)$, de norma $\sqrt{144+16+64}=\sqrt{224}=4\sqrt{14}$. Esse número é a área do paralelogramo; a do triângulo é a metade, $2\sqrt{14}$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Combinação linear de três vetores", "medio",
+  R`Escreva $\vec{a}=\left(3,2,-1\right)$ como combinação linear de $\vec{u}=\left(2,3,0\right)$, $\vec{v}=\left(1,0,1\right)$ e $\vec{w}=\left(0,1,2\right)$, na forma $\vec{a}=\alpha\vec{u}+\beta\vec{v}+\gamma\vec{w}$. Calcule $\alpha+\beta+\gamma$.`,
+  R`$1$`,
+  [R`$3$`, R`$-1$`, R`$2$`, R`$0$`],
+  R`Comparando coordenada a coordenada, $2\alpha+\beta=3$, $3\alpha+\gamma=2$ e $\beta+2\gamma=-1$. Da primeira, $\beta=3-2\alpha$; levando à terceira, $\gamma=\alpha-2$; substituindo na segunda, $4\alpha=4$, logo $\alpha=1$, $\beta=1$ e $\gamma=-1$. A soma é $1$, e a verificação é direta: $\vec{u}+\vec{v}-\vec{w}=\left(3,2,-1\right)$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Ângulo entre dois planos", "medio",
+  R`Determine o cosseno do ângulo agudo entre os planos $3x-4z=1$ e $2x+y-2z=0$.`,
+  R`$\dfrac{14}{15}$`,
+  [R`$\dfrac{2}{15}$`, R`$\dfrac{13}{15}$`, R`$\dfrac{7}{15}$`, R`$\dfrac{14}{25}$`],
+  R`O ângulo entre planos é o ângulo entre suas normais, $\vec{n}_{1}=\left(3,0,-4\right)$ e $\vec{n}_{2}=\left(2,1,-2\right)$. Então $\cos\theta=\dfrac{\left|6+0+8\right|}{5\cdot3}=\dfrac{14}{15}$; o módulo garante que se obtém o ângulo agudo.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Distância de ponto a reta no espaço", "dificil",
+  R`Determine a distância do ponto $P=\left(1,2,3\right)$ à reta $r:\left(0,0,1\right)+t\left(2,1,-2\right)$.`,
+  R`$3$`,
+  [R`$2$`, R`$4$`, R`$5$`, R`$6$`],
+  R`Tome $A=\left(0,0,1\right)$ na reta, de modo que $\overrightarrow{AP}=\left(1,2,2\right)$. O produto vetorial $\overrightarrow{AP}\times\vec{d}=\left(1,2,2\right)\times\left(2,1,-2\right)=\left(-6,6,-3\right)$ tem norma $9$, e a distância é essa norma dividida pela do diretor: $\dfrac{9}{3}=3$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Volume de tetraedro", "dificil",
+  R`Determine o volume do tetraedro de vértices $\left(0,0,0\right)$, $\left(1,2,0\right)$, $\left(0,3,1\right)$ e $\left(2,0,5\right)$.`,
+  R`$\dfrac{19}{6}$`,
+  [R`$\dfrac{19}{3}$`, R`$\dfrac{19}{2}$`, R`$\dfrac{11}{6}$`, R`$\dfrac{23}{6}$`],
+  R`O volume do tetraedro é um sexto do módulo do produto misto das três arestas que partem de um vértice. Com as arestas $\left(1,2,0\right)$, $\left(0,3,1\right)$ e $\left(2,0,5\right)$, o determinante vale $15+4=19$, logo $V=\dfrac{19}{6}$. Usar $\dfrac{1}{2}$ em vez de $\dfrac{1}{6}$ é confundir a fórmula da área do triângulo com a do volume.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Projeção ortogonal de ponto sobre plano", "dificil",
+  R`Seja $Q$ a projeção ortogonal do ponto $P=\left(1,1,1\right)$ sobre o plano $x+2y+2z=3$. Determine a soma das coordenadas de $Q$.`,
+  R`$\dfrac{17}{9}$`,
+  [R`$\dfrac{19}{9}$`, R`$\dfrac{7}{3}$`, R`$\dfrac{11}{9}$`, R`$\dfrac{5}{3}$`],
+  R`Caminhe de $P$ na direção da normal $\vec{n}=\left(1,2,2\right)$ o quanto for preciso para zerar a equação: $Q=P-\dfrac{1+2+2-3}{9}\vec{n}=\left(1,1,1\right)-\dfrac{2}{9}\left(1,2,2\right)=\left(\dfrac{7}{9},\dfrac{5}{9},\dfrac{5}{9}\right)$, que de fato satisfaz $x+2y+2z=3$. A soma das coordenadas é $\dfrac{17}{9}$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Esfera tangente a um plano", "medio",
+  R`Determine o raio da esfera de centro $\left(1,2,-1\right)$ tangente ao plano $2x-2y+z=6$.`,
+  R`$3$`,
+  [R`$1$`, R`$9$`, R`$2$`, R`$5$`],
+  R`A tangência equivale a dizer que a distância do centro ao plano é o raio: $r=\dfrac{\left|2\cdot1-2\cdot2+(-1)-6\right|}{\sqrt{4+4+1}}=\dfrac{\left|-9\right|}{3}=3$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Secção plana de uma esfera", "medio",
+  R`Uma esfera de raio $6$ é cortada por um plano cuja distância ao centro é $4$. Determine a área da secção obtida.`,
+  R`$20\pi$`,
+  [R`$16\pi$`, R`$36\pi$`, R`$52\pi$`, R`$12\pi$`],
+  R`A secção é um círculo de raio $\rho$, com $\rho^{2}=6^{2}-4^{2}=20$ pelo teorema de Pitágoras aplicado ao triângulo formado pelo raio da esfera, a distância ao plano e o raio da secção. A área é $\pi\rho^{2}=20\pi$ — repare que não é preciso extrair a raiz.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Altura do tetraedro regular", "dificil",
+  R`Determine a altura de um tetraedro regular de aresta $6$.`,
+  R`$2\sqrt{6}$`,
+  [R`$3\sqrt{3}$`, R`$2\sqrt{3}$`, R`$3\sqrt{2}$`, R`$6\sqrt{2}$`],
+  R`O pé da altura é o baricentro da base equilátera, que dista do vértice $\dfrac{2}{3}$ da mediana, isto é $\dfrac{2}{3}\cdot\dfrac{6\sqrt{3}}{2}=2\sqrt{3}$. No triângulo retângulo formado pela altura, esse raio e a aresta lateral, $h^{2}=36-12=24$, logo $h=2\sqrt{6}$.`);
+
+q("Vetores no Espaço e Geometria Sólida", "Cilindro inscrito em cone", "dificil",
+  R`Um cilindro reto está inscrito num cone de raio $6$ e altura $9$, com a base no mesmo plano da base do cone. Sabendo que o raio do cilindro é $4$, determine seu volume.`,
+  R`$48\pi$`,
+  [R`$36\pi$`, R`$72\pi$`, R`$96\pi$`, R`$24\pi$`],
+  R`Um corte pelo eixo mostra triângulos semelhantes: a altura do cilindro satisfaz $\dfrac{h}{9}=\dfrac{6-4}{6}$, isto é $h=3$. O volume é então $\pi r^{2}h=\pi\cdot16\cdot3=48\pi$.`);
+
+// ===========================================================================
+// Montagem final: distribui as letras e escreve o JSON.
+// ===========================================================================
+const letras = sequenciaDeLetras(brutas.length);
+const questoes = brutas.map((b, i) => {
+  const certa = letras[i];
+  const alternativas = {};
+  let k = 0;
+  for (const l of LETRAS) alternativas[l] = l === certa ? b.correta : b.distratores[k++];
+  return {
+    materia: MATERIA,
+    topico: b.topico,
+    subtopico: b.subtopico,
+    dificuldade: b.dificuldade,
+    enunciado: b.enunciado,
+    alternativas,
+    gabarito: certa,
+    resolucao: b.resolucao,
+    instituicao: null,
+    ano: null,
+    tikz_code: null,
+  };
+});
+
+const aqui = dirname(fileURLToPath(import.meta.url));
+const destino = resolve(aqui, "..", "fcg_lote3.json");
+writeFileSync(destino, JSON.stringify(questoes, null, 2), "utf8");
+
+const porTopico = new Map();
+const porLetra = new Map();
+const porDif = new Map();
+for (const item of questoes) {
+  porTopico.set(item.topico, (porTopico.get(item.topico) || 0) + 1);
+  porLetra.set(item.gabarito, (porLetra.get(item.gabarito) || 0) + 1);
+  porDif.set(item.dificuldade, (porDif.get(item.dificuldade) || 0) + 1);
+}
+console.log(`${questoes.length} questões escritas em ${destino}`);
+console.log("por tópico:");
+[...porTopico.entries()].forEach(([t, n]) => console.log(`  ${String(n).padStart(3)}  ${t}`));
+console.log("por dificuldade:", Object.fromEntries(porDif));
+console.log("por letra:", Object.fromEntries([...porLetra.entries()].sort()));
