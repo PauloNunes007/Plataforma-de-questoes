@@ -1,0 +1,1427 @@
+[
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Produto de potências com regra da cadeia",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\left(x^{2}+1\\right)^{3}\\left(2x-1\\right)^{4}$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$24$",
+      "b": "$64$",
+      "c": "$48$",
+      "d": "$96$",
+      "e": "$88$"
+    },
+    "gabarito": "e",
+    "resolucao": "Derivando pelo produto, com a cadeia em cada fator: $f'(x)=3\\left(x^{2}+1\\right)^{2}\\cdot2x\\cdot\\left(2x-1\\right)^{4}+\\left(x^{2}+1\\right)^{3}\\cdot4\\left(2x-1\\right)^{3}\\cdot2$. Em $x=1$: $3\\cdot4\\cdot2\\cdot1+8\\cdot4\\cdot1\\cdot2=24+64=88$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Produto de quatro fatores lineares",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x\\left(x-1\\right)\\left(x-2\\right)\\left(x-3\\right)$. Calcule $f'(0)$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$-6$",
+      "c": "$-3$",
+      "d": "$0$",
+      "e": "$-12$"
+    },
+    "gabarito": "b",
+    "resolucao": "Em vez de expandir, use a regra do produto: $f'$ é a soma de quatro parcelas, cada uma obtida derivando um fator e mantendo os outros três. Em $x=0$, toda parcela que conserve o fator $x$ se anula; sobra apenas a que deriva o próprio $x$: $\\left(0-1\\right)\\left(0-2\\right)\\left(0-3\\right)=-6$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quociente com fatoração no numerador",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{x^{2}-1}{x^{2}+1}$. Calcule $f'(2)$.",
+    "alternativas": {
+      "a": "$\\dfrac{4}{25}$",
+      "b": "$\\dfrac{2}{5}$",
+      "c": "$\\dfrac{12}{25}$",
+      "d": "$\\dfrac{3}{25}$",
+      "e": "$\\dfrac{8}{25}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela regra do quociente, $f'(x)=\\dfrac{2x\\left(x^{2}+1\\right)-\\left(x^{2}-1\\right)2x}{\\left(x^{2}+1\\right)^{2}}=\\dfrac{4x}{\\left(x^{2}+1\\right)^{2}}$. Em $x=2$, isso vale $\\dfrac{8}{25}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quociente com radical no numerador e no denominador",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{1+\\sqrt{x}}{1-\\sqrt{x}}$. Calcule $f'(4)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$-\\dfrac{1}{2}$",
+      "d": "$\\dfrac{3}{4}$",
+      "e": "$-\\dfrac{1}{4}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Escreva $u=\\sqrt{x}$, de modo que $f=\\dfrac{1+u}{1-u}$ e $\\dfrac{df}{du}=\\dfrac{\\left(1-u\\right)+\\left(1+u\\right)}{\\left(1-u\\right)^{2}}=\\dfrac{2}{\\left(1-u\\right)^{2}}$. Em $x=4$ tem-se $u=2$ e $\\dfrac{df}{du}=2$; como $\\dfrac{du}{dx}=\\dfrac{1}{2\\sqrt{x}}=\\dfrac{1}{4}$, a cadeia dá $f'(4)=2\\cdot\\dfrac{1}{4}=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Produto de potência por radical",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{2}\\sqrt{2x+5}$. Calcule $f'(2)$.",
+    "alternativas": {
+      "a": "$\\dfrac{40}{3}$",
+      "b": "$\\dfrac{28}{3}$",
+      "c": "$\\dfrac{44}{3}$",
+      "d": "$\\dfrac{38}{3}$",
+      "e": "$\\dfrac{52}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela regra do produto com a cadeia no radical, $f'(x)=2x\\sqrt{2x+5}+x^{2}\\cdot\\dfrac{2}{2\\sqrt{2x+5}}=2x\\sqrt{2x+5}+\\dfrac{x^{2}}{\\sqrt{2x+5}}$. Em $x=2$, $\\sqrt{9}=3$ e $f'(2)=4\\cdot3+\\dfrac{4}{3}=\\dfrac{40}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Produto de radical por quadrado perfeito",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{x}\\left(x-2\\right)^{2}$. Calcule $f'(4)$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$7$",
+      "c": "$11$",
+      "d": "$13$",
+      "e": "$9$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela regra do produto, $f'(x)=\\dfrac{\\left(x-2\\right)^{2}}{2\\sqrt{x}}+2\\sqrt{x}\\left(x-2\\right)$. Em $x=4$: $\\dfrac{4}{4}+2\\cdot2\\cdot2=1+8=9$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Cadeia com quociente elevado à quarta",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\left(\\dfrac{2x-1}{x+3}\\right)^{4}$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{64}$",
+      "b": "$\\dfrac{7}{512}$",
+      "c": "$\\dfrac{1}{64}$",
+      "d": "$\\dfrac{7}{256}$",
+      "e": "$\\dfrac{21}{256}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $u=\\dfrac{2x-1}{x+3}$, a regra do quociente dá $u'=\\dfrac{2\\left(x+3\\right)-\\left(2x-1\\right)}{\\left(x+3\\right)^{2}}=\\dfrac{7}{\\left(x+3\\right)^{2}}$, que em $x=1$ vale $\\dfrac{7}{16}$; e $u(1)=\\dfrac{1}{4}$. Pela cadeia, $f'=4u^{3}u'=4\\cdot\\dfrac{1}{64}\\cdot\\dfrac{7}{16}=\\dfrac{7}{256}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Cadeia com radical de trinômio",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{x^{2}+3x}$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{5}{2}$",
+      "b": "$\\dfrac{3}{4}$",
+      "c": "$\\dfrac{5}{8}$",
+      "d": "$\\dfrac{5}{4}$",
+      "e": "$\\dfrac{1}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela regra da cadeia, $f'(x)=\\dfrac{2x+3}{2\\sqrt{x^{2}+3x}}$. Em $x=1$, o radicando vale $4$ e $f'(1)=\\dfrac{5}{2\\cdot2}=\\dfrac{5}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quociente com radical no denominador",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{x}{\\sqrt{x^{2}+1}}$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{2}}{4}$",
+      "b": "$\\dfrac{\\sqrt{2}}{2}$",
+      "c": "$\\dfrac{\\sqrt{2}}{8}$",
+      "d": "$\\dfrac{3\\sqrt{2}}{4}$",
+      "e": "$\\dfrac{\\sqrt{2}}{16}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando pelo quociente e simplificando, $f'(x)=\\dfrac{\\sqrt{x^{2}+1}-x\\cdot\\dfrac{x}{\\sqrt{x^{2}+1}}}{x^{2}+1}=\\dfrac{1}{\\left(x^{2}+1\\right)^{3/2}}$. Em $x=1$: $\\dfrac{1}{2\\sqrt{2}}=\\dfrac{\\sqrt{2}}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Potência com expoente racional e produto",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{2/3}\\left(x-5\\right)$. Calcule $f'(8)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$5$",
+      "c": "$4$",
+      "d": "$6$",
+      "e": "$8$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela regra do produto, $f'(x)=\\dfrac{2}{3}x^{-1/3}\\left(x-5\\right)+x^{2/3}$. Em $x=8$, $x^{-1/3}=\\dfrac{1}{2}$ e $x^{2/3}=4$, logo $f'(8)=\\dfrac{2}{3}\\cdot\\dfrac{1}{2}\\cdot3+4=1+4=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Expoente racional dentro de expoente racional",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\left(x^{3/2}+1\\right)^{2/3}$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt[3]{2}}{2}$",
+      "b": "$\\dfrac{\\sqrt[3]{4}}{4}$",
+      "c": "$\\dfrac{\\sqrt[3]{2}}{4}$",
+      "d": "$\\dfrac{\\sqrt[3]{4}}{3}$",
+      "e": "$\\dfrac{\\sqrt[3]{4}}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $u=x^{3/2}+1$, tem-se $u(1)=2$ e $u'(1)=\\dfrac{3}{2}\\sqrt{x}\\big|_{x=1}=\\dfrac{3}{2}$. Pela cadeia, $f'=\\dfrac{2}{3}u^{-1/3}u'=\\dfrac{2}{3}\\cdot2^{-1/3}\\cdot\\dfrac{3}{2}=2^{-1/3}=\\dfrac{2^{2/3}}{2}=\\dfrac{\\sqrt[3]{4}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quociente trigonométrico que simplifica",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\operatorname{sen}x}{1+\\cos x}$. Calcule $f'\\left(\\dfrac{\\pi}{3}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$\\dfrac{4}{3}$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$\\dfrac{2}{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela regra do quociente, $f'(x)=\\dfrac{\\cos x\\left(1+\\cos x\\right)+\\operatorname{sen}^{2}x}{\\left(1+\\cos x\\right)^{2}}=\\dfrac{\\cos x+1}{\\left(1+\\cos x\\right)^{2}}=\\dfrac{1}{1+\\cos x}$, usando $\\operatorname{sen}^{2}+\\cos^{2}=1$. Em $x=\\dfrac{\\pi}{3}$, $\\cos x=\\dfrac{1}{2}$ e $f'=\\dfrac{1}{3/2}=\\dfrac{2}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivada da secante num ponto notável",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sec x$. Calcule $f'\\left(\\dfrac{\\pi}{4}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{2}}{2}$",
+      "b": "$2\\sqrt{2}$",
+      "c": "$\\sqrt{2}$",
+      "d": "$\\dfrac{\\sqrt{2}}{4}$",
+      "e": "$\\dfrac{3\\sqrt{2}}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como $\\sec x=\\left(\\cos x\\right)^{-1}$, a cadeia dá $f'(x)=\\dfrac{\\operatorname{sen}x}{\\cos^{2}x}=\\sec x\\operatorname{tg}x$. Em $x=\\dfrac{\\pi}{4}$: $\\sec\\dfrac{\\pi}{4}=\\sqrt{2}$ e $\\operatorname{tg}\\dfrac{\\pi}{4}=1$, logo $f'=\\sqrt{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quadrado de seno de argumento múltiplo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\operatorname{sen}^{2}\\left(3x\\right)$. Calcule $f'\\left(\\dfrac{\\pi}{12}\\right)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$2$",
+      "d": "$6$",
+      "e": "$9$"
+    },
+    "gabarito": "b",
+    "resolucao": "Aplicando a cadeia duas vezes, $f'(x)=2\\operatorname{sen}(3x)\\cos(3x)\\cdot3=3\\operatorname{sen}(6x)$. Em $x=\\dfrac{\\pi}{12}$, $\\operatorname{sen}\\dfrac{\\pi}{2}=1$ e $f'=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Potência de tangente",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\operatorname{tg}^{3}x$. Calcule $f'\\left(\\dfrac{\\pi}{4}\\right)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$4$",
+      "c": "$9$",
+      "d": "$12$",
+      "e": "$6$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela cadeia, $f'(x)=3\\operatorname{tg}^{2}x\\sec^{2}x$. Em $x=\\dfrac{\\pi}{4}$, $\\operatorname{tg}x=1$ e $\\sec^{2}x=2$, logo $f'=3\\cdot1\\cdot2=6$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Cadeia tripla com seno e cosseno",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\operatorname{sen}\\left(\\cos 3x\\right)$. Calcule $f'\\left(\\dfrac{\\pi}{6}\\right)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$-1$",
+      "c": "$0$",
+      "d": "$-6$",
+      "e": "$-3$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela cadeia, $f'(x)=\\cos\\left(\\cos 3x\\right)\\cdot\\left(-\\operatorname{sen}3x\\right)\\cdot3$. Em $x=\\dfrac{\\pi}{6}$ tem-se $3x=\\dfrac{\\pi}{2}$, logo $\\cos 3x=0$, $\\operatorname{sen}3x=1$ e $f'=\\cos(0)\\cdot(-1)\\cdot3=-3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Produto de três fatores com trigonométricas",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{2}\\operatorname{sen}x\\cos x$. Calcule $f'\\left(\\dfrac{\\pi}{4}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{4}$",
+      "b": "$\\dfrac{\\pi}{2}$",
+      "c": "$\\dfrac{\\pi}{8}$",
+      "d": "$\\dfrac{\\pi^{2}}{8}$",
+      "e": "$\\dfrac{\\pi}{16}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Use $\\operatorname{sen}x\\cos x=\\dfrac{\\operatorname{sen}2x}{2}$, de modo que $f(x)=\\dfrac{x^{2}\\operatorname{sen}2x}{2}$ e $f'(x)=x\\operatorname{sen}2x+x^{2}\\cos 2x$. Em $x=\\dfrac{\\pi}{4}$: $\\operatorname{sen}\\dfrac{\\pi}{2}=1$ e $\\cos\\dfrac{\\pi}{2}=0$, logo $f'=\\dfrac{\\pi}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita no fólio de Descartes",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x^{3}+y^{3}=6xy$ passa pelo ponto $\\left(3,3\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$-2$",
+      "c": "$-1$",
+      "d": "$-\\dfrac{1}{2}$",
+      "e": "$2$"
+    },
+    "gabarito": "c",
+    "resolucao": "Derivando implicitamente, $3x^{2}+3y^{2}y'=6y+6xy'$, donde $y'=\\dfrac{6y-3x^{2}}{3y^{2}-6x}=\\dfrac{2y-x^{2}}{y^{2}-2x}$. Em $\\left(3,3\\right)$: $\\dfrac{6-9}{9-6}=-1$ — a tangente ao fólio nesse ponto faz $45^{\\circ}$ com os eixos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita numa cônica com termo misto",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x^{2}+xy+y^{2}=7$ passa pelo ponto $\\left(1,2\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-\\dfrac{5}{4}$",
+      "b": "$\\dfrac{4}{5}$",
+      "c": "$-\\dfrac{4}{5}$",
+      "d": "$-\\dfrac{2}{5}$",
+      "e": "$-\\dfrac{3}{5}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Derivando implicitamente, $2x+y+xy'+2yy'=0$, isto é, $y'=-\\dfrac{2x+y}{x+2y}$. Em $\\left(1,2\\right)$: $-\\dfrac{4}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita com soma de radicais",
+    "dificuldade": "medio",
+    "enunciado": "A curva $\\sqrt{x}+\\sqrt{y}=4$ passa pelo ponto $\\left(1,9\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$-3$",
+      "c": "$-\\dfrac{1}{3}$",
+      "d": "$-9$",
+      "e": "$\\dfrac{1}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Derivando, $\\dfrac{1}{2\\sqrt{x}}+\\dfrac{y'}{2\\sqrt{y}}=0$, logo $y'=-\\dfrac{\\sqrt{y}}{\\sqrt{x}}$. Em $\\left(1,9\\right)$: $-\\dfrac{3}{1}=-3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita com cúbica e termo misto",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $y^{3}+3xy=14$ passa pelo ponto $\\left(1,2\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-\\dfrac{2}{5}$",
+      "b": "$-\\dfrac{5}{2}$",
+      "c": "$\\dfrac{2}{5}$",
+      "d": "$-\\dfrac{1}{5}$",
+      "e": "$-\\dfrac{3}{5}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando implicitamente, $3y^{2}y'+3y+3xy'=0$, ou seja, $y'=-\\dfrac{y}{y^{2}+x}$. Em $\\left(1,2\\right)$: $-\\dfrac{2}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita com dois termos mistos",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x^{2}y+xy^{2}=6$ passa pelo ponto $\\left(1,2\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-\\dfrac{5}{8}$",
+      "b": "$\\dfrac{8}{5}$",
+      "c": "$-\\dfrac{4}{5}$",
+      "d": "$-\\dfrac{6}{5}$",
+      "e": "$-\\dfrac{8}{5}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Derivando os dois produtos, $2xy+x^{2}y'+y^{2}+2xyy'=0$. Em $\\left(1,2\\right)$: $4+y'+4+4y'=0$, logo $5y'=-8$ e $y'=-\\dfrac{8}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita numa soma de cubos",
+    "dificuldade": "medio",
+    "enunciado": "A curva $x^{3}+y^{3}=9$ passa pelo ponto $\\left(1,2\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-\\dfrac{1}{4}$",
+      "b": "$-4$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$-\\dfrac{1}{2}$",
+      "e": "$-\\dfrac{1}{8}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando, $3x^{2}+3y^{2}y'=0$, donde $y'=-\\dfrac{x^{2}}{y^{2}}$. Em $\\left(1,2\\right)$: $-\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita na astroide",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x^{2/3}+y^{2/3}=5$ passa pelo ponto $\\left(8,1\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-2$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$-\\dfrac{1}{4}$",
+      "d": "$-\\dfrac{1}{2}$",
+      "e": "$-\\dfrac{1}{8}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Derivando, $\\dfrac{2}{3}x^{-1/3}+\\dfrac{2}{3}y^{-1/3}y'=0$, isto é, $y'=-\\left(\\dfrac{y}{x}\\right)^{1/3}$. Em $\\left(8,1\\right)$: $-\\sqrt[3]{\\dfrac{1}{8}}=-\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita com funções trigonométricas",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x\\cos y+y\\cos x=1$ passa pelo ponto $\\left(0,1\\right)$. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$\\cos 1$",
+      "b": "$-\\operatorname{sen}1$",
+      "c": "$\\operatorname{sen}1$",
+      "d": "$-\\cos 1$",
+      "e": "$-\\cos 2$"
+    },
+    "gabarito": "d",
+    "resolucao": "Derivando os dois produtos, $\\cos y-x\\operatorname{sen}y\\cdot y'+y'\\cos x-y\\operatorname{sen}x=0$. Em $\\left(0,1\\right)$, os termos com $x$ e com $\\operatorname{sen}x$ somem: $\\cos 1+y'=0$, logo $y'=-\\cos 1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivação implícita com seno de um produto",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x+\\operatorname{sen}\\left(xy\\right)=y$ passa pela origem. Determine $\\dfrac{dy}{dx}$ nesse ponto.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$-1$",
+      "c": "$1$",
+      "d": "$2$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Derivando implicitamente, $1+\\cos\\left(xy\\right)\\left(y+xy'\\right)=y'$. Na origem, $\\cos 0=1$, $y=0$ e $x=0$, de modo que $1+1\\cdot\\left(0+0\\right)=y'$, isto é, $y'=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivada segunda implícita numa circunferência",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x^{2}+y^{2}=25$ passa pelo ponto $\\left(3,4\\right)$. Determine $\\dfrac{d^{2}y}{dx^{2}}$ nesse ponto.",
+    "alternativas": {
+      "a": "$-\\dfrac{25}{16}$",
+      "b": "$-\\dfrac{25}{64}$",
+      "c": "$\\dfrac{25}{64}$",
+      "d": "$-\\dfrac{9}{64}$",
+      "e": "$-\\dfrac{3}{16}$"
+    },
+    "gabarito": "b",
+    "resolucao": "De $x+yy'=0$ vem $y'=-\\dfrac{x}{y}$. Derivando de novo, $1+\\left(y'\\right)^{2}+yy''=0$, logo $y''=-\\dfrac{1+\\left(y'\\right)^{2}}{y}$. Em $\\left(3,4\\right)$, $y'=-\\dfrac{3}{4}$ e $y''=-\\dfrac{1+\\frac{9}{16}}{4}=-\\dfrac{25}{64}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivada segunda implícita numa hipérbole",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $x^{2}-y^{2}=16$ passa pelo ponto $\\left(5,3\\right)$. Determine $\\dfrac{d^{2}y}{dx^{2}}$ nesse ponto.",
+    "alternativas": {
+      "a": "$\\dfrac{16}{27}$",
+      "b": "$-\\dfrac{25}{27}$",
+      "c": "$-\\dfrac{16}{9}$",
+      "d": "$-\\dfrac{8}{27}$",
+      "e": "$-\\dfrac{16}{27}$"
+    },
+    "gabarito": "e",
+    "resolucao": "De $2x-2yy'=0$ vem $y'=\\dfrac{x}{y}$. Derivando, $1-\\left(y'\\right)^{2}-yy''=0$, isto é, $y''=\\dfrac{1-\\left(y'\\right)^{2}}{y}=\\dfrac{y^{2}-x^{2}}{y^{3}}=-\\dfrac{16}{y^{3}}$. Em $y=3$: $-\\dfrac{16}{27}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quarta derivada de um seno de argumento duplo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\operatorname{sen}\\left(2x\\right)$. Calcule $f^{(4)}\\left(\\dfrac{\\pi}{8}\\right)$.",
+    "alternativas": {
+      "a": "$4\\sqrt{2}$",
+      "b": "$16\\sqrt{2}$",
+      "c": "$8\\sqrt{2}$",
+      "d": "$2\\sqrt{2}$",
+      "e": "$\\dfrac{\\sqrt{2}}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Cada derivação multiplica por $2$ e avança a fase em $\\dfrac{\\pi}{2}$; após quatro derivações a fase volta ao início: $f^{(4)}(x)=2^{4}\\operatorname{sen}(2x)=16\\operatorname{sen}(2x)$. Em $x=\\dfrac{\\pi}{8}$, $\\operatorname{sen}\\dfrac{\\pi}{4}=\\dfrac{\\sqrt{2}}{2}$ e $f^{(4)}=16\\cdot\\dfrac{\\sqrt{2}}{2}=8\\sqrt{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivada de ordem muito alta do cosseno",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\cos x$. Calcule $f^{(2026)}(0)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$2$",
+      "d": "$-1$",
+      "e": "$-2$"
+    },
+    "gabarito": "d",
+    "resolucao": "As derivadas do cosseno se repetem com período $4$: $-\\operatorname{sen}x$, $-\\cos x$, $\\operatorname{sen}x$, $\\cos x$. Como $2026=4\\cdot506+2$, tem-se $f^{(2026)}(x)=-\\cos x$, e em $x=0$ isso vale $-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quarta derivada na origem pela regra de Leibniz",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{3}\\operatorname{sen}x$. Calcule $f^{(4)}(0)$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$24$",
+      "c": "$12$",
+      "d": "$48$",
+      "e": "$0$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela regra de Leibniz, $f^{(4)}=\\sum_{k=0}^{4}\\binom{4}{k}\\left(x^{3}\\right)^{(k)}\\left(\\operatorname{sen}x\\right)^{(4-k)}$. Em $x=0$ só sobrevive o termo com $\\left(x^{3}\\right)'''=6$: $\\binom{4}{3}\\cdot6\\cdot\\left(\\operatorname{sen}\\right)'(0)=4\\cdot6\\cdot1=24$. O mesmo se lê no desenvolvimento $x^{3}\\operatorname{sen}x=x^{4}-\\dfrac{x^{6}}{6}+\\cdots$, cujo coeficiente de $x^{4}$ é $\\dfrac{f^{(4)}(0)}{4!}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quarta derivada na origem de um produto com cosseno",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{2}\\cos x$. Calcule $f^{(4)}(0)$.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$-12$",
+      "c": "$-24$",
+      "d": "$-6$",
+      "e": "$24$"
+    },
+    "gabarito": "b",
+    "resolucao": "Por Leibniz, em $x=0$ só sobrevive o termo com $\\left(x^{2}\\right)''=2$: $\\binom{4}{2}\\cdot2\\cdot\\left(\\cos\\right)''(0)=6\\cdot2\\cdot\\left(-1\\right)=-12$. Conferindo pelo desenvolvimento, $x^{2}\\cos x=x^{2}-\\dfrac{x^{4}}{2}+\\cdots$, e $\\dfrac{f^{(4)}(0)}{4!}=-\\dfrac{1}{2}$ dá $f^{(4)}(0)=-12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quarta derivada de uma racional na origem",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{1}{1+2x}$. Calcule $f^{(4)}(0)$.",
+    "alternativas": {
+      "a": "$24$",
+      "b": "$96$",
+      "c": "$192$",
+      "d": "$384$",
+      "e": "$768$"
+    },
+    "gabarito": "d",
+    "resolucao": "Derivando sucessivamente, $f^{(n)}(x)=\\dfrac{\\left(-1\\right)^{n}n!\\,2^{n}}{\\left(1+2x\\right)^{n+1}}$ — cada derivação traz um fator $-2$ e aumenta o expoente. Para $n=4$ e $x=0$: $4!\\cdot2^{4}=24\\cdot16=384$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Quarta derivada de 1/x num ponto",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{1}{x}$. Calcule $f^{(4)}(1)$.",
+    "alternativas": {
+      "a": "$-24$",
+      "b": "$24$",
+      "c": "$6$",
+      "d": "$120$",
+      "e": "$-6$"
+    },
+    "gabarito": "b",
+    "resolucao": "Tem-se $f^{(n)}(x)=\\dfrac{\\left(-1\\right)^{n}n!}{x^{n+1}}$: o sinal alterna e o fatorial cresce. Para $n=4$, o sinal é positivo e $f^{(4)}(1)=4!=24$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Terceira derivada de um polinômio",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{5}-3x^{4}$. Calcule $f'''(2)$.",
+    "alternativas": {
+      "a": "$48$",
+      "b": "$72$",
+      "c": "$120$",
+      "d": "$96$",
+      "e": "$144$"
+    },
+    "gabarito": "d",
+    "resolucao": "Derivando três vezes: $f'=5x^{4}-12x^{3}$, $f''=20x^{3}-36x^{2}$ e $f'''=60x^{2}-72x$. Em $x=2$: $240-144=96$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivada segunda de uma racional na origem",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{1}{1+x^{2}}$. Calcule $f''(0)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$-1$",
+      "c": "$-2$",
+      "d": "$0$",
+      "e": "$-4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela cadeia, $f'(x)=-\\dfrac{2x}{\\left(1+x^{2}\\right)^{2}}$. Derivando de novo pelo quociente, $f''(x)=\\dfrac{-2\\left(1+x^{2}\\right)^{2}+2x\\cdot2\\left(1+x^{2}\\right)2x}{\\left(1+x^{2}\\right)^{4}}$, que em $x=0$ vale $-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Derivada segunda de um produto com cosseno",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{2}\\cos\\left(2x\\right)$. Calcule $f''(0)$.",
+    "alternativas": {
+      "a": "$-2$",
+      "b": "$4$",
+      "c": "$2$",
+      "d": "$-4$",
+      "e": "$0$"
+    },
+    "gabarito": "c",
+    "resolucao": "Derivando pelo produto, $f'=2x\\cos 2x-2x^{2}\\operatorname{sen}2x$ e $f''=2\\cos 2x-4x\\operatorname{sen}2x-4x\\operatorname{sen}2x-4x^{2}\\cos 2x$. Em $x=0$ todos os termos com fator $x$ somem e resta $2\\cos 0=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Cadeia com a função composta consigo mesma",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=g\\left(g(x)\\right)$, onde $g$ é derivável com $g(1)=2$, $g(2)=5$, $g'(1)=3$ e $g'(2)=-1$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$-3$",
+      "c": "$-1$",
+      "d": "$15$",
+      "e": "$-5$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela regra da cadeia, $f'(x)=g'\\left(g(x)\\right)g'(x)$. Em $x=1$: $g'\\left(g(1)\\right)g'(1)=g'(2)\\cdot3=-1\\cdot3=-3$. Os valores $g(2)=5$ e $g(1)=2$ servem só para localizar o ponto em que $g'$ deve ser lida.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Cálculo das Derivadas",
+    "subtopico": "Cadeia com radical de função tabelada",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{g(x)}$, onde $g$ é derivável com $g(4)=9$ e $g'(4)=-2$. Calcule $f'(4)$.",
+    "alternativas": {
+      "a": "$-\\dfrac{1}{6}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$-\\dfrac{1}{3}$",
+      "d": "$-\\dfrac{2}{3}$",
+      "e": "$-\\dfrac{1}{9}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{g'(x)}{2\\sqrt{g(x)}}$. Em $x=4$: $\\dfrac{-2}{2\\cdot3}=-\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Escada que escorrega pela parede",
+    "dificuldade": "medio",
+    "enunciado": "Uma escada de $5$ m está apoiada numa parede vertical. O pé da escada é puxado horizontalmente, afastando-se da parede a $2$ m/s. Determine, em m/s, a velocidade com que o topo desce quando o pé está a $3$ m da parede.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{3}$",
+      "b": "$\\dfrac{4}{3}$",
+      "c": "$\\dfrac{5}{3}$",
+      "d": "$\\dfrac{3}{2}$",
+      "e": "$\\dfrac{8}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $x^{2}+y^{2}=25$, derivando em relação ao tempo: $x\\dfrac{dx}{dt}+y\\dfrac{dy}{dt}=0$. Quando $x=3$, tem-se $y=4$, e $3\\cdot2+4\\dfrac{dy}{dt}=0$ dá $\\dfrac{dy}{dt}=-\\dfrac{3}{2}$. O sinal negativo diz que o topo desce; a rapidez é $\\dfrac{3}{2}$ m/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Balão esférico sendo inflado",
+    "dificuldade": "medio",
+    "enunciado": "Um balão esférico é inflado a uma taxa constante de $100$ cm$^{3}$/s. Determine, em cm/s, a taxa de variação do raio no instante em que ele mede $5$ cm.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{\\pi}$",
+      "b": "$\\dfrac{1}{2\\pi}$",
+      "c": "$\\dfrac{4}{\\pi}$",
+      "d": "$\\dfrac{1}{\\pi}$",
+      "e": "$\\dfrac{1}{4\\pi}$"
+    },
+    "gabarito": "d",
+    "resolucao": "De $V=\\dfrac{4}{3}\\pi r^{3}$ vem $\\dfrac{dV}{dt}=4\\pi r^{2}\\dfrac{dr}{dt}$. Com $\\dfrac{dV}{dt}=100$ e $r=5$: $\\dfrac{dr}{dt}=\\dfrac{100}{4\\pi\\cdot25}=\\dfrac{1}{\\pi}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Ponta da sombra projetada por um poste",
+    "dificuldade": "dificil",
+    "enunciado": "Um homem de $1{,}8$ m de altura afasta-se de um poste de $6$ m a $1{,}5$ m/s. Determine, em m/s, a velocidade com que a ponta de sua sombra se move sobre o chão.",
+    "alternativas": {
+      "a": "$\\dfrac{9}{7}$",
+      "b": "$\\dfrac{5}{7}$",
+      "c": "$\\dfrac{10}{7}$",
+      "d": "$\\dfrac{15}{7}$",
+      "e": "$\\dfrac{20}{7}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Sendo $x$ a distância do homem ao poste e $s$ o comprimento da sombra, a semelhança de triângulos dá $\\dfrac{s}{1{,}8}=\\dfrac{x+s}{6}$, isto é, $4{,}2\\,s=1{,}8\\,x$ e $s=\\dfrac{3}{7}x$. A ponta da sombra está em $x+s=\\dfrac{10}{7}x$, cuja taxa é $\\dfrac{10}{7}\\cdot1{,}5=\\dfrac{15}{7}$ m/s. Repare que ela não depende da distância ao poste.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Ponto que percorre uma parábola",
+    "dificuldade": "dificil",
+    "enunciado": "Um ponto move-se sobre a parábola $y=x^{2}$ de modo que sua abscissa cresce a $3$ cm/s. Determine, em cm/s, a taxa de variação da distância do ponto à origem no instante em que $x=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{3\\sqrt{2}}{2}$",
+      "b": "$\\dfrac{9\\sqrt{2}}{4}$",
+      "c": "$3\\sqrt{2}$",
+      "d": "$\\dfrac{9\\sqrt{2}}{2}$",
+      "e": "$\\dfrac{15\\sqrt{2}}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "A distância é $D=\\sqrt{x^{2}+x^{4}}$, logo $\\dfrac{dD}{dx}=\\dfrac{2x+4x^{3}}{2\\sqrt{x^{2}+x^{4}}}$, que em $x=1$ vale $\\dfrac{6}{2\\sqrt{2}}=\\dfrac{3}{\\sqrt{2}}$. Pela cadeia, $\\dfrac{dD}{dt}=\\dfrac{3}{\\sqrt{2}}\\cdot3=\\dfrac{9}{\\sqrt{2}}=\\dfrac{9\\sqrt{2}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Cubo com aresta crescendo",
+    "dificuldade": "medio",
+    "enunciado": "A aresta de um cubo cresce a $2$ cm/s. Determine, em cm$^{2}$/s, a taxa de variação da área total de sua superfície no instante em que a aresta mede $5$ cm.",
+    "alternativas": {
+      "a": "$60$",
+      "b": "$120$",
+      "c": "$100$",
+      "d": "$150$",
+      "e": "$240$"
+    },
+    "gabarito": "b",
+    "resolucao": "A área total é $S=6a^{2}$, logo $\\dfrac{dS}{dt}=12a\\dfrac{da}{dt}$. Com $a=5$ e $\\dfrac{da}{dt}=2$: $12\\cdot5\\cdot2=120$ cm$^{2}$/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Monte de areia em forma de cone",
+    "dificuldade": "dificil",
+    "enunciado": "Areia cai formando um monte cônico cuja altura é sempre igual ao raio da base, a uma taxa de $10$ m$^{3}$/min. Determine, em m/min, a taxa de variação da altura no instante em que ela mede $5$ m.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{5\\pi}$",
+      "b": "$\\dfrac{1}{5\\pi}$",
+      "c": "$\\dfrac{2}{25\\pi}$",
+      "d": "$\\dfrac{4}{5\\pi}$",
+      "e": "$\\dfrac{10}{\\pi}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $r=h$, o volume é $V=\\dfrac{\\pi}{3}h^{2}\\cdot h=\\dfrac{\\pi h^{3}}{3}$, logo $\\dfrac{dV}{dt}=\\pi h^{2}\\dfrac{dh}{dt}$. Com $h=5$: $\\dfrac{dh}{dt}=\\dfrac{10}{25\\pi}=\\dfrac{2}{5\\pi}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Área de um triângulo com ângulo variável",
+    "dificuldade": "medio",
+    "enunciado": "Dois lados de um triângulo medem $4$ m e $5$ m, e o ângulo entre eles cresce a $0{,}06$ rad/s. Determine, em m$^{2}$/s, a taxa de variação da área quando esse ângulo vale $\\dfrac{\\pi}{3}$.",
+    "alternativas": {
+      "a": "$0{,}15$",
+      "b": "$0{,}6$",
+      "c": "$0{,}3$",
+      "d": "$0{,}12$",
+      "e": "$0{,}24$"
+    },
+    "gabarito": "c",
+    "resolucao": "A área é $A=\\dfrac{1}{2}\\cdot4\\cdot5\\operatorname{sen}\\theta=10\\operatorname{sen}\\theta$, logo $\\dfrac{dA}{dt}=10\\cos\\theta\\dfrac{d\\theta}{dt}$. Com $\\cos\\dfrac{\\pi}{3}=\\dfrac{1}{2}$: $10\\cdot\\dfrac{1}{2}\\cdot0{,}06=0{,}3$ m$^{2}$/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Ângulo de observação de um balão que sobe",
+    "dificuldade": "dificil",
+    "enunciado": "Um balão sobe verticalmente a $10$ m/s, e um observador está a $100$ m do ponto de lançamento. Determine, em rad/s, a taxa de variação do ângulo de elevação quando o balão está a $100$ m de altura.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{10}$",
+      "b": "$\\dfrac{1}{40}$",
+      "c": "$\\dfrac{1}{5}$",
+      "d": "$\\dfrac{1}{100}$",
+      "e": "$\\dfrac{1}{20}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $\\theta=\\operatorname{arctg}\\dfrac{h}{100}$, tem-se $\\dfrac{d\\theta}{dt}=\\dfrac{1}{1+\\left(h/100\\right)^{2}}\\cdot\\dfrac{1}{100}\\cdot\\dfrac{dh}{dt}$. Para $h=100$: $\\dfrac{1}{2}\\cdot\\dfrac{1}{100}\\cdot10=\\dfrac{1}{20}$ rad/s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Caixa aberta de base quadrada e área mínima",
+    "dificuldade": "dificil",
+    "enunciado": "Uma caixa sem tampa, de base quadrada, deve ter volume $32$ cm$^{3}$. Determine, em cm$^{2}$, a menor área total possível de material.",
+    "alternativas": {
+      "a": "$32$",
+      "b": "$48$",
+      "c": "$40$",
+      "d": "$64$",
+      "e": "$96$"
+    },
+    "gabarito": "b",
+    "resolucao": "Sendo $x$ o lado da base e $h$ a altura, $x^{2}h=32$ e a área é $A=x^{2}+4xh=x^{2}+\\dfrac{128}{x}$. De $A'=2x-\\dfrac{128}{x^{2}}=0$ vem $x^{3}=64$, isto é, $x=4$ (mínimo, pois $A''>0$). Então $A=16+32=48$ cm$^{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Retângulo de área máxima inscrito numa elipse",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a maior área possível de um retângulo de lados paralelos aos eixos inscrito na elipse $\\dfrac{x^{2}}{9}+\\dfrac{y^{2}}{4}=1$.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$6$",
+      "c": "$18$",
+      "d": "$24$",
+      "e": "$36$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com o vértice $\\left(x,y\\right)$ no primeiro quadrante, a área é $A=4xy=4x\\cdot2\\sqrt{1-\\dfrac{x^{2}}{9}}$. Maximizar $A$ equivale a maximizar $x^{2}\\left(1-\\dfrac{x^{2}}{9}\\right)$, o que ocorre em $x=\\dfrac{3}{\\sqrt{2}}$, e então $y=\\sqrt{2}$. A área vale $4\\cdot\\dfrac{3}{\\sqrt{2}}\\cdot\\sqrt{2}=12$ — resultado geral $2ab$ para a elipse de semieixos $a$ e $b$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Menor distância de um ponto a uma parábola",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a menor distância do ponto $\\left(4,0\\right)$ à parábola $y^{2}=2x$.",
+    "alternativas": {
+      "a": "$\\sqrt{5}$",
+      "b": "$2\\sqrt{2}$",
+      "c": "$\\sqrt{7}$",
+      "d": "$\\sqrt{10}$",
+      "e": "$3$"
+    },
+    "gabarito": "c",
+    "resolucao": "Um ponto da parábola é $\\left(x,y\\right)$ com $y^{2}=2x$, e o quadrado da distância vale $D=\\left(x-4\\right)^{2}+2x$. De $D'=2\\left(x-4\\right)+2=0$ vem $x=3$, valor admissível (pois $x\\geq0$), e $D=1+6=7$. A distância mínima é $\\sqrt{7}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Triângulo isósceles de área máxima inscrito num círculo",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a maior área possível de um triângulo isósceles inscrito num círculo de raio $1$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{3}}{2}$",
+      "b": "$\\dfrac{3\\sqrt{3}}{2}$",
+      "c": "$\\dfrac{\\sqrt{3}}{4}$",
+      "d": "$\\dfrac{2\\sqrt{3}}{3}$",
+      "e": "$\\dfrac{3\\sqrt{3}}{4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Coloque a base a uma distância $d\\in\\left[-1,1\\right]$ do centro, do lado oposto ao vértice. Então a base mede $2\\sqrt{1-d^{2}}$, a altura é $1+d$ e a área vale $A(d)=\\sqrt{1-d^{2}}\\left(1+d\\right)$. Derivando e igualando a zero, $d=\\dfrac{1}{2}$, o que dá $A=\\dfrac{\\sqrt{3}}{2}\\cdot\\dfrac{3}{2}=\\dfrac{3\\sqrt{3}}{4}$ — o triângulo ótimo é o equilátero.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Cilindro de volume máximo inscrito num cone",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o maior volume possível de um cilindro reto inscrito num cone de raio $3$ e altura $9$, com as bases apoiadas na base do cone.",
+    "alternativas": {
+      "a": "$9\\pi$",
+      "b": "$12\\pi$",
+      "c": "$18\\pi$",
+      "d": "$24\\pi$",
+      "e": "$27\\pi$"
+    },
+    "gabarito": "b",
+    "resolucao": "Se o cilindro tem raio $r$, a semelhança de triângulos dá altura $h=9\\left(1-\\dfrac{r}{3}\\right)$, e $V=\\pi r^{2}h=9\\pi r^{2}-3\\pi r^{3}$. De $V'=18\\pi r-9\\pi r^{2}=0$ vem $r=2$ (o valor $r=0$ é mínimo), e $V=36\\pi-24\\pi=12\\pi$ — exatamente $\\dfrac{4}{9}$ do volume do cone.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Fio cortado entre quadrado e círculo",
+    "dificuldade": "dificil",
+    "enunciado": "Um fio de $100$ cm é cortado em dois pedaços: com um faz-se um quadrado e com o outro, um círculo. Determine, em cm, o comprimento do pedaço usado no quadrado para que a soma das áreas seja mínima.",
+    "alternativas": {
+      "a": "$\\dfrac{100}{\\pi+4}$",
+      "b": "$\\dfrac{400}{\\pi+2}$",
+      "c": "$\\dfrac{100\\pi}{\\pi+4}$",
+      "d": "$\\dfrac{400}{\\pi+4}$",
+      "e": "$\\dfrac{200}{\\pi+4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Se $x$ é o pedaço do quadrado, seu lado é $\\dfrac{x}{4}$ e sua área $\\dfrac{x^{2}}{16}$; o círculo tem comprimento $100-x$, raio $\\dfrac{100-x}{2\\pi}$ e área $\\dfrac{\\left(100-x\\right)^{2}}{4\\pi}$. De $S'=\\dfrac{x}{8}-\\dfrac{100-x}{2\\pi}=0$ vem $\\pi x=4\\left(100-x\\right)$, isto é, $x=\\dfrac{400}{\\pi+4}$. Como $S''>0$, é mínimo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Máximo de uma função com fator exponencial",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor máximo de $f(x)=x^{2}e^{-x}$ no intervalo $\\left[0,+\\infty\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{e^{2}}$",
+      "b": "$\\dfrac{4}{e}$",
+      "c": "$\\dfrac{1}{e^{2}}$",
+      "d": "$\\dfrac{4}{e^{2}}$",
+      "e": "$\\dfrac{4}{e^{3}}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Derivando, $f'(x)=\\left(2x-x^{2}\\right)e^{-x}=x\\left(2-x\\right)e^{-x}$, que anula em $x=0$ e $x=2$. O sinal de $f'$ é positivo em $\\left(0,2\\right)$ e negativo depois, então $x=2$ é máximo absoluto, com $f(2)=\\dfrac{4}{e^{2}}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Soma do máximo e do mínimo num intervalo fechado",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{3}-3x+1$ em $\\left[0,3\\right]$. Calcule a soma do valor máximo absoluto com o valor mínimo absoluto de $f$ nesse intervalo.",
+    "alternativas": {
+      "a": "$18$",
+      "b": "$16$",
+      "c": "$20$",
+      "d": "$19$",
+      "e": "$12$"
+    },
+    "gabarito": "a",
+    "resolucao": "Os candidatos são os extremos do intervalo e os pontos críticos: $f'(x)=3x^{2}-3$ anula em $x=1$ (o ponto $x=-1$ está fora). Comparando $f(0)=1$, $f(1)=-1$ e $f(3)=19$, o máximo é $19$ e o mínimo é $-1$. A soma vale $18$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Extremos absolutos de x mais seu inverso",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x+\\dfrac{1}{x}$ em $\\left[\\dfrac{1}{2},3\\right]$. Calcule a soma do valor máximo absoluto com o valor mínimo absoluto de $f$ nesse intervalo.",
+    "alternativas": {
+      "a": "$\\dfrac{16}{3}$",
+      "b": "$\\dfrac{13}{3}$",
+      "c": "$\\dfrac{19}{3}$",
+      "d": "$\\dfrac{9}{2}$",
+      "e": "$\\dfrac{11}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "De $f'(x)=1-\\dfrac{1}{x^{2}}$ vem o ponto crítico $x=1$, com $f(1)=2$. Nas bordas, $f\\left(\\dfrac{1}{2}\\right)=\\dfrac{5}{2}$ e $f(3)=\\dfrac{10}{3}$. O máximo é $\\dfrac{10}{3}$ e o mínimo é $2$, de soma $\\dfrac{16}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Máximo de uma combinação de seno e cosseno",
+    "dificuldade": "medio",
+    "enunciado": "Determine o valor máximo de $f(x)=\\operatorname{sen}x+\\cos x$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$\\dfrac{\\sqrt{2}}{2}$",
+      "c": "$2\\sqrt{2}$",
+      "d": "$\\dfrac{3}{2}$",
+      "e": "$\\sqrt{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "De $f'(x)=\\cos x-\\operatorname{sen}x=0$ vem $\\operatorname{tg}x=1$, isto é, $x=\\dfrac{\\pi}{4}+k\\pi$. Em $x=\\dfrac{\\pi}{4}$, $f=\\dfrac{\\sqrt{2}}{2}+\\dfrac{\\sqrt{2}}{2}=\\sqrt{2}$, e $f''<0$ ali. O mesmo sai de $f(x)=\\sqrt{2}\\operatorname{sen}\\left(x+\\dfrac{\\pi}{4}\\right)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Valor do máximo local de uma cúbica",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{3}-3x^{2}-9x+5$. Determine o valor do máximo local de $f$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$-22$",
+      "c": "$8$",
+      "d": "$10$",
+      "e": "$12$"
+    },
+    "gabarito": "d",
+    "resolucao": "De $f'(x)=3x^{2}-6x-9=3\\left(x-3\\right)\\left(x+1\\right)$ vêm os críticos $x=-1$ e $x=3$. Como $f''(x)=6x-6$, tem-se $f''(-1)=-12<0$: máximo local em $x=-1$, com $f(-1)=-1-3+9+5=10$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Distância entre os valores extremos locais",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{x^{2}+1}{x}$. Calcule a diferença entre o valor do mínimo local e o valor do máximo local de $f$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$2$",
+      "c": "$1$",
+      "d": "$-4$",
+      "e": "$8$"
+    },
+    "gabarito": "a",
+    "resolucao": "Escrevendo $f(x)=x+\\dfrac{1}{x}$, tem-se $f'(x)=1-\\dfrac{1}{x^{2}}$, que anula em $x=\\pm1$. Para $x>0$, $x=1$ é mínimo local com $f(1)=2$; para $x<0$, $x=-1$ é máximo local com $f(-1)=-2$. A diferença é $2-\\left(-2\\right)=4$. Note que o \"mínimo\" local supera o \"máximo\" local — os dois ramos são separados pela assíntota $x=0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Ponto dado pelo Teorema do Valor Médio numa cúbica",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{3}-x$ em $\\left[0,2\\right]$. Determine o valor de $c\\in\\left(0,2\\right)$ dado pelo Teorema do Valor Médio.",
+    "alternativas": {
+      "a": "$\\dfrac{2\\sqrt{3}}{3}$",
+      "b": "$\\dfrac{\\sqrt{3}}{3}$",
+      "c": "$\\dfrac{4\\sqrt{3}}{3}$",
+      "d": "$\\dfrac{\\sqrt{3}}{2}$",
+      "e": "$\\dfrac{3\\sqrt{3}}{4}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A taxa média é $\\dfrac{f(2)-f(0)}{2-0}=\\dfrac{6-0}{2}=3$. Impondo $f'(c)=3c^{2}-1=3$, vem $c^{2}=\\dfrac{4}{3}$ e, tomando a raiz positiva do intervalo, $c=\\dfrac{2}{\\sqrt{3}}=\\dfrac{2\\sqrt{3}}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Ponto do Teorema do Valor Médio para a raiz quadrada",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{x}$ em $\\left[0,4\\right]$. Determine o valor de $c\\in\\left(0,4\\right)$ dado pelo Teorema do Valor Médio.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$1$",
+      "c": "$3$",
+      "d": "$4$",
+      "e": "$0$"
+    },
+    "gabarito": "b",
+    "resolucao": "A taxa média vale $\\dfrac{2-0}{4-0}=\\dfrac{1}{2}$. De $f'(c)=\\dfrac{1}{2\\sqrt{c}}=\\dfrac{1}{2}$ vem $\\sqrt{c}=1$, isto é, $c=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Ponto do Teorema de Rolle",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x\\sqrt{4-x^{2}}$ em $\\left[-2,2\\right]$. Determine o valor positivo de $c$ dado pelo Teorema de Rolle.",
+    "alternativas": {
+      "a": "$2\\sqrt{2}$",
+      "b": "$\\sqrt{2}$",
+      "c": "$\\dfrac{\\sqrt{2}}{2}$",
+      "d": "$\\sqrt{3}$",
+      "e": "$\\dfrac{\\sqrt{3}}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Como $f(-2)=f(2)=0$ e $f$ é contínua em $\\left[-2,2\\right]$ e derivável no interior, Rolle garante $c$ com $f'(c)=0$. Derivando, $f'(x)=\\sqrt{4-x^{2}}-\\dfrac{x^{2}}{\\sqrt{4-x^{2}}}=\\dfrac{4-2x^{2}}{\\sqrt{4-x^{2}}}$, que anula quando $x^{2}=2$. O valor positivo é $c=\\sqrt{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "L'Hospital com arco-tangente",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0}\\dfrac{x-\\operatorname{arctg}x}{x^{3}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{6}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{2}{3}$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{1}{12}$"
+    },
+    "gabarito": "d",
+    "resolucao": "É uma indeterminação $\\dfrac{0}{0}$. Derivando numerador e denominador, $\\dfrac{1-\\dfrac{1}{1+x^{2}}}{3x^{2}}=\\dfrac{x^{2}}{3x^{2}\\left(1+x^{2}\\right)}=\\dfrac{1}{3\\left(1+x^{2}\\right)}\\to\\dfrac{1}{3}$. Uma única aplicação basta porque o numerador simplifica.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "L'Hospital com tangente e seno",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0}\\dfrac{\\operatorname{tg}x-x}{x-\\operatorname{sen}x}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$3$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Ambos são infinitésimos de terceira ordem: $\\operatorname{tg}x-x\\sim\\dfrac{x^{3}}{3}$ e $x-\\operatorname{sen}x\\sim\\dfrac{x^{3}}{6}$. O quociente tende a $\\dfrac{1/3}{1/6}=2$. Por L'Hospital chega-se ao mesmo após três derivações — bem mais trabalhoso.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "L'Hospital com raízes de índices diferentes",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to1}\\dfrac{\\sqrt[3]{x}-1}{\\sqrt{x}-1}$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{3}$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$\\dfrac{1}{3}$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$\\dfrac{5}{6}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando numerador e denominador, $\\dfrac{\\frac{1}{3}x^{-2/3}}{\\frac{1}{2}x^{-1/2}}$, que em $x=1$ vale $\\dfrac{1/3}{1/2}=\\dfrac{2}{3}$. Também se resolve com $u=x^{1/6}$, que transforma o quociente em $\\dfrac{u^{2}-1}{u^{3}-1}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Indeterminação do tipo um elevado a infinito",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to+\\infty}\\left(1+\\dfrac{3}{x}\\right)^{2x}$.",
+    "alternativas": {
+      "a": "$e^{3}$",
+      "b": "$e^{2}$",
+      "c": "$e^{6}$",
+      "d": "$e^{5}$",
+      "e": "$e^{9}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Tomando logaritmo, $2x\\ln\\left(1+\\dfrac{3}{x}\\right)$. Com $t=\\dfrac{1}{x}\\to0^{+}$, isso é $\\dfrac{2\\ln\\left(1+3t\\right)}{t}\\to6$, pois $\\ln(1+u)\\sim u$. Pela continuidade da exponencial, o limite é $e^{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Potência com base tendendo a um e expoente explodindo",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0}\\left(\\cos 2x\\right)^{3/x^{2}}$.",
+    "alternativas": {
+      "a": "$e^{-3}$",
+      "b": "$e^{-2}$",
+      "c": "$e^{-12}$",
+      "d": "$e^{6}$",
+      "e": "$e^{-6}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Tomando logaritmo, $\\dfrac{3\\ln\\cos 2x}{x^{2}}$, uma indeterminação $\\dfrac{0}{0}$. Como $\\ln\\cos u\\sim-\\dfrac{u^{2}}{2}$ com $u=2x$, o numerador se comporta como $-6x^{2}$, e o quociente tende a $-6$. Logo o limite é $e^{-6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Indeterminação infinito menos infinito com seno",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0}\\left(\\dfrac{1}{x^{2}}-\\dfrac{1}{\\operatorname{sen}^{2}x}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$-\\dfrac{1}{6}$",
+      "c": "$-\\dfrac{1}{3}$",
+      "d": "$\\dfrac{1}{6}$",
+      "e": "$-\\dfrac{2}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Reduzindo ao mesmo denominador, a expressão vira $\\dfrac{\\operatorname{sen}^{2}x-x^{2}}{x^{2}\\operatorname{sen}^{2}x}$. O denominador se comporta como $x^{4}$; no numerador, $\\operatorname{sen}^{2}x=x^{2}-\\dfrac{x^{4}}{3}+\\cdots$, de modo que $\\operatorname{sen}^{2}x-x^{2}\\sim-\\dfrac{x^{4}}{3}$. O limite é $-\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Produto de zero por infinito com arco-tangente",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to+\\infty}x\\left(\\dfrac{\\pi}{2}-\\operatorname{arctg}x\\right)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$\\dfrac{\\pi}{2}$",
+      "d": "$2$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Escreva $t=\\dfrac{1}{x}\\to0^{+}$; o produto vira $\\dfrac{\\frac{\\pi}{2}-\\operatorname{arctg}\\frac{1}{t}}{t}$, indeterminação $\\dfrac{0}{0}$. Como $\\dfrac{\\pi}{2}-\\operatorname{arctg}\\dfrac{1}{t}=\\operatorname{arctg}t$, o quociente é $\\dfrac{\\operatorname{arctg}t}{t}\\to1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Distância entre os pontos de inflexão",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{4}-6x^{2}$. Calcule a distância entre os dois pontos de inflexão do gráfico de $f$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$4$",
+      "c": "$2$",
+      "d": "$2\\sqrt{2}$",
+      "e": "$\\sqrt{5}$"
+    },
+    "gabarito": "c",
+    "resolucao": "De $f''(x)=12x^{2}-12$ vêm os candidatos $x=\\pm1$, e $f''$ de fato troca de sinal em cada um. Como $f(1)=f(-1)=-5$, os pontos de inflexão são $\\left(-1,-5\\right)$ e $\\left(1,-5\\right)$: têm a mesma ordenada, e a distância é simplesmente $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Comprimento do intervalo de concavidade para baixo",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o comprimento do intervalo em que o gráfico de $f(x)=x^{4}-4x^{3}+10$ tem concavidade voltada para baixo.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$2$",
+      "d": "$4$",
+      "e": "$6$"
+    },
+    "gabarito": "c",
+    "resolucao": "Derivando duas vezes, $f''(x)=12x^{2}-24x=12x\\left(x-2\\right)$, que é negativa exatamente para $0<x<2$. Nesse intervalo — e só nele — a concavidade é para baixo; seu comprimento é $2$. Os pontos $x=0$ e $x=2$ são de inflexão, já que $f''$ troca de sinal em ambos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Abscissa do ponto de inflexão com fator exponencial",
+    "dificuldade": "medio",
+    "enunciado": "Determine a abscissa do único ponto de inflexão do gráfico de $f(x)=xe^{x}$.",
+    "alternativas": {
+      "a": "$-2$",
+      "b": "$-1$",
+      "c": "$0$",
+      "d": "$1$",
+      "e": "$2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando, $f'(x)=\\left(1+x\\right)e^{x}$ e $f''(x)=\\left(2+x\\right)e^{x}$. Como $e^{x}>0$ sempre, $f''$ troca de sinal apenas em $x=-2$, que é, portanto, o único ponto de inflexão (em $x=-1$ há mínimo, não inflexão).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Facho de farol varrendo uma praia reta",
+    "dificuldade": "dificil",
+    "enunciado": "Um farol situado a $1$ km de uma praia reta gira a $3$ voltas por minuto. Determine, em km/min, a velocidade com que o facho de luz varre a praia no ponto mais próximo do farol.",
+    "alternativas": {
+      "a": "$3\\pi$",
+      "b": "$12\\pi$",
+      "c": "$2\\pi$",
+      "d": "$9\\pi$",
+      "e": "$6\\pi$"
+    },
+    "gabarito": "e",
+    "resolucao": "Se $\\theta$ é o ângulo entre a perpendicular à praia e o facho, o ponto iluminado fica em $x=\\operatorname{tg}\\theta$, logo $\\dfrac{dx}{dt}=\\sec^{2}\\theta\\dfrac{d\\theta}{dt}$. No ponto mais próximo, $\\theta=0$ e $\\sec^{2}\\theta=1$. Como $3$ voltas por minuto valem $\\dfrac{d\\theta}{dt}=6\\pi$ rad/min, a velocidade é $6\\pi$ km/min.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "Retângulo de área máxima sob uma parábola",
+    "dificuldade": "dificil",
+    "enunciado": "Um retângulo tem a base sobre o eixo $x$ e os dois vértices superiores sobre a parábola $y=12-x^{2}$. Determine sua maior área possível.",
+    "alternativas": {
+      "a": "$16$",
+      "b": "$24$",
+      "c": "$32$",
+      "d": "$36$",
+      "e": "$48$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com o vértice superior direito em $\\left(x,12-x^{2}\\right)$, a base mede $2x$ e a área é $A(x)=2x\\left(12-x^{2}\\right)=24x-2x^{3}$, com $0<x<2\\sqrt{3}$. De $A'(x)=24-6x^{2}=0$ vem $x=2$, e $A''<0$ ali. A área máxima é $A(2)=4\\cdot8=32$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Derivada",
+    "subtopico": "L'Hospital com exponencial e termo linear",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0}\\dfrac{e^{2x}-1-2x}{x^{2}}$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$1$",
+      "c": "$4$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$\\dfrac{3}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "É uma indeterminação $\\dfrac{0}{0}$. Uma aplicação de L'Hospital dá $\\dfrac{2e^{2x}-2}{2x}$, ainda $\\dfrac{0}{0}$; a segunda dá $\\dfrac{4e^{2x}}{2}\\to2$. O mesmo se lê no desenvolvimento $e^{2x}=1+2x+2x^{2}+\\cdots$, cujo primeiro termo restante é $2x^{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

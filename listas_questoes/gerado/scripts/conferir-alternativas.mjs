@@ -21,8 +21,11 @@ function forma(s) {
   // Os marcadores procuram COMANDO LaTeX, não substring solta: /frac/ casava
   // com a palavra "fracas" de uma alternativa em prosa e acusava tell falso
   // (visto na leva de Química no estilo UFF, que é quase toda em prosa).
-  if (/\[dt]?frac/.test(t)) marcas.push("fracao");
-  if (/\sqrt/.test(t)) marcas.push("raiz");
+  // (E o comando precisa da barra invertida ESCAPADA: `/\[dt]?frac/` procurava
+  // o literal "[dt]frac" e `/\sqrt/` procurava espaço+"qrt" — as duas marcas
+  // nunca disparavam, e toda alternativa fracionária passava como "simples".)
+  if (/\\[dt]?frac/.test(t)) marcas.push("fracao");
+  if (/\\sqrt/.test(t)) marcas.push("raiz");
   if (/\\pi/.test(t)) marcas.push("pi");
   if (/times\s*10\^|10\^\{/.test(t)) marcas.push("notcient");
   if (/pmatrix|begin\{matrix\}|vmatrix/.test(t)) marcas.push("matriz");

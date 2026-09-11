@@ -1,0 +1,1579 @@
+[
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de Riemann que produz o arco-tangente",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1}{n}\\sum_{k=1}^{n}\\dfrac{1}{1+\\left(\\dfrac{k}{n}\\right)^{2}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{2}$",
+      "b": "$\\dfrac{\\pi}{6}$",
+      "c": "$\\dfrac{\\pi}{4}$",
+      "d": "$\\dfrac{\\pi}{3}$",
+      "e": "$\\dfrac{\\pi}{8}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A soma é exatamente a soma de Riemann de $f(x)=\\dfrac{1}{1+x^{2}}$ em $\\left[0,1\\right]$, com $n$ subintervalos de largura $\\dfrac{1}{n}$ e pontos $x_{k}=\\dfrac{k}{n}$ nas extremidades direitas. O limite é $\\displaystyle\\int_{0}^{1}\\dfrac{dx}{1+x^{2}}=\\operatorname{arctg}1=\\dfrac{\\pi}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de raízes reconhecida como integral",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1}{n}\\sum_{k=1}^{n}\\sqrt{\\dfrac{k}{n}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$\\dfrac{2}{3}$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{3}{4}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Trata-se da soma de Riemann de $f(x)=\\sqrt{x}$ em $\\left[0,1\\right]$ com pontos $\\dfrac{k}{n}$. O limite é $\\displaystyle\\int_{0}^{1}\\sqrt{x}\\,dx=\\left[\\dfrac{2}{3}x^{3/2}\\right]_{0}^{1}=\\dfrac{2}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de cubos dividida pela quarta potência",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1^{3}+2^{3}+\\cdots+n^{3}}{n^{4}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{4}$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{1}{5}$",
+      "e": "$1$"
+    },
+    "gabarito": "b",
+    "resolucao": "Coloque $\\dfrac{1}{n}$ em evidência: a expressão é $\\dfrac{1}{n}\\sum_{k=1}^{n}\\left(\\dfrac{k}{n}\\right)^{3}$, a soma de Riemann de $x^{3}$ em $\\left[0,1\\right]$. O limite é $\\displaystyle\\int_{0}^{1}x^{3}dx=\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de quartas potências",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1^{4}+2^{4}+\\cdots+n^{4}}{n^{5}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{6}$",
+      "c": "$\\dfrac{1}{3}$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$\\dfrac{1}{5}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pondo $\\dfrac{1}{n}$ em evidência, a expressão é $\\dfrac{1}{n}\\sum_{k=1}^{n}\\left(\\dfrac{k}{n}\\right)^{4}$, soma de Riemann de $x^{4}$ em $\\left[0,1\\right]$, cujo limite é $\\displaystyle\\int_{0}^{1}x^{4}dx=\\dfrac{1}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma com k no numerador e n ao quadrado no denominador",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\dfrac{k}{n^{2}+k^{2}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\ln 2}{2}$",
+      "b": "$\\ln 2$",
+      "c": "$\\dfrac{\\pi}{4}$",
+      "d": "$\\dfrac{\\ln 2}{4}$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Divida numerador e denominador por $n^{2}$: o termo geral vira $\\dfrac{1}{n}\\cdot\\dfrac{k/n}{1+\\left(k/n\\right)^{2}}$. É a soma de Riemann de $\\dfrac{x}{1+x^{2}}$ em $\\left[0,1\\right]$, cujo limite é $\\left[\\dfrac{1}{2}\\ln\\left(1+x^{2}\\right)\\right]_{0}^{1}=\\dfrac{\\ln 2}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de senos igualmente espaçados",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1}{n}\\sum_{k=1}^{n}\\operatorname{sen}\\dfrac{k\\pi}{n}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{\\pi}$",
+      "b": "$\\dfrac{4}{\\pi}$",
+      "c": "$\\dfrac{\\pi}{2}$",
+      "d": "$\\dfrac{2}{\\pi}$",
+      "e": "$\\dfrac{2}{\\pi^{2}}$"
+    },
+    "gabarito": "d",
+    "resolucao": "É a soma de Riemann de $f(x)=\\operatorname{sen}\\left(\\pi x\\right)$ em $\\left[0,1\\right]$. O limite é $\\displaystyle\\int_{0}^{1}\\operatorname{sen}\\left(\\pi x\\right)dx=\\left[-\\dfrac{\\cos\\pi x}{\\pi}\\right]_{0}^{1}=\\dfrac{2}{\\pi}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de exponenciais igualmente espaçadas",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1}{n}\\sum_{k=1}^{n}e^{k/n}$.",
+    "alternativas": {
+      "a": "$e-1$",
+      "b": "$e$",
+      "c": "$e+1$",
+      "d": "$\\dfrac{e-1}{2}$",
+      "e": "$2e-1$"
+    },
+    "gabarito": "a",
+    "resolucao": "É a soma de Riemann de $f(x)=e^{x}$ em $\\left[0,1\\right]$, logo o limite vale $\\displaystyle\\int_{0}^{1}e^{x}dx=e-1$. (Como soma geométrica exata, ela também vale $\\dfrac{e^{1/n}\\left(e-1\\right)}{n\\left(e^{1/n}-1\\right)}$, que tende ao mesmo valor.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma harmônica deslocada",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\left(\\dfrac{1}{n+1}+\\dfrac{1}{n+2}+\\cdots+\\dfrac{1}{2n}\\right)$.",
+    "alternativas": {
+      "a": "$\\ln 3$",
+      "b": "$\\ln 2$",
+      "c": "$\\dfrac{\\ln 2}{2}$",
+      "d": "$1$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "O termo geral é $\\dfrac{1}{n+k}=\\dfrac{1}{n}\\cdot\\dfrac{1}{1+k/n}$, de modo que a soma é a de Riemann de $\\dfrac{1}{1+x}$ em $\\left[0,1\\right]$. O limite é $\\left[\\ln\\left(1+x\\right)\\right]_{0}^{1}=\\ln 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma com radical no denominador",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\dfrac{1}{\\sqrt{n^{2}+kn}}$.",
+    "alternativas": {
+      "a": "$\\sqrt{2}-1$",
+      "b": "$2-\\sqrt{2}$",
+      "c": "$4\\sqrt{2}-4$",
+      "d": "$\\sqrt{2}$",
+      "e": "$2\\sqrt{2}-2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Ponha $n$ em evidência sob o radical: $\\dfrac{1}{\\sqrt{n^{2}+kn}}=\\dfrac{1}{n}\\cdot\\dfrac{1}{\\sqrt{1+k/n}}$. A soma é a de Riemann de $\\dfrac{1}{\\sqrt{1+x}}$ em $\\left[0,1\\right]$, e o limite é $\\left[2\\sqrt{1+x}\\right]_{0}^{1}=2\\sqrt{2}-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de logaritmos reconhecida como integral",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1}{n}\\sum_{k=1}^{n}\\ln\\left(1+\\dfrac{k}{n}\\right)$.",
+    "alternativas": {
+      "a": "$\\ln 2-1$",
+      "b": "$2\\ln 2$",
+      "c": "$2\\ln 2-1$",
+      "d": "$\\ln 2$",
+      "e": "$1-\\ln 2$"
+    },
+    "gabarito": "c",
+    "resolucao": "É a soma de Riemann de $\\ln\\left(1+x\\right)$ em $\\left[0,1\\right]$. Integrando por partes, $\\displaystyle\\int_{0}^{1}\\ln(1+x)dx=\\left[\\left(1+x\\right)\\ln\\left(1+x\\right)-x\\right]_{0}^{1}=2\\ln 2-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de Riemann com intervalo deslocado",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1}{n}\\sum_{k=1}^{n}\\left(2+\\dfrac{k}{n}\\right)^{2}$.",
+    "alternativas": {
+      "a": "$\\dfrac{13}{3}$",
+      "b": "$\\dfrac{19}{3}$",
+      "c": "$\\dfrac{7}{3}$",
+      "d": "$\\dfrac{26}{3}$",
+      "e": "$\\dfrac{19}{6}$"
+    },
+    "gabarito": "b",
+    "resolucao": "É a soma de Riemann de $f(x)=\\left(2+x\\right)^{2}$ em $\\left[0,1\\right]$, cujo limite é $\\displaystyle\\int_{0}^{1}\\left(2+x\\right)^{2}dx=\\left[\\dfrac{\\left(2+x\\right)^{3}}{3}\\right]_{0}^{1}=\\dfrac{27-8}{3}=\\dfrac{19}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de Riemann com o dobro de parcelas",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1}{n}\\sum_{k=1}^{2n}\\dfrac{1}{1+\\dfrac{k}{n}}$.",
+    "alternativas": {
+      "a": "$\\ln 2$",
+      "b": "$2\\ln 2$",
+      "c": "$\\ln 4$",
+      "d": "$\\dfrac{\\ln 3}{2}$",
+      "e": "$\\ln 3$"
+    },
+    "gabarito": "e",
+    "resolucao": "A largura de cada subintervalo continua $\\dfrac{1}{n}$, mas o índice vai até $2n$: os pontos $\\dfrac{k}{n}$ varrem $\\left[0,2\\right]$. O limite é $\\displaystyle\\int_{0}^{2}\\dfrac{dx}{1+x}=\\ln 3-\\ln 1=\\ln 3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de quadrados dividida pelo cubo",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{n\\to\\infty}\\dfrac{1^{2}+2^{2}+\\cdots+n^{2}}{n^{3}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pondo $\\dfrac{1}{n}$ em evidência, a expressão é $\\dfrac{1}{n}\\sum_{k=1}^{n}\\left(\\dfrac{k}{n}\\right)^{2}$, soma de Riemann de $x^{2}$ em $\\left[0,1\\right]$, de limite $\\dfrac{1}{3}$. Confere com a fórmula fechada $\\dfrac{n(n+1)(2n+1)}{6n^{3}}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de Riemann à direita com quatro subintervalos",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{2}$ em $\\left[0,2\\right]$. Calcule a soma de Riemann associada à partição em $4$ subintervalos de mesma largura, tomando as extremidades direitas como pontos amostrais.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{4}$",
+      "b": "$\\dfrac{15}{4}$",
+      "c": "$\\dfrac{11}{4}$",
+      "d": "$\\dfrac{17}{4}$",
+      "e": "$\\dfrac{8}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A largura é $\\Delta x=\\dfrac{1}{2}$ e os pontos são $\\dfrac{1}{2}$, $1$, $\\dfrac{3}{2}$ e $2$. A soma vale $\\dfrac{1}{2}\\left(\\dfrac{1}{4}+1+\\dfrac{9}{4}+4\\right)=\\dfrac{1}{2}\\cdot\\dfrac{30}{4}=\\dfrac{15}{4}$ — maior que a integral $\\dfrac{8}{3}$, como se espera de uma função crescente com pontos à direita.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de Riemann à esquerda com quatro subintervalos",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{1}{x}$ em $\\left[1,3\\right]$. Calcule a soma de Riemann associada à partição em $4$ subintervalos de mesma largura, tomando as extremidades esquerdas como pontos amostrais.",
+    "alternativas": {
+      "a": "$\\dfrac{77}{60}$",
+      "b": "$\\dfrac{57}{60}$",
+      "c": "$\\dfrac{67}{60}$",
+      "d": "$\\dfrac{87}{60}$",
+      "e": "$\\dfrac{11}{10}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A largura é $\\Delta x=\\dfrac{1}{2}$ e os pontos são $1$, $\\dfrac{3}{2}$, $2$ e $\\dfrac{5}{2}$. A soma vale $\\dfrac{1}{2}\\left(1+\\dfrac{2}{3}+\\dfrac{1}{2}+\\dfrac{2}{5}\\right)=\\dfrac{1}{2}\\cdot\\dfrac{77}{30}=\\dfrac{77}{60}$, uma superestimativa de $\\ln 3$, já que $\\dfrac{1}{x}$ é decrescente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral do módulo num intervalo assimétrico",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{-1}^{2}\\left|x\\right|dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}$",
+      "b": "$\\dfrac{5}{2}$",
+      "c": "$2$",
+      "d": "$\\dfrac{7}{2}$",
+      "e": "$3$"
+    },
+    "gabarito": "b",
+    "resolucao": "Quebre no ponto em que o módulo muda de expressão: $\\displaystyle\\int_{-1}^{0}\\left(-x\\right)dx+\\displaystyle\\int_{0}^{2}x\\,dx=\\dfrac{1}{2}+2=\\dfrac{5}{2}$. Geometricamente, são dois triângulos de áreas $\\dfrac{1}{2}$ e $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral de um módulo com vértice interior",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{4}\\left|x-1\\right|dx$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$4$",
+      "c": "$\\dfrac{9}{2}$",
+      "d": "$\\dfrac{11}{2}$",
+      "e": "$5$"
+    },
+    "gabarito": "e",
+    "resolucao": "Separando em $\\left[0,1\\right]$ e $\\left[1,4\\right]$: $\\displaystyle\\int_{0}^{1}\\left(1-x\\right)dx+\\displaystyle\\int_{1}^{4}\\left(x-1\\right)dx=\\dfrac{1}{2}+\\dfrac{9}{2}=5$. São dois triângulos, de catetos $1$ e $1$ e de catetos $3$ e $3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral do módulo de uma parábola",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{-2}^{2}\\left|x^{2}-1\\right|dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{8}{3}$",
+      "b": "$\\dfrac{16}{3}$",
+      "c": "$4$",
+      "d": "$2$",
+      "e": "$\\dfrac{10}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "O integrando é par, então basta o dobro de $\\displaystyle\\int_{0}^{2}$. Em $\\left[0,1\\right]$, $\\left|x^{2}-1\\right|=1-x^{2}$, com integral $\\dfrac{2}{3}$; em $\\left[1,2\\right]$, vale $x^{2}-1$, com integral $\\dfrac{8}{3}-2-\\left(\\dfrac{1}{3}-1\\right)=\\dfrac{4}{3}$. O total é $2\\left(\\dfrac{2}{3}+\\dfrac{4}{3}\\right)=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Área com sinal do seno num período",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{2\\pi}\\operatorname{sen}x\\,dx$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$4$",
+      "c": "$0$",
+      "d": "$-2$",
+      "e": "$2\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "A primitiva é $-\\cos x$, e $-\\cos 2\\pi+\\cos 0=-1+1=0$. A integral definida é uma área COM SINAL: a região acima do eixo em $\\left[0,\\pi\\right]$ e a de baixo em $\\left[\\pi,2\\pi\\right]$ têm áreas iguais e se cancelam. A área geométrica total seria $4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Máximo e mínimo de uma função com módulo",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}\\max\\left\\{x,\\,x^{2}\\right\\}dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{2}{3}$",
+      "c": "$\\dfrac{5}{6}$",
+      "d": "$\\dfrac{1}{6}$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Em $\\left[0,1\\right]$ vale $x^{2}\\leq x$, pois $x^{2}-x=x\\left(x-1\\right)\\leq0$ nesse intervalo. Logo o máximo é sempre $x$, e a integral é $\\displaystyle\\int_{0}^{1}x\\,dx=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral do mínimo de duas retas",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{2}\\min\\left\\{x,\\,2-x\\right\\}dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$2$",
+      "c": "$\\dfrac{3}{2}$",
+      "d": "$1$",
+      "e": "$\\dfrac{4}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "As duas retas se cruzam em $x=1$. Em $\\left[0,1\\right]$ o mínimo é $x$; em $\\left[1,2\\right]$ é $2-x$. A região é um triângulo de base $2$ e altura $1$, de área $1$ — e a integral vale $\\dfrac{1}{2}+\\dfrac{1}{2}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral da função piso",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{3}\\lfloor x\\rfloor\\,dx$, em que $\\lfloor x\\rfloor$ é o maior inteiro menor ou igual a $x$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$\\dfrac{9}{2}$",
+      "d": "$6$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "A função é constante em cada intervalo unitário: vale $0$ em $\\left[0,1\\right)$, $1$ em $\\left[1,2\\right)$ e $2$ em $\\left[2,3\\right)$. A integral é a soma das áreas dos retângulos: $0\\cdot1+1\\cdot1+2\\cdot1=3$. Os três pontos de descontinuidade não afetam o valor da integral.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Parcela ímpar que se anula no intervalo simétrico",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{-1}^{1}\\left(x^{3}\\cos x+x^{2}\\right)dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{3}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$\\dfrac{4}{3}$",
+      "d": "$0$",
+      "e": "$2$"
+    },
+    "gabarito": "a",
+    "resolucao": "A função $x^{3}\\cos x$ é ímpar (ímpar vezes par), então sua integral no intervalo simétrico é nula. Já $x^{2}$ é par: $\\displaystyle\\int_{-1}^{1}x^{2}dx=2\\displaystyle\\int_{0}^{1}x^{2}dx=\\dfrac{2}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Simetria com quinta potência e seno ao quadrado",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{-\\pi/2}^{\\pi/2}\\left(x^{5}\\operatorname{sen}^{2}x+\\cos x\\right)dx$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$\\pi$",
+      "d": "$2$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "O produto $x^{5}\\operatorname{sen}^{2}x$ é ímpar, pois $x^{5}$ é ímpar e $\\operatorname{sen}^{2}x$ é par; sua integral no intervalo simétrico é zero. Resta $\\displaystyle\\int_{-\\pi/2}^{\\pi/2}\\cos x\\,dx=\\left[\\operatorname{sen}x\\right]_{-\\pi/2}^{\\pi/2}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integrando ímpar num intervalo simétrico",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{-3}^{3}\\dfrac{x}{1+x^{2}}\\,dx$.",
+    "alternativas": {
+      "a": "$\\ln 10$",
+      "b": "$\\dfrac{\\ln 10}{2}$",
+      "c": "$0$",
+      "d": "$2\\ln 10$",
+      "e": "$3$"
+    },
+    "gabarito": "c",
+    "resolucao": "A função $\\dfrac{x}{1+x^{2}}$ é ímpar: trocar $x$ por $-x$ inverte o sinal do numerador e mantém o denominador. Num intervalo simétrico, a integral de uma função ímpar é $0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Constante mais parcela ímpar",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{-2}^{2}\\left(3+x\\sqrt{4-x^{2}}\\right)dx$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$0$",
+      "c": "$12$",
+      "d": "$3$",
+      "e": "$24$"
+    },
+    "gabarito": "c",
+    "resolucao": "A parcela $x\\sqrt{4-x^{2}}$ é ímpar — produto de uma função ímpar por uma par — e sua integral no intervalo simétrico é nula. Sobra $\\displaystyle\\int_{-2}^{2}3\\,dx=3\\cdot4=12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Simetria do intervalo com seno ao quadrado",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/2}\\operatorname{sen}^{2}x\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{2}$",
+      "b": "$\\dfrac{\\pi}{8}$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{\\pi}{4}$",
+      "e": "$\\dfrac{\\pi}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "A substituição $x\\mapsto\\dfrac{\\pi}{2}-x$ transforma $\\operatorname{sen}^{2}$ em $\\cos^{2}$ sem mudar o intervalo, de modo que as integrais de $\\operatorname{sen}^{2}$ e de $\\cos^{2}$ ali são iguais. Como a soma delas é $\\displaystyle\\int_{0}^{\\pi/2}1\\,dx=\\dfrac{\\pi}{2}$, cada uma vale $\\dfrac{\\pi}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Truque de simetria com potência da tangente",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/2}\\dfrac{dx}{1+\\operatorname{tg}^{\\sqrt{2}}x}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{4}$",
+      "b": "$\\dfrac{\\pi}{2}$",
+      "c": "$\\dfrac{\\pi}{2\\sqrt{2}}$",
+      "d": "$\\dfrac{\\pi}{8}$",
+      "e": "$\\dfrac{\\pi}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Chame a integral de $I$ e aplique $x\\mapsto\\dfrac{\\pi}{2}-x$: como $\\operatorname{tg}\\left(\\dfrac{\\pi}{2}-x\\right)=\\operatorname{cotg}x$, obtém-se $I=\\displaystyle\\int_{0}^{\\pi/2}\\dfrac{\\operatorname{tg}^{\\sqrt{2}}x}{1+\\operatorname{tg}^{\\sqrt{2}}x}dx$. Somando as duas expressões, $2I=\\displaystyle\\int_{0}^{\\pi/2}1\\,dx=\\dfrac{\\pi}{2}$, logo $I=\\dfrac{\\pi}{4}$ — o expoente é irrelevante.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Linearidade com duas funções",
+    "dificuldade": "medio",
+    "enunciado": "Sabendo que $\\displaystyle\\int_{1}^{4}f(x)dx=6$ e $\\displaystyle\\int_{1}^{4}g(x)dx=-2$, calcule $\\displaystyle\\int_{1}^{4}\\left[2f(x)-3g(x)\\right]dx$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$12$",
+      "c": "$18$",
+      "d": "$-18$",
+      "e": "$24$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela linearidade, a integral vale $2\\cdot6-3\\cdot\\left(-2\\right)=12+6=18$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Maior valor possível com integrando limitado",
+    "dificuldade": "medio",
+    "enunciado": "Sabe-se que $1\\leq f(x)\\leq3$ para todo $x\\in\\left[0,4\\right]$. Determine o maior valor possível de $\\displaystyle\\int_{0}^{4}f(x)dx$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$8$",
+      "c": "$12$",
+      "d": "$16$",
+      "e": "$3$"
+    },
+    "gabarito": "c",
+    "resolucao": "A monotonicidade da integral dá $\\displaystyle\\int_{0}^{4}1\\,dx\\leq\\displaystyle\\int_{0}^{4}f\\leq\\displaystyle\\int_{0}^{4}3\\,dx$, isto é, $4\\leq\\displaystyle\\int_{0}^{4}f\\leq12$. O teto $12$ é atingido por $f\\equiv3$, logo é o maior valor possível.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Mudança de escala no argumento",
+    "dificuldade": "dificil",
+    "enunciado": "Sabendo que $\\displaystyle\\int_{0}^{2}f(x)dx=7$, calcule $\\displaystyle\\int_{0}^{1}f\\left(2x\\right)dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{2}$",
+      "b": "$7$",
+      "c": "$14$",
+      "d": "$\\dfrac{7}{4}$",
+      "e": "$\\dfrac{2}{7}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $u=2x$ tem-se $du=2\\,dx$ e os limites $0$ e $2$: $\\displaystyle\\int_{0}^{1}f(2x)dx=\\dfrac{1}{2}\\displaystyle\\int_{0}^{2}f(u)du=\\dfrac{7}{2}$. Comprimir o gráfico horizontalmente pela metade divide a área por dois.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Reflexão do intervalo de integração",
+    "dificuldade": "dificil",
+    "enunciado": "Sabendo que $\\displaystyle\\int_{0}^{1}f(x)dx=5$, calcule $\\displaystyle\\int_{0}^{1}f\\left(1-x\\right)dx$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$-5$",
+      "c": "$\\dfrac{5}{2}$",
+      "d": "$10$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $u=1-x$ tem-se $du=-dx$, e os limites se invertem: $\\displaystyle\\int_{0}^{1}f(1-x)dx=\\displaystyle\\int_{0}^{1}f(u)du=5$. Refletir o gráfico em torno de $x=\\dfrac{1}{2}$ não muda a área sob ele.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Aditividade com intervalo intermediário",
+    "dificuldade": "medio",
+    "enunciado": "Sabendo que $\\displaystyle\\int_{2}^{7}f(x)dx=10$ e $\\displaystyle\\int_{5}^{7}f(x)dx=3$, calcule $\\displaystyle\\int_{2}^{5}f(x)dx$.",
+    "alternativas": {
+      "a": "$7$",
+      "b": "$13$",
+      "c": "$-7$",
+      "d": "$\\dfrac{10}{3}$",
+      "e": "$30$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela aditividade, $\\displaystyle\\int_{2}^{7}=\\displaystyle\\int_{2}^{5}+\\displaystyle\\int_{5}^{7}$, logo $\\displaystyle\\int_{2}^{5}f=10-3=7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral com limites invertidos",
+    "dificuldade": "medio",
+    "enunciado": "Sabendo que $\\displaystyle\\int_{1}^{3}f(x)dx=8$, calcule $\\displaystyle\\int_{3}^{1}\\left[f(x)+2\\right]dx$.",
+    "alternativas": {
+      "a": "$-12$",
+      "b": "$12$",
+      "c": "$-8$",
+      "d": "$-4$",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Primeiro, $\\displaystyle\\int_{1}^{3}\\left[f+2\\right]=8+2\\cdot2=12$. Inverter os limites troca o sinal: $\\displaystyle\\int_{3}^{1}\\left[f+2\\right]=-12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral avaliada por área geométrica",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{-2}^{2}\\sqrt{4-x^{2}}\\,dx$ interpretando-a como área.",
+    "alternativas": {
+      "a": "$4\\pi$",
+      "b": "$\\pi$",
+      "c": "$8\\pi$",
+      "d": "$2\\pi$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O gráfico de $y=\\sqrt{4-x^{2}}$ é a semicircunferência superior de raio $2$, pois $y\\geq0$ e $x^{2}+y^{2}=4$. A integral é a área do semicírculo: $\\dfrac{\\pi\\cdot2^{2}}{2}=2\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral de uma reta como área de trapézio",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{3}\\left(2x+1\\right)dx$ interpretando-a como área.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$9$",
+      "c": "$10$",
+      "d": "$15$",
+      "e": "$6$"
+    },
+    "gabarito": "a",
+    "resolucao": "A região é o trapézio de bases $f(0)=1$ e $f(3)=7$ e altura $3$: $\\dfrac{\\left(1+7\\right)\\cdot3}{2}=12$. Pelo Teorema Fundamental, $\\left[x^{2}+x\\right]_{0}^{3}=9+3=12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Soma de módulo com constante",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{-1}^{3}\\left(\\left|x\\right|+1\\right)dx$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$9$",
+      "c": "$7$",
+      "d": "$11$",
+      "e": "$13$"
+    },
+    "gabarito": "b",
+    "resolucao": "Separe as parcelas: $\\displaystyle\\int_{-1}^{3}\\left|x\\right|dx=\\dfrac{1}{2}+\\dfrac{9}{2}=5$ e $\\displaystyle\\int_{-1}^{3}1\\,dx=4$. O total é $9$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral com sinal de uma cúbica deslocada",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{-1}^{2}\\left(x^{3}-x\\right)dx$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$\\dfrac{3}{4}$",
+      "c": "$\\dfrac{9}{4}$",
+      "d": "$\\dfrac{15}{4}$",
+      "e": "$-\\dfrac{9}{4}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Integrando, $\\left[\\dfrac{x^{4}}{4}-\\dfrac{x^{2}}{2}\\right]_{-1}^{2}=\\left(4-2\\right)-\\left(\\dfrac{1}{4}-\\dfrac{1}{2}\\right)=2+\\dfrac{1}{4}=\\dfrac{9}{4}$. O intervalo não é simétrico, então a imparidade do integrando não ajuda aqui.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral de função definida por partes",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{2}$ para $x\\leq1$ e $f(x)=2-x$ para $x>1$. Calcule $\\displaystyle\\int_{0}^{2}f(x)dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{7}{6}$",
+      "d": "$\\dfrac{4}{3}$",
+      "e": "$\\dfrac{5}{6}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela aditividade, $\\displaystyle\\int_{0}^{1}x^{2}dx+\\displaystyle\\int_{1}^{2}\\left(2-x\\right)dx=\\dfrac{1}{3}+\\left(4-2-2+\\dfrac{1}{2}\\right)=\\dfrac{1}{3}+\\dfrac{1}{2}=\\dfrac{5}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Média de uma função afim por partes",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\left|2x-4\\right|$. Calcule $\\displaystyle\\int_{0}^{5}f(x)dx$.",
+    "alternativas": {
+      "a": "$9$",
+      "b": "$11$",
+      "c": "$15$",
+      "d": "$17$",
+      "e": "$13$"
+    },
+    "gabarito": "e",
+    "resolucao": "O vértice está em $x=2$. Em $\\left[0,2\\right]$, $f(x)=4-2x$, com integral $8-4=4$; em $\\left[2,5\\right]$, $f(x)=2x-4$, com integral $\\left(25-20\\right)-\\left(4-8\\right)=9$. O total é $13$ — ou, geometricamente, dois triângulos de áreas $4$ e $9$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral de uma função escada",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=1$ para $0\\leq x<2$, $f(x)=3$ para $2\\leq x<3$ e $f(x)=-1$ para $3\\leq x\\leq5$. Calcule $\\displaystyle\\int_{0}^{5}f(x)dx$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$7$",
+      "c": "$1$",
+      "d": "$-3$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "A integral de uma função escada é a soma das áreas com sinal dos retângulos: $1\\cdot2+3\\cdot1+\\left(-1\\right)\\cdot2=2+3-2=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Definida",
+    "subtopico": "Integral com sinal de um cosseno em três quartos de período",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{3\\pi/2}\\cos x\\,dx$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$2$",
+      "d": "$-1$",
+      "e": "$-2$"
+    },
+    "gabarito": "d",
+    "resolucao": "A primitiva é $\\operatorname{sen}x$, logo a integral vale $\\operatorname{sen}\\dfrac{3\\pi}{2}-\\operatorname{sen}0=-1$. A área positiva de $\\left[0,\\frac{\\pi}{2}\\right]$ vale $1$ e a negativa de $\\left[\\frac{\\pi}{2},\\frac{3\\pi}{2}\\right]$ vale $-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre duas parábolas opostas",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada pelas curvas $y=x^{2}$ e $y=2x-x^{2}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{6}$",
+      "b": "$\\dfrac{2}{3}$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{4}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Igualando, $x^{2}=2x-x^{2}$ dá $2x\\left(x-1\\right)=0$, com interseções em $x=0$ e $x=1$. Nesse intervalo a segunda curva está acima, e a área é $\\displaystyle\\int_{0}^{1}\\left(2x-2x^{2}\\right)dx=1-\\dfrac{2}{3}=\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre a cúbica e a bissetriz",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a área total da região limitada pelas curvas $y=x^{3}$ e $y=x$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$1$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$\\dfrac{3}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "As curvas se cruzam em $x=-1$, $0$ e $1$. Como $\\left|x-x^{3}\\right|$ é par, a área total é $2\\displaystyle\\int_{0}^{1}\\left(x-x^{3}\\right)dx=2\\left(\\dfrac{1}{2}-\\dfrac{1}{4}\\right)=\\dfrac{1}{2}$. Integrar $x-x^{3}$ direto de $-1$ a $1$ daria $0$: os dois laços têm sinais opostos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre a raiz e a parábola",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada pelas curvas $y=\\sqrt{x}$ e $y=x^{2}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{6}$",
+      "c": "$\\dfrac{2}{3}$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$\\dfrac{5}{6}$"
+    },
+    "gabarito": "a",
+    "resolucao": "As curvas se cruzam em $x=0$ e $x=1$, e ali $\\sqrt{x}\\geq x^{2}$. A área é $\\displaystyle\\int_{0}^{1}\\left(\\sqrt{x}-x^{2}\\right)dx=\\dfrac{2}{3}-\\dfrac{1}{3}=\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre uma parábola e o eixo x",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada pela parábola $y=x^{2}-4$ e pelo eixo $x$.",
+    "alternativas": {
+      "a": "$\\dfrac{16}{3}$",
+      "b": "$\\dfrac{64}{3}$",
+      "c": "$\\dfrac{32}{3}$",
+      "d": "$8$",
+      "e": "$16$"
+    },
+    "gabarito": "c",
+    "resolucao": "A parábola corta o eixo em $x=\\pm2$ e fica abaixo dele entre esses pontos. A área é $\\displaystyle\\int_{-2}^{2}\\left(4-x^{2}\\right)dx=2\\left(8-\\dfrac{8}{3}\\right)=\\dfrac{32}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área geométrica do seno num período",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área total da região limitada pela curva $y=\\operatorname{sen}x$ e pelo eixo $x$, com $0\\leq x\\leq2\\pi$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$2\\pi$",
+      "d": "$\\pi$",
+      "e": "$4$"
+    },
+    "gabarito": "e",
+    "resolucao": "Área é sempre positiva, então integra-se o módulo: $\\displaystyle\\int_{0}^{2\\pi}\\left|\\operatorname{sen}x\\right|dx=2\\displaystyle\\int_{0}^{\\pi}\\operatorname{sen}x\\,dx=2\\cdot2=4$. A integral sem módulo daria $0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre a exponencial e uma reta horizontal",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada por $y=e^{x}$, $y=1$ e $x=1$.",
+    "alternativas": {
+      "a": "$e-1$",
+      "b": "$e$",
+      "c": "$\\dfrac{e-1}{2}$",
+      "d": "$e+1$",
+      "e": "$e-2$"
+    },
+    "gabarito": "e",
+    "resolucao": "As curvas $y=e^{x}$ e $y=1$ se cruzam em $x=0$, e para $x>0$ a exponencial está acima. A área é $\\displaystyle\\int_{0}^{1}\\left(e^{x}-1\\right)dx=\\left(e-1\\right)-1=e-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre a hipérbole e seu quadrado",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a área da região limitada por $y=\\dfrac{1}{x}$, $y=\\dfrac{1}{x^{2}}$, $x=1$ e $x=2$.",
+    "alternativas": {
+      "a": "$\\ln 2+\\dfrac{1}{2}$",
+      "b": "$\\ln 2-\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{2}-\\ln 2$",
+      "d": "$\\ln 2-1$",
+      "e": "$2\\ln 2-\\dfrac{1}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Para $x>1$ vale $\\dfrac{1}{x}>\\dfrac{1}{x^{2}}$. A área é $\\displaystyle\\int_{1}^{2}\\left(\\dfrac{1}{x}-\\dfrac{1}{x^{2}}\\right)dx=\\left[\\ln x+\\dfrac{1}{x}\\right]_{1}^{2}=\\left(\\ln 2+\\dfrac{1}{2}\\right)-1=\\ln 2-\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre uma reta e uma parábola achatada",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada pelas curvas $y=x$ e $y=\\dfrac{x^{2}}{4}$.",
+    "alternativas": {
+      "a": "$\\dfrac{8}{3}$",
+      "b": "$\\dfrac{4}{3}$",
+      "c": "$\\dfrac{16}{3}$",
+      "d": "$\\dfrac{32}{3}$",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Igualando, $x=\\dfrac{x^{2}}{4}$ dá $x=0$ e $x=4$, e nesse intervalo a reta está acima. A área é $\\displaystyle\\int_{0}^{4}\\left(x-\\dfrac{x^{2}}{4}\\right)dx=8-\\dfrac{16}{3}=\\dfrac{8}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre parábola e reta com raízes assimétricas",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a área da região limitada pela parábola $y=4-x^{2}$ e pela reta $y=x+2$.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{2}$",
+      "b": "$\\dfrac{9}{2}$",
+      "c": "$\\dfrac{9}{4}$",
+      "d": "$6$",
+      "e": "$\\dfrac{27}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Igualando, $4-x^{2}=x+2$ dá $x^{2}+x-2=0$, com raízes $x=-2$ e $x=1$. Entre elas a parábola está acima, e a área é $\\displaystyle\\int_{-2}^{1}\\left(2-x-x^{2}\\right)dx=\\left[2x-\\dfrac{x^{2}}{2}-\\dfrac{x^{3}}{3}\\right]_{-2}^{1}=\\dfrac{7}{6}+\\dfrac{10}{3}=\\dfrac{9}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre cosseno e seno num quarto de período",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada por $y=\\cos x$, $y=\\operatorname{sen}x$, $x=0$ e $x=\\dfrac{\\pi}{4}$.",
+    "alternativas": {
+      "a": "$1-\\dfrac{\\sqrt{2}}{2}$",
+      "b": "$2-\\sqrt{2}$",
+      "c": "$\\sqrt{2}$",
+      "d": "$\\sqrt{2}-1$",
+      "e": "$\\dfrac{\\sqrt{2}}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Em $\\left[0,\\dfrac{\\pi}{4}\\right]$ vale $\\cos x\\geq\\operatorname{sen}x$. A área é $\\displaystyle\\int_{0}^{\\pi/4}\\left(\\cos x-\\operatorname{sen}x\\right)dx=\\left[\\operatorname{sen}x+\\cos x\\right]_{0}^{\\pi/4}=\\sqrt{2}-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área por integração em relação a y",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a área da região limitada pelas curvas $x=y^{2}$ e $x=y+2$.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{2}$",
+      "b": "$\\dfrac{9}{4}$",
+      "c": "$\\dfrac{11}{2}$",
+      "d": "$6$",
+      "e": "$\\dfrac{9}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Integrar em $y$ evita quebrar a região em duas. Igualando, $y^{2}=y+2$ dá $y=-1$ e $y=2$; entre esses valores a reta está à direita da parábola. A área é $\\displaystyle\\int_{-1}^{2}\\left(y+2-y^{2}\\right)dy=\\left[\\dfrac{y^{2}}{2}+2y-\\dfrac{y^{3}}{3}\\right]_{-1}^{2}=\\dfrac{10}{3}+\\dfrac{7}{6}=\\dfrac{9}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área sob o logaritmo",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a área da região limitada por $y=\\ln x$, pelo eixo $x$ e pela reta $x=e$.",
+    "alternativas": {
+      "a": "$e$",
+      "b": "$e-1$",
+      "c": "$1$",
+      "d": "$2$",
+      "e": "$\\dfrac{e}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A curva corta o eixo em $x=1$ e fica acima dele até $x=e$. A área é $\\displaystyle\\int_{1}^{e}\\ln x\\,dx$; integrando por partes, $\\left[x\\ln x-x\\right]_{1}^{e}=\\left(e-e\\right)-\\left(0-1\\right)=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre um módulo e uma parábola",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a área da região limitada pelas curvas $y=\\left|x\\right|$ e $y=2-x^{2}$.",
+    "alternativas": {
+      "a": "$\\dfrac{4}{3}$",
+      "b": "$\\dfrac{5}{3}$",
+      "c": "$\\dfrac{7}{3}$",
+      "d": "$\\dfrac{8}{3}$",
+      "e": "$\\dfrac{7}{6}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Por simetria, basta o dobro da parte com $x\\geq0$. Ali $x=2-x^{2}$ dá $x^{2}+x-2=0$, isto é, $x=1$. A área é $2\\displaystyle\\int_{0}^{1}\\left(2-x^{2}-x\\right)dx=2\\left(2-\\dfrac{1}{3}-\\dfrac{1}{2}\\right)=\\dfrac{7}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre cúbica e eixo com dois laços",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a área total da região limitada pela curva $y=x^{3}-4x$ e pelo eixo $x$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$16$",
+      "c": "$\\dfrac{16}{3}$",
+      "d": "$12$",
+      "e": "$8$"
+    },
+    "gabarito": "e",
+    "resolucao": "As raízes são $x=0$ e $x=\\pm2$, e $\\left|x^{3}-4x\\right|$ é par. A área total é $2\\displaystyle\\int_{0}^{2}\\left(4x-x^{3}\\right)dx=2\\left(8-4\\right)=8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área sob uma curva com arco-tangente",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada por $y=\\dfrac{1}{1+x^{2}}$, pelo eixo $x$ e pelas retas $x=0$ e $x=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{2}$",
+      "b": "$\\dfrac{\\pi}{6}$",
+      "c": "$\\dfrac{\\pi}{3}$",
+      "d": "$\\dfrac{\\pi}{8}$",
+      "e": "$\\dfrac{\\pi}{4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A função é positiva em todo o intervalo, então a área é a própria integral: $\\displaystyle\\int_{0}^{1}\\dfrac{dx}{1+x^{2}}=\\operatorname{arctg}1=\\dfrac{\\pi}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume por discos com a raiz quadrada",
+    "dificuldade": "medio",
+    "enunciado": "A região sob $y=\\sqrt{x}$, com $0\\leq x\\leq4$, gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$4\\pi$",
+      "b": "$16\\pi$",
+      "c": "$\\dfrac{16\\pi}{3}$",
+      "d": "$8\\pi$",
+      "e": "$32\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pelo método dos discos, $V=\\pi\\displaystyle\\int_{0}^{4}\\left(\\sqrt{x}\\right)^{2}dx=\\pi\\displaystyle\\int_{0}^{4}x\\,dx=\\pi\\cdot8=8\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume por discos com uma parábola",
+    "dificuldade": "medio",
+    "enunciado": "A região sob $y=x^{2}$, com $0\\leq x\\leq1$, gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{3}$",
+      "b": "$\\dfrac{\\pi}{5}$",
+      "c": "$\\dfrac{\\pi}{4}$",
+      "d": "$\\dfrac{2\\pi}{5}$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo método dos discos, $V=\\pi\\displaystyle\\int_{0}^{1}x^{4}dx=\\dfrac{\\pi}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume por anéis entre reta e parábola",
+    "dificuldade": "dificil",
+    "enunciado": "A região entre $y=x$ e $y=x^{2}$ gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\dfrac{2\\pi}{15}$",
+      "b": "$\\dfrac{\\pi}{15}$",
+      "c": "$\\dfrac{4\\pi}{15}$",
+      "d": "$\\dfrac{\\pi}{6}$",
+      "e": "$\\dfrac{\\pi}{5}$"
+    },
+    "gabarito": "a",
+    "resolucao": "As curvas se cruzam em $x=0$ e $x=1$, com $x\\geq x^{2}$ ali. Pelo método dos anéis, $V=\\pi\\displaystyle\\int_{0}^{1}\\left(x^{2}-x^{4}\\right)dx=\\pi\\left(\\dfrac{1}{3}-\\dfrac{1}{5}\\right)=\\dfrac{2\\pi}{15}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume por cascas cilíndricas",
+    "dificuldade": "dificil",
+    "enunciado": "A região sob $y=x^{2}$, com $0\\leq x\\leq2$, gira em torno do eixo $y$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$8\\pi$",
+      "b": "$4\\pi$",
+      "c": "$16\\pi$",
+      "d": "$\\dfrac{32\\pi}{5}$",
+      "e": "$\\dfrac{16\\pi}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo método das cascas, $V=2\\pi\\displaystyle\\int_{0}^{2}x\\cdot x^{2}dx=2\\pi\\left[\\dfrac{x^{4}}{4}\\right]_{0}^{2}=2\\pi\\cdot4=8\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Cascas cilíndricas numa região entre curvas",
+    "dificuldade": "dificil",
+    "enunciado": "A região entre $y=x$ e $y=x^{2}$ gira em torno do eixo $y$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{3}$",
+      "b": "$\\dfrac{\\pi}{6}$",
+      "c": "$\\dfrac{\\pi}{12}$",
+      "d": "$\\dfrac{2\\pi}{15}$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo método das cascas, $V=2\\pi\\displaystyle\\int_{0}^{1}x\\left(x-x^{2}\\right)dx=2\\pi\\left(\\dfrac{1}{3}-\\dfrac{1}{4}\\right)=\\dfrac{2\\pi}{12}=\\dfrac{\\pi}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Cascas cilíndricas com a cúbica",
+    "dificuldade": "medio",
+    "enunciado": "A região sob $y=x^{3}$, com $0\\leq x\\leq1$, gira em torno do eixo $y$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{5}$",
+      "b": "$\\dfrac{\\pi}{7}$",
+      "c": "$\\dfrac{2\\pi}{7}$",
+      "d": "$\\dfrac{\\pi}{4}$",
+      "e": "$\\dfrac{2\\pi}{5}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo método das cascas, $V=2\\pi\\displaystyle\\int_{0}^{1}x\\cdot x^{3}dx=2\\pi\\cdot\\dfrac{1}{5}=\\dfrac{2\\pi}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Revolução em torno de uma reta horizontal",
+    "dificuldade": "dificil",
+    "enunciado": "A região entre $y=x^{2}$ e o eixo $x$, com $0\\leq x\\leq1$, gira em torno da reta $y=-1$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\dfrac{8\\pi}{15}$",
+      "b": "$\\dfrac{13\\pi}{15}$",
+      "c": "$\\dfrac{\\pi}{5}$",
+      "d": "$\\dfrac{23\\pi}{15}$",
+      "e": "$\\dfrac{7\\pi}{15}$"
+    },
+    "gabarito": "b",
+    "resolucao": "O raio externo é $x^{2}+1$ e o interno é $1$ (a distância do eixo $x$ à reta). Pelo método dos anéis, $V=\\pi\\displaystyle\\int_{0}^{1}\\left[\\left(x^{2}+1\\right)^{2}-1\\right]dx=\\pi\\displaystyle\\int_{0}^{1}\\left(x^{4}+2x^{2}\\right)dx=\\pi\\left(\\dfrac{1}{5}+\\dfrac{2}{3}\\right)=\\dfrac{13\\pi}{15}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume com a hipérbole em torno do eixo x",
+    "dificuldade": "medio",
+    "enunciado": "A região sob $y=\\dfrac{1}{x}$, com $1\\leq x\\leq2$, gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$\\dfrac{\\pi}{2}$",
+      "c": "$\\dfrac{\\pi}{3}$",
+      "d": "$\\dfrac{\\pi}{4}$",
+      "e": "$2\\pi$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo método dos discos, $V=\\pi\\displaystyle\\int_{1}^{2}\\dfrac{dx}{x^{2}}=\\pi\\left[-\\dfrac{1}{x}\\right]_{1}^{2}=\\pi\\left(1-\\dfrac{1}{2}\\right)=\\dfrac{\\pi}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume gerado pelo arco de seno",
+    "dificuldade": "dificil",
+    "enunciado": "A região sob $y=\\operatorname{sen}x$, com $0\\leq x\\leq\\pi$, gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi^{2}}{4}$",
+      "b": "$\\pi^{2}$",
+      "c": "$\\dfrac{\\pi^{2}}{2}$",
+      "d": "$2\\pi^{2}$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pelo método dos discos, $V=\\pi\\displaystyle\\int_{0}^{\\pi}\\operatorname{sen}^{2}x\\,dx$. Usando $\\operatorname{sen}^{2}x=\\dfrac{1-\\cos 2x}{2}$, a integral vale $\\dfrac{\\pi}{2}$, logo $V=\\pi\\cdot\\dfrac{\\pi}{2}=\\dfrac{\\pi^{2}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume com integrando exponencial",
+    "dificuldade": "dificil",
+    "enunciado": "A região sob $y=e^{-x}$, com $0\\leq x\\leq1$, gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\pi\\left(1-e^{-2}\\right)$",
+      "b": "$\\dfrac{\\pi\\left(1-e^{-1}\\right)}{2}$",
+      "c": "$\\dfrac{\\pi\\left(1+e^{-2}\\right)}{2}$",
+      "d": "$\\dfrac{\\pi e^{-2}}{2}$",
+      "e": "$\\dfrac{\\pi\\left(1-e^{-2}\\right)}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo método dos discos, $V=\\pi\\displaystyle\\int_{0}^{1}e^{-2x}dx=\\pi\\left[-\\dfrac{e^{-2x}}{2}\\right]_{0}^{1}=\\dfrac{\\pi\\left(1-e^{-2}\\right)}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume de uma esfera por integração",
+    "dificuldade": "medio",
+    "enunciado": "A região sob $y=\\sqrt{9-x^{2}}$, com $-3\\leq x\\leq3$, gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$36\\pi$",
+      "b": "$18\\pi$",
+      "c": "$27\\pi$",
+      "d": "$12\\pi$",
+      "e": "$72\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "O sólido é a esfera de raio $3$. Pelos discos, $V=\\pi\\displaystyle\\int_{-3}^{3}\\left(9-x^{2}\\right)dx=\\pi\\left(54-18\\right)=36\\pi$, que confere com $\\dfrac{4}{3}\\pi r^{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Volume com a raiz do seno",
+    "dificuldade": "medio",
+    "enunciado": "A região sob $y=\\sqrt{\\operatorname{sen}x}$, com $0\\leq x\\leq\\pi$, gira em torno do eixo $x$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$2\\pi$",
+      "c": "$4\\pi$",
+      "d": "$\\dfrac{\\pi^{2}}{2}$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelos discos, $V=\\pi\\displaystyle\\int_{0}^{\\pi}\\left(\\sqrt{\\operatorname{sen}x}\\right)^{2}dx=\\pi\\displaystyle\\int_{0}^{\\pi}\\operatorname{sen}x\\,dx=\\pi\\cdot2=2\\pi$. Elevar ao quadrado elimina o radical — por isso este é mais simples que o caso $y=\\operatorname{sen}x$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Sólido de seções quadradas sobre um disco",
+    "dificuldade": "dificil",
+    "enunciado": "A base de um sólido é o disco $x^{2}+y^{2}\\leq4$, e as seções perpendiculares ao eixo $x$ são quadrados. Calcule seu volume.",
+    "alternativas": {
+      "a": "$\\dfrac{64}{3}$",
+      "b": "$\\dfrac{128}{3}$",
+      "c": "$\\dfrac{256}{3}$",
+      "d": "$32$",
+      "e": "$\\dfrac{32}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Em cada $x$, o lado do quadrado é a corda vertical do disco, de comprimento $2\\sqrt{4-x^{2}}$, e a área da seção é $4\\left(4-x^{2}\\right)$. Logo $V=\\displaystyle\\int_{-2}^{2}4\\left(4-x^{2}\\right)dx=4\\left(16-\\dfrac{16}{3}\\right)=\\dfrac{128}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Sólido de seções triangulares equiláteras",
+    "dificuldade": "dificil",
+    "enunciado": "A base de um sólido é o disco $x^{2}+y^{2}\\leq4$, e as seções perpendiculares ao eixo $x$ são triângulos equiláteros. Calcule seu volume.",
+    "alternativas": {
+      "a": "$\\dfrac{16\\sqrt{3}}{3}$",
+      "b": "$\\dfrac{64\\sqrt{3}}{3}$",
+      "c": "$\\dfrac{32\\sqrt{3}}{9}$",
+      "d": "$\\dfrac{32\\sqrt{3}}{3}$",
+      "e": "$32\\sqrt{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O lado é a corda $L=2\\sqrt{4-x^{2}}$, e a área do triângulo equilátero é $\\dfrac{\\sqrt{3}}{4}L^{2}=\\sqrt{3}\\left(4-x^{2}\\right)$. Então $V=\\sqrt{3}\\displaystyle\\int_{-2}^{2}\\left(4-x^{2}\\right)dx=\\sqrt{3}\\cdot\\dfrac{32}{3}=\\dfrac{32\\sqrt{3}}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Sólido de seções semicirculares",
+    "dificuldade": "dificil",
+    "enunciado": "A base de um sólido é a região limitada por $y=1-x^{2}$ e pelo eixo $x$, e as seções perpendiculares ao eixo $x$ são semicírculos de diâmetro sobre a base. Calcule seu volume.",
+    "alternativas": {
+      "a": "$\\dfrac{4\\pi}{15}$",
+      "b": "$\\dfrac{16\\pi}{15}$",
+      "c": "$\\dfrac{\\pi}{15}$",
+      "d": "$\\dfrac{2\\pi}{15}$",
+      "e": "$\\dfrac{8\\pi}{15}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O diâmetro da seção é $1-x^{2}$, então o raio é $\\dfrac{1-x^{2}}{2}$ e a área do semicírculo é $\\dfrac{\\pi}{2}\\cdot\\dfrac{\\left(1-x^{2}\\right)^{2}}{4}=\\dfrac{\\pi\\left(1-x^{2}\\right)^{2}}{8}$. Como $\\displaystyle\\int_{-1}^{1}\\left(1-x^{2}\\right)^{2}dx=\\dfrac{16}{15}$, vem $V=\\dfrac{\\pi}{8}\\cdot\\dfrac{16}{15}=\\dfrac{2\\pi}{15}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco de potência três meios",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\dfrac{2}{3}x^{3/2}$ de $x=1$ a $x=4$.",
+    "alternativas": {
+      "a": "$\\dfrac{2\\left(5\\sqrt{5}+2\\sqrt{2}\\right)}{3}$",
+      "b": "$\\dfrac{5\\sqrt{5}-2\\sqrt{2}}{3}$",
+      "c": "$\\dfrac{4\\left(5\\sqrt{5}-2\\sqrt{2}\\right)}{3}$",
+      "d": "$\\dfrac{2\\left(5\\sqrt{5}-2\\sqrt{2}\\right)}{3}$",
+      "e": "$\\dfrac{2\\left(5\\sqrt{5}-\\sqrt{2}\\right)}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Como $y'=\\sqrt{x}$, tem-se $1+\\left(y'\\right)^{2}=1+x$ e $L=\\displaystyle\\int_{1}^{4}\\sqrt{1+x}\\,dx=\\left[\\dfrac{2}{3}\\left(1+x\\right)^{3/2}\\right]_{1}^{4}=\\dfrac{2}{3}\\left(5^{3/2}-2^{3/2}\\right)=\\dfrac{2\\left(5\\sqrt{5}-2\\sqrt{2}\\right)}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco com quadrado perfeito",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\dfrac{x^{3}}{3}+\\dfrac{1}{4x}$ de $x=1$ a $x=2$.",
+    "alternativas": {
+      "a": "$\\dfrac{59}{24}$",
+      "b": "$\\dfrac{49}{24}$",
+      "c": "$\\dfrac{67}{24}$",
+      "d": "$\\dfrac{59}{12}$",
+      "e": "$\\dfrac{7}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Tem-se $y'=x^{2}-\\dfrac{1}{4x^{2}}$, de modo que $1+\\left(y'\\right)^{2}=x^{4}+\\dfrac{1}{2}+\\dfrac{1}{16x^{4}}=\\left(x^{2}+\\dfrac{1}{4x^{2}}\\right)^{2}$ — o radical some. Assim $L=\\displaystyle\\int_{1}^{2}\\left(x^{2}+\\dfrac{1}{4x^{2}}\\right)dx=\\left[\\dfrac{x^{3}}{3}-\\dfrac{1}{4x}\\right]_{1}^{2}=\\left(\\dfrac{8}{3}-\\dfrac{1}{8}\\right)-\\left(\\dfrac{1}{3}-\\dfrac{1}{4}\\right)=\\dfrac{59}{24}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco com logaritmo",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\dfrac{x^{2}}{2}-\\dfrac{\\ln x}{4}$ de $x=1$ a $x=2$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}-\\dfrac{\\ln 2}{4}$",
+      "b": "$\\dfrac{3}{2}+\\dfrac{\\ln 2}{2}$",
+      "c": "$\\dfrac{5}{2}+\\dfrac{\\ln 2}{4}$",
+      "d": "$\\dfrac{3}{2}+\\dfrac{\\ln 2}{4}$",
+      "e": "$3+\\dfrac{\\ln 2}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Tem-se $y'=x-\\dfrac{1}{4x}$ e $1+\\left(y'\\right)^{2}=x^{2}+\\dfrac{1}{2}+\\dfrac{1}{16x^{2}}=\\left(x+\\dfrac{1}{4x}\\right)^{2}$. Logo $L=\\displaystyle\\int_{1}^{2}\\left(x+\\dfrac{1}{4x}\\right)dx=\\left[\\dfrac{x^{2}}{2}+\\dfrac{\\ln x}{4}\\right]_{1}^{2}=\\dfrac{3}{2}+\\dfrac{\\ln 2}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco com radical de dois",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\dfrac{1}{3}\\left(x^{2}+2\\right)^{3/2}$ de $x=0$ a $x=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{3}$",
+      "b": "$\\dfrac{5}{3}$",
+      "c": "$\\dfrac{8}{3}$",
+      "d": "$\\dfrac{4}{3}$",
+      "e": "$\\dfrac{7}{6}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Derivando, $y'=x\\sqrt{x^{2}+2}$, de modo que $1+\\left(y'\\right)^{2}=1+x^{4}+2x^{2}=\\left(x^{2}+1\\right)^{2}$. Então $L=\\displaystyle\\int_{0}^{1}\\left(x^{2}+1\\right)dx=\\dfrac{1}{3}+1=\\dfrac{4}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco da catenária",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\dfrac{e^{x}+e^{-x}}{2}$ de $x=0$ a $x=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{e+e^{-1}}{2}$",
+      "b": "$e-e^{-1}$",
+      "c": "$\\dfrac{e-e^{-1}}{2}$",
+      "d": "$\\dfrac{e-1}{2}$",
+      "e": "$\\dfrac{e^{2}-1}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $y'=\\dfrac{e^{x}-e^{-x}}{2}$, tem-se $1+\\left(y'\\right)^{2}=\\left(\\dfrac{e^{x}+e^{-x}}{2}\\right)^{2}$, porque $\\cosh^{2}-\\operatorname{senh}^{2}=1$. Assim $L=\\displaystyle\\int_{0}^{1}\\dfrac{e^{x}+e^{-x}}{2}dx=\\left[\\dfrac{e^{x}-e^{-x}}{2}\\right]_{0}^{1}=\\dfrac{e-e^{-1}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco com potência três meios deslocada",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=x^{3/2}$ de $x=0$ a $x=4$.",
+    "alternativas": {
+      "a": "$\\dfrac{4\\left(10\\sqrt{10}-1\\right)}{27}$",
+      "b": "$\\dfrac{8\\left(10\\sqrt{10}-1\\right)}{27}$",
+      "c": "$\\dfrac{8\\left(10\\sqrt{10}+1\\right)}{27}$",
+      "d": "$\\dfrac{8\\left(10\\sqrt{10}-1\\right)}{9}$",
+      "e": "$\\dfrac{10\\sqrt{10}-1}{27}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $y'=\\dfrac{3}{2}\\sqrt{x}$, tem-se $1+\\left(y'\\right)^{2}=1+\\dfrac{9x}{4}$ e $L=\\displaystyle\\int_{0}^{4}\\sqrt{1+\\dfrac{9x}{4}}\\,dx=\\dfrac{8}{27}\\left[\\left(1+\\dfrac{9x}{4}\\right)^{3/2}\\right]_{0}^{4}=\\dfrac{8}{27}\\left(10^{3/2}-1\\right)=\\dfrac{8\\left(10\\sqrt{10}-1\\right)}{27}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco de uma reta por integração",
+    "dificuldade": "medio",
+    "enunciado": "Calcule o comprimento do arco da curva $y=3x+1$ de $x=0$ a $x=2$.",
+    "alternativas": {
+      "a": "$\\sqrt{10}$",
+      "b": "$4\\sqrt{10}$",
+      "c": "$2\\sqrt{10}$",
+      "d": "$2\\sqrt{5}$",
+      "e": "$6$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $y'=3$, tem-se $1+\\left(y'\\right)^{2}=10$ e $L=\\displaystyle\\int_{0}^{2}\\sqrt{10}\\,dx=2\\sqrt{10}$ — que é exatamente a distância entre $\\left(0,1\\right)$ e $\\left(2,7\\right)$, como tem de ser para uma reta.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco com quarta potência",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\dfrac{x^{4}}{8}+\\dfrac{1}{4x^{2}}$ de $x=1$ a $x=2$.",
+    "alternativas": {
+      "a": "$\\dfrac{31}{16}$",
+      "b": "$\\dfrac{35}{16}$",
+      "c": "$\\dfrac{33}{16}$",
+      "d": "$\\dfrac{33}{8}$",
+      "e": "$\\dfrac{17}{8}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Tem-se $y'=\\dfrac{x^{3}}{2}-\\dfrac{1}{2x^{3}}$ e $1+\\left(y'\\right)^{2}=\\dfrac{x^{6}}{4}+\\dfrac{1}{2}+\\dfrac{1}{4x^{6}}=\\left(\\dfrac{x^{3}}{2}+\\dfrac{1}{2x^{3}}\\right)^{2}$. Logo $L=\\displaystyle\\int_{1}^{2}\\left(\\dfrac{x^{3}}{2}+\\dfrac{1}{2x^{3}}\\right)dx=\\left[\\dfrac{x^{4}}{8}-\\dfrac{1}{4x^{2}}\\right]_{1}^{2}=\\left(2-\\dfrac{1}{16}\\right)-\\left(\\dfrac{1}{8}-\\dfrac{1}{4}\\right)=\\dfrac{33}{16}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Área entre duas parábolas de concavidades opostas",
+    "dificuldade": "medio",
+    "enunciado": "Calcule a área da região limitada pelas curvas $y=x^{2}$ e $y=8-x^{2}$.",
+    "alternativas": {
+      "a": "$\\dfrac{32}{3}$",
+      "b": "$\\dfrac{64}{3}$",
+      "c": "$\\dfrac{128}{3}$",
+      "d": "$\\dfrac{16}{3}$",
+      "e": "$32$"
+    },
+    "gabarito": "b",
+    "resolucao": "Igualando, $x^{2}=8-x^{2}$ dá $x=\\pm2$, e entre esses pontos a segunda curva está acima. A área é $\\displaystyle\\int_{-2}^{2}\\left(8-2x^{2}\\right)dx=32-2\\cdot\\dfrac{16}{3}=\\dfrac{64}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Cascas cilíndricas com a raiz quadrada",
+    "dificuldade": "dificil",
+    "enunciado": "A região sob $y=\\sqrt{x}$, com $0\\leq x\\leq1$, gira em torno do eixo $y$. Calcule o volume do sólido gerado.",
+    "alternativas": {
+      "a": "$\\dfrac{2\\pi}{5}$",
+      "b": "$\\dfrac{8\\pi}{5}$",
+      "c": "$\\dfrac{4\\pi}{7}$",
+      "d": "$\\dfrac{4\\pi}{5}$",
+      "e": "$\\dfrac{\\pi}{5}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pelo método das cascas, $V=2\\pi\\displaystyle\\int_{0}^{1}x\\sqrt{x}\\,dx=2\\pi\\displaystyle\\int_{0}^{1}x^{3/2}dx=2\\pi\\cdot\\dfrac{2}{5}=\\dfrac{4\\pi}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Aplicações da Integral Definida",
+    "subtopico": "Comprimento de arco com secante",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento do arco da curva $y=\\ln\\left(\\cos x\\right)$ de $x=0$ a $x=\\dfrac{\\pi}{4}$.",
+    "alternativas": {
+      "a": "$\\ln\\left(2+\\sqrt{2}\\right)$",
+      "b": "$\\ln\\left(1+\\sqrt{2}\\right)$",
+      "c": "$\\ln\\left(\\sqrt{2}-1\\right)$",
+      "d": "$\\ln\\left(2+\\sqrt{3}\\right)$",
+      "e": "$2\\ln\\left(1+\\sqrt{2}\\right)$"
+    },
+    "gabarito": "b",
+    "resolucao": "Como $y'=-\\operatorname{tg}x$, tem-se $1+\\left(y'\\right)^{2}=1+\\operatorname{tg}^{2}x=\\sec^{2}x$, e o radical vira $\\sec x$ (positivo no intervalo). Então $L=\\displaystyle\\int_{0}^{\\pi/4}\\sec x\\,dx=\\left[\\ln\\left|\\sec x+\\operatorname{tg}x\\right|\\right]_{0}^{\\pi/4}=\\ln\\left(\\sqrt{2}+1\\right)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

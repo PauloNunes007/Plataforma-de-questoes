@@ -1,0 +1,1617 @@
+[
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com fatoração de multiplicidade dois",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{x^{3}-3x+2}{x^{4}-4x+3}$ para $x\\neq1$. Determine o valor que se deve atribuir a $f(1)$ para que $f$ seja contínua em $x=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$\\dfrac{3}{4}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Tanto o numerador quanto o denominador se anulam em $x=1$, e com multiplicidade dois: $x^{3}-3x+2=(x-1)^{2}(x+2)$ e $x^{4}-4x+3=(x-1)^{2}\\left(x^{2}+2x+3\\right)$. Cancelando o fator $(x-1)^{2}$, sobra $\\dfrac{x+2}{x^{2}+2x+3}$, que em $x=1$ vale $\\dfrac{3}{6}=\\dfrac{1}{2}$. Cancelar só um fator $(x-1)$ deixaria outra indeterminação — é o erro comum aqui.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com exponencial e cosseno",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{e^{x^{2}}-\\cos x}{x^{2}}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{2}{3}$",
+      "c": "$\\dfrac{5}{2}$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{3}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Escreva o numerador como $\\left(e^{x^{2}}-1\\right)+\\left(1-\\cos x\\right)$. Dividindo por $x^{2}$, o primeiro pedaço tende a $1$, porque $e^{u}-1\\sim u$ com $u=x^{2}$, e o segundo tende a $\\dfrac{1}{2}$, pois $1-\\cos x\\sim\\dfrac{x^{2}}{2}$. Logo $f(0)=1+\\dfrac{1}{2}=\\dfrac{3}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com duas exponenciais de bases distintas",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{3^{x}-2^{x}}{x}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$\\ln\\dfrac{2}{3}$",
+      "b": "$\\ln\\dfrac{3}{2}$",
+      "c": "$\\ln 6$",
+      "d": "$\\ln\\dfrac{1}{6}$",
+      "e": "$\\ln 5$"
+    },
+    "gabarito": "b",
+    "resolucao": "Some e subtraia $1$ no numerador: $\\dfrac{\\left(3^{x}-1\\right)-\\left(2^{x}-1\\right)}{x}$. Como $a^{x}-1=e^{x\\ln a}-1\\sim x\\ln a$, cada parcela tende a $\\ln 3$ e $\\ln 2$. Portanto $f(0)=\\ln 3-\\ln 2=\\ln\\dfrac{3}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com racionalização em ponto simétrico",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\sqrt{x^{2}+3}-2}{x^{2}-1}$ para $x\\neq\\pm1$. Determine $f(1)$ para que $f$ seja contínua em $x=1$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{8}$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{1}{6}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Multiplicando pelo conjugado, $\\sqrt{x^{2}+3}-2=\\dfrac{x^{2}-1}{\\sqrt{x^{2}+3}+2}$. O fator $x^{2}-1$ cancela com o denominador e resta $\\dfrac{1}{\\sqrt{x^{2}+3}+2}$, contínua em $x=1$, onde vale $\\dfrac{1}{2+2}=\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com logaritmo e exponencial",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\ln(1+3x)}{e^{4x}-1}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{4}$",
+      "b": "$\\dfrac{4}{3}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$\\dfrac{3}{2}$",
+      "e": "$\\dfrac{1}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Use os infinitésimos equivalentes $\\ln(1+u)\\sim u$ e $e^{v}-1\\sim v$: o numerador se comporta como $3x$ e o denominador como $4x$. O quociente tende a $\\dfrac{3}{4}$, que é o valor do prolongamento.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com raiz cúbica",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\sqrt[3]{8+x}-2}{x}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{6}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$\\dfrac{1}{8}$",
+      "e": "$\\dfrac{1}{12}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Ponha $u=\\sqrt[3]{8+x}$, de modo que $x=u^{3}-8$ e $u\\to2$. O quociente vira $\\dfrac{u-2}{u^{3}-8}=\\dfrac{1}{u^{2}+2u+4}$, que tende a $\\dfrac{1}{4+4+4}=\\dfrac{1}{12}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com infinitésimo de terceira ordem",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{x-\\operatorname{sen}x}{x^{3}}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$\\dfrac{1}{6}$",
+      "d": "$\\dfrac{1}{4}$",
+      "e": "$\\dfrac{2}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Aplicando L'Hospital três vezes: $\\dfrac{1-\\cos x}{3x^{2}}$, depois $\\dfrac{\\operatorname{sen}x}{6x}$ e por fim $\\dfrac{\\cos x}{6}\\to\\dfrac{1}{6}$. O mesmo sai do desenvolvimento $\\operatorname{sen}x=x-\\dfrac{x^{3}}{6}+\\cdots$, que mostra que o numerador é um infinitésimo de terceira ordem.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com produto de cossenos",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{1-\\cos x\\cos 2x}{x^{2}}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{5}{4}$",
+      "d": "$\\dfrac{5}{2}$",
+      "e": "$\\dfrac{7}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Escreva $1-\\cos x\\cos 2x=\\left(1-\\cos x\\right)+\\cos x\\left(1-\\cos 2x\\right)$. Dividindo por $x^{2}$, a primeira parcela tende a $\\dfrac{1}{2}$ e a segunda a $1\\cdot\\dfrac{4}{2}=2$, pois $1-\\cos 2x\\sim\\dfrac{(2x)^{2}}{2}$. O prolongamento vale $\\dfrac{1}{2}+2=\\dfrac{5}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com seno de argumento composto",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\operatorname{sen}\\left(x^{2}-4\\right)}{x-2}$ para $x\\neq2$. Determine $f(2)$ para que $f$ seja contínua em $x=2$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$2$",
+      "c": "$1$",
+      "d": "$8$",
+      "e": "$0$"
+    },
+    "gabarito": "a",
+    "resolucao": "Multiplique e divida por $x^{2}-4$: $f(x)=\\dfrac{\\operatorname{sen}\\left(x^{2}-4\\right)}{x^{2}-4}\\cdot\\left(x+2\\right)$. Com $u=x^{2}-4\\to0$, o primeiro fator tende a $1$ e o segundo a $4$. Logo $f(2)=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com diferença de radicais simétricos",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\sqrt{2+x}-\\sqrt{2-x}}{x}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{2}}{4}$",
+      "b": "$\\dfrac{\\sqrt{2}}{2}$",
+      "c": "$\\sqrt{2}$",
+      "d": "$\\dfrac{\\sqrt{2}}{8}$",
+      "e": "$2\\sqrt{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Racionalizando, $\\sqrt{2+x}-\\sqrt{2-x}=\\dfrac{(2+x)-(2-x)}{\\sqrt{2+x}+\\sqrt{2-x}}=\\dfrac{2x}{\\sqrt{2+x}+\\sqrt{2-x}}$. Dividindo por $x$ e fazendo $x\\to0$, resta $\\dfrac{2}{2\\sqrt{2}}=\\dfrac{1}{\\sqrt{2}}=\\dfrac{\\sqrt{2}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com seno sobre diferença de radicais",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\operatorname{sen}x}{\\sqrt{1+x}-\\sqrt{1-x}}$ para $x\\neq0$. Determine $f(0)$ para que $f$ seja contínua em $x=0$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$0$",
+      "d": "$3$",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Racionalize o denominador: $\\sqrt{1+x}-\\sqrt{1-x}=\\dfrac{2x}{\\sqrt{1+x}+\\sqrt{1-x}}$. Assim $f(x)=\\dfrac{\\operatorname{sen}x}{x}\\cdot\\dfrac{\\sqrt{1+x}+\\sqrt{1-x}}{2}$, produto que tende a $1\\cdot\\dfrac{2}{2}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento com raiz cúbica no denominador",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{x-1}{\\sqrt[3]{x}-1}$ para $x\\neq1$. Determine $f(1)$ para que $f$ seja contínua em $x=1$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$6$",
+      "d": "$3$",
+      "e": "$9$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $u=\\sqrt[3]{x}$, tem-se $x=u^{3}$ e $u\\to1$, de modo que $\\dfrac{x-1}{\\sqrt[3]{x}-1}=\\dfrac{u^{3}-1}{u-1}=u^{2}+u+1$. O limite é $1+1+1=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Prolongamento à direita com radicais no denominador",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{x^{2}-4}{\\sqrt{x}-\\sqrt{2}}$ para $x>0$, $x\\neq2$. Determine o valor que torna $f$ contínua em $x=2$.",
+    "alternativas": {
+      "a": "$4\\sqrt{2}$",
+      "b": "$16\\sqrt{2}$",
+      "c": "$8\\sqrt{2}$",
+      "d": "$2\\sqrt{2}$",
+      "e": "$6\\sqrt{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Racionalize multiplicando por $\\sqrt{x}+\\sqrt{2}$: o denominador vira $x-2$, que cancela com o fator correspondente de $x^{2}-4=(x-2)(x+2)$. Sobra $\\left(x+2\\right)\\left(\\sqrt{x}+\\sqrt{2}\\right)$, contínua em $x=2$, onde vale $4\\cdot2\\sqrt{2}=8\\sqrt{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Dois parâmetros com exponencial e radical",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $a$ e $b$ reais tais que $f(x)=\\dfrac{e^{ax}-1}{x}$ para $x<0$, $f(0)=b$ e $f(x)=\\dfrac{\\sqrt{1+4x}-1}{x}$ para $x>0$. Se $f$ é contínua em $x=0$, calcule $a+b$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$6$",
+      "d": "$4$",
+      "e": "$8$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela direita, racionalizando: $\\dfrac{\\sqrt{1+4x}-1}{x}=\\dfrac{4}{\\sqrt{1+4x}+1}\\to2$. Pela esquerda, $\\dfrac{e^{ax}-1}{x}=a\\cdot\\dfrac{e^{ax}-1}{ax}\\to a$. A continuidade exige que ambos os limites laterais valham $f(0)=b$, logo $a=2$ e $b=2$, donde $a+b=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Dois parâmetros com cosseno e seno",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $b>0$ e $c$ reais tais que $f(x)=\\dfrac{1-\\cos(bx)}{x^{2}}$ para $x<0$, $f(0)=2$ e $f(x)=\\dfrac{\\operatorname{sen}(2x)}{\\sqrt{x+1}-1}-c$ para $x>0$. Se $f$ é contínua em $x=0$, calcule $b+c$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$6$",
+      "d": "$4$",
+      "e": "$8$"
+    },
+    "gabarito": "d",
+    "resolucao": "À esquerda, $\\dfrac{1-\\cos(bx)}{x^{2}}=\\dfrac{b^{2}}{2}\\cdot\\dfrac{1-\\cos(bx)}{(bx)^{2}/2\\cdot b^{2}/b^{2}}\\to\\dfrac{b^{2}}{2}$, e igualando a $2$ vem $b=2$. À direita, racionalizando o denominador, $\\sqrt{x+1}-1=\\dfrac{x}{\\sqrt{x+1}+1}$, de modo que $\\dfrac{\\operatorname{sen}(2x)}{\\sqrt{x+1}-1}=\\dfrac{\\operatorname{sen}(2x)}{x}\\left(\\sqrt{x+1}+1\\right)\\to2\\cdot2=4$. Então $4-c=2$ e $c=2$, donde $b+c=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Três ramos e dois pontos de colagem",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $a$ e $b$ reais tais que $f(x)=x^{2}+a$ para $x<1$, $f(x)=bx+3$ para $1\\leq x<2$ e $f(x)=x^{3}$ para $x\\geq2$ definam uma função contínua em $\\mathbb{R}$. Calcule $a+b$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$7$",
+      "c": "$5$",
+      "d": "$6$",
+      "e": "$8$"
+    },
+    "gabarito": "b",
+    "resolucao": "A colagem em $x=2$ dá $2b+3=8$, isto é $b=\\dfrac{5}{2}$. A colagem em $x=1$ dá $1+a=b+3=\\dfrac{11}{2}$, logo $a=\\dfrac{9}{2}$. Somando, $a+b=\\dfrac{9}{2}+\\dfrac{5}{2}=7$. Comece sempre pelo ponto em que só há uma incógnita.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Parâmetro dentro de um radical",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $a$ e $b$ reais tais que $f(x)=\\dfrac{\\sqrt{9+ax}-3}{x}$ para $x<0$, $f(0)=b$ e $f(x)=\\dfrac{\\ln(1+2x)}{x}$ para $x>0$. Se $f$ é contínua em $x=0$, calcule $a-b$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$10$",
+      "c": "$8$",
+      "d": "$12$",
+      "e": "$14$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela direita, $\\dfrac{\\ln(1+2x)}{x}\\to2$, então $b=2$. Pela esquerda, racionalizando, $\\dfrac{\\sqrt{9+ax}-3}{x}=\\dfrac{a}{\\sqrt{9+ax}+3}\\to\\dfrac{a}{6}$. Igualando a $2$, vem $a=12$, e $a-b=10$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Parâmetro em diferença de exponenciais",
+    "dificuldade": "medio",
+    "enunciado": "Seja $a$ real tal que $f(x)=\\dfrac{e^{3x}-e^{ax}}{x}$ para $x\\neq0$ e $f(0)=1$ seja contínua em $x=0$. Determine $a$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$3$",
+      "d": "$4$",
+      "e": "$-2$"
+    },
+    "gabarito": "b",
+    "resolucao": "Some e subtraia $1$: $\\dfrac{\\left(e^{3x}-1\\right)-\\left(e^{ax}-1\\right)}{x}\\to3-a$. A continuidade exige $3-a=1$, ou seja, $a=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Parâmetro e valor do limite na mesma questão",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $a$ o único real para o qual $\\displaystyle\\lim_{x\\to2}\\dfrac{x^{2}+ax+2a}{x^{2}-4}$ existe e é finito, e seja $L$ esse limite. Calcule $a+L$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$-\\dfrac{3}{4}$",
+      "c": "$-\\dfrac{1}{4}$",
+      "d": "$\\dfrac{3}{4}$",
+      "e": "$-\\dfrac{1}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como o denominador se anula em $x=2$, o limite só é finito se o numerador também se anular ali: $4+2a+2a=0$, isto é, $a=-1$. Com esse valor, $x^{2}-x-2=(x-2)(x+1)$ e $\\dfrac{(x-2)(x+1)}{(x-2)(x+2)}=\\dfrac{x+1}{x+2}\\to\\dfrac{3}{4}$. Logo $a+L=-1+\\dfrac{3}{4}=-\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Parâmetro em quociente de senos",
+    "dificuldade": "medio",
+    "enunciado": "Seja $a$ real tal que $f(x)=\\dfrac{\\operatorname{sen}(ax)}{\\operatorname{sen}(3x)}$ para $x\\neq0$ e $f(0)=\\dfrac{5}{3}$ seja contínua em $x=0$. Determine $a$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$4$",
+      "c": "$6$",
+      "d": "$15$",
+      "e": "$5$"
+    },
+    "gabarito": "e",
+    "resolucao": "Divida numerador e denominador por $x$: $\\dfrac{\\operatorname{sen}(ax)/x}{\\operatorname{sen}(3x)/x}\\to\\dfrac{a}{3}$. A continuidade exige $\\dfrac{a}{3}=\\dfrac{5}{3}$, logo $a=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Parâmetro num infinitésimo de terceira ordem",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $a>0$ tal que $f(x)=\\dfrac{\\operatorname{tg}(ax)-\\operatorname{sen}(ax)}{x^{3}}$ para $x\\neq0$ e $f(0)=4$ seja contínua em $x=0$. Determine $a$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$4$",
+      "d": "$8$",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Fatorando, $\\operatorname{tg}u-\\operatorname{sen}u=\\operatorname{sen}u\\cdot\\dfrac{1-\\cos u}{\\cos u}$, que para $u\\to0$ se comporta como $u\\cdot\\dfrac{u^{2}}{2}=\\dfrac{u^{3}}{2}$. Com $u=ax$, o quociente tende a $\\dfrac{a^{3}}{2}$. Igualando a $4$, vem $a^{3}=8$ e $a=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Parâmetro no limite exponencial fundamental",
+    "dificuldade": "medio",
+    "enunciado": "Seja $a$ real tal que $f(x)=\\left(1+ax\\right)^{1/x}$ para $x\\neq0$ e $f(0)=e^{3}$ seja contínua em $x=0$. Determine $a$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$3$",
+      "d": "$6$",
+      "e": "$9$"
+    },
+    "gabarito": "c",
+    "resolucao": "Tomando logaritmo, $\\ln f(x)=\\dfrac{\\ln(1+ax)}{x}\\to a$, pois $\\ln(1+u)\\sim u$. Pela continuidade da exponencial, $f(x)\\to e^{a}$, e a exigência $e^{a}=e^{3}$ dá $a=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Parâmetro sob radical com prolongamento",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $a$ real tal que $f(x)=\\dfrac{\\sqrt{x+a}-2}{x-3}$, definida para $x\\neq3$, admita prolongamento contínuo em $x=3$. Determine o valor desse prolongamento.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{1}{4}$",
+      "c": "$\\dfrac{1}{6}$",
+      "d": "$\\dfrac{1}{8}$",
+      "e": "$\\dfrac{1}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Para o limite ser finito, o numerador precisa se anular em $x=3$: $\\sqrt{3+a}=2$, ou seja, $a=1$. Com $a=1$, racionalizando: $\\dfrac{\\sqrt{x+1}-2}{x-3}=\\dfrac{x-3}{(x-3)\\left(\\sqrt{x+1}+2\\right)}=\\dfrac{1}{\\sqrt{x+1}+2}\\to\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Contagem de raízes de uma quártica pelo TVI",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de raízes reais da equação $x^{4}-4x+1=0$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$3$",
+      "d": "$2$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "Seja $f(x)=x^{4}-4x+1$. Como $f'(x)=4x^{3}-4=4\\left(x^{3}-1\\right)$, a função decresce em $(-\\infty,1)$ e cresce em $(1,+\\infty)$, com mínimo $f(1)=-2<0$. Em cada ramo de monotonicidade $f$ é injetora e vai a $+\\infty$, então o Teorema do Valor Intermediário garante exatamente uma raiz em cada um: são $2$ raízes reais.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Contagem de raízes de uma cúbica pelo TVI",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de raízes reais da equação $x^{3}-3x+1=0$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$2$",
+      "d": "$3$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $f(x)=x^{3}-3x+1$ tem-se $f'(x)=3x^{2}-3$, que anula em $x=\\pm1$. Como $f(-1)=3>0$ é máximo local, $f(1)=-1<0$ é mínimo local e $f\\to\\mp\\infty$ nos extremos, o sinal muda três vezes. O TVI dá uma raiz em cada um dos intervalos $(-\\infty,-1)$, $(-1,1)$ e $(1,+\\infty)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Interseção entre exponencial e parábola",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de soluções reais da equação $2^{x}=x^{2}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$4$",
+      "d": "$3$",
+      "e": "$0$"
+    },
+    "gabarito": "d",
+    "resolucao": "Seja $f(x)=2^{x}-x^{2}$, contínua em $\\mathbb{R}$. Duas soluções são visíveis: $x=2$ e $x=4$. Além delas, $f(-1)=\\dfrac{1}{2}-1<0$ e $f(0)=1>0$, o que pelo TVI dá uma raiz em $(-1,0)$. Para $x>4$ a exponencial domina e $f>0$; entre $2$ e $4$, $f<0$; e para $x<-1$, $f<0$. São exatamente $3$ soluções.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Número de soluções com raiz dupla",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de soluções reais distintas da equação $x^{3}-6x^{2}+9x=4$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$1$",
+      "c": "$3$",
+      "d": "$0$",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "A equação equivale a $x^{3}-6x^{2}+9x-4=0$, e $x=1$ é raiz. Dividindo, $x^{3}-6x^{2}+9x-4=(x-1)^{2}(x-4)$. As soluções são $x=1$ (dupla) e $x=4$: apenas $2$ valores distintos. Repare que em $x=1$ o gráfico tangencia o eixo sem trocar de sinal — contar trocas de sinal daria $1$, resposta errada.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Contagem de raízes de uma quíntica",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de raízes reais da equação $x^{5}-5x+3=0$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$1$",
+      "c": "$2$",
+      "d": "$4$",
+      "e": "$5$"
+    },
+    "gabarito": "a",
+    "resolucao": "Seja $f(x)=x^{5}-5x+3$. Então $f'(x)=5x^{4}-5=5\\left(x^{4}-1\\right)$ anula em $x=\\pm1$, com máximo local $f(-1)=7>0$ e mínimo local $f(1)=-1<0$. Como $f\\to-\\infty$ à esquerda e $f\\to+\\infty$ à direita, há troca de sinal nos três intervalos de monotonicidade: $3$ raízes reais.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Localização de raiz num intervalo unitário",
+    "dificuldade": "medio",
+    "enunciado": "Seja $n$ o inteiro tal que a equação $x^{3}+x-7=0$ possui raiz no intervalo $(n,\\,n+1)$. Determine $n$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$2$",
+      "d": "$3$",
+      "e": "$-1$"
+    },
+    "gabarito": "b",
+    "resolucao": "Seja $f(x)=x^{3}+x-7$, contínua. Como $f(1)=1+1-7=-5<0$ e $f(2)=8+2-7=3>0$, o Teorema do Valor Intermediário garante uma raiz em $(1,2)$, logo $n=1$. Como $f$ é estritamente crescente ($f'=3x^{2}+1>0$), essa raiz é a única.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Interseção entre cosseno e cúbica",
+    "dificuldade": "medio",
+    "enunciado": "Determine o número de soluções reais da equação $\\cos x=x^{3}$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$1$",
+      "d": "$3$",
+      "e": "$4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Seja $f(x)=\\cos x-x^{3}$. Para $x\\leq0$ tem-se $-x^{3}\\geq0$ e, quando $x\\leq-1$, $-x^{3}\\geq1\\geq\\cos x$ com desigualdade estrita, de modo que $f>0$; no trecho $(-1,0]$ também $f>0$. Para $x\\geq1$, $x^{3}\\geq1>\\cos x$ e $f<0$. Sobra $(0,1)$, onde $f(0)=1>0$, $f(1)=\\cos 1-1<0$ e $f$ é decrescente: exatamente $1$ solução.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Raízes de uma quártica com três pontos críticos",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de raízes reais da equação $3x^{4}-8x^{3}-6x^{2}+24x-5=0$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$2$",
+      "d": "$3$",
+      "e": "$4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $f(x)=3x^{4}-8x^{3}-6x^{2}+24x-5$, tem-se $f'(x)=12\\left(x-2\\right)\\left(x^{2}-1\\right)$, com pontos críticos $-1$, $1$ e $2$. Os valores são $f(-1)=-24$ (mínimo), $f(1)=8$ (máximo) e $f(2)=3$ (mínimo). Como $f\\to+\\infty$ nos dois extremos, há troca de sinal apenas em $(-\\infty,-1)$ e em $(-1,1)$; depois de $x=1$ a função nunca volta a ser negativa. São $2$ raízes.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Salto de uma exponencial com expoente 1/x",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{1}{1+2^{1/x}}$ para $x\\neq0$. Calcule $\\displaystyle\\lim_{x\\to0^{+}}f(x)-\\lim_{x\\to0^{-}}f(x)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$2$",
+      "d": "$-2$",
+      "e": "$-1$"
+    },
+    "gabarito": "e",
+    "resolucao": "Quando $x\\to0^{+}$, $\\dfrac{1}{x}\\to+\\infty$ e $2^{1/x}\\to+\\infty$, de modo que $f\\to0$. Quando $x\\to0^{-}$, $\\dfrac{1}{x}\\to-\\infty$ e $2^{1/x}\\to0$, de modo que $f\\to1$. A diferença pedida é $0-1=-1$: a descontinuidade em $x=0$ é de salto, de amplitude $1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Descontinuidades removíveis e não removíveis",
+    "dificuldade": "medio",
+    "enunciado": "Determine quantos pontos de descontinuidade **não removível** tem a função $f(x)=\\dfrac{x^{2}-x-6}{x^{3}-4x}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$2$",
+      "d": "$0$",
+      "e": "$4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Fatorando, $f(x)=\\dfrac{(x-3)(x+2)}{x(x-2)(x+2)}$. A função não está definida em $x=0$, $x=2$ e $x=-2$. Em $x=-2$ o fator comum cancela e o limite é finito, $\\dfrac{-5}{(-2)(-4)}=-\\dfrac{5}{8}$: descontinuidade removível. Em $x=0$ e $x=2$ o limite é infinito, e essas duas descontinuidades não são removíveis.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Descontinuidade de uma função composta",
+    "dificuldade": "medio",
+    "enunciado": "Sejam $f(x)=\\dfrac{1}{x-2}$ e $g(x)=\\sqrt{x+3}$. Determine o valor de $x$ em que a composta $f\\circ g$ não é contínua.",
+    "alternativas": {
+      "a": "$-3$",
+      "b": "$2$",
+      "c": "$4$",
+      "d": "$1$",
+      "e": "$-1$"
+    },
+    "gabarito": "d",
+    "resolucao": "Tem-se $\\left(f\\circ g\\right)(x)=\\dfrac{1}{\\sqrt{x+3}-2}$, definida para $x\\geq-3$. Ela deixa de existir quando o denominador se anula, isto é, $\\sqrt{x+3}=2$, ou seja, $x+3=4$ e $x=1$. Nos demais pontos do domínio a composta de contínuas é contínua.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Salto de uma função com módulo no denominador",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{\\left|x-3\\right|\\left(x+1\\right)}{x-3}$ para $x\\neq3$. Calcule $\\displaystyle\\lim_{x\\to3^{+}}f(x)-\\lim_{x\\to3^{-}}f(x)$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$0$",
+      "c": "$8$",
+      "d": "$-8$",
+      "e": "$-4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Para $x>3$ vale $\\left|x-3\\right|=x-3$ e $f(x)=x+1\\to4$. Para $x<3$ vale $\\left|x-3\\right|=3-x$ e $f(x)=-(x+1)\\to-4$. A diferença é $4-(-4)=8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Duas descontinuidades removíveis com módulo",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{x^{2}-9}{\\left|x\\right|-3}$, definida para $\\left|x\\right|\\neq3$. Sabendo que $f$ admite prolongamento contínuo em $x=3$ e em $x=-3$, calcule a soma dos dois valores desse prolongamento.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$0$",
+      "c": "$6$",
+      "d": "$-6$",
+      "e": "$18$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para $x>0$ perto de $3$, $\\left|x\\right|-3=x-3$ e $f(x)=\\dfrac{(x-3)(x+3)}{x-3}=x+3\\to6$. Para $x<0$ perto de $-3$, $\\left|x\\right|-3=-x-3$ e $f(x)=\\dfrac{(x-3)(x+3)}{-(x+3)}=3-x\\to6$. Os dois prolongamentos valem $6$, e a soma é $12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Salto de um quociente de exponenciais",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{e^{1/x}-1}{e^{1/x}+1}$ para $x\\neq0$. Calcule $\\displaystyle\\lim_{x\\to0^{+}}f(x)-\\lim_{x\\to0^{-}}f(x)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$2$",
+      "d": "$-2$",
+      "e": "$-1$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela direita, $e^{1/x}\\to+\\infty$; dividindo numerador e denominador por $e^{1/x}$ obtém-se $\\dfrac{1-e^{-1/x}}{1+e^{-1/x}}\\to1$. Pela esquerda, $e^{1/x}\\to0$ e o quociente tende a $\\dfrac{-1}{1}=-1$. A diferença é $1-(-1)=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Descontinuidades da tangente num período",
+    "dificuldade": "medio",
+    "enunciado": "Determine quantos pontos do intervalo $\\left[0,\\,2\\pi\\right]$ são pontos de descontinuidade de $f(x)=\\operatorname{tg}x$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$4$",
+      "d": "$0$",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Como $\\operatorname{tg}x=\\dfrac{\\operatorname{sen}x}{\\cos x}$ é quociente de funções contínuas, ela só deixa de ser contínua onde $\\cos x=0$. Em $\\left[0,2\\pi\\right]$ isso ocorre em $x=\\dfrac{\\pi}{2}$ e $x=\\dfrac{3\\pi}{2}$: são $2$ pontos, ambos com descontinuidade infinita.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Zeros do denominador num intervalo simétrico",
+    "dificuldade": "medio",
+    "enunciado": "Determine quantos pontos do intervalo aberto $\\left(-2\\pi,\\,2\\pi\\right)$ são pontos de descontinuidade de $f(x)=\\dfrac{x}{\\operatorname{sen}x}$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$1$",
+      "c": "$2$",
+      "d": "$4$",
+      "e": "$5$"
+    },
+    "gabarito": "a",
+    "resolucao": "A função deixa de estar definida onde $\\operatorname{sen}x=0$. No intervalo aberto $(-2\\pi,2\\pi)$ isso acontece em $x=-\\pi$, $x=0$ e $x=\\pi$ — os pontos $\\pm2\\pi$ ficam de fora. São $3$ descontinuidades, sendo a de $x=0$ removível (ali o limite vale $1$) e as outras duas infinitas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Salto com módulo no denominador e fator quadrático",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{x^{2}+2x}{\\left|x\\right|}$ para $x\\neq0$. Calcule $\\displaystyle\\lim_{x\\to0^{+}}f(x)-\\lim_{x\\to0^{-}}f(x)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$0$",
+      "c": "$4$",
+      "d": "$-4$",
+      "e": "$-2$"
+    },
+    "gabarito": "c",
+    "resolucao": "Fatorando, $x^{2}+2x=x(x+2)$. Para $x>0$, $\\dfrac{x(x+2)}{x}=x+2\\to2$; para $x<0$, $\\dfrac{x(x+2)}{-x}=-(x+2)\\to-2$. A diferença é $2-(-2)=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Salto do arco-tangente de 1/x",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\operatorname{arctg}\\left(\\dfrac{1}{x}\\right)$ para $x\\neq0$. Calcule $\\displaystyle\\lim_{x\\to0^{+}}f(x)-\\lim_{x\\to0^{-}}f(x)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{2}$",
+      "b": "$\\pi$",
+      "c": "$2\\pi$",
+      "d": "$\\dfrac{\\pi}{4}$",
+      "e": "$\\dfrac{3\\pi}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela direita, $\\dfrac{1}{x}\\to+\\infty$ e $\\operatorname{arctg}$ tende a $\\dfrac{\\pi}{2}$. Pela esquerda, $\\dfrac{1}{x}\\to-\\infty$ e o arco-tangente tende a $-\\dfrac{\\pi}{2}$. O salto é $\\dfrac{\\pi}{2}-\\left(-\\dfrac{\\pi}{2}\\right)=\\pi$, e nenhum valor atribuído a $f(0)$ remove essa descontinuidade.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Continuidade",
+    "subtopico": "Descontinuidades de uma racional num intervalo fechado",
+    "dificuldade": "medio",
+    "enunciado": "Determine quantos pontos do intervalo $\\left[0,\\,3\\right]$ são pontos de descontinuidade de $f(x)=\\dfrac{x^{2}-3x+2}{x^{2}-4x+3}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$2$",
+      "d": "$0$",
+      "e": "$4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Fatorando, $f(x)=\\dfrac{(x-1)(x-2)}{(x-1)(x-3)}$. O denominador anula em $x=1$ e $x=3$, ambos em $\\left[0,3\\right]$: a função não está definida nesses dois pontos. Em $x=1$ a descontinuidade é removível (o limite vale $\\dfrac{1-2}{1-3}=\\dfrac{1}{2}$) e em $x=3$ é infinita — mas as duas contam como pontos de descontinuidade.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição com incrementos de sinais opostos",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{3}-2x$. Calcule $\\displaystyle\\lim_{h\\to0}\\dfrac{f(2+3h)-f(2-h)}{h}$.",
+    "alternativas": {
+      "a": "$10$",
+      "b": "$40$",
+      "c": "$20$",
+      "d": "$30$",
+      "e": "$50$"
+    },
+    "gabarito": "b",
+    "resolucao": "Some e subtraia $f(2)$ no numerador: $\\dfrac{f(2+3h)-f(2)}{h}-\\dfrac{f(2-h)-f(2)}{h}$. O primeiro quociente vale $3\\cdot\\dfrac{f(2+3h)-f(2)}{3h}\\to3f'(2)$ e o segundo $-\\dfrac{f(2-h)-f(2)}{-h}\\to-f'(2)$, com o sinal invertido. O limite é $4f'(2)$, e como $f'(x)=3x^{2}-2$ dá $f'(2)=10$, resulta $40$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Quociente de Newton com fator polinomial",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f$ derivável com $f(1)=2$ e $f'(1)=-3$. Calcule $\\displaystyle\\lim_{x\\to1}\\dfrac{x^{2}f(1)-f(x)}{x-1}$.",
+    "alternativas": {
+      "a": "$7$",
+      "b": "$1$",
+      "c": "$-7$",
+      "d": "$4$",
+      "e": "$3$"
+    },
+    "gabarito": "a",
+    "resolucao": "Chame $g(x)=x^{2}f(1)-f(x)$. Como $g(1)=f(1)-f(1)=0$, o limite é exatamente $g'(1)$ pela definição de derivada. Derivando, $g'(x)=2xf(1)-f'(x)$, logo $g'(1)=2\\cdot2-(-3)=7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição da derivada com raiz cúbica",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{h\\to0}\\dfrac{\\sqrt[3]{27+h}-3}{h}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{9}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$\\dfrac{1}{81}$",
+      "d": "$\\dfrac{1}{18}$",
+      "e": "$\\dfrac{1}{27}$"
+    },
+    "gabarito": "e",
+    "resolucao": "O quociente é a definição de $f'(27)$ para $f(x)=\\sqrt[3]{x}$. Como $f'(x)=\\dfrac{1}{3}x^{-2/3}$, tem-se $f'(27)=\\dfrac{1}{3\\cdot27^{2/3}}=\\dfrac{1}{3\\cdot9}=\\dfrac{1}{27}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição da derivada com radical afim",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{2x+1}$. Calcule $f'(4)$ usando a definição de derivada.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{6}$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$\\dfrac{1}{9}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela definição, $f'(4)=\\lim_{h\\to0}\\dfrac{\\sqrt{9+2h}-3}{h}$. Racionalizando, $\\dfrac{\\left(9+2h\\right)-9}{h\\left(\\sqrt{9+2h}+3\\right)}=\\dfrac{2}{\\sqrt{9+2h}+3}\\to\\dfrac{2}{6}=\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição da derivada de uma função racional",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{1}{x+2}$. Calcule $\\displaystyle\\lim_{h\\to0}\\dfrac{f(1+h)-f(1)}{h}$.",
+    "alternativas": {
+      "a": "$-\\dfrac{1}{3}$",
+      "b": "$-\\dfrac{1}{6}$",
+      "c": "$\\dfrac{1}{9}$",
+      "d": "$-\\dfrac{1}{9}$",
+      "e": "$-\\dfrac{1}{27}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O quociente é $\\dfrac{1}{h}\\left(\\dfrac{1}{3+h}-\\dfrac{1}{3}\\right)=\\dfrac{1}{h}\\cdot\\dfrac{3-(3+h)}{3(3+h)}=\\dfrac{-1}{3(3+h)}$, que tende a $-\\dfrac{1}{9}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição da derivada do seno num ponto notável",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{h\\to0}\\dfrac{\\operatorname{sen}\\left(\\dfrac{\\pi}{6}+h\\right)-\\operatorname{sen}\\dfrac{\\pi}{6}}{h}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{3}}{2}$",
+      "b": "$\\dfrac{\\sqrt{2}}{2}$",
+      "c": "$\\dfrac{\\sqrt{3}}{3}$",
+      "d": "$\\dfrac{\\sqrt{3}}{4}$",
+      "e": "$\\dfrac{\\sqrt{2}}{4}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O quociente é a definição de $f'\\left(\\dfrac{\\pi}{6}\\right)$ com $f=\\operatorname{sen}$. Como $f'=\\cos$, o limite vale $\\cos\\dfrac{\\pi}{6}=\\dfrac{\\sqrt{3}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Definição com incremento múltiplo no cosseno",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{h\\to0}\\dfrac{\\cos\\left(\\dfrac{\\pi}{3}+2h\\right)-\\cos\\dfrac{\\pi}{3}}{h}$.",
+    "alternativas": {
+      "a": "$-\\dfrac{\\sqrt{3}}{2}$",
+      "b": "$-\\sqrt{3}$",
+      "c": "$\\sqrt{3}$",
+      "d": "$-2\\sqrt{3}$",
+      "e": "$-\\dfrac{\\sqrt{3}}{4}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Multiplique e divida por $2$: $2\\cdot\\dfrac{\\cos\\left(\\frac{\\pi}{3}+2h\\right)-\\cos\\frac{\\pi}{3}}{2h}\\to2\\left(\\cos\\right)'\\left(\\dfrac{\\pi}{3}\\right)=-2\\operatorname{sen}\\dfrac{\\pi}{3}$. Como $\\operatorname{sen}\\dfrac{\\pi}{3}=\\dfrac{\\sqrt{3}}{2}$, o limite é $-\\sqrt{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Limite que é a derivada de uma potência alta",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to2}\\dfrac{x^{10}-2^{10}}{x-2}$.",
+    "alternativas": {
+      "a": "$2560$",
+      "b": "$1024$",
+      "c": "$5120$",
+      "d": "$10240$",
+      "e": "$512$"
+    },
+    "gabarito": "c",
+    "resolucao": "Esse quociente é a definição de $f'(2)$ para $f(x)=x^{10}$. Como $f'(x)=10x^{9}$, o limite vale $10\\cdot2^{9}=10\\cdot512=5120$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Combinação de incrementos com dados pontuais",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f$ derivável com $f(2)=4$ e $f'(2)=5$. Calcule $\\displaystyle\\lim_{h\\to0}\\dfrac{f(2+2h)-f(2-3h)}{h}$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$10$",
+      "c": "$15$",
+      "d": "$25$",
+      "e": "$20$"
+    },
+    "gabarito": "d",
+    "resolucao": "Somando e subtraindo $f(2)$, o quociente vira $2\\cdot\\dfrac{f(2+2h)-f(2)}{2h}+3\\cdot\\dfrac{f(2-3h)-f(2)}{-3h}$, cujos limites são $2f'(2)$ e $3f'(2)$. O total é $5f'(2)=25$. Observe que o valor $f(2)=4$ não entra na conta — é um dado deliberadamente inútil.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Derivada num ponto de descontinuidade removível",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{x^{2}-4}{x-2}$ para $x\\neq2$ e $f(2)=4$. Calcule $f'(2)$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$4$",
+      "d": "$-1$",
+      "e": "$1$"
+    },
+    "gabarito": "e",
+    "resolucao": "Para $x\\neq2$ vale $f(x)=x+2$, e como $f(2)=4$ coincide com o valor do prolongamento, $f(x)=x+2$ em toda a reta. Logo $f'(2)=1$. Se $f(2)$ fosse qualquer outro número, $f$ nem seria contínua em $2$ e a derivada não existiria.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Derivada pela definição com radical quadrático",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{x^{2}+9}$. Calcule $f'(4)$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{5}$",
+      "b": "$\\dfrac{4}{5}$",
+      "c": "$\\dfrac{5}{4}$",
+      "d": "$\\dfrac{2}{5}$",
+      "e": "$\\dfrac{4}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela definição e racionalizando, $\\dfrac{\\sqrt{(4+h)^{2}+9}-5}{h}=\\dfrac{(4+h)^{2}-16}{h\\left(\\sqrt{(4+h)^{2}+9}+5\\right)}=\\dfrac{8+h}{\\sqrt{(4+h)^{2}+9}+5}$, que tende a $\\dfrac{8}{10}=\\dfrac{4}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Abscissa a partir do valor da derivada",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{2}+3x$. Determine o valor de $a$ para o qual $\\displaystyle\\lim_{h\\to0}\\dfrac{f(a+h)-f(a)}{h}=9$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$4$",
+      "c": "$6$",
+      "d": "$9$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "O limite é $f'(a)=2a+3$. A equação $2a+3=9$ dá $a=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente na origem que reencontra a cúbica",
+    "dificuldade": "dificil",
+    "enunciado": "A reta tangente ao gráfico de $f(x)=x^{3}-3x^{2}+2x$ na origem intercepta o gráfico num segundo ponto. Calcule a soma das coordenadas desse ponto.",
+    "alternativas": {
+      "a": "$9$",
+      "b": "$3$",
+      "c": "$6$",
+      "d": "$12$",
+      "e": "$15$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $f'(x)=3x^{2}-6x+2$, tem-se $f'(0)=2$ e a tangente é $y=2x$. Igualando, $x^{3}-3x^{2}+2x=2x$ dá $x^{3}-3x^{2}=0$, isto é, $x^{2}(x-3)=0$. A raiz dupla $x=0$ é o próprio ponto de tangência; o segundo ponto é $x=3$, com $f(3)=27-27+6=6$. A soma é $3+6=9$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangentes à parábola por um ponto do eixo y",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o produto dos coeficientes angulares das retas tangentes ao gráfico de $y=x^{2}$ que passam pelo ponto $\\left(0,-4\\right)$.",
+    "alternativas": {
+      "a": "$16$",
+      "b": "$-8$",
+      "c": "$-4$",
+      "d": "$8$",
+      "e": "$-16$"
+    },
+    "gabarito": "e",
+    "resolucao": "A tangente no ponto de abscissa $a$ é $y=2a\\left(x-a\\right)+a^{2}=2ax-a^{2}$. Impondo que passe por $\\left(0,-4\\right)$: $-a^{2}=-4$, ou seja, $a=\\pm2$. Os coeficientes angulares são $4$ e $-4$, e o produto é $-16$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangentes por um ponto externo a uma parábola transladada",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o produto dos coeficientes angulares das retas tangentes ao gráfico de $y=x^{2}+3$ que passam pela origem.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$-6$",
+      "c": "$-3$",
+      "d": "$-12$",
+      "e": "$6$"
+    },
+    "gabarito": "d",
+    "resolucao": "A tangente em $x=a$ é $y=2a\\left(x-a\\right)+a^{2}+3=2ax-a^{2}+3$. Passando pela origem, $-a^{2}+3=0$ e $a=\\pm\\sqrt{3}$. Os coeficientes são $2\\sqrt{3}$ e $-2\\sqrt{3}$, de produto $-12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente à cúbica por um ponto do eixo y",
+    "dificuldade": "dificil",
+    "enunciado": "Existe uma única reta tangente ao gráfico de $y=x^{3}$ que passa pelo ponto $\\left(0,2\\right)$. Determine seu coeficiente angular.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$-3$",
+      "c": "$6$",
+      "d": "$12$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "A tangente em $x=a$ é $y=3a^{2}\\left(x-a\\right)+a^{3}=3a^{2}x-2a^{3}$. Passando por $\\left(0,2\\right)$: $-2a^{3}=2$, logo $a=-1$ — solução única, pois $a\\mapsto-2a^{3}$ é injetora. O coeficiente angular é $3a^{2}=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Soma dos coeficientes de tangentes por um ponto dado",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a soma dos coeficientes angulares das retas tangentes ao gráfico de $y=x^{2}-4x+5$ que passam pelo ponto $\\left(0,1\\right)$.",
+    "alternativas": {
+      "a": "$-4$",
+      "b": "$0$",
+      "c": "$4$",
+      "d": "$8$",
+      "e": "$-8$"
+    },
+    "gabarito": "e",
+    "resolucao": "A tangente em $x=a$ tem equação $y=\\left(2a-4\\right)\\left(x-a\\right)+a^{2}-4a+5$; fazendo $x=0$, a ordenada do corte é $-a^{2}+5$. Impondo $-a^{2}+5=1$, vem $a=\\pm2$, com coeficientes $2a-4$ iguais a $0$ e $-8$. A soma é $-8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Área do triângulo formado pela tangente e os eixos",
+    "dificuldade": "dificil",
+    "enunciado": "A reta tangente ao gráfico de $y=\\dfrac{1}{x}$ no ponto de abscissa $2$ forma, com os eixos coordenados, um triângulo. Calcule sua área.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$4$",
+      "d": "$8$",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Como $y'=-\\dfrac{1}{x^{2}}$, o coeficiente angular em $x=2$ é $-\\dfrac{1}{4}$ e a tangente é $y=\\dfrac{1}{2}-\\dfrac{1}{4}\\left(x-2\\right)=1-\\dfrac{x}{4}$. Ela corta os eixos em $\\left(4,0\\right)$ e $\\left(0,1\\right)$, e o triângulo retângulo correspondente tem área $\\dfrac{4\\cdot1}{2}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Soma dos interceptos da reta tangente",
+    "dificuldade": "medio",
+    "enunciado": "A reta tangente ao gráfico de $y=\\dfrac{1}{x^{2}}$ no ponto de abscissa $1$ corta os eixos coordenados em dois pontos. Calcule a soma das coordenadas não nulas desses dois pontos.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{2}$",
+      "b": "$\\dfrac{5}{2}$",
+      "c": "$\\dfrac{11}{2}$",
+      "d": "$\\dfrac{9}{2}$",
+      "e": "$\\dfrac{3}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $y'=-\\dfrac{2}{x^{3}}$, o coeficiente em $x=1$ é $-2$, e a tangente é $y=1-2\\left(x-1\\right)=3-2x$. Ela corta o eixo $y$ em $3$ e o eixo $x$ em $\\dfrac{3}{2}$. A soma pedida é $3+\\dfrac{3}{2}=\\dfrac{9}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Reta normal e seu intercepto com o eixo x",
+    "dificuldade": "medio",
+    "enunciado": "A reta normal ao gráfico de $y=\\sqrt{x}$ no ponto de abscissa $4$ corta o eixo $x$ num ponto. Determine sua abscissa.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{2}$",
+      "b": "$\\dfrac{11}{2}$",
+      "c": "$\\dfrac{17}{4}$",
+      "d": "$\\dfrac{9}{2}$",
+      "e": "$\\dfrac{5}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Como $y'=\\dfrac{1}{2\\sqrt{x}}$, a tangente em $x=4$ tem coeficiente $\\dfrac{1}{4}$ e a normal, coeficiente $-4$. A normal é $y-2=-4\\left(x-4\\right)$; fazendo $y=0$, obtém-se $x=4+\\dfrac{2}{4}=\\dfrac{9}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Normal à parábola que reencontra a curva",
+    "dificuldade": "dificil",
+    "enunciado": "A reta normal ao gráfico de $y=x^{2}$ no ponto $\\left(1,1\\right)$ intercepta a parábola num segundo ponto. Determine sua abscissa.",
+    "alternativas": {
+      "a": "$-\\dfrac{1}{2}$",
+      "b": "$-\\dfrac{3}{4}$",
+      "c": "$-\\dfrac{3}{2}$",
+      "d": "$-\\dfrac{2}{3}$",
+      "e": "$-\\dfrac{5}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A tangente em $\\left(1,1\\right)$ tem coeficiente $2$, então a normal tem coeficiente $-\\dfrac{1}{2}$ e equação $y=1-\\dfrac{1}{2}\\left(x-1\\right)$. Igualando a $x^{2}$: $2x^{2}+x-3=0$, cujas raízes são $x=1$ (o ponto de partida) e $x=-\\dfrac{3}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente horizontal que reencontra a cúbica",
+    "dificuldade": "medio",
+    "enunciado": "A reta tangente ao gráfico de $y=x^{3}-3x$ no ponto de abscissa $1$ intercepta a curva num segundo ponto. Determine sua abscissa.",
+    "alternativas": {
+      "a": "$-1$",
+      "b": "$2$",
+      "c": "$1$",
+      "d": "$-2$",
+      "e": "$-3$"
+    },
+    "gabarito": "d",
+    "resolucao": "Como $y'=3x^{2}-3$ anula em $x=1$, a tangente é horizontal: $y=-2$. Resolvendo $x^{3}-3x=-2$, isto é, $x^{3}-3x+2=0$, fatora-se $\\left(x-1\\right)^{2}\\left(x+2\\right)=0$. O segundo ponto tem abscissa $-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente à quártica em ponto de tangência dupla",
+    "dificuldade": "dificil",
+    "enunciado": "A reta tangente ao gráfico de $y=x^{4}-2x^{2}$ no ponto de abscissa $1$ tangencia a curva num segundo ponto. Determine sua abscissa.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$-1$",
+      "c": "$1$",
+      "d": "$2$",
+      "e": "$-2$"
+    },
+    "gabarito": "b",
+    "resolucao": "Como $y'=4x^{3}-4x$ anula em $x=1$, a tangente é a horizontal $y=-1$. Resolvendo $x^{4}-2x^{2}+1=0$, ou seja, $\\left(x^{2}-1\\right)^{2}=0$, obtêm-se $x=1$ e $x=-1$, ambas raízes duplas: a reta tangencia a curva nos dois pontos, o que é típico de quárticas com \"dois vales\" na mesma altura.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente a partir de um ponto de reencontro conhecido",
+    "dificuldade": "dificil",
+    "enunciado": "A reta tangente ao gráfico de $y=x^{3}$ no ponto de abscissa $a>0$ intercepta a curva no ponto $\\left(-4,-64\\right)$. Determine o coeficiente angular dessa tangente.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$3$",
+      "c": "$6$",
+      "d": "$24$",
+      "e": "$48$"
+    },
+    "gabarito": "a",
+    "resolucao": "A tangente em $x=a$ é $y=3a^{2}x-2a^{3}$. Igualando a $x^{3}$, obtém-se $x^{3}-3a^{2}x+2a^{3}=\\left(x-a\\right)^{2}\\left(x+2a\\right)=0$, de modo que o segundo ponto tem abscissa $-2a$. De $-2a=-4$ vem $a=2$, e o coeficiente angular é $3a^{2}=12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente paralela a uma reta dada e distância entre os pontos",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{3}+x$. As retas tangentes ao gráfico de $f$ paralelas à reta $y=4x+1$ tocam o gráfico em dois pontos. Calcule a distância entre eles.",
+    "alternativas": {
+      "a": "$\\sqrt{5}$",
+      "b": "$2\\sqrt{5}$",
+      "c": "$4\\sqrt{5}$",
+      "d": "$2\\sqrt{10}$",
+      "e": "$3\\sqrt{5}$"
+    },
+    "gabarito": "b",
+    "resolucao": "O paralelismo exige $f'(x)=3x^{2}+1=4$, isto é, $x=\\pm1$. Os pontos são $\\left(1,2\\right)$ e $\\left(-1,-2\\right)$, e a distância vale $\\sqrt{2^{2}+4^{2}}=\\sqrt{20}=2\\sqrt{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente paralela à corda (ponto de contato)",
+    "dificuldade": "medio",
+    "enunciado": "Determine a abscissa do ponto do gráfico de $y=\\sqrt{x}$ em que a reta tangente é paralela à corda que une $\\left(1,1\\right)$ a $\\left(4,2\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}$",
+      "b": "$\\dfrac{5}{2}$",
+      "c": "$\\dfrac{9}{8}$",
+      "d": "$\\dfrac{9}{4}$",
+      "e": "$\\dfrac{7}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O coeficiente angular da corda é $\\dfrac{2-1}{4-1}=\\dfrac{1}{3}$. Igualando à derivada, $\\dfrac{1}{2\\sqrt{x}}=\\dfrac{1}{3}$, donde $\\sqrt{x}=\\dfrac{3}{2}$ e $x=\\dfrac{9}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente perpendicular a uma reta dada",
+    "dificuldade": "medio",
+    "enunciado": "A reta tangente ao gráfico de $y=\\sqrt{x+1}$ num ponto $P$ é perpendicular à reta $y=-4x$. Calcule a soma das coordenadas de $P$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$4$",
+      "c": "$6$",
+      "d": "$5$",
+      "e": "$7$"
+    },
+    "gabarito": "d",
+    "resolucao": "A perpendicularidade exige coeficiente angular $\\dfrac{1}{4}$. Como $y'=\\dfrac{1}{2\\sqrt{x+1}}$, resolve-se $\\dfrac{1}{2\\sqrt{x+1}}=\\dfrac{1}{4}$, isto é, $\\sqrt{x+1}=2$ e $x=3$. Então $y=2$ e a soma é $5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Reta tangente escrita na forma y = ax + b",
+    "dificuldade": "medio",
+    "enunciado": "A reta $y=ax+b$ é tangente ao gráfico de $y=\\sqrt{x}$ no ponto de abscissa $9$. Calcule $a+b$.",
+    "alternativas": {
+      "a": "$\\dfrac{5}{3}$",
+      "b": "$\\dfrac{4}{3}$",
+      "c": "$\\dfrac{7}{3}$",
+      "d": "$\\dfrac{3}{2}$",
+      "e": "$\\dfrac{5}{6}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Tem-se $a=\\dfrac{1}{2\\sqrt{9}}=\\dfrac{1}{6}$ e, como a reta passa por $\\left(9,3\\right)$, $b=3-\\dfrac{9}{6}=\\dfrac{3}{2}$. Logo $a+b=\\dfrac{1}{6}+\\dfrac{3}{2}=\\dfrac{5}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangente comum a duas parábolas",
+    "dificuldade": "dificil",
+    "enunciado": "As parábolas $y=x^{2}$ e $y=-x^{2}+4x-4$ admitem duas retas tangentes comuns. Calcule a soma dos coeficientes angulares dessas retas.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$6$",
+      "d": "$8$",
+      "e": "$4$"
+    },
+    "gabarito": "e",
+    "resolucao": "A tangente à primeira em $x=a$ é $y=2ax-a^{2}$; à segunda em $x=b$ é $y=\\left(4-2b\\right)x+b^{2}-4$. Igualando coeficientes angulares, $b=2-a$; igualando os termos independentes, $-a^{2}=\\left(2-a\\right)^{2}-4=a^{2}-4a$, ou seja, $2a^{2}-4a=0$ e $a\\in\\left\\{0,2\\right\\}$. Os coeficientes são $0$ e $4$, de soma $4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Tangentes horizontais e soma das ordenadas",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{4}-8x^{2}+3$. Calcule a soma das ordenadas dos pontos do gráfico de $f$ em que a reta tangente é horizontal.",
+    "alternativas": {
+      "a": "$-13$",
+      "b": "$-10$",
+      "c": "$3$",
+      "d": "$-26$",
+      "e": "$-23$"
+    },
+    "gabarito": "e",
+    "resolucao": "De $f'(x)=4x^{3}-16x=4x\\left(x^{2}-4\\right)$ vêm as abscissas $x=0$ e $x=\\pm2$. As ordenadas são $f(0)=3$ e $f(\\pm2)=16-32+3=-13$ (duas vezes). A soma é $3-13-13=-23$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Produto das ordenadas com tangente horizontal",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{x}{x^{2}+1}$. Calcule o produto das ordenadas dos pontos do gráfico de $f$ em que a reta tangente é horizontal.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$-\\dfrac{1}{2}$",
+      "c": "$-\\dfrac{1}{4}$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$-\\dfrac{1}{8}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela regra do quociente, $f'(x)=\\dfrac{\\left(x^{2}+1\\right)-x\\cdot2x}{\\left(x^{2}+1\\right)^{2}}=\\dfrac{1-x^{2}}{\\left(x^{2}+1\\right)^{2}}$, que anula em $x=\\pm1$. As ordenadas correspondentes são $f(1)=\\dfrac{1}{2}$ e $f(-1)=-\\dfrac{1}{2}$, de produto $-\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Ângulo entre a parábola e a raiz quadrada",
+    "dificuldade": "dificil",
+    "enunciado": "As curvas $y=x^{2}$ e $y=\\sqrt{x}$ se cruzam no ponto $\\left(1,1\\right)$. Calcule a tangente do ângulo agudo entre elas nesse ponto.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{3}{4}$",
+      "c": "$\\dfrac{3}{2}$",
+      "d": "$\\dfrac{4}{3}$",
+      "e": "$\\dfrac{2}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Os coeficientes angulares são $m_{1}=2$ e $m_{2}=\\dfrac{1}{2}$. O ângulo entre as curvas é o ângulo entre as tangentes: $\\operatorname{tg}\\theta=\\left|\\dfrac{m_{1}-m_{2}}{1+m_{1}m_{2}}\\right|=\\left|\\dfrac{2-\\frac{1}{2}}{1+1}\\right|=\\dfrac{3}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Ângulo entre a parábola e a cúbica",
+    "dificuldade": "medio",
+    "enunciado": "As curvas $y=x^{2}$ e $y=x^{3}$ se cruzam no ponto $\\left(1,1\\right)$. Calcule a tangente do ângulo agudo entre elas nesse ponto.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{7}$",
+      "b": "$\\dfrac{1}{5}$",
+      "c": "$\\dfrac{1}{6}$",
+      "d": "$\\dfrac{1}{8}$",
+      "e": "$\\dfrac{5}{7}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Os coeficientes angulares em $x=1$ são $2$ e $3$. Logo $\\operatorname{tg}\\theta=\\left|\\dfrac{3-2}{1+6}\\right|=\\dfrac{1}{7}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Colagem derivável de parábola e raiz",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $a$ e $b$ reais tais que $f(x)=ax^{2}+bx$ para $x\\leq1$ e $f(x)=2\\sqrt{x}+1$ para $x>1$ seja derivável em $x=1$. Calcule $ab$.",
+    "alternativas": {
+      "a": "$10$",
+      "b": "$-6$",
+      "c": "$-10$",
+      "d": "$6$",
+      "e": "$-15$"
+    },
+    "gabarito": "c",
+    "resolucao": "A continuidade em $x=1$ dá $a+b=3$. A igualdade das derivadas laterais dá $2a+b=\\left.\\dfrac{1}{\\sqrt{x}}\\right|_{x=1}=1$. Subtraindo, $a=-2$ e $b=5$, logo $ab=-10$. Note que derivabilidade exige as duas condições: só igualar derivadas deixaria um degrau no gráfico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Colagem derivável com radical deslocado",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $a$ e $b$ reais tais que $f(x)=ax^{2}+1$ para $x\\leq2$ e $f(x)=\\sqrt{x+2}+b$ para $x>2$ seja derivável em $x=2$. Calcule $a+b$.",
+    "alternativas": {
+      "a": "$-\\dfrac{5}{16}$",
+      "b": "$-\\dfrac{11}{16}$",
+      "c": "$-\\dfrac{9}{16}$",
+      "d": "$-\\dfrac{13}{16}$",
+      "e": "$-\\dfrac{3}{16}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A derivada à direita em $x=2$ é $\\dfrac{1}{2\\sqrt{4}}=\\dfrac{1}{4}$, e a da esquerda é $4a$; logo $a=\\dfrac{1}{16}$. A continuidade exige $4a+1=2+b$, isto é, $\\dfrac{1}{4}+1=2+b$ e $b=-\\dfrac{3}{4}$. Somando, $a+b=\\dfrac{1}{16}-\\dfrac{12}{16}=-\\dfrac{11}{16}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Pontos angulosos de um módulo de cúbica",
+    "dificuldade": "medio",
+    "enunciado": "Determine o número de pontos em que a função $f(x)=\\left|x^{3}-3x\\right|$ não é derivável.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$4$",
+      "d": "$0$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "O módulo só pode criar bico onde o argumento troca de sinal. As raízes de $x^{3}-3x=x\\left(x^{2}-3\\right)$ são $0$ e $\\pm\\sqrt{3}$, todas simples, então em cada uma a derivada do argumento é não nula e as derivadas laterais de $f$ têm sinais opostos. São $3$ pontos angulosos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Pontos angulosos de um módulo de parábola",
+    "dificuldade": "medio",
+    "enunciado": "Determine o número de pontos em que a função $f(x)=\\left|x^{2}-3x+2\\right|$ não é derivável.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$3$",
+      "d": "$4$",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "As raízes de $x^{2}-3x+2$ são $1$ e $2$, ambas simples. Em cada uma delas o gráfico da parábola cruza o eixo e o módulo o reflete, criando um bico: as derivadas laterais valem $\\mp1$ em $x=1$ e $\\pm1$ em $x=2$. São $2$ pontos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Derivadas laterais de um produto com módulo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\left|x-1\\right|\\left(x+1\\right)$. Calcule $f'_{+}(1)-f'_{-}(1)$, a diferença entre as derivadas laterais em $x=1$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$0$",
+      "c": "$4$",
+      "d": "$-2$",
+      "e": "$-4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Para $x>1$, $f(x)=\\left(x-1\\right)\\left(x+1\\right)=x^{2}-1$ e $f'=2x\\to2$. Para $x<1$, $f(x)=\\left(1-x\\right)\\left(x+1\\right)=1-x^{2}$ e $f'=-2x\\to-2$. A diferença é $2-\\left(-2\\right)=4$, e o ponto é anguloso.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Bico de um produto por módulo na origem",
+    "dificuldade": "medio",
+    "enunciado": "Determine o número de pontos em que a função $f(x)=\\left(x^{2}-1\\right)\\left|x\\right|$ não é derivável.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$2$",
+      "d": "$3$",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Para $x>0$, $f(x)=x^{3}-x$ e $f'\\to-1$ quando $x\\to0^{+}$; para $x<0$, $f(x)=-x^{3}+x$ e $f'\\to1$ quando $x\\to0^{-}$. As derivadas laterais diferem apenas em $x=0$; nos demais pontos $f$ é polinomial em cada semirreta. É $1$ ponto.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Derivadas laterais de x vezes um módulo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x\\left|x-2\\right|$. Calcule $f'(1)+f'(3)$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$4$",
+      "d": "$6$",
+      "e": "$8$"
+    },
+    "gabarito": "c",
+    "resolucao": "Para $x<2$, $f(x)=x\\left(2-x\\right)=2x-x^{2}$ e $f'(x)=2-2x$, donde $f'(1)=0$. Para $x>2$, $f(x)=x\\left(x-2\\right)=x^{2}-2x$ e $f'(x)=2x-2$, donde $f'(3)=4$. A soma é $4$ — em $x=2$ a derivada nem existiria, mas o enunciado não pede ali.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Expoente mínimo para a derivada existir na origem",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{p}\\operatorname{sen}\\dfrac{1}{x}$ para $x\\neq0$ e $f(0)=0$, com $p$ inteiro positivo. Determine o menor valor de $p$ para o qual $f'(0)$ existe.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$1$",
+      "c": "$3$",
+      "d": "$4$",
+      "e": "$5$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela definição, $\\dfrac{f(h)-f(0)}{h}=h^{p-1}\\operatorname{sen}\\dfrac{1}{h}$. Para $p=1$ isso é $\\operatorname{sen}\\dfrac{1}{h}$, que oscila entre $-1$ e $1$ e não tem limite. Para $p=2$ o quociente é $h\\operatorname{sen}\\dfrac{1}{h}$, com módulo $\\leq\\left|h\\right|$, e o confronto dá limite $0$. O menor $p$ é $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Ordem máxima de derivação de um módulo cúbico",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\left|x\\right|^{3}$. Determine o maior inteiro $n$ para o qual a derivada $f^{(n)}(0)$ existe.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$3$",
+      "d": "$2$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "Para $x>0$, $f(x)=x^{3}$, e para $x<0$, $f(x)=-x^{3}$. Então $f'(x)=3x^{2}$ e $-3x^{2}$, que colam em $0$ com valor $0$; $f''(x)=6x$ e $-6x$, que também colam com valor $0$. Já $f'''$ vale $6$ à direita e $-6$ à esquerda: as derivadas laterais de terceira ordem diferem, e $f'''(0)$ não existe. O maior $n$ é $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "A Derivada",
+    "subtopico": "Ordem máxima de derivação de uma potência racional",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{4/3}$, definida em $\\mathbb{R}$. Determine o maior inteiro $n$ para o qual a derivada $f^{(n)}(0)$ existe.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$2$",
+      "d": "$3$",
+      "e": "$4$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela definição, $\\dfrac{f(h)-f(0)}{h}=h^{1/3}\\to0$, logo $f'(0)=0$ existe e $f'(x)=\\dfrac{4}{3}x^{1/3}$. Já $\\dfrac{f'(h)-f'(0)}{h}=\\dfrac{4}{3}h^{-2/3}\\to+\\infty$ pelos dois lados, de modo que $f''(0)$ não existe. O maior $n$ é $1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

@@ -1,0 +1,1655 @@
+[
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa numa cúbica crescente",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{3}+2x+1$, bijetora de $\\mathbb{R}$ em $\\mathbb{R}$. Calcule $\\left(f^{-1}\\right)'(4)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{5}$",
+      "c": "$5$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{1}{9}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Como $f(1)=4$, tem-se $f^{-1}(4)=1$. O teorema da função inversa dá $\\left(f^{-1}\\right)'(4)=\\dfrac{1}{f'(1)}$, e $f'(x)=3x^{2}+2$ vale $5$ em $x=1$. Logo a derivada é $\\dfrac{1}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa numa quíntica",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{5}+x^{3}+x$, bijetora de $\\mathbb{R}$ em $\\mathbb{R}$. Calcule $\\left(f^{-1}\\right)'(3)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$9$",
+      "c": "$\\dfrac{1}{5}$",
+      "d": "$\\dfrac{1}{9}$",
+      "e": "$\\dfrac{1}{15}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Por inspeção, $f(1)=1+1+1=3$, logo $f^{-1}(3)=1$. Como $f'(x)=5x^{4}+3x^{2}+1$ vale $9$ em $x=1$, o teorema da função inversa dá $\\left(f^{-1}\\right)'(3)=\\dfrac{1}{9}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa com logaritmo",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{3}+\\ln x$, bijetora de $\\left(0,+\\infty\\right)$ em $\\mathbb{R}$. Calcule $\\left(f^{-1}\\right)'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$4$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{1}{4}$",
+      "e": "$\\dfrac{1}{6}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Como $f(1)=1+0=1$, tem-se $f^{-1}(1)=1$. Derivando, $f'(x)=3x^{2}+\\dfrac{1}{x}$, que em $x=1$ vale $4$. Portanto $\\left(f^{-1}\\right)'(1)=\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa com seno",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=2x+\\operatorname{sen}x$, bijetora de $\\mathbb{R}$ em $\\mathbb{R}$. Calcule $\\left(f^{-1}\\right)'(0)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$1$",
+      "e": "$\\dfrac{1}{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Como $f(0)=0$, tem-se $f^{-1}(0)=0$. Derivando, $f'(x)=2+\\cos x$, que em $x=0$ vale $3$. Logo $\\left(f^{-1}\\right)'(0)=\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa com termo linear",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{3}+3x-2$, bijetora de $\\mathbb{R}$ em $\\mathbb{R}$. Calcule $\\left(f^{-1}\\right)'(2)$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$\\dfrac{1}{6}$",
+      "c": "$\\dfrac{1}{3}$",
+      "d": "$\\dfrac{1}{4}$",
+      "e": "$\\dfrac{1}{12}$"
+    },
+    "gabarito": "b",
+    "resolucao": "De $f(1)=1+3-2=2$ vem $f^{-1}(2)=1$. Como $f'(x)=3x^{2}+3$ vale $6$ em $x=1$, resulta $\\left(f^{-1}\\right)'(2)=\\dfrac{1}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa com exponencial",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=e^{x}+x$, bijetora de $\\mathbb{R}$ em $\\mathbb{R}$. Calcule $\\left(f^{-1}\\right)'(1)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$\\dfrac{1}{e}$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$e$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como $f(0)=1+0=1$, tem-se $f^{-1}(1)=0$. Derivando, $f'(x)=e^{x}+1$, que em $x=0$ vale $2$. Logo $\\left(f^{-1}\\right)'(1)=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Teorema da função inversa com radical",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\sqrt{x^{3}+1}$, bijetora de $\\left[0,+\\infty\\right)$ em $\\left[1,+\\infty\\right)$. Calcule $\\left(f^{-1}\\right)'(3)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{3}$",
+      "d": "$\\dfrac{1}{4}$",
+      "e": "$\\dfrac{1}{6}$"
+    },
+    "gabarito": "b",
+    "resolucao": "De $f(2)=\\sqrt{9}=3$ vem $f^{-1}(3)=2$. Derivando pela cadeia, $f'(x)=\\dfrac{3x^{2}}{2\\sqrt{x^{3}+1}}$, que em $x=2$ vale $\\dfrac{12}{6}=2$. Portanto $\\left(f^{-1}\\right)'(3)=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada segunda da função inversa",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{3}+x$, bijetora de $\\mathbb{R}$ em $\\mathbb{R}$. Calcule $\\left(f^{-1}\\right)''(2)$.",
+    "alternativas": {
+      "a": "$-\\dfrac{3}{32}$",
+      "b": "$\\dfrac{3}{32}$",
+      "c": "$-\\dfrac{3}{16}$",
+      "d": "$-\\dfrac{1}{32}$",
+      "e": "$-\\dfrac{6}{64}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando $\\left(f^{-1}\\right)'(y)=\\dfrac{1}{f'\\left(f^{-1}(y)\\right)}$ mais uma vez, obtém-se $\\left(f^{-1}\\right)''(y)=-\\dfrac{f''\\left(f^{-1}(y)\\right)}{\\left[f'\\left(f^{-1}(y)\\right)\\right]^{3}}$. Como $f(1)=2$, usa-se $x=1$: $f'(1)=4$ e $f''(1)=6$, logo $\\left(f^{-1}\\right)''(2)=-\\dfrac{6}{64}=-\\dfrac{3}{32}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Valor pontual da função inversa",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{3}+x-1$, bijetora de $\\mathbb{R}$ em $\\mathbb{R}$. Calcule $f^{-1}(9)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$1$",
+      "d": "$9$",
+      "e": "$4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Procura-se $x$ com $x^{3}+x-1=9$, isto é, $x^{3}+x-10=0$. Testando os divisores de $10$, $x=2$ dá $8+2-10=0$. Como $f$ é estritamente crescente ($f'=3x^{2}+1>0$), essa raiz é única e $f^{-1}(9)=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa de uma função homográfica",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{2x-1}{x+3}$, definida para $x\\neq-3$. Calcule $f^{-1}(1)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$-4$",
+      "d": "$4$",
+      "e": "$\\dfrac{1}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Resolve-se $\\dfrac{2x-1}{x+3}=1$, ou seja, $2x-1=x+3$, o que dá $x=4$. Alternativamente, isolando $x$ em $y=\\dfrac{2x-1}{x+3}$ obtém-se $f^{-1}(y)=\\dfrac{3y+1}{2-y}$, que em $y=1$ vale $4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada de x elevado a x",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{x}$, definida para $x>0$. Calcule $f'(e)$.",
+    "alternativas": {
+      "a": "$e^{e}$",
+      "b": "$e^{e+1}$",
+      "c": "$2e^{e}$",
+      "d": "$2e^{e-1}$",
+      "e": "$3e^{e}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Escreva $f(x)=e^{x\\ln x}$. Pela cadeia, $f'(x)=x^{x}\\left(\\ln x+1\\right)$. Em $x=e$: $\\ln e+1=2$ e $f'(e)=2e^{e}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Mínimo de x elevado a x",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor mínimo de $f(x)=x^{x}$ para $x>0$.",
+    "alternativas": {
+      "a": "$e^{1/e}$",
+      "b": "$e^{-e}$",
+      "c": "$e^{-1}$",
+      "d": "$e^{-1/e}$",
+      "e": "$e^{-2/e}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Tomando logaritmo, $g(x)=\\ln f(x)=x\\ln x$, cuja derivada é $\\ln x+1$: negativa para $x<\\dfrac{1}{e}$ e positiva depois. O mínimo ocorre em $x=\\dfrac{1}{e}$, onde $g=-\\dfrac{1}{e}$ e $f=e^{-1/e}$. Como o logaritmo é crescente, minimizar $g$ é o mesmo que minimizar $f$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivação logarítmica com expoente irracional variável",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{\\sqrt{x}}$, definida para $x>0$. Calcule $f'(4)$.",
+    "alternativas": {
+      "a": "$8\\ln 2+8$",
+      "b": "$8\\ln 2$",
+      "c": "$4\\ln 2+8$",
+      "d": "$8\\ln 2+4$",
+      "e": "$16\\ln 2+8$"
+    },
+    "gabarito": "a",
+    "resolucao": "Tomando logaritmo, $\\ln f=\\sqrt{x}\\ln x$, e derivando, $\\dfrac{f'}{f}=\\dfrac{\\ln x}{2\\sqrt{x}}+\\dfrac{\\sqrt{x}}{x}=\\dfrac{\\ln x}{2\\sqrt{x}}+\\dfrac{1}{\\sqrt{x}}$. Em $x=4$: $\\dfrac{\\ln 4}{4}+\\dfrac{1}{2}=\\dfrac{\\ln 2}{2}+\\dfrac{1}{2}$. Como $f(4)=4^{2}=16$, vem $f'(4)=16\\left(\\dfrac{\\ln 2}{2}+\\dfrac{1}{2}\\right)=8\\ln 2+8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivação logarítmica com expoente trigonométrico",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{\\operatorname{sen}x}$, definida para $x>0$. Calcule $f'\\left(\\dfrac{\\pi}{2}\\right)$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$\\dfrac{\\pi}{2}$",
+      "c": "$2$",
+      "d": "$\\dfrac{2}{\\pi}$",
+      "e": "$1$"
+    },
+    "gabarito": "e",
+    "resolucao": "De $\\ln f=\\operatorname{sen}x\\ln x$ vem $\\dfrac{f'}{f}=\\cos x\\ln x+\\dfrac{\\operatorname{sen}x}{x}$. Em $x=\\dfrac{\\pi}{2}$, $\\cos x=0$ e $\\operatorname{sen}x=1$, de modo que $\\dfrac{f'}{f}=\\dfrac{2}{\\pi}$; como $f\\left(\\dfrac{\\pi}{2}\\right)=\\dfrac{\\pi}{2}$, resulta $f'=\\dfrac{\\pi}{2}\\cdot\\dfrac{2}{\\pi}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada de uma potência com logaritmo no expoente",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{\\ln x}$, definida para $x>0$. Calcule $f'(e)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$e$",
+      "c": "$2e$",
+      "d": "$2$",
+      "e": "$\\dfrac{2}{e}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Como $f(x)=e^{\\left(\\ln x\\right)^{2}}$, a cadeia dá $f'(x)=e^{\\left(\\ln x\\right)^{2}}\\cdot\\dfrac{2\\ln x}{x}$. Em $x=e$: $f(e)=e$ e $f'(e)=e\\cdot\\dfrac{2}{e}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada do logaritmo de um argumento com radical",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\ln\\left(x+\\sqrt{x^{2}+1}\\right)$. Calcule $f'(0)$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$-1$",
+      "e": "$1$"
+    },
+    "gabarito": "e",
+    "resolucao": "Derivando pela cadeia, $f'(x)=\\dfrac{1+\\dfrac{x}{\\sqrt{x^{2}+1}}}{x+\\sqrt{x^{2}+1}}=\\dfrac{1}{\\sqrt{x^{2}+1}}$, depois de simplificar o numerador. Em $x=0$ isso vale $1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada do logaritmo de um quociente",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\ln\\dfrac{1+x}{1-x}$, definida para $\\left|x\\right|<1$. Calcule $f'(0)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$2$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$-2$"
+    },
+    "gabarito": "c",
+    "resolucao": "Separando o logaritmo, $f(x)=\\ln(1+x)-\\ln(1-x)$, de modo que $f'(x)=\\dfrac{1}{1+x}+\\dfrac{1}{1-x}=\\dfrac{2}{1-x^{2}}$. Em $x=0$: $f'(0)=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Produto de exponencial por logaritmo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=e^{x^{2}}\\ln x$, definida para $x>0$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$2e$",
+      "b": "$e$",
+      "c": "$\\dfrac{e}{2}$",
+      "d": "$1$",
+      "e": "$e^{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela regra do produto, $f'(x)=2xe^{x^{2}}\\ln x+\\dfrac{e^{x^{2}}}{x}$. Em $x=1$, o logaritmo se anula e sobra $f'(1)=e$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada de um logaritmo de base dois",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\log_{2}\\left(x^{2}+1\\right)$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{\\ln 2}$",
+      "b": "$\\dfrac{1}{2\\ln 2}$",
+      "c": "$\\ln 2$",
+      "d": "$\\dfrac{1}{\\ln 4}$",
+      "e": "$\\dfrac{1}{\\ln 2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela mudança de base, $f(x)=\\dfrac{\\ln\\left(x^{2}+1\\right)}{\\ln 2}$, logo $f'(x)=\\dfrac{2x}{\\left(x^{2}+1\\right)\\ln 2}$. Em $x=1$: $\\dfrac{2}{2\\ln 2}=\\dfrac{1}{\\ln 2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada de uma exponencial de base dois",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=2^{x^{2}}$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$2\\ln 2$",
+      "b": "$\\ln 2$",
+      "c": "$8\\ln 2$",
+      "d": "$4\\ln 2$",
+      "e": "$4\\ln 4$"
+    },
+    "gabarito": "d",
+    "resolucao": "Escrevendo $f(x)=e^{x^{2}\\ln 2}$, a cadeia dá $f'(x)=2^{x^{2}}\\ln 2\\cdot2x$. Em $x=1$: $2\\cdot\\ln 2\\cdot2=4\\ln 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada de um logaritmo composto",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\ln\\left(\\ln x\\right)$, definida para $x>1$. Calcule $f'(e)$.",
+    "alternativas": {
+      "a": "$e$",
+      "b": "$\\dfrac{1}{e}$",
+      "c": "$\\dfrac{1}{e^{2}}$",
+      "d": "$\\dfrac{2}{e}$",
+      "e": "$1$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{1}{\\ln x}\\cdot\\dfrac{1}{x}$. Em $x=e$, $\\ln e=1$ e $f'(e)=\\dfrac{1}{e}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada segunda do logaritmo do seno",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\ln\\left(\\operatorname{sen}x\\right)$, definida para $0<x<\\pi$. Calcule $f''\\left(\\dfrac{\\pi}{4}\\right)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$-1$",
+      "c": "$-2$",
+      "d": "$-\\sqrt{2}$",
+      "e": "$-\\dfrac{1}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{\\cos x}{\\operatorname{sen}x}=\\operatorname{cotg}x$, cuja derivada é $-\\operatorname{cossec}^{2}x=-\\dfrac{1}{\\operatorname{sen}^{2}x}$. Em $x=\\dfrac{\\pi}{4}$, $\\operatorname{sen}^{2}x=\\dfrac{1}{2}$ e $f''=-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada segunda de potência por logaritmo",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{2}\\ln x$, definida para $x>0$. Calcule $f''(e)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$4$",
+      "c": "$6$",
+      "d": "$5$",
+      "e": "$2$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela regra do produto, $f'(x)=2x\\ln x+x$. Derivando de novo, $f''(x)=2\\ln x+2+1=2\\ln x+3$. Em $x=e$, $\\ln e=1$ e $f''=5$ — repare que $f''$ não depende mais de $x$ a não ser pelo logaritmo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Máximo do logaritmo dividido pela variável",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor máximo de $f(x)=\\dfrac{\\ln x}{x}$ para $x>0$.",
+    "alternativas": {
+      "a": "$e$",
+      "b": "$\\dfrac{1}{e}$",
+      "c": "$\\dfrac{1}{e^{2}}$",
+      "d": "$\\dfrac{2}{e}$",
+      "e": "$\\dfrac{1}{2e}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Derivando pelo quociente, $f'(x)=\\dfrac{1-\\ln x}{x^{2}}$, positiva para $x<e$ e negativa para $x>e$. O máximo absoluto ocorre em $x=e$ e vale $\\dfrac{\\ln e}{e}=\\dfrac{1}{e}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Mínimo da exponencial dividida pela variável",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor mínimo de $f(x)=\\dfrac{e^{x}}{x}$ para $x>0$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$e^{2}$",
+      "c": "$\\dfrac{e}{2}$",
+      "d": "$2e$",
+      "e": "$e$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pela regra do quociente, $f'(x)=\\dfrac{e^{x}\\left(x-1\\right)}{x^{2}}$, negativa em $\\left(0,1\\right)$ e positiva em $\\left(1,+\\infty\\right)$. O mínimo ocorre em $x=1$, com $f(1)=e$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Mínimo de uma soma de exponenciais",
+    "dificuldade": "medio",
+    "enunciado": "Determine o valor mínimo de $f(x)=e^{x}+e^{-x}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$e$",
+      "c": "$0$",
+      "d": "$2$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "De $f'(x)=e^{x}-e^{-x}=0$ vem $e^{2x}=1$, isto é, $x=0$. Como $f''(x)=e^{x}+e^{-x}>0$, trata-se de mínimo, e $f(0)=1+1=2$. O mesmo sai da desigualdade das médias, já que $e^{x}e^{-x}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Ponto de máximo com fator exponencial decrescente",
+    "dificuldade": "medio",
+    "enunciado": "Determine a abscissa do ponto de máximo de $f(x)=xe^{-2x}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$2$",
+      "d": "$\\dfrac{1}{4}$",
+      "e": "$\\dfrac{1}{e}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Derivando pelo produto, $f'(x)=e^{-2x}\\left(1-2x\\right)$. Como $e^{-2x}>0$, o sinal de $f'$ é o de $1-2x$: positivo antes de $\\dfrac{1}{2}$ e negativo depois. O máximo está em $x=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Equação exponencial com bases relacionadas",
+    "dificuldade": "medio",
+    "enunciado": "Determine a solução real da equação $2^{x}=8^{x-1}$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$3$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$\\dfrac{5}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Escreva $8=2^{3}$, de modo que $8^{x-1}=2^{3x-3}$. Como a exponencial de base $2$ é injetora, $x=3x-3$, isto é, $x=\\dfrac{3}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Equação logarítmica com produto de argumentos",
+    "dificuldade": "medio",
+    "enunciado": "Determine a solução real da equação $\\log_{3}x+\\log_{3}\\left(x-2\\right)=1$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$2$",
+      "d": "$5$",
+      "e": "$9$"
+    },
+    "gabarito": "b",
+    "resolucao": "Somando os logaritmos, $\\log_{3}\\left[x\\left(x-2\\right)\\right]=1$, isto é, $x^{2}-2x=3$. As raízes são $x=3$ e $x=-1$, mas o domínio exige $x>2$; sobra $x=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Equação exponencial redutível a quadrática",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule a soma das raízes reais da equação $e^{2x}-3e^{x}+2=0$.",
+    "alternativas": {
+      "a": "$\\ln 3$",
+      "b": "$2\\ln 2$",
+      "c": "$\\ln 6$",
+      "d": "$\\ln\\dfrac{3}{2}$",
+      "e": "$\\ln 2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $u=e^{x}>0$, a equação vira $u^{2}-3u+2=0$, de raízes $u=1$ e $u=2$. Voltando, $e^{x}=1$ dá $x=0$ e $e^{x}=2$ dá $x=\\ln 2$. A soma é $0+\\ln 2=\\ln 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Limite de x elevado a x na origem",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0^{+}}x^{x}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$0$",
+      "c": "$e$",
+      "d": "$\\dfrac{1}{e}$",
+      "e": "$2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Tome logaritmo: $\\ln\\left(x^{x}\\right)=x\\ln x$, indeterminação $0\\cdot\\infty$. Escrevendo $x\\ln x=\\dfrac{\\ln x}{1/x}$ e aplicando L'Hospital, obtém-se $\\dfrac{1/x}{-1/x^{2}}=-x\\to0$. Como a exponencial é contínua, o limite é $e^{0}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Limite exponencial com seno no lugar de x",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0}\\left(1+\\operatorname{sen}x\\right)^{1/x}$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$e^{2}$",
+      "c": "$\\dfrac{1}{e}$",
+      "d": "$e^{1/2}$",
+      "e": "$e$"
+    },
+    "gabarito": "e",
+    "resolucao": "Tomando logaritmo, $\\dfrac{\\ln\\left(1+\\operatorname{sen}x\\right)}{x}$. Como $\\ln(1+u)\\sim u$ e $\\operatorname{sen}x\\sim x$, o quociente tende a $1$. Logo o limite é $e^{1}=e$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Produto de x por diferença de logaritmos no infinito",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to+\\infty}x\\left[\\ln\\left(x+1\\right)-\\ln x\\right]$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$1$",
+      "c": "$e$",
+      "d": "$2$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Junte os logaritmos: a expressão é $x\\ln\\left(1+\\dfrac{1}{x}\\right)$. Com $t=\\dfrac{1}{x}\\to0^{+}$, isso vira $\\dfrac{\\ln\\left(1+t\\right)}{t}\\to1$. Equivalentemente, $\\left(1+\\frac{1}{x}\\right)^{x}\\to e$ e o logaritmo disso tende a $1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada de uma potência de expoente irracional",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{\\pi}+\\pi^{x}$, definida para $x>0$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\pi\\ln\\pi$",
+      "b": "$1+\\pi\\ln\\pi$",
+      "c": "$\\pi+\\pi\\ln\\pi$",
+      "d": "$\\pi+\\ln\\pi$",
+      "e": "$2\\pi\\ln\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "As duas parcelas têm regras diferentes: $x^{\\pi}$ é potência de expoente constante, com derivada $\\pi x^{\\pi-1}$; já $\\pi^{x}$ é exponencial de base constante, com derivada $\\pi^{x}\\ln\\pi$. Em $x=1$: $\\pi\\cdot1+\\pi\\ln\\pi$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada do arco-seno com argumento escalado",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\operatorname{arcsen}\\dfrac{x}{2}$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{3}}{3}$",
+      "b": "$\\dfrac{\\sqrt{3}}{2}$",
+      "c": "$\\dfrac{2\\sqrt{3}}{3}$",
+      "d": "$\\dfrac{\\sqrt{3}}{6}$",
+      "e": "$\\dfrac{\\sqrt{2}}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{1/2}{\\sqrt{1-\\dfrac{x^{2}}{4}}}$. Em $x=1$, o radicando vale $\\dfrac{3}{4}$ e $f'(1)=\\dfrac{1/2}{\\sqrt{3}/2}=\\dfrac{1}{\\sqrt{3}}=\\dfrac{\\sqrt{3}}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada segunda do arco-tangente de um quadrado",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\operatorname{arctg}\\left(x^{2}\\right)$. Calcule $f''(1)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$-1$",
+      "c": "$-\\dfrac{1}{2}$",
+      "d": "$-2$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{2x}{1+x^{4}}$. Derivando pelo quociente, $f''(x)=\\dfrac{2\\left(1+x^{4}\\right)-2x\\cdot4x^{3}}{\\left(1+x^{4}\\right)^{2}}=\\dfrac{2-6x^{4}}{\\left(1+x^{4}\\right)^{2}}$. Em $x=1$: $\\dfrac{2-6}{4}=-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada do arco-seno de um radical",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\operatorname{arcsen}\\sqrt{x}$, definida para $0<x<1$. Calcule $f'\\left(\\dfrac{1}{4}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{3}}{3}$",
+      "b": "$\\dfrac{4\\sqrt{3}}{3}$",
+      "c": "$\\dfrac{2\\sqrt{3}}{3}$",
+      "d": "$\\dfrac{\\sqrt{3}}{2}$",
+      "e": "$\\dfrac{\\sqrt{3}}{6}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{1}{\\sqrt{1-x}}\\cdot\\dfrac{1}{2\\sqrt{x}}$. Em $x=\\dfrac{1}{4}$: $\\dfrac{1}{\\sqrt{3}/2}\\cdot\\dfrac{1}{2\\cdot\\frac{1}{2}}=\\dfrac{2}{\\sqrt{3}}=\\dfrac{2\\sqrt{3}}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Produto de x pelo arco-tangente",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x\\operatorname{arctg}x$. Calcule $f'(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{4}-\\dfrac{1}{2}$",
+      "b": "$\\dfrac{\\pi}{2}+\\dfrac{1}{2}$",
+      "c": "$\\dfrac{\\pi}{4}+\\dfrac{1}{2}$",
+      "d": "$\\dfrac{\\pi}{4}+1$",
+      "e": "$\\dfrac{\\pi}{2}-\\dfrac{1}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela regra do produto, $f'(x)=\\operatorname{arctg}x+\\dfrac{x}{1+x^{2}}$. Em $x=1$: $\\dfrac{\\pi}{4}+\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Soma do arco-tangente com o do inverso",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\operatorname{arctg}x+\\operatorname{arctg}\\dfrac{1}{x}$, definida para $x>0$. Calcule $f(3)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{4}$",
+      "b": "$\\pi$",
+      "c": "$\\dfrac{3\\pi}{4}$",
+      "d": "$\\dfrac{\\pi}{3}$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Derivando, $f'(x)=\\dfrac{1}{1+x^{2}}+\\dfrac{-1/x^{2}}{1+1/x^{2}}=\\dfrac{1}{1+x^{2}}-\\dfrac{1}{1+x^{2}}=0$, logo $f$ é constante em $\\left(0,+\\infty\\right)$. Avaliando em $x=1$: $\\dfrac{\\pi}{4}+\\dfrac{\\pi}{4}=\\dfrac{\\pi}{2}$. Esse é o valor em $x=3$ também.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada da soma do arco-seno com o arco-cosseno",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\operatorname{arcsen}x+\\operatorname{arccos}x$, definida para $\\left|x\\right|<1$. Calcule $f'\\left(\\dfrac{3}{10}\\right)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$-1$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$0$"
+    },
+    "gabarito": "e",
+    "resolucao": "As derivadas são $\\dfrac{1}{\\sqrt{1-x^{2}}}$ e $-\\dfrac{1}{\\sqrt{1-x^{2}}}$, que se cancelam em todo o intervalo. Assim $f'\\equiv0$ — de fato $f(x)=\\dfrac{\\pi}{2}$ é constante, e o ponto $\\dfrac{3}{10}$ não tem nada de especial.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada do arco-cosseno com argumento afim",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\operatorname{arccos}\\left(1-2x\\right)$, definida para $0<x<1$. Calcule $f'\\left(\\dfrac{1}{2}\\right)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$1$",
+      "c": "$-2$",
+      "d": "$4$",
+      "e": "$\\dfrac{1}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{-\\left(-2\\right)}{\\sqrt{1-\\left(1-2x\\right)^{2}}}=\\dfrac{2}{\\sqrt{1-\\left(1-2x\\right)^{2}}}$. Em $x=\\dfrac{1}{2}$ o argumento $1-2x$ se anula, o radical vale $1$ e $f'=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Arco-tangente de uma exponencial",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\operatorname{arctg}\\left(e^{x}\\right)$. Calcule $f'(0)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$1$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$2$",
+      "e": "$\\dfrac{1}{e}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{e^{x}}{1+e^{2x}}$. Em $x=0$: $\\dfrac{1}{1+1}=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Quadrado do arco-seno",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\left(\\operatorname{arcsen}x\\right)^{2}$. Calcule $f'\\left(\\dfrac{1}{2}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi\\sqrt{3}}{9}$",
+      "b": "$\\dfrac{4\\pi\\sqrt{3}}{9}$",
+      "c": "$\\dfrac{2\\pi\\sqrt{3}}{9}$",
+      "d": "$\\dfrac{2\\pi\\sqrt{3}}{3}$",
+      "e": "$\\dfrac{\\pi\\sqrt{3}}{6}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela cadeia, $f'(x)=\\dfrac{2\\operatorname{arcsen}x}{\\sqrt{1-x^{2}}}$. Em $x=\\dfrac{1}{2}$: $\\operatorname{arcsen}\\dfrac{1}{2}=\\dfrac{\\pi}{6}$ e $\\sqrt{1-\\frac{1}{4}}=\\dfrac{\\sqrt{3}}{2}$, logo $f'=\\dfrac{2\\cdot\\frac{\\pi}{6}}{\\frac{\\sqrt{3}}{2}}=\\dfrac{2\\pi}{3\\sqrt{3}}=\\dfrac{2\\pi\\sqrt{3}}{9}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Função Inversa",
+    "subtopico": "Derivada segunda do arco-tangente",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\operatorname{arctg}x$. Calcule $f''(1)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$-\\dfrac{1}{4}$",
+      "c": "$-1$",
+      "d": "$-\\dfrac{1}{2}$",
+      "e": "$-\\dfrac{1}{8}$"
+    },
+    "gabarito": "d",
+    "resolucao": "De $f'(x)=\\dfrac{1}{1+x^{2}}$ vem, pela cadeia, $f''(x)=-\\dfrac{2x}{\\left(1+x^{2}\\right)^{2}}$. Em $x=1$: $-\\dfrac{2}{4}=-\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com radical de um polinômio",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{4}x\\sqrt{x^{2}+9}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{49}{3}$",
+      "b": "$\\dfrac{125}{3}$",
+      "c": "$\\dfrac{98}{3}$",
+      "d": "$\\dfrac{98}{9}$",
+      "e": "$\\dfrac{196}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $u=x^{2}+9$ tem-se $du=2x\\,dx$, e a integral vira $\\dfrac{1}{2}\\displaystyle\\int_{9}^{25}\\sqrt{u}\\,du=\\dfrac{1}{3}\\left[u^{3/2}\\right]_{9}^{25}=\\dfrac{125-27}{3}=\\dfrac{98}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição que produz logaritmo",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}\\dfrac{x}{x^{2}+1}\\,dx$.",
+    "alternativas": {
+      "a": "$\\ln 2$",
+      "b": "$\\dfrac{\\ln 2}{4}$",
+      "c": "$2\\ln 2$",
+      "d": "$\\dfrac{\\ln 3}{2}$",
+      "e": "$\\dfrac{\\ln 2}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $u=x^{2}+1$ e $du=2x\\,dx$, a integral vale $\\dfrac{1}{2}\\displaystyle\\int_{1}^{2}\\dfrac{du}{u}=\\dfrac{1}{2}\\left[\\ln u\\right]_{1}^{2}=\\dfrac{\\ln 2}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com potência de seno",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/2}\\operatorname{sen}^{3}x\\cos x\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{1}{8}$",
+      "d": "$\\dfrac{1}{4}$",
+      "e": "$\\dfrac{3}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $u=\\operatorname{sen}x$ e $du=\\cos x\\,dx$, a integral vira $\\displaystyle\\int_{0}^{1}u^{3}du=\\left[\\dfrac{u^{4}}{4}\\right]_{0}^{1}=\\dfrac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Numerador que é a derivada do denominador",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}\\dfrac{2x+1}{x^{2}+x+1}\\,dx$.",
+    "alternativas": {
+      "a": "$\\ln 3$",
+      "b": "$\\ln 2$",
+      "c": "$\\dfrac{\\ln 3}{2}$",
+      "d": "$2\\ln 3$",
+      "e": "$\\ln 6$"
+    },
+    "gabarito": "a",
+    "resolucao": "O numerador é exatamente a derivada do denominador, então a primitiva é $\\ln\\left|x^{2}+x+1\\right|$. Avaliando, $\\ln 3-\\ln 1=\\ln 3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com exponencial de argumento quadrático",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}xe^{x^{2}}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{e-1}{2}$",
+      "b": "$e-1$",
+      "c": "$\\dfrac{e}{2}$",
+      "d": "$\\dfrac{e+1}{2}$",
+      "e": "$\\dfrac{e-1}{4}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $u=x^{2}$ e $du=2x\\,dx$, a integral vale $\\dfrac{1}{2}\\displaystyle\\int_{0}^{1}e^{u}du=\\dfrac{e-1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com logaritmo no denominador",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{e}^{e^{2}}\\dfrac{dx}{x\\ln x}$.",
+    "alternativas": {
+      "a": "$\\ln 2$",
+      "b": "$\\ln 3$",
+      "c": "$2\\ln 2$",
+      "d": "$1$",
+      "e": "$\\dfrac{\\ln 2}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $u=\\ln x$ e $du=\\dfrac{dx}{x}$, os limites passam a $1$ e $2$, e a integral vira $\\displaystyle\\int_{1}^{2}\\dfrac{du}{u}=\\ln 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Integral da tangente",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/3}\\operatorname{tg}x\\,dx$.",
+    "alternativas": {
+      "a": "$\\ln 3$",
+      "b": "$\\dfrac{\\ln 2}{2}$",
+      "c": "$\\ln\\dfrac{1}{2}$",
+      "d": "$\\ln 2$",
+      "e": "$2\\ln 2$"
+    },
+    "gabarito": "d",
+    "resolucao": "Escreva $\\operatorname{tg}x=\\dfrac{\\operatorname{sen}x}{\\cos x}$ e use $u=\\cos x$, $du=-\\operatorname{sen}x\\,dx$: a primitiva é $-\\ln\\left|\\cos x\\right|$. Avaliando, $-\\ln\\dfrac{1}{2}+\\ln 1=\\ln 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição linear com secante ao quadrado",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/12}\\sec^{2}\\left(3x\\right)dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{6}$",
+      "c": "$1$",
+      "d": "$3$",
+      "e": "$\\dfrac{2}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $u=3x$ e $du=3\\,dx$, a integral vira $\\dfrac{1}{3}\\displaystyle\\int_{0}^{\\pi/4}\\sec^{2}u\\,du=\\dfrac{1}{3}\\left[\\operatorname{tg}u\\right]_{0}^{\\pi/4}=\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Primitiva que é o arco-seno",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1/2}\\dfrac{dx}{\\sqrt{1-x^{2}}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{3}$",
+      "b": "$\\dfrac{\\pi}{4}$",
+      "c": "$\\dfrac{\\pi}{2}$",
+      "d": "$\\dfrac{\\pi}{6}$",
+      "e": "$\\dfrac{\\pi}{12}$"
+    },
+    "gabarito": "d",
+    "resolucao": "A primitiva é $\\operatorname{arcsen}x$, de modo que a integral vale $\\operatorname{arcsen}\\dfrac{1}{2}-\\operatorname{arcsen}0=\\dfrac{\\pi}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Primitiva que é o arco-tangente",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\sqrt{3}}\\dfrac{dx}{1+x^{2}}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{6}$",
+      "b": "$\\dfrac{\\pi}{4}$",
+      "c": "$\\dfrac{\\pi}{2}$",
+      "d": "$\\dfrac{\\pi}{3}$",
+      "e": "$\\dfrac{2\\pi}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "A primitiva é $\\operatorname{arctg}x$, logo a integral vale $\\operatorname{arctg}\\sqrt{3}-\\operatorname{arctg}0=\\dfrac{\\pi}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Potência de logaritmo dividida pela variável",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{1}^{e}\\dfrac{\\left(\\ln x\\right)^{2}}{x}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$1$",
+      "c": "$\\dfrac{1}{3}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$\\dfrac{1}{6}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $u=\\ln x$ e $du=\\dfrac{dx}{x}$, os limites viram $0$ e $1$, e a integral é $\\displaystyle\\int_{0}^{1}u^{2}du=\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com cubo sob o radical",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{2}x^{2}\\sqrt{x^{3}+1}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{26}{9}$",
+      "b": "$\\dfrac{52}{3}$",
+      "c": "$\\dfrac{104}{9}$",
+      "d": "$\\dfrac{27}{9}$",
+      "e": "$\\dfrac{52}{9}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $u=x^{3}+1$ e $du=3x^{2}dx$, a integral vira $\\dfrac{1}{3}\\displaystyle\\int_{1}^{9}\\sqrt{u}\\,du=\\dfrac{2}{9}\\left[u^{3/2}\\right]_{1}^{9}=\\dfrac{2}{9}\\left(27-1\\right)=\\dfrac{52}{9}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição que leva ao arco-tangente",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/2}\\dfrac{\\cos x}{1+\\operatorname{sen}^{2}x}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{4}$",
+      "b": "$\\dfrac{\\pi}{2}$",
+      "c": "$\\dfrac{\\pi}{6}$",
+      "d": "$\\dfrac{\\pi}{3}$",
+      "e": "$\\dfrac{\\pi}{8}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $u=\\operatorname{sen}x$ e $du=\\cos x\\,dx$, a integral vira $\\displaystyle\\int_{0}^{1}\\dfrac{du}{1+u^{2}}=\\operatorname{arctg}1-\\operatorname{arctg}0=\\dfrac{\\pi}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Exponencial sobre um mais exponencial",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\ln 3}\\dfrac{e^{x}}{1+e^{x}}\\,dx$.",
+    "alternativas": {
+      "a": "$\\ln 3$",
+      "b": "$\\ln 2$",
+      "c": "$\\ln 4$",
+      "d": "$\\dfrac{\\ln 3}{2}$",
+      "e": "$\\ln\\dfrac{3}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $u=1+e^{x}$ e $du=e^{x}dx$, os limites passam a $2$ e $4$, e a integral vira $\\displaystyle\\int_{2}^{4}\\dfrac{du}{u}=\\ln 4-\\ln 2=\\ln 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com radical no denominador",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{3}\\dfrac{x}{\\sqrt{x+1}}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{4}{3}$",
+      "b": "$\\dfrac{16}{3}$",
+      "c": "$\\dfrac{8}{3}$",
+      "d": "$\\dfrac{10}{3}$",
+      "e": "$\\dfrac{14}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $u=x+1$, tem-se $x=u-1$ e $dx=du$, e a integral vira $\\displaystyle\\int_{1}^{4}\\dfrac{u-1}{\\sqrt{u}}\\,du=\\displaystyle\\int_{1}^{4}\\left(u^{1/2}-u^{-1/2}\\right)du=\\left[\\dfrac{2}{3}u^{3/2}-2u^{1/2}\\right]_{1}^{4}=\\left(\\dfrac{16}{3}-4\\right)-\\left(\\dfrac{2}{3}-2\\right)=\\dfrac{8}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com raiz quadrada da variável",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{1}^{3}\\dfrac{dx}{\\sqrt{x}\\left(1+x\\right)}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{3}$",
+      "b": "$\\dfrac{\\pi}{6}$",
+      "c": "$\\dfrac{\\pi}{12}$",
+      "d": "$\\dfrac{\\pi}{4}$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $u=\\sqrt{x}$, tem-se $du=\\dfrac{dx}{2\\sqrt{x}}$ e a integral vira $2\\displaystyle\\int_{1}^{\\sqrt{3}}\\dfrac{du}{1+u^{2}}=2\\left[\\operatorname{arctg}u\\right]_{1}^{\\sqrt{3}}=2\\left(\\dfrac{\\pi}{3}-\\dfrac{\\pi}{4}\\right)=\\dfrac{\\pi}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Seno de raiz sobre raiz",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi^{2}/4}\\dfrac{\\operatorname{sen}\\sqrt{x}}{\\sqrt{x}}\\,dx$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$1$",
+      "c": "$4$",
+      "d": "$\\pi$",
+      "e": "$\\dfrac{\\pi}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $u=\\sqrt{x}$ e $du=\\dfrac{dx}{2\\sqrt{x}}$, a integral vira $2\\displaystyle\\int_{0}^{\\pi/2}\\operatorname{sen}u\\,du=2\\left[-\\cos u\\right]_{0}^{\\pi/2}=2\\left(0+1\\right)=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com quarta potência no denominador",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}\\dfrac{x}{x^{4}+1}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{4}$",
+      "b": "$\\dfrac{\\pi}{16}$",
+      "c": "$\\dfrac{\\pi}{2}$",
+      "d": "$\\dfrac{\\pi}{6}$",
+      "e": "$\\dfrac{\\pi}{8}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $u=x^{2}$ e $du=2x\\,dx$, a integral vira $\\dfrac{1}{2}\\displaystyle\\int_{0}^{1}\\dfrac{du}{1+u^{2}}=\\dfrac{1}{2}\\cdot\\dfrac{\\pi}{4}=\\dfrac{\\pi}{8}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Secante ao quadrado vezes tangente",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/4}\\sec^{2}x\\operatorname{tg}x\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$1$",
+      "d": "$\\dfrac{1}{3}$",
+      "e": "$\\dfrac{3}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $u=\\operatorname{tg}x$ e $du=\\sec^{2}x\\,dx$, a integral vira $\\displaystyle\\int_{0}^{1}u\\,du=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Soma de potências de expoente fracionário",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{1}^{4}\\left(\\sqrt{x}+\\dfrac{1}{\\sqrt{x}}\\right)dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{14}{3}$",
+      "b": "$\\dfrac{16}{3}$",
+      "c": "$\\dfrac{22}{3}$",
+      "d": "$\\dfrac{20}{3}$",
+      "e": "$\\dfrac{26}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "As primitivas são $\\dfrac{2}{3}x^{3/2}$ e $2x^{1/2}$. Avaliando, $\\left(\\dfrac{16}{3}+4\\right)-\\left(\\dfrac{2}{3}+2\\right)=\\dfrac{14}{3}+2=\\dfrac{20}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Potência de um binômio linear",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}\\left(3x-1\\right)^{2}dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$3$",
+      "c": "$\\dfrac{2}{3}$",
+      "d": "$\\dfrac{4}{3}$",
+      "e": "$1$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $u=3x-1$ e $du=3\\,dx$, a integral vira $\\dfrac{1}{3}\\displaystyle\\int_{-1}^{2}u^{2}du=\\dfrac{1}{9}\\left[u^{3}\\right]_{-1}^{2}=\\dfrac{8+1}{9}=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Cosseno de argumento múltiplo",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{\\pi/9}\\cos\\left(3x\\right)dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{3}}{2}$",
+      "b": "$\\dfrac{\\sqrt{3}}{6}$",
+      "c": "$\\dfrac{\\sqrt{3}}{3}$",
+      "d": "$\\dfrac{\\sqrt{3}}{12}$",
+      "e": "$\\dfrac{\\sqrt{2}}{6}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A primitiva é $\\dfrac{\\operatorname{sen}(3x)}{3}$. Avaliando, $\\dfrac{\\operatorname{sen}\\frac{\\pi}{3}}{3}=\\dfrac{\\sqrt{3}/2}{3}=\\dfrac{\\sqrt{3}}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com radical de soma de quadrados",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{2}\\dfrac{x}{\\sqrt{x^{2}+5}}\\,dx$.",
+    "alternativas": {
+      "a": "$\\sqrt{5}-3$",
+      "b": "$3-2\\sqrt{5}$",
+      "c": "$3-\\sqrt{5}$",
+      "d": "$9-\\sqrt{5}$",
+      "e": "$\\dfrac{3-\\sqrt{5}}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $u=x^{2}+5$ e $du=2x\\,dx$, a integral vira $\\dfrac{1}{2}\\displaystyle\\int_{5}^{9}u^{-1/2}du=\\left[\\sqrt{u}\\right]_{5}^{9}=3-\\sqrt{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Substituição com quadrado no denominador",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}\\dfrac{2x}{\\left(1+x^{2}\\right)^{2}}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$1$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{3}{4}$",
+      "e": "$\\dfrac{1}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $u=1+x^{2}$ e $du=2x\\,dx$, a integral vira $\\displaystyle\\int_{1}^{2}\\dfrac{du}{u^{2}}=\\left[-\\dfrac{1}{u}\\right]_{1}^{2}=-\\dfrac{1}{2}+1=\\dfrac{1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Quadrado dividido pelo cubo mais um",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{0}^{1}\\dfrac{x^{2}}{x^{3}+1}\\,dx$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\ln 2}{2}$",
+      "b": "$\\dfrac{\\ln 2}{3}$",
+      "c": "$\\ln 2$",
+      "d": "$\\dfrac{\\ln 3}{3}$",
+      "e": "$\\dfrac{\\ln 2}{6}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $u=x^{3}+1$ e $du=3x^{2}dx$, a integral vira $\\dfrac{1}{3}\\displaystyle\\int_{1}^{2}\\dfrac{du}{u}=\\dfrac{\\ln 2}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "TFC com limite superior quadrático",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_{0}^{x^{2}}\\sqrt{1+t^{3}}\\,dt$. Calcule $F'(1)$.",
+    "alternativas": {
+      "a": "$\\sqrt{2}$",
+      "b": "$2\\sqrt{2}$",
+      "c": "$4\\sqrt{2}$",
+      "d": "$2$",
+      "e": "$\\dfrac{\\sqrt{2}}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo Teorema Fundamental combinado com a regra da cadeia, $F'(x)=\\sqrt{1+\\left(x^{2}\\right)^{3}}\\cdot2x=2x\\sqrt{1+x^{6}}$. Em $x=1$: $2\\sqrt{2}$. Esquecer o fator $2x$ é o erro clássico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "TFC com os dois limites variáveis",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_{x}^{x^{2}}\\dfrac{dt}{t}$, definida para $x>1$. Calcule $F'(2)$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$1$",
+      "c": "$\\dfrac{1}{4}$",
+      "d": "$2$",
+      "e": "$\\dfrac{3}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo Teorema Fundamental, $F'(x)=\\dfrac{1}{x^{2}}\\cdot2x-\\dfrac{1}{x}=\\dfrac{2}{x}-\\dfrac{1}{x}=\\dfrac{1}{x}$. Em $x=2$: $\\dfrac{1}{2}$. (De fato $F(x)=\\ln x^{2}-\\ln x=\\ln x$.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "TFC com limite superior trigonométrico",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_{1}^{\\operatorname{sen}x}e^{t^{2}}dt$. Calcule $F'\\left(\\dfrac{\\pi}{3}\\right)$.",
+    "alternativas": {
+      "a": "$e^{3/4}$",
+      "b": "$\\dfrac{e^{3/4}}{4}$",
+      "c": "$\\dfrac{e^{3/4}}{2}$",
+      "d": "$\\dfrac{e^{1/4}}{2}$",
+      "e": "$\\dfrac{\\sqrt{3}e^{3/4}}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pelo Teorema Fundamental com a cadeia, $F'(x)=e^{\\operatorname{sen}^{2}x}\\cos x$. Em $x=\\dfrac{\\pi}{3}$: $\\operatorname{sen}^{2}x=\\dfrac{3}{4}$ e $\\cos x=\\dfrac{1}{2}$, logo $F'=\\dfrac{e^{3/4}}{2}$. Note que a primitiva de $e^{t^{2}}$ não é elementar — e nem precisa ser.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Mínimo de uma função definida por integral",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_{0}^{x}\\left(t^{2}-4\\right)dt$. Determine o valor mínimo de $F$ em $\\left[0,4\\right]$.",
+    "alternativas": {
+      "a": "$-\\dfrac{8}{3}$",
+      "b": "$-\\dfrac{32}{3}$",
+      "c": "$-\\dfrac{16}{9}$",
+      "d": "$-\\dfrac{16}{3}$",
+      "e": "$-\\dfrac{4}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pelo TFC, $F'(x)=x^{2}-4$, negativa em $\\left(0,2\\right)$ e positiva em $\\left(2,4\\right)$: o mínimo está em $x=2$. Calculando, $F(2)=\\dfrac{8}{3}-8=-\\dfrac{16}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Derivada segunda de uma função definida por integral",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_{0}^{x}\\sqrt{4+t^{2}}\\,dt$. Calcule $F''(2)$.",
+    "alternativas": {
+      "a": "$\\sqrt{2}$",
+      "b": "$\\dfrac{\\sqrt{2}}{4}$",
+      "c": "$\\dfrac{\\sqrt{2}}{2}$",
+      "d": "$2\\sqrt{2}$",
+      "e": "$\\dfrac{\\sqrt{2}}{8}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pelo TFC, $F'(x)=\\sqrt{4+x^{2}}$, e derivando de novo, $F''(x)=\\dfrac{x}{\\sqrt{4+x^{2}}}$. Em $x=2$: $\\dfrac{2}{\\sqrt{8}}=\\dfrac{2}{2\\sqrt{2}}=\\dfrac{\\sqrt{2}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "TFC com limites variáveis e integrando trigonométrico",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $F(x)=\\displaystyle\\int_{x}^{x^{3}}\\operatorname{sen}\\left(t^{2}\\right)dt$. Calcule $F'(1)$.",
+    "alternativas": {
+      "a": "$\\operatorname{sen}1$",
+      "b": "$3\\operatorname{sen}1$",
+      "c": "$4\\operatorname{sen}1$",
+      "d": "$-2\\operatorname{sen}1$",
+      "e": "$2\\operatorname{sen}1$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo Teorema Fundamental, $F'(x)=\\operatorname{sen}\\left(x^{6}\\right)\\cdot3x^{2}-\\operatorname{sen}\\left(x^{2}\\right)$. Em $x=1$: $3\\operatorname{sen}1-\\operatorname{sen}1=2\\operatorname{sen}1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Limite com integral no numerador",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\displaystyle\\lim_{x\\to0}\\dfrac{1}{x^{3}}\\int_{0}^{x}\\dfrac{t^{2}}{1+t}\\,dt$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$1$",
+      "c": "$\\dfrac{1}{6}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$\\dfrac{1}{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "É uma indeterminação $\\dfrac{0}{0}$. Por L'Hospital, derivando numerador (pelo TFC) e denominador, obtém-se $\\dfrac{\\dfrac{x^{2}}{1+x}}{3x^{2}}=\\dfrac{1}{3\\left(1+x\\right)}\\to\\dfrac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Ponto médio integral de uma parábola",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{2}$ em $\\left[0,3\\right]$. Determine o valor de $c$ dado pelo Teorema do Valor Médio para integrais.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}$",
+      "b": "$2\\sqrt{3}$",
+      "c": "$\\dfrac{\\sqrt{3}}{2}$",
+      "d": "$\\sqrt{6}$",
+      "e": "$\\sqrt{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "O valor médio é $\\dfrac{1}{3}\\displaystyle\\int_{0}^{3}x^{2}dx=\\dfrac{1}{3}\\cdot9=3$. Procura-se $c\\in\\left(0,3\\right)$ com $c^{2}=3$, isto é, $c=\\sqrt{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Valor médio do seno num semiperíodo",
+    "dificuldade": "medio",
+    "enunciado": "Determine o valor médio de $f(x)=\\operatorname{sen}x$ no intervalo $\\left[0,\\pi\\right]$.",
+    "alternativas": {
+      "a": "$\\dfrac{2}{\\pi}$",
+      "b": "$\\dfrac{1}{\\pi}$",
+      "c": "$\\dfrac{4}{\\pi}$",
+      "d": "$\\dfrac{\\pi}{2}$",
+      "e": "$\\dfrac{2}{\\pi^{2}}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O valor médio é $\\dfrac{1}{\\pi}\\displaystyle\\int_{0}^{\\pi}\\operatorname{sen}x\\,dx=\\dfrac{1}{\\pi}\\left[-\\cos x\\right]_{0}^{\\pi}=\\dfrac{2}{\\pi}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Ponto médio integral da raiz quadrada",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\sqrt{x}$ em $\\left[0,4\\right]$. Determine o valor de $c$ dado pelo Teorema do Valor Médio para integrais.",
+    "alternativas": {
+      "a": "$\\dfrac{16}{9}$",
+      "b": "$\\dfrac{4}{3}$",
+      "c": "$\\dfrac{9}{4}$",
+      "d": "$\\dfrac{8}{9}$",
+      "e": "$\\dfrac{16}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O valor médio vale $\\dfrac{1}{4}\\displaystyle\\int_{0}^{4}\\sqrt{x}\\,dx=\\dfrac{1}{4}\\cdot\\dfrac{16}{3}=\\dfrac{4}{3}$. De $\\sqrt{c}=\\dfrac{4}{3}$ vem $c=\\dfrac{16}{9}$ — repare que $c$ não é o ponto médio do intervalo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Valor médio da função inverso",
+    "dificuldade": "medio",
+    "enunciado": "Determine o valor médio de $f(x)=\\dfrac{1}{x}$ no intervalo $\\left[1,e\\right]$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{e}$",
+      "b": "$\\dfrac{e}{e-1}$",
+      "c": "$\\dfrac{1}{e+1}$",
+      "d": "$\\dfrac{1}{e-1}$",
+      "e": "$e-1$"
+    },
+    "gabarito": "d",
+    "resolucao": "O valor médio é $\\dfrac{1}{e-1}\\displaystyle\\int_{1}^{e}\\dfrac{dx}{x}=\\dfrac{\\ln e-\\ln 1}{e-1}=\\dfrac{1}{e-1}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Primitiva com condição inicial num polinômio",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f$ tal que $f'(x)=3x^{2}-2x$ e $f(1)=4$. Calcule $f(2)$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$10$",
+      "c": "$12$",
+      "d": "$4$",
+      "e": "$8$"
+    },
+    "gabarito": "e",
+    "resolucao": "Integrando, $f(x)=x^{3}-x^{2}+C$. De $f(1)=1-1+C=4$ vem $C=4$, logo $f(x)=x^{3}-x^{2}+4$ e $f(2)=8-4+4=8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Primitiva de segunda ordem com duas condições",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f$ tal que $f''(x)=6x$, $f'(0)=1$ e $f(0)=2$. Calcule $f(2)$.",
+    "alternativas": {
+      "a": "$8$",
+      "b": "$10$",
+      "c": "$14$",
+      "d": "$12$",
+      "e": "$16$"
+    },
+    "gabarito": "d",
+    "resolucao": "Integrando uma vez, $f'(x)=3x^{2}+C_{1}$, e $f'(0)=1$ dá $C_{1}=1$. Integrando de novo, $f(x)=x^{3}+x+C_{2}$, e $f(0)=2$ dá $C_{2}=2$. Então $f(2)=8+2+2=12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Primitiva de uma exponencial com condição inicial",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f$ tal que $f'(x)=e^{2x}$ e $f(0)=1$. Calcule $f\\left(\\dfrac{1}{2}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{e+1}{2}$",
+      "b": "$\\dfrac{e-1}{2}$",
+      "c": "$\\dfrac{e}{2}$",
+      "d": "$\\dfrac{e+2}{2}$",
+      "e": "$e+1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Integrando, $f(x)=\\dfrac{e^{2x}}{2}+C$, e $f(0)=\\dfrac{1}{2}+C=1$ dá $C=\\dfrac{1}{2}$. Então $f\\left(\\dfrac{1}{2}\\right)=\\dfrac{e}{2}+\\dfrac{1}{2}=\\dfrac{e+1}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Primitiva do inverso com condição inicial",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f$ tal que $f'(x)=\\dfrac{1}{x}$ para $x>0$ e $f(1)=0$. Calcule $f\\left(e^{2}\\right)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$e$",
+      "c": "$2$",
+      "d": "$e^{2}$",
+      "e": "$4$"
+    },
+    "gabarito": "c",
+    "resolucao": "Integrando, $f(x)=\\ln x+C$, e $f(1)=0$ dá $C=0$. Logo $f\\left(e^{2}\\right)=\\ln e^{2}=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Aditividade do intervalo de integração",
+    "dificuldade": "medio",
+    "enunciado": "Sabendo que $\\displaystyle\\int_{0}^{3}f(x)\\,dx=5$ e $\\displaystyle\\int_{0}^{1}f(x)\\,dx=2$, calcule $\\displaystyle\\int_{1}^{3}f(x)\\,dx$.",
+    "alternativas": {
+      "a": "$7$",
+      "b": "$-3$",
+      "c": "$3$",
+      "d": "$\\dfrac{5}{2}$",
+      "e": "$10$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela aditividade em relação ao intervalo, $\\displaystyle\\int_{0}^{3}=\\displaystyle\\int_{0}^{1}+\\displaystyle\\int_{1}^{3}$. Logo $\\displaystyle\\int_{1}^{3}f=5-2=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Linearidade da integral definida",
+    "dificuldade": "medio",
+    "enunciado": "Sabendo que $\\displaystyle\\int_{0}^{2}f(x)\\,dx=4$, calcule $\\displaystyle\\int_{0}^{2}\\left[3f(x)-2\\right]dx$.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$8$",
+      "c": "$10$",
+      "d": "$4$",
+      "e": "$6$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela linearidade, $\\displaystyle\\int_{0}^{2}\\left[3f-2\\right]=3\\displaystyle\\int_{0}^{2}f-\\displaystyle\\int_{0}^{2}2\\,dx=3\\cdot4-2\\cdot2=12-4=8$. O segundo termo é a área do retângulo de base $2$ e altura $2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo I",
+    "topico": "Integral Indefinida",
+    "subtopico": "Paridade do integrando num intervalo simétrico",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\displaystyle\\int_{-2}^{2}\\left(x^{3}+3x^{2}\\right)dx$.",
+    "alternativas": {
+      "a": "$8$",
+      "b": "$16$",
+      "c": "$32$",
+      "d": "$0$",
+      "e": "$24$"
+    },
+    "gabarito": "b",
+    "resolucao": "A parcela $x^{3}$ é ímpar e sua integral no intervalo simétrico é nula. Já $3x^{2}$ é par, então $\\displaystyle\\int_{-2}^{2}3x^{2}dx=2\\displaystyle\\int_{0}^{2}3x^{2}dx=2\\cdot8=16$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]
