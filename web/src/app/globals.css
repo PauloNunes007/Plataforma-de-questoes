@@ -323,3 +323,42 @@
     border: 1px solid transparent;
   }
 }
+
+@layer utilities {
+  /* ---------------------------------------------------------------
+     Paleta do medidor de "Questões feitas" (e de qualquer marca de
+     dado acerto/erro que precise do mesmo par).
+
+     Por que não os tokens do tema: --questly-green/--questly-red são
+     calibrados pra TEXTO (o tema claro fintech foi aprofundado até
+     passar em WCAG AA), e num traço de 26px isso lê como cor lavada.
+     Aqui a marca é grande e não carrega texto, então pode ser bem mais
+     saturada — e o par é escolhido pela separação, não pelo gosto.
+
+     Validado com scripts/validate_palette.js da skill de dataviz, em
+     cada modo contra a superfície REAL do cartão (os tons "-fundo", que
+     são os que a legenda e a barra 100% usam sozinhos):
+       claro  (#ffffff): #0aa571 × #a32750 — tudo PASS, deutan ΔE 14.6
+       escuro (#181b21): #0aad80 × #b53259 — deutan ΔE 12.7, e um único
+                         WARN de contraste (o vinho a 2.93:1)
+     O alívio que a skill exige pro WARN está lá: número e % escritos em
+     texto ao lado da marca, mais a barra 100% empilhada.
+
+     O par é verde × VINHO, não verde × vermelho: dois matizes de mesma
+     luminosidade em lados opostos do vermelho-verde colapsam na mesma
+     cor para deuteranopia. Puxar o "erro" pro magenta é o que salva a
+     leitura — e continua lendo como "ruim".
+     --------------------------------------------------------------- */
+  .anel-paleta {
+    --anel-acerto-claro: #14d497;
+    --anel-acerto-fundo: #0aa571;
+    --anel-erro-claro: #c9456c;
+    --anel-erro-fundo: #a32750;
+  }
+  .dark .anel-paleta {
+    --anel-acerto-claro: #19c692;
+    --anel-acerto-fundo: #0aad80;
+    --anel-erro-claro: #d24a72;
+    --anel-erro-fundo: #b53259;
+  }
+}

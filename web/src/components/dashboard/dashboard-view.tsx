@@ -19,7 +19,7 @@ import { MissoesCard } from "./missoes-card";
 import { QuestoesFeitasCard } from "./questoes-feitas-card";
 import { BossSiegeMeter } from "./boss-siege-meter";
 import { GpsAprovacaoCard } from "./gps-aprovacao-card";
-import { CalendarRailCard } from "./right-rail";
+import { AgendaCard } from "./agenda-card";
 import { TarefasDoDiaCard } from "./tarefas-do-dia-card";
 import { SimuladosCard } from "./simulados-card";
 import { DesempenhoView } from "./desempenho-view";
@@ -32,10 +32,12 @@ import { ConquistasView } from "./conquistas-view";
 // de identidade fixa no topo (PerfilBar: quem sou, nível, ranking, conquistas,
 // streak) e um TRILHO lateral que troca a visão do miolo:
 //
-//   • Global      — a ação do dia. Cartão colorido de "continuar de onde
-//                   parou" (faixa, não painel gigante), metas do dia, o anel
-//                   grosso de questões feitas, o cerco ao boss + GPS, e o
-//                   rail de consulta (simulados, tarefas, calendário).
+//   • Global      — a ação do dia, em quatro faixas de prioridade decrescente:
+//                   (1) continuar de onde parou; (2) as duas COISAS PRA FAZER
+//                   agora, lado a lado e do mesmo tamanho — a missão do dia e
+//                   o simulado; (3) o diagnóstico (cerco ao boss + GPS) com o
+//                   anel de questões e o "marcado para hoje" na coluna
+//                   estreita ao lado; (4) a Agenda, em largura inteira.
 //   • Desempenho  — a análise: KPIs, radar por área, curva de evolução,
 //                   tópicos mais errados e a tira da semana.
 //   • Conquistas  — a estante de brasões, acesos e apagados.
@@ -125,12 +127,20 @@ export function DashboardView({
                 metas={dados.metasHoje}
               />
 
+              {/* As duas coisas que o aluno PODE FAZER agora, com o mesmo
+                  peso visual. Antes o simulado morava no rail estreito, abaixo
+                  da dobra — quem nunca tinha feito um nem descobria que
+                  existia. Ao lado da missão do dia ele ganha destaque sem
+                  competir com ela: missão é o hábito, simulado é o teste. */}
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
                 <MissoesCard missions={dados.missions} metas={dados.metasHoje} />
-                <QuestoesFeitasCard hero={hero} />
+                <SimuladosCard atalho={atalhoSimulados} />
               </div>
 
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+              {/* Diagnóstico à esquerda (largo, porque é leitura); números e
+                  lista de hoje à direita, numa coluna estreita — é aqui que o
+                  anel de questões cabe sem ocupar meia tela. */}
+              <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
                 <div className="flex min-w-0 flex-col gap-4">
                   <BossSiegeMeter
                     bossAlvo={dados.bossAlvo}
@@ -149,22 +159,26 @@ export function DashboardView({
                 </div>
 
                 <aside className="flex min-w-0 flex-col gap-4">
-                  <SimuladosCard atalho={atalhoSimulados} />
+                  <QuestoesFeitasCard hero={hero} />
                   <TarefasDoDiaCard
                     tarefasIniciais={dados.tarefasHoje}
                     hoje={hojeStr}
                     subjects={subjectsResumo}
                   />
-                  <CalendarRailCard
-                    monthLabel={dados.calendar.monthLabel}
-                    dowOffset={dados.calendar.dowOffset}
-                    days={dados.calendar.days}
-                    tarefas={dados.tarefasPorData}
-                    subjects={subjectsResumo}
-                    index={0}
-                  />
                 </aside>
               </div>
+
+              {/* A agenda fecha a visão em largura inteira: planejar a semana
+                  é a única coisa aqui que precisa de espaço horizontal (sete
+                  colunas de dia com texto legível dentro). */}
+              <AgendaCard
+                monthLabel={dados.calendar.monthLabel}
+                dowOffset={dados.calendar.dowOffset}
+                days={dados.calendar.days}
+                tarefas={dados.tarefasPorData}
+                subjects={subjectsResumo}
+                hoje={hojeStr}
+              />
             </div>
           )}
 

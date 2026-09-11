@@ -6,9 +6,17 @@ import { Check, ListTodo, Plus, X } from "lucide-react";
 import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
 import { alternarTarefaAction, criarTarefaAction, excluirTarefaAction } from "@/lib/tarefas/actions";
 
-// Tarefas pontuais que o aluno adiciona pro dia de hoje — sem lógica
-// derivada no servidor (CRUD simples), então atualiza o estado local
-// direto depois do "ok" da action em vez de refetch.
+// O QUE VOCÊ MARCOU PRA HOJE — o recorte de hoje da mesma lista que a
+// AgendaCard edita no mês inteiro. Sem lógica derivada no servidor (CRUD
+// simples), então atualiza o estado local direto depois do "ok" da action
+// em vez de refetch.
+//
+// A divisão de trabalho com a AgendaCard é de proximidade, não de dados: aqui
+// o aluno marca um afazer de hoje sem sair do topo da home; lá ele planeja a
+// semana, escolhe hora e duração e arrasta entre dias. Por isso este cartão
+// CRIA sempre tipo "tarefa" (rápido, sem horário) mas EXIBE também as sessões
+// agendadas do dia — senão o aluno marcaria um bloco na agenda e não o veria
+// na lista de hoje.
 export function TarefasDoDiaCard({
   tarefasIniciais,
   hoje,
@@ -46,6 +54,9 @@ export function TarefasDoDiaCard({
           concluida: false,
           subjectId: subjectId || null,
           subjectNome,
+          tipo: "tarefa",
+          hora: null,
+          duracaoMin: null,
         },
       ]);
       setNome("");
@@ -69,7 +80,7 @@ export function TarefasDoDiaCard({
   return (
     <div className="surface flex flex-col p-5">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-[13.5px] font-semibold tracking-tight">Tarefas do dia</span>
+        <span className="text-[13.5px] font-semibold tracking-tight">Marcado para hoje</span>
         <button
           type="button"
           onClick={() => setFormAberto((v) => !v)}
@@ -132,9 +143,9 @@ export function TarefasDoDiaCard({
           <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-questly-purple/10">
             <ListTodo size={20} strokeWidth={1.75} className="text-questly-purple" />
           </span>
-          <p className="mb-1 text-[13px] font-medium">Adicione tarefas ao seu dia</p>
+          <p className="mb-1 text-[13px] font-medium">Nada marcado para hoje</p>
           <p className="mb-4 max-w-[220px] text-xs text-muted-foreground">
-            Organize o que você quer estudar hoje, além da missão gerada.
+            Anote um afazer rápido aqui, ou agende uma sessão com hora na Agenda logo abaixo.
           </p>
           <button
             type="button"
@@ -166,9 +177,17 @@ export function TarefasDoDiaCard({
                 >
                   {t.nome}
                 </span>
-                {(t.subjectNome || t.descricao) && (
-                  <span className="block truncate text-[11px] text-muted-foreground">
-                    {[t.subjectNome, t.descricao].filter(Boolean).join(" · ")}
+                {(t.hora || t.subjectNome || t.descricao) && (
+                  <span className="tnum block truncate text-[11px] text-muted-foreground">
+                    {[
+                      t.hora && t.duracaoMin
+                        ? `${t.hora} · ${t.duracaoMin}min`
+                        : t.hora || null,
+                      t.subjectNome,
+                      t.descricao,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </span>
                 )}
               </span>

@@ -1,45 +1,54 @@
 "use client";
 
-// "Questões feitas" — o anel de acertos/erros da vida toda.
+// "Questões feitas" — o medidor de pontaria da vida toda.
 //
-// Repasse de 2026-09-11: o anel de antes era um fio de 6px e sumia na tela.
-// Aqui ele é a MARCA do cartão — 26px de traço sobre um raio de 74, com os
-// dois arcos separados por um vão real (nada de dois semicírculos colados que
-// viram um borrão), ponta arredondada, gradiente no traço e um halo suave por
-// baixo pra dar volume sem virar 3D de clip-art.
+// **Repasse de 2026-09-11 (2).** Duas queixas, uma resposta:
 //
-// Acessibilidade (regra `color-not-only` + `direct-labeling` da skill): o
-// valor vive no CENTRO em texto, e a legenda ao lado repete número e % por
-// escrito com um marcador de forma. Nada aqui depende de enxergar cor nem de
-// acertar um hover.
+// 1. *O cartão ocupava meia home pra mostrar três números.* Ele saiu da grade
+//    larga e virou um cartão de coluna estreita. O VETOR não encolheu (é a
+//    marca visual do cartão) — o que encolheu foi tudo em volta: a legenda
+//    desceu pra baixo do anel em vez de disputar largura com ele, os dois
+//    blocos de acerto/erro viraram uma linha só de duas colunas, e a frase
+//    explicativa saiu (o número no centro e os dois rótulos já dizem tudo).
+//
+// 2. *As cores eram sem vida.* Os tokens do tema são propositalmente
+//    profundos (contraste de TEXTO, ver o tema claro fintech) e ficavam
+//    apagados num traço grosso. O anel agora tem paleta própria, só pra ele:
+//    escolhida contra a superfície do cartão e VALIDADA (validate_palette.js
+//    da skill de dataviz) em claro e escuro — banda de luminosidade, piso de
+//    croma, separação para daltonismo e contraste — os valores exatos e o
+//    laudo do validador estão no comentário de `.anel-paleta` em
+//    globals.css. O vinho, em vez do vermelho-tijolo do tema, é o que
+//    dá a separação para deuteranopia — vermelho e verde de mesma
+//    luminosidade viram a MESMA cor pra quem não distingue os dois.
+//
+// **Forma.** Não é uma pizza de 2 fatias (a skill de dataviz proíbe, e com
+// razão): é um MEDIDOR radial — um arco de acerto sobre um leito de erro. A
+// leitura é "o quanto do círculo eu acerto", não "compare estas duas fatias".
+//
+// Acessibilidade: o valor vive no centro em texto; a legenda repete número e
+// % por escrito com ícone próprio; e a barra 100% embaixo é a alternativa
+// empilhada. Nada aqui depende de enxergar cor nem de acertar um hover.
 
 import { motion, useReducedMotion } from "framer-motion";
-import { CircleCheck, CircleX, PieChart } from "lucide-react";
+import { CircleCheck, CircleX, Target } from "lucide-react";
 import type { HeroDados } from "@/lib/dashboard/hero-data";
 
 const R = 74;
 const TRACO = 26;
 const C = 2 * Math.PI * R;
-/** vão entre os arcos, em fração da volta (≈6°) */
-const VAO = 0.017;
 
 export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
   const semMovimento = useReducedMotion();
   const total = hero.totalQuestoes;
   const fracAcerto = total > 0 ? hero.acertos / total : 0;
   const pctErro = total > 0 ? 100 - hero.pctAcerto : 0;
-
-  // Com 100% de um lado o vão não existe — senão o anel "abre" sem motivo.
-  const soUmLado = total > 0 && (hero.acertos === 0 || hero.erros === 0);
-  const vao = soUmLado ? 0 : VAO;
-  const arcoVerde = Math.max(0, C * (fracAcerto - vao));
-  const arcoVermelho = Math.max(0, C * (1 - fracAcerto - vao));
-  const giroVermelho = fracAcerto * 360 + vao * 360;
+  const arcoAcerto = C * fracAcerto;
 
   return (
-    <section className="surface flex flex-col p-4 sm:p-5">
+    <section className="surface anel-paleta flex flex-col p-4 sm:p-5">
       <div className="mb-1 flex items-center gap-2">
-        <PieChart size={15} strokeWidth={2.1} className="text-questly-green-dark dark:text-questly-green" />
+        <Target size={15} strokeWidth={2.1} className="text-questly-green-dark dark:text-questly-green" />
         <h2 className="font-heading text-[15px] font-semibold tracking-tight">Questões feitas</h2>
       </div>
 
@@ -49,111 +58,131 @@ export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
           respondeu entre acertos e erros.
         </p>
       ) : (
-        <div className="flex flex-1 flex-col items-center justify-center gap-5 py-2 sm:flex-row sm:gap-6">
+        <div className="flex flex-col items-center gap-3.5 pt-1">
           <div className="relative h-[188px] w-[188px] shrink-0">
             <svg viewBox="0 0 188 188" className="h-full w-full">
               <defs>
-                <linearGradient id="anel-acerto" x1="0" y1="0" x2="188" y2="188" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="var(--color-questly-green)" />
-                  <stop offset="1" stopColor="var(--color-questly-green-deep)" />
+                {/* Gradiente do arco: um só matiz, claro → fundo. É o que dá
+                    volume ao traço grosso sem inventar uma segunda cor (e sem
+                    virar aquele degradê arco-íris de dashboard genérico). */}
+                <linearGradient id="anel-acerto" x1="14" y1="14" x2="174" y2="174" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="var(--anel-acerto-claro)" />
+                  <stop offset="1" stopColor="var(--anel-acerto-fundo)" />
                 </linearGradient>
-                <linearGradient id="anel-erro" x1="188" y1="0" x2="0" y2="188" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="var(--color-questly-red)" />
-                  <stop offset="1" stopColor="var(--color-questly-red-dark)" />
+                <linearGradient id="anel-erro" x1="174" y1="14" x2="14" y2="174" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="var(--anel-erro-claro)" />
+                  <stop offset="1" stopColor="var(--anel-erro-fundo)" />
                 </linearGradient>
               </defs>
 
-              {/* leito do anel: dá o volume sem depender de sombra */}
-              <circle
-                cx="94"
-                cy="94"
-                r={R}
-                fill="none"
-                stroke="var(--muted)"
-                strokeWidth={TRACO}
-                opacity="0.7"
-              />
-
               <g transform="rotate(-90 94 94)">
+                {/* Leito = a parte errada. Volta inteira por baixo: o arco de
+                    acerto cobre a fração certa e o que sobra JÁ É o erro — sem
+                    dois arcos concorrendo pelo mesmo pixel. */}
+                <circle cx="94" cy="94" r={R} fill="none" stroke="url(#anel-erro)" strokeWidth={TRACO}>
+                  <title>{`Erros: ${hero.erros} de ${total} (${pctErro}%)`}</title>
+                </circle>
+
+                {/* Folga na cor da superfície sob o arco (a "2px surface gap"
+                    da skill): sem ela a ponta arredondada do verde parece
+                    derretida em cima do vinho. */}
+                <motion.circle
+                  cx="94"
+                  cy="94"
+                  r={R}
+                  fill="none"
+                  stroke="var(--card)"
+                  strokeWidth={TRACO}
+                  strokeLinecap="round"
+                  strokeDasharray={`${arcoAcerto} ${C - arcoAcerto}`}
+                  initial={semMovimento ? false : { strokeDasharray: `0 ${C}` }}
+                  animate={{ strokeDasharray: `${arcoAcerto} ${C - arcoAcerto}` }}
+                  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                  aria-hidden
+                />
+
                 <motion.circle
                   cx="94"
                   cy="94"
                   r={R}
                   fill="none"
                   stroke="url(#anel-acerto)"
-                  strokeWidth={TRACO}
-                  strokeLinecap={soUmLado ? "butt" : "round"}
-                  strokeDasharray={`${arcoVerde} ${C - arcoVerde}`}
+                  strokeWidth={TRACO - 4}
+                  strokeLinecap="round"
+                  strokeDasharray={`${arcoAcerto} ${C - arcoAcerto}`}
                   initial={semMovimento ? false : { strokeDasharray: `0 ${C}` }}
-                  animate={{ strokeDasharray: `${arcoVerde} ${C - arcoVerde}` }}
+                  animate={{ strokeDasharray: `${arcoAcerto} ${C - arcoAcerto}` }}
                   transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <title>{`Acertos: ${hero.acertos} de ${total} (${hero.pctAcerto}%)`}</title>
                 </motion.circle>
-
-                <motion.circle
-                  cx="94"
-                  cy="94"
-                  r={R}
-                  fill="none"
-                  stroke="url(#anel-erro)"
-                  strokeWidth={TRACO}
-                  strokeLinecap={soUmLado ? "butt" : "round"}
-                  strokeDasharray={`${arcoVermelho} ${C - arcoVermelho}`}
-                  transform={`rotate(${giroVermelho} 94 94)`}
-                  initial={semMovimento ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.45 }}
-                >
-                  <title>{`Erros: ${hero.erros} de ${total} (${pctErro}%)`}</title>
-                </motion.circle>
               </g>
-            </svg>
 
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-              <span className="tnum font-heading text-[30px] font-bold leading-none tracking-tight">
+              <text
+                x="94"
+                y="88"
+                textAnchor="middle"
+                className="tnum fill-foreground font-heading"
+                style={{ fontSize: 34, fontWeight: 700, letterSpacing: "-0.02em" }}
+              >
                 {total.toLocaleString("pt-BR")}
-              </span>
-              <span className="mt-1 text-[10.5px] font-semibold leading-tight text-muted-foreground">
-                questões
-                <br />
+              </text>
+              <text
+                x="94"
+                y="104"
+                textAnchor="middle"
+                className="fill-muted-foreground"
+                style={{ fontSize: 10.5, fontWeight: 600 }}
+              >
                 respondidas
-              </span>
-            </div>
+              </text>
+              <text
+                x="94"
+                y="121"
+                textAnchor="middle"
+                className="tnum fill-foreground"
+                style={{ fontSize: 12.5, fontWeight: 700 }}
+              >
+                {hero.pctAcerto}% de acerto
+              </text>
+            </svg>
           </div>
 
-          <div className="flex w-full min-w-0 flex-col gap-2.5">
+          <div className="grid w-full grid-cols-2 gap-2">
             <Linha
-              icone={<CircleCheck size={15} strokeWidth={2.2} />}
+              icone={<CircleCheck size={14} strokeWidth={2.3} />}
               rotulo="Acertos"
               valor={hero.acertos}
               pct={hero.pctAcerto}
               tom="bom"
             />
             <Linha
-              icone={<CircleX size={15} strokeWidth={2.2} />}
+              icone={<CircleX size={14} strokeWidth={2.3} />}
               rotulo="Erros"
               valor={hero.erros}
               pct={pctErro}
               tom="ruim"
             />
-
-            {/* Barra 100% — a alternativa acessível ao anel (regra da skill:
-                donut exige fallback empilhado). Também é ela que dá a leitura
-                rápida da proporção quando o anel está fora do campo de visão. */}
-            <div className="mt-1">
-              <span className="flex h-3 w-full overflow-hidden rounded-full bg-questly-red">
-                <span
-                  className="h-full bg-questly-green"
-                  style={{ width: `${hero.pctAcerto}%` }}
-                />
-              </span>
-              <p className="mt-2 text-[11.5px] leading-snug text-muted-foreground">
-                Você acerta <span className="font-bold text-foreground">{hero.pctAcerto}%</span> do
-                que responde — cerca de {Math.round(hero.pctAcerto / 10)} a cada 10 questões.
-              </p>
-            </div>
           </div>
+
+          {/* Barra 100% — a alternativa acessível ao anel (regra da skill:
+              donut/medidor exige fallback empilhado), e a leitura rápida da
+              proporção quando o anel está fora do campo de visão. */}
+          <span
+            className="flex h-2.5 w-full overflow-hidden rounded-full"
+            style={{ background: "var(--anel-erro-fundo)" }}
+            role="img"
+            aria-label={`${hero.pctAcerto}% de acerto em ${total} questões respondidas.`}
+          >
+            <span
+              className="h-full rounded-full"
+              style={{
+                width: `${hero.pctAcerto}%`,
+                background: "var(--anel-acerto-fundo)",
+                boxShadow: "0 0 0 2px var(--card)",
+              }}
+            />
+          </span>
         </div>
       )}
     </section>
@@ -174,33 +203,20 @@ function Linha({
   tom: "bom" | "ruim";
 }) {
   const bom = tom === "bom";
+  const cor = bom ? "var(--anel-acerto-fundo)" : "var(--anel-erro-fundo)";
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border bg-background/60 px-3 py-2.5">
-      <span
-        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-          bom
-            ? "bg-questly-green-light text-questly-green-dark dark:text-questly-green"
-            : "bg-questly-red-light text-questly-red-dark"
-        }`}
-      >
-        {icone}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+    <div className="min-w-0 rounded-xl border border-border bg-background/60 px-2.5 py-2">
+      <span className="flex items-center gap-1.5">
+        <span style={{ color: cor }}>{icone}</span>
+        <span className="truncate text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
           {rotulo}
         </span>
-        <span className="tnum block font-heading text-[19px] font-bold leading-tight">
+      </span>
+      <span className="mt-0.5 flex items-baseline gap-1.5">
+        <span className="tnum font-heading text-[19px] font-bold leading-tight">
           {valor.toLocaleString("pt-BR")}
         </span>
-      </span>
-      <span
-        className={`tnum shrink-0 rounded-lg px-2 py-1 text-[12.5px] font-bold ${
-          bom
-            ? "bg-questly-green-light text-questly-green-dark dark:text-questly-green"
-            : "bg-questly-red-light text-questly-red-dark"
-        }`}
-      >
-        {pct}%
+        <span className="tnum text-[12px] font-bold text-muted-foreground">{pct}%</span>
       </span>
     </div>
   );
