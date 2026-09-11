@@ -83,6 +83,7 @@ if (taxonomia) {
 }
 
 const problemas = [];
+const avisos = [];
 const vistosNesteLote = new Map();
 const cobertura = new Map();
 const porGabarito = new Map();
@@ -103,7 +104,15 @@ for (const arq of arquivos) {
 
     const preenchidas = LETRAS.filter((l) => item.alternativas && item.alternativas[l] && String(item.alternativas[l]).trim());
     if (preenchidas.length < 2) erro(`só ${preenchidas.length} alternativa(s) preenchida(s)`);
-    if (preenchidas.length !== 5) erro(`esperadas 5 alternativas, achadas ${preenchidas.length}`);
+    // Cinco alternativas é a regra das levas AUTORAIS. Prova real transcrita
+    // (`instituicao` preenchida) fica com o formato que o professor usou —
+    // Certo/Errado tem 2, o item "I / II" da UFF tem 4 — e completar pra cinco
+    // seria inventar distrator, o que a regra de ouro proíbe. Vira aviso.
+    if (preenchidas.length !== 5) {
+      const msg = `esperadas 5 alternativas, achadas ${preenchidas.length}`;
+      if (item.instituicao) avisos.push(`${ref}: ${msg} (transcrição de ${item.instituicao} — formato da prova)`);
+      else erro(msg);
+    }
     if (!item.gabarito || !preenchidas.includes(item.gabarito)) erro(`gabarito "${item.gabarito}" não aponta pra alternativa preenchida`);
 
     // alternativas repetidas entre si (mesmo valor em duas letras)
@@ -143,6 +152,12 @@ console.log(`\ncobertura por tópico (${total} questões no total):`);
 
 console.log("\ndistribuição de gabaritos:");
 LETRAS.forEach((l) => console.log(`  ${l}: ${porGabarito.get(l) || 0}`));
+
+if (avisos.length) {
+  console.log(`
+${avisos.length} AVISO(S) (não bloqueiam):`);
+  avisos.forEach((a) => console.log(`  - ${a}`));
+}
 
 if (problemas.length) {
   console.log(`\n${problemas.length} PROBLEMA(S):`);

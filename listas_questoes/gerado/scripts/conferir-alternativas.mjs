@@ -18,8 +18,11 @@ function forma(s) {
   const t = String(s || "");
   const marcas = [];
   if (/\{,\}/.test(t)) marcas.push("decimal");
-  if (/frac/.test(t)) marcas.push("fracao");
-  if (/sqrt/.test(t)) marcas.push("raiz");
+  // Os marcadores procuram COMANDO LaTeX, não substring solta: /frac/ casava
+  // com a palavra "fracas" de uma alternativa em prosa e acusava tell falso
+  // (visto na leva de Química no estilo UFF, que é quase toda em prosa).
+  if (/\[dt]?frac/.test(t)) marcas.push("fracao");
+  if (/\sqrt/.test(t)) marcas.push("raiz");
   if (/\\pi/.test(t)) marcas.push("pi");
   if (/times\s*10\^|10\^\{/.test(t)) marcas.push("notcient");
   if (/pmatrix|begin\{matrix\}|vmatrix/.test(t)) marcas.push("matriz");
