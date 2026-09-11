@@ -1,0 +1,22 @@
+-- ============================================================
+-- QUESTLY — distintivos escolhidos pro card público
+-- Rodar DEPOIS de supabase_conteudo_compartilhado.sql (precisa de
+-- "profiles" já existente). Migração aditiva e idempotente.
+--
+-- POR QUE EXISTE: o card público (ranking) mostrava TODOS os distintivos
+-- conquistados do aluno, em `flex-wrap` — quanto mais brasões o aluno
+-- ganhava, mais alto o card ficava, e o layout perdia a proporção de
+-- "carta" que o resto do card tem. A UI (web/) agora reserva um número
+-- FIXO de vagas pro card (ver MAX_DISTINTIVOS_CARD em
+-- lib/ranking/badges.ts) e deixa o próprio aluno escolher QUAIS
+-- distintivos (dos que ele já tem) aparecem lá — visão "Conquistas" da
+-- home (components/dashboard/conquistas-view.tsx).
+--
+-- Sem trigger novo: `distintivos_selecionados` NÃO está na lista de
+-- colunas protegidas do trigger `questly_proteger_colunas_profile`
+-- (supabase_seguranca_hardening.sql) — é preferência de exibição, não
+-- economia/plano, então o UPDATE dono-only comum de "profiles" já
+-- alcança. Sem mudança de RLS.
+-- ============================================================
+
+alter table profiles add column if not exists distintivos_selecionados text[];

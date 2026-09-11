@@ -198,7 +198,9 @@ export function DashboardView({
             <DesempenhoView dados={desempenho} semana={dados.semana} ehPro={dados.ehPro} />
           )}
 
-          {visao === "conquistas" && <ConquistasView distintivos={hero.distintivos} />}
+          {visao === "conquistas" && (
+            <ConquistasView distintivos={hero.distintivos} selecionadosIniciais={hero.distintivosSelecionados} />
+          )}
         </div>
       </div>
 

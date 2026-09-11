@@ -16,6 +16,9 @@ export type HeroDados = {
   /** a estante inteira (acesos + apagados) — a visão Conquistas da home mostra
    *  também o que falta, com o requisito escrito em cada card. */
   distintivos: Distintivo[];
+  /** ids que o aluno escolheu pro card público (null = resumo automático,
+   *  ver distintivosParaCard em lib/ranking/badges.ts). */
+  distintivosSelecionados: string[] | null;
   acertos: number;
   erros: number;
   totalQuestoes: number;
@@ -30,6 +33,7 @@ export async function carregarHeroDashboard(
     liga?: string | null;
     nivel?: number | null;
     streak_atual?: number | null;
+    distintivos_selecionados?: string[] | null;
   } | null,
 ): Promise<HeroDados> {
   const meuXp = profile?.xp_total || 0;
@@ -75,6 +79,7 @@ export async function carregarHeroDashboard(
     conquistas: conquistados.length,
     conquistasLista: conquistados.map((d) => ({ insignia: d.insignia, tom: d.tom, nome: d.nome })),
     distintivos,
+    distintivosSelecionados: profile?.distintivos_selecionados ?? null,
     acertos: ac,
     erros: er,
     totalQuestoes: tot,

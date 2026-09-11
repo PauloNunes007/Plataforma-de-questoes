@@ -54,6 +54,9 @@ export type ProfileRow = {
   // vêm do mesmo `select("*")`; declaradas porque `ehPro(profile)` as lê.
   plano?: string | null;
   plano_expira_em?: string | null;
+  // idem — `hero-data.ts` lê pra saber quais distintivos o aluno escolheu
+  // pro card público (ver lib/ranking/badges.ts).
+  distintivos_selecionados?: string[] | null;
 };
 
 export type MissionCardData = Mission & { mestre: boolean };

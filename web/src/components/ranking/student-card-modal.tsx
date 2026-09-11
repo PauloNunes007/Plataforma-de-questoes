@@ -22,6 +22,7 @@ import { CursoIcone } from "@/components/cursos/curso-icone";
 import { cursoReconhecido, resolverCurso } from "@/lib/cursos/registro";
 import type { CardUsuario } from "@/lib/ranking/actions";
 import { Insignia } from "@/components/insignias/insignia";
+import { MAX_DISTINTIVOS_CARD } from "@/lib/ranking/badges";
 import { PRO_FRAME, ProFoil, ProSelo } from "@/components/ranking/pro-visual";
 
 type StudentCardModalProps = {
@@ -260,43 +261,53 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
           )}
         </div>
 
-        {/* distintivos conquistados — só os que o aluno tem */}
+        {/* distintivos — vagas FIXAS (MAX_DISTINTIVOS_CARD): o card não
+            cresce mais a cada brasão novo. `card.distintivos` já vem
+            escolhido/cortado pelo servidor (distintivosParaCard); aqui só
+            desenha exatamente essa quantidade de vagas, sempre a mesma
+            linha, preenchendo o resto com a moldura "apagada" (ainda não
+            escolhida/conquistada) em vez de deixar buraco. */}
         <div className="relative z-10 mt-3 rounded-xl bg-black/25 p-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/70">
               Distintivos
             </span>
             <span className="tnum text-[9.5px] font-bold text-white/70">
-              {card.distintivos.length + (pro ? 1 : 0)}
+              {card.totalDistintivosConquistados}
             </span>
           </div>
-          {card.distintivos.length > 0 || pro ? (
-            <div className="flex flex-wrap gap-1.5">
-              {pro && (
-                <span
-                  title="Assinante Questly Pro"
-                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-questly-gold to-amber-300 px-2.5 py-1 text-[10px] font-bold text-[#3a2a05] ring-1 ring-white/50"
-                >
-                  <Crown size={11} strokeWidth={2.5} className="fill-current" />
-                  Assinante Pro
-                </span>
-              )}
-              {card.distintivos.map((d, i) => (
+          {pro && (
+            <span
+              title="Assinante Questly Pro"
+              className="mb-2 flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-questly-gold to-amber-300 px-2.5 py-1 text-[10px] font-bold text-[#3a2a05] ring-1 ring-white/50"
+            >
+              <Crown size={11} strokeWidth={2.5} className="fill-current" />
+              Assinante Pro
+            </span>
+          )}
+          <div className="flex items-center gap-2">
+            {Array.from({ length: MAX_DISTINTIVOS_CARD }).map((_, i) => {
+              const d = card.distintivos[i];
+              return (
                 <motion.div
-                  key={d.id}
-                  title={`${d.nome} — ${d.descricao}`}
+                  key={d?.id ?? `vaga-${i}`}
+                  title={d ? `${d.nome} — ${d.descricao}` : undefined}
                   initial={{ opacity: 0, scale: 0.6 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.05 * i, type: "spring", stiffness: 320, damping: 20 }}
-                  className="flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10"
                 >
-                  <Insignia nome={d.insignia} tom={d.tom} size={16} nua />
-                  <span className="text-[10px] font-semibold text-white">{d.nome}</span>
+                  {d ? (
+                    <Insignia nome={d.insignia} tom={d.tom} size={34} />
+                  ) : (
+                    <Insignia nome="broto" tom="prata" size={34} apagada />
+                  )}
                 </motion.div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-[10.5px] text-white/70">
+              );
+            })}
+          </div>
+          {card.totalDistintivosConquistados === 0 && (
+            <p className="mt-2 text-[10.5px] text-white/70">
               Ainda sem distintivos — responda questões pra desbloquear os primeiros.
             </p>
           )}

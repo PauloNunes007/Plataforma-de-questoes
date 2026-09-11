@@ -62,6 +62,49 @@ export function calcularDistintivos(ctx: DistintivoContexto): Distintivo[] {
   }));
 }
 
+// Vagas fixas do card público (student-card-modal): antes o card crescia
+// com cada distintivo novo do aluno (flex-wrap sem limite) e virava uma
+// carta cada vez mais alta e desproporcional. Agora o card SEMPRE reserva
+// este número de vagas — o aluno escolhe o que entra (ver
+// `profiles.distintivos_selecionados`, supabase_distintivos_selecionados.sql);
+// sem escolha própria, a vaga cai pro fallback abaixo.
+export const MAX_DISTINTIVOS_CARD = 5;
+
+// Ids válidos pra validar a escolha do aluno no servidor (nunca confiar no
+// array que o cliente manda).
+export const IDS_DISTINTIVOS = DEFINICOES.map((d) => d.id);
+
+// Escolhe os distintivos que aparecem no card público: os IDs que o aluno
+// selecionou, na ordem escolhida, restritos aos que ele de fato conquistou
+// (a conquista pode ter sido perdida, ou o id ser de uma definição
+// removida), até MAX_DISTINTIVOS_CARD. Sem seleção própria (null/vazio) ou
+// se nada da seleção sobreviveu à validação, cai no mesmo resumo automático
+// que a linha do ranking usa (`distintivosResumo`), só com mais vagas.
+export function distintivosParaCard(
+  distintivos: Distintivo[],
+  selecionados: string[] | null | undefined,
+): Distintivo[] {
+  const conquistadosPorId = new Map(distintivos.filter((d) => d.conquistado).map((d) => [d.id, d]));
+  if (selecionados && selecionados.length > 0) {
+    const escolhidos = selecionados
+      .map((id) => conquistadosPorId.get(id))
+      .filter((d): d is Distintivo => Boolean(d))
+      .slice(0, MAX_DISTINTIVOS_CARD);
+    if (escolhidos.length > 0) return escolhidos;
+  }
+  // distintivosResumo pede um DistintivoContexto pra recalcular "atingiu" —
+  // aqui já temos os `Distintivo` prontos, então aplica a mesma
+  // ORDEM_CATEGORIA (mais impressionante por categoria) direto sobre o que
+  // já está conquistado, sem recomputar nada.
+  const porCategoria = new Map<string, Distintivo>();
+  for (const [id, d] of conquistadosPorId) {
+    porCategoria.set(id.split("-")[0], d);
+  }
+  return ORDEM_CATEGORIA.map((c) => porCategoria.get(c))
+    .filter((d): d is Distintivo => Boolean(d))
+    .slice(0, MAX_DISTINTIVOS_CARD);
+}
+
 // Resumo p/ linhas de lista (coluna "Conquistas" do ranking): em vez das
 // 12 definições completas, mostra só o distintivo mais alto de cada
 // categoria (streak-3/7/30 vira só o de streak mais alto conquistado),
