@@ -1,0 +1,3118 @@
+[
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Massa atômica média e abundância isotópica",
+    "dificuldade": "dificil",
+    "enunciado": "O boro natural é uma mistura de $^{10}\\text{B}$ (massa $10{,}013$ u) e $^{11}\\text{B}$ (massa $11{,}009$ u), e sua massa atômica tabelada é $10{,}81$ u. Determine a abundância do isótopo $^{11}\\text{B}$.",
+    "alternativas": {
+      "a": "$20{,}0\\%$",
+      "b": "$80{,}0\\%$",
+      "c": "$75{,}0\\%$",
+      "d": "$50{,}0\\%$",
+      "e": "$60{,}0\\%$"
+    },
+    "gabarito": "b",
+    "resolucao": "Seja $x$ a fração de $^{11}\\text{B}$; a de $^{10}\\text{B}$ é $1-x$. A massa média é a média ponderada pelas abundâncias: $11{,}009x+10{,}013(1-x)=10{,}81$. Desenvolvendo, $10{,}013+0{,}996x=10{,}81$, logo $x=\\dfrac{0{,}797}{0{,}996}=0{,}800$, ou seja, $80{,}0\\%$. A verificação rápida é notar que $10{,}81$ está muito mais perto de $11{,}009$ do que de $10{,}013$, de modo que o isótopo pesado tem de ser o majoritário — quem responde $20\\%$ inverteu a ponderação.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Espectrometria de massas e padrão isotópico",
+    "dificuldade": "dificil",
+    "enunciado": "O cloro natural contém $75\\%$ de $^{35}\\text{Cl}$ e $25\\%$ de $^{37}\\text{Cl}$. No espectro de massas do $\\text{Cl}_2$ aparecem três picos, em $m/z$ iguais a $70$, $72$ e $74$. Determine a razão entre suas intensidades, nessa ordem.",
+    "alternativas": {
+      "a": "$3:1:0$",
+      "b": "$1:2:1$",
+      "c": "$9:6:1$",
+      "d": "$9:3:1$",
+      "e": "$6:9:1$"
+    },
+    "gabarito": "c",
+    "resolucao": "Cada molécula tem dois átomos sorteados independentemente. O pico $70$ exige dois $^{35}\\text{Cl}$: $0{,}75^2=0{,}5625$. O pico $74$ exige dois $^{37}\\text{Cl}$: $0{,}25^2=0{,}0625$. O pico $72$ é misto e pode ocorrer de duas maneiras ($^{35}\\text{Cl}{-}^{37}\\text{Cl}$ e $^{37}\\text{Cl}{-}^{35}\\text{Cl}$): $2\\cdot 0{,}75\\cdot 0{,}25=0{,}375$. Dividindo tudo por $0{,}0625$ obtém-se $9:6:1$. O erro típico é esquecer o fator $2$ do pico misto e concluir $9:3:1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Lei das proporções múltiplas",
+    "dificuldade": "dificil",
+    "enunciado": "Dois óxidos de nitrogênio contêm, em massa, $63{,}6\\%$ e $46{,}7\\%$ de nitrogênio. Calcule a razão entre as massas de oxigênio combinadas com uma mesma massa de nitrogênio nos dois compostos (segundo composto em relação ao primeiro).",
+    "alternativas": {
+      "a": "$1:2$",
+      "b": "$3:2$",
+      "c": "$1:1$",
+      "d": "$2:1$",
+      "e": "$4:3$"
+    },
+    "gabarito": "d",
+    "resolucao": "Fixe $100$ g de cada composto. No primeiro há $63{,}6$ g de $\\text{N}$ para $36{,}4$ g de $\\text{O}$, isto é, $\\dfrac{36{,}4}{63{,}6}=0{,}572$ g de $\\text{O}$ por grama de $\\text{N}$. No segundo, $\\dfrac{53{,}3}{46{,}7}=1{,}141$ g de $\\text{O}$ por grama de $\\text{N}$. A razão é $\\dfrac{1{,}141}{0{,}572}\\approx 2$. Números inteiros pequenos como esse são exatamente o que enunciou a lei das proporções múltiplas de Dalton — os compostos são $\\text{N}_2\\text{O}$ e $\\text{NO}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Experimento de Rutherford",
+    "dificuldade": "medio",
+    "enunciado": "No experimento da folha de ouro, praticamente todas as partículas $\\alpha$ atravessaram a lâmina sem desvio, mas uma fração ínfima retrocedeu em ângulos maiores que $90^{\\circ}$. Se o modelo de Thomson (esfera de carga positiva difusa) estivesse correto, o resultado esperado seria:",
+    "alternativas": {
+      "a": "somente desvios muito pequenos",
+      "b": "retrocesso da maior parte do feixe",
+      "c": "absorção total das partículas",
+      "d": "desvios idênticos para todas elas",
+      "e": "emissão de elétrons pela folha"
+    },
+    "gabarito": "a",
+    "resolucao": "Com a carga positiva diluída por todo o volume do átomo, o campo elétrico sentido pela partícula $\\alpha$ em qualquer trajetória seria fraco e aproximadamente compensado de todos os lados, produzindo apenas pequenas deflexões acumuladas. O retrocesso observado exige uma concentração de carga positiva e de massa num volume minúsculo, capaz de exercer uma força intensa num único encontro — o núcleo. A raridade do evento informa, além disso, que esse núcleo ocupa uma fração desprezível da área da folha.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Efeito fotoelétrico: energia cinética do elétron",
+    "dificuldade": "dificil",
+    "enunciado": "A função trabalho do sódio metálico é $2{,}28$ eV. Incidindo sobre ele luz de comprimento de onda $400$ nm, determine a energia cinética máxima dos elétrons emitidos. Use $\\lambda(\\text{nm})=\\dfrac{1240}{E(\\text{eV})}$.",
+    "alternativas": {
+      "a": "$1{,}24$ eV",
+      "b": "$0{,}82$ eV",
+      "c": "$2{,}28$ eV",
+      "d": "$5{,}38$ eV",
+      "e": "$0{,}41$ eV"
+    },
+    "gabarito": "b",
+    "resolucao": "Primeiro converta o comprimento de onda em energia de fóton: $E=\\dfrac{1240}{400}=3{,}10$ eV. A equação de Einstein para o efeito fotoelétrico dá $E_c=h\\nu-\\Phi=3{,}10-2{,}28=0{,}82$ eV. Note que a energia do fóton se reparte em duas parcelas: a mínima necessária para arrancar o elétron do metal ($\\Phi$) e o excedente, que aparece como energia cinética. Aumentar a intensidade da luz aumentaria o número de elétrons emitidos, não essa energia.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Efeito fotoelétrico: comprimento de onda limiar",
+    "dificuldade": "dificil",
+    "enunciado": "Um metal tem função trabalho de $4{,}50$ eV. Determine o maior comprimento de onda capaz de provocar emissão fotoelétrica nesse metal, usando $\\lambda(\\text{nm})=\\dfrac{1240}{E(\\text{eV})}$.",
+    "alternativas": {
+      "a": "$248$ nm",
+      "b": "$310$ nm",
+      "c": "$276$ nm",
+      "d": "$205$ nm",
+      "e": "$551$ nm"
+    },
+    "gabarito": "c",
+    "resolucao": "O limiar corresponde a elétrons emitidos com energia cinética nula, isto é, fóton com energia exatamente igual à função trabalho: $E=4{,}50$ eV. Então $\\lambda=\\dfrac{1240}{4{,}50}\\approx 276$ nm, na região do ultravioleta. Qualquer comprimento de onda maior que esse carrega fótons menos energéticos e não produz corrente alguma, por mais intenso que seja o feixe — foi justamente essa independência em relação à intensidade que derrubou a descrição puramente ondulatória da luz.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Contagem de fótons de uma fonte luminosa",
+    "dificuldade": "dificil",
+    "enunciado": "Um laser de hélio-neônio emite luz de $633$ nm com potência de $5{,}0$ mW. Calcule o número de fótons emitidos em $1{,}0$ s. Use $hc=1{,}986\\times 10^{-25}$ J·m.",
+    "alternativas": {
+      "a": "$3{,}1\\times 10^{16}$",
+      "b": "$1{,}6\\times 10^{16}$",
+      "c": "$1{,}6\\times 10^{19}$",
+      "d": "$8{,}0\\times 10^{15}$",
+      "e": "$3{,}2\\times 10^{17}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A energia de um fóton é $E=\\dfrac{hc}{\\lambda}=\\dfrac{1{,}986\\times 10^{-25}}{6{,}33\\times 10^{-7}}=3{,}14\\times 10^{-19}$ J. Em $1{,}0$ s o laser entrega $5{,}0\\times 10^{-3}$ J. O número de fótons é o quociente entre a energia total e a energia de cada um: $N=\\dfrac{5{,}0\\times 10^{-3}}{3{,}14\\times 10^{-19}}\\approx 1{,}6\\times 10^{16}$. O valor enorme explica por que a granularidade da luz passa despercebida em experimentos macroscópicos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Limite da série de Balmer",
+    "dificuldade": "dificil",
+    "enunciado": "No átomo de hidrogênio ($E_n=-\\dfrac{13{,}6}{n^2}$ eV), determine o menor comprimento de onda da série de Balmer, isto é, o limite das transições que terminam em $n=2$. Use $\\lambda(\\text{nm})=\\dfrac{1240}{E(\\text{eV})}$.",
+    "alternativas": {
+      "a": "$656$ nm",
+      "b": "$365$ nm",
+      "c": "$91$ nm",
+      "d": "$122$ nm",
+      "e": "$486$ nm"
+    },
+    "gabarito": "b",
+    "resolucao": "O menor comprimento de onda corresponde à maior energia liberada, ou seja, à transição que parte do nível mais alto possível, $n\\to\\infty$. Nesse caso $\\Delta E=0-\\left(-\\dfrac{13{,}6}{2^2}\\right)=3{,}40$ eV. Logo $\\lambda=\\dfrac{1240}{3{,}40}\\approx 365$ nm. Esse é o ponto onde as linhas da série se acumulam e se fundem no contínuo; $91$ nm seria o limite análogo da série de Lyman, que termina em $n=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Íons hidrogenoides e dependência em Z",
+    "dificuldade": "dificil",
+    "enunciado": "Para íons com um único elétron vale $E_n=-13{,}6\\,\\dfrac{Z^2}{n^2}$ eV. Determine a energia necessária para arrancar o elétron do íon $\\text{He}^{+}$ em seu estado fundamental.",
+    "alternativas": {
+      "a": "$13{,}6$ eV",
+      "b": "$27{,}2$ eV",
+      "c": "$6{,}8$ eV",
+      "d": "$54{,}4$ eV",
+      "e": "$108{,}8$ eV"
+    },
+    "gabarito": "d",
+    "resolucao": "Para o $\\text{He}^{+}$ tem-se $Z=2$ e estado fundamental $n=1$, portanto $E_1=-13{,}6\\cdot\\dfrac{4}{1}=-54{,}4$ eV. A ionização leva o elétron a $E_\\infty=0$, de modo que a energia exigida é $0-(-54{,}4)=54{,}4$ eV — quatro vezes a do hidrogênio, porque a energia escala com $Z^2$. Responder $27{,}2$ eV corresponde ao erro de escalar linearmente com $Z$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Comprimento de onda de de Broglie do nêutron",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule o comprimento de onda de de Broglie de um nêutron térmico que se move a $2{,}2\\times 10^{3}$ m/s. Use $h=6{,}626\\times 10^{-34}$ J·s e $m_n=1{,}675\\times 10^{-27}$ kg.",
+    "alternativas": {
+      "a": "$1{,}8\\times 10^{-7}$ m",
+      "b": "$1{,}8\\times 10^{-10}$ m",
+      "c": "$3{,}6\\times 10^{-10}$ m",
+      "d": "$9{,}0\\times 10^{-11}$ m",
+      "e": "$1{,}8\\times 10^{-13}$ m"
+    },
+    "gabarito": "b",
+    "resolucao": "O momento linear vale $p=mv=\\left(1{,}675\\times 10^{-27}\\right)\\left(2{,}2\\times 10^{3}\\right)=3{,}69\\times 10^{-24}$ kg·m/s. Então $\\lambda=\\dfrac{h}{p}=\\dfrac{6{,}626\\times 10^{-34}}{3{,}69\\times 10^{-24}}\\approx 1{,}8\\times 10^{-10}$ m. O resultado é da ordem das distâncias interatômicas de um cristal, e é por isso que nêutrons lentos servem de sonda de difração para determinar estruturas — inclusive posições de átomos leves, que os raios X enxergam mal.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Princípio da incerteza de Heisenberg",
+    "dificuldade": "dificil",
+    "enunciado": "Um elétron está confinado numa região de dimensão $1{,}0\\times 10^{-10}$ m. Usando $\\Delta x\\cdot m\\,\\Delta v\\ge\\dfrac{h}{4\\pi}$, com $h=6{,}626\\times 10^{-34}$ J·s e $m_e=9{,}11\\times 10^{-31}$ kg, estime a incerteza mínima em sua velocidade.",
+    "alternativas": {
+      "a": "$5{,}8\\times 10^{6}$ m/s",
+      "b": "$1{,}2\\times 10^{6}$ m/s",
+      "c": "$2{,}9\\times 10^{5}$ m/s",
+      "d": "$5{,}8\\times 10^{5}$ m/s",
+      "e": "$5{,}8\\times 10^{4}$ m/s"
+    },
+    "gabarito": "d",
+    "resolucao": "Isolando, $\\Delta v\\ge\\dfrac{h}{4\\pi m\\,\\Delta x}=\\dfrac{6{,}626\\times 10^{-34}}{4\\pi\\left(9{,}11\\times 10^{-31}\\right)\\left(1{,}0\\times 10^{-10}\\right)}$. O denominador vale $1{,}14\\times 10^{-39}$, de modo que $\\Delta v\\approx 5{,}8\\times 10^{5}$ m/s. A incerteza é comparável à própria velocidade típica do elétron no átomo: falar em trajetória bem definida para ele não tem sentido físico, e é esse o motivo pelo qual o orbital substitui a órbita de Bohr.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Conjuntos de números quânticos permitidos",
+    "dificuldade": "medio",
+    "enunciado": "Considerando as restrições entre os números quânticos $\\left(n,\\ell,m_\\ell,m_s\\right)$, qual conjunto abaixo é impossível?",
+    "alternativas": {
+      "a": "$\\left(3,\\,2,\\,-2,\\,+\\tfrac{1}{2}\\right)$",
+      "b": "$\\left(4,\\,0,\\,0,\\,-\\tfrac{1}{2}\\right)$",
+      "c": "$\\left(2,\\,1,\\,+1,\\,-\\tfrac{1}{2}\\right)$",
+      "d": "$\\left(3,\\,3,\\,0,\\,+\\tfrac{1}{2}\\right)$",
+      "e": "$\\left(5,\\,4,\\,-3,\\,+\\tfrac{1}{2}\\right)$"
+    },
+    "gabarito": "d",
+    "resolucao": "As regras são $\\ell=0,1,\\dots,n-1$ e $m_\\ell=-\\ell,\\dots,+\\ell$, com $m_s=\\pm\\tfrac12$. No conjunto $\\left(3,3,0,+\\tfrac12\\right)$ tem-se $\\ell=n$, o que viola a primeira regra: com $n=3$ o máximo é $\\ell=2$ (subnível $3d$). Todos os demais respeitam as três condições — inclusive $\\left(5,4,-3,+\\tfrac12\\right)$, que descreve um elétron $5g$, subnível que existe formalmente ainda que não seja ocupado nos átomos do estado fundamental conhecidos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Nós radiais e angulares de um orbital",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de nós radiais de um orbital $5p$ de um átomo hidrogenoide, lembrando que o número total de nós é $n-1$ e que $\\ell$ deles são angulares.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$2$",
+      "c": "$3$",
+      "d": "$1$",
+      "e": "$5$"
+    },
+    "gabarito": "c",
+    "resolucao": "Para o orbital $5p$ tem-se $n=5$ e $\\ell=1$. O número total de nós é $n-1=4$, dos quais $\\ell=1$ é angular (o plano nodal que separa os dois lóbulos do orbital $p$). Restam $n-\\ell-1=5-1-1=3$ nós radiais, isto é, três superfícies esféricas onde a densidade de probabilidade se anula. O número de nós radiais cresce com $n$ dentro de um mesmo subnível e é o que empurra a densidade eletrônica para longe do núcleo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Penetração e blindagem em átomos polieletrônicos",
+    "dificuldade": "dificil",
+    "enunciado": "Num átomo polieletrônico observa-se $E_{3s}<E_{3p}<E_{3d}$, embora no hidrogênio os três subníveis tenham a mesma energia. A causa dessa separação é:",
+    "alternativas": {
+      "a": "maior número de nós angulares do $s$",
+      "b": "repulsão entre elétrons de mesmo spin",
+      "c": "diferença de momento angular de spin",
+      "d": "maior penetração dos orbitais $s$",
+      "e": "aumento da carga nuclear com $\\ell$"
+    },
+    "gabarito": "d",
+    "resolucao": "A função de distribuição radial do orbital $3s$ apresenta pequenos máximos muito próximos do núcleo, região onde os elétrons internos não conseguem blindar a carga nuclear. O elétron $3s$ portanto \"vê\" uma carga nuclear efetiva maior e fica mais estabilizado. O orbital $3p$ penetra menos, e o $3d$, com dois nós angulares, é praticamente expulso da vizinhança do núcleo. Como no hidrogênio não há outros elétrons para blindar, o efeito desaparece e a energia depende apenas de $n$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Exceções à ordem de preenchimento",
+    "dificuldade": "medio",
+    "enunciado": "Escreva a configuração eletrônica do átomo de cromo ($Z=24$) em seu estado fundamental.",
+    "alternativas": {
+      "a": "$[\\text{Ar}]3d^{5}4s^{1}$",
+      "b": "$[\\text{Ar}]3d^{4}4s^{2}$",
+      "c": "$[\\text{Ar}]3d^{6}$",
+      "d": "$[\\text{Ar}]3d^{3}4s^{2}4p^{1}$",
+      "e": "$[\\text{Ar}]3d^{5}4s^{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A regra de Aufbau prevê $[\\text{Ar}]3d^{4}4s^{2}$, mas os subníveis $4s$ e $3d$ têm energias muito próximas, e a configuração observada é $[\\text{Ar}]3d^{5}4s^{1}$. A promoção de um elétron $4s$ para o $3d$ é compensada pela estabilidade extra do subnível $d$ semipreenchido, com cinco elétrons de spins paralelos em orbitais distintos, que minimiza a repulsão elétron-elétron. O cobre exibe a mesma anomalia, alcançando o $3d$ completo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Configuração eletrônica de cátion de metal de transição",
+    "dificuldade": "dificil",
+    "enunciado": "Escreva a configuração eletrônica do íon $\\text{Cu}^{2+}$, sabendo que $Z=29$.",
+    "alternativas": {
+      "a": "$[\\text{Ar}]3d^{7}4s^{2}$",
+      "b": "$[\\text{Ar}]3d^{10}$",
+      "c": "$[\\text{Ar}]3d^{9}$",
+      "d": "$[\\text{Ar}]3d^{8}4s^{1}$",
+      "e": "$[\\text{Ar}]3d^{10}4s^{1}$"
+    },
+    "gabarito": "c",
+    "resolucao": "O cobre neutro é uma das exceções do bloco $d$: $[\\text{Ar}]3d^{10}4s^{1}$. Na formação de cátions de metais de transição, os elétrons saem primeiro do subnível de maior número quântico principal, o $4s$, e só então do $3d$ — ao contrário da ordem de preenchimento. Retirando o único elétron $4s$ e um elétron $3d$, resta $[\\text{Ar}]3d^{9}$, configuração com um elétron desemparelhado que explica o paramagnetismo e a cor azul dos sais de $\\text{Cu}^{2+}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Elétrons desemparelhados e paramagnetismo",
+    "dificuldade": "medio",
+    "enunciado": "Determine o número de elétrons desemparelhados no íon $\\text{Co}^{2+}$ em campo fraco, sabendo que o cobalto tem $Z=27$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$7$",
+      "c": "$3$",
+      "d": "$2$",
+      "e": "$0$"
+    },
+    "gabarito": "c",
+    "resolucao": "O cobalto neutro é $[\\text{Ar}]3d^{7}4s^{2}$; o cátion $\\text{Co}^{2+}$ perde os dois elétrons $4s$ e fica $[\\text{Ar}]3d^{7}$. Distribuindo sete elétrons nos cinco orbitais $d$ segundo a regra de Hund, ocupa-se primeiro cada orbital com um elétron (cinco elétrons paralelos) e os dois restantes emparelham-se em dois desses orbitais. Sobram três orbitais com elétron isolado, logo três elétrons desemparelhados — a espécie é paramagnética.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Carga nuclear efetiva pelas regras de Slater",
+    "dificuldade": "dificil",
+    "enunciado": "Estime a carga nuclear efetiva sentida pelo elétron $3s$ do sódio ($Z=11$), usando as regras de Slater: elétrons da camada $n-1$ blindam $0{,}85$ cada e os das camadas mais internas, $1{,}00$ cada.",
+    "alternativas": {
+      "a": "$1{,}0$",
+      "b": "$8{,}8$",
+      "c": "$2{,}2$",
+      "d": "$3{,}2$",
+      "e": "$11{,}0$"
+    },
+    "gabarito": "c",
+    "resolucao": "A configuração é $1s^{2}2s^{2}2p^{6}3s^{1}$. Para o elétron $3s$ não há outro elétron no mesmo grupo; os oito elétrons da camada $n=2$ contribuem com $8\\times 0{,}85=6{,}8$ e os dois da camada $n=1$ com $2\\times 1{,}00=2{,}0$. A constante de blindagem é $S=8{,}8$ e $Z_{\\text{ef}}=11-8{,}8=2{,}2$. O valor muito abaixo de $Z$ mostra por que o elétron de valência do sódio é tão fracamente preso — daí a baixíssima energia de ionização do grupo 1.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Raio iônico em série isoeletrônica",
+    "dificuldade": "dificil",
+    "enunciado": "Ordene em ordem crescente de raio as espécies isoeletrônicas $\\text{N}^{3-}$, $\\text{O}^{2-}$, $\\text{F}^{-}$, $\\text{Na}^{+}$ e $\\text{Mg}^{2+}$.",
+    "alternativas": {
+      "a": "$\\text{N}^{3-}<\\text{O}^{2-}<\\text{F}^{-}<\\text{Na}^{+}<\\text{Mg}^{2+}$",
+      "b": "$\\text{F}^{-}<\\text{O}^{2-}<\\text{N}^{3-}<\\text{Na}^{+}<\\text{Mg}^{2+}$",
+      "c": "$\\text{Na}^{+}<\\text{Mg}^{2+}<\\text{F}^{-}<\\text{N}^{3-}<\\text{O}^{2-}$",
+      "d": "$\\text{Mg}^{2+}<\\text{Na}^{+}<\\text{F}^{-}<\\text{O}^{2-}<\\text{N}^{3-}$",
+      "e": "$\\text{O}^{2-}<\\text{N}^{3-}<\\text{F}^{-}<\\text{Mg}^{2+}<\\text{Na}^{+}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Todas as cinco espécies têm $10$ elétrons, portanto a mesma blindagem; o que muda é a carga nuclear: $7$, $8$, $9$, $11$ e $12$. Quanto maior $Z$, mais fortemente a mesma nuvem de dez elétrons é puxada e menor o raio. Assim o $\\text{Mg}^{2+}$ ($Z=12$) é o menor e o $\\text{N}^{3-}$ ($Z=7$) é o maior. Em série isoeletrônica o raio decresce monotonicamente com o número atômico, e não com a carga do íon tomada isoladamente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Salto entre energias de ionização sucessivas",
+    "dificuldade": "dificil",
+    "enunciado": "Entre os elementos $\\text{Na}$, $\\text{Mg}$, $\\text{Al}$, $\\text{Si}$ e $\\text{P}$, qual apresenta a maior razão entre a segunda e a primeira energias de ionização?",
+    "alternativas": {
+      "a": "$\\text{Mg}$",
+      "b": "$\\text{Al}$",
+      "c": "$\\text{Si}$",
+      "d": "$\\text{Na}$",
+      "e": "$\\text{P}$"
+    },
+    "gabarito": "d",
+    "resolucao": "A primeira ionização do sódio retira seu único elétron de valência, deixando o íon $\\text{Na}^{+}$ com a configuração estável do neônio. A segunda ionização teria de romper esse cerne de gás nobre, o que custa quase dez vezes mais. Nos demais elementos a segunda remoção ainda ocorre na camada de valência e o salto é modesto. O padrão é geral: o pulo abrupto acontece sempre logo depois de esvaziada a camada de valência, e serve para identificar o grupo do elemento.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Identificação de grupo por energias de ionização",
+    "dificuldade": "dificil",
+    "enunciado": "Um elemento do terceiro período apresenta energias de ionização sucessivas, em kJ/mol, iguais a $738$, $1451$, $7733$, $10\\,540$ e $13\\,630$. Determine o grupo a que ele pertence na tabela periódica.",
+    "alternativas": {
+      "a": "grupo $1$",
+      "b": "grupo $13$",
+      "c": "grupo $2$",
+      "d": "grupo $14$",
+      "e": "grupo $15$"
+    },
+    "gabarito": "c",
+    "resolucao": "A sequência cresce suavemente de $738$ para $1451$ e então salta mais de cinco vezes, para $7733$. Isso indica que os dois primeiros elétrons pertencem à camada de valência e o terceiro já vem do cerne de gás nobre. Um elemento com exatamente dois elétrons de valência está no grupo $2$ — trata-se do magnésio. Se fosse do grupo $13$, o salto apareceria entre a terceira e a quarta ionizações.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Anomalia da afinidade eletrônica do flúor",
+    "dificuldade": "dificil",
+    "enunciado": "A afinidade eletrônica do cloro ($-349$ kJ/mol) é mais negativa que a do flúor ($-328$ kJ/mol), contrariando a tendência de grupo. A explicação aceita é:",
+    "alternativas": {
+      "a": "forte repulsão no pequeno orbital $2p$",
+      "b": "maior eletronegatividade do cloro",
+      "c": "menor carga nuclear efetiva do cloro",
+      "d": "maior energia de ligação do $\\text{F}_2$",
+      "e": "ausência de orbitais $d$ no flúor"
+    },
+    "gabarito": "a",
+    "resolucao": "O átomo de flúor é muito pequeno, e seus sete elétrons de valência já se amontoam num orbital $2p$ compacto. O elétron adicional entra nessa mesma região e sofre repulsão intereletrônica intensa, que cancela parte da estabilização obtida. No cloro, os orbitais $3p$ são mais difusos, a densidade eletrônica se acomoda melhor e o ganho líquido é maior. O mesmo efeito faz o oxigênio ter afinidade menos negativa que o enxofre — e não tem relação com a eletronegatividade, em que o flúor lidera.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Contração lantanídica",
+    "dificuldade": "dificil",
+    "enunciado": "O zircônio ($Z=40$) e o háfnio ($Z=72$) têm raios atômicos praticamente iguais, apesar de o háfnio estar um período abaixo. Esse fato é atribuído:",
+    "alternativas": {
+      "a": "à contração dos orbitais $6s$ por efeito relativístico exclusivo",
+      "b": "ao maior número de elétrons desemparelhados do háfnio",
+      "c": "à ausência de elétrons $d$ no háfnio",
+      "d": "à repulsão entre os elétrons de valência do zircônio",
+      "e": "à blindagem ineficiente dos orbitais $4f$"
+    },
+    "gabarito": "e",
+    "resolucao": "Entre o lantânio e o háfnio intercalam-se os catorze lantanídeos, que acrescentam catorze prótons ao núcleo e catorze elétrons a orbitais $4f$. Como os orbitais $f$ são muito difusos e pouco penetrantes, blindam mal a carga nuclear: o aumento de $Z_{\\text{ef}}$ sentido pelos elétrons externos comprime o átomo e cancela o aumento de raio esperado pela mudança de período. Em consequência, zircônio e háfnio têm química tão parecida que sua separação industrial é notoriamente difícil.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Caráter metálico ao longo de um período",
+    "dificuldade": "medio",
+    "enunciado": "Ao percorrer o terceiro período do sódio ao cloro, observa-se que o caráter metálico dos elementos e o caráter básico de seus óxidos:",
+    "alternativas": {
+      "a": "ambos diminuem",
+      "b": "ambos aumentam",
+      "c": "ambos se mantêm",
+      "d": "só o metálico aumenta",
+      "e": "só o básico aumenta"
+    },
+    "gabarito": "a",
+    "resolucao": "Da esquerda para a direita a carga nuclear efetiva cresce e o raio diminui, de modo que os elétrons de valência ficam cada vez mais presos: a tendência de ceder elétrons — a essência do caráter metálico — cai. Os óxidos acompanham: $\\text{Na}_2\\text{O}$ e $\\text{MgO}$ são nitidamente básicos, $\\text{Al}_2\\text{O}_3$ é anfótero e $\\text{SO}_3$ e $\\text{Cl}_2\\text{O}_7$ reagem com água formando ácidos fortes. As duas propriedades caminham juntas porque têm a mesma origem eletrônica.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Reatividade dos metais alcalinos",
+    "dificuldade": "medio",
+    "enunciado": "A reação dos metais alcalinos com água torna-se progressivamente mais violenta de lítio para césio. A razão dessa tendência é:",
+    "alternativas": {
+      "a": "a queda da primeira energia de ionização",
+      "b": "o aumento da eletronegatividade",
+      "c": "o aumento da carga nuclear efetiva",
+      "d": "a diminuição do raio atômico",
+      "e": "o aumento da afinidade eletrônica"
+    },
+    "gabarito": "a",
+    "resolucao": "Descendo o grupo $1$, o elétron de valência ocupa camadas cada vez mais externas e é blindado por um número crescente de elétrons internos, o que reduz a energia necessária para arrancá-lo. Como a etapa determinante da reação é justamente a oxidação do metal, $\\text{M}\\rightarrow\\text{M}^{+}+e^{-}$, a reação com água fica mais fácil e mais exotérmica. Raio atômico e eletronegatividade variam no sentido oposto ao afirmado nos distratores.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Poder oxidante dos halogênios",
+    "dificuldade": "dificil",
+    "enunciado": "Borbulhando $\\text{Cl}_2$ numa solução de $\\text{KBr}$ observa-se o aparecimento de uma coloração alaranjada, mas nada acontece ao borbulhar $\\text{Br}_2$ numa solução de $\\text{KCl}$. Esse par de observações mostra que:",
+    "alternativas": {
+      "a": "o brometo é o redutor mais fraco",
+      "b": "o brometo é o oxidante mais forte",
+      "c": "o cloreto é o redutor mais forte",
+      "d": "os dois halogênios têm poder oxidante igual",
+      "e": "o cloro é o oxidante mais forte"
+    },
+    "gabarito": "e",
+    "resolucao": "A cor alaranjada denuncia a formação de $\\text{Br}_2$: o cloro arrancou elétrons do brometo, $\\text{Cl}_2+2\\text{Br}^{-}\\rightarrow 2\\text{Cl}^{-}+\\text{Br}_2$. Como a reação inversa não acontece, o cloro tem maior tendência a se reduzir, isto é, é o oxidante mais forte. Isso reflete a diminuição do poder oxidante ao descer o grupo $17$, acompanhando a queda da afinidade eletrônica efetiva e o aumento do raio — o flúor é o extremo superior dessa escala.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Reatividade dos gases nobres",
+    "dificuldade": "dificil",
+    "enunciado": "Compostos como $\\text{XeF}_4$ são conhecidos desde 1962, mas não existem compostos análogos de hélio ou neônio. A explicação está em que, no xenônio:",
+    "alternativas": {
+      "a": "a camada de valência está incompleta",
+      "b": "a afinidade eletrônica é muito negativa",
+      "c": "a eletronegatividade é maior",
+      "d": "a energia de ionização é bem menor",
+      "e": "o raio atômico é menor"
+    },
+    "gabarito": "d",
+    "resolucao": "Todos os gases nobres têm a camada de valência completa, mas o xenônio é grande e seus elétrons $5p$ estão longe do núcleo e bem blindados: sua primeira energia de ionização ($1170$ kJ/mol) é comparável à do oxigênio, baixa o bastante para que oxidantes muito agressivos como o flúor consigam formar ligações reais com ele. Hélio e neônio, minúsculos, têm energias de ionização de $2372$ e $2081$ kJ/mol, inatingíveis por qualquer reagente químico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Ponto de fusão ao longo do terceiro período",
+    "dificuldade": "dificil",
+    "enunciado": "No terceiro período, o silício apresenta ponto de fusão muito superior ao do sódio, do fósforo e do enxofre. A causa desse máximo é:",
+    "alternativas": {
+      "a": "a ligação metálica mais forte do período",
+      "b": "a alta polaridade das ligações $\\text{Si}-\\text{Si}$",
+      "c": "as ligações de hidrogênio entre as moléculas",
+      "d": "a maior massa molar entre os cinco elementos",
+      "e": "a rede covalente tridimensional"
+    },
+    "gabarito": "e",
+    "resolucao": "No silício cada átomo se liga covalentemente a outros quatro num arranjo tetraédrico que se estende por todo o cristal, como no diamante. Fundir esse sólido significa romper ligações covalentes, o que exige temperaturas altíssimas. O sódio é um metal de ligação relativamente fraca, e fósforo e enxofre formam sólidos moleculares ($\\text{P}_4$ e $\\text{S}_8$) mantidos apenas por forças de dispersão. Ligação $\\text{Si}-\\text{Si}$ é apolar, e não há hidrogênio envolvido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Contagem de partículas subatômicas em amostra macroscópica",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de nêutrons contidos em $0{,}50$ mol do isótopo $^{13}\\text{C}$. Use $N_A=6{,}02\\times 10^{23}$ mol$^{-1}$.",
+    "alternativas": {
+      "a": "$3{,}0\\times 10^{24}$",
+      "b": "$1{,}8\\times 10^{24}$",
+      "c": "$4{,}2\\times 10^{24}$",
+      "d": "$2{,}1\\times 10^{23}$",
+      "e": "$2{,}1\\times 10^{24}$"
+    },
+    "gabarito": "e",
+    "resolucao": "O carbono tem $Z=6$, logo o isótopo de número de massa $13$ possui $13-6=7$ nêutrons por átomo. Em $0{,}50$ mol há $0{,}50\\times 6{,}02\\times 10^{23}=3{,}01\\times 10^{23}$ átomos. Multiplicando, $3{,}01\\times 10^{23}\\times 7\\approx 2{,}1\\times 10^{24}$ nêutrons. O erro mais comum é usar $13$ (número de massa) em vez de $7$, o que daria $3{,}9\\times 10^{24}$, ou esquecer o fator $0{,}50$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Energia de radiação por mol de fótons",
+    "dificuldade": "dificil",
+    "enunciado": "Lâmpadas germicidas emitem radiação ultravioleta de $254$ nm. Calcule a energia correspondente a um mol desses fótons, usando $\\lambda(\\text{nm})=\\dfrac{1240}{E(\\text{eV})}$ e $1$ eV $=96{,}5$ kJ/mol.",
+    "alternativas": {
+      "a": "$236$ kJ/mol",
+      "b": "$942$ kJ/mol",
+      "c": "$471$ kJ/mol",
+      "d": "$302$ kJ/mol",
+      "e": "$118$ kJ/mol"
+    },
+    "gabarito": "c",
+    "resolucao": "A energia de cada fóton é $E=\\dfrac{1240}{254}=4{,}88$ eV. Convertendo para base molar, $4{,}88\\times 96{,}5\\approx 471$ kJ/mol. Esse valor supera a energia típica de uma ligação $\\text{C}-\\text{C}$ ($348$ kJ/mol) e é da ordem das ligações do esqueleto do DNA: é exatamente por isso que essa radiação danifica material genético e esteriliza superfícies, enquanto a luz visível, de alguns poucos elétron-volts a menos, não o faz.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Comparação de energia entre transições eletrônicas",
+    "dificuldade": "dificil",
+    "enunciado": "No átomo de hidrogênio ($E_n=-\\dfrac{13{,}6}{n^2}$ eV), qual das transições abaixo emite o fóton de maior energia?",
+    "alternativas": {
+      "a": "$n=2\\rightarrow n=1$",
+      "b": "$n=4\\rightarrow n=2$",
+      "c": "$n=3\\rightarrow n=2$",
+      "d": "$n=5\\rightarrow n=4$",
+      "e": "$n=3\\rightarrow n=1$"
+    },
+    "gabarito": "e",
+    "resolucao": "Calcule $\\Delta E=13{,}6\\left(\\dfrac{1}{n_f^2}-\\dfrac{1}{n_i^2}\\right)$ em cada caso: $3\\to1$ dá $13{,}6\\left(1-\\tfrac19\\right)=12{,}09$ eV; $2\\to1$ dá $10{,}2$ eV; $4\\to2$ dá $2{,}55$ eV; $3\\to2$ dá $1{,}89$ eV; $5\\to4$ dá $0{,}31$ eV. Vence a transição $3\\to1$. Repare que o tamanho do salto em $n$ não decide nada — o que importa é a proximidade do nível final ao fundamental, onde os níveis estão muito mais espaçados.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Espectro de emissão de íon hidrogenoide",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o comprimento de onda do fóton emitido na transição $n=2\\rightarrow n=1$ do íon $\\text{He}^{+}$, para o qual $E_n=-13{,}6\\,\\dfrac{Z^2}{n^2}$ eV. Use $\\lambda(\\text{nm})=\\dfrac{1240}{E(\\text{eV})}$.",
+    "alternativas": {
+      "a": "$121{,}6$ nm",
+      "b": "$60{,}8$ nm",
+      "c": "$30{,}4$ nm",
+      "d": "$15{,}2$ nm",
+      "e": "$91{,}2$ nm"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $Z=2$, $\\Delta E=13{,}6\\cdot 4\\left(1-\\dfrac{1}{4}\\right)=54{,}4\\times 0{,}75=40{,}8$ eV. Logo $\\lambda=\\dfrac{1240}{40{,}8}\\approx 30{,}4$ nm. Como a energia escala com $Z^2$, o comprimento de onda encolhe pelo fator $Z^2=4$ em relação à linha correspondente do hidrogênio ($121{,}6$ nm, a primeira da série de Lyman). Responder $60{,}8$ nm corresponde a escalar apenas com $Z$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Regra de Hund e princípio da exclusão",
+    "dificuldade": "medio",
+    "enunciado": "Um estudante distribui os três elétrons $2p$ do nitrogênio colocando dois deles emparelhados num mesmo orbital e o terceiro sozinho em outro. Essa distribuição:",
+    "alternativas": {
+      "a": "viola o princípio da exclusão de Pauli",
+      "b": "viola o princípio da incerteza",
+      "c": "está correta para o estado fundamental",
+      "d": "viola o princípio de Aufbau",
+      "e": "viola a regra de Hund"
+    },
+    "gabarito": "e",
+    "resolucao": "O princípio de Pauli está respeitado, pois os dois elétrons emparelhados teriam spins opostos. O que falha é a regra de Hund: havendo orbitais degenerados disponíveis, o estado de menor energia é aquele com o maior número de spins paralelos em orbitais diferentes, porque elétrons em orbitais distintos se repelem menos. A configuração descrita corresponde, portanto, a um estado excitado; o estado fundamental do nitrogênio tem três elétrons desemparelhados.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Degenerescência de orbitais",
+    "dificuldade": "dificil",
+    "enunciado": "Comparando o átomo de hidrogênio com o de lítio, a afirmação correta sobre as energias dos orbitais $2s$ e $2p$ é:",
+    "alternativas": {
+      "a": "são diferentes no $\\text{H}$ e iguais no $\\text{Li}$",
+      "b": "são iguais no $\\text{H}$ e diferentes no $\\text{Li}$",
+      "c": "são iguais nos dois átomos",
+      "d": "são diferentes nos dois átomos",
+      "e": "o $2p$ é o mais estável nos dois átomos"
+    },
+    "gabarito": "b",
+    "resolucao": "No hidrogênio existe um único elétron e nenhuma repulsão intereletrônica: a energia depende exclusivamente de $n$, de modo que $2s$ e $2p$ são degenerados. No lítio há elétrons $1s$ que blindam o núcleo, e a blindagem é sentida de modo diferente por orbitais de penetração diferente. O $2s$, mais penetrante, experimenta maior $Z_{\\text{ef}}$ e fica abaixo do $2p$ — razão pela qual o terceiro elétron do lítio ocupa o $2s$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Anomalia de raio no bloco p",
+    "dificuldade": "dificil",
+    "enunciado": "Os raios atômicos do alumínio ($143$ pm) e do gálio ($135$ pm) contrariam a expectativa de aumento ao descer o grupo $13$. Esse comportamento decorre:",
+    "alternativas": {
+      "a": "do preenchimento dos orbitais $4f$",
+      "b": "do preenchimento dos orbitais $3d$",
+      "c": "da maior eletronegatividade do gálio",
+      "d": "do menor número de camadas do gálio",
+      "e": "da hibridização dos orbitais de valência"
+    },
+    "gabarito": "b",
+    "resolucao": "Entre o alumínio e o gálio intercala-se a primeira série de transição, que acrescenta dez prótons e dez elétrons $3d$. Os orbitais $d$ blindam mal, e a carga nuclear efetiva sentida pelos elétrons $4p$ do gálio acaba maior que a sentida pelos $3p$ do alumínio, comprimindo o átomo o suficiente para anular o ganho do período adicional. É o análogo, no bloco $p$, da contração lantanídica que aproxima zircônio e háfnio.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Exceção de energia de ionização entre grupos 15 e 16",
+    "dificuldade": "dificil",
+    "enunciado": "A primeira energia de ionização do enxofre ($1000$ kJ/mol) é menor que a do fósforo ($1012$ kJ/mol), invertendo a tendência do período. A causa é:",
+    "alternativas": {
+      "a": "a maior carga nuclear efetiva do fósforo",
+      "b": "o menor raio atômico do enxofre",
+      "c": "a maior afinidade eletrônica do fósforo",
+      "d": "a repulsão no orbital $3p$ duplamente ocupado",
+      "e": "a maior blindagem exercida pelos orbitais $3d$"
+    },
+    "gabarito": "d",
+    "resolucao": "O fósforo tem configuração $[\\text{Ne}]3s^{2}3p^{3}$, com os três orbitais $p$ semipreenchidos e nenhum par. No enxofre, $[\\text{Ne}]3s^{2}3p^{4}$, o quarto elétron é obrigado a emparelhar-se, e a repulsão entre dois elétrons no mesmo orbital eleva sua energia. Arrancá-lo custa, portanto, um pouco menos, apesar da carga nuclear maior. A mesma inversão aparece entre nitrogênio e oxigênio, e entre berílio e boro por motivo análogo (mudança de subnível).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Espectro de linhas e quantização",
+    "dificuldade": "medio",
+    "enunciado": "A lâmpada de vapor de sódio emite um espectro formado por linhas estreitas e bem definidas, e não por um contínuo de cores. Essa observação evidencia que:",
+    "alternativas": {
+      "a": "os elétrons giram em órbitas circulares",
+      "b": "os fótons têm massa de repouso nula",
+      "c": "o sódio possui um só elétron de valência",
+      "d": "as energias eletrônicas são quantizadas",
+      "e": "a temperatura do gás é muito elevada"
+    },
+    "gabarito": "d",
+    "resolucao": "Cada linha corresponde a fótons de uma única energia, $\\Delta E=h\\nu$, emitidos quando o elétron passa de um estado permitido para outro. Se as energias eletrônicas pudessem assumir qualquer valor, as transições cobririam todas as energias e o espectro seria contínuo, como o de um sólido incandescente. O fato de o sódio ter um elétron de valência explica a simplicidade do espectro, mas não a sua natureza discreta.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Comparação entre raio atômico e raio iônico",
+    "dificuldade": "medio",
+    "enunciado": "O raio do íon $\\text{Cl}^{-}$ ($181$ pm) é bem maior que o do átomo de cloro ($99$ pm). A explicação correta é:",
+    "alternativas": {
+      "a": "o número de camadas aumenta em uma unidade",
+      "b": "a carga nuclear efetiva aumenta no ânion",
+      "c": "o número de prótons diminui no ânion",
+      "d": "a repulsão cresce com o mesmo número de prótons",
+      "e": "a blindagem dos elétrons internos diminui"
+    },
+    "gabarito": "d",
+    "resolucao": "O ânion tem um elétron a mais, mas exatamente os mesmos $17$ prótons. A carga nuclear disponível passa a ser repartida entre $18$ elétrons, de modo que a atração por elétron cai e a repulsão intereletrônica na camada de valência cresce: a nuvem se expande. Nenhuma camada nova é aberta — o elétron extra entra no próprio subnível $3p$. Pelo raciocínio inverso, cátions são sempre menores que os átomos que os originam.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Composição de um íon a partir do símbolo nuclear",
+    "dificuldade": "medio",
+    "enunciado": "Determine, nessa ordem, o número de prótons, nêutrons e elétrons do íon $^{56}_{26}\\text{Fe}^{3+}$.",
+    "alternativas": {
+      "a": "$26$, $30$ e $26$",
+      "b": "$26$, $26$ e $23$",
+      "c": "$23$, $30$ e $26$",
+      "d": "$26$, $30$ e $23$",
+      "e": "$26$, $56$ e $29$"
+    },
+    "gabarito": "d",
+    "resolucao": "O número atômico dá diretamente os prótons: $26$. Os nêutrons são a diferença entre o número de massa e o atômico: $56-26=30$. A carga $3+$ significa três elétrons a menos que o átomo neutro: $26-3=23$. Vale lembrar que número de massa e carga são informações independentes — a carga nunca altera a contagem de prótons ou nêutrons, apenas a de elétrons.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Eletronegatividade e tendência periódica",
+    "dificuldade": "medio",
+    "enunciado": "Entre os elementos $\\text{B}$, $\\text{N}$, $\\text{O}$, $\\text{Al}$ e $\\text{S}$, qual apresenta a maior eletronegatividade de Pauling?",
+    "alternativas": {
+      "a": "$\\text{N}$",
+      "b": "$\\text{S}$",
+      "c": "$\\text{B}$",
+      "d": "$\\text{Al}$",
+      "e": "$\\text{O}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A eletronegatividade cresce ao longo do período (maior $Z_{\\text{ef}}$, menor raio) e decresce ao descer o grupo. Entre os citados, o oxigênio combina alta posição no período com o segundo período, e só perde para o flúor em toda a tabela: seu valor é $3{,}5$, contra $3{,}0$ do nitrogênio, $2{,}5$ do enxofre, $2{,}0$ do boro e $1{,}5$ do alumínio. A comparação $\\text{N}$ contra $\\text{S}$ mostra que período e grupo às vezes competem — aqui prevalece o período.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Estrutura Atômica e Tabela Periódica",
+    "subtopico": "Densidade de probabilidade radial",
+    "dificuldade": "dificil",
+    "enunciado": "No átomo de hidrogênio, a função de distribuição radial do orbital $1s$ tem máximo em $52{,}9$ pm, embora a densidade de probabilidade $\\left|\\psi\\right|^{2}$ seja máxima no próprio núcleo. A conciliação entre os dois fatos está em que:",
+    "alternativas": {
+      "a": "o volume da casca esférica cresce com a distância",
+      "b": "a função de onda muda de sinal em $52{,}9$ pm",
+      "c": "existe um nó radial nessa distância",
+      "d": "o elétron não pode ocupar o núcleo",
+      "e": "a energia potencial é mínima nessa distância"
+    },
+    "gabarito": "a",
+    "resolucao": "A função de distribuição radial é $4\\pi r^{2}\\left|\\psi\\right|^{2}$: ela mede a probabilidade de encontrar o elétron numa casca fina de raio $r$, e não num ponto. Perto do núcleo $\\left|\\psi\\right|^{2}$ é grande, mas o volume disponível tende a zero; longe, o volume é grande, mas $\\left|\\psi\\right|^{2}$ decai exponencialmente. O produto tem máximo intermediário, justamente no raio de Bohr. O orbital $1s$ não tem nó algum, o que descarta duas das alternativas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Contagem de elétrons de valência em íon poliatômico",
+    "dificuldade": "medio",
+    "enunciado": "Determine o número total de elétrons de valência que devem aparecer na estrutura de Lewis do íon clorato, $\\text{ClO}_3^{-}$.",
+    "alternativas": {
+      "a": "$24$",
+      "b": "$25$",
+      "c": "$32$",
+      "d": "$20$",
+      "e": "$26$"
+    },
+    "gabarito": "e",
+    "resolucao": "O cloro pertence ao grupo $17$ e contribui com $7$ elétrons; cada oxigênio, do grupo $16$, contribui com $6$, totalizando $7+18=25$. A carga $1-$ acrescenta um elétron, resultando $26$. Esse total é o que deve ser distribuído entre ligações e pares isolados: três ligações simples consomem $6$ elétrons e os $20$ restantes completam o octeto dos três oxigênios e deixam um par isolado no cloro. Esquecer a carga do íon é o erro que leva a $25$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Carga formal e escolha da estrutura de Lewis",
+    "dificuldade": "dificil",
+    "enunciado": "Na estrutura de Lewis do íon sulfato, $\\text{SO}_4^{2-}$, desenhada apenas com quatro ligações simples $\\text{S}-\\text{O}$, determine a carga formal do átomo de enxofre.",
+    "alternativas": {
+      "a": "$+2$",
+      "b": "$0$",
+      "c": "$-2$",
+      "d": "$+6$",
+      "e": "$+1$"
+    },
+    "gabarito": "a",
+    "resolucao": "A carga formal é $\\text{CF}=n_{\\text{val}}-n_{\\text{isolados}}-\\tfrac{1}{2}n_{\\text{ligantes}}$. O enxofre tem $6$ elétrons de valência, nenhum par isolado nessa estrutura e oito elétrons em ligações: $\\text{CF}=6-0-4=+2$. Cada oxigênio fica com $6-6-1=-1$, e a soma $+2+4(-1)=-2$ reproduz a carga do íon, como deve ser. É justamente essa distribuição desfavorável que motiva as estruturas alternativas com ligações duplas, nas quais a carga formal do enxofre cai a zero.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Ressonância e ordem de ligação fracionária",
+    "dificuldade": "dificil",
+    "enunciado": "O íon nitrato, $\\text{NO}_3^{-}$, é descrito por três estruturas de ressonância equivalentes, cada uma com uma ligação dupla e duas simples. Determine a ordem média da ligação $\\text{N}-\\text{O}$.",
+    "alternativas": {
+      "a": "$1{,}33$",
+      "b": "$1{,}00$",
+      "c": "$1{,}50$",
+      "d": "$2{,}00$",
+      "e": "$0{,}67$"
+    },
+    "gabarito": "a",
+    "resolucao": "Somando as três estruturas, cada posição $\\text{N}-\\text{O}$ aparece como dupla em uma delas e como simples nas outras duas, de modo que a ordem média é $\\dfrac{2+1+1}{3}=\\dfrac{4}{3}\\approx 1{,}33$. A previsão é confirmada experimentalmente: as três distâncias $\\text{N}-\\text{O}$ são idênticas e intermediárias entre a de uma simples e a de uma dupla. O híbrido de ressonância é uma única espécie, e não uma mistura que oscila entre as três estruturas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Exceções à regra do octeto",
+    "dificuldade": "medio",
+    "enunciado": "Em qual das espécies abaixo o átomo central possui menos de oito elétrons na camada de valência?",
+    "alternativas": {
+      "a": "$\\text{PCl}_5$",
+      "b": "$\\text{SF}_6$",
+      "c": "$\\text{BF}_3$",
+      "d": "$\\text{CH}_4$",
+      "e": "$\\text{NH}_4^{+}$"
+    },
+    "gabarito": "c",
+    "resolucao": "O boro tem apenas três elétrons de valência e, ao formar três ligações com o flúor, fica com seis elétrons — um octeto incompleto. Esse déficit é a razão de o $\\text{BF}_3$ ser um ácido de Lewis vigoroso, capaz de aceitar um par isolado. $\\text{PCl}_5$ e $\\text{SF}_6$ são exemplos opostos, de octeto expandido, e as duas últimas espécies satisfazem a regra exatamente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Energia de rede e a lei de Coulomb",
+    "dificuldade": "dificil",
+    "enunciado": "Entre os compostos iônicos $\\text{NaF}$, $\\text{NaCl}$, $\\text{KCl}$, $\\text{KBr}$ e $\\text{MgO}$, qual apresenta a maior energia de rede em módulo?",
+    "alternativas": {
+      "a": "$\\text{MgO}$",
+      "b": "$\\text{NaF}$",
+      "c": "$\\text{NaCl}$",
+      "d": "$\\text{KCl}$",
+      "e": "$\\text{KBr}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A energia de rede varia como $\\dfrac{Q_1Q_2}{d}$. Nos quatro primeiros compostos as cargas são $1+$ e $1-$, e as diferenças vêm apenas da distância interiônica. No $\\text{MgO}$ as cargas são $2+$ e $2-$, o que quadruplica o numerador, e os íons ainda são pequenos, o que reduz $d$. O resultado é uma energia de rede em torno de $3800$ kJ/mol, contra $788$ kJ/mol do $\\text{NaCl}$ — e é essa diferença que explica o ponto de fusão do $\\text{MgO}$ acima de $2800\\ ^{\\circ}\\text{C}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Ciclo de Born-Haber: afinidade eletrônica",
+    "dificuldade": "dificil",
+    "enunciado": "Para o $\\text{KCl}$ são dados, em kJ/mol: $\\Delta H_f^{\\circ}=-437$; sublimação do $\\text{K}$, $+89$; primeira ionização do $\\text{K}$, $+419$; dissociação do $\\text{Cl}_2$, $+243$; energia de rede, $-717$. Determine a afinidade eletrônica do cloro.",
+    "alternativas": {
+      "a": "$-437$ kJ/mol",
+      "b": "$-717$ kJ/mol",
+      "c": "$-349$ kJ/mol",
+      "d": "$+349$ kJ/mol",
+      "e": "$-121$ kJ/mol"
+    },
+    "gabarito": "c",
+    "resolucao": "O ciclo de Born-Haber decompõe a formação do sólido em etapas cuja soma deve reproduzir $\\Delta H_f^{\\circ}$. Note que apenas meio mol de $\\text{Cl}_2$ é consumido, de modo que entra $\\tfrac{243}{2}=121{,}5$. Assim $-437=89+419+121{,}5+\\text{AE}+(-717)$, ou seja, $-437=-87{,}5+\\text{AE}$ e $\\text{AE}=-349{,}5\\approx-349$ kJ/mol. O sinal negativo indica processo exotérmico, coerente com a alta afinidade eletrônica dos halogênios; usar $243$ inteiro é o descuido mais comum.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Entalpia de reação por energias de ligação",
+    "dificuldade": "dificil",
+    "enunciado": "Estime $\\Delta H$ da reação $\\text{H}_2(g)+\\text{Cl}_2(g)\\rightarrow 2\\,\\text{HCl}(g)$ usando as energias médias de ligação, em kJ/mol: $\\text{H}-\\text{H}=436$, $\\text{Cl}-\\text{Cl}=242$ e $\\text{H}-\\text{Cl}=431$.",
+    "alternativas": {
+      "a": "$+184$ kJ",
+      "b": "$-184$ kJ",
+      "c": "$-247$ kJ",
+      "d": "$-431$ kJ",
+      "e": "$-92$ kJ"
+    },
+    "gabarito": "b",
+    "resolucao": "Vale $\\Delta H=\\sum E_{\\text{ligações rompidas}}-\\sum E_{\\text{ligações formadas}}$. Rompem-se uma $\\text{H}-\\text{H}$ e uma $\\text{Cl}-\\text{Cl}$: $436+242=678$ kJ. Formam-se duas $\\text{H}-\\text{Cl}$: $2\\times 431=862$ kJ. Logo $\\Delta H=678-862=-184$ kJ. O processo é exotérmico porque as ligações formadas são, no conjunto, mais fortes que as rompidas. Esquecer o coeficiente $2$ do produto leva a $-92$ kJ, que é o valor por mol de $\\text{HCl}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Ordem de ligação e comprimento de ligação",
+    "dificuldade": "dificil",
+    "enunciado": "Ordene em ordem crescente de comprimento a ligação nitrogênio-nitrogênio nas espécies $\\text{N}_2$, $\\text{N}_2\\text{F}_2$ e $\\text{N}_2\\text{H}_4$.",
+    "alternativas": {
+      "a": "$\\text{N}_2<\\text{N}_2\\text{F}_2<\\text{N}_2\\text{H}_4$",
+      "b": "$\\text{N}_2\\text{H}_4<\\text{N}_2\\text{F}_2<\\text{N}_2$",
+      "c": "$\\text{N}_2\\text{F}_2<\\text{N}_2<\\text{N}_2\\text{H}_4$",
+      "d": "$\\text{N}_2<\\text{N}_2\\text{H}_4<\\text{N}_2\\text{F}_2$",
+      "e": "$\\text{N}_2\\text{H}_4<\\text{N}_2<\\text{N}_2\\text{F}_2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Escrevendo as estruturas de Lewis: no $\\text{N}_2$ a ligação é tripla, no $\\text{N}_2\\text{F}_2$ é dupla (cada nitrogênio faz ainda uma ligação com flúor e guarda um par isolado) e no $\\text{N}_2\\text{H}_4$ é simples. Quanto maior a ordem de ligação, maior a densidade eletrônica entre os núcleos, mais forte a atração e menor a distância de equilíbrio. Os valores medidos confirmam: $110$ pm, $122$ pm e $147$ pm, respectivamente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "VSEPR com par isolado em bipirâmide trigonal",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a geometria molecular do $\\text{SF}_4$, sabendo que o enxofre possui um par isolado além das quatro ligações.",
+    "alternativas": {
+      "a": "tetraédrica",
+      "b": "quadrado planar",
+      "c": "gangorra",
+      "d": "bipirâmide trigonal",
+      "e": "pirâmide quadrada"
+    },
+    "gabarito": "c",
+    "resolucao": "São cinco domínios eletrônicos em torno do enxofre, o que define arranjo de bipirâmide trigonal. O par isolado, mais volumoso, ocupa preferencialmente uma posição equatorial, onde sofre repulsão de apenas dois vizinhos a $90^{\\circ}$ em vez de três. Restam dois flúores axiais e dois equatoriais, e o formato resultante lembra uma gangorra. A resposta \"bipirâmide trigonal\" descreve o arranjo dos domínios, não a geometria dos núcleos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "VSEPR com dois pares isolados",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a geometria molecular do $\\text{ClF}_3$, molécula em que o cloro é o átomo central.",
+    "alternativas": {
+      "a": "trigonal plana",
+      "b": "pirâmide trigonal",
+      "c": "forma de T",
+      "d": "bipirâmide trigonal",
+      "e": "tetraédrica"
+    },
+    "gabarito": "c",
+    "resolucao": "O cloro tem $7$ elétrons de valência; três são usados nas ligações com os flúores e sobram dois pares isolados, totalizando cinco domínios — arranjo de bipirâmide trigonal. Os dois pares isolados ocupam posições equatoriais, que oferecem mais espaço, deixando os três flúores em um plano com dois deles axiais e um equatorial: o conjunto tem forma de T, com ângulos ligeiramente menores que $90^{\\circ}$ pela repulsão extra dos pares isolados.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "VSEPR com octeto expandido",
+    "dificuldade": "medio",
+    "enunciado": "Determine a geometria molecular do $\\text{XeF}_4$.",
+    "alternativas": {
+      "a": "tetraédrica",
+      "b": "quadrado planar",
+      "c": "gangorra",
+      "d": "pirâmide quadrada",
+      "e": "octaédrica"
+    },
+    "gabarito": "b",
+    "resolucao": "O xenônio traz $8$ elétrons de valência; quatro participam das ligações e os outros quatro formam dois pares isolados. São seis domínios, logo arranjo octaédrico. Os dois pares isolados se posicionam em vértices opostos, o mais longe possível um do outro, e os quatro flúores ficam no plano equatorial, com ângulos de exatamente $90^{\\circ}$. A geometria molecular é, portanto, quadrado planar — e a molécula é apolar, apesar das quatro ligações polares.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "VSEPR em íon poliatômico linear",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a geometria do íon triiodeto, $\\text{I}_3^{-}$, no qual um átomo de iodo é central.",
+    "alternativas": {
+      "a": "angular",
+      "b": "forma de T",
+      "c": "trigonal plana",
+      "d": "piramidal",
+      "e": "linear"
+    },
+    "gabarito": "e",
+    "resolucao": "O iodo central tem $7$ elétrons de valência mais o elétron da carga negativa: $8$. Dois formam as ligações com os iodos terminais e os seis restantes constituem três pares isolados — cinco domínios, arranjo de bipirâmide trigonal. Os três pares isolados ocupam as três posições equatoriais, e os dois ligantes ficam nas axiais, a $180^{\\circ}$ um do outro. A geometria molecular é linear, embora o arranjo eletrônico não seja.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Comparação de ângulos de ligação",
+    "dificuldade": "dificil",
+    "enunciado": "Ordene em ordem decrescente os ângulos de ligação nas moléculas $\\text{CH}_4$, $\\text{NH}_3$ e $\\text{H}_2\\text{O}$.",
+    "alternativas": {
+      "a": "$\\text{H}_2\\text{O}>\\text{NH}_3>\\text{CH}_4$",
+      "b": "$\\text{CH}_4>\\text{NH}_3>\\text{H}_2\\text{O}$",
+      "c": "$\\text{NH}_3>\\text{CH}_4>\\text{H}_2\\text{O}$",
+      "d": "$\\text{CH}_4>\\text{H}_2\\text{O}>\\text{NH}_3$",
+      "e": "$\\text{H}_2\\text{O}>\\text{CH}_4>\\text{NH}_3$"
+    },
+    "gabarito": "b",
+    "resolucao": "As três moléculas têm quatro domínios eletrônicos e arranjo tetraédrico, mas diferem no número de pares isolados: zero, um e dois. Um par isolado é atraído por um único núcleo e ocupa uma região angularmente mais larga que um par ligante, comprimindo os ângulos restantes. Daí a sequência medida $109{,}5^{\\circ}$, $107^{\\circ}$ e $104{,}5^{\\circ}$. A hierarquia geral de repulsão é par isolado-par isolado maior que par isolado-par ligante, maior que par ligante-par ligante.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Polaridade molecular e simetria",
+    "dificuldade": "medio",
+    "enunciado": "Qual das moléculas abaixo é polar, apesar de todas possuírem ligações covalentes polares?",
+    "alternativas": {
+      "a": "$\\text{SO}_2$",
+      "b": "$\\text{CO}_2$",
+      "c": "$\\text{BF}_3$",
+      "d": "$\\text{CCl}_4$",
+      "e": "$\\text{SF}_6$"
+    },
+    "gabarito": "a",
+    "resolucao": "A polaridade da molécula é a soma vetorial dos dipolos de ligação, e depende da geometria. $\\text{CO}_2$ é linear, $\\text{BF}_3$ trigonal plana, $\\text{CCl}_4$ tetraédrica e $\\text{SF}_6$ octaédrica: em todas elas os vetores se cancelam por simetria. Já o $\\text{SO}_2$ é angular, por causa do par isolado no enxofre, e os dois dipolos $\\text{S}-\\text{O}$ têm resultante não nula. A consequência prática aparece na solubilidade: o $\\text{SO}_2$ é muito solúvel em água, o $\\text{CO}_2$ não.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Momento dipolar e caráter iônico percentual",
+    "dificuldade": "dificil",
+    "enunciado": "A molécula de $\\text{HCl}$ tem momento dipolar de $1{,}08$ D e comprimento de ligação de $127$ pm. Sabendo que uma separação de cargas inteiras a essa distância corresponderia a $6{,}10$ D, determine o caráter iônico percentual da ligação.",
+    "alternativas": {
+      "a": "$45{,}0\\%$",
+      "b": "$27{,}3\\%$",
+      "c": "$9{,}0\\%$",
+      "d": "$82{,}3\\%$",
+      "e": "$17{,}7\\%$"
+    },
+    "gabarito": "e",
+    "resolucao": "O caráter iônico percentual é a razão entre o momento dipolar observado e aquele que a molécula teria se o elétron fosse transferido por inteiro: $\\dfrac{1{,}08}{6{,}10}=0{,}177$, isto é, $17{,}7\\%$. O resultado quantifica algo que a eletronegatividade só indica qualitativamente: a ligação $\\text{H}-\\text{Cl}$ é predominantemente covalente, com uma carga parcial de cerca de $0{,}18$ unidade sobre cada átomo, e não um par iônico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Contagem de ligações sigma e pi",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de ligações $\\sigma$ e $\\pi$ na molécula de propino, $\\text{CH}_3-\\text{C}\\equiv\\text{CH}$.",
+    "alternativas": {
+      "a": "$4\\ \\sigma$ e $2\\ \\pi$",
+      "b": "$6\\ \\sigma$ e $1\\ \\pi$",
+      "c": "$8\\ \\sigma$ e $0\\ \\pi$",
+      "d": "$6\\ \\sigma$ e $2\\ \\pi$",
+      "e": "$5\\ \\sigma$ e $3\\ \\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Toda ligação simples é uma $\\sigma$; uma tripla é composta por uma $\\sigma$ e duas $\\pi$. Contando: três ligações $\\text{C}-\\text{H}$ da metila, uma $\\text{C}-\\text{C}$ simples, a componente $\\sigma$ da tripla e a ligação $\\text{C}-\\text{H}$ terminal somam seis $\\sigma$; as duas componentes restantes da tripla são as $\\pi$. As ligações $\\pi$ resultam da superposição lateral de orbitais $p$ não hibridizados e são mais fracas que a $\\sigma$, o que explica a reatividade dos alcinos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Hibridização com octeto expandido",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a hibridização do átomo central na molécula de $\\text{XeF}_2$.",
+    "alternativas": {
+      "a": "$sp^{3}d$",
+      "b": "$sp^{3}$",
+      "c": "$sp^{2}$",
+      "d": "$sp^{3}d^{2}$",
+      "e": "$sp$"
+    },
+    "gabarito": "a",
+    "resolucao": "O xenônio possui oito elétrons de valência: dois participam das ligações com os flúores e seis formam três pares isolados. O número de domínios eletrônicos é cinco, e o modelo de ligação de valência descreve esse arranjo misturando um orbital $s$, três $p$ e um $d$, o que gera cinco orbitais híbridos $sp^{3}d$ dirigidos aos vértices de uma bipirâmide trigonal. A geometria molecular observada é linear, porque três dos cinco híbridos abrigam pares isolados.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Hibridização em íon com ressonância",
+    "dificuldade": "medio",
+    "enunciado": "Determine a hibridização do átomo de carbono no íon carbonato, $\\text{CO}_3^{2-}$.",
+    "alternativas": {
+      "a": "$sp^{3}$",
+      "b": "$sp$",
+      "c": "$sp^{2}$",
+      "d": "$sp^{3}d$",
+      "e": "$sp^{3}d^{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "O carbono está ligado a três oxigênios e não possui pares isolados: são três domínios eletrônicos, arranjo trigonal plano e hibridização $sp^{2}$. O orbital $p$ remanescente, perpendicular ao plano, superpõe-se aos orbitais $p$ dos três oxigênios formando um sistema $\\pi$ deslocalizado — a tradução, em linguagem de orbitais, das três estruturas de ressonância equivalentes do íon.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "TOM: ordem de ligação na série do oxigênio",
+    "dificuldade": "dificil",
+    "enunciado": "Usando a teoria do orbital molecular, ordene em ordem crescente de comprimento de ligação as espécies $\\text{O}_2$, $\\text{O}_2^{-}$ e $\\text{O}_2^{2-}$.",
+    "alternativas": {
+      "a": "$\\text{O}_2^{2-}<\\text{O}_2^{-}<\\text{O}_2$",
+      "b": "$\\text{O}_2^{-}<\\text{O}_2<\\text{O}_2^{2-}$",
+      "c": "$\\text{O}_2<\\text{O}_2^{2-}<\\text{O}_2^{-}$",
+      "d": "$\\text{O}_2^{2-}<\\text{O}_2<\\text{O}_2^{-}$",
+      "e": "$\\text{O}_2<\\text{O}_2^{-}<\\text{O}_2^{2-}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Os elétrons acrescentados entram nos orbitais antiligantes $\\pi^{*}_{2p}$, que já estavam parcialmente ocupados no $\\text{O}_2$. A ordem de ligação, $\\tfrac{1}{2}\\left(n_{\\text{lig}}-n_{\\text{antilig}}\\right)$, cai de $2$ para $1{,}5$ e depois para $1$. Menor ordem significa ligação mais fraca e mais longa: $121$ pm, $133$ pm e $149$ pm. É por isso que o íon superóxido e o peróxido são espécies reativas, enquanto o $\\text{O}_2$ é comparativamente estável.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "TOM: paramagnetismo do oxigênio",
+    "dificuldade": "dificil",
+    "enunciado": "O oxigênio líquido é atraído por um ímã, comportamento que a estrutura de Lewis usual do $\\text{O}_2$ não prevê. A teoria do orbital molecular explica o fato porque nela:",
+    "alternativas": {
+      "a": "os elétrons dos orbitais $\\pi^{*}$ estão emparelhados",
+      "b": "a ordem de ligação resultante é igual a um",
+      "c": "dois elétrons ocupam $\\pi^{*}$ desemparelhados",
+      "d": "os orbitais $\\pi^{*}$ permanecem inteiramente vazios",
+      "e": "existe uma ligação dupla localizada entre os átomos"
+    },
+    "gabarito": "c",
+    "resolucao": "Preenchendo os orbitais moleculares do $\\text{O}_2$, os dois últimos elétrons vão para os orbitais degenerados $\\pi^{*}_{2p}$ e, pela regra de Hund, ocupam-nos separadamente com spins paralelos. A molécula é, portanto, um birradical, e o momento magnético resultante explica a atração pelo ímã. A ordem de ligação continua sendo $2$, compatível com a dupla da estrutura de Lewis — que, no entanto, mostra todos os elétrons emparelhados e erra na previsão magnética.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "TOM: existência de espécies com ordem fracionária",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a ordem de ligação do íon $\\text{He}_2^{+}$, que é detectado experimentalmente, ao contrário da molécula $\\text{He}_2$.",
+    "alternativas": {
+      "a": "$0{,}0$",
+      "b": "$1{,}0$",
+      "c": "$0{,}5$",
+      "d": "$1{,}5$",
+      "e": "$2{,}0$"
+    },
+    "gabarito": "c",
+    "resolucao": "O íon tem três elétrons: dois preenchem o orbital ligante $\\sigma_{1s}$ e o terceiro ocupa o antiligante $\\sigma^{*}_{1s}$. A ordem de ligação vale $\\tfrac{1}{2}(2-1)=0{,}5$, positiva, o que basta para manter os núcleos unidos, ainda que de modo fraco. No $\\text{He}_2$ neutro haveria dois elétrons em cada orbital, ordem zero e nenhuma estabilização — motivo pelo qual o hélio é monoatômico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "TOM: efeito da ionização sobre a ligação",
+    "dificuldade": "dificil",
+    "enunciado": "Ao remover um elétron do $\\text{N}_2$ formando $\\text{N}_2^{+}$, a ligação enfraquece; ao remover um elétron do $\\text{O}_2$ formando $\\text{O}_2^{+}$, ela se fortalece. A razão dessa diferença é que o elétron removido sai:",
+    "alternativas": {
+      "a": "de orbital ligante no $\\text{N}_2$ e antiligante no $\\text{O}_2$",
+      "b": "de orbital antiligante nas duas moléculas",
+      "c": "de orbital ligante nas duas moléculas",
+      "d": "de orbital não ligante no $\\text{N}_2$",
+      "e": "de orbital $\\sigma$ no $\\text{O}_2$ e $\\pi$ no $\\text{N}_2$"
+    },
+    "gabarito": "a",
+    "resolucao": "No $\\text{N}_2$ o orbital ocupado de maior energia é o ligante $\\sigma_{2p}$; retirar dele um elétron derruba a ordem de ligação de $3$ para $2{,}5$, alongando e enfraquecendo a ligação. No $\\text{O}_2$ o orbital ocupado de maior energia é o antiligante $\\pi^{*}_{2p}$; retirar um elétron dali eleva a ordem de $2$ para $2{,}5$, encurtando a ligação de $121$ pm para $112$ pm. O caso mostra que ionizar nem sempre desestabiliza a ligação.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Ligação pi e isomeria geométrica",
+    "dificuldade": "dificil",
+    "enunciado": "O 1,2-dicloroeteno existe nas formas cis e trans, que não se interconvertem à temperatura ambiente, enquanto o 1,2-dicloroetano não apresenta isômeros desse tipo. A razão é que a ligação $\\pi$:",
+    "alternativas": {
+      "a": "é mais forte que a ligação $\\sigma$ correspondente",
+      "b": "torna a molécula obrigatoriamente polar",
+      "c": "aumenta o comprimento da ligação entre os carbonos",
+      "d": "localiza os elétrons sobre o eixo internuclear",
+      "e": "impede a rotação em torno do eixo internuclear"
+    },
+    "gabarito": "e",
+    "resolucao": "A ligação $\\pi$ nasce da superposição lateral de dois orbitais $p$ paralelos. Girar um carbono em relação ao outro desalinharia esses orbitais e destruiria a superposição, o que custa cerca de $270$ kJ/mol — barreira alta demais para ser vencida por agitação térmica ordinária. Na ligação simples só há a $\\sigma$, cuja densidade eletrônica é cilíndrica em torno do eixo, e a rotação é praticamente livre.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Energia de ressonância do benzeno",
+    "dificuldade": "dificil",
+    "enunciado": "A hidrogenação do ciclo-hexeno libera $120$ kJ/mol, mas a hidrogenação completa do benzeno libera apenas $208$ kJ/mol. Determine a energia de ressonância do benzeno.",
+    "alternativas": {
+      "a": "$152$ kJ/mol",
+      "b": "$88$ kJ/mol",
+      "c": "$328$ kJ/mol",
+      "d": "$120$ kJ/mol",
+      "e": "$208$ kJ/mol"
+    },
+    "gabarito": "a",
+    "resolucao": "Se o benzeno fosse apenas um cicloexatrieno com três ligações duplas isoladas, sua hidrogenação liberaria $3\\times 120=360$ kJ/mol. O valor medido é $208$ kJ/mol, ou seja, $360-208=152$ kJ/mol a menos. Essa diferença mede o quanto o benzeno real é mais estável que a estrutura hipotética de ligações localizadas, estabilização que vem da deslocalização dos seis elétrons $\\pi$ por todo o anel.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Anomalia de ponto de ebulição nos haletos de hidrogênio",
+    "dificuldade": "dificil",
+    "enunciado": "Na série $\\text{HCl}$, $\\text{HBr}$ e $\\text{HI}$ o ponto de ebulição cresce com a massa molar, mas o $\\text{HF}$, o mais leve de todos, ferve acima de todos eles. O motivo é:",
+    "alternativas": {
+      "a": "a maior massa molar efetiva do $\\text{HF}$",
+      "b": "a ligação de hidrogênio entre as moléculas de $\\text{HF}$",
+      "c": "a maior polarizabilidade do flúor",
+      "d": "a menor energia da ligação $\\text{H}-\\text{F}$",
+      "e": "o caráter iônico total da ligação no $\\text{HF}$"
+    },
+    "gabarito": "b",
+    "resolucao": "De $\\text{HCl}$ a $\\text{HI}$ o número de elétrons cresce, a polarizabilidade aumenta e as forças de dispersão de London tornam-se progressivamente mais intensas, elevando o ponto de ebulição. O $\\text{HF}$ foge da série porque o flúor, pequeno e muito eletronegativo, permite ligações de hidrogênio genuínas entre moléculas vizinhas, muito mais fortes que a dispersão. O mesmo salto aparece na comparação entre $\\text{H}_2\\text{O}$ e $\\text{H}_2\\text{S}$ e entre $\\text{NH}_3$ e $\\text{PH}_3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Forças de dispersão e forma molecular",
+    "dificuldade": "dificil",
+    "enunciado": "O $n$-pentano ferve a $36\\ ^{\\circ}\\text{C}$ e o neopentano, seu isômero, a $10\\ ^{\\circ}\\text{C}$, embora ambos tenham fórmula $\\text{C}_5\\text{H}_{12}$. A explicação está em que a molécula linear:",
+    "alternativas": {
+      "a": "tem maior área de contato entre as moléculas",
+      "b": "possui momento dipolar permanente",
+      "c": "forma ligações de hidrogênio intermoleculares",
+      "d": "tem massa molar ligeiramente maior",
+      "e": "apresenta ligações covalentes mais fortes"
+    },
+    "gabarito": "a",
+    "resolucao": "Os dois isômeros têm o mesmo número de elétrons e, portanto, polarizabilidade total semelhante, mas as forças de dispersão dependem também de quanto as superfícies moleculares conseguem se aproximar. A cadeia linear do $n$-pentano permite contato ao longo de todo o comprimento, enquanto o neopentano, quase esférico e compacto, só se toca em pequenas regiões. Ambos são apolares e não fazem ligação de hidrogênio, o que elimina as demais explicações.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Estrutura do gelo e ligações de hidrogênio",
+    "dificuldade": "medio",
+    "enunciado": "Diferentemente da maioria das substâncias, a água tem o sólido menos denso que o líquido. A causa é que, no gelo:",
+    "alternativas": {
+      "a": "as moléculas ficam mais distantes por repulsão eletrostática",
+      "b": "as ligações covalentes $\\text{O}-\\text{H}$ se alongam",
+      "c": "cada molécula faz quatro ligações de hidrogênio direcionais",
+      "d": "o número de moléculas por mol diminui",
+      "e": "as forças de dispersão superam as ligações de hidrogênio"
+    },
+    "gabarito": "c",
+    "resolucao": "No gelo cada molécula doa dois hidrogênios e aceita dois pares isolados, ligando-se a quatro vizinhas em geometria aproximadamente tetraédrica. Esse arranjo direcional gera uma rede hexagonal cheia de vazios e, portanto, pouco compacta. Ao fundir, parte das ligações se rompe, as moléculas colapsam nesses espaços e a densidade aumenta até o máximo em $4\\ ^{\\circ}\\text{C}$. É por isso que o gelo flutua e os lagos congelam de cima para baixo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Viscosidade e número de grupos hidroxila",
+    "dificuldade": "medio",
+    "enunciado": "A viscosidade a $25\\ ^{\\circ}\\text{C}$ cresce na sequência etanol, etilenoglicol, glicerol, substâncias de massas molares próximas. A explicação é o aumento:",
+    "alternativas": {
+      "a": "da polarizabilidade das cadeias carbônicas",
+      "b": "do comprimento da cadeia carbônica",
+      "c": "da massa molar das substâncias",
+      "d": "do número de grupos hidroxila por molécula",
+      "e": "da pressão de vapor de cada líquido"
+    },
+    "gabarito": "d",
+    "resolucao": "Etanol, etilenoglicol e glicerol têm um, dois e três grupos hidroxila, respectivamente. Cada $\\text{OH}$ adicional multiplica os pontos de ancoragem para ligações de hidrogênio entre moléculas vizinhas, aumentando a resistência ao escoamento. O efeito é grande: a viscosidade do glicerol é cerca de mil vezes a do etanol. Pelo mesmo motivo cresce a tensão superficial e cai a pressão de vapor ao longo da série.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Pressão de vapor e forças intermoleculares",
+    "dificuldade": "dificil",
+    "enunciado": "Entre as substâncias $\\text{CH}_3\\text{OCH}_3$, $\\text{CH}_3\\text{CH}_2\\text{OH}$, $\\text{H}_2\\text{O}$, $\\text{CH}_3\\text{CH}_2\\text{CH}_2\\text{OH}$ e $\\text{C}_3\\text{H}_5(\\text{OH})_3$, qual apresenta a maior pressão de vapor a $25\\ ^{\\circ}\\text{C}$?",
+    "alternativas": {
+      "a": "$\\text{CH}_3\\text{CH}_2\\text{OH}$",
+      "b": "$\\text{H}_2\\text{O}$",
+      "c": "$\\text{CH}_3\\text{CH}_2\\text{CH}_2\\text{OH}$",
+      "d": "$\\text{CH}_3\\text{OCH}_3$",
+      "e": "$\\text{C}_3\\text{H}_5(\\text{OH})_3$"
+    },
+    "gabarito": "d",
+    "resolucao": "A pressão de vapor mede a facilidade de escapar do líquido e é tanto maior quanto mais fracas forem as forças intermoleculares. O éter dimetílico é isômero do etanol, mas não possui hidrogênio ligado a oxigênio: suas moléculas interagem apenas por dipolo-dipolo e dispersão, sem ligações de hidrogênio. Todas as demais substâncias da lista têm pelo menos um grupo $\\text{OH}$, e o glicerol, com três, é a menos volátil. O éter dimetílico é, de fato, gasoso à temperatura ambiente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Classificação de sólidos por propriedades",
+    "dificuldade": "dificil",
+    "enunciado": "Uma substância funde a $801\\ ^{\\circ}\\text{C}$, é quebradiça, não conduz corrente no estado sólido, mas conduz bem quando fundida ou dissolvida em água. Classifique esse sólido.",
+    "alternativas": {
+      "a": "iônico",
+      "b": "metálico",
+      "c": "molecular",
+      "d": "covalente reticular",
+      "e": "amorfo"
+    },
+    "gabarito": "a",
+    "resolucao": "O alto ponto de fusão indica forças de coesão intensas, o que já elimina os sólidos moleculares. A ausência de condução no estado sólido descarta o metálico, em que os elétrons são móveis em qualquer estado. O critério decisivo é a condução após a fusão: significa que existem portadores de carga que estavam presos na rede e passam a se mover — íons. Um sólido covalente reticular como o quartzo não conduz nem fundido, pois seus elétrons permanecem localizados nas ligações.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Cela unitária cúbica de faces centradas",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de átomos por cela unitária numa estrutura cúbica de faces centradas.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$1$",
+      "c": "$6$",
+      "d": "$4$",
+      "e": "$8$"
+    },
+    "gabarito": "d",
+    "resolucao": "Cada um dos oito átomos dos vértices é compartilhado por oito celas vizinhas e contribui com $\\tfrac18$: são $8\\times\\tfrac18=1$ átomo. Cada um dos seis átomos centrados nas faces é dividido entre duas celas e contribui com $\\tfrac12$: são $6\\times\\tfrac12=3$. O total é $1+3=4$ átomos por cela. Para comparação, a cúbica de corpo centrado contém $2$ e a cúbica simples, $1$ — e é dessa contagem que se extrai a densidade do metal.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Densidade a partir da cela unitária",
+    "dificuldade": "dificil",
+    "enunciado": "O ferro cristaliza no sistema cúbico de corpo centrado com aresta $a=287$ pm. Calcule sua densidade, usando $M=55{,}85$ g/mol e $N_A=6{,}022\\times 10^{23}$ mol$^{-1}$.",
+    "alternativas": {
+      "a": "$3{,}92$ g/cm³",
+      "b": "$15{,}7$ g/cm³",
+      "c": "$7{,}85$ g/cm³",
+      "d": "$5{,}24$ g/cm³",
+      "e": "$11{,}8$ g/cm³"
+    },
+    "gabarito": "c",
+    "resolucao": "A cela de corpo centrado contém $8\\times\\tfrac18+1=2$ átomos. A massa da cela é $\\dfrac{2\\times 55{,}85}{6{,}022\\times 10^{23}}=1{,}855\\times 10^{-22}$ g. O volume é $a^{3}=\\left(2{,}87\\times 10^{-8}\\ \\text{cm}\\right)^{3}=2{,}364\\times 10^{-23}$ cm³. Dividindo, $\\rho=\\dfrac{1{,}855\\times 10^{-22}}{2{,}364\\times 10^{-23}}\\approx 7{,}85$ g/cm³, em ótimo acordo com o valor experimental. Usar um átomo por cela conduziria à metade do valor.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Ligação covalente coordenada",
+    "dificuldade": "medio",
+    "enunciado": "Ao misturar $\\text{NH}_3$ e $\\text{BF}_3$ forma-se o aduto $\\text{H}_3\\text{N}-\\text{BF}_3$. A ligação que une os dois fragmentos é:",
+    "alternativas": {
+      "a": "covalente coordenada, com o par vindo do boro",
+      "b": "iônica, por transferência de elétron do boro",
+      "c": "de hidrogênio, entre o $\\text{NH}_3$ e o flúor",
+      "d": "metálica, por deslocalização dos elétrons",
+      "e": "covalente coordenada, com o par vindo do nitrogênio"
+    },
+    "gabarito": "e",
+    "resolucao": "O nitrogênio da amônia tem um par isolado disponível e atua como base de Lewis; o boro do trifluoreto tem apenas seis elétrons de valência, um orbital $p$ vazio, e atua como ácido de Lewis. Os dois elétrons da nova ligação são fornecidos integralmente pelo nitrogênio — daí o nome ligação coordenada, embora, depois de formada, ela seja indistinguível de qualquer outra covalente. A geometria em torno do boro muda de trigonal plana para tetraédrica.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Número de estruturas de ressonância equivalentes",
+    "dificuldade": "medio",
+    "enunciado": "Determine o número de estruturas de ressonância equivalentes que descrevem a molécula de $\\text{SO}_3$, escritas com uma ligação dupla e duas simples.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$4$",
+      "d": "$6$",
+      "e": "$1$"
+    },
+    "gabarito": "b",
+    "resolucao": "A ligação dupla pode estar em qualquer um dos três oxigênios, e as três alternativas são equivalentes por simetria: são três estruturas de ressonância. O híbrido resultante tem as três ligações idênticas, com ordem média $\\tfrac{2+1+1}{3}\\approx 1{,}33$, e a molécula é trigonal plana e apolar. O mesmo raciocínio se aplica ao $\\text{NO}_3^{-}$; já o $\\text{NO}_2^{-}$, angular, admite apenas duas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Polaridade em geometrias de cinco e seis domínios",
+    "dificuldade": "dificil",
+    "enunciado": "Entre as moléculas $\\text{PF}_5$, $\\text{SF}_4$, $\\text{XeF}_4$, $\\text{CF}_4$ e $\\text{SF}_6$, qual é polar?",
+    "alternativas": {
+      "a": "$\\text{SF}_4$",
+      "b": "$\\text{PF}_5$",
+      "c": "$\\text{XeF}_4$",
+      "d": "$\\text{CF}_4$",
+      "e": "$\\text{SF}_6$"
+    },
+    "gabarito": "a",
+    "resolucao": "Todas têm ligações polares, e o que decide é a simetria. $\\text{PF}_5$ (bipirâmide trigonal), $\\text{CF}_4$ (tetraédrica) e $\\text{SF}_6$ (octaédrica) distribuem os ligantes simetricamente e anulam os dipolos; no $\\text{XeF}_4$ os dois pares isolados ficam em vértices opostos do octaedro e o arranjo quadrado planar dos flúores também se cancela. No $\\text{SF}_4$, porém, o único par isolado equatorial quebra a simetria da bipirâmide e a resultante é não nula.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Momento dipolar: efeito do par isolado",
+    "dificuldade": "dificil",
+    "enunciado": "A amônia tem momento dipolar de $1{,}47$ D, enquanto o $\\text{NF}_3$, de geometria idêntica, tem apenas $0{,}24$ D, embora a ligação $\\text{N}-\\text{F}$ seja mais polar que a $\\text{N}-\\text{H}$. A causa é que, no $\\text{NF}_3$:",
+    "alternativas": {
+      "a": "a geometria é trigonal plana e simétrica",
+      "b": "o nitrogênio perde seu par isolado",
+      "c": "os dipolos de ligação opõem-se ao do par isolado",
+      "d": "as ligações $\\text{N}-\\text{F}$ são praticamente apolares",
+      "e": "o flúor é menos eletronegativo que o hidrogênio"
+    },
+    "gabarito": "c",
+    "resolucao": "As duas moléculas são pirâmides trigonais, com um par isolado no nitrogênio que contribui com um dipolo apontando para fora, no eixo. Na amônia o nitrogênio é o extremo negativo das ligações, e o dipolo das ligações aponta no mesmo sentido do par isolado: as contribuições se somam. No $\\text{NF}_3$ o flúor é mais eletronegativo que o nitrogênio, os dipolos de ligação apontam para os flúores, em sentido oposto ao do par isolado, e o cancelamento quase completo deixa um momento resultante pequeno.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Energia de ligação e inércia química do nitrogênio",
+    "dificuldade": "dificil",
+    "enunciado": "O $\\text{N}_2$ constitui $78\\%$ da atmosfera e é praticamente inerte à temperatura ambiente, apesar de a formação da amônia a partir dele ser exotérmica. A explicação para essa inércia é:",
+    "alternativas": {
+      "a": "a entalpia positiva da formação da amônia",
+      "b": "a baixa concentração de hidrogênio na atmosfera",
+      "c": "a altíssima energia da ligação tripla nitrogênio-nitrogênio",
+      "d": "a apolaridade da molécula de nitrogênio",
+      "e": "a entropia desfavorável da reação direta"
+    },
+    "gabarito": "c",
+    "resolucao": "Romper a tripla do $\\text{N}_2$ custa $941$ kJ/mol, uma das maiores energias de ligação conhecidas, o que impõe uma barreira de ativação enorme a qualquer reação. Trata-se de um impedimento cinético, não termodinâmico: a síntese da amônia tem $\\Delta H^{\\circ}=-92$ kJ/mol e é espontânea em condições apropriadas. A indústria contorna a barreira com catalisador de ferro, alta pressão e temperatura da ordem de $450\\ ^{\\circ}\\text{C}$ — o processo Haber-Bosch.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Interações íon-dipolo na dissolução",
+    "dificuldade": "medio",
+    "enunciado": "A dissolução do $\\text{NaCl}$ em água exige vencer uma energia de rede de $788$ kJ/mol, e ainda assim ocorre facilmente. A interação responsável por compensar esse custo é:",
+    "alternativas": {
+      "a": "força íon-dipolo",
+      "b": "força dipolo-dipolo",
+      "c": "dispersão de London",
+      "d": "ligação de hidrogênio",
+      "e": "ligação covalente dativa"
+    },
+    "gabarito": "a",
+    "resolucao": "As moléculas de água orientam o extremo negativo do seu dipolo, o oxigênio, ao redor dos cátions $\\text{Na}^{+}$ e os hidrogênios parcialmente positivos ao redor dos ânions $\\text{Cl}^{-}$. Essa interação íon-dipolo é a mais forte entre as intermoleculares e libera uma energia de hidratação de magnitude comparável à da rede, deixando um saldo entálpico pequeno que a variação de entropia positiva completa. Ligações de hidrogênio ocorrem entre as próprias moléculas de água, não entre elas e os íons.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Teoria de bandas: condutividade e temperatura",
+    "dificuldade": "dificil",
+    "enunciado": "Ao se aquecer uma amostra, a condutividade elétrica de um metal diminui, mas a de um semicondutor aumenta. A explicação, segundo a teoria de bandas, é que no semicondutor:",
+    "alternativas": {
+      "a": "as vibrações da rede deixam de espalhar os portadores",
+      "b": "o intervalo entre as bandas aumenta com a temperatura",
+      "c": "a banda de valência se esvazia completamente",
+      "d": "a mobilidade dos elétrons cresce com o aquecimento",
+      "e": "elétrons são promovidos através do intervalo de energia"
+    },
+    "gabarito": "e",
+    "resolucao": "No metal a banda está parcialmente preenchida e o número de portadores já é máximo; aquecer só intensifica as vibrações da rede, que espalham os elétrons e aumentam a resistividade. No semicondutor a banda de valência está cheia e a de condução, vazia, separadas por um intervalo pequeno (cerca de $1{,}1$ eV no silício). A energia térmica promove elétrons através desse intervalo, criando pares elétron-lacuna: o número de portadores cresce exponencialmente e domina sobre o espalhamento.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Ligas substitucionais e intersticiais",
+    "dificuldade": "medio",
+    "enunciado": "O aço-carbono comum, com até cerca de $2\\%$ de carbono dissolvido no ferro, é classificado como liga:",
+    "alternativas": {
+      "a": "substitucional",
+      "b": "heterogênea",
+      "c": "intersticial",
+      "d": "intermetálica",
+      "e": "eutética simples"
+    },
+    "gabarito": "c",
+    "resolucao": "Numa liga substitucional os átomos do soluto ocupam posições da rede antes pertencentes ao solvente, o que exige raios atômicos semelhantes — é o caso do latão, em que o zinco substitui átomos de cobre. O carbono tem raio muito menor que o do ferro e se aloja nos interstícios entre os átomos da rede, travando o deslizamento dos planos cristalinos. Esse travamento é exatamente o que torna o aço muito mais duro e resistente que o ferro puro.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Ligações Químicas",
+    "subtopico": "Carga formal e número de oxidação",
+    "dificuldade": "dificil",
+    "enunciado": "Na molécula de $\\text{CO}_2$, o número de oxidação do carbono é $+4$, mas sua carga formal é zero. A diferença entre os dois conceitos está em que o número de oxidação:",
+    "alternativas": {
+      "a": "atribui os elétrons ao átomo mais eletronegativo",
+      "b": "divide os elétrons igualmente entre os átomos ligados",
+      "c": "considera apenas os pares isolados de cada átomo",
+      "d": "é calculado a partir da geometria molecular",
+      "e": "equivale à carga real medida sobre o átomo"
+    },
+    "gabarito": "a",
+    "resolucao": "A carga formal supõe partilha igualitária dos elétrons de ligação: o carbono, com quatro elétrons de valência e oito elétrons ligantes, fica com $4-\\tfrac{8}{2}=0$. O número de oxidação faz a hipótese extrema oposta, entregando os elétrons de cada ligação por inteiro ao átomo mais eletronegativo: o carbono perde todos os oito e fica $+4$. Nenhum dos dois é a carga real, que é intermediária — são convenções de contabilidade úteis para fins diferentes.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Calorimetria e calor específico",
+    "dificuldade": "dificil",
+    "enunciado": "Um bloco metálico de $100{,}0$ g a $80{,}0\\ ^{\\circ}\\text{C}$ é mergulhado em $100{,}0$ g de água a $20{,}0\\ ^{\\circ}\\text{C}$, num calorímetro de capacidade desprezível. O equilíbrio térmico ocorre a $25{,}0\\ ^{\\circ}\\text{C}$. Determine o calor específico do metal, usando $c_{\\text{água}}=4{,}18$ J/(g·°C).",
+    "alternativas": {
+      "a": "$0{,}76$ J/(g·°C)",
+      "b": "$0{,}19$ J/(g·°C)",
+      "c": "$0{,}38$ J/(g·°C)",
+      "d": "$4{,}18$ J/(g·°C)",
+      "e": "$0{,}45$ J/(g·°C)"
+    },
+    "gabarito": "c",
+    "resolucao": "O calor cedido pelo metal é absorvido pela água: $m_mc_m\\Delta T_m=m_ac_a\\Delta T_a$. A água aquece $5{,}0\\ ^{\\circ}\\text{C}$ e absorve $100{,}0\\times 4{,}18\\times 5{,}0=2090$ J. O metal esfria de $80{,}0$ para $25{,}0\\ ^{\\circ}\\text{C}$, isto é, $55{,}0\\ ^{\\circ}\\text{C}$. Logo $c_m=\\dfrac{2090}{100{,}0\\times 55{,}0}=0{,}38$ J/(g·°C). O valor é típico de metais como o cobre e ilustra por que massas iguais de metal e água trocam calor com variações de temperatura tão diferentes.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Calorímetro de bomba a volume constante",
+    "dificuldade": "dificil",
+    "enunciado": "A combustão de $1{,}50$ g de glicose ($M=180$ g/mol) numa bomba calorimétrica de capacidade $5{,}00$ kJ/°C provoca elevação de $4{,}67\\ ^{\\circ}\\text{C}$ na temperatura. Determine a variação de energia interna da combustão, por mol de glicose.",
+    "alternativas": {
+      "a": "$-1{,}40\\times 10^{3}$ kJ/mol",
+      "b": "$-5{,}60\\times 10^{3}$ kJ/mol",
+      "c": "$-2{,}34\\times 10^{1}$ kJ/mol",
+      "d": "$-4{,}67\\times 10^{2}$ kJ/mol",
+      "e": "$-2{,}80\\times 10^{3}$ kJ/mol"
+    },
+    "gabarito": "e",
+    "resolucao": "O calor absorvido pelo calorímetro é $q=C\\,\\Delta T=5{,}00\\times 4{,}67=23{,}4$ kJ, liberado pela amostra. A quantidade queimada é $n=\\dfrac{1{,}50}{180}=8{,}33\\times 10^{-3}$ mol. Por mol, $\\Delta E=-\\dfrac{23{,}4}{8{,}33\\times 10^{-3}}\\approx-2{,}80\\times 10^{3}$ kJ/mol. Como a bomba opera a volume constante, o calor medido é $\\Delta E$, e não $\\Delta H$ — para a glicose os dois praticamente coincidem, porque a reação não altera o número de mols de gás.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Lei de Hess",
+    "dificuldade": "dificil",
+    "enunciado": "São dados $\\text{C}(s)+\\text{O}_2(g)\\rightarrow\\text{CO}_2(g)$, com $\\Delta H=-393{,}5$ kJ, e $\\text{CO}(g)+\\tfrac12\\text{O}_2(g)\\rightarrow\\text{CO}_2(g)$, com $\\Delta H=-283{,}0$ kJ. Determine $\\Delta H$ da reação $\\text{C}(s)+\\tfrac12\\text{O}_2(g)\\rightarrow\\text{CO}(g)$.",
+    "alternativas": {
+      "a": "$-110{,}5$ kJ",
+      "b": "$-676{,}5$ kJ",
+      "c": "$+110{,}5$ kJ",
+      "d": "$-283{,}0$ kJ",
+      "e": "$-393{,}5$ kJ"
+    },
+    "gabarito": "a",
+    "resolucao": "Some a primeira equação com o inverso da segunda. Ao inverter, o sinal muda: $\\text{CO}_2(g)\\rightarrow\\text{CO}(g)+\\tfrac12\\text{O}_2(g)$, com $\\Delta H=+283{,}0$ kJ. O $\\text{CO}_2$ aparece dos dois lados e é cancelado, sobrando exatamente a equação pedida, com $\\Delta H=-393{,}5+283{,}0=-110{,}5$ kJ. Essa medida indireta é necessária porque a combustão do carbono nunca produz apenas $\\text{CO}$ — a lei de Hess contorna a impossibilidade experimental.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Entalpia de formação a partir da combustão",
+    "dificuldade": "dificil",
+    "enunciado": "A combustão completa do etanol líquido libera $1367$ kJ/mol. Sabendo que $\\Delta H_f^{\\circ}$ vale $-393{,}5$ kJ/mol para o $\\text{CO}_2(g)$ e $-285{,}8$ kJ/mol para a $\\text{H}_2\\text{O}(l)$, determine a entalpia de formação do etanol.",
+    "alternativas": {
+      "a": "$-1367{,}0$ kJ/mol",
+      "b": "$+277{,}4$ kJ/mol",
+      "c": "$-1644{,}4$ kJ/mol",
+      "d": "$-138{,}7$ kJ/mol",
+      "e": "$-277{,}4$ kJ/mol"
+    },
+    "gabarito": "e",
+    "resolucao": "A reação é $\\text{C}_2\\text{H}_5\\text{OH}(l)+3\\text{O}_2(g)\\rightarrow 2\\text{CO}_2(g)+3\\text{H}_2\\text{O}(l)$, e vale $\\Delta H^{\\circ}=\\sum\\Delta H_f^{\\circ}(\\text{produtos})-\\sum\\Delta H_f^{\\circ}(\\text{reagentes})$. Os produtos somam $2(-393{,}5)+3(-285{,}8)=-1644{,}4$ kJ; o oxigênio, substância simples, tem entalpia de formação nula. Assim $-1367=-1644{,}4-\\Delta H_f^{\\circ}(\\text{etanol})$, de onde $\\Delta H_f^{\\circ}=-277{,}4$ kJ/mol.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Relação entre entalpia e energia interna",
+    "dificuldade": "dificil",
+    "enunciado": "Para $\\text{N}_2(g)+3\\text{H}_2(g)\\rightarrow 2\\text{NH}_3(g)$ tem-se $\\Delta H^{\\circ}=-92{,}2$ kJ a $298$ K. Determine $\\Delta E^{\\circ}$, usando $R=8{,}314\\times 10^{-3}$ kJ/(mol·K).",
+    "alternativas": {
+      "a": "$-97{,}2$ kJ",
+      "b": "$-92{,}2$ kJ",
+      "c": "$-87{,}2$ kJ",
+      "d": "$-82{,}3$ kJ",
+      "e": "$-102{,}1$ kJ"
+    },
+    "gabarito": "c",
+    "resolucao": "Vale $\\Delta H=\\Delta E+\\Delta n_{\\text{gás}}RT$. Aqui $\\Delta n_{\\text{gás}}=2-(1+3)=-2$, logo $\\Delta n RT=-2\\times 8{,}314\\times 10^{-3}\\times 298=-4{,}96$ kJ. Isolando, $\\Delta E=\\Delta H-\\Delta nRT=-92{,}2+4{,}96=-87{,}2$ kJ. A contração do volume faz a vizinhança realizar trabalho sobre o sistema, e por isso a energia interna cai menos que a entalpia. O erro de sinal mais comum leva a $-97{,}2$ kJ.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Trabalho de expansão contra pressão constante",
+    "dificuldade": "dificil",
+    "enunciado": "Um gás se expande de $2{,}0$ L para $6{,}0$ L contra uma pressão externa constante de $1{,}5$ atm. Determine o trabalho realizado sobre o gás, sabendo que $1$ L·atm $=101{,}3$ J.",
+    "alternativas": {
+      "a": "$+6{,}1\\times 10^{2}$ J",
+      "b": "$-9{,}1\\times 10^{2}$ J",
+      "c": "$-1{,}2\\times 10^{3}$ J",
+      "d": "$-4{,}1\\times 10^{2}$ J",
+      "e": "$-6{,}1\\times 10^{2}$ J"
+    },
+    "gabarito": "e",
+    "resolucao": "Para pressão externa constante, $w=-P_{\\text{ext}}\\Delta V=-1{,}5\\times(6{,}0-2{,}0)=-6{,}0$ L·atm. Convertendo, $-6{,}0\\times 101{,}3\\approx-6{,}1\\times 10^{2}$ J. O sinal negativo segue a convenção de que $w$ é o trabalho recebido pelo sistema: numa expansão o gás empurra a vizinhança e perde energia. Repare que o trabalho depende da pressão de oposição, e não da pressão do gás — por isso uma expansão no vácuo não realiza trabalho algum.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Previsão do sinal da variação de entropia",
+    "dificuldade": "medio",
+    "enunciado": "Em qual das transformações abaixo a variação de entropia do sistema é negativa?",
+    "alternativas": {
+      "a": "$\\text{CaCO}_3(s)\\rightarrow\\text{CaO}(s)+\\text{CO}_2(g)$",
+      "b": "$\\text{H}_2\\text{O}(l)\\rightarrow\\text{H}_2\\text{O}(g)$",
+      "c": "$\\text{NaCl}(s)\\rightarrow\\text{Na}^{+}(aq)+\\text{Cl}^{-}(aq)$",
+      "d": "$2\\text{NO}(g)+\\text{O}_2(g)\\rightarrow 2\\text{NO}_2(g)$",
+      "e": "$2\\text{H}_2\\text{O}_2(l)\\rightarrow 2\\text{H}_2\\text{O}(l)+\\text{O}_2(g)$"
+    },
+    "gabarito": "d",
+    "resolucao": "O critério dominante é a variação do número de mols de gás, porque o estado gasoso tem entropia molar muito superior à dos condensados. Na reação escolhida, três mols de gás transformam-se em dois: o número de microestados acessíveis diminui e $\\Delta S<0$. Nas demais há produção de gás ou passagem a um estado mais desordenado. Note que $\\Delta S<0$ não impede a espontaneidade — a formação do $\\text{NO}_2$ é espontânea porque é suficientemente exotérmica.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Cálculo de entropia padrão de reação",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\Delta S^{\\circ}$ da reação $\\text{N}_2(g)+3\\text{H}_2(g)\\rightarrow 2\\text{NH}_3(g)$, usando as entropias padrão, em J/(mol·K): $\\text{N}_2=191{,}5$; $\\text{H}_2=130{,}6$; $\\text{NH}_3=192{,}5$.",
+    "alternativas": {
+      "a": "$-129{,}8$ J/K",
+      "b": "$-198{,}3$ J/K",
+      "c": "$+198{,}3$ J/K",
+      "d": "$-390{,}8$ J/K",
+      "e": "$-99{,}2$ J/K"
+    },
+    "gabarito": "b",
+    "resolucao": "Aplique $\\Delta S^{\\circ}=\\sum n S^{\\circ}(\\text{produtos})-\\sum n S^{\\circ}(\\text{reagentes})$, sem esquecer os coeficientes. Produtos: $2\\times 192{,}5=385{,}0$ J/K. Reagentes: $191{,}5+3\\times 130{,}6=191{,}5+391{,}8=583{,}3$ J/K. Logo $\\Delta S^{\\circ}=385{,}0-583{,}3=-198{,}3$ J/K. O sinal negativo era previsível: quatro mols de gás condensam-se em dois, com forte perda de liberdade translacional.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Temperatura de inversão da espontaneidade",
+    "dificuldade": "dificil",
+    "enunciado": "A decomposição $\\text{CaCO}_3(s)\\rightarrow\\text{CaO}(s)+\\text{CO}_2(g)$ tem $\\Delta H^{\\circ}=+178$ kJ/mol e $\\Delta S^{\\circ}=+160$ J/(mol·K). Determine a temperatura acima da qual o processo se torna espontâneo em condições padrão.",
+    "alternativas": {
+      "a": "$1113$ K",
+      "b": "$890$ K",
+      "c": "$1450$ K",
+      "d": "$835$ K",
+      "e": "$298$ K"
+    },
+    "gabarito": "a",
+    "resolucao": "A espontaneidade exige $\\Delta G^{\\circ}=\\Delta H^{\\circ}-T\\Delta S^{\\circ}<0$. Como ambos os termos são positivos, o produto $T\\Delta S^{\\circ}$ só supera $\\Delta H^{\\circ}$ acima de $T=\\dfrac{\\Delta H^{\\circ}}{\\Delta S^{\\circ}}$. Cuidando das unidades, $T=\\dfrac{178\\,000}{160}\\approx 1113$ K, cerca de $840\\ ^{\\circ}\\text{C}$. É exatamente por isso que a calcinação industrial do calcário em fornos de cal opera em torno de $900\\ ^{\\circ}\\text{C}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Relação entre energia livre padrão e constante de equilíbrio",
+    "dificuldade": "dificil",
+    "enunciado": "Uma reação apresenta $\\Delta G^{\\circ}=-34{,}2$ kJ/mol a $298$ K. Determine sua constante de equilíbrio, usando $\\Delta G^{\\circ}=-RT\\ln K$ e $R=8{,}314$ J/(mol·K).",
+    "alternativas": {
+      "a": "$1{,}0\\times 10^{-6}$",
+      "b": "$3{,}4\\times 10^{4}$",
+      "c": "$1{,}4\\times 10^{1}$",
+      "d": "$1{,}0\\times 10^{3}$",
+      "e": "$1{,}0\\times 10^{6}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Isolando, $\\ln K=-\\dfrac{\\Delta G^{\\circ}}{RT}=\\dfrac{34\\,200}{8{,}314\\times 298}=\\dfrac{34\\,200}{2477{,}6}=13{,}8$. Logo $K=e^{13{,}8}\\approx 1{,}0\\times 10^{6}$. O resultado mostra a sensibilidade extrema de $K$ à energia livre: cada $5{,}7$ kJ/mol de $\\Delta G^{\\circ}$ multiplica ou divide $K$ por dez à temperatura ambiente. Sinal negativo de $\\Delta G^{\\circ}$ corresponde sempre a $K>1$, isto é, equilíbrio deslocado para os produtos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Energia livre em condições não padrão",
+    "dificuldade": "dificil",
+    "enunciado": "Para um sistema químico que atingiu o equilíbrio a temperatura e pressão constantes, é correto afirmar que:",
+    "alternativas": {
+      "a": "$\\Delta G=\\Delta G^{\\circ}=0$ sempre",
+      "b": "$\\Delta G^{\\circ}=0$ e $\\Delta G=-RT\\ln Q$",
+      "c": "$\\Delta G=0$ e $\\Delta G^{\\circ}=-RT\\ln K$",
+      "d": "$\\Delta G<0$ e $Q>K$ no equilíbrio",
+      "e": "$\\Delta G>0$ e $Q=K$ fora do equilíbrio"
+    },
+    "gabarito": "c",
+    "resolucao": "No equilíbrio a energia livre do sistema está no mínimo, e qualquer avanço infinitesimal da reação não altera $G$: por isso $\\Delta G=0$. Já $\\Delta G^{\\circ}$ compara reagentes e produtos todos no estado padrão, condição que em geral não é a do equilíbrio; ele é uma constante da reação, ligada a $K$ por $\\Delta G^{\\circ}=-RT\\ln K$, e só se anula no caso particular $K=1$. A relação geral entre os dois é $\\Delta G=\\Delta G^{\\circ}+RT\\ln Q$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Segunda lei e entropia do universo",
+    "dificuldade": "dificil",
+    "enunciado": "A água congela espontaneamente a $-10\\ ^{\\circ}\\text{C}$, embora o gelo seja mais ordenado que o líquido. A compatibilidade com a segunda lei vem de que:",
+    "alternativas": {
+      "a": "a entropia do sistema na verdade aumenta ao congelar",
+      "b": "a entropia da vizinhança cresce mais que a do sistema diminui",
+      "c": "a segunda lei não se aplica a processos abaixo de zero",
+      "d": "o congelamento ocorre com variação de entalpia positiva",
+      "e": "a entropia do universo permanece rigorosamente constante"
+    },
+    "gabarito": "b",
+    "resolucao": "O critério de espontaneidade é $\\Delta S_{\\text{universo}}=\\Delta S_{\\text{sist}}+\\Delta S_{\\text{viz}}>0$. O congelamento tem $\\Delta S_{\\text{sist}}<0$, mas é exotérmico, e o calor liberado se dissipa na vizinhança, aumentando sua entropia em $-\\Delta H/T$. A $-10\\ ^{\\circ}\\text{C}$ esse ganho supera a perda do sistema e a soma é positiva. Acima de $0\\ ^{\\circ}\\text{C}$ a situação se inverte, e o processo espontâneo passa a ser a fusão — o ponto de fusão é exatamente a temperatura em que a soma se anula.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Espontaneidade e os sinais de entalpia e entropia",
+    "dificuldade": "dificil",
+    "enunciado": "Uma reação tem $\\Delta H<0$ e $\\Delta S<0$. Sobre sua espontaneidade, conclui-se que ela é:",
+    "alternativas": {
+      "a": "espontânea apenas a temperaturas altas",
+      "b": "espontânea em qualquer temperatura",
+      "c": "espontânea apenas a temperaturas baixas",
+      "d": "não espontânea em qualquer temperatura",
+      "e": "espontânea somente na temperatura padrão"
+    },
+    "gabarito": "c",
+    "resolucao": "Em $\\Delta G=\\Delta H-T\\Delta S$, o termo entálpico favorece a reação ($\\Delta H<0$) e o entrópico a desfavorece, pois $-T\\Delta S>0$. Como o peso do segundo cresce linearmente com a temperatura, existe um valor crítico $T=\\Delta H/\\Delta S$ acima do qual $\\Delta G$ muda de sinal. Abaixo dele a entalpia domina e a reação é espontânea. É o caso de toda condensação e de sínteses como a da amônia, favorecidas termodinamicamente no frio — e por isso conduzidas com catalisador, não com calor extra.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Determinação da lei de velocidade por velocidades iniciais",
+    "dificuldade": "dificil",
+    "enunciado": "Para $\\text{A}+\\text{B}\\rightarrow\\text{P}$ mediram-se, com $[\\text{A}]$ e $[\\text{B}]$ em mol/L e $v$ em mol/(L·s): $(0{,}10;\\,0{,}10;\\,2{,}0\\times 10^{-3})$, $(0{,}20;\\,0{,}10;\\,8{,}0\\times 10^{-3})$ e $(0{,}10;\\,0{,}20;\\,4{,}0\\times 10^{-3})$. Determine a constante de velocidade.",
+    "alternativas": {
+      "a": "$2{,}0$ L²/(mol²·s)",
+      "b": "$0{,}20$ L²/(mol²·s)",
+      "c": "$20{,}0$ L²/(mol²·s)",
+      "d": "$0{,}020$ L²/(mol²·s)",
+      "e": "$200{,}0$ L²/(mol²·s)"
+    },
+    "gabarito": "a",
+    "resolucao": "Comparando os dois primeiros ensaios, $[\\text{B}]$ é constante e dobrar $[\\text{A}]$ quadruplica $v$: a ordem em $\\text{A}$ é $2$. Entre o primeiro e o terceiro, dobrar $[\\text{B}]$ apenas dobra $v$: a ordem em $\\text{B}$ é $1$. A lei é $v=k[\\text{A}]^{2}[\\text{B}]$, de terceira ordem global. Substituindo o primeiro ensaio, $k=\\dfrac{2{,}0\\times 10^{-3}}{\\left(0{,}10\\right)^{2}\\left(0{,}10\\right)}=\\dfrac{2{,}0\\times 10^{-3}}{1{,}0\\times 10^{-3}}=2{,}0$ L²/(mol²·s).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Cinética de segunda ordem",
+    "dificuldade": "dificil",
+    "enunciado": "Uma reação de segunda ordem em relação a $\\text{A}$ tem $k=0{,}20$ L/(mol·min). Partindo de $[\\text{A}]_0=0{,}50$ mol/L, determine o tempo necessário para que a concentração caia a $0{,}10$ mol/L.",
+    "alternativas": {
+      "a": "$20$ min",
+      "b": "$80$ min",
+      "c": "$25$ min",
+      "d": "$16$ min",
+      "e": "$40$ min"
+    },
+    "gabarito": "e",
+    "resolucao": "A lei integrada de segunda ordem é $\\dfrac{1}{[\\text{A}]}=\\dfrac{1}{[\\text{A}]_0}+kt$. Substituindo, $\\dfrac{1}{0{,}10}-\\dfrac{1}{0{,}50}=10-2=8{,}0$, que deve igualar $kt=0{,}20\\,t$. Logo $t=40$ min. Note a diferença essencial em relação à primeira ordem: aqui a meia-vida não é constante, pois depende de $[\\text{A}]_0$, e a reação vai ficando cada vez mais lenta à medida que o reagente se esgota.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Meias-vidas sucessivas em primeira ordem",
+    "dificuldade": "dificil",
+    "enunciado": "Uma reação de primeira ordem tem meia-vida de $30$ min. Determine a porcentagem do reagente que ainda resta após $2{,}0$ h de reação.",
+    "alternativas": {
+      "a": "$6{,}25\\%$",
+      "b": "$12{,}50\\%$",
+      "c": "$25{,}00\\%$",
+      "d": "$3{,}13\\%$",
+      "e": "$50{,}00\\%$"
+    },
+    "gabarito": "a",
+    "resolucao": "Em $2{,}0$ h cabem $\\dfrac{120}{30}=4$ meias-vidas. Em processos de primeira ordem cada meia-vida reduz a concentração à metade, independentemente do valor absoluto dela, de modo que resta $\\left(\\tfrac12\\right)^{4}=\\tfrac{1}{16}=0{,}0625$, ou $6{,}25\\%$. Chegar-se-ia ao mesmo resultado por $k=\\dfrac{\\ln 2}{30}=0{,}0231$ min$^{-1}$ e $[\\text{A}]/[\\text{A}]_0=e^{-0{,}0231\\times 120}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Energia de ativação pela equação de Arrhenius",
+    "dificuldade": "dificil",
+    "enunciado": "A constante de velocidade de uma reação dobra ao se elevar a temperatura de $300$ K para $310$ K. Determine a energia de ativação, usando $R=8{,}314$ J/(mol·K) e $\\ln 2=0{,}693$.",
+    "alternativas": {
+      "a": "$26{,}8$ kJ/mol",
+      "b": "$107{,}2$ kJ/mol",
+      "c": "$5{,}36$ kJ/mol",
+      "d": "$53{,}6$ kJ/mol",
+      "e": "$80{,}4$ kJ/mol"
+    },
+    "gabarito": "d",
+    "resolucao": "A forma de dois pontos da equação de Arrhenius é $\\ln\\dfrac{k_2}{k_1}=\\dfrac{E_a}{R}\\left(\\dfrac{1}{T_1}-\\dfrac{1}{T_2}\\right)$. O fator entre parênteses vale $\\dfrac{1}{300}-\\dfrac{1}{310}=1{,}075\\times 10^{-4}$ K$^{-1}$. Então $E_a=\\dfrac{8{,}314\\times 0{,}693}{1{,}075\\times 10^{-4}}\\approx 5{,}36\\times 10^{4}$ J/mol, isto é, $53{,}6$ kJ/mol. Esse valor, próximo de $50$ kJ/mol, é a origem da regra prática de que dez graus a mais dobram a velocidade de muitas reações.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Efeito do catalisador sobre a velocidade",
+    "dificuldade": "dificil",
+    "enunciado": "Um catalisador reduz a energia de ativação de uma reação de $100$ kJ/mol para $75$ kJ/mol. Determine por qual fator a velocidade aumenta a $298$ K, mantidos iguais o fator pré-exponencial e as concentrações. Use $R=8{,}314$ J/(mol·K).",
+    "alternativas": {
+      "a": "$1{,}3\\times 10^{2}$",
+      "b": "$4{,}2\\times 10^{-5}$",
+      "c": "$2{,}4\\times 10^{2}$",
+      "d": "$1{,}0\\times 10^{3}$",
+      "e": "$2{,}4\\times 10^{4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A razão entre as constantes é $\\dfrac{k_{\\text{cat}}}{k}=e^{\\left(E_a-E_a'\\right)/RT}=e^{25\\,000/\\left(8{,}314\\times 298\\right)}=e^{10{,}09}\\approx 2{,}4\\times 10^{4}$. Uma redução aparentemente modesta de $25$ kJ/mol acelera a reação dezenas de milhares de vezes, porque a dependência é exponencial. Vale lembrar que o catalisador abaixa igualmente a barreira da reação inversa, de modo que a constante de equilíbrio permanece intacta.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Lei de velocidade a partir da etapa lenta",
+    "dificuldade": "dificil",
+    "enunciado": "Propõe-se para $\\text{NO}_2(g)+\\text{CO}(g)\\rightarrow\\text{NO}(g)+\\text{CO}_2(g)$ o mecanismo: etapa lenta $\\text{NO}_2+\\text{NO}_2\\rightarrow\\text{NO}_3+\\text{NO}$; etapa rápida $\\text{NO}_3+\\text{CO}\\rightarrow\\text{NO}_2+\\text{CO}_2$. Determine a lei de velocidade prevista.",
+    "alternativas": {
+      "a": "$v=k[\\text{NO}_2][\\text{CO}]$",
+      "b": "$v=k[\\text{NO}_2]^{2}[\\text{CO}]$",
+      "c": "$v=k[\\text{NO}_3][\\text{CO}]$",
+      "d": "$v=k[\\text{NO}_2]$",
+      "e": "$v=k[\\text{NO}_2]^{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A velocidade global é imposta pela etapa mais lenta, e para uma etapa elementar os expoentes coincidem com os coeficientes: $v=k[\\text{NO}_2]^{2}$. O $\\text{CO}$, embora apareça na equação global, participa apenas de uma etapa rápida posterior e não influencia a velocidade — previsão contraintuitiva que a experiência confirma em baixas temperaturas. O $\\text{NO}_3$ é intermediário e nunca pode figurar na lei de velocidade final.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Mecanismo com pré-equilíbrio rápido",
+    "dificuldade": "dificil",
+    "enunciado": "Para $2\\text{NO}(g)+\\text{O}_2(g)\\rightarrow 2\\text{NO}_2(g)$ propõe-se: equilíbrio rápido $2\\text{NO}\\rightleftharpoons\\text{N}_2\\text{O}_2$; etapa lenta $\\text{N}_2\\text{O}_2+\\text{O}_2\\rightarrow 2\\text{NO}_2$. Determine a lei de velocidade prevista.",
+    "alternativas": {
+      "a": "$v=k[\\text{NO}]^{2}[\\text{O}_2]$",
+      "b": "$v=k[\\text{NO}][\\text{O}_2]$",
+      "c": "$v=k[\\text{N}_2\\text{O}_2][\\text{O}_2]$",
+      "d": "$v=k[\\text{NO}]^{2}$",
+      "e": "$v=k[\\text{NO}]^{2}[\\text{O}_2]^{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A etapa lenta dá $v=k_2[\\text{N}_2\\text{O}_2][\\text{O}_2]$, mas o intermediário não pode permanecer na expressão. Do pré-equilíbrio, $K=\\dfrac{[\\text{N}_2\\text{O}_2]}{[\\text{NO}]^{2}}$, ou seja, $[\\text{N}_2\\text{O}_2]=K[\\text{NO}]^{2}$. Substituindo, $v=k_2K[\\text{NO}]^{2}[\\text{O}_2]=k[\\text{NO}]^{2}[\\text{O}_2]$, de terceira ordem global. Esse mecanismo explica ainda a curiosidade de a reação ficar mais lenta ao se aquecer: o pré-equilíbrio exotérmico se desloca para o $\\text{NO}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Ação do catalisador sobre equilíbrio e entalpia",
+    "dificuldade": "dificil",
+    "enunciado": "Ao se adicionar um catalisador a um sistema reacional em condições fixas, permanecem inalterados:",
+    "alternativas": {
+      "a": "a energia de ativação e $\\Delta H$",
+      "b": "$\\Delta H$ e a constante de equilíbrio",
+      "c": "a constante de velocidade e $\\Delta H$",
+      "d": "a energia de ativação e a constante de equilíbrio",
+      "e": "o tempo para atingir o equilíbrio e $\\Delta H$"
+    },
+    "gabarito": "b",
+    "resolucao": "O catalisador oferece um caminho alternativo de menor energia de ativação, acelerando igualmente a reação direta e a inversa; por isso o equilíbrio é alcançado mais depressa, mas com a mesma composição final. Entalpia e energia livre são funções de estado, determinadas apenas pelos estados inicial e final, e independem do caminho: $\\Delta H$ não muda, e como $\\Delta G^{\\circ}=-RT\\ln K$, a constante de equilíbrio tampouco.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Molecularidade e ordem de reação",
+    "dificuldade": "medio",
+    "enunciado": "Sobre a relação entre a equação química global e a lei de velocidade de uma reação, é correto afirmar que a ordem de reação:",
+    "alternativas": {
+      "a": "é sempre igual à soma dos coeficientes",
+      "b": "é determinada experimentalmente",
+      "c": "coincide com a molecularidade global",
+      "d": "é sempre um número inteiro positivo",
+      "e": "independe do mecanismo da reação"
+    },
+    "gabarito": "b",
+    "resolucao": "Só em uma etapa elementar os expoentes da lei de velocidade coincidem com os coeficientes estequiométricos. Numa reação global, que quase sempre é a soma de várias etapas, a lei precisa ser obtida por medidas de velocidade — e pode resultar fracionária, nula ou até negativa em relação a alguma espécie. Molecularidade é conceito aplicável apenas a etapas elementares e conta as partículas que colidem; ordem é uma descrição empírica do comportamento observado.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Teoria das colisões e fator de orientação",
+    "dificuldade": "medio",
+    "enunciado": "Num gás, o número de colisões por segundo é ordens de grandeza maior que o número de reações efetivamente ocorridas. Além da energia insuficiente, o outro motivo dessa discrepância é:",
+    "alternativas": {
+      "a": "a repulsão eletrostática entre as moléculas",
+      "b": "a diferença de massa entre os reagentes",
+      "c": "a baixa concentração dos reagentes",
+      "d": "a orientação inadequada das moléculas na colisão",
+      "e": "a ausência de catalisador no meio"
+    },
+    "gabarito": "d",
+    "resolucao": "Para que a colisão seja produtiva, as moléculas precisam chegar com energia igual ou superior à de ativação e ainda com as regiões reativas voltadas uma para a outra. Em reações entre moléculas grandes, a fração de orientações favoráveis pode ser minúscula, e é isso que o fator estérico da equação de Arrhenius contabiliza no termo pré-exponencial. Concentração e catálise alteram o número de colisões ou a barreira, não essa fração geométrica.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Conversão entre Kc e Kp",
+    "dificuldade": "dificil",
+    "enunciado": "Para $2\\text{SO}_2(g)+\\text{O}_2(g)\\rightleftharpoons 2\\text{SO}_3(g)$ tem-se $K_c=280{,}0$ a $1000$ K. Determine $K_p$, usando $R=0{,}0821$ atm·L/(mol·K).",
+    "alternativas": {
+      "a": "$34{,}1$",
+      "b": "$0{,}34$",
+      "c": "$280{,}0$",
+      "d": "$3{,}4$",
+      "e": "$23{,}0$"
+    },
+    "gabarito": "d",
+    "resolucao": "Vale $K_p=K_c\\left(RT\\right)^{\\Delta n}$, com $\\Delta n=2-3=-1$. Então $K_p=\\dfrac{280{,}0}{0{,}0821\\times 1000}=\\dfrac{280{,}0}{82{,}1}\\approx 3{,}4$. O expoente negativo reflete a contração do número de mols gasosos. Quando $\\Delta n=0$ as duas constantes coincidem numericamente, o que ocorre, por exemplo, no equilíbrio entre $\\text{H}_2$, $\\text{I}_2$ e $\\text{HI}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Quociente de reação e sentido do deslocamento",
+    "dificuldade": "dificil",
+    "enunciado": "No equilíbrio $\\text{H}_2(g)+\\text{I}_2(g)\\rightleftharpoons 2\\text{HI}(g)$, com $K_c=50$, um recipiente contém as três espécies a $0{,}10$ mol/L cada. O sistema irá:",
+    "alternativas": {
+      "a": "deslocar-se no sentido dos produtos",
+      "b": "deslocar-se no sentido dos reagentes",
+      "c": "permanecer em equilíbrio",
+      "d": "consumir todo o iodo presente",
+      "e": "aumentar o valor de sua constante"
+    },
+    "gabarito": "a",
+    "resolucao": "Calcule o quociente com as concentrações do momento: $Q=\\dfrac{\\left(0{,}10\\right)^{2}}{\\left(0{,}10\\right)\\left(0{,}10\\right)}=1$. Como $Q<K_c$, faltam produtos em relação à situação de equilíbrio, e a reação avança no sentido direto até que $Q$ cresça e iguale $50$. O valor da constante não muda: só a temperatura pode alterá-la. Se fosse $Q>K$, o sistema retrocederia.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Cálculo de constante de equilíbrio por tabela ICE",
+    "dificuldade": "dificil",
+    "enunciado": "Em um recipiente de $1{,}0$ L colocam-se $1{,}00$ mol de $\\text{H}_2$ e $1{,}00$ mol de $\\text{I}_2$. No equilíbrio encontram-se $1{,}56$ mol de $\\text{HI}$. Determine $K_c$ da reação $\\text{H}_2(g)+\\text{I}_2(g)\\rightleftharpoons 2\\text{HI}(g)$.",
+    "alternativas": {
+      "a": "$7{,}1$",
+      "b": "$50{,}3$",
+      "c": "$25{,}1$",
+      "d": "$100{,}6$",
+      "e": "$2{,}4$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela estequiometria, formar $1{,}56$ mol de $\\text{HI}$ consome $0{,}78$ mol de cada reagente, restando $1{,}00-0{,}78=0{,}22$ mol/L de $\\text{H}_2$ e de $\\text{I}_2$. Então $K_c=\\dfrac{\\left(1{,}56\\right)^{2}}{\\left(0{,}22\\right)\\left(0{,}22\\right)}=\\dfrac{2{,}434}{0{,}0484}\\approx 50{,}3$. O erro mais comum é subtrair $1{,}56$ dos reagentes, esquecendo o coeficiente $2$ do produto, o que levaria a um valor completamente diferente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Le Chatelier: adição de gás inerte a volume constante",
+    "dificuldade": "dificil",
+    "enunciado": "Ao sistema em equilíbrio $\\text{N}_2(g)+3\\text{H}_2(g)\\rightleftharpoons 2\\text{NH}_3(g)$, contido num recipiente rígido, injeta-se argônio. O efeito sobre o equilíbrio é:",
+    "alternativas": {
+      "a": "deslocamento para a amônia",
+      "b": "deslocamento para os reagentes",
+      "c": "nenhum deslocamento",
+      "d": "aumento do valor de $K_p$",
+      "e": "diminuição do valor de $K_c$"
+    },
+    "gabarito": "c",
+    "resolucao": "O argônio não participa da reação e, a volume constante, não altera as concentrações nem as pressões parciais das espécies envolvidas. A pressão total sobe, mas é o quociente calculado com as pressões parciais que determina o deslocamento, e ele permanece igual a $K$. Se, em vez disso, o gás inerte fosse acrescentado mantendo a pressão total constante — o que exigiria expandir o volume —, o equilíbrio se deslocaria para o lado de maior número de mols gasosos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Le Chatelier: pressão em reação sem variação de mols",
+    "dificuldade": "dificil",
+    "enunciado": "Comprimindo-se à metade o volume do sistema $\\text{H}_2(g)+\\text{I}_2(g)\\rightleftharpoons 2\\text{HI}(g)$, em equilíbrio e a temperatura constante, observa-se:",
+    "alternativas": {
+      "a": "deslocamento no sentido do $\\text{HI}$",
+      "b": "deslocamento no sentido dos reagentes",
+      "c": "nenhum deslocamento do equilíbrio",
+      "d": "aumento da constante de equilíbrio",
+      "e": "diminuição da constante de equilíbrio"
+    },
+    "gabarito": "c",
+    "resolucao": "Reduzir o volume dobra todas as concentrações. No quociente $Q=\\dfrac{[\\text{HI}]^{2}}{[\\text{H}_2][\\text{I}_2]}$, o numerador é multiplicado por $4$ e o denominador também, de modo que $Q$ continua igual a $K_c$ e nada se desloca. Isso acontece sempre que $\\Delta n_{\\text{gás}}=0$. Para reações com $\\Delta n\\neq 0$, a compressão favorece o lado com menos mols de gás.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "pH de solução de base forte diprótica",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o pH de uma solução aquosa de $\\text{Ba(OH)}_2$ de concentração $5{,}0\\times 10^{-3}$ mol/L, a $25\\ ^{\\circ}\\text{C}$.",
+    "alternativas": {
+      "a": "$11{,}70$",
+      "b": "$12{,}00$",
+      "c": "$2{,}30$",
+      "d": "$2{,}00$",
+      "e": "$12{,}30$"
+    },
+    "gabarito": "b",
+    "resolucao": "Cada fórmula unitária libera dois íons hidróxido, de modo que $[\\text{OH}^{-}]=2\\times 5{,}0\\times 10^{-3}=1{,}0\\times 10^{-2}$ mol/L. Daí $\\text{pOH}=-\\log\\left(1{,}0\\times 10^{-2}\\right)=2{,}00$ e, como $\\text{pH}+\\text{pOH}=14$ a $25\\ ^{\\circ}\\text{C}$, $\\text{pH}=12{,}00$. Ignorar o fator $2$ levaria a $11{,}70$; confundir pH com pOH levaria a $2{,}00$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "pH de ácido fraco a partir do Ka",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o pH de uma solução $0{,}20$ mol/L de ácido acético, cujo $K_a$ vale $1{,}8\\times 10^{-5}$.",
+    "alternativas": {
+      "a": "$4{,}74$",
+      "b": "$3{,}02$",
+      "c": "$2{,}42$",
+      "d": "$2{,}72$",
+      "e": "$5{,}44$"
+    },
+    "gabarito": "d",
+    "resolucao": "Montando a tabela de equilíbrio com $x=[\\text{H}^{+}]$ e supondo $x\\ll 0{,}20$, tem-se $K_a\\approx\\dfrac{x^{2}}{0{,}20}$, logo $x=\\sqrt{1{,}8\\times 10^{-5}\\times 0{,}20}=\\sqrt{3{,}6\\times 10^{-6}}=1{,}9\\times 10^{-3}$ mol/L. Então $\\text{pH}=-\\log\\left(1{,}9\\times 10^{-3}\\right)\\approx 2{,}72$. A aproximação se justifica: $x$ é menos de $1\\%$ da concentração inicial. O valor $4{,}74$ é o $\\text{p}K_a$, que só seria o pH numa solução tampão equimolar.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Lei da diluição de Ostwald",
+    "dificuldade": "dificil",
+    "enunciado": "Uma solução de ácido fraco é diluída a temperatura constante. Sobre o grau de ionização $\\alpha$ e a concentração de $\\text{H}^{+}$, ocorre que:",
+    "alternativas": {
+      "a": "$\\alpha$ diminui e $[\\text{H}^{+}]$ aumenta",
+      "b": "$\\alpha$ aumenta e $[\\text{H}^{+}]$ diminui",
+      "c": "ambos aumentam",
+      "d": "ambos diminuem",
+      "e": "$\\alpha$ permanece constante e $[\\text{H}^{+}]$ diminui"
+    },
+    "gabarito": "b",
+    "resolucao": "Da lei de Ostwald, $K_a=\\dfrac{\\alpha^{2}C}{1-\\alpha}$, com $K_a$ fixo: se $C$ cai, $\\alpha$ precisa crescer. Isso é o princípio de Le Chatelier aplicado à ionização, que produz mais partículas e por isso é favorecida pela diluição. Ainda assim, $[\\text{H}^{+}]=\\alpha C$ diminui, porque a queda de $C$ é proporcionalmente maior que o ganho de $\\alpha$ — diluir uma solução ácida sempre eleva o pH, por mais que a ionização percentual aumente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "pH de solução-tampão pela equação de Henderson-Hasselbalch",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o pH de um tampão que contém ácido acético $0{,}20$ mol/L e acetato de sódio $0{,}30$ mol/L, sabendo que $\\text{p}K_a=4{,}74$ e $\\log 1{,}5=0{,}18$.",
+    "alternativas": {
+      "a": "$4{,}56$",
+      "b": "$4{,}74$",
+      "c": "$5{,}22$",
+      "d": "$4{,}44$",
+      "e": "$4{,}92$"
+    },
+    "gabarito": "e",
+    "resolucao": "A equação de Henderson-Hasselbalch dá $\\text{pH}=\\text{p}K_a+\\log\\dfrac{[\\text{base}]}{[\\text{ácido}]}=4{,}74+\\log\\dfrac{0{,}30}{0{,}20}=4{,}74+0{,}18=4{,}92$. Como há mais base conjugada que ácido, o pH fica acima do $\\text{p}K_a$, como esperado. Inverter a razão produz $4{,}56$, erro frequente; note ainda que o pH do tampão depende apenas da razão entre as concentrações, e não de seus valores absolutos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Resposta de um tampão à adição de base forte",
+    "dificuldade": "dificil",
+    "enunciado": "Um litro de tampão contém $0{,}40$ mol de ácido acético e $0{,}40$ mol de acetato de sódio. Determine o pH após a adição de $0{,}10$ mol de $\\text{NaOH}$, com $\\text{p}K_a=4{,}74$ e $\\log\\left(\\tfrac{5}{3}\\right)=0{,}22$.",
+    "alternativas": {
+      "a": "$4{,}52$",
+      "b": "$4{,}74$",
+      "c": "$4{,}96$",
+      "d": "$5{,}26$",
+      "e": "$13{,}00$"
+    },
+    "gabarito": "c",
+    "resolucao": "O hidróxido consome quantidade equivalente de ácido e produz a mesma quantidade de base conjugada: o ácido cai para $0{,}40-0{,}10=0{,}30$ mol e o acetato sobe para $0{,}40+0{,}10=0{,}50$ mol. Então $\\text{pH}=4{,}74+\\log\\dfrac{0{,}50}{0{,}30}=4{,}74+0{,}22=4{,}96$. A variação é de apenas $0{,}22$ unidade, contra os mais de $12$ que a mesma adição provocaria em água pura — é essa resistência que define um tampão.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "pH no ponto de equivalência de titulação de ácido fraco",
+    "dificuldade": "dificil",
+    "enunciado": "Titulam-se $25{,}0$ mL de ácido acético $0{,}10$ mol/L ($K_a=1{,}8\\times 10^{-5}$) com $\\text{NaOH}$ $0{,}10$ mol/L. Determine o pH no ponto de equivalência, lembrando que o volume final é o dobro do inicial.",
+    "alternativas": {
+      "a": "$8{,}72$",
+      "b": "$7{,}00$",
+      "c": "$5{,}28$",
+      "d": "$9{,}26$",
+      "e": "$8{,}22$"
+    },
+    "gabarito": "a",
+    "resolucao": "No ponto de equivalência todo o ácido virou acetato, e a diluição pelo volume de titulante deixa $[\\text{CH}_3\\text{COO}^{-}]=0{,}050$ mol/L. Esse ânion hidrolisa com $K_b=\\dfrac{K_w}{K_a}=\\dfrac{1{,}0\\times 10^{-14}}{1{,}8\\times 10^{-5}}=5{,}6\\times 10^{-10}$. Daí $[\\text{OH}^{-}]=\\sqrt{5{,}6\\times 10^{-10}\\times 0{,}050}=5{,}3\\times 10^{-6}$ mol/L, $\\text{pOH}=5{,}28$ e $\\text{pH}=8{,}72$. O ponto de equivalência de ácido fraco com base forte é sempre básico — por isso se usa fenolftaleína, e não azul de bromotimol.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Solubilidade molar a partir do produto de solubilidade",
+    "dificuldade": "dificil",
+    "enunciado": "O fluoreto de cálcio tem $K_{ps}=3{,}9\\times 10^{-11}$ a $25\\ ^{\\circ}\\text{C}$. Determine sua solubilidade molar em água pura.",
+    "alternativas": {
+      "a": "$6{,}2\\times 10^{-6}$ mol/L",
+      "b": "$3{,}4\\times 10^{-4}$ mol/L",
+      "c": "$1{,}6\\times 10^{-4}$ mol/L",
+      "d": "$2{,}1\\times 10^{-4}$ mol/L",
+      "e": "$2{,}1\\times 10^{-6}$ mol/L"
+    },
+    "gabarito": "d",
+    "resolucao": "Dissolvendo $s$ mol/L de $\\text{CaF}_2$, obtêm-se $s$ mol/L de $\\text{Ca}^{2+}$ e $2s$ mol/L de $\\text{F}^{-}$. Então $K_{ps}=s\\left(2s\\right)^{2}=4s^{3}$, de onde $s^{3}=\\dfrac{3{,}9\\times 10^{-11}}{4}=9{,}75\\times 10^{-12}$ e $s\\approx 2{,}1\\times 10^{-4}$ mol/L. Esquecer o coeficiente $2$ do fluoreto — e com ele o fator $4$ — é o deslize clássico, e faz a solubilidade parecer maior do que é.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Efeito do íon comum sobre a solubilidade",
+    "dificuldade": "dificil",
+    "enunciado": "O cloreto de prata tem $K_{ps}=1{,}8\\times 10^{-10}$. Determine sua solubilidade molar numa solução de $\\text{NaCl}$ $0{,}10$ mol/L.",
+    "alternativas": {
+      "a": "$1{,}8\\times 10^{-9}$ mol/L",
+      "b": "$1{,}3\\times 10^{-5}$ mol/L",
+      "c": "$1{,}8\\times 10^{-10}$ mol/L",
+      "d": "$1{,}8\\times 10^{-11}$ mol/L",
+      "e": "$5{,}6\\times 10^{-6}$ mol/L"
+    },
+    "gabarito": "a",
+    "resolucao": "Seja $s$ a solubilidade nessas condições: $[\\text{Ag}^{+}]=s$ e $[\\text{Cl}^{-}]=0{,}10+s\\approx 0{,}10$, já que o cloreto proveniente do sal domina largamente. Então $s=\\dfrac{K_{ps}}{0{,}10}=1{,}8\\times 10^{-9}$ mol/L, cerca de sete mil vezes menor que em água pura, onde seria $\\sqrt{K_{ps}}=1{,}3\\times 10^{-5}$ mol/L. O efeito do íon comum é a aplicação direta do princípio de Le Chatelier ao equilíbrio de dissolução.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Previsão de precipitação pelo quociente iônico",
+    "dificuldade": "dificil",
+    "enunciado": "Misturam-se volumes iguais de $\\text{Ca(NO}_3)_2$ $2{,}0\\times 10^{-3}$ mol/L e $\\text{NaF}$ $2{,}0\\times 10^{-3}$ mol/L. Determine o quociente iônico $Q$ do $\\text{CaF}_2$ logo após a mistura.",
+    "alternativas": {
+      "a": "$8{,}0\\times 10^{-9}$",
+      "b": "$4{,}0\\times 10^{-6}$",
+      "c": "$1{,}0\\times 10^{-9}$",
+      "d": "$1{,}0\\times 10^{-6}$",
+      "e": "$2{,}0\\times 10^{-9}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A mistura de volumes iguais reduz à metade cada concentração: $[\\text{Ca}^{2+}]=[\\text{F}^{-}]=1{,}0\\times 10^{-3}$ mol/L. Então $Q=[\\text{Ca}^{2+}][\\text{F}^{-}]^{2}=\\left(1{,}0\\times 10^{-3}\\right)\\left(1{,}0\\times 10^{-3}\\right)^{2}=1{,}0\\times 10^{-9}$. Como esse valor excede o $K_{ps}=3{,}9\\times 10^{-11}$, forma-se precipitado até que o produto iônico caia ao valor da constante. Esquecer a diluição pela metade é o erro mais frequente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Equação de Nernst",
+    "dificuldade": "dificil",
+    "enunciado": "A pilha de Daniell tem $E^{\\circ}=1{,}10$ V. Calcule seu potencial quando $[\\text{Zn}^{2+}]=1{,}0$ mol/L e $[\\text{Cu}^{2+}]=0{,}010$ mol/L, usando $E=E^{\\circ}-\\dfrac{0{,}0592}{n}\\log Q$.",
+    "alternativas": {
+      "a": "$1{,}16$ V",
+      "b": "$1{,}10$ V",
+      "c": "$0{,}99$ V",
+      "d": "$1{,}28$ V",
+      "e": "$1{,}04$ V"
+    },
+    "gabarito": "e",
+    "resolucao": "A reação global é $\\text{Zn}+\\text{Cu}^{2+}\\rightarrow\\text{Zn}^{2+}+\\text{Cu}$, com $n=2$ e $Q=\\dfrac{[\\text{Zn}^{2+}]}{[\\text{Cu}^{2+}]}=\\dfrac{1{,}0}{0{,}010}=100$. Então $E=1{,}10-\\dfrac{0{,}0592}{2}\\times 2=1{,}10-0{,}059=1{,}04$ V. O potencial cai porque o reagente está escasso em relação ao produto — exatamente o que acontece com uma pilha ao longo do uso, até que $Q$ alcance $K$ e $E$ se anule, quando a pilha está descarregada.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Energia livre a partir do potencial de célula",
+    "dificuldade": "dificil",
+    "enunciado": "Determine $\\Delta G^{\\circ}$ da reação global da pilha de Daniell, que envolve $2$ mols de elétrons e tem $E^{\\circ}=1{,}10$ V. Use $F=96\\,500$ C/mol.",
+    "alternativas": {
+      "a": "$-106$ kJ",
+      "b": "$+212$ kJ",
+      "c": "$-424$ kJ",
+      "d": "$-212$ kJ",
+      "e": "$-2{,}12$ kJ"
+    },
+    "gabarito": "d",
+    "resolucao": "Vale $\\Delta G^{\\circ}=-nFE^{\\circ}=-2\\times 96\\,500\\times 1{,}10=-2{,}12\\times 10^{5}$ J, isto é, $-212$ kJ. O sinal negativo confirma a espontaneidade, coerente com um potencial de célula positivo. Esse número representa o trabalho elétrico máximo extraível por mol de reação; qualquer corrente real, com dissipação ôhmica, entrega menos que isso.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Eletrólise e volume de gás produzido",
+    "dificuldade": "dificil",
+    "enunciado": "Na eletrólise da água acidulada, uma corrente de $1{,}93$ A circula durante $1000$ s. Determine o volume de $\\text{H}_2$ obtido nas CNTP, com $F=96\\,500$ C/mol e volume molar $22{,}4$ L/mol.",
+    "alternativas": {
+      "a": "$0{,}448$ L",
+      "b": "$0{,}112$ L",
+      "c": "$1{,}120$ L",
+      "d": "$0{,}224$ L",
+      "e": "$0{,}022$ L"
+    },
+    "gabarito": "d",
+    "resolucao": "A carga total é $Q=it=1{,}93\\times 1000=1930$ C, equivalente a $\\dfrac{1930}{96\\,500}=0{,}0200$ mol de elétrons. No cátodo ocorre $2\\text{H}^{+}+2e^{-}\\rightarrow\\text{H}_2$, de modo que cada mol de hidrogênio consome dois mols de elétrons: formam-se $0{,}0100$ mol. O volume é $0{,}0100\\times 22{,}4=0{,}224$ L. Esquecer o fator $2$ da semirreação leva a $0{,}448$ L, o dobro do correto.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Termodinâmica, Cinética e Equilíbrio",
+    "subtopico": "Dependência da constante de equilíbrio com a temperatura",
+    "dificuldade": "dificil",
+    "enunciado": "Para uma reação exotérmica em fase gasosa, o efeito de um aumento de temperatura sobre a constante de equilíbrio é:",
+    "alternativas": {
+      "a": "$K$ aumenta",
+      "b": "$K$ diminui",
+      "c": "$K$ não se altera",
+      "d": "$K$ tende a zero",
+      "e": "$K$ fica negativa"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela equação de van't Hoff, $\\dfrac{d\\ln K}{dT}=\\dfrac{\\Delta H^{\\circ}}{RT^{2}}$: com $\\Delta H^{\\circ}<0$, $\\ln K$ decresce quando $T$ aumenta. A leitura qualitativa é a de Le Chatelier — o calor é um dos \"produtos\" e o aquecimento desloca o equilíbrio para os reagentes. A temperatura é a única perturbação capaz de alterar o valor de $K$; pressão, concentração e catalisador mudam apenas a composição do equilíbrio ou a rapidez com que ele é atingido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Nomenclatura de oxiácidos",
+    "dificuldade": "medio",
+    "enunciado": "Qual é o nome do ácido de fórmula $\\text{HClO}_2$?",
+    "alternativas": {
+      "a": "ácido hipocloroso",
+      "b": "ácido cloroso",
+      "c": "ácido clórico",
+      "d": "ácido perclórico",
+      "e": "ácido clorídrico"
+    },
+    "gabarito": "b",
+    "resolucao": "A família dos oxiácidos do cloro tem quatro membros, nomeados pelo número de oxigênios: $\\text{HClO}$ é o hipocloroso, $\\text{HClO}_2$ o cloroso, $\\text{HClO}_3$ o clórico e $\\text{HClO}_4$ o perclórico. A regra geral parte do ácido padrão terminado em \"-ico\"; um oxigênio a menos troca o sufixo para \"-oso\", dois a menos acrescenta o prefixo \"hipo-\" e um a mais, \"per-\". O ácido clorídrico, $\\text{HCl}$, é um hidrácido e não pertence a essa série.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Fórmula a partir do nome de sal",
+    "dificuldade": "medio",
+    "enunciado": "Escreva a fórmula do sulfato de alumínio, usado como coagulante no tratamento de água.",
+    "alternativas": {
+      "a": "$\\text{AlSO}_4$",
+      "b": "$\\text{Al}_3(\\text{SO}_4)_2$",
+      "c": "$\\text{Al}_2(\\text{SO}_4)_3$",
+      "d": "$\\text{Al}(\\text{SO}_4)_3$",
+      "e": "$\\text{Al}_2\\text{SO}_4$"
+    },
+    "gabarito": "c",
+    "resolucao": "O alumínio forma cátion $\\text{Al}^{3+}$ e o sulfato é $\\text{SO}_4^{2-}$. Para que o composto seja eletricamente neutro, a carga total positiva deve igualar a negativa: são necessários dois alumínios ($+6$) e três sulfatos ($-6$), o que dá $\\text{Al}_2(\\text{SO}_4)_3$. O atalho prático é trocar os módulos das cargas entre os índices, sempre simplificando a razão quando possível — o que aqui não ocorre, pois $2$ e $3$ são primos entre si.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Nomenclatura de metais com Nox variável",
+    "dificuldade": "medio",
+    "enunciado": "Qual é o nome do composto $\\text{FeCl}_3$ na nomenclatura de estoque?",
+    "alternativas": {
+      "a": "cloreto de ferro (II)",
+      "b": "tricloreto de ferro (II)",
+      "c": "clorato de ferro (III)",
+      "d": "cloreto férrico (II)",
+      "e": "cloreto de ferro (III)"
+    },
+    "gabarito": "e",
+    "resolucao": "O cloreto tem carga $1-$; três deles exigem um cátion $3+$, de modo que o número de oxidação do ferro é $+3$, indicado em algarismos romanos entre parênteses. A nomenclatura tradicional usaria o sufixo \"-ico\" para o maior Nox — cloreto férrico — e \"-oso\" para o menor, $\\text{FeCl}_2$, cloreto ferroso. Já o clorato seria o oxiânion $\\text{ClO}_3^{-}$, que não aparece aqui.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Óxidos anfóteros",
+    "dificuldade": "medio",
+    "enunciado": "Qual dos óxidos abaixo reage tanto com ácidos fortes quanto com bases fortes?",
+    "alternativas": {
+      "a": "$\\text{Na}_2\\text{O}$",
+      "b": "$\\text{P}_4\\text{O}_{10}$",
+      "c": "$\\text{Cl}_2\\text{O}_7$",
+      "d": "$\\text{Al}_2\\text{O}_3$",
+      "e": "$\\text{Li}_2\\text{O}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O óxido de alumínio é anfótero: com ácido comporta-se como base, formando $\\text{Al}^{3+}$, e com base forte comporta-se como ácido, formando o íon aluminato $\\text{Al}(\\text{OH})_4^{-}$. Esse caráter duplo é típico de elementos na fronteira entre metais e ametais, como $\\text{Al}$, $\\text{Zn}$, $\\text{Pb}$ e $\\text{Sn}$. $\\text{Na}_2\\text{O}$ e $\\text{Li}_2\\text{O}$ são francamente básicos, enquanto $\\text{P}_4\\text{O}_{10}$ e $\\text{Cl}_2\\text{O}_7$ são óxidos ácidos, que em água dão ácido fosfórico e ácido perclórico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Óxidos ácidos e chuva ácida",
+    "dificuldade": "medio",
+    "enunciado": "A queima de combustíveis com enxofre libera $\\text{SO}_2$, que se oxida na atmosfera a $\\text{SO}_3$. Qual espécie se forma quando esse $\\text{SO}_3$ encontra a água das nuvens?",
+    "alternativas": {
+      "a": "$\\text{H}_2\\text{SO}_3$",
+      "b": "$\\text{H}_2\\text{S}$",
+      "c": "$\\text{S}_2\\text{O}_3^{2-}$",
+      "d": "$\\text{HSO}_3^{-}$",
+      "e": "$\\text{H}_2\\text{SO}_4$"
+    },
+    "gabarito": "e",
+    "resolucao": "Óxidos ácidos reagem com água produzindo o ácido de mesmo número de oxidação do elemento central. No $\\text{SO}_3$ o enxofre está $+6$, e o ácido correspondente é o sulfúrico: $\\text{SO}_3+\\text{H}_2\\text{O}\\rightarrow\\text{H}_2\\text{SO}_4$. O $\\text{SO}_2$, com enxofre $+4$, daria ácido sulfuroso. Como o sulfúrico é um ácido forte e diprótico, é ele o principal responsável pela acidez extrema da chuva em regiões industriais.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Pares conjugados de Brønsted-Lowry",
+    "dificuldade": "dificil",
+    "enunciado": "No equilíbrio $\\text{HCO}_3^{-}+\\text{H}_2\\text{O}\\rightleftharpoons\\text{H}_2\\text{CO}_3+\\text{OH}^{-}$, identifique o ácido conjugado do $\\text{HCO}_3^{-}$.",
+    "alternativas": {
+      "a": "$\\text{H}_2\\text{CO}_3$",
+      "b": "$\\text{H}_2\\text{O}$",
+      "c": "$\\text{OH}^{-}$",
+      "d": "$\\text{CO}_3^{2-}$",
+      "e": "$\\text{HCO}_3^{-}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Um par conjugado difere por exatamente um próton. Nesse equilíbrio o bicarbonato atua como base de Brønsted, recebendo $\\text{H}^{+}$ da água e transformando-se em $\\text{H}_2\\text{CO}_3$ — seu ácido conjugado. A água atua como ácido e seu par conjugado é o $\\text{OH}^{-}$. Note que o $\\text{CO}_3^{2-}$ é a base conjugada do bicarbonato, e não seu ácido: é a espécie que resultaria da perda de um próton.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Força relativa de oxiácidos",
+    "dificuldade": "dificil",
+    "enunciado": "Ordene em ordem crescente de força ácida os compostos $\\text{HClO}$, $\\text{HClO}_2$ e $\\text{HClO}_3$.",
+    "alternativas": {
+      "a": "$\\text{HClO}_3<\\text{HClO}_2<\\text{HClO}$",
+      "b": "$\\text{HClO}_2<\\text{HClO}<\\text{HClO}_3$",
+      "c": "$\\text{HClO}<\\text{HClO}_3<\\text{HClO}_2$",
+      "d": "$\\text{HClO}_3<\\text{HClO}<\\text{HClO}_2$",
+      "e": "$\\text{HClO}<\\text{HClO}_2<\\text{HClO}_3$"
+    },
+    "gabarito": "e",
+    "resolucao": "Em oxiácidos de um mesmo elemento central, a força cresce com o número de oxigênios não protonados. Cada oxigênio adicional retira densidade eletrônica do cloro por efeito indutivo, o que enfraquece a ligação $\\text{O}-\\text{H}$ e, sobretudo, dispersa a carga negativa do ânion resultante por mais átomos, estabilizando a base conjugada. Quanto mais estável a base conjugada, mais forte o ácido: o $\\text{HClO}_4$, com quatro oxigênios, é um dos ácidos mais fortes conhecidos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Hidrólise de sais e caráter do meio",
+    "dificuldade": "dificil",
+    "enunciado": "Qual dos sais abaixo, dissolvido em água pura, produz solução de pH maior que $7$?",
+    "alternativas": {
+      "a": "$\\text{NH}_4\\text{Cl}$",
+      "b": "$\\text{NaCl}$",
+      "c": "$\\text{CH}_3\\text{COONa}$",
+      "d": "$\\text{KNO}_3$",
+      "e": "$\\text{NH}_4\\text{NO}_3$"
+    },
+    "gabarito": "c",
+    "resolucao": "O caráter da solução vem da força dos \"pais\" do sal. O acetato de sódio provém de base forte ($\\text{NaOH}$) e ácido fraco ($\\text{CH}_3\\text{COOH}$): o ânion acetato hidrolisa, retirando prótons da água e liberando $\\text{OH}^{-}$, e o meio fica básico. $\\text{NH}_4\\text{Cl}$ e $\\text{NH}_4\\text{NO}_3$ vêm de base fraca e ácido forte, com o cátion amônio cedendo prótons e acidificando o meio. $\\text{NaCl}$ e $\\text{KNO}_3$, de ácido e base fortes, não hidrolisam e permanecem neutros.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Espécies anfipróticas",
+    "dificuldade": "medio",
+    "enunciado": "Qual das espécies abaixo pode atuar tanto como ácido quanto como base de Brønsted-Lowry?",
+    "alternativas": {
+      "a": "$\\text{CO}_3^{2-}$",
+      "b": "$\\text{HCO}_3^{-}$",
+      "c": "$\\text{NH}_4^{+}$",
+      "d": "$\\text{Cl}^{-}$",
+      "e": "$\\text{CH}_3\\text{COOH}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Para ser anfiprótica, a espécie precisa ter um próton ionizável e, ao mesmo tempo, um par isolado capaz de receber outro. O bicarbonato satisfaz as duas condições: perde $\\text{H}^{+}$ formando $\\text{CO}_3^{2-}$ ou o recebe formando $\\text{H}_2\\text{CO}_3$. O carbonato só pode receber, o amônio e o ácido acético só podem ceder, e o cloreto é base conjugada de ácido forte, tão fraca que não reage apreciavelmente. Esse comportamento duplo é a base do tampão bicarbonato que controla o pH do sangue.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Equação iônica líquida de precipitação",
+    "dificuldade": "medio",
+    "enunciado": "Escreva a equação iônica líquida da reação entre soluções aquosas de $\\text{AgNO}_3$ e $\\text{NaCl}$.",
+    "alternativas": {
+      "a": "$\\text{Ag}^{+}+\\text{NO}_3^{-}\\rightarrow\\text{AgNO}_3(s)$",
+      "b": "$\\text{Ag}^{+}+\\text{Cl}^{-}\\rightarrow\\text{AgCl}(s)$",
+      "c": "$\\text{Na}^{+}+\\text{Cl}^{-}\\rightarrow\\text{NaCl}(s)$",
+      "d": "$\\text{Na}^{+}+\\text{NO}_3^{-}\\rightarrow\\text{NaNO}_3(s)$",
+      "e": "$\\text{AgNO}_3+\\text{NaCl}\\rightarrow\\text{AgCl}+\\text{NaNO}_3$"
+    },
+    "gabarito": "b",
+    "resolucao": "Todos os reagentes estão dissociados em solução, e o único produto insolúvel é o cloreto de prata. Os íons $\\text{Na}^{+}$ e $\\text{NO}_3^{-}$ aparecem inalterados dos dois lados da equação completa e são espectadores: devem ser cancelados. Sobra apenas $\\text{Ag}^{+}+\\text{Cl}^{-}\\rightarrow\\text{AgCl}(s)$. A última alternativa é a equação molecular, correta mas não iônica líquida, porque ainda escreve os espectadores.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Regras de solubilidade",
+    "dificuldade": "dificil",
+    "enunciado": "A mistura de quais soluções aquosas abaixo produz precipitado?",
+    "alternativas": {
+      "a": "$\\text{NaNO}_3$ e $\\text{KCl}$",
+      "b": "$\\text{CaCl}_2$ e $\\text{NaNO}_3$",
+      "c": "$\\text{K}_2\\text{SO}_4$ e $\\text{NaCl}$",
+      "d": "$\\text{Pb(NO}_3)_2$ e $\\text{KI}$",
+      "e": "$\\text{NH}_4\\text{Cl}$ e $\\text{KNO}_3$"
+    },
+    "gabarito": "d",
+    "resolucao": "As regras de solubilidade dizem que nitratos e sais de metais alcalinos e de amônio são sempre solúveis — o que já elimina toda combinação em que os produtos possíveis se encaixam nessas categorias. No primeiro caso, porém, a troca produz $\\text{PbI}_2$, e os iodetos são solúveis exceto os de prata, chumbo e mercúrio. Forma-se então o precipitado amarelo característico do iodeto de chumbo, usado como demonstração clássica de dupla troca.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Neutralização de ácido poliprótico",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o volume de solução de $\\text{NaOH}$ $0{,}50$ mol/L necessário para neutralizar completamente $25$ mL de $\\text{H}_3\\text{PO}_4$ $0{,}20$ mol/L.",
+    "alternativas": {
+      "a": "$10$ mL",
+      "b": "$30$ mL",
+      "c": "$90$ mL",
+      "d": "$15$ mL",
+      "e": "$60$ mL"
+    },
+    "gabarito": "b",
+    "resolucao": "A quantidade de ácido é $0{,}025\\times 0{,}20=5{,}0\\times 10^{-3}$ mol. Sendo triprótico, cada mol consome três mols de hidróxido na neutralização total: $1{,}5\\times 10^{-2}$ mol de $\\text{NaOH}$. O volume é $\\dfrac{1{,}5\\times 10^{-2}}{0{,}50}=0{,}030$ L, ou $30$ mL. Ignorar a acidez tripla levaria a $10$ mL — o volume correspondente apenas à primeira ionização.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Titulação e determinação de concentração",
+    "dificuldade": "dificil",
+    "enunciado": "Na titulação de $20{,}0$ mL de solução de $\\text{H}_2\\text{SO}_4$, o ponto de equivalência é alcançado com $25{,}0$ mL de $\\text{NaOH}$ $0{,}200$ mol/L. Determine a concentração do ácido.",
+    "alternativas": {
+      "a": "$0{,}250$ mol/L",
+      "b": "$0{,}0625$ mol/L",
+      "c": "$0{,}160$ mol/L",
+      "d": "$0{,}500$ mol/L",
+      "e": "$0{,}125$ mol/L"
+    },
+    "gabarito": "e",
+    "resolucao": "A base fornece $0{,}0250\\times 0{,}200=5{,}00\\times 10^{-3}$ mol de $\\text{OH}^{-}$. Como o ácido sulfúrico é diprótico, $\\text{H}_2\\text{SO}_4+2\\text{NaOH}\\rightarrow\\text{Na}_2\\text{SO}_4+2\\text{H}_2\\text{O}$, a quantidade de ácido é a metade: $2{,}50\\times 10^{-3}$ mol. A concentração vale $\\dfrac{2{,}50\\times 10^{-3}}{0{,}0200}=0{,}125$ mol/L. Tratar o ácido como monoprótico dobraria o resultado.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Balanceamento de equação redox em meio ácido",
+    "dificuldade": "dificil",
+    "enunciado": "Na equação $\\text{MnO}_4^{-}+\\text{Fe}^{2+}+\\text{H}^{+}\\rightarrow\\text{Mn}^{2+}+\\text{Fe}^{3+}+\\text{H}_2\\text{O}$, determine o coeficiente do $\\text{H}^{+}$ após o balanceamento com os menores inteiros.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$16$",
+      "c": "$8$",
+      "d": "$5$",
+      "e": "$2$"
+    },
+    "gabarito": "c",
+    "resolucao": "O manganês cai de $+7$ para $+2$, ganhando $5$ elétrons; o ferro sobe de $+2$ para $+3$, perdendo $1$. Para igualar os elétrons são necessários cinco ferros por permanganato: $\\text{MnO}_4^{-}+5\\text{Fe}^{2+}+\\text{H}^{+}\\rightarrow\\text{Mn}^{2+}+5\\text{Fe}^{3+}+\\text{H}_2\\text{O}$. Os quatro oxigênios do permanganato saem como quatro moléculas de água, que exigem oito hidrogênios. A conferência de cargas fecha: $-1+10+8=+17$ à esquerda e $+2+15=+17$ à direita.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Balanceamento de equação redox em meio básico",
+    "dificuldade": "dificil",
+    "enunciado": "Balanceando $\\text{MnO}_4^{-}+\\text{I}^{-}\\rightarrow\\text{MnO}_2+\\text{IO}_3^{-}$ em meio básico, com adição de $\\text{H}_2\\text{O}$ e $\\text{OH}^{-}$, determine o coeficiente do íon hidróxido.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$4$",
+      "c": "$6$",
+      "d": "$8$",
+      "e": "$2$"
+    },
+    "gabarito": "e",
+    "resolucao": "O manganês vai de $+7$ a $+4$, ganhando $3$ elétrons; o iodo vai de $-1$ a $+5$, perdendo $6$. São necessários dois permanganatos por iodeto: $2\\text{MnO}_4^{-}+\\text{I}^{-}\\rightarrow 2\\text{MnO}_2+\\text{IO}_3^{-}$. A carga à esquerda é $-3$ e à direita, $-1$; acrescentando $2\\,\\text{OH}^{-}$ à direita as cargas se igualam, e uma molécula de água à esquerda fecha hidrogênios e oxigênios: $2\\text{MnO}_4^{-}+\\text{I}^{-}+\\text{H}_2\\text{O}\\rightarrow 2\\text{MnO}_2+\\text{IO}_3^{-}+2\\text{OH}^{-}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Número de oxidação em íon poliatômico",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de oxidação médio do enxofre no íon tiossulfato, $\\text{S}_2\\text{O}_3^{2-}$.",
+    "alternativas": {
+      "a": "$+4$",
+      "b": "$+6$",
+      "c": "$-2$",
+      "d": "$+3$",
+      "e": "$+2$"
+    },
+    "gabarito": "e",
+    "resolucao": "Atribuindo $-2$ a cada oxigênio, a soma dos números de oxidação deve igualar a carga do íon: $2x+3(-2)=-2$, logo $2x=+4$ e $x=+2$. Trata-se de um valor médio: na estrutura real os dois enxofres são quimicamente distintos, um central com Nox $+5$ e um terminal com $-1$. A média é suficiente para balancear equações, mas convém lembrar que ela nem sempre corresponde ao estado de um átomo individual.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Identificação de agente oxidante",
+    "dificuldade": "medio",
+    "enunciado": "Na reação $\\text{Zn}(s)+2\\text{HCl}(aq)\\rightarrow\\text{ZnCl}_2(aq)+\\text{H}_2(g)$, qual espécie atua como agente oxidante?",
+    "alternativas": {
+      "a": "$\\text{Zn}$",
+      "b": "$\\text{Cl}^{-}$",
+      "c": "$\\text{ZnCl}_2$",
+      "d": "$\\text{H}^{+}$",
+      "e": "$\\text{H}_2$"
+    },
+    "gabarito": "d",
+    "resolucao": "O zinco passa de $0$ a $+2$: perde elétrons, oxida-se e portanto é o agente redutor. O hidrogênio passa de $+1$ a $0$: recebe elétrons, reduz-se e é o agente oxidante. O cloreto mantém o número de oxidação $-1$ dos dois lados e é apenas espectador. A confusão frequente vem do nome: o agente oxidante é quem provoca a oxidação alheia e, ao fazê-lo, é reduzido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Série de reatividade dos metais",
+    "dificuldade": "dificil",
+    "enunciado": "Uma lâmina de zinco mergulhada em $\\text{CuSO}_4$ escurece e a solução azul desbota; uma lâmina de cobre em $\\text{ZnSO}_4$ permanece inalterada. Conclui-se que:",
+    "alternativas": {
+      "a": "o zinco é mais facilmente oxidado que o cobre",
+      "b": "o cobre é mais facilmente oxidado que o zinco",
+      "c": "os dois metais têm a mesma tendência a oxidar",
+      "d": "o sulfato participa da transferência de elétrons",
+      "e": "o cobre reduz o zinco metálico na segunda experiência"
+    },
+    "gabarito": "a",
+    "resolucao": "A primeira experiência mostra a reação $\\text{Zn}+\\text{Cu}^{2+}\\rightarrow\\text{Zn}^{2+}+\\text{Cu}$: o zinco cede elétrons ao íon cobre, que se deposita como metal avermelhado. A ausência de reação no sentido inverso indica que o cobre não consegue reduzir o $\\text{Zn}^{2+}$. Em termos de potenciais padrão, $E^{\\circ}\\left(\\text{Zn}^{2+}/\\text{Zn}\\right)=-0{,}76$ V é menor que $E^{\\circ}\\left(\\text{Cu}^{2+}/\\text{Cu}\\right)=+0{,}34$ V — a mesma diferença que faz a pilha de Daniell funcionar.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Reagente limitante",
+    "dificuldade": "dificil",
+    "enunciado": "Misturam-se $28$ g de $\\text{N}_2$ e $3{,}0$ g de $\\text{H}_2$, que reagem formando amônia. Determine a massa máxima de $\\text{NH}_3$ obtida. Massas molares: $\\text{N}=14$, $\\text{H}=1$ g/mol.",
+    "alternativas": {
+      "a": "$34$ g",
+      "b": "$8{,}5$ g",
+      "c": "$28$ g",
+      "d": "$17$ g",
+      "e": "$23$ g"
+    },
+    "gabarito": "d",
+    "resolucao": "As quantidades são $\\dfrac{28}{28}=1{,}0$ mol de $\\text{N}_2$ e $\\dfrac{3{,}0}{2{,}0}=1{,}5$ mol de $\\text{H}_2$. A equação $\\text{N}_2+3\\text{H}_2\\rightarrow 2\\text{NH}_3$ exigiria $3{,}0$ mol de hidrogênio para consumir todo o nitrogênio, e só há metade disso: o hidrogênio é o reagente limitante. Ele produz $\\dfrac{2}{3}\\times 1{,}5=1{,}0$ mol de amônia, isto é, $17$ g. Partir do nitrogênio, sem testar o limitante, levaria ao valor impossível de $34$ g.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Rendimento percentual",
+    "dificuldade": "dificil",
+    "enunciado": "A partir de $0{,}50$ mol de $\\text{N}_2$ e hidrogênio em excesso obtêm-se $13{,}6$ g de amônia. Determine o rendimento da reação, sabendo que $M(\\text{NH}_3)=17$ g/mol.",
+    "alternativas": {
+      "a": "$64{,}0\\%$",
+      "b": "$40{,}0\\%$",
+      "c": "$85{,}0\\%$",
+      "d": "$80{,}0\\%$",
+      "e": "$75{,}0\\%$"
+    },
+    "gabarito": "d",
+    "resolucao": "Pela estequiometria $\\text{N}_2+3\\text{H}_2\\rightarrow 2\\text{NH}_3$, meio mol de nitrogênio produziria $1{,}0$ mol de amônia, ou $17$ g — esse é o rendimento teórico. O rendimento percentual é a razão entre o obtido e o teórico: $\\dfrac{13{,}6}{17}=0{,}800$, isto é, $80{,}0\\%$. Rendimentos abaixo de $100\\%$ são a regra, seja por reações paralelas, por perdas na separação ou, como no caso da síntese da amônia, por o sistema atingir o equilíbrio antes da conversão total.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Grau de pureza de amostra",
+    "dificuldade": "dificil",
+    "enunciado": "A calcinação de $25{,}0$ g de um calcário produz $8{,}80$ g de $\\text{CO}_2$. Determine a pureza da amostra em $\\text{CaCO}_3$, sabendo que $M(\\text{CaCO}_3)=100$ g/mol e $M(\\text{CO}_2)=44$ g/mol.",
+    "alternativas": {
+      "a": "$64{,}0\\%$",
+      "b": "$88{,}0\\%$",
+      "c": "$35{,}2\\%$",
+      "d": "$80{,}0\\%$",
+      "e": "$75{,}0\\%$"
+    },
+    "gabarito": "d",
+    "resolucao": "A reação é $\\text{CaCO}_3\\rightarrow\\text{CaO}+\\text{CO}_2$, na proporção de $1:1$. A quantidade de gás liberado é $\\dfrac{8{,}80}{44}=0{,}200$ mol, que provém de $0{,}200$ mol de carbonato, ou $0{,}200\\times 100=20{,}0$ g. A pureza é $\\dfrac{20{,}0}{25{,}0}=0{,}800$, isto é, $80{,}0\\%$; os $5{,}0$ g restantes são impurezas que não liberam gás. Note que o cálculo parte do produto medido, e não da massa total pesada.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Fórmula mínima a partir da composição percentual",
+    "dificuldade": "medio",
+    "enunciado": "Um composto contém, em massa, $40{,}0\\%$ de carbono, $6{,}7\\%$ de hidrogênio e $53{,}3\\%$ de oxigênio. Determine sua fórmula mínima.",
+    "alternativas": {
+      "a": "$\\text{C}_2\\text{H}_4\\text{O}_2$",
+      "b": "$\\text{CH}_2\\text{O}$",
+      "c": "$\\text{CHO}$",
+      "d": "$\\text{C}_6\\text{H}_{12}\\text{O}_6$",
+      "e": "$\\text{CH}_3\\text{O}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Tome $100$ g de amostra e converta em mols: $\\dfrac{40{,}0}{12}=3{,}33$; $\\dfrac{6{,}7}{1}=6{,}7$; $\\dfrac{53{,}3}{16}=3{,}33$. Dividindo todos pelo menor, obtém-se $1:2:1$, logo $\\text{CH}_2\\text{O}$. As outras alternativas com essa mesma proporção — $\\text{C}_2\\text{H}_4\\text{O}_2$ e $\\text{C}_6\\text{H}_{12}\\text{O}_6$ — são fórmulas moleculares possíveis, mas a mínima é, por definição, a de menores índices inteiros.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Fórmula molecular a partir da fórmula mínima",
+    "dificuldade": "medio",
+    "enunciado": "Um composto de fórmula mínima $\\text{CH}_2\\text{O}$ tem massa molar $180$ g/mol. Determine sua fórmula molecular.",
+    "alternativas": {
+      "a": "$\\text{C}_3\\text{H}_6\\text{O}_3$",
+      "b": "$\\text{C}_5\\text{H}_{10}\\text{O}_5$",
+      "c": "$\\text{C}_{12}\\text{H}_{24}\\text{O}_{12}$",
+      "d": "$\\text{C}_6\\text{H}_{12}\\text{O}_6$",
+      "e": "$\\text{C}_4\\text{H}_8\\text{O}_4$"
+    },
+    "gabarito": "d",
+    "resolucao": "A massa da unidade mínima é $12+2(1)+16=30$ g/mol. O fator de multiplicação é $\\dfrac{180}{30}=6$, de modo que a fórmula molecular é $\\text{C}_6\\text{H}_{12}\\text{O}_6$ — a da glicose e de outras hexoses. Composição percentual sozinha nunca distingue esses isômeros e homólogos; é preciso conhecer a massa molar, obtida por espectrometria de massas ou por propriedades coligativas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Análise elementar por combustão",
+    "dificuldade": "dificil",
+    "enunciado": "A combustão completa de $0{,}255$ g de um composto de $\\text{C}$, $\\text{H}$ e $\\text{O}$ produz $0{,}561$ g de $\\text{CO}_2$ e $0{,}306$ g de $\\text{H}_2\\text{O}$. Determine a fórmula mínima do composto.",
+    "alternativas": {
+      "a": "$\\text{C}_3\\text{H}_6\\text{O}$",
+      "b": "$\\text{C}_3\\text{H}_8\\text{O}$",
+      "c": "$\\text{C}_2\\text{H}_6\\text{O}$",
+      "d": "$\\text{C}_3\\text{H}_8\\text{O}_2$",
+      "e": "$\\text{CH}_4\\text{O}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Todo o carbono da amostra está no $\\text{CO}_2$: $\\dfrac{0{,}561}{44}=0{,}01275$ mol, ou $0{,}153$ g. Todo o hidrogênio está na água: $\\dfrac{0{,}306}{18}=0{,}0170$ mol de $\\text{H}_2\\text{O}$, logo $0{,}0340$ mol de $\\text{H}$, ou $0{,}034$ g. O oxigênio é obtido por diferença: $0{,}255-0{,}153-0{,}034=0{,}068$ g, isto é, $0{,}00425$ mol. Dividindo os três pelo menor: $3:8:1$, ou seja, $\\text{C}_3\\text{H}_8\\text{O}$ — o propanol. O oxigênio jamais pode ser calculado a partir dos produtos, pois parte dele vem do ar.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Preparo de solução por diluição",
+    "dificuldade": "medio",
+    "enunciado": "Determine o volume de solução de $\\text{HCl}$ $2{,}00$ mol/L necessário para preparar $500$ mL de solução $0{,}100$ mol/L.",
+    "alternativas": {
+      "a": "$50{,}0$ mL",
+      "b": "$10{,}0$ mL",
+      "c": "$100{,}0$ mL",
+      "d": "$12{,}5$ mL",
+      "e": "$25{,}0$ mL"
+    },
+    "gabarito": "e",
+    "resolucao": "Na diluição a quantidade de soluto não muda, de modo que $C_1V_1=C_2V_2$. Então $V_1=\\dfrac{0{,}100\\times 500}{2{,}00}=25{,}0$ mL. Na prática, mede-se esse volume com pipeta, transfere-se para balão volumétrico de $500$ mL e completa-se com água até a marca — e, tratando-se de ácido concentrado, sempre se adiciona o ácido sobre a água, nunca o inverso.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Concentração de íons em mistura de soluções",
+    "dificuldade": "dificil",
+    "enunciado": "Misturam-se $100$ mL de $\\text{NaCl}$ $0{,}10$ mol/L com $100$ mL de $\\text{CaCl}_2$ $0{,}10$ mol/L. Determine a concentração de íons cloreto na mistura.",
+    "alternativas": {
+      "a": "$0{,}30$ mol/L",
+      "b": "$0{,}10$ mol/L",
+      "c": "$0{,}20$ mol/L",
+      "d": "$0{,}075$ mol/L",
+      "e": "$0{,}15$ mol/L"
+    },
+    "gabarito": "e",
+    "resolucao": "Do $\\text{NaCl}$ vêm $0{,}100\\times 0{,}10=0{,}010$ mol de $\\text{Cl}^{-}$. Do $\\text{CaCl}_2$ vêm $0{,}100\\times 0{,}10\\times 2=0{,}020$ mol, pois cada fórmula libera dois cloretos. O total é $0{,}030$ mol num volume final de $0{,}200$ L, o que dá $0{,}15$ mol/L. Os dois erros típicos são esquecer o fator $2$ do cloreto de cálcio e esquecer a diluição provocada pela soma dos volumes.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Estequiometria com volume de gás",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o volume de $\\text{CO}_2$ liberado, a $27\\ ^{\\circ}\\text{C}$ e $1{,}0$ atm, na decomposição total de $10{,}0$ g de $\\text{CaCO}_3$. Use $M=100$ g/mol e $R=0{,}0821$ atm·L/(mol·K).",
+    "alternativas": {
+      "a": "$2{,}24$ L",
+      "b": "$4{,}92$ L",
+      "c": "$1{,}23$ L",
+      "d": "$2{,}46$ L",
+      "e": "$24{,}6$ L"
+    },
+    "gabarito": "d",
+    "resolucao": "A decomposição $\\text{CaCO}_3\\rightarrow\\text{CaO}+\\text{CO}_2$ converte $\\dfrac{10{,}0}{100}=0{,}100$ mol de carbonato em $0{,}100$ mol de gás. Pela equação dos gases ideais, $V=\\dfrac{nRT}{P}=\\dfrac{0{,}100\\times 0{,}0821\\times 300}{1{,}0}=2{,}46$ L. Usar $22{,}4$ L/mol daria $2{,}24$ L, resposta válida apenas nas CNTP — a temperatura aqui é $300$ K, e não $273$ K.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Pressões parciais e lei de Dalton",
+    "dificuldade": "dificil",
+    "enunciado": "Um recipiente rígido de $10{,}0$ L a $300$ K contém $0{,}20$ mol de hélio e $0{,}30$ mol de neônio. Determine a pressão parcial do hélio, usando $R=0{,}0821$ atm·L/(mol·K).",
+    "alternativas": {
+      "a": "$1{,}23$ atm",
+      "b": "$0{,}49$ atm",
+      "c": "$0{,}74$ atm",
+      "d": "$0{,}25$ atm",
+      "e": "$2{,}46$ atm"
+    },
+    "gabarito": "b",
+    "resolucao": "A pressão parcial de um componente é a que ele exerceria sozinho no mesmo volume e temperatura: $p_{\\text{He}}=\\dfrac{n_{\\text{He}}RT}{V}=\\dfrac{0{,}20\\times 0{,}0821\\times 300}{10{,}0}\\approx 0{,}49$ atm. A pressão total, $1{,}23$ atm, é a soma das parciais, conforme a lei de Dalton — consequência direta de as moléculas de um gás ideal não interagirem entre si, de modo que cada uma contribui independentemente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Lei de efusão de Graham",
+    "dificuldade": "dificil",
+    "enunciado": "Determine quantas vezes o hélio ($M=4{,}0$ g/mol) efunde mais rapidamente que o metano ($M=16{,}0$ g/mol) por um mesmo orifício, nas mesmas condições.",
+    "alternativas": {
+      "a": "$2{,}0$",
+      "b": "$4{,}0$",
+      "c": "$1{,}4$",
+      "d": "$0{,}5$",
+      "e": "$16{,}0$"
+    },
+    "gabarito": "a",
+    "resolucao": "A lei de Graham estabelece $\\dfrac{v_1}{v_2}=\\sqrt{\\dfrac{M_2}{M_1}}$. Aqui, $\\sqrt{\\dfrac{16{,}0}{4{,}0}}=\\sqrt{4}=2{,}0$. A raiz quadrada aparece porque, à mesma temperatura, todas as moléculas têm a mesma energia cinética média $\\tfrac12 mv^{2}$: massas quatro vezes menores implicam velocidades apenas duas vezes maiores. Responder $4{,}0$ equivale a usar a razão direta das massas molares.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Massa molar a partir da densidade de um gás",
+    "dificuldade": "dificil",
+    "enunciado": "Um gás tem densidade $1{,}96$ g/L nas CNTP. Determine sua massa molar, usando volume molar de $22{,}4$ L/mol.",
+    "alternativas": {
+      "a": "$43{,}9$ g/mol",
+      "b": "$21{,}9$ g/mol",
+      "c": "$28{,}0$ g/mol",
+      "d": "$64{,}0$ g/mol",
+      "e": "$87{,}8$ g/mol"
+    },
+    "gabarito": "a",
+    "resolucao": "A densidade é massa por volume, e um mol ocupa $22{,}4$ L nas CNTP: $M=d\\cdot V_m=1{,}96\\times 22{,}4\\approx 43{,}9$ g/mol. O valor identifica o gás como dióxido de carbono ($44$ g/mol). A relação equivalente $M=\\dfrac{dRT}{P}$ vale em quaisquer condições e é o fundamento do método de Dumas para determinar massas molares de líquidos voláteis.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Desvios do comportamento de gás ideal",
+    "dificuldade": "medio",
+    "enunciado": "Em que condições um gás real mais se afasta do comportamento previsto pela equação dos gases ideais?",
+    "alternativas": {
+      "a": "baixa pressão e alta temperatura",
+      "b": "alta pressão e baixa temperatura",
+      "c": "alta pressão e alta temperatura",
+      "d": "baixa pressão e baixa temperatura",
+      "e": "quaisquer condições, igualmente"
+    },
+    "gabarito": "b",
+    "resolucao": "O modelo ideal supõe volume molecular desprezível e ausência de forças intermoleculares. Sob alta pressão as moléculas ficam próximas e seu volume próprio deixa de ser irrelevante; sob baixa temperatura a energia cinética cai e as forças atrativas passam a reter as moléculas, reduzindo a pressão exercida nas paredes. São exatamente os dois termos corrigidos na equação de van der Waals — e é por isso que todo gás se liquefaz quando comprimido e resfriado o bastante.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Volume de gás em reação de metal com ácido",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o volume de $\\text{H}_2$ obtido nas CNTP ao se dissolver $1{,}30$ g de zinco em ácido clorídrico em excesso. Use $M(\\text{Zn})=65{,}0$ g/mol e volume molar de $22{,}4$ L/mol.",
+    "alternativas": {
+      "a": "$0{,}224$ L",
+      "b": "$0{,}896$ L",
+      "c": "$1{,}120$ L",
+      "d": "$4{,}480$ L",
+      "e": "$0{,}448$ L"
+    },
+    "gabarito": "e",
+    "resolucao": "A quantidade de zinco é $\\dfrac{1{,}30}{65{,}0}=0{,}0200$ mol. A reação $\\text{Zn}+2\\text{HCl}\\rightarrow\\text{ZnCl}_2+\\text{H}_2$ libera um mol de gás por mol de metal, logo $0{,}0200$ mol de $\\text{H}_2$. O volume é $0{,}0200\\times 22{,}4=0{,}448$ L. Como o ácido está em excesso, o zinco é o reagente limitante e nenhum cálculo adicional sobre o $\\text{HCl}$ é necessário.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Decomposição térmica e massa residual",
+    "dificuldade": "dificil",
+    "enunciado": "Aquecendo-se $8{,}4$ g de bicarbonato de sódio, ocorre $2\\text{NaHCO}_3\\rightarrow\\text{Na}_2\\text{CO}_3+\\text{H}_2\\text{O}+\\text{CO}_2$. Determine a massa do resíduo sólido, com $M(\\text{NaHCO}_3)=84$ e $M(\\text{Na}_2\\text{CO}_3)=106$ g/mol.",
+    "alternativas": {
+      "a": "$3{,}1$ g",
+      "b": "$5{,}3$ g",
+      "c": "$8{,}4$ g",
+      "d": "$6{,}2$ g",
+      "e": "$4{,}2$ g"
+    },
+    "gabarito": "b",
+    "resolucao": "A amostra corresponde a $\\dfrac{8{,}4}{84}=0{,}100$ mol de bicarbonato. Pela equação, dois mols produzem um de carbonato, de modo que se formam $0{,}0500$ mol, ou $0{,}0500\\times 106=5{,}3$ g. A diferença de $3{,}1$ g escapa como vapor de água e gás carbônico — é essa liberação de $\\text{CO}_2$ dentro da massa que faz o bicarbonato atuar como fermento químico.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Estequiometria industrial com rendimento",
+    "dificuldade": "dificil",
+    "enunciado": "Numa planta de amônia, $28$ kg de $\\text{N}_2$ reagem com hidrogênio em excesso com rendimento de $60\\%$. Determine a massa de $\\text{NH}_3$ obtida, com $M(\\text{N}_2)=28$ e $M(\\text{NH}_3)=17$ g/mol.",
+    "alternativas": {
+      "a": "$20{,}4$ kg",
+      "b": "$34{,}0$ kg",
+      "c": "$10{,}2$ kg",
+      "d": "$28{,}0$ kg",
+      "e": "$17{,}0$ kg"
+    },
+    "gabarito": "a",
+    "resolucao": "A massa dada corresponde a $1{,}0$ kmol de $\\text{N}_2$, que pela equação $\\text{N}_2+3\\text{H}_2\\rightarrow 2\\text{NH}_3$ produziria $2{,}0$ kmol de amônia, ou $34{,}0$ kg — o rendimento teórico. Aplicando o rendimento real, $34{,}0\\times 0{,}60=20{,}4$ kg. A proporção estequiométrica em quilomols é idêntica à em mols, o que dispensa converter as massas para gramas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Análise gravimétrica de cloreto",
+    "dificuldade": "dificil",
+    "enunciado": "Uma amostra de $1{,}000$ g contendo cloreto é tratada com excesso de $\\text{AgNO}_3$, produzindo $1{,}435$ g de $\\text{AgCl}$. Determine a porcentagem de cloro na amostra, com $M(\\text{AgCl})=143{,}5$ e $M(\\text{Cl})=35{,}5$ g/mol.",
+    "alternativas": {
+      "a": "$14{,}4\\%$",
+      "b": "$35{,}5\\%$",
+      "c": "$71{,}0\\%$",
+      "d": "$25{,}0\\%$",
+      "e": "$10{,}0\\%$"
+    },
+    "gabarito": "b",
+    "resolucao": "O precipitado corresponde a $\\dfrac{1{,}435}{143{,}5}=0{,}01000$ mol de $\\text{AgCl}$, e cada fórmula contém um cloro: $0{,}01000$ mol, ou $0{,}01000\\times 35{,}5=0{,}355$ g. Na amostra de $1{,}000$ g isso equivale a $35{,}5\\%$. A gravimetria é confiável justamente por medir massa de um sólido insolúvel e de composição bem definida, sem depender de padronização de solução alguma.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Combustão completa e incompleta",
+    "dificuldade": "medio",
+    "enunciado": "Um aquecedor a gás mal regulado, com entrada de ar insuficiente, produz chama amarelada e deposita fuligem. Além do carbono sólido, o produto perigoso formado nessas condições é:",
+    "alternativas": {
+      "a": "$\\text{CO}$",
+      "b": "$\\text{CO}_2$",
+      "c": "$\\text{O}_3$",
+      "d": "$\\text{NO}_2$",
+      "e": "$\\text{H}_2\\text{O}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com oxigênio suficiente, a combustão de um hidrocarboneto gera apenas $\\text{CO}_2$ e $\\text{H}_2\\text{O}$. Faltando oxigênio, o carbono não se oxida por completo e aparecem monóxido de carbono e carbono elementar — a fuligem que escurece panelas. O $\\text{CO}$ é inodoro e liga-se à hemoglobina com afinidade cerca de $200$ vezes maior que a do oxigênio, o que explica os envenenamentos por aquecedores em ambientes fechados.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Força e solubilidade de bases",
+    "dificuldade": "dificil",
+    "enunciado": "O hidróxido de cálcio é classificado como base forte, embora sua solubilidade em água seja baixa. A conciliação entre os dois fatos está em que:",
+    "alternativas": {
+      "a": "a fração dissolvida permanece na forma molecular",
+      "b": "a fração dissolvida está totalmente dissociada",
+      "c": "a força de uma base independe de sua dissociação",
+      "d": "o sólido não dissolvido também libera hidróxido",
+      "e": "a base se converte em óxido ao dissolver"
+    },
+    "gabarito": "b",
+    "resolucao": "Força e solubilidade são propriedades distintas. Solubilidade mede quanto do sólido passa à solução; força mede o grau de dissociação daquilo que efetivamente se dissolveu. No $\\text{Ca(OH)}_2$ a quantidade dissolvida é pequena, mas está $100\\%$ na forma de $\\text{Ca}^{2+}$ e $\\text{OH}^{-}$ — daí ser base forte e, ao mesmo tempo, uma suspensão leitosa quando em excesso. O caso oposto é a amônia: infinitamente solúvel, porém base fraca.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Nomenclatura de sais ácidos",
+    "dificuldade": "medio",
+    "enunciado": "Qual é o nome oficial do composto $\\text{NaHCO}_3$?",
+    "alternativas": {
+      "a": "carbonato de sódio",
+      "b": "hidrogenocarbonato de sódio",
+      "c": "hidróxido de sódio carbonatado",
+      "d": "hidrogenocarbonato de sódio (II)",
+      "e": "carbeto de sódio hidratado"
+    },
+    "gabarito": "b",
+    "resolucao": "Sais ácidos conservam hidrogênios ionizáveis do ácido de origem, e a nomenclatura oficial os indica com o prefixo \"hidrogeno-\": $\\text{NaHCO}_3$ é o hidrogenocarbonato de sódio, popularmente bicarbonato. O carbonato de sódio é o $\\text{Na}_2\\text{CO}_3$, sem hidrogênio. Como o sódio tem número de oxidação fixo $+1$, não se usa algarismo romano em seu nome.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Conversão entre título e concentração em quantidade de matéria",
+    "dificuldade": "dificil",
+    "enunciado": "Uma solução comercial de $\\text{H}_2\\text{SO}_4$ tem $98\\%$ em massa e densidade $1{,}84$ g/mL. Determine sua concentração em mol/L, com $M=98$ g/mol.",
+    "alternativas": {
+      "a": "$9{,}2$ mol/L",
+      "b": "$18{,}4$ mol/L",
+      "c": "$1{,}84$ mol/L",
+      "d": "$36{,}8$ mol/L",
+      "e": "$10{,}0$ mol/L"
+    },
+    "gabarito": "b",
+    "resolucao": "Tome $1{,}00$ L da solução: sua massa é $1000\\times 1{,}84=1840$ g, dos quais $98\\%$, ou $1803$ g, são ácido puro. Isso equivale a $\\dfrac{1803}{98}=18{,}4$ mol. Como o volume tomado foi exatamente um litro, a concentração é $18{,}4$ mol/L. A forma compacta da conta é $C=\\dfrac{1000\\,d\\,\\tau}{M}$, relação que vale para qualquer solução concentrada.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Corrosão em metais revestidos",
+    "dificuldade": "dificil",
+    "enunciado": "Uma chapa de ferro revestida de zinco e outra revestida de estanho são riscadas até expor o ferro. No ponto arranhado, a corrosão do ferro será:",
+    "alternativas": {
+      "a": "acelerada apenas na chapa revestida de zinco",
+      "b": "acelerada nas duas chapas igualmente",
+      "c": "acelerada apenas na chapa revestida de estanho",
+      "d": "impedida nas duas chapas igualmente",
+      "e": "impedida apenas na chapa revestida de estanho"
+    },
+    "gabarito": "c",
+    "resolucao": "O que decide é o potencial relativo. O zinco ($-0{,}76$ V) oxida-se mais facilmente que o ferro ($-0{,}44$ V) e continua a protegê-lo mesmo com o revestimento rompido, funcionando como ânodo de sacrifício. O estanho ($-0{,}14$ V) é menos reativo que o ferro: ao expor o metal, forma-se uma pilha em que o ferro é o ânodo e corrói mais depressa do que corroeria sozinho. É por isso que latas de folha-de-flandres amassadas enferrujam rapidamente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Química Geral",
+    "topico": "Funções Inorgânicas e Reações Químicas",
+    "subtopico": "Hidrácidos: substância pura e solução aquosa",
+    "dificuldade": "medio",
+    "enunciado": "O composto $\\text{HCl}$ recebe nomes diferentes conforme o estado em que se encontra. Qual é o nome correto do gás puro?",
+    "alternativas": {
+      "a": "ácido clorídrico",
+      "b": "ácido hipocloroso",
+      "c": "hidreto de cloro",
+      "d": "cloreto de hidrogênio",
+      "e": "cloro hidrogenado"
+    },
+    "gabarito": "d",
+    "resolucao": "No estado gasoso o $\\text{HCl}$ é uma substância molecular covalente, sem íons, e recebe o nome de cloreto de hidrogênio. Só ao ser dissolvido em água ele se ioniza, produzindo $\\text{H}_3\\text{O}^{+}$ e $\\text{Cl}^{-}$, e a solução resultante é o ácido clorídrico. A distinção não é mero formalismo: o gás seco não conduz corrente nem reage com metais, comportamentos que aparecem apenas na solução.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]
