@@ -139,12 +139,21 @@
      antigo (#0e9f6e) dava só 3.39:1 com texto branco, ou seja: os ~70 CTAs
      `bg-questly-green text-white` reprovavam em texto normal e, sobre cartão
      branco, o tom lia como "menta doce" em vez de sério. Os pares aferidos
-     (sobre --card branco): verde 4.64, verde-dark 6.37, azul 5.37, roxo 4.64,
-     laranja-dark 5.02, vermelho-dark 5.70, ouro-dark 5.06. */
-  --questly-green: #0a855c;
-  --questly-green-dark: #076d4b;
-  --questly-green-deep: #05543a;
-  --questly-green-light: #e4f5ed;
+     (sobre --card branco): verde 4.62, verde-dark 6.39, azul 5.37, roxo 4.64,
+     laranja-dark 5.02, vermelho-dark 5.70, ouro-dark 5.06.
+
+     **Repasse de 2026-09-11 (3): matiz.** O verde da marca era esmeralda
+     puxando pro azul (~162°) e lia como "teal de dashboard", frio. A pedido,
+     ele foi girado pro verde VIVO de mensageiro (~140°, a família do
+     #25D366) e ganhou croma — sem ceder um ponto de contraste: a
+     luminosidade de cada degrau foi mantida, só o matiz e a saturação
+     mudaram (verde 4.64 → 4.62, verde-dark 6.37 → 6.39). Nenhum dos ~70
+     CTAs precisou mudar. Se for mexer de novo, MEÇA antes: no claro o verde
+     carrega texto branco por cima. */
+  --questly-green: #09873f;
+  --questly-green-dark: #076e33;
+  --questly-green-deep: #045226;
+  --questly-green-light: #e3f7e9;
   --questly-blue: #5b5bd6;
   --questly-blue-dark: #4747b3;
   --questly-blue-light: #ececfb;
@@ -207,10 +216,10 @@
   --elev-lg: 0 14px 24px -8px rgb(0 0 0 / 0.5), 0 4px 8px -4px rgb(0 0 0 / 0.3);
   --elev-xl: 0 28px 48px -14px rgb(0 0 0 / 0.6), 0 8px 16px -8px rgb(0 0 0 / 0.35);
 
-  --questly-green: #2dd4a0;
-  --questly-green-dark: #4be0b3;
-  --questly-green-deep: #0e9f6e;
-  --questly-green-light: #12312a;
+  --questly-green: #25d366;
+  --questly-green-dark: #4ae081;
+  --questly-green-deep: #12a150;
+  --questly-green-light: #10301c;
   --questly-blue: #8f8fe8;
   --questly-blue-dark: #a5a5f0;
   --questly-blue-light: #24244a;
@@ -338,9 +347,12 @@
      Validado com scripts/validate_palette.js da skill de dataviz, em
      cada modo contra a superfície REAL do cartão (os tons "-fundo", que
      são os que a legenda e a barra 100% usam sozinhos):
-       claro  (#ffffff): #0aa571 × #a32750 — tudo PASS, deutan ΔE 14.6
-       escuro (#181b21): #0aad80 × #b53259 — deutan ΔE 12.7, e um único
-                         WARN de contraste (o vinho a 2.93:1)
+       claro  (#ffffff): #0bab4a × #a32750 — tudo PASS, deutan ΔE 16.6
+       escuro (#181b21): #0cb050 × #b53259 — deutan ΔE 13.6, e um único
+                         WARN de contraste (o vinho a 2.96:1)
+       (Revalidado em 2026-09-11 (3), quando o verde girou do esmeralda pro
+        matiz do WhatsApp: mesma luminosidade, matiz e croma novos — a
+        separação para deuteranopia SUBIU, 14.6→16.6 e 12.7→13.6.)
      O alívio que a skill exige pro WARN está lá: número e % escritos em
      texto ao lado da marca, mais a barra 100% empilhada.
 
@@ -350,14 +362,14 @@
      leitura — e continua lendo como "ruim".
      --------------------------------------------------------------- */
   .anel-paleta {
-    --anel-acerto-claro: #14d497;
-    --anel-acerto-fundo: #0aa571;
+    --anel-acerto-claro: #16d15f;
+    --anel-acerto-fundo: #0bab4a;
     --anel-erro-claro: #c9456c;
     --anel-erro-fundo: #a32750;
   }
   .dark .anel-paleta {
-    --anel-acerto-claro: #19c692;
-    --anel-acerto-fundo: #0aad80;
+    --anel-acerto-claro: #1bc45c;
+    --anel-acerto-fundo: #0cb050;
     --anel-erro-claro: #d24a72;
     --anel-erro-fundo: #b53259;
   }

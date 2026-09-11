@@ -2,6 +2,19 @@
 
 // "Questões feitas" — o medidor de pontaria da vida toda.
 //
+// **Repasse de 2026-09-11 (3).** O cartão mudou de vizinho: ele agora mora
+// EMBAIXO do atalho de Simulados, na mesma coluna. O motivo é geométrico —
+// quando há prova em andamento o cartão de Simulados vira três linhas e um
+// botão, e sobrava meia coluna de vazio ao lado da missão do dia. O anel
+// preenche esse vazio, e a dupla até faz sentido junta: "como fui na prova"
+// em cima, "como venho indo no geral" embaixo.
+//
+// Por isso o layout virou ANFÍBIO, e a chave é a largura, não a tela:
+// empilhado (anel em cima, números embaixo) quando a coluna é estreita;
+// lado a lado (anel à esquerda, números à direita) assim que ela abre. O
+// `h-full` + `flex-1` fazem o cartão esticar até o pé da coluna, que é o
+// ponto todo da mudança.
+//
 // **Repasse de 2026-09-11 (2).** Duas queixas, uma resposta:
 //
 // 1. *O cartão ocupava meia home pra mostrar três números.* Ele saiu da grade
@@ -46,7 +59,7 @@ export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
   const arcoAcerto = C * fracAcerto;
 
   return (
-    <section className="surface anel-paleta flex flex-col p-4 sm:p-5">
+    <section className="surface anel-paleta @container flex h-full flex-col p-4 sm:p-5">
       <div className="mb-1 flex items-center gap-2">
         <Target size={15} strokeWidth={2.1} className="text-questly-green-dark dark:text-questly-green" />
         <h2 className="font-heading text-[15px] font-semibold tracking-tight">Questões feitas</h2>
@@ -58,8 +71,10 @@ export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
           respondeu entre acertos e erros.
         </p>
       ) : (
-        <div className="flex flex-col items-center gap-3.5 pt-1">
-          <div className="relative h-[188px] w-[188px] shrink-0">
+        <div className="flex flex-1 flex-col items-center justify-center gap-3.5 pt-1 @[26rem]:flex-row @[26rem]:gap-5">
+          {/* O anel cresce quando a coluna abre: com espaço de sobra, um
+              vetor maior é melhor uso do pixel do que margem. */}
+          <div className="relative h-[188px] w-[188px] shrink-0 @[26rem]:h-[236px] @[26rem]:w-[236px]">
             <svg viewBox="0 0 188 188" className="h-full w-full">
               <defs>
                 {/* Gradiente do arco: um só matiz, claro → fundo. É o que dá
@@ -148,41 +163,46 @@ export function QuestoesFeitasCard({ hero }: { hero: HeroDados }) {
             </svg>
           </div>
 
-          <div className="grid w-full grid-cols-2 gap-2">
-            <Linha
-              icone={<CircleCheck size={14} strokeWidth={2.3} />}
-              rotulo="Acertos"
-              valor={hero.acertos}
-              pct={hero.pctAcerto}
-              tom="bom"
-            />
-            <Linha
-              icone={<CircleX size={14} strokeWidth={2.3} />}
-              rotulo="Erros"
-              valor={hero.erros}
-              pct={pctErro}
-              tom="ruim"
-            />
-          </div>
+          {/* A legenda: duas colunas quando está embaixo do anel (coluna
+              estreita), duas LINHAS empilhadas quando está ao lado dele —
+              nesse caso a largura sobra e o que falta é altura. */}
+          <div className="flex w-full min-w-0 flex-col gap-2.5 @[26rem]:max-w-[16rem] @[26rem]:flex-1">
+            <div className="grid grid-cols-2 gap-2 @[26rem]:grid-cols-1">
+              <Linha
+                icone={<CircleCheck size={14} strokeWidth={2.3} />}
+                rotulo="Acertos"
+                valor={hero.acertos}
+                pct={hero.pctAcerto}
+                tom="bom"
+              />
+              <Linha
+                icone={<CircleX size={14} strokeWidth={2.3} />}
+                rotulo="Erros"
+                valor={hero.erros}
+                pct={pctErro}
+                tom="ruim"
+              />
+            </div>
 
-          {/* Barra 100% — a alternativa acessível ao anel (regra da skill:
-              donut/medidor exige fallback empilhado), e a leitura rápida da
-              proporção quando o anel está fora do campo de visão. */}
-          <span
-            className="flex h-2.5 w-full overflow-hidden rounded-full"
-            style={{ background: "var(--anel-erro-fundo)" }}
-            role="img"
-            aria-label={`${hero.pctAcerto}% de acerto em ${total} questões respondidas.`}
-          >
+            {/* Barra 100% — a alternativa acessível ao anel (regra da skill:
+                donut/medidor exige fallback empilhado), e a leitura rápida da
+                proporção quando o anel está fora do campo de visão. */}
             <span
-              className="h-full rounded-full"
-              style={{
-                width: `${hero.pctAcerto}%`,
-                background: "var(--anel-acerto-fundo)",
-                boxShadow: "0 0 0 2px var(--card)",
-              }}
-            />
-          </span>
+              className="flex h-2.5 w-full overflow-hidden rounded-full"
+              style={{ background: "var(--anel-erro-fundo)" }}
+              role="img"
+              aria-label={`${hero.pctAcerto}% de acerto em ${total} questões respondidas.`}
+            >
+              <span
+                className="h-full rounded-full"
+                style={{
+                  width: `${hero.pctAcerto}%`,
+                  background: "var(--anel-acerto-fundo)",
+                  boxShadow: "0 0 0 2px var(--card)",
+                }}
+              />
+            </span>
+          </div>
         </div>
       )}
     </section>

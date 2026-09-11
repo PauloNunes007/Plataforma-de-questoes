@@ -34,10 +34,12 @@ import { ConquistasView } from "./conquistas-view";
 //
 //   • Global      — a ação do dia, em quatro faixas de prioridade decrescente:
 //                   (1) continuar de onde parou; (2) as duas COISAS PRA FAZER
-//                   agora, lado a lado e do mesmo tamanho — a missão do dia e
-//                   o simulado; (3) o diagnóstico (cerco ao boss + GPS) com o
-//                   anel de questões e o "marcado para hoje" na coluna
-//                   estreita ao lado; (4) a Agenda, em largura inteira.
+//                   agora, lado a lado e do mesmo tamanho — a missão do dia à
+//                   esquerda, e à direita o simulado com o anel de questões
+//                   feitas embaixo dele (é o que preenche a sobra de altura da
+//                   coluna); (3) o diagnóstico (cerco ao boss + GPS) com o
+//                   "marcado para hoje" na coluna estreita ao lado; (4) a
+//                   Agenda, em largura inteira.
 //   • Desempenho  — a análise: KPIs, radar por área, curva de evolução,
 //                   tópicos mais errados e a tira da semana.
 //   • Conquistas  — a estante de brasões, acesos e apagados.
@@ -131,15 +133,26 @@ export function DashboardView({
                   peso visual. Antes o simulado morava no rail estreito, abaixo
                   da dobra — quem nunca tinha feito um nem descobria que
                   existia. Ao lado da missão do dia ele ganha destaque sem
-                  competir com ela: missão é o hábito, simulado é o teste. */}
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                  competir com ela: missão é o hábito, simulado é o teste.
+
+                  A missão do dia é ALTA (uma linha por disciplina, mais as
+                  quatro metas) e o atalho de simulado é BAIXO — sobretudo no
+                  estado "prova em andamento", que é só um título e um botão.
+                  Isso deixava meia coluna de vazio à direita. O anel de
+                  questões feitas desceu pra cá e fecha esse buraco: ele estica
+                  até o pé da coluna (`h-full` lá dentro) e a leitura empilha
+                  bem — o simulado é a prova de agora, o anel é o histórico
+                  que ela vai mexer. */}
+              <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
                 <MissoesCard missions={dados.missions} metas={dados.metasHoje} />
-                <SimuladosCard atalho={atalhoSimulados} />
+                <div className="flex min-w-0 flex-col gap-4">
+                  <SimuladosCard atalho={atalhoSimulados} />
+                  <QuestoesFeitasCard hero={hero} />
+                </div>
               </div>
 
-              {/* Diagnóstico à esquerda (largo, porque é leitura); números e
-                  lista de hoje à direita, numa coluna estreita — é aqui que o
-                  anel de questões cabe sem ocupar meia tela. */}
+              {/* Diagnóstico à esquerda (largo, porque é leitura); o que está
+                  marcado pra hoje à direita, numa coluna estreita. */}
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
                 <div className="flex min-w-0 flex-col gap-4">
                   <BossSiegeMeter
@@ -159,7 +172,6 @@ export function DashboardView({
                 </div>
 
                 <aside className="flex min-w-0 flex-col gap-4">
-                  <QuestoesFeitasCard hero={hero} />
                   <TarefasDoDiaCard
                     tarefasIniciais={dados.tarefasHoje}
                     hoje={hojeStr}
