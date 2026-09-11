@@ -114,6 +114,9 @@ export async function carregarOpcoesSimulado(
     .from("questions")
     .select("id, ano, dificuldade, topic_id, topicos!inner ( id, nome, materia_id, materias!inner ( nome ) )")
     .in("instituicao", casadas)
+    // Mesmo recorte de montarSimuladoAction: aprofundamento não é sorteado,
+    // então também não pode entrar na contagem que o montador exibe.
+    .eq("desafio", false)
     .limit(8000);
 
   type Acc = {

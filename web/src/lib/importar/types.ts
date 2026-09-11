@@ -20,6 +20,9 @@ export type ItemImportado = {
   // cadeia" dentro do tópico "Cálculo das Derivadas") — mais granular que
   // topicos.descricao, que é um texto único por tópico inteiro.
   subtopico: string | null;
+  // Questão de APROFUNDAMENTO: fica fora de todo sorteio automático e ganha
+  // selo próprio em /questao (ver supabase_questao_desafio.sql).
+  desafio: boolean;
   materiaId: string | null;
   materiaNomeOriginal: string;
   topicoId: string | null;
@@ -55,4 +58,5 @@ export type QuestionPayload = {
   gabarito: string | null;
   resolucao: string | null;
   subtopico: string | null;
+  desafio: boolean;
 };

@@ -223,7 +223,10 @@ export async function questlyGerarMissaoParaSubject(
       .select("*")
       .eq("user_id", user.id)
       .in("topico_id", topicoIdsDaMateria),
-    supabase.from("questions").select("topic_id").in("topic_id", topicoIdsDaMateria),
+    // Só conta como "tópico que tem questão" o que a missão pode de fato
+    // sortear — senão um tópico só de aprofundamento viraria fronteira
+    // curricular e a missão sairia vazia. Ver supabase_questao_desafio.sql.
+    supabase.from("questions").select("topic_id").in("topic_id", topicoIdsDaMateria).eq("desafio", false),
   ]);
 
   type ProgressoRow = {
@@ -327,7 +330,11 @@ export async function questlyGerarMissaoParaSubject(
   const { data: candidatas } = await supabase
     .from("questions")
     .select("id, topic_id, tempo_medio_seg, dificuldade")
-    .in("topic_id", topicIds);
+    .in("topic_id", topicIds)
+    // Aprofundamento (questions.desafio) fica fora de sorteio automático:
+    // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
+    // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
+    .eq("desafio", false);
 
   if (!candidatas || candidatas.length === 0) {
     return { semMissaoHoje: true, motivo: "Ainda não há questões cadastradas pros tópicos dessa disciplina." };

@@ -431,6 +431,16 @@ export function QuestaoRunner({
           Pergunta {indiceAtual + 1} de {perguntasState.length}
         </div>
         <div className="mb-4 flex flex-wrap gap-1.5">
+          {/* Selo de APROFUNDAMENTO (questions.desafio, ver
+              supabase_questao_desafio.sql) — vem primeiro porque muda a
+              leitura de todo o resto: é conteúdo além do nível da prova, e o
+              aluno precisa saber disso ANTES de tentar. Não confundir com o
+              "desafio de recuperação" oferecido no fim da missão. */}
+          {pergunta.desafio && (
+            <span className="rounded-full bg-questly-purple/12 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide text-questly-purple">
+              Desafio · aprofundamento
+            </span>
+          )}
           {pergunta.dificuldade && (
             <span className="rounded-full bg-muted px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
               {pergunta.dificuldade}
@@ -448,6 +458,14 @@ export function QuestaoRunner({
             </span>
           )}
         </div>
+
+        {pergunta.desafio && (
+          <p className="mb-4 rounded-xl border border-questly-purple/20 bg-questly-purple/[0.06] px-3.5 py-2.5 text-[12.5px] leading-relaxed text-muted-foreground">
+            Essa é uma questão de aprofundamento: ela vai além do que a prova
+            costuma cobrar. Serve pra esticar o conteúdo — errar aqui não quer
+            dizer que você não está pronto.
+          </p>
+        )}
 
         <QuestaoAcoes
           questionId={pergunta.id}

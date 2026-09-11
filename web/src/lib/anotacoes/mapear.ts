@@ -19,6 +19,7 @@ export function questaoParaItemImportado(q: QuestaoComContexto): ItemImportado {
     gabarito: q.gabarito,
     resolucao: q.resolucao,
     subtopico: q.subtopico,
+    desafio: q.desafio === true,
     materiaId: null,
     materiaNomeOriginal: q.materiaNome || "",
     topicoId: q.topic_id,

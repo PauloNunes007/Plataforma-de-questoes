@@ -34,7 +34,11 @@ export async function seguirRotaAction(input: {
   const { data: candidatas } = await supabase
     .from("questions")
     .select("id, topic_id, tempo_medio_seg, dificuldade")
-    .in("topic_id", topicIds);
+    .in("topic_id", topicIds)
+    // Aprofundamento (questions.desafio) fica fora de sorteio automático:
+    // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
+    // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
+    .eq("desafio", false);
   if (!candidatas || candidatas.length === 0) return { missaoId: null };
 
   const porTopico: Record<string, typeof candidatas> = {};

@@ -104,7 +104,7 @@ export async function carregarQuestaoAdminAction(
   const { data, error: err } = await supabase
     .from("questions")
     .select(
-      "id, topic_id, dificuldade, instituicao, ano, enunciado, imagem_url, alternativas, alternativas_imagens, gabarito, resolucao, subtopico, topicos(nome, materia_id, materias(nome))",
+      "id, topic_id, dificuldade, instituicao, ano, enunciado, imagem_url, alternativas, alternativas_imagens, gabarito, resolucao, subtopico, desafio, topicos(nome, materia_id, materias(nome))",
     )
     .eq("id", id)
     .maybeSingle();
@@ -127,6 +127,7 @@ export async function carregarQuestaoAdminAction(
     gabarito: data.gabarito,
     resolucao: data.resolucao,
     subtopico: data.subtopico,
+    desafio: data.desafio === true,
     materiaId: topico?.materia_id ?? null,
     materiaNomeOriginal: materia?.nome ?? "",
     topicoId: data.topic_id,

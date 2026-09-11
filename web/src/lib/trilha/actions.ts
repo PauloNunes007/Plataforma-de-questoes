@@ -68,7 +68,10 @@ export async function iniciarPraticaTopicoAction(
   const { data: candidatas } = await supabase
     .from("questions")
     .select("id, tempo_medio_seg, dificuldade")
-    .eq("topic_id", topicoId);
+    .eq("topic_id", topicoId)
+    // Aprofundamento não entra em missão gerada pelo app (ver
+    // supabase_questao_desafio.sql) — o aluno pede por ele no Banco de Questões.
+    .eq("desafio", false);
   if (!candidatas || candidatas.length === 0) return { missaoId: null };
 
   const escolhidas = questlyEmbaralhar(candidatas).slice(0, Math.min(alvo, candidatas.length));
@@ -127,7 +130,10 @@ export async function iniciarRevisaoRelampagoAction(
   const { data: candidatas } = await supabase
     .from("questions")
     .select("id, topic_id, tempo_medio_seg, dificuldade")
-    .in("topic_id", ids);
+    .in("topic_id", ids)
+    // Aprofundamento não entra em missão gerada pelo app (ver
+    // supabase_questao_desafio.sql) — o aluno pede por ele no Banco de Questões.
+    .eq("desafio", false);
   if (!candidatas || candidatas.length === 0) return { missaoId: null };
 
   // embaralha dentro de cada tópico e depois intercala (rodízio)

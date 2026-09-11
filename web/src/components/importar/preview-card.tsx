@@ -21,6 +21,13 @@ export function PreviewCard({ item, motivos }: { item: ItemImportado; motivos: s
       )}
 
       <div className="mb-4 flex flex-wrap gap-1.5">
+        {/* Mesmo selo de aprofundamento do questao-runner — ver
+            supabase_questao_desafio.sql. */}
+        {item.desafio && (
+          <span className="rounded-full bg-questly-purple/12 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide text-questly-purple">
+            Desafio · aprofundamento
+          </span>
+        )}
         <span className="rounded-full bg-muted px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
           {item.dificuldade}
         </span>

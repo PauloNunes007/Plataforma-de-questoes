@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { questlyEmbaralhar, questlyHojeISO, questlyXpDaQuestao } from "@/lib/questly/shared";
 import { carregarTopicosPratica, type TopicoPratica } from "./disciplinas-data";
+import { separarFiltroDificuldade } from "./filtros";
 
 export async function buscarTopicosPraticaAction(materiaId: string): Promise<TopicoPratica[]> {
   const supabase = await createClient();
@@ -66,8 +67,12 @@ export async function calcularPreviaPraticaAction(
   if (topicIds.length === 0) return vazia;
 
   const supabase = await createClient();
+  const filtro = separarFiltroDificuldade(dificuldades);
   let query = supabase.from("questions").select("id, dificuldade, tempo_medio_seg").in("topic_id", topicIds);
-  if (dificuldades.length > 0) query = query.in("dificuldade", dificuldades);
+  if (filtro.niveis.length > 0) query = query.in("dificuldade", filtro.niveis);
+  // Aprofundamento só entra quando o aluno pede: é o único lugar do app em
+  // que ele encontra essas questões. Ver supabase_questao_desafio.sql.
+  if (!filtro.incluirDesafio) query = query.eq("desafio", false);
   const { data } = await query;
   const pool = data || [];
   const total = pool.length;
@@ -110,11 +115,13 @@ export async function iniciarPraticaLivreAction(input: {
   } = await supabase.auth.getUser();
   if (!user || input.topicIds.length === 0) return { missaoId: null };
 
+  const filtro = separarFiltroDificuldade(input.dificuldades);
   let query = supabase
     .from("questions")
     .select("id, tempo_medio_seg, dificuldade")
     .in("topic_id", input.topicIds);
-  if (input.dificuldades.length > 0) query = query.in("dificuldade", input.dificuldades);
+  if (filtro.niveis.length > 0) query = query.in("dificuldade", filtro.niveis);
+  if (!filtro.incluirDesafio) query = query.eq("desafio", false);
   const { data: candidatas } = await query;
   if (!candidatas || candidatas.length === 0) return { missaoId: null };
 

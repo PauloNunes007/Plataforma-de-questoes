@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { FILTRO_DESAFIO } from "@/lib/disciplinas/filtros";
+
 // Chips de dificuldade: cor semântica no estado ativo, sem emoji de
 // bolinha (redesign 2026-07) — a própria cor do chip comunica o nível.
 const DIFICULDADES = [
@@ -36,6 +38,10 @@ export function FiltrosPratica({
   const usandoCustom =
     custom && typeof quantidade === "number" && !QTD_OPCOES.includes(quantidade as (typeof QTD_OPCOES)[number]);
 
+  // "Todas" fala só dos NÍVEIS: ter marcado o aprofundamento não pode apagar
+  // o estado ativo dele (são dois eixos diferentes do mesmo Set).
+  const niveisSelecionados = [...dificuldades].filter((d) => d !== FILTRO_DESAFIO);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -44,7 +50,7 @@ export function FiltrosPratica({
           <button
             type="button"
             onClick={onLimparDificuldades}
-            className={`${CHIP_BASE} ${dificuldades.size === 0 ? CHIP_ATIVO_NEUTRO : CHIP_INATIVO}`}
+            className={`${CHIP_BASE} ${niveisSelecionados.length === 0 ? CHIP_ATIVO_NEUTRO : CHIP_INATIVO}`}
           >
             Todas
           </button>
@@ -60,6 +66,31 @@ export function FiltrosPratica({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Aprofundamento (questions.desafio) é opt-in e mora num bloco próprio,
+          não como um quarto nível: ele não ordena com fácil/médio/difícil — é
+          outro eixo, "cai na prova" contra "vai além dela". Este é o único
+          lugar do app em que o aluno encontra essas questões. */}
+      <div>
+        <div className="kicker mb-2.5">Aprofundamento</div>
+        <button
+          type="button"
+          onClick={() => onToggleDificuldade(FILTRO_DESAFIO)}
+          aria-pressed={dificuldades.has(FILTRO_DESAFIO)}
+          className={`${CHIP_BASE} ${
+            dificuldades.has(FILTRO_DESAFIO)
+              ? "border-questly-purple/50 bg-questly-purple/12 text-questly-purple"
+              : CHIP_INATIVO
+          }`}
+        >
+          Incluir questões de desafio
+        </button>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">
+          Questões de desafio vão além do nível cobrado na prova. Ficam fora da
+          missão do dia e dos simulados — só aparecem quando você pede. Valem XP
+          normalmente.
+        </p>
       </div>
 
       <div>

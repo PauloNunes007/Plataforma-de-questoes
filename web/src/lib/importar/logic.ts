@@ -230,6 +230,7 @@ export function normalizarItemJson(raw: Record<string, unknown>, materiaLotePadr
     gabarito,
     resolucao: typeof raw.resolucao === "string" && raw.resolucao.trim() ? raw.resolucao.trim() : null,
     subtopico: typeof raw.subtopico === "string" && raw.subtopico.trim() ? raw.subtopico.trim() : null,
+    desafio: raw.desafio === true,
     materiaId,
     materiaNomeOriginal,
     topicoId,
@@ -343,5 +344,6 @@ export function montarPayload(item: ItemImportado): QuestionPayload {
     gabarito: item.gabarito,
     resolucao: item.resolucao && item.resolucao.trim() ? item.resolucao.trim() : null,
     subtopico: item.subtopico && item.subtopico.trim() ? item.subtopico.trim() : null,
+    desafio: item.desafio === true,
   };
 }

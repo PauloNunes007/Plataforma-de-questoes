@@ -600,7 +600,9 @@ async function carregarProjecaoBoss(
       .select("topico_id, status, maestria, estabilidade, taxa_acerto, num_questoes_respondidas, ultima_revisao")
       .eq("user_id", user.id)
       .in("topico_id", idsProva),
-    supabase.from("questions").select("topic_id, tempo_medio_seg").in("topic_id", idsProva),
+    // Mesmo recorte do mission-engine: a estimativa de tempo/volume da prova
+    // fala do que o aluno vai praticar, e aprofundamento não é sorteado.
+    supabase.from("questions").select("topic_id, tempo_medio_seg").in("topic_id", idsProva).eq("desafio", false),
   ]);
 
   type ProgProva = {

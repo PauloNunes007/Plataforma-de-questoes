@@ -272,7 +272,7 @@ export async function carregarMapaTrilha(
           )
           .eq("user_id", user.id)
           .in("topico_id", topicoIds),
-        supabase.from("questions").select("topic_id").in("topic_id", topicoIds),
+        supabase.from("questions").select("topic_id").in("topic_id", topicoIds).eq("desafio", false),
       ]);
       (progressos || []).forEach((p) => (progressoPorTopico[p.topico_id] = p));
       (questoes || []).forEach((q) => (temQuestaoPorTopico[q.topic_id] = true));
@@ -376,7 +376,7 @@ export async function carregarCaminhoDisciplina(
         )
         .eq("user_id", user.id)
         .in("topico_id", topicoIds),
-      supabase.from("questions").select("topic_id").in("topic_id", topicoIds),
+      supabase.from("questions").select("topic_id").in("topic_id", topicoIds).eq("desafio", false),
     ]);
     const pp: Record<string, ProgressoRow> = {};
     (progressos || []).forEach((p) => (pp[p.topico_id] = p));

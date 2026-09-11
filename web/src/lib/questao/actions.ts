@@ -509,7 +509,11 @@ async function prepararDesafioRecuperacao(
   const { data: questoesTopico } = await supabase
     .from("questions")
     .select("id, dificuldade, tempo_medio_seg")
-    .eq("topic_id", topico.id);
+    .eq("topic_id", topico.id)
+    // Aprofundamento (questions.desafio) fica fora de sorteio automático:
+    // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
+    // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
+    .eq("desafio", false);
   if (!questoesTopico || questoesTopico.length === 0) return null;
   const questaoDesafio = questoesTopico[Math.floor(Math.random() * questoesTopico.length)];
 

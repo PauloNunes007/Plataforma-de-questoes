@@ -12,6 +12,11 @@ export type Pergunta = {
   resolucao: string | null;
   subtopico: string | null;
   tempo_medio_seg: number | null;
+  /** Questão de APROFUNDAMENTO (ver supabase_questao_desafio.sql): vai além
+   *  do nível cobrado na prova. Fica fora de todo sorteio automático e o
+   *  aluno a vê com selo próprio. Não confundir com o "desafio de
+   *  recuperação" do fim da missão, que é outra coisa (retrieval practice). */
+  desafio: boolean | null;
 };
 
 export type MissaoResumo = {

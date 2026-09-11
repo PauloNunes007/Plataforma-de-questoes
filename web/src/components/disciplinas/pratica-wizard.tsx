@@ -18,6 +18,7 @@ import { TopicoPicker } from "./topico-picker";
 import { FiltrosPratica } from "./filtros-pratica";
 import { ResumoPratica } from "./resumo-pratica";
 import { hrefQuestao } from "@/lib/questao/navegacao";
+import { FILTRO_DESAFIO } from "@/lib/disciplinas/filtros";
 
 const LABEL_DIFICULDADE: Record<string, string> = { facil: "Fácil", medio: "Médio", dificil: "Difícil" };
 
@@ -131,7 +132,12 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
     topicosSelecionados.size === 0
       ? "Todos os tópicos"
       : `${topicosSelecionados.size} ${topicosSelecionados.size === 1 ? "tópico" : "tópicos"}`;
-  const dificuldadeLabel = dificuldadesArr.length === 0 ? "Todas" : dificuldadesArr.map((d) => LABEL_DIFICULDADE[d] || d).join(", ");
+  // O opt-in de aprofundamento viaja no mesmo Set das dificuldades, mas não é
+  // um nível — no resumo ele entra como sufixo, não como mais um item da lista.
+  const niveisArr = dificuldadesArr.filter((d) => d !== FILTRO_DESAFIO);
+  const dificuldadeLabel =
+    (niveisArr.length === 0 ? "Todas" : niveisArr.map((d) => LABEL_DIFICULDADE[d] || d).join(", ")) +
+    (dificuldades.has(FILTRO_DESAFIO) ? " + desafio" : "");
   const quantidadeLabel = quantidade === "todas" ? "Todas disponíveis" : contagemQuestoes(quantidade);
   const podeComecar = Boolean(materiaId) && topicos.length > 0 && (previa?.selecionadas ?? 0) > 0 && !carregandoPrevia;
 
@@ -210,7 +216,11 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
                         return next;
                       })
                     }
-                    onLimparDificuldades={() => setDificuldades(new Set())}
+                    onLimparDificuldades={() =>
+                      // "Todas" zera os NÍVEIS e preserva o opt-in de desafio,
+                      // que é outro eixo do filtro.
+                      setDificuldades((prev) => (prev.has(FILTRO_DESAFIO) ? new Set([FILTRO_DESAFIO]) : new Set()))
+                    }
                     quantidade={quantidade}
                     onQuantidade={setQuantidade}
                   />

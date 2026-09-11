@@ -205,6 +205,10 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
     .select("id, ano, dificuldade, topic_id")
     .in("instituicao", casadas)
     .in("topic_id", input.topicIds)
+    // Aprofundamento (questions.desafio) fica fora de sorteio automático:
+    // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
+    // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
+    .eq("desafio", false)
     .limit(5000);
 
   let pool = (brutas || []) as Candidata[];
