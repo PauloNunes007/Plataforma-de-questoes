@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import {
-  carregarDadosDashboard,
-  carregarPerfilDashboard,
-  XP_POR_NIVEL,
-} from "@/lib/questly/dashboard-data";
+import { carregarDadosDashboard, carregarPerfilDashboard } from "@/lib/questly/dashboard-data";
 import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
+import { carregarDesempenho } from "@/lib/dashboard/desempenho-data";
 import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
-import { QUESTLY_LIGA_INFO, QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
-import { HeroBanner } from "@/components/dashboard/hero-banner";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
 
 export const metadata: Metadata = {
@@ -27,45 +22,29 @@ export default async function DashboardPage() {
   if (!user) return null;
 
   // O hero depende só do perfil, não do dashboard inteiro — lendo o perfil
-  // aqui, uma vez, as quatro cargas rodam de fato em paralelo. Antes, `hero`
+  // aqui, uma vez, as cargas rodam de fato em paralelo. Antes, `hero`
   // estava dentro de um Promise.all que só COMEÇAVA depois de
   // carregarDadosDashboard() inteiro (missões, projeção, liga, calendário).
   const perfil = await carregarPerfilDashboard(supabase, user.id);
-  const [dados, retomar, hero, atalhoSimulados] = await Promise.all([
+  const [dados, retomar, hero, atalhoSimulados, desempenho] = await Promise.all([
     carregarDadosDashboard(supabase, user, perfil),
     carregarRetomar(supabase, user.id),
     carregarHeroDashboard(supabase, user, perfil),
     carregarAtalhoSimulados(supabase, user),
+    // Histórico agregado da aba Desempenho. Entra no mesmo Promise.all: a aba
+    // não é a inicial, mas a carga é leve (agregada por dia/tópico no
+    // servidor) e assim trocar de visão é instantâneo, sem spinner.
+    carregarDesempenho(supabase, user.id),
   ]);
 
-  const liga: Liga = (dados.profile?.liga as Liga) || QUESTLY_LIGAS[0];
-  const ligaNome = (QUESTLY_LIGA_INFO[liga] || QUESTLY_LIGA_INFO.bronze).nome;
-
   return (
-    <div className="mx-auto flex w-full max-w-[1340px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <HeroBanner
-        nome={dados.profile?.nome || dados.greeting}
-        fotoUrl={dados.profile?.foto_url ?? null}
-        curso={dados.profile?.curso ?? null}
-        liga={liga}
-        ligaNome={ligaNome}
-        nivel={dados.profile?.nivel || 1}
-        xpTotal={dados.profile?.xp_total || 0}
-        xpPorNivel={XP_POR_NIVEL}
-        streakAtual={dados.profile?.streak_atual || 0}
-        recordeStreak={dados.semana.recorde.melhorStreak}
-        pro={dados.ehPro}
-      />
-
-      {/* `retomar` entra no FocoHojeCard (dentro do DashboardView) em vez de
-          um cartão próprio: "continuar de onde parou" e "sua missão de hoje"
-          eram dois cartões grandes lado a lado dizendo a mesma coisa. */}
-      <DashboardView
-        dados={dados}
-        hero={hero}
-        atalhoSimulados={atalhoSimulados}
-        retomar={retomar}
-      />
-    </div>
+    <DashboardView
+      dados={dados}
+      hero={hero}
+      desempenho={desempenho}
+      atalhoSimulados={atalhoSimulados}
+      retomar={retomar}
+      userId={user.id}
+    />
   );
 }

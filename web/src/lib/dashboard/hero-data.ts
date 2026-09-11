@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { calcularDistintivos } from "@/lib/ranking/badges";
+import { calcularDistintivos, type Distintivo } from "@/lib/ranking/badges";
 import { QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
 import type { NomeInsignia, TomInsignia } from "@/components/insignias/insignia";
 
@@ -13,6 +13,9 @@ export type HeroDados = {
   totalAlunos: number;
   conquistas: number;
   conquistasLista: { insignia: NomeInsignia; tom: TomInsignia; nome: string }[];
+  /** a estante inteira (acesos + apagados) — a visão Conquistas da home mostra
+   *  também o que falta, com o requisito escrito em cada card. */
+  distintivos: Distintivo[];
   acertos: number;
   erros: number;
   totalQuestoes: number;
@@ -71,6 +74,7 @@ export async function carregarHeroDashboard(
     totalAlunos: total || 1,
     conquistas: conquistados.length,
     conquistasLista: conquistados.map((d) => ({ insignia: d.insignia, tom: d.tom, nome: d.nome })),
+    distintivos,
     acertos: ac,
     erros: er,
     totalQuestoes: tot,
