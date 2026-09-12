@@ -28,7 +28,11 @@ type LinhaComQuestao = { topicos: { materia_id: string | null } | null };
 // exato como disciplina seguindo o pattern `topicos!inner`/`materias(nome)`
 // já usado em lib/cursos/actions.ts e lib/admin/actions.ts.
 async function contarQuestoesPorMateria(supabase: SupabaseClient): Promise<Map<string, number>> {
-  const { data } = await supabase.from("questions").select("topicos!inner ( materia_id )");
+  // .limit alto: sem ele o PostgREST corta em 1000 linhas por padrão, e com o
+  // banco passando disso uma matéria inteira (ex.: "Fundamentos de Cálculo e
+  // Geometria") pode cair fora da janela retornada e desaparecer de
+  // Listas/Banco de Questões — mesmo padrão de lib/cursos/actions.ts.
+  const { data } = await supabase.from("questions").select("topicos!inner ( materia_id )").limit(20000);
 
   const contagem = new Map<string, number>();
   for (const row of (data || []) as unknown as LinhaComQuestao[]) {

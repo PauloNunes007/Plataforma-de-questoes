@@ -231,7 +231,7 @@ export const CURSOS: CursoIdentidade[] = [
       "Álgebra Linear",
       "Análise Real",
       "Álgebra Abstrata",
-      "Geometria Analítica",
+      "Fundamentos de Cálculo e Geometria",
     ],
   },
   {

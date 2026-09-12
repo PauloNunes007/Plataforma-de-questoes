@@ -52,11 +52,15 @@ const SESSAO_INICIAL: Sessao = {
   iniciadoEm: null,
 };
 
-const CHAVE_LS = "questly_foco_v1";
-// Batimento gravado a cada tick enquanto roda. Sem ele, fechar a aba com uma
-// sessão rodando e voltar no dia seguinte creditaria as horas em que ninguém
-// estava estudando (o tempo é derivado de `iniciadoEm`).
-const CHAVE_VISTO = "questly_foco_visto_v1";
+// As chaves levam o id do aluno: sem isso, duas contas no MESMO navegador
+// (comum em laptop compartilhado/lab) liam e escreviam a mesma sessão de
+// foco — a de uma virava crédito de segundos pra outra ao finalizar (bug
+// real reportado). `chavesFoco` cai pra um sufixo fixo sem sessão (SSR/antes
+// do user chegar) só pra não quebrar o `localStorage.getItem`.
+function chavesFoco(userId: string | null): { ls: string; visto: string } {
+  const sufixo = userId || "anon";
+  return { ls: `questly_foco_v1:${sufixo}`, visto: `questly_foco_visto_v1:${sufixo}` };
+}
 // Buraco tolerado entre o último batimento e a volta: F5/navegação levam menos
 // que isso, então a sessão retoma sem perder nada; sumiço maior vira pausa no
 // último instante com sinal de vida.
@@ -132,10 +136,13 @@ function restaurarSessao(salvo: Sessao, vistoEm: number): Sessao {
 export function FocoProvider({
   children,
   focoHojeSegInicial = 0,
+  userId = null,
 }: {
   children: React.ReactNode;
   focoHojeSegInicial?: number;
+  userId?: string | null;
 }) {
+  const { ls: CHAVE_LS, visto: CHAVE_VISTO } = useMemo(() => chavesFoco(userId), [userId]);
   const [sessao, setSessao] = useState<Sessao>(SESSAO_INICIAL);
   const [barraAberta, setBarraAberta] = useState(false);
   const [colapsada, setColapsada] = useState(false);
@@ -217,7 +224,7 @@ export function FocoProvider({
     } catch {
       /* localStorage indisponível/corrompido — começa limpo */
     }
-  }, []);
+  }, [CHAVE_LS, CHAVE_VISTO]);
 
   useEffect(() => {
     if (!montado) return;
@@ -226,7 +233,7 @@ export function FocoProvider({
     } catch {
       /* ignora */
     }
-  }, [sessao, montado]);
+  }, [sessao, montado, CHAVE_LS]);
 
   const segundos = segundosDaSessao(sessao);
   const restanteSeg =
@@ -272,7 +279,7 @@ export function FocoProvider({
       autoColapsoRef.current = null;
       setColapsada(true);
     }, AUTO_COLAPSA_MS);
-  }, [cancelarAutoColapso]);
+  }, [cancelarAutoColapso, CHAVE_VISTO]);
 
   const pausar = useCallback(() => {
     cancelarAutoColapso();
@@ -328,7 +335,7 @@ export function FocoProvider({
       setTick((t) => (t + 1) % 1_000_000);
     }, 1000);
     return () => clearInterval(id);
-  }, [estado, modo, alvoMin, finalizar]);
+  }, [estado, modo, alvoMin, finalizar, CHAVE_VISTO]);
 
   const valor = useMemo<FocoContexto>(() => {
     const ativo = sessao.estado !== "parado";

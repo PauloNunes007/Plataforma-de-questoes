@@ -48,7 +48,7 @@ export default async function ProtectedLayout({
   const pro = ehPro(profile);
 
   return (
-    <FocoProvider focoHojeSegInicial={focoHojeSeg}>
+    <FocoProvider focoHojeSegInicial={focoHojeSeg} userId={user.id}>
       <div className="flex min-h-screen flex-col">
         {/* Header horizontal + barra de Foco logo abaixo (redesign 2026-09). */}
         <TopNav
