@@ -272,6 +272,14 @@ Manda um e-mail para todo mundo que já tem conta. Exige a migration
 2. Clique **Enviar teste** com o seu endereço e **abra o e-mail no celular e no
    Gmail web**. Erro de texto, link errado e quebra de layout só aparecem de
    verdade dentro do cliente — nunca na prévia.
+
+   > **Não achou o teste? Ele quase certamente chegou.** E-mail de campanha leva
+   > os cabeçalhos `List-Unsubscribe` (é o que faz o Gmail mostrar "Cancelar
+   > inscrição" em vez de a pessoa apertar "spam") — e é exatamente isso que o
+   > Gmail usa pra arquivar em **Promoções**. Busque por
+   > `in:anywhere from:<seu remetente>`. Pra confirmar que saiu de fato:
+   > `curl -s -H "api-key: $BREVO_API_KEY" "https://api.brevo.com/v3/smtp/statistics/events?days=1"`
+   > — `delivered` significa que o Gmail aceitou; aí é pasta, não entrega.
 3. Clique **Conferir a base**: quantas contas existem, quantas já receberam,
    quantas faltam e **quanto sobrou do saldo da Brevo hoje**.
 4. Clique **Enviar para quem falta**. Ele roda em lotes e mostra o progresso.

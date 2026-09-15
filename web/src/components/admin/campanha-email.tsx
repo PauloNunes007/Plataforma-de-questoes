@@ -143,7 +143,14 @@ export function CampanhaEmail({
     setAviso(
       "error" in res
         ? { tipo: "erro", texto: res.error }
-        : { tipo: "ok", texto: `Teste enviado para ${emailTeste}. Confira na caixa de entrada antes de disparar.` },
+        : {
+            tipo: "ok",
+            // Onde procurar faz parte da instrução: o e-mail leva cabeçalho de
+            // campanha (List-Unsubscribe), e é justamente isso que o Gmail usa
+            // pra arquivar em Promoções. Sem esta frase, o teste parece ter
+            // falhado quando na verdade foi entregue.
+            texto: `Teste enviado para ${emailTeste}. Procure também em Promoções e Spam — e-mail de campanha costuma cair lá. No Gmail, buscar "in:anywhere" pelo remetente acha na hora.`,
+          },
     );
   }
 
