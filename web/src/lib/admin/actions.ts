@@ -375,6 +375,98 @@ export async function revogarProAdminAction(userId: string): Promise<{ ok: true 
   return { ok: true };
 }
 
+// ----------------------------------------------------------------- cupons
+// CRUD de cupons de Pro grátis (supabase_cupons_pro.sql). O resgate em si
+// (aluno consumindo um código) mora em lib/plano/actions.ts — aqui é só a
+// gestão do admin. Roda com o client normal (não service_role): a policy
+// "admin gerencia cupons" já libera o e-mail admin pra tudo em `cupons`.
+
+export type CupomAdmin = {
+  id: string;
+  codigo: string;
+  descricao: string | null;
+  diasPro: number;
+  limiteUsos: number | null;
+  usos: number;
+  ativo: boolean;
+  expiraEm: string | null;
+  criadoEm: string;
+};
+
+export async function listarCuponsAdminAction(): Promise<{ cupons: CupomAdmin[] } | { error: string }> {
+  const { supabase, error } = await requireAdmin();
+  if (!supabase) return { error: error! };
+
+  const { data, error: err } = await supabase
+    .from("cupons")
+    .select("id, codigo, descricao, dias_pro, limite_usos, usos, ativo, expira_em, criado_em")
+    .order("criado_em", { ascending: false });
+  if (err) return { error: err.message };
+
+  const cupons: CupomAdmin[] = (data || []).map((c) => ({
+    id: c.id,
+    codigo: c.codigo,
+    descricao: c.descricao,
+    diasPro: c.dias_pro,
+    limiteUsos: c.limite_usos,
+    usos: c.usos,
+    ativo: c.ativo,
+    expiraEm: c.expira_em,
+    criadoEm: c.criado_em,
+  }));
+  return { cupons };
+}
+
+export async function criarCupomAdminAction(input: {
+  codigo: string;
+  diasPro: number;
+  limiteUsos: number | null;
+  expiraEm: string | null; // ISO, ou null
+  descricao: string | null;
+}): Promise<{ ok: true } | { error: string }> {
+  const { supabase, error } = await requireAdmin();
+  if (!supabase) return { error: error! };
+
+  const codigo = input.codigo.trim();
+  if (!codigo) return { error: "Digite um código." };
+  if (!Number.isInteger(input.diasPro) || input.diasPro <= 0) {
+    return { error: "Dias de Pro precisa ser um número maior que zero." };
+  }
+  if (input.limiteUsos !== null && (!Number.isInteger(input.limiteUsos) || input.limiteUsos <= 0)) {
+    return { error: "Limite de usos precisa ser um número maior que zero (ou deixe vazio pra ilimitado)." };
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error: err } = await supabase.from("cupons").insert({
+    codigo,
+    dias_pro: input.diasPro,
+    limite_usos: input.limiteUsos,
+    expira_em: input.expiraEm,
+    descricao: input.descricao?.trim() || null,
+    criado_por: user?.email ?? null,
+  });
+  if (err) {
+    if (err.code === "23505") return { error: "Já existe um cupom com esse código." };
+    return { error: err.message };
+  }
+  return { ok: true };
+}
+
+export async function alternarCupomAdminAction(
+  id: string,
+  ativo: boolean,
+): Promise<{ ok: true } | { error: string }> {
+  const { supabase, error } = await requireAdmin();
+  if (!supabase) return { error: error! };
+
+  const { error: err } = await supabase.from("cupons").update({ ativo }).eq("id", id);
+  if (err) return { error: err.message };
+  return { ok: true };
+}
+
 export async function excluirQuestaoAdminAction(id: string): Promise<{ ok: true } | { error: string }> {
   const { supabase, error } = await requireAdmin();
   if (!supabase) return { error: error! };

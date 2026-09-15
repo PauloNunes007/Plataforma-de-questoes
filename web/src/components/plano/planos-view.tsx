@@ -13,6 +13,7 @@ import {
   Minus,
   RefreshCw,
   ShieldCheck,
+  Ticket,
   TriangleAlert,
 } from "lucide-react";
 import {
@@ -25,6 +26,7 @@ import {
   cancelarAssinaturaPendenteAction,
   conferirPagamentoAction,
   criarAssinaturaAction,
+  resgatarCupomAction,
   type AssinaturaPendente,
   type ConferenciaPagamento,
   type EstadoPagamento,
@@ -181,6 +183,8 @@ export function PlanosView(props: PlanosViewProps) {
   return (
     <div className="flex flex-col gap-10">
       <Cabecalho jaEhPro={props.jaEhPro} />
+
+      {!mostrandoEspera && <CupomResgate onResgatado={() => router.refresh()} />}
 
       {props.jaEhPro ? (
         <StatusPro
@@ -352,6 +356,79 @@ function LinhaConfianca() {
         </li>
       ))}
     </ul>
+  );
+}
+
+/* -------------------------------------------------------------- cupom Pro */
+
+// Link discreto que expande um campo de código — a maioria dos alunos não tem
+// cupom, então isto não pode competir visualmente com os cards de plano.
+function CupomResgate({ onResgatado }: { onResgatado: () => void }) {
+  const [aberto, setAberto] = useState(false);
+  const [codigo, setCodigo] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [sucesso, setSucesso] = useState<number | null>(null);
+
+  async function resgatar() {
+    if (!codigo.trim()) return;
+    setErro(null);
+    setEnviando(true);
+    const res = await resgatarCupomAction(codigo);
+    setEnviando(false);
+    if ("error" in res) {
+      setErro(res.error);
+      return;
+    }
+    setSucesso(res.diasConcedidos);
+    setCodigo("");
+    onResgatado();
+  }
+
+  if (sucesso !== null) {
+    return (
+      <p className="mx-auto flex items-center gap-1.5 text-[12.5px] font-medium text-questly-green-dark">
+        <BadgeCheck size={14} strokeWidth={2.2} />
+        Cupom aplicado — {sucesso} dias de Pro liberados.
+      </p>
+    );
+  }
+
+  if (!aberto) {
+    return (
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className="mx-auto flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+      >
+        <Ticket size={13} strokeWidth={2} />
+        Tenho um cupom
+      </button>
+    );
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-xs flex-col items-center gap-2">
+      <div className="flex w-full items-center gap-2">
+        <input
+          autoFocus
+          value={codigo}
+          onChange={(e) => setCodigo(e.target.value.toUpperCase())}
+          onKeyDown={(e) => e.key === "Enter" && resgatar()}
+          placeholder="Código do cupom"
+          className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-card px-2.5 font-mono text-[13px] uppercase tracking-wide outline-none focus:border-questly-gold"
+        />
+        <button
+          type="button"
+          disabled={enviando || !codigo.trim()}
+          onClick={resgatar}
+          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-questly-gold/15 px-3 text-[12.5px] font-semibold text-questly-gold transition-colors hover:bg-questly-gold/25 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {enviando ? <Loader2 size={13} className="animate-spin" /> : "Aplicar"}
+        </button>
+      </div>
+      {erro && <p className="text-[12px] text-questly-red-dark">{erro}</p>}
+    </div>
   );
 }
 

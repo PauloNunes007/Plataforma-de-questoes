@@ -12,6 +12,7 @@
 //   3) confirmação manual do admin (lib/admin/actions.ts) — hoje só pra
 //      contingência (gateway fora do ar, pagamento por fora).
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { acharOpcao, ehPro } from "@/lib/plano/plano";
 import {
   buscarPagamentoMP,
@@ -279,4 +280,86 @@ export async function conferirPagamentoAction(
 
   // Nenhum pagamento ainda: o aluno abriu o checkout e não terminou.
   return { estado: "processando" };
+}
+
+// ------------------------------------------------------------- cupom de Pro
+// Resgate de um cupom (dias_pro concedidos direto, sem passar pelo Mercado
+// Pago — ver supabase_cupons_pro.sql). A leitura do cupom e a escrita em
+// `profiles`/`cupom_resgates` rodam via service_role: o aluno não tem policy
+// de select em `cupons` (a validação é toda no servidor) e a coluna `plano`
+// é protegida pelo trigger de segurança contra o cliente do próprio aluno.
+export async function resgatarCupomAction(
+  codigoDigitado: string,
+): Promise<{ ok: true; diasConcedidos: number } | { error: string }> {
+  const codigo = codigoDigitado.trim();
+  if (!codigo) return { error: "Digite um código." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Faça login pra usar um cupom." };
+
+  const admin = createAdminClient();
+
+  const { data: cupom, error: errCupom } = await admin
+    .from("cupons")
+    .select("id, dias_pro, ativo, limite_usos, usos, expira_em")
+    .ilike("codigo", codigo)
+    .maybeSingle();
+  if (errCupom) return { error: errCupom.message };
+  if (!cupom || !cupom.ativo) return { error: "Cupom inválido." };
+  if (cupom.expira_em && new Date(cupom.expira_em).getTime() < Date.now()) {
+    return { error: "Esse cupom expirou." };
+  }
+  if (cupom.limite_usos !== null && cupom.usos >= cupom.limite_usos) {
+    return { error: "Esse cupom atingiu o limite de usos." };
+  }
+
+  const { data: jaResgatado } = await admin
+    .from("cupom_resgates")
+    .select("id")
+    .eq("cupom_id", cupom.id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (jaResgatado) return { error: "Você já usou esse cupom nesta conta." };
+
+  const { data: profile, error: errProfile } = await admin
+    .from("profiles")
+    .select("plano, plano_ciclo, plano_desde, plano_expira_em")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (errProfile) return { error: errProfile.message };
+
+  // Já é Pro (pago ou de outro cupom): soma os dias em cima da validade atual
+  // em vez de reiniciar — resgatar um cupom nunca deve ENCURTAR o que o aluno
+  // já tinha. Do contrário, começa a contar de agora.
+  const agora = new Date();
+  const jaPro = ehPro(profile);
+  const baseExpira = jaPro && profile?.plano_expira_em ? new Date(profile.plano_expira_em) : agora;
+  const novaExpira = new Date(baseExpira.getTime() + cupom.dias_pro * 24 * 60 * 60 * 1000);
+
+  const { error: errUpdate } = await admin
+    .from("profiles")
+    .update({
+      plano: "pro",
+      plano_ciclo: jaPro ? profile?.plano_ciclo : "cupom",
+      plano_desde: jaPro ? profile?.plano_desde : agora.toISOString(),
+      plano_expira_em: novaExpira.toISOString(),
+    })
+    .eq("id", user.id);
+  if (errUpdate) return { error: errUpdate.message };
+
+  await admin.from("cupom_resgates").insert({
+    cupom_id: cupom.id,
+    user_id: user.id,
+    dias_concedidos: cupom.dias_pro,
+  });
+  // Incremento simples (leitura-e-escrita, não atômico sob concorrência) — pro
+  // volume de um cupom distribuído manualmente isso é aceitável; o que
+  // realmente impede abuso é o índice único (cupom_id, user_id) checado acima,
+  // que já barra a mesma conta resgatando duas vezes.
+  await admin.from("cupons").update({ usos: cupom.usos + 1 }).eq("id", cupom.id);
+
+  return { ok: true, diasConcedidos: cupom.dias_pro };
 }
