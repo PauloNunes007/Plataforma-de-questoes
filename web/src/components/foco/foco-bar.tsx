@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronDown, Pause, Play, Square, Trash2, X } from "lucide-react";
 import { Insignia } from "@/components/insignias/insignia";
@@ -11,22 +10,18 @@ const MINUTOS_RAPIDOS = [15, 25, 50] as const;
 // Altura do header (h-14) — a barra gruda logo abaixo dele.
 const TOPO_STICKY = "top-14";
 
-// Quanto tempo o ponteiro precisa ficar em cima da linha recolhida antes dela
-// "acordar". Passar o mouse rápido (o caso comum — o aluno indo pro conteúdo)
-// não dispara nada.
-const MS_DESPERTAR = 1000;
-
 // Barra de Foco abaixo do header. Ela ACOMPANHA a rolagem (sticky): sumir
 // quando o aluno desce a página era o jeito mais rápido de esquecer que o
 // cronômetro está rodando.
 //
 // Estados: painel de setup (parado), barra colorida rodando, OU linha fina
 // quando está recolhida — o que acontece SOZINHO alguns segundos depois de
-// iniciar, pra não roubar o topo da tela. Com o ponteiro parado em cima da
-// linha por ~1s ela ACORDA: cresce um tico, o relógio ganha corpo e aparece o
-// convite "abrir"; clicar devolve a barra inteira. A versão anterior
-// escancarava a barra sobreposta no hover — bastava o ponteiro cruzar o topo
-// da tela pra ela pular na frente do conteúdo.
+// iniciar, pra não roubar o topo da tela. Clicar na linha devolve a barra
+// inteira. A versão anterior escancarava a barra sobreposta no hover —
+// bastava o ponteiro cruzar o topo da tela pra ela pular na frente do
+// conteúdo; uma versão seguinte tentou um "despertar" no hover com fundo
+// claro + nome + relógio, mas isso virou uma segunda barra visualmente
+// pesada por cima da fitinha — removido a pedido: recolhida é só a fitinha.
 export function FocoBar() {
   const foco = useFoco();
 
@@ -248,142 +243,30 @@ function CorpoBarra() {
   );
 }
 
-// Linha fina — o Foco recolhido: só lembra que está rodando, sem atrapalhar.
-// Ficar com o ponteiro em cima por ~1s a DESPERTA (cresce um tico, o relógio
-// ganha corpo, entra o convite "abrir") — é só um sinal de vida, quem manda
-// abrir de verdade é o clique. Cruzar o topo da tela de passagem não muda nada.
+// Linha fina — o Foco recolhido: só uma fitinha uniforme lembrando que a
+// sessão está rodando, sem disputar atenção com o conteúdo. Sem texto, sem
+// fundo claro, sem efeito de brilho passando (desconcentra) — só a cor,
+// meio apagada quando pausado. Clicar expande a barra inteira.
 function LinhaFina() {
   const foco = useFoco();
-  // O estado do "despertar" mora aqui de propósito: ele morre junto com a
-  // linha quando a barra expande ou a sessão acaba, sem efeito de limpeza.
-  const [desperta, setDesperta] = useState(false);
-  const relogioRef = useRef<number | null>(null);
-
-  const dormir = useCallback(() => {
-    if (relogioRef.current !== null) {
-      window.clearTimeout(relogioRef.current);
-      relogioRef.current = null;
-    }
-    setDesperta(false);
-  }, []);
-
-  const agendarDespertar = useCallback(() => {
-    if (relogioRef.current !== null) return;
-    relogioRef.current = window.setTimeout(() => {
-      relogioRef.current = null;
-      setDesperta(true);
-    }, MS_DESPERTAR);
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (relogioRef.current !== null) window.clearTimeout(relogioRef.current);
-    },
-    [],
-  );
-
   const rodando = foco.estado === "rodando";
-  const mostrado = foco.modo === "timer" ? foco.restanteSeg : foco.segundos;
-  // Mola curta: o crescimento tem que parecer resposta ao ponteiro, não uma
-  // animação com vida própria.
-  const mola = { type: "spring" as const, stiffness: 460, damping: 32, mass: 0.6 };
 
   return (
     <motion.button
       type="button"
       onClick={foco.expandir}
-      // "Ficar parado em cima" só existe pro mouse; no toque o clique resolve.
-      onPointerEnter={(e) => {
-        if (e.pointerType === "mouse") agendarDespertar();
-      }}
-      onPointerLeave={dormir}
-      onFocus={agendarDespertar}
-      onBlur={dormir}
       initial={{ height: 0, opacity: 0 }}
       animate={{ height: "auto", opacity: 1 }}
       exit={{ height: 0, opacity: 0 }}
       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
       aria-label="Expandir sessão de foco"
-      title="Sessão de foco em andamento — clique pra expandir"
-      className="group relative block w-full cursor-pointer overflow-hidden border-b border-black/5 backdrop-blur-sm transition-[background-color,box-shadow] duration-200 dark:border-white/10"
-      style={{
-        backgroundColor: `${foco.cor}${desperta ? "33" : "1f"}`,
-        boxShadow: desperta ? `0 10px 22px -16px ${foco.cor}` : "0 0 0 0 transparent",
-      }}
+      title={rodando ? "Sessão de foco em andamento — clique para expandir" : "Sessão de foco pausada — clique para expandir"}
+      className="block w-full cursor-pointer"
     >
-      {/* barrinha de cor com brilho deslizante — desperta, engrossa e o brilho
-          passa mais rápido (o "está vivo"). */}
-      <motion.span
-        className="relative block w-full"
-        animate={{ height: desperta ? 7 : 4 }}
-        transition={mola}
-        style={{ backgroundColor: foco.cor }}
-      >
-        {rodando && (
-          <motion.span
-            className="absolute inset-y-0 w-1/3 bg-white/40 blur-[2px]"
-            animate={{ x: ["-40%", "340%"] }}
-            transition={{ duration: desperta ? 1.5 : 2.4, repeat: Infinity, ease: "linear" }}
-          />
-        )}
-      </motion.span>
-      {/* Linha de status baixinha (~20px). A versão anterior tinha só os 6px
-          de cor e o relógio ficava CORTADO pelo overflow-hidden — dava pra
-          ver que algo rodava, mas não quanto. */}
-      <motion.span
-        className="mx-auto flex w-full max-w-[1340px] items-center gap-2 px-4 sm:px-6"
-        animate={{ paddingTop: desperta ? 7 : 3, paddingBottom: desperta ? 7 : 3 }}
-        transition={mola}
-      >
-        <span className="relative flex h-1.5 w-1.5 shrink-0">
-          {rodando && (
-            <span
-              className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
-              style={{ backgroundColor: foco.cor }}
-            />
-          )}
-          <span
-            className="relative inline-flex h-1.5 w-1.5 rounded-full"
-            style={{ backgroundColor: foco.cor, opacity: rodando ? 1 : 0.5 }}
-          />
-        </span>
-        <motion.span
-          className={`min-w-0 flex-1 truncate text-left font-medium transition-colors duration-200 ${
-            desperta ? "text-foreground" : "text-muted-foreground"
-          }`}
-          animate={{ fontSize: desperta ? 12 : 10.5 }}
-          transition={mola}
-        >
-          {foco.objetivo || (foco.modo === "timer" ? "Foco cronometrado" : "Sessão de foco")}
-          {!rodando && " · pausado"}
-        </motion.span>
-
-        <AnimatePresence initial={false}>
-          {desperta && (
-            <motion.span
-              key="abrir"
-              initial={{ opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 8 }}
-              transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
-              className="flex shrink-0 items-center gap-0.5 text-[10.5px] font-semibold"
-              style={{ color: foco.cor }}
-            >
-              abrir
-              <ChevronDown size={12} strokeWidth={3} />
-            </motion.span>
-          )}
-        </AnimatePresence>
-
-        <motion.span
-          className="tnum shrink-0 rounded-full px-1.5 py-px text-[10px] font-bold text-white"
-          style={{ backgroundColor: foco.cor, transformOrigin: "right center" }}
-          animate={{ scale: desperta ? 1.15 : 1 }}
-          transition={mola}
-        >
-          {formatarRelogio(mostrado)}
-        </motion.span>
-      </motion.span>
+      <span
+        className="block h-1 w-full transition-opacity duration-200 hover:opacity-100"
+        style={{ backgroundColor: foco.cor, opacity: rodando ? 1 : 0.4 }}
+      />
     </motion.button>
   );
 }
