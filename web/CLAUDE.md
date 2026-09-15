@@ -391,15 +391,33 @@ remetente é metade da entrega. Migração: `supabase_email_campanha.sql` (raiz)
   verdade dentro do cliente de e-mail.
 - **`auth.admin.listUsers` é a única chamada do app pra API Admin do GoTrue**
   (todo o resto de escrita privilegiada passa por PostgREST via service_role,
-  caminho muito mais pisado). Já falhou uma vez com uma mensagem imprestável —
+  caminho muito mais pisado). Falhou com uma mensagem imprestável —
   `Falha ao listar contas: {"url":"...auth/v1/admin/users?..."}` — porque o
-  auth-js, quando o `fetch()` rejeita sem um `.message` (falha de transporte
-  crua, não um erro de negócio com corpo JSON), cai no fallback
-  `JSON.stringify(erro)`. `lib/supabase/resiliencia.ts` (`comRetentativa` +
-  `descreverErro`) cobre isso: reentanta 3x com backoff curto e, se falhar de
-  novo, loga a forma REAL do erro no servidor em vez de só `.message`. Se
-  aparecer de novo, olhar os logs da function no Vercel antes de suspeitar de
-  config — o endpoint em si respondeu normal a um teste manual.
+  auth-js, quando a resposta não tem `.message`, cai no fallback
+  `JSON.stringify(erro)`, e numa `Response` isso só enxerga `url`.
+  `lib/supabase/resiliencia.ts` (`comRetentativa` + `descreverErro`) existe por
+  causa disso: loga a forma REAL do erro em vez de só `.message` — hoje
+  incluindo `status`/`code`, que o `AuthError` pendura no Error e que era
+  exatamente o sinal que faltava.
+- **A causa real daquela falha (achada em 2026-09-15) era DADO, não rede nem
+  chave**, e vale registrar porque a leitura óbvia da mensagem manda pro lugar
+  errado. Chamando o endpoint no braço: `per_page=6` → 200, `per_page=7` →
+  **500 `Database error finding users`**; `filter=zzzz` → 200 com zero contas
+  (query vazia não quebra), `filter=gmail` → 200 com 13, `filter=seed` → 500.
+  Isto é, o GoTrue quebrava ao LER certas linhas — as 40 contas
+  `seed_N@questly.test` que `supabase_seed_ranking_teste.sql` inseriu direto em
+  `auth.users` sem preencher as colunas de token, que no Go são `string` e não
+  aceitam NULL. Uma linha assim derruba QUALQUER listagem que passe por ela,
+  enquanto login, `getUserById` e PostgREST seguem normais — por isso nada mais
+  no app tinha notado. Conserto: `supabase_corrigir_auth_users_tokens.sql`
+  (raiz). A mensagem de erro do `listarUsuarios` agora diz isso quando o status
+  é 5xx, em vez de mandar conferir a `SUPABASE_SERVICE_ROLE_KEY` (que estava
+  certa o tempo todo).
+- **Endereço em TLD reservado (RFC 2606) é descartado da fila** (`NAO_ENTREGAVEL`
+  em `lib/email/campanha.ts`: `.test`, `.example`, `.invalid`, `.localhost`).
+  Conta de teste nunca entrega, e 40 hard bounces num disparo queimam a
+  reputação do remetente que também manda a confirmação de cadastro. O lugar
+  certo de não ter conta fantasma é o banco; isto é o cinto de segurança.
 
 Arquivos: `lib/email/{campanha,templates-campanha,descadastro,actions}.ts`,
 `lib/supabase/resiliencia.ts`,

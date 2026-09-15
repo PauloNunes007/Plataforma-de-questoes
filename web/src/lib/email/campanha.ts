@@ -57,6 +57,17 @@ export type ResumoCampanha = {
 
 type Usuario = { id: string; email: string; nome: string; confirmado: boolean };
 
+/**
+ * TLDs reservados pela RFC 2606: endereço nesses domínios NUNCA entrega, por
+ * definição. Entrou aqui depois de `supabase_seed_ranking_teste.sql` deixar 40
+ * contas `seed_N@questly.test` órfãs em `auth.users` — mandar campanha pra
+ * elas seria 40 hard bounces, e bounce é o que derruba a reputação do
+ * remetente que também entrega a confirmação de cadastro do aluno novo.
+ * A faxina certa é no banco (supabase_corrigir_auth_users_tokens.sql); isto
+ * aqui é o cinto de segurança pra próxima conta de teste que alguém criar.
+ */
+const NAO_ENTREGAVEL = /@(?:[^@]+\.)?(?:test|example|invalid|localhost)$/i;
+
 export function baseDoApp(): string {
   const base = process.env.NEXT_PUBLIC_APP_URL?.trim();
   if (!base) {
@@ -96,15 +107,31 @@ async function listarUsuarios(): Promise<Usuario[]> {
     );
     if (error) {
       console.error(`[campanha] listUsers pagina ${pagina} falhou:`, descreverErro(error));
+      const status = Number((error as { status?: unknown }).status ?? 0);
+      // 5xx aqui quase nunca é rede: é o GoTrue recusando a própria consulta.
+      // O caso conhecido (2026-09-15) é linha em `auth.users` inserida à mão
+      // com coluna de token NULL — no Go elas são `string`, então a varredura
+      // quebra e DERRUBA A LISTAGEM INTEIRA, embora login, getUserById e
+      // PostgREST continuem normais. Dizer isso aqui evita a caçada errada:
+      // a mensagem antiga mandava conferir a service_role, que estava certa.
+      const pista =
+        status >= 500
+          ? "O Auth respondeu " +
+            status +
+            " ('Database error finding users'). Isso costuma ser linha de auth.users " +
+            "criada por SQL manual com colunas de token NULL — rode " +
+            "supabase_corrigir_auth_users_tokens.sql no SQL Editor. Os Logs > Auth do " +
+            "painel mostram a mensagem completa do erro."
+          : "Se persistir, confira SUPABASE_SERVICE_ROLE_KEY no Vercel e os logs da function.";
       throw new Error(
-        `Falha ao listar contas ao ler a página ${pagina} do Auth (${descreverErro(error)}). ` +
-          `Se persistir, confira SUPABASE_SERVICE_ROLE_KEY no Vercel e os logs da function.`,
+        `Falha ao listar contas ao ler a página ${pagina} do Auth (${descreverErro(error)}). ${pista}`,
       );
     }
 
     const lote = data?.users ?? [];
     for (const u of lote) {
       if (!u.email) continue;
+      if (NAO_ENTREGAVEL.test(u.email)) continue;
       usuarios.push({
         id: u.id,
         email: u.email,

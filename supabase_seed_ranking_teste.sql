@@ -9,6 +9,12 @@
 -- no fim (basta apagar o auth.users; profiles cai por ON DELETE CASCADE).
 --
 -- Idempotente: reexecutar não duplica (checa o username seed_N).
+--
+-- ⚠️ LIMPE DEPOIS DE USAR. Apagar só os `profiles` não basta: a linha em
+-- auth.users fica órfã e continua contando como conta do projeto — inclusive
+-- na lista de destinatários do e-mail de campanha, onde `@questly.test` (RFC
+-- 2606, domínio que nunca entrega) viraria hard bounce. Use o bloco de limpeza
+-- do fim do arquivo, que apaga o auth.users e leva o profile junto.
 
 do $$
 declare
@@ -43,15 +49,25 @@ begin
     xp_sem_i := (i * 173) % 1500;
     liga_i := ligas[1 + i % 5];
 
+    -- As colunas de token vão com '' DE PROPÓSITO, nunca NULL. No GoTrue elas
+    -- são `string` (não `*string`), então uma linha com NULL aqui derruba a
+    -- API Admin inteira com 500 "Database error finding users" — não só pra
+    -- esta conta: pra QUALQUER listagem cujo resultado passe por ela. Foi o
+    -- que aconteceu em 2026-09-15 e quebrou o disparo de e-mail de campanha;
+    -- o conserto está em supabase_corrigir_auth_users_tokens.sql.
     insert into auth.users (
       instance_id, id, aud, role, email, encrypted_password,
       email_confirmed_at, created_at, updated_at,
-      raw_app_meta_data, raw_user_meta_data
+      raw_app_meta_data, raw_user_meta_data,
+      confirmation_token, recovery_token, email_change,
+      email_change_token_new, email_change_token_current, reauthentication_token
     ) values (
       '00000000-0000-0000-0000-000000000000', uid, 'authenticated', 'authenticated',
       'seed_' || i || '@questly.test', '',
       now(), now(), now(),
-      '{"provider":"email","providers":["email"]}', '{}'
+      '{"provider":"email","providers":["email"]}', '{}',
+      '', '', '',
+      '', '', ''
     ) on conflict (id) do nothing;
 
     insert into public.profiles (

@@ -23,10 +23,17 @@
 export function descreverErro(erro: unknown): string {
   if (erro instanceof Error) {
     const partes = [erro.name, erro.message].filter(Boolean);
+    // `status`/`code` NÃO são propriedades de Error, mas o AuthError do
+    // supabase-js pendura as duas ali — e é justamente onde mora o sinal que
+    // importa quando a `.message` é imprestável. Foi o caso de 2026-09-15: a
+    // mensagem era `{}` e o `status` dizia 500, ou seja, o servidor respondeu
+    // e recusou — nada a ver com a rede, que era a leitura óbvia da mensagem.
+    const extra = erro as { status?: unknown; code?: unknown; cause?: unknown };
+    if (extra.status !== undefined) partes.push(`status=${String(extra.status)}`);
+    if (extra.code !== undefined) partes.push(`code=${String(extra.code)}`);
     // `cause` é onde undici/Node guardam o motivo real de um "fetch failed"
     // (ECONNRESET, timeout, DNS…) — sem isso a mensagem some no genérico.
-    const causa = (erro as { cause?: unknown }).cause;
-    if (causa) partes.push(`causa: ${descreverErro(causa)}`);
+    if (extra.cause) partes.push(`causa: ${descreverErro(extra.cause)}`);
     return partes.join(" — ") || "erro sem mensagem";
   }
 
