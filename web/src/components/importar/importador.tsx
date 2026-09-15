@@ -40,7 +40,14 @@ import {
 } from "@/components/importar/pdf-recortador";
 import { LETRAS_ALTERNATIVA, type ItemImportado, type Letra, type Materia, type Topico } from "@/lib/importar/types";
 
-const STORAGE_KEY = "questly_importar_fila_v1";
+// A chave leva o id da conta, igual às do timer de Foco (components/foco/
+// foco-provider.tsx): duas contas no MESMO navegador liam e escreviam a mesma
+// fila de importação, e a fila de uma aparecia pra outra. Hoje só o admin
+// alcança esta tela, mas o padrão é o mesmo — estado de navegador nunca é
+// global, é por conta.
+function chaveFila(userId: string): string {
+  return `questly_importar_fila_v1:${userId}`;
+}
 const TAMANHO_LOTE_AUTO = 200;
 
 const BTN_PRIMARIO =
@@ -57,24 +64,24 @@ type ReportInfo = {
   prontasCount: number;
 };
 
-function salvarFilaLocal(fila: ItemImportado[], indiceAtual: number) {
+function salvarFilaLocal(chave: string, fila: ItemImportado[], indiceAtual: number) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ fila, indiceAtual, savedAt: Date.now() }));
+    localStorage.setItem(chave, JSON.stringify({ fila, indiceAtual, savedAt: Date.now() }));
   } catch (err) {
     console.warn("Não foi possível salvar a sessão localmente:", err);
   }
 }
-function carregarFilaLocal(): { fila: ItemImportado[]; indiceAtual: number } | null {
+function carregarFilaLocal(chave: string): { fila: ItemImportado[]; indiceAtual: number } | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(chave);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
-function limparFilaLocal() {
+function limparFilaLocal(chave: string) {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(chave);
   } catch {
     // ignora
   }
@@ -104,11 +111,14 @@ export function Importador({
   materiasIniciais,
   topicosIniciais,
   enunciadosIniciais,
+  userId,
 }: {
   materiasIniciais: Materia[];
   topicosIniciais: Topico[];
   enunciadosIniciais: string[];
+  userId: string;
 }) {
+  const STORAGE_KEY = useMemo(() => chaveFila(userId), [userId]);
   const [materias] = useState<Materia[]>(materiasIniciais);
   const [topicos] = useState<Topico[]>(topicosIniciais);
   const [enunciadosExistentes, setEnunciadosExistentes] = useState<Set<string>>(new Set(enunciadosIniciais));
@@ -148,25 +158,25 @@ export function Importador({
     // (efeito), não em lazy-init do useState, senão o valor divergiria
     // entre o HTML gerado no servidor e a primeira renderização no
     // cliente (hydration mismatch).
-    const salvo = carregarFilaLocal();
+    const salvo = carregarFilaLocal(STORAGE_KEY);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (salvo?.fila?.length) setResumeDisponivel(salvo);
-  }, []);
+  }, [STORAGE_KEY]);
 
   useEffect(() => {
     if (fila.length === 0) return;
     if (salvarTimeoutRef.current) clearTimeout(salvarTimeoutRef.current);
-    salvarTimeoutRef.current = setTimeout(() => salvarFilaLocal(fila, indiceAtual), 300);
+    salvarTimeoutRef.current = setTimeout(() => salvarFilaLocal(STORAGE_KEY, fila, indiceAtual), 300);
     return () => {
       if (salvarTimeoutRef.current) clearTimeout(salvarTimeoutRef.current);
     };
-  }, [fila, indiceAtual]);
+  }, [fila, indiceAtual, STORAGE_KEY]);
 
   useEffect(() => {
     if (view !== "final") return;
     const puladas = fila.filter((i) => i.status === "pulada").length;
-    if (puladas === 0) limparFilaLocal();
-  }, [view, fila]);
+    if (puladas === 0) limparFilaLocal(STORAGE_KEY);
+  }, [view, fila, STORAGE_KEY]);
 
   const itemAtual = fila[indiceAtual] as ItemImportado | undefined;
 
@@ -442,7 +452,7 @@ export function Importador({
       )
     )
       return;
-    limparFilaLocal();
+    limparFilaLocal(STORAGE_KEY);
     setFila([]);
     setIndiceAtual(0);
     setView("step1");
@@ -466,7 +476,7 @@ export function Importador({
     setView("revisao");
   }
   function descartarSessaoSalva() {
-    limparFilaLocal();
+    limparFilaLocal(STORAGE_KEY);
     setResumeDisponivel(null);
   }
 

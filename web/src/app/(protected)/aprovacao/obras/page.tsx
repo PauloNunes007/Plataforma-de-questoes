@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ehAdmin } from "@/lib/admin/auth";
 import { carregarObras, dataLocalISO } from "@/lib/aprovacao/dados";
 import { AprovacaoTabs } from "@/components/aprovacao/aprovacao-tabs";
@@ -9,9 +10,7 @@ export const metadata = { title: "Obras literárias — Questly" };
 
 export default async function ObrasPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) redirect("/login");
   if (!ehAdmin(user.email)) redirect("/dashboard");
 

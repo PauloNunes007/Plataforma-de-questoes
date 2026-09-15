@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarOpcoesSimulado, carregarStatusPlano } from "@/lib/simulados/simulados-data";
 import { PageHeader } from "@/components/page-header";
 import { MontadorSimulado } from "@/components/simulados/montador-simulado";
@@ -11,9 +12,7 @@ export const metadata: Metadata = {
 
 export default async function MontarSimuladoPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) return null;
 
   const [opcoes, status] = await Promise.all([

@@ -2,6 +2,7 @@
 // SupabaseClient). `questions` é leitura pública pra autenticado; `simulados_aluno`
 // é dono-only (RLS) — então tudo aqui já roda no cliente SSR normal do usuário.
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { contagemPorInstituicao, listarInstituicoes } from "@/lib/questly/contagem-questoes";
 import type { Pergunta } from "@/lib/questao/types";
 import { instituicoesQueCasam, nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
 import { ehPro } from "@/lib/plano/plano";
@@ -60,14 +61,6 @@ export type OpcoesSimulado = {
   materias: MateriaSimulado[];
 };
 
-type LinhaQuestao = {
-  id: string;
-  ano: number | null;
-  dificuldade: string | null;
-  topic_id: string | null;
-  topicos: { id: string; nome: string | null; materia_id: string | null; materias: { nome: string | null } | null } | null;
-};
-
 // Resolve os valores crus de questions.instituicao que casam com o texto de
 // profiles.universidade do aluno. Reusado pela action de montar (autoritativo).
 export async function instituicoesDoAluno(
@@ -76,14 +69,15 @@ export async function instituicoesDoAluno(
 ): Promise<string[]> {
   const termo = (universidade || "").trim();
   if (termo.length < 2) return [];
-  const { data } = await supabase
-    .from("questions")
-    .select("instituicao")
-    .not("instituicao", "is", null)
-    .limit(5000);
+  // vw_instituicoes (supabase_escala_lancamento.sql): ~8 linhas com os valores
+  // distintos. A varredura anterior baixava a coluna `instituicao` de todas as
+  // questões e ainda era cortada nas 1000 primeiras pelo teto do PostgREST —
+  // uma universidade cujas provas caíssem fora dessa janela simplesmente não
+  // era reconhecida, e o aluno via o estado vazio sem motivo.
+  const instituicoes = await listarInstituicoes(supabase);
   return instituicoesQueCasam(
     termo,
-    (data || []).map((l: { instituicao: string | null }) => l.instituicao),
+    instituicoes.map((i) => i.instituicao),
   );
 }
 
@@ -110,14 +104,13 @@ export async function carregarOpcoesSimulado(
   const casadas = await instituicoesDoAluno(supabase, universidade);
   if (casadas.length === 0) return { ...VAZIO, universidade };
 
-  const { data: qs } = await supabase
-    .from("questions")
-    .select("id, ano, dificuldade, topic_id, topicos!inner ( id, nome, materia_id, materias!inner ( nome ) )")
-    .in("instituicao", casadas)
-    // Mesmo recorte de montarSimuladoAction: aprofundamento não é sorteado,
-    // então também não pode entrar na contagem que o montador exibe.
-    .eq("desafio", false)
-    .limit(8000);
+  // Grade agregada por tópico/dificuldade/ano (view), não as linhas cruas das
+  // questões: eram ~310 KB e 1000 linhas por abertura do montador — o maior
+  // consumidor de banda do app — e o teto do PostgREST cortava o resto, fazendo
+  // o montador exibir contagem errada e esconder tópicos.
+  // `totalRegular` mantém o mesmo recorte de montarSimuladoAction:
+  // aprofundamento (questions.desafio) não é sorteado, logo não é contado.
+  const grade = await contagemPorInstituicao(supabase, casadas);
 
   type Acc = {
     nome: string;
@@ -127,29 +120,28 @@ export async function carregarOpcoesSimulado(
   const porMateria = new Map<string, Acc>();
   const anos = new Set<number>();
 
-  for (const q of (qs || []) as unknown as LinhaQuestao[]) {
-    const t = q.topicos;
-    const materiaId = t?.materia_id;
-    const materiaNome = t?.materias?.nome;
-    if (!t || !materiaId || !materiaNome || !t.id) continue;
-    if (typeof q.ano === "number") anos.add(q.ano);
+  for (const linha of grade) {
+    if (linha.totalRegular === 0) continue;
+    const { materiaId, materiaNome, topicId } = linha;
+    if (!materiaId || !materiaNome || !topicId) continue;
+    if (typeof linha.ano === "number") anos.add(linha.ano);
 
     let m = porMateria.get(materiaId);
     if (!m) {
       m = { nome: materiaNome, questoes: 0, topicos: new Map() };
       porMateria.set(materiaId, m);
     }
-    m.questoes += 1;
+    m.questoes += linha.totalRegular;
 
-    let tp = m.topicos.get(t.id);
+    let tp = m.topicos.get(topicId);
     if (!tp) {
-      tp = { nome: t.nome || "Tópico", questoes: 0, grade: gradeVazia() };
-      m.topicos.set(t.id, tp);
+      tp = { nome: linha.topicoNome || "Tópico", questoes: 0, grade: gradeVazia() };
+      m.topicos.set(topicId, tp);
     }
-    tp.questoes += 1;
-    const dif = normalizarChaveDificuldade(q.dificuldade);
-    const anoChave = typeof q.ano === "number" ? String(q.ano) : "0";
-    tp.grade[dif][anoChave] = (tp.grade[dif][anoChave] || 0) + 1;
+    tp.questoes += linha.totalRegular;
+    const dif = normalizarChaveDificuldade(linha.dificuldade);
+    const anoChave = typeof linha.ano === "number" ? String(linha.ano) : "0";
+    tp.grade[dif][anoChave] = (tp.grade[dif][anoChave] || 0) + linha.totalRegular;
   }
 
   // Aproveitamento do aluno por tópico — é o que deixa o montador dizer "você

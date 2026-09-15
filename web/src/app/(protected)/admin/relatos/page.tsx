@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { listarRelatosAdminAction } from "@/lib/admin/actions";
 import { RelatosLista } from "@/components/admin/relatos-lista";
@@ -11,9 +12,7 @@ export const metadata: Metadata = {
 
 export default async function AdminRelatosPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user || user.email !== ADMIN_EMAIL) redirect("/dashboard");
 
   const resultado = await listarRelatosAdminAction(true);

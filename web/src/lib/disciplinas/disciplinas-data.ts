@@ -4,6 +4,7 @@
 // missão gerada automaticamente pro dia.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { diasAte } from "@/lib/questly/shared";
+import { contagemDosTopicos, contagemPorMateria } from "@/lib/questly/contagem-questoes";
 
 type BossRow = { id: string; nome: string; data_prova: string };
 
@@ -19,29 +20,18 @@ export type DisciplinaPratica = {
   diasAteProva: number | null;
 };
 
-type LinhaComQuestao = { topicos: { materia_id: string | null } | null };
-
 // Toda matéria com pelo menos 1 questão no banco — independente do aluno ter
 // escolhido essa disciplina no onboarding. Antes, Banco/Listas de Questões só
 // mostravam os `subjects` do aluno, então conteúdo real (ex.: "Fundamentos de
 // Cálculo e Geometria") ficava invisível pra quem nunca adicionou aquele nome
-// exato como disciplina seguindo o pattern `topicos!inner`/`materias(nome)`
-// já usado em lib/cursos/actions.ts e lib/admin/actions.ts.
-async function contarQuestoesPorMateria(supabase: SupabaseClient): Promise<Map<string, number>> {
-  // .limit alto: sem ele o PostgREST corta em 1000 linhas por padrão, e com o
-  // banco passando disso uma matéria inteira (ex.: "Fundamentos de Cálculo e
-  // Geometria") pode cair fora da janela retornada e desaparecer de
-  // Listas/Banco de Questões — mesmo padrão de lib/cursos/actions.ts.
-  const { data } = await supabase.from("questions").select("topicos!inner ( materia_id )").limit(20000);
-
-  const contagem = new Map<string, number>();
-  for (const row of (data || []) as unknown as LinhaComQuestao[]) {
-    const mid = row.topicos?.materia_id;
-    if (!mid) continue;
-    contagem.set(mid, (contagem.get(mid) || 0) + 1);
-  }
-  return contagem;
-}
+// exato como disciplina.
+//
+// A contagem vem da view vw_questoes_por_topico (supabase_escala_lancamento.sql).
+// A versão anterior varria `questions` com `.limit(20000)` acreditando que isso
+// levantava o teto do PostgREST — não levanta: o teto é do servidor (1000) e o
+// .limit só abaixa. Com 2.583 questões no banco, "Fundamentos de Cálculo e
+// Geometria" tinha voltado a sumir exatamente como o comentário antigo dizia
+// estar evitando. Ver lib/supabase/paginado.ts.
 
 export async function carregarDisciplinasPratica(
   supabase: SupabaseClient,
@@ -49,10 +39,10 @@ export async function carregarDisciplinasPratica(
 ): Promise<DisciplinaPratica[]> {
   const hoje = new Date(new Date().toDateString());
 
-  const [{ data: subjects }, { data: materias }, contagemPorMateria] = await Promise.all([
+  const [{ data: subjects }, { data: materias }, questoesPorMateria] = await Promise.all([
     supabase.from("subjects").select("id, nome, materia_id, bosses(id, nome, data_prova)").eq("user_id", user.id),
     supabase.from("materias").select("id, nome"),
-    contarQuestoesPorMateria(supabase),
+    contagemPorMateria(supabase),
   ]);
 
   const subjectPorMateria = new Map<
@@ -74,7 +64,7 @@ export async function carregarDisciplinasPratica(
   });
 
   return (materias || [])
-    .filter((m) => (contagemPorMateria.get(m.id) || 0) > 0)
+    .filter((m) => (questoesPorMateria.get(m.id) || 0) > 0)
     .map((m) => {
       const sub = subjectPorMateria.get(m.id);
       return {
@@ -99,13 +89,13 @@ export type MateriaComQuestoes = { id: string; nome: string; totalQuestoes: numb
 // uma lista curada por curso (que pode incluir disciplina sem conteúdo
 // ainda, ou deixar de fora conteúdo real de outro semestre).
 export async function listarMateriasComQuestoes(supabase: SupabaseClient): Promise<MateriaComQuestoes[]> {
-  const [{ data: materias }, contagemPorMateria] = await Promise.all([
+  const [{ data: materias }, questoesPorMateria] = await Promise.all([
     supabase.from("materias").select("id, nome"),
-    contarQuestoesPorMateria(supabase),
+    contagemPorMateria(supabase),
   ]);
 
   return (materias || [])
-    .map((m) => ({ id: m.id, nome: m.nome, totalQuestoes: contagemPorMateria.get(m.id) || 0 }))
+    .map((m) => ({ id: m.id, nome: m.nome, totalQuestoes: questoesPorMateria.get(m.id) || 0 }))
     .filter((m) => m.totalQuestoes > 0)
     .sort((a, b) => b.totalQuestoes - a.totalQuestoes || a.nome.localeCompare(b.nome));
 }
@@ -134,8 +124,11 @@ export async function carregarTopicosPratica(
   if (!topicos || topicos.length === 0) return [];
 
   const topicoIds = topicos.map((t) => t.id);
-  const [{ data: questoes }, { data: progressos }] = await Promise.all([
-    supabase.from("questions").select("topic_id").in("topic_id", topicoIds),
+  const [contagens, { data: progressos }] = await Promise.all([
+    // Contagem agregada (view), não a varredura de `questions` que existia
+    // aqui: uma matéria grande já passava das 1000 linhas do teto do PostgREST
+    // e os tópicos do fim sumiam do seletor. Ver lib/supabase/paginado.ts.
+    contagemDosTopicos(supabase, topicoIds),
     supabase
       .from("aluno_topico_progresso")
       .select("topico_id, taxa_acerto, num_questoes_respondidas")
@@ -143,10 +136,6 @@ export async function carregarTopicosPratica(
       .in("topico_id", topicoIds),
   ]);
 
-  const countPorTopico: Record<string, number> = {};
-  (questoes || []).forEach((q) => {
-    countPorTopico[q.topic_id] = (countPorTopico[q.topic_id] || 0) + 1;
-  });
   const progPorTopico: Record<string, { taxa_acerto: number; num_questoes_respondidas: number }> = {};
   (progressos || []).forEach((p) => {
     progPorTopico[p.topico_id] = p;
@@ -160,7 +149,7 @@ export async function carregarTopicosPratica(
         nome: t.nome,
         descricao: t.descricao,
         ordem: t.ordem,
-        totalQuestoes: countPorTopico[t.id] || 0,
+        totalQuestoes: contagens.get(t.id)?.total || 0,
         taxaAcerto: p && p.num_questoes_respondidas > 0 ? p.taxa_acerto : null,
         numRespondidas: p?.num_questoes_respondidas || 0,
       };

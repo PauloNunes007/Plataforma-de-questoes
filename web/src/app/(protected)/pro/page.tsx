@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { buscarMinhaAssinaturaPendenteAction, conferirPagamentoAction } from "@/lib/plano/actions";
 import { ehPro } from "@/lib/plano/plano";
 import { PlanosView } from "@/components/plano/planos-view";
@@ -28,9 +29,7 @@ export default async function ProPage({
 }) {
   const params = await searchParams;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) return null;
 
   // Volta do checkout: confere o pagamento na API do Mercado Pago ANTES de

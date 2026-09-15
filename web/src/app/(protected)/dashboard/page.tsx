@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarDadosDashboard, carregarPerfilDashboard } from "@/lib/questly/dashboard-data";
 import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
@@ -13,9 +14,7 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   // proxy.ts + (protected)/layout.tsx já garantem sessão; isso aqui não
   // deveria disparar, mas o TypeScript exige o narrowing.

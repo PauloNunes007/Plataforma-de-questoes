@@ -7,6 +7,7 @@
 // nunca sai do servidor. Se a variável não estiver configurada (preview sem
 // env, por exemplo), caímos num piso conservador em vez de quebrar a página.
 import { createAdminClient } from "@/lib/supabase/admin";
+import { contagemInstituicaoCompleta, contagemPorTopico } from "@/lib/questly/contagem-questoes";
 import { instituicoesQueCasam } from "@/lib/cursos/instituicao";
 import { CAMPANHA } from "./campanha";
 
@@ -41,71 +42,62 @@ const FALLBACK: StatsBanco = {
   aoVivo: false,
 };
 
-type Linha = {
-  instituicao: string | null;
-  topic_id: string | null;
-  topicos: {
-    id: string;
-    nome: string | null;
-    ordem: number | null;
-    materias: { nome: string | null } | null;
-  } | null;
-};
-
 export async function carregarStatsBanco(): Promise<StatsBanco> {
   try {
     const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("questions")
-      .select("instituicao, topic_id, topicos ( id, nome, ordem, materias ( nome ) )")
-      .limit(20000);
+    // Agregados (views de supabase_escala_lancamento.sql) em vez das 2.583
+    // linhas cruas de `questions`. Além de ~218 KB por revalidação, a leitura
+    // antiga batia no teto de 1000 linhas do PostgREST: a landing anunciava
+    // ~1.000 questões quando o banco já tinha 2.583, e a lista de tópicos em
+    // foco saía incompleta. `.limit(20000)` não levantava esse teto (ele é do
+    // servidor; o .limit só abaixa) — ver lib/supabase/paginado.ts.
+    const [porTopico, porInstituicao] = await Promise.all([
+      contagemPorTopico(supabase),
+      contagemInstituicaoCompleta(supabase),
+    ]);
 
-    if (error || !data || data.length === 0) return FALLBACK;
+    if (porTopico.length === 0) return FALLBACK;
 
-    const linhas = data as unknown as Linha[];
     const materiasFoco = new Set(CAMPANHA.materias);
     const casadas = new Set(
       instituicoesQueCasam(
         CAMPANHA.instituicao,
-        linhas.map((l) => l.instituicao),
+        porInstituicao.map((l) => l.instituicao),
       ),
     );
 
     const disciplinas = new Set<string>();
-    const topicos = new Map<string, TopicoFoco & { ordem: number }>();
+    const topicos: (TopicoFoco & { ordem: number })[] = [];
+    let total = 0;
     let materiaFoco = 0;
-    let instituicao = 0;
-    let instituicaoMateriaFoco = 0;
 
-    for (const l of linhas) {
-      const materia = l.topicos?.materias?.nome ?? null;
-      if (materia) disciplinas.add(materia);
-      const ehFoco = !!materia && materiasFoco.has(materia);
-      const ehInstituicao = !!l.instituicao && casadas.has(l.instituicao.trim());
-      if (ehInstituicao) instituicao++;
-      if (!ehFoco) continue;
-
-      materiaFoco++;
-      if (ehInstituicao) instituicaoMateriaFoco++;
-      const t = l.topicos;
-      if (!t?.id) continue;
-      const atual = topicos.get(t.id);
-      if (atual) atual.questoes++;
-      else
-        topicos.set(t.id, {
-          materia: materia as string,
-          nome: t.nome || "Tópico",
-          questoes: 1,
-          ordem: t.ordem ?? 99,
-        });
+    for (const t of porTopico) {
+      total += t.total;
+      disciplinas.add(t.materiaNome);
+      if (!materiasFoco.has(t.materiaNome)) continue;
+      materiaFoco += t.total;
+      topicos.push({
+        materia: t.materiaNome,
+        nome: t.topicoNome,
+        questoes: t.total,
+        ordem: t.topicoOrdem ?? 99,
+      });
     }
 
-    const topicosFoco = [...topicos.values()]
+    let instituicao = 0;
+    let instituicaoMateriaFoco = 0;
+    for (const l of porInstituicao) {
+      if (!casadas.has(l.instituicao.trim())) continue;
+      instituicao += l.total;
+      if (materiasFoco.has(l.materiaNome)) instituicaoMateriaFoco += l.total;
+    }
+
+    const topicosFoco = topicos
       .sort((a, b) => a.materia.localeCompare(b.materia) || a.ordem - b.ordem)
       .map(({ materia, nome, questoes }) => ({ materia, nome, questoes }));
 
     return {
-      total: linhas.length,
+      total,
       materiaFoco,
       instituicao,
       instituicaoMateriaFoco,

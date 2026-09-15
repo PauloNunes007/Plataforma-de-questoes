@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { carregarDadosImportadorAction } from "@/lib/importar/actions";
 import { carregarQuestaoAdminAction } from "@/lib/admin/actions";
@@ -13,9 +14,7 @@ export const metadata: Metadata = {
 export default async function EditarQuestaoAdminPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user || user.email !== ADMIN_EMAIL) redirect("/dashboard");
 
   const [{ materias, topicos }, resultado] = await Promise.all([

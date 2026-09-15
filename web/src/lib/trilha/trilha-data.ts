@@ -5,6 +5,7 @@
 // a mesma fronteira curricular (1º pendente com questões) do
 // mission-engine.
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { contagemDosTopicos } from "@/lib/questly/contagem-questoes";
 import {
   diasAte,
   questlyEhMestre,
@@ -264,7 +265,7 @@ export async function carregarMapaTrilha(
 
     const topicoIds = (topicos || []).map((t) => t.id);
     if (topicoIds.length > 0) {
-      const [{ data: progressos }, { data: questoes }] = await Promise.all([
+      const [{ data: progressos }, contagens] = await Promise.all([
         supabase
           .from("aluno_topico_progresso")
           .select(
@@ -272,10 +273,15 @@ export async function carregarMapaTrilha(
           )
           .eq("user_id", user.id)
           .in("topico_id", topicoIds),
-        supabase.from("questions").select("topic_id").in("topic_id", topicoIds).eq("desafio", false),
+        // Contagem agregada em vez de varrer `questions`: um aluno com 4
+        // disciplinas já estourava as 1000 linhas do teto do PostgREST, e
+        // tópicos COM questão apareciam como "sem questões" na trilha.
+        contagemDosTopicos(supabase, topicoIds),
       ]);
       (progressos || []).forEach((p) => (progressoPorTopico[p.topico_id] = p));
-      (questoes || []).forEach((q) => (temQuestaoPorTopico[q.topic_id] = true));
+      contagens.forEach((c, topicId) => {
+        if (c.totalRegular > 0) temQuestaoPorTopico[topicId] = true;
+      });
     }
   }
 
@@ -368,7 +374,7 @@ export async function carregarCaminhoDisciplina(
   // mostra o número e usa ele pra oferecer o tamanho da prática
   let qtdQuestoes: Record<string, number> = {};
   if (topicoIds.length > 0) {
-    const [{ data: progressos }, { data: questoes }] = await Promise.all([
+    const [{ data: progressos }, contagens] = await Promise.all([
       supabase
         .from("aluno_topico_progresso")
         .select(
@@ -376,13 +382,13 @@ export async function carregarCaminhoDisciplina(
         )
         .eq("user_id", user.id)
         .in("topico_id", topicoIds),
-      supabase.from("questions").select("topic_id").in("topic_id", topicoIds).eq("desafio", false),
+      contagemDosTopicos(supabase, topicoIds),
     ]);
     const pp: Record<string, ProgressoRow> = {};
     (progressos || []).forEach((p) => (pp[p.topico_id] = p));
     progressoPorTopico = pp;
     const tq: Record<string, number> = {};
-    (questoes || []).forEach((q) => (tq[q.topic_id] = (tq[q.topic_id] || 0) + 1));
+    contagens.forEach((c, topicId) => (tq[topicId] = c.totalRegular));
     qtdQuestoes = tq;
   }
 

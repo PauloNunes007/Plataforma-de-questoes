@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarDisciplinasPratica, carregarTopicosPratica } from "@/lib/disciplinas/disciplinas-data";
 import { ListaTopicoCard } from "@/components/questoes/lista-topico-card";
 import { PageHeader } from "@/components/page-header";
@@ -16,9 +17,7 @@ export default async function ListasDaDisciplinaPage({
 }) {
   const { materiaId } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   if (!user) return null;
 

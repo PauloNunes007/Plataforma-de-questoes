@@ -117,16 +117,27 @@ export function nomeExibicaoInstituicao(casadas: string[]): string | null {
 export type InstituicaoAgregada = { nome: string; questoes: number };
 
 export function agruparInstituicoes(valores: (string | null)[]): InstituicaoAgregada[] {
+  return agruparInstituicoesContadas(valores.map((v) => ({ instituicao: v, total: 1 })));
+}
+
+/** Mesma fusão de edições ("UFF (1º sem.)" + "UFF (2º sem.)" → "UFF"), mas
+ *  partindo de valores JÁ contados — que é como a view vw_instituicoes entrega.
+ *  Sem isto, o chamador precisava reexpandir a contagem em N repetições da
+ *  string só pra ser recontada aqui, o que cresce com o banco inteiro. */
+export function agruparInstituicoesContadas(
+  valores: { instituicao: string | null; total: number }[],
+): InstituicaoAgregada[] {
   const grupos = new Map<string, { nome: string; questoes: number }>();
-  for (const raw of valores) {
-    const limpo = (raw || "").trim();
+  for (const { instituicao, total } of valores) {
+    const limpo = (instituicao || "").trim();
     if (!limpo) continue;
     const nucleo = nucleoInstituicao(normalizarInstituicao(limpo));
     if (!nucleo) continue;
+    const quantas = Math.max(0, total);
     const atual = grupos.get(nucleo);
-    if (!atual) grupos.set(nucleo, { nome: limpo, questoes: 1 });
+    if (!atual) grupos.set(nucleo, { nome: limpo, questoes: quantas });
     else {
-      atual.questoes += 1;
+      atual.questoes += quantas;
       // rótulo canônico = o mais curto (sem "(1º sem.)" e afins)
       if (limpo.length < atual.nome.length) atual.nome = limpo;
     }

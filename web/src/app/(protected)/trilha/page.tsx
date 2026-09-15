@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarMapaTrilha } from "@/lib/trilha/trilha-data";
 import { TrilhaView } from "@/components/trilha/trilha-view";
 
@@ -9,9 +10,7 @@ export const metadata: Metadata = {
 
 export default async function TrilhaPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   if (!user) return null;
 

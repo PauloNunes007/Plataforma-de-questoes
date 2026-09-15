@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { lerPaginado } from "@/lib/supabase/paginado";
 import { questlyEmbaralhar } from "@/lib/questly/shared";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { ehPro } from "@/lib/plano/plano";
@@ -200,18 +201,24 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
   if (materiaIds.length > 1) return { ok: false, erro: "misturado" };
   const materiaNome = linhasTopico.find((t) => t.materias?.nome)?.materias?.nome ?? null;
 
-  const { data: brutas } = await supabase
-    .from("questions")
-    .select("id, ano, dificuldade, topic_id")
-    .in("instituicao", casadas)
-    .in("topic_id", input.topicIds)
-    // Aprofundamento (questions.desafio) fica fora de sorteio automático:
-    // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
-    // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
-    .eq("desafio", false)
-    .limit(5000);
+  // O sorteio precisa das LINHAS (são os ids que vão pra prova), então aqui é
+  // paginação de verdade, não agregado. O `.limit(5000)` anterior não fazia o
+  // que parecia: o teto do PostgREST é 1000 e o .limit só consegue abaixá-lo —
+  // uma disciplina grande tinha o fim do conjunto cortado e as mesmas questões
+  // eram sorteadas pra todo mundo. Ver lib/supabase/paginado.ts.
+  const brutas = await lerPaginado<Candidata>(() =>
+    supabase
+      .from("questions")
+      .select("id, ano, dificuldade, topic_id")
+      .in("instituicao", casadas)
+      .in("topic_id", input.topicIds)
+      // Aprofundamento (questions.desafio) fica fora de sorteio automático:
+      // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
+      // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
+      .eq("desafio", false),
+  );
 
-  let pool = (brutas || []) as Candidata[];
+  let pool = brutas;
   if (difsPedidas.size > 0) pool = pool.filter((q) => difsPedidas.has(normalizarChaveDificuldade(q.dificuldade)));
   if (anosPedidos.size > 0) pool = pool.filter((q) => q.ano != null && anosPedidos.has(q.ano));
   if (pool.length === 0) return { ok: false, erro: "sem_questoes" };

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { questlyBuscarRotinaCompleta } from "@/lib/questly/rotina-engine";
 import { ConfiguracoesPanel } from "@/components/configuracoes/configuracoes-panel";
 import type { SubjectComBosses } from "@/lib/configuracoes/actions";
@@ -10,9 +11,7 @@ export const metadata: Metadata = {
 
 export default async function ConfiguracoesPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) return null;
 
   const { data: profile } = await supabase

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { ModeloMl, type ModeloRow } from "@/components/admin/modelo-ml";
 
@@ -14,9 +15,7 @@ export const maxDuration = 60;
 
 export default async function AdminMlPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user || user.email !== ADMIN_EMAIL) redirect("/dashboard");
 
   const { data, error } = await supabase

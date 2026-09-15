@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FileQuestion } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarHistorico, carregarSimulado } from "@/lib/simulados/simulados-data";
 import { SimuladoRunner } from "@/components/simulados/simulado-runner";
 import { SimuladoResultado } from "@/components/simulados/simulado-resultado";
@@ -30,9 +31,7 @@ function EstadoVazio({ mensagem }: { mensagem: string }) {
 export default async function SimuladoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) return null;
 
   const simulado = await carregarSimulado(supabase, user, id);

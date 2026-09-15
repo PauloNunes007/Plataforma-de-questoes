@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { listarMateriasComQuestoes } from "@/lib/disciplinas/disciplinas-data";
 import { listarInstituicoesComQuestoes } from "@/lib/cursos/actions";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
@@ -11,9 +12,7 @@ export const metadata: Metadata = {
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   // Cinto e suspensório: o proxy.ts já barra quem não tem sessão.
   if (!user) {

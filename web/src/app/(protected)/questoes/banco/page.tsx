@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarDisciplinasPratica } from "@/lib/disciplinas/disciplinas-data";
 import { PraticaWizard } from "@/components/disciplinas/pratica-wizard";
 import { PageHeader } from "@/components/page-header";
@@ -10,9 +11,7 @@ export const metadata: Metadata = {
 
 export default async function BancoDeQuestoesPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   if (!user) return null;
 

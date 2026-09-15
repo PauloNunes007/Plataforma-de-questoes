@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import {
   carregarHistorico,
   carregarOpcoesSimulado,
@@ -14,9 +15,7 @@ export const metadata: Metadata = {
 
 export default async function SimuladosPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) return null;
 
   // O hub mostra só o resumo (última/média/melhor), calculado do próprio

@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { LOTE_IN } from "@/lib/supabase/paginado";
 
 // Dados da aba "Desempenho" da home: acertabilidade por área (radar),
 // evolução dia a dia e os tópicos que o aluno mais erra.
@@ -45,7 +46,9 @@ export const DESEMPENHO_VAZIO: DesempenhoDados = {
 // Teto do histórico lido. Acima disso o recorte mais recente já descreve o
 // aluno melhor do que a cauda antiga — e o aviso de truncado aparece na UI.
 const LIMITE_TENTATIVAS = 8000;
-const LOTE_IN = 400;
+// LOTE_IN vem de lib/supabase/paginado.ts: o valor local era 400, acima do
+// teto real de URL do gateway (~330 uuids) — cada lote falhava e o mapa de
+// tópico/matéria da aba Desempenho saía vazio em conta com histórico grande.
 
 type Tentativa = { question_id: string; correta: boolean | null; created_at: string };
 

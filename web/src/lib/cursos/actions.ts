@@ -9,9 +9,10 @@
 // cliente SSR normal. A regra de casamento de texto→instituição mora em
 // lib/cursos/instituicao.ts (helpers puros, reusados pelo módulo de simulados).
 import { createClient } from "@/lib/supabase/server";
+import { contagemPorInstituicao, listarInstituicoes } from "@/lib/questly/contagem-questoes";
 import {
   acronimoInstituicao,
-  agruparInstituicoes,
+  agruparInstituicoesContadas,
   combinaInstituicao,
   nomeExibicaoInstituicao,
   normalizarInstituicao,
@@ -44,19 +45,18 @@ export async function validarInstituicaoAction(texto: string): Promise<Resultado
 
   const supabase = await createClient();
 
-  // 1) Descobre os valores distintos de instituição no banco e casa com o texto.
-  //    (PostgREST não tem DISTINCT simples; o banco ainda é pequeno — dedup no JS.)
-  const { data: linhas, error } = await supabase
-    .from("questions")
-    .select("instituicao")
-    .not("instituicao", "is", null)
-    .limit(5000);
-
-  if (error || !linhas) return VAZIO;
+  // 1) Valores distintos de instituição (view vw_instituicoes: ~8 linhas) e
+  //    casamento com o texto digitado. Antes isto baixava a coluna
+  //    `instituicao` de TODAS as questões — 2.583 linhas pra descobrir 8
+  //    valores — e ainda era cortado nas primeiras 1000 pelo teto do
+  //    PostgREST, então uma universidade cujas provas estivessem no fim do
+  //    banco simplesmente não era "reconhecida" no onboarding.
+  const instituicoes = await listarInstituicoes(supabase);
+  if (instituicoes.length === 0) return VAZIO;
 
   const entradaAcr = acronimoInstituicao(entradaNorm);
   const instituicoesCasadas = new Set<string>();
-  for (const l of linhas as { instituicao: string | null }[]) {
+  for (const l of instituicoes) {
     const raw = (l.instituicao || "").trim();
     if (!raw) continue;
     if (combinaInstituicao(entradaNorm, entradaAcr, normalizarInstituicao(raw))) instituicoesCasadas.add(raw);
@@ -66,29 +66,22 @@ export async function validarInstituicaoAction(texto: string): Promise<Resultado
 
   const casadas = [...instituicoesCasadas];
 
-  // 2) Agrega questões por matéria/tópico só das instituições casadas.
-  const { data: qs } = await supabase
-    .from("questions")
-    .select("instituicao, topicos!inner ( nome, materias!inner ( nome ) )")
-    .in("instituicao", casadas)
-    .limit(5000);
-
-  type LinhaQ = {
-    topicos: { nome: string | null; materias: { nome: string | null } | null } | null;
-  };
+  // 2) Agrega questões por matéria/tópico só das instituições casadas — de
+  //    novo pela view, que já vem somada por tópico.
+  const grade = await contagemPorInstituicao(supabase, casadas);
 
   const porMateria = new Map<string, { questoes: number; topicos: Map<string, number> }>();
-  for (const q of (qs || []) as unknown as LinhaQ[]) {
-    const materia = q.topicos?.materias?.nome;
-    const topico = q.topicos?.nome;
+  for (const linha of grade) {
+    const materia = linha.materiaNome;
+    const topico = linha.topicoNome;
     if (!materia) continue;
     let m = porMateria.get(materia);
     if (!m) {
       m = { questoes: 0, topicos: new Map() };
       porMateria.set(materia, m);
     }
-    m.questoes += 1;
-    if (topico) m.topicos.set(topico, (m.topicos.get(topico) || 0) + 1);
+    m.questoes += linha.total;
+    if (topico) m.topicos.set(topico, (m.topicos.get(topico) || 0) + linha.total);
   }
 
   const disciplinas: DisciplinaInstituicao[] = [...porMateria.entries()]
@@ -117,14 +110,11 @@ export async function validarInstituicaoAction(texto: string): Promise<Resultado
 // Server Action chamada pelo page.tsx do onboarding.
 export async function listarInstituicoesComQuestoes(): Promise<InstituicaoAgregada[]> {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("questions")
-    .select("instituicao")
-    .not("instituicao", "is", null)
-    .limit(20000);
-  return agruparInstituicoes(
-    (data || []).map((l: { instituicao: string | null }) => l.instituicao),
-  ).filter((i) => ehInstituicaoSugerivel(i.nome));
+  // vw_instituicoes já traz o distinct com a contagem; a fusão das EDIÇÕES do
+  // mesmo lugar ("UFF (1º sem.)" + "UFF (2º sem.)" → "UFF") continua sendo do
+  // helper puro, agora na variante que aceita valores já contados.
+  const instituicoes = await listarInstituicoes(supabase);
+  return agruparInstituicoesContadas(instituicoes).filter((i) => ehInstituicaoSugerivel(i.nome));
 }
 
 // Nem todo valor de `questions.instituicao` é uma universidade: o campo também

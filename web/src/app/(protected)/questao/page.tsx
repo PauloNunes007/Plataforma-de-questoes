@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Map as MapIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { questlyEhMestre, questlyEmbaralhar } from "@/lib/questly/shared";
 import { QuestaoRunner } from "@/components/questao/questao-runner";
 import { ehPro } from "@/lib/plano/plano";
@@ -57,9 +58,7 @@ export default async function QuestaoPage({
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) return null;
 
   const { data: missao, error: missaoError } = await supabase

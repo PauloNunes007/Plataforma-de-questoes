@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ehAdmin } from "@/lib/admin/auth";
 import { carregarErros, dataLocalISO } from "@/lib/aprovacao/dados";
 import { etapasPendentes } from "@/lib/aprovacao/tipos";
@@ -10,9 +11,7 @@ export const metadata = { title: "Caderno de Erros — Questly" };
 
 export default async function ErrosPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) redirect("/login");
   if (!ehAdmin(user.email)) redirect("/dashboard");
 

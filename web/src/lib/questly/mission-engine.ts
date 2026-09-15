@@ -4,6 +4,8 @@
 // curricular, revisão espaçada Ebbinghaus, etc.) — a lógica aqui é uma
 // tradução 1:1 pra TypeScript, mesmos nomes e constantes.
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { contagemDosTopicos } from "@/lib/questly/contagem-questoes";
+import { lerPaginado } from "@/lib/supabase/paginado";
 import {
   QUESTLY_DIAS_SEMANA,
   QUESTLY_RETENCAO_LIMIAR,
@@ -194,6 +196,14 @@ export async function questlyGerarMissoesDoDia(
   return { missoes, semMissaoHoje: false };
 }
 
+/** Linha mínima de `questions` que o sorteio da missão consome. */
+type CandidataQuestao = {
+  id: string;
+  topic_id: string;
+  tempo_medio_seg: number | null;
+  dificuldade: string | null;
+};
+
 export async function questlyGerarMissaoParaSubject(
   supabase: SupabaseClient,
   user: { id: string },
@@ -217,7 +227,7 @@ export async function questlyGerarMissaoParaSubject(
   const topicoIdsDaMateria = topicosMateria.map((t) => t.id);
   // Progresso do aluno e "quais tópicos têm questão" saem dos mesmos ids —
   // nenhuma das duas depende do resultado da outra.
-  const [{ data: progressos }, { data: questoesDaMateria }] = await Promise.all([
+  const [{ data: progressos }, contagensDaMateria] = await Promise.all([
     supabase
       .from("aluno_topico_progresso")
       .select("*")
@@ -226,7 +236,12 @@ export async function questlyGerarMissaoParaSubject(
     // Só conta como "tópico que tem questão" o que a missão pode de fato
     // sortear — senão um tópico só de aprofundamento viraria fronteira
     // curricular e a missão sairia vazia. Ver supabase_questao_desafio.sql.
-    supabase.from("questions").select("topic_id").in("topic_id", topicoIdsDaMateria).eq("desafio", false),
+    //
+    // Contagem agregada (view), não varredura de `questions`: matéria grande
+    // passa das 1000 linhas do teto do PostgREST, e aí tópicos COM questão
+    // voltavam como "sem questão" — a fronteira curricular pulava conteúdo em
+    // silêncio. Ver lib/supabase/paginado.ts.
+    contagemDosTopicos(supabase, topicoIdsDaMateria),
   ]);
 
   type ProgressoRow = {
@@ -243,7 +258,9 @@ export async function questlyGerarMissaoParaSubject(
   ((progressos || []) as ProgressoRow[]).forEach((p) => (progressoPorTopico[p.topico_id] = p));
 
   const temQuestao: Record<string, boolean> = {};
-  (questoesDaMateria || []).forEach((q) => (temQuestao[q.topic_id] = true));
+  contagensDaMateria.forEach((c, topicId) => {
+    if (c.totalRegular > 0) temQuestao[topicId] = true;
+  });
 
   const topics: TopicoComProgresso[] = topicosMateria.map((t) => {
     const p = progressoPorTopico[t.id];
@@ -327,16 +344,21 @@ export async function questlyGerarMissaoParaSubject(
   const topicosEscolhidos = pontuados.slice(0, MAX_TOPICOS_POR_MISSAO).map((p) => p.topic);
   const topicIds = topicosEscolhidos.map((t) => t.id);
 
-  const { data: candidatas } = await supabase
-    .from("questions")
-    .select("id, topic_id, tempo_medio_seg, dificuldade")
-    .in("topic_id", topicIds)
-    // Aprofundamento (questions.desafio) fica fora de sorteio automático:
-    // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
-    // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
-    .eq("desafio", false);
+  // Aqui as LINHAS são necessárias (é delas que saem os ids sorteados), então
+  // pagina em vez de agregar — sem isso o teto de 1000 do PostgREST cortava o
+  // fim do conjunto e o sorteio só via as primeiras questões dos tópicos.
+  const candidatas = await lerPaginado<CandidataQuestao>(() =>
+    supabase
+      .from("questions")
+      .select("id, topic_id, tempo_medio_seg, dificuldade")
+      .in("topic_id", topicIds)
+      // Aprofundamento (questions.desafio) fica fora de sorteio automático:
+      // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
+      // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
+      .eq("desafio", false),
+  );
 
-  if (!candidatas || candidatas.length === 0) {
+  if (candidatas.length === 0) {
     return { semMissaoHoje: true, motivo: "Ainda não há questões cadastradas pros tópicos dessa disciplina." };
   }
 
@@ -415,6 +437,24 @@ export async function questlyGerarMissaoParaSubject(
     .single();
 
   if (insertError) {
+    // 23505 = violação do índice único ux_missions_dia
+    // (supabase_escala_lancamento.sql). Não é erro: significa que outra
+    // requisição do MESMO aluno — outra aba, um duplo clique, o prefetch do
+    // Next em cima da navegação — criou a missão de hoje entre a nossa leitura
+    // e a nossa escrita. A corrida existia de verdade: havia conta com 9
+    // missões pro mesmo dia/disciplina em produção. A resposta certa é usar a
+    // missão que ganhou, não inventar outra nem mostrar erro.
+    if (insertError.code === "23505") {
+      const { data: jaExistente } = await supabase
+        .from("missions")
+        .select("*, subjects(nome)")
+        .eq("user_id", user.id)
+        .eq("subject_id", subject.id)
+        .eq("data", questlyHojeISO())
+        .eq("avulsa", false)
+        .maybeSingle();
+      if (jaExistente) return jaExistente;
+    }
     console.error("Erro ao gerar missão do dia:", insertError);
     return { semMissaoHoje: true, motivo: "Não foi possível gerar a missão agora." };
   }

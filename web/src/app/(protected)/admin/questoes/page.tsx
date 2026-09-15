@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { carregarDadosImportadorAction } from "@/lib/importar/actions";
 import { buscarQuestoesAdminAction, contarRelatosPendentesAction } from "@/lib/admin/actions";
@@ -12,9 +13,7 @@ export const metadata: Metadata = {
 
 export default async function AdminQuestoesPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user || user.email !== ADMIN_EMAIL) redirect("/dashboard");
 
   const [{ materias, topicos }, resultado, pendentesRelatos] = await Promise.all([

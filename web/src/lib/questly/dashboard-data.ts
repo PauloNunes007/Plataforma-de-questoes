@@ -22,6 +22,7 @@ import { questlyRotaAprovacao, type RotaAprovacao, type TopicoRota } from "./rot
 import { ehPro } from "@/lib/plano/plano";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
+import { contagemDosTopicos } from "@/lib/questly/contagem-questoes";
 
 const XP_POR_NIVEL = 1000;
 const DOW_ABREV = ["dom", "seg", "ter", "qua", "qui", "sex", "sab"];
@@ -597,7 +598,7 @@ async function carregarProjecaoBoss(
 
   // Precisa do progresso do aluno E do tempo médio/nº de questões por tópico;
   // as duas leituras saem dos mesmos ids.
-  const [{ data: progProva }, { data: questoesProva }] = await Promise.all([
+  const [{ data: progProva }, contagensProva] = await Promise.all([
     supabase
       .from("aluno_topico_progresso")
       .select("topico_id, status, maestria, estabilidade, taxa_acerto, num_questoes_respondidas, ultima_revisao")
@@ -605,7 +606,10 @@ async function carregarProjecaoBoss(
       .in("topico_id", idsProva),
     // Mesmo recorte do mission-engine: a estimativa de tempo/volume da prova
     // fala do que o aluno vai praticar, e aprofundamento não é sorteado.
-    supabase.from("questions").select("topic_id, tempo_medio_seg").in("topic_id", idsProva).eq("desafio", false),
+    // A view já entrega o total e a média de tempo por tópico — antes isso
+    // baixava uma linha por questão da matéria só pra tirar dois números, e
+    // batia no teto de 1000 do PostgREST em matéria grande.
+    contagemDosTopicos(supabase, idsProva),
   ]);
 
   type ProgProva = {
@@ -632,23 +636,13 @@ async function carregarProjecaoBoss(
 
   // ---- GPS: rota Δnota/min pros minutos de hoje ----
   // Só tópicos com questão entram na rota — os demais seguem na projeção.
-  const statsPorTopico: Record<string, { total: number; somaSeg: number; comDado: number }> = {};
-  (questoesProva || []).forEach((q) => {
-    const s = (statsPorTopico[q.topic_id] ||= { total: 0, somaSeg: 0, comDado: 0 });
-    s.total += 1;
-    if (q.tempo_medio_seg) {
-      s.somaSeg += q.tempo_medio_seg;
-      s.comDado += 1;
-    }
-  });
-
   const topicosRota: TopicoRota[] = topicosParaProjecao.map((t) => {
-    const s = statsPorTopico[t.id];
+    const c = contagensProva.get(t.id);
     return {
       ...t,
       nome: nomePorId[t.id] || "Tópico",
-      questoesDisponiveis: s?.total ?? 0,
-      tempoMedioSeg: s && s.comDado > 0 ? s.somaSeg / s.comDado : null,
+      questoesDisponiveis: c?.totalRegular ?? 0,
+      tempoMedioSeg: c?.tempoMedioSeg ?? null,
     };
   });
 

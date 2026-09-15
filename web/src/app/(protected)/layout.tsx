@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { ehPro } from "@/lib/plano/plano";
 import { carregarFocoHojeSeg } from "@/lib/foco/foco-data";
@@ -15,9 +16,7 @@ export default async function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   // Cinto e suspensório: o proxy.ts já redireciona quem não tem sessão,
   // isso aqui só cobre o Server Component sendo renderizado direto.

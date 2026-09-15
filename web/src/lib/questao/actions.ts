@@ -107,28 +107,27 @@ export async function registrarRespostaAction(input: {
     ? Math.round(input.tempoMedioAnterior * 0.7 + input.tempoSeg * 0.3)
     : input.tempoSeg;
   // `questions` só é escrita pelo admin (RLS de segurança) — a recalibração do
-  // tempo médio, que qualquer aluno dispara ao responder, roda via service_role
-  // no servidor (o user já foi validado acima). Na mesma escrita, os contadores
-  // globais tentativas_total/acertos_total (feature "taxa da questão" da rede
-  // neural — supabase_rede_neural.sql).
+  // tempo médio e os contadores globais (tentativas_total/acertos_total, que
+  // alimentam a rede neural) rodam via service_role no servidor, com o user já
+  // validado acima.
+  //
+  // É UM RPC, não um read-modify-write: a versão anterior lia os contadores e
+  // reescrevia a soma no app, então dois alunos respondendo a MESMA questão ao
+  // mesmo tempo perdiam uma das duas contagens. Com 900 alunos e uma questão
+  // popular isso deixa de ser hipótese. `questly_registrar_estatistica_questao`
+  // (supabase_escala_lancamento.sql) faz `set x = x + 1` dentro do banco, onde
+  // o incremento é atômico, e aplica a mesma média móvel de sempre
+  // (anterior*0.7 + novo*0.3).
   const admin = createAdminClient();
-  const { data: statsQuestao } = await admin
-    .from("questions")
-    .select("tentativas_total, acertos_total")
-    .eq("id", input.questionId)
-    .maybeSingle();
-  const { error: tempoError } = await admin
-    .from("questions")
-    .update({
-      tempo_medio_seg: novoTempoMedio,
-      tentativas_total: (statsQuestao?.tentativas_total ?? 0) + 1,
-      acertos_total: (statsQuestao?.acertos_total ?? 0) + (correta ? 1 : 0),
-    })
-    .eq("id", input.questionId);
-  if (tempoError) {
-    // Banco ainda sem supabase_rede_neural.sql (colunas novas ausentes):
-    // não pode custar a recalibração do tempo médio, que já existia.
-    console.error("Erro ao atualizar estatísticas da questão:", tempoError);
+  const { error: statsError } = await admin.rpc("questly_registrar_estatistica_questao", {
+    p_question_id: input.questionId,
+    p_correta: correta,
+    p_tempo_seg: input.tempoSeg,
+  });
+  if (statsError) {
+    // Banco ainda sem supabase_escala_lancamento.sql: a recalibração do tempo
+    // médio, que já existia antes, não pode ser perdida junto.
+    console.error("Erro ao registrar estatística da questão:", statsError);
     await admin.from("questions").update({ tempo_medio_seg: novoTempoMedio }).eq("id", input.questionId);
   }
 
@@ -300,13 +299,20 @@ export async function finalizarMissaoAction(input: {
   // farm de chamar finalizarMissaoAction repetidas vezes na mesma missão).
   if (missao.concluida) return vazio;
 
-  const placar = await recomputarPlacarMissao(supabase, user.id, missao);
-
-  await supabase
+  // A checagem acima sozinha era check-then-act: dois cliques em "Finalizar"
+  // (ou duas abas) liam `concluida: false` os dois e pagavam XP duas vezes.
+  // Quem RESERVA a missão é este update condicional — `.eq("concluida", false)`
+  // faz o banco decidir, e só a chamada que voltar com linha segue adiante.
+  const { data: reservada } = await supabase
     .from("missions")
     .update({ concluida: true, tempo_gasto_min: input.tempoGastoMinMissao })
     .eq("id", missao.id)
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .eq("concluida", false)
+    .select("id");
+  if (!reservada || reservada.length === 0) return vazio; // outra chamada ganhou
+
+  const placar = await recomputarPlacarMissao(supabase, user.id, missao);
 
   // XP/liga/streak vivem em colunas protegidas de `profiles` (só service_role
   // escreve — supabase_seguranca_hardening.sql). Essas duas rodam via cliente
@@ -422,20 +428,23 @@ async function atualizarMetricasSubject(
 
   const errosPorMotivo: Record<string, number> = {};
   if (topicoIds.length > 0) {
-    const { data: questoesMateria } = await supabase.from("questions").select("id").in("topic_id", topicoIds);
-    const questaoIds = (questoesMateria || []).map((q) => q.id);
-    if (questaoIds.length > 0) {
+      // Filtra pelo tópico da questão via join (`questions!inner`), em vez de
+      // baixar os ids de TODAS as questões da matéria e mandá-los de volta num
+      // `.in()`. Aquele caminho já falhava de verdade: Cálculo I tem 663
+      // questões, o que dava ~24 KB de querystring — bem acima do teto de URL
+      // do gateway (~12 KB, ver lib/supabase/paginado.ts). O erro era engolido,
+      // então o perdão por motivo de erro simplesmente não era aplicado.
+      // De quebra, some um round-trip.
       const { data: errosClassificados } = await supabase
         .from("question_attempts")
-        .select("motivo_erro")
+        .select("motivo_erro, questions!inner(topic_id)")
         .eq("user_id", userId)
         .eq("correta", false)
         .not("motivo_erro", "is", null)
-        .in("question_id", questaoIds);
+        .in("questions.topic_id", topicoIds);
       (errosClassificados || []).forEach((a) => {
         if (a.motivo_erro) errosPorMotivo[a.motivo_erro] = (errosPorMotivo[a.motivo_erro] || 0) + 1;
       });
-    }
   }
 
   const metricas = questlyCalcularMetricas(subject, topicos, diasRestantes, diasEstudados, errosPorMotivo);

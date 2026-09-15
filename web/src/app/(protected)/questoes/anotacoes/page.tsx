@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarQuestoesComNotas } from "@/lib/anotacoes/dados";
 import { MinhasQuestoesLista } from "@/components/questoes/minhas-questoes-lista";
 import { PageHeader } from "@/components/page-header";
@@ -10,9 +11,7 @@ export const metadata: Metadata = {
 
 export default async function AnotacoesPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
   if (!user) return null;
 
   const itens = await carregarQuestoesComNotas(supabase, user);

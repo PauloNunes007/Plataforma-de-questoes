@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarDadosRanking, carregarRankingGlobal } from "@/lib/ranking/ranking-data";
 import { RankingView } from "@/components/ranking/ranking-view";
 
@@ -9,9 +10,7 @@ export const metadata: Metadata = {
 
 export default async function RankingPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   if (!user) return null;
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarDisciplinasPratica } from "@/lib/disciplinas/disciplinas-data";
 import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { DisciplinaNavegarGrid } from "@/components/questoes/disciplina-navegar-grid";
@@ -14,9 +15,7 @@ export const metadata: Metadata = {
 
 export default async function ListasDeQuestoesPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await usuarioDaSessao(supabase);
 
   if (!user) return null;
 

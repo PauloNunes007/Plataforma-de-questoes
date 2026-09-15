@@ -2,6 +2,7 @@
 // padrão de lib/disciplinas/disciplinas-data.ts) pras telas "Favoritos" e
 // "Minhas anotações" em /questoes.
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { emLotes } from "@/lib/supabase/paginado";
 import type { Pergunta } from "@/lib/questao/types";
 
 export type QuestaoComContexto = Pergunta & {
@@ -29,13 +30,15 @@ async function montarItens(
 ): Promise<Map<string, QuestaoComContexto>> {
   if (questionIds.length === 0) return new Map();
 
-  const { data: questoes } = await supabase
-    .from("questions")
-    .select("*, topicos(nome, materias(nome))")
-    .in("id", questionIds);
+  // Em lotes: a lista de favoritos/anotações de um aluno não tem teto, e um
+  // `.in()` grande estoura a URL do gateway antes de chegar no banco
+  // (ver lib/supabase/paginado.ts).
+  const questoes = await emLotes(questionIds, (lote) =>
+    supabase.from("questions").select("*, topicos(nome, materias(nome))").in("id", lote),
+  );
 
   const mapa = new Map<string, QuestaoComContexto>();
-  (questoes || []).forEach((q) => {
+  questoes.forEach((q) => {
     const topico = primeiro(q.topicos as unknown as TopicoEmbutido | TopicoEmbutido[]);
     const materia = primeiro(topico?.materias ?? null);
     mapa.set(q.id, { ...(q as Pergunta), materiaNome: materia?.nome ?? null, topicoNome: topico?.nome ?? null });
@@ -55,7 +58,9 @@ export async function carregarFavoritos(supabase: SupabaseClient, user: { id: st
 
   const [questoesPorId, { data: notas }] = await Promise.all([
     montarItens(supabase, user.id, ids),
-    supabase.from("question_notes").select("question_id, nota").eq("user_id", user.id).in("question_id", ids),
+    // sem `.in(ids)`: as notas já são só do próprio aluno (owner-only), então
+    // o filtro extra só repetia o recorte e ainda arriscava estourar a URL.
+    supabase.from("question_notes").select("question_id, nota").eq("user_id", user.id),
   ]);
   const notaPorId: Record<string, string> = {};
   (notas || []).forEach((n) => (notaPorId[n.question_id] = n.nota));
@@ -81,7 +86,8 @@ export async function carregarQuestoesComNotas(
 
   const [questoesPorId, { data: favoritos }] = await Promise.all([
     montarItens(supabase, user.id, ids),
-    supabase.from("question_favoritos").select("question_id").eq("user_id", user.id).in("question_id", ids),
+    // idem: favoritos já são owner-only.
+    supabase.from("question_favoritos").select("question_id").eq("user_id", user.id),
   ]);
   const favoritoSet = new Set((favoritos || []).map((f) => f.question_id as string));
   const notaPorId: Record<string, string> = {};
