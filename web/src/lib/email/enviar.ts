@@ -18,6 +18,12 @@ export type MensagemEmail = {
   html: string;
   /** Fallback em texto puro. Nunca omita: email só-HTML pontua como spam. */
   texto: string;
+  /**
+   * Cabeçalhos extras. Hoje serve pro `List-Unsubscribe` da campanha: é ele
+   * que faz o Gmail mostrar "Cancelar inscrição" ao lado do remetente — o
+   * botão que o aluno aperta em vez de marcar como spam.
+   */
+  cabecalhos?: Record<string, string>;
 };
 
 export type ResultadoEnvio = { ok: true } | { ok: false; erro: string };
@@ -74,6 +80,7 @@ async function entregarViaBrevo(
         subject: msg.assunto,
         htmlContent: msg.html,
         textContent: msg.texto,
+        ...(msg.cabecalhos ? { headers: msg.cabecalhos } : {}),
       }),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
@@ -89,5 +96,40 @@ async function entregarViaBrevo(
   } catch (e) {
     const erro = e instanceof Error ? e.message : String(e);
     return { ok: false, erro: `Falha ao chamar a Brevo: ${erro}` };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Saldo do dia
+// ---------------------------------------------------------------------------
+// O plano gratuito da Brevo entrega 300 e-mails por DIA, e o mesmo saldo paga
+// a confirmação de cadastro de aluno novo. Um disparo em massa que consuma
+// tudo derruba, em silêncio, o cadastro de quem chegar depois — por isso o
+// envio de campanha consulta isto antes de cada lote e guarda uma reserva.
+//
+// Devolve null quando não dá pra saber (chave ausente, API fora, formato
+// diferente do esperado). null = "desconhecido", nunca "zero": quem chama
+// decide se segue com cautela ou para.
+export async function creditosBrevo(): Promise<number | null> {
+  const apiKey = env("BREVO_API_KEY");
+  if (!apiKey) return null;
+
+  try {
+    const resposta = await fetch("https://api.brevo.com/v3/account", {
+      headers: { "api-key": apiKey, accept: "application/json" },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      cache: "no-store",
+    });
+    if (!resposta.ok) return null;
+
+    const corpo = (await resposta.json()) as {
+      plan?: { type?: string; credits?: number; creditsType?: string }[];
+    };
+    const planos = Array.isArray(corpo.plan) ? corpo.plan : [];
+    const envio = planos.find((p) => p.creditsType === "sendLimit") ?? planos[0];
+    const credito = envio?.credits;
+    return typeof credito === "number" && Number.isFinite(credito) ? credito : null;
+  } catch {
+    return null;
   }
 }

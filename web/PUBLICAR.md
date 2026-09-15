@@ -22,6 +22,10 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    plano/XP/liga, restringe a escrita de questões ao admin e estreita as
    assinaturas.
 
+3. `supabase_email_campanha.sql` — só é necessária se você for usar o disparo de
+   e-mail para a base (`/admin/emails`, passo 5). Cria o registro de quem já
+   recebeu cada campanha e a preferência de descadastro do aluno.
+
 > Depois de rodar a #2, o ganho de XP, a virada de semana da liga e a ativação
 > do Pro passam a depender da **service_role key** no servidor (próximo passo).
 > Sem ela, essas ações falham silenciosamente.
@@ -48,6 +52,11 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    | `EMAIL_REMETENTE` | o endereço verificado na Brevo (passo 4) | não |
    | `EMAIL_REMETENTE_NOME` | nome que aparece como remetente, ex. `Questly` | não |
    | `SEND_EMAIL_HOOK_SECRET` | Supabase → Authentication → Hooks (passo 4) | **SIM** |
+   | `EMAIL_DESCADASTRO_SECRET` | qualquer frase longa e secreta; assina o link de descadastro da campanha | não — sem ela, deriva da `SUPABASE_SERVICE_ROLE_KEY` |
+
+   > ⚠️ Se um dia você **trocar** a `SUPABASE_SERVICE_ROLE_KEY` sem ter
+   > `EMAIL_DESCADASTRO_SECRET` definida, os links de descadastro já enviados
+   > param de funcionar (a assinatura deriva dela). Definir a variável evita isso.
 
    > `NEXT_PUBLIC_APP_URL` você só sabe depois do primeiro deploy. Faça o deploy,
    > copie a URL que o Vercel deu, coloque na variável e **faça um redeploy**.
@@ -248,6 +257,43 @@ texto claro.
 Um POST sem assinatura em `/api/auth/email-hook` também é um teste útil: `401`
 prova que o `SEND_EMAIL_HOOK_SECRET` está presente no Vercel (se faltasse,
 seria `500` com "Hook de email não configurado no servidor").
+
+---
+
+## 5) Avisar a base — disparo de e-mail em `/admin/emails`
+
+Manda um e-mail para todo mundo que já tem conta. Exige a migration
+`supabase_email_campanha.sql` (passo 1) e a Brevo já funcionando (passo 4).
+
+**A ordem importa:**
+
+1. Abra `/admin/emails` (só a conta admin enxerga). O texto vem preenchido com um
+   rascunho — **reescreva**. A prévia à direita é o HTML real que a Brevo recebe.
+2. Clique **Enviar teste** com o seu endereço e **abra o e-mail no celular e no
+   Gmail web**. Erro de texto, link errado e quebra de layout só aparecem de
+   verdade dentro do cliente — nunca na prévia.
+3. Clique **Conferir a base**: quantas contas existem, quantas já receberam,
+   quantas faltam e **quanto sobrou do saldo da Brevo hoje**.
+4. Clique **Enviar para quem falta**. Ele roda em lotes e mostra o progresso.
+   **Pode fechar a aba**: quem já recebeu está gravado, e reabrir continua de onde
+   parou — ninguém recebe duas vezes.
+
+**O que ele nunca faz, de propósito:**
+
+- Não gasta o saldo todo da Brevo. Guarda **60 e-mails** do dia para a
+  confirmação de cadastro. Quando bate nessa reserva, o disparo **para sozinho**
+  — continue no dia seguinte. (Com 300/dia no plano grátis, ~240 por dia.)
+- Não manda para quem clicou em "não quero mais receber".
+- Não manda para contas **não confirmadas** (há um checkbox, mas pense duas
+  vezes: elas não conseguem entrar sem confirmar o e-mail, então o botão do
+  e-mail não resolve nada para elas).
+
+> **Teto real do grátis:** 300 e-mails/dia. Base maior que isso = vários dias,
+> ou plano pago. Não existe atalho — e queimar a cota derruba o cadastro de
+> aluno novo, que é o pior momento possível para isso acontecer.
+
+Se aparecer "falha", clique em **Tentar as falhas de novo** depois de corrigir o
+motivo (quase sempre é saldo do dia ou remetente não verificado — passo 4.5).
 
 ---
 

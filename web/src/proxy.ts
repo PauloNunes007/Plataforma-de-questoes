@@ -4,7 +4,12 @@ import { updateSession } from "@/lib/supabase/middleware";
 // /verificar-email é alcançada por quem JÁ criou a conta mas ainda não
 // confirmou o email — ou seja, sem sessão. Fora desta lista, o guard mandaria
 // o aluno pro /login e o cadastro nunca se completaria.
-const PUBLIC_ROUTES = ["/", "/login", "/verificar-email"];
+//
+// /descadastrar é o mesmo caso, por outro motivo: o clique vem da caixa de
+// entrada, sem sessão. Mandar quem pediu pra sair da lista pro /login lê como
+// "estão dificultando a saída" — e a alternativa que a pessoa tem na mão é o
+// botão de spam, que queima o remetente que entrega a confirmação de cadastro.
+const PUBLIC_ROUTES = ["/", "/login", "/verificar-email", "/descadastrar"];
 
 // Arquivos de metadado gerados pelo App Router (robots.txt, sitemap.xml,
 // ícones e o card de preview do link). São pedidos SEM sessão — por crawler do

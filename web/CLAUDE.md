@@ -306,12 +306,19 @@ tabela, é regressão de segurança, não simplificação.
 - `lib/email/enviar.ts` — adaptador do provedor. **Todo** o que é específico da
   Brevo mora aqui; trocar por Resend/SES = reescrever `entregarViaBrevo`. Timeout
   de 4s porque o hook tem orçamento de 5s (o Supabase repete até 3x em 429/503).
-- `lib/email/templates-auth.ts` — HTML dos emails (`signup`, `recovery`,
-  `magiclink`, `invite`, `email_change`). Markup de 2005 **de propósito**: tabela
-  + estilo inline + zero imagem + cores HEX fixas (os tokens CSS do app não
-  existem em cliente de email, e imagem bloqueada num email de segurança destrói
-  a confiança). O switch é **total** — o hook intercepta TODOS os emails de auth,
-  então um tipo sem template viraria email quebrado, não erro de compilação.
+- `lib/email/casca.ts` — a **casca visual** de todo email que sai da Questly
+  (documento, marca, cartão branco, botão, rodapé) + os blocos reutilizáveis
+  (`blocoTitulo`, `blocoBotao`, `blocoDestaques`, `blocoLinkAlternativo`).
+  Markup de 2005 **de propósito**: tabela + estilo inline + zero imagem + cores
+  HEX fixas (os tokens CSS do app não existem em cliente de email, e imagem
+  bloqueada num email de segurança destrói a confiança). Saiu de dentro de
+  `templates-auth.ts` quando nasceu o segundo tipo de email (campanha): duas
+  cópias do mesmo cabeçalho envelhecem em direções diferentes, e um email que
+  não se parece com o que o aluno já recebeu da gente parece golpe.
+- `lib/email/templates-auth.ts` — só o CONTEÚDO de cada tipo (`signup`,
+  `recovery`, `magiclink`, `invite`, `email_change`). O switch é **total** — o
+  hook intercepta TODOS os emails de auth, então um tipo sem template viraria
+  email quebrado, não erro de compilação.
 - `app/api/auth/email-hook/route.ts` — verifica a assinatura **Standard Webhooks**
   (`webhook-id`/`webhook-timestamp`/`webhook-signature`, HMAC sobre
   `{id}.{timestamp}.{corpo cru}`, chave = base64 **decodificado** depois do
@@ -337,6 +344,56 @@ tabela, é regressão de segurança, não simplificação.
 - `verificarCodigoAction` tenta `type: "signup"` e cai pra `"email"`: os dois
   consultam o mesmo token, e errar o tipo devolve "Token has expired or is
   invalid" — mensagem que faria o aluno jogar fora um código válido.
+
+## E-mail de campanha para a base — `/admin/emails` (2026-09-15)
+
+Disparo em massa pra quem já tem conta (o primeiro: reengajamento às vésperas do
+lançamento). Usa **a mesma casca** do e-mail de código do cadastro — reconhecer o
+remetente é metade da entrega. Migração: `supabase_email_campanha.sql` (raiz).
+
+**O que é diferente de um e-mail transacional**, e por quê:
+
+- **Lotes, não um disparo só.** A função serverless tem orçamento de segundos e a
+  Brevo entrega ~300/dia no grátis. `enviarLoteCampanha` manda até `LOTE_MAX`
+  (40) por chamada, 4 em paralelo; a tela repete a chamada e mostra a barra
+  andar. `maxDuration = 60` na page — o padrão da Vercel cortaria no meio.
+- **Duplicata custa mais que omissão.** A vaga é RESERVADA em
+  `email_campanha_envios` (status `enviando`) **antes** do envio; o índice único
+  `(campanha, user_id)` é o árbitro, não o filtro em JS. Função que morre no meio
+  deixa a linha `enviando` e aquele aluno não entra na próxima rodada — recebeu
+  de menos. O contrário (gravar depois de enviar) manda o mesmo e-mail duas vezes
+  a cada timeout, e isso vira reclamação de spam.
+- **Reserva do transacional.** `RESERVA_TRANSACIONAL` (60) é a fatia do saldo
+  diário da Brevo que a campanha **não** pode gastar, lida via `creditosBrevo()`
+  (`GET /v3/account`). Sem isso, um disparo grande consome os 300 e o aluno que
+  se cadastrar à noite não recebe o código — o disparo derrubaria o cadastro em
+  silêncio. O laço da tela para sozinho ao bater nessa parede.
+- **Opt-out obrigatório.** `profiles.aceita_emails` + link assinado no rodapé
+  (`lib/email/descadastro.ts`: HMAC-SHA256 truncado em 128 bits, chave derivada
+  de `EMAIL_DESCADASTRO_SECRET` ou, na falta, da `SUPABASE_SERVICE_ROLE_KEY`).
+  Chega sem sessão, então a assinatura É a autorização. Rota
+  `/api/email/descadastrar` responde **GET** (clique no rodapé → descadastra →
+  redirect pra `/descadastrar`, pública em `proxy.ts`) **e POST** (o one-click
+  nativo do Gmail, via cabeçalhos `List-Unsubscribe`/`List-Unsubscribe-Post` —
+  sem a metade POST o botão do Gmail dá erro, e um cancelamento que falha empurra
+  a pessoa pro botão de spam). Isso não é só decência: spam queima a reputação do
+  remetente na Brevo, **e o remetente é o mesmo que entrega a confirmação de
+  cadastro** — campanha malfeita derruba o cadastro de aluno novo.
+  O transacional ignora `aceita_emails` de propósito.
+- **A lista não é copiada.** Destinatários saem de `auth.users` via
+  `service_role` na hora do disparo. Não existe tabela de leads pra desatualizar
+  nem pra vazar. Contas não confirmadas ficam **fora por padrão** (não conseguem
+  entrar sem confirmar — o botão não resolve nada pra elas); há um checkbox.
+- **A copy é editável na tela, não no código.** `CAMPANHA_PADRAO`
+  (`lib/email/templates-campanha.ts`) é só rascunho; o que sai é o que está no
+  formulário. A prévia é um `<iframe srcDoc>` com o **HTML real** que vai pra
+  Brevo, e há "enviar teste" antes do disparo — erro de texto só aparece de
+  verdade dentro do cliente de e-mail.
+
+Arquivos: `lib/email/{campanha,templates-campanha,descadastro,actions}.ts`,
+`lib/admin/actions-campanha.ts` (requireAdmin próprio — módulo `"use server"` só
+exporta função async, então não dá pra reusar o de `lib/admin/actions.ts`),
+`components/admin/campanha-email.tsx`, `components/email/descadastro-painel.tsx`.
 
 ## Latência de navegação — a regra das "ondas" (repasse 2026-09-10)
 
