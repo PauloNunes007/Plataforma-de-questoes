@@ -1,0 +1,686 @@
+[
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Área de paraboloide",
+    "dificuldade": "medio",
+    "enunciado": "A área da porção do paraboloide $z = x^2+y^2$ situada abaixo do plano $z = 1$ é:",
+    "alternativas": {
+      "a": "$\\frac{\\pi}{6}(5\\sqrt{5}+1)$",
+      "b": "$\\frac{\\pi}{3}(5\\sqrt{5}-1)$",
+      "c": "$\\frac{\\pi}{6}(5\\sqrt{5}-2)$",
+      "d": "$\\frac{\\pi}{12}(5\\sqrt{5}-1)$",
+      "e": "$\\frac{\\pi}{6}(5\\sqrt{5}-1)$"
+    },
+    "gabarito": "e",
+    "resolucao": "Para $z = g(x,y)$ vale $dS = \\sqrt{1 + g_x^2 + g_y^2}\\,dA = \\sqrt{1+4x^2+4y^2}\\,dA$, e a projeção é o disco $x^2+y^2\\le 1$. Em polares, $A = \\int_0^{2\\pi}\\!\\!\\int_0^1\\sqrt{1+4r^2}\\,r\\,dr\\,d\\theta = 2\\pi\\left[\\frac{(1+4r^2)^{3/2}}{12}\\right]_0^1 = \\frac{\\pi}{6}\\left(5\\sqrt5 - 1\\right) \\approx 5{,}33$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Área de porção plana dentro de cilindro",
+    "dificuldade": "facil",
+    "enunciado": "A área da porção do plano $z = 2x + 3y$ interior ao cilindro $x^2+y^2 = 4$ é:",
+    "alternativas": {
+      "a": "$2\\sqrt{14}\\pi$",
+      "b": "$4\\sqrt{13}\\pi$",
+      "c": "$8\\sqrt{14}\\pi$",
+      "d": "$4\\sqrt{14}\\pi$",
+      "e": "$\\sqrt{14}\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $z = 2x+3y$, $dS = \\sqrt{1 + 2^2 + 3^2}\\,dA = \\sqrt{14}\\,dA$ — fator constante, pois o plano tem inclinação fixa. A projeção é o disco de raio $2$, de área $4\\pi$. Logo $A = 4\\sqrt{14}\\,\\pi \\approx 47{,}0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Integral de superfície sobre esfera",
+    "dificuldade": "dificil",
+    "enunciado": "O valor de $\\displaystyle\\iint_S \\left(x^2+y^2\\right)dS$, em que $S$ é a esfera $x^2+y^2+z^2 = 9$, é:",
+    "alternativas": {
+      "a": "$108\\pi$",
+      "b": "$72\\pi$",
+      "c": "$216\\pi$",
+      "d": "$324\\pi$",
+      "e": "$144\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Em coordenadas esféricas com $\\rho = 3$: $x^2+y^2 = 9\\operatorname{sen}^2\\varphi$ e $dS = 9\\operatorname{sen}\\varphi\\,d\\varphi\\,d\\theta$. Então $\\iint_S (x^2+y^2)dS = \\int_0^{2\\pi}\\!\\!\\int_0^{\\pi}81\\operatorname{sen}^3\\varphi\\,d\\varphi\\,d\\theta = 81\\cdot 2\\pi\\cdot\\frac{4}{3} = 216\\pi \\approx 678{,}6$. (Caminho alternativo: por simetria $\\iint_S x^2dS = \\iint_S y^2dS = \\iint_S z^2dS = \\frac{1}{3}\\iint_S \\rho^2dS = \\frac{9\\cdot 36\\pi}{3} = 108\\pi$, e a resposta é o dobro disso.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Fluxo através de paraboloide",
+    "dificuldade": "dificil",
+    "enunciado": "O fluxo do campo $\\mathbf{F}(x,y,z) = (x, y, z)$ através da superfície $z = 4 - x^2 - y^2$, $z \\ge 0$, orientada para cima, é:",
+    "alternativas": {
+      "a": "$12\\pi$",
+      "b": "$24\\pi$",
+      "c": "$48\\pi$",
+      "d": "$16\\pi$",
+      "e": "$32\\pi$"
+    },
+    "gabarito": "b",
+    "resolucao": "Para $z = g(x,y)$ com orientação para cima, $\\mathbf{F}\\cdot d\\mathbf{S} = \\left(-Pg_x - Qg_y + R\\right)dA$. Aqui $g_x = -2x$, $g_y = -2y$, logo o integrando é $2x^2 + 2y^2 + \\left(4 - x^2-y^2\\right) = x^2+y^2+4$. Em polares sobre o disco de raio $2$: $\\int_0^{2\\pi}\\!\\!\\int_0^2\\left(r^2+4\\right)r\\,dr\\,d\\theta = 2\\pi\\left[\\frac{r^4}{4} + 2r^2\\right]_0^2 = 2\\pi(4+8) = 24\\pi \\approx 75{,}4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Fluxo de campo constante através de triângulo",
+    "dificuldade": "medio",
+    "enunciado": "O fluxo de $\\mathbf{F} = (1,2,3)$ através da porção do plano $x+y+z = 1$ situada no primeiro octante, orientada com normal de componente $z$ positiva, é:",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$2$",
+      "c": "$1$",
+      "d": "$\\frac{3}{2}$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "A normal unitária é $\\hat{\\mathbf{n}} = \\frac{(1,1,1)}{\\sqrt3}$, de modo que $\\mathbf{F}\\cdot\\hat{\\mathbf{n}} = \\frac{1+2+3}{\\sqrt3} = \\frac{6}{\\sqrt3}$, constante. A porção é o triângulo de vértices $(1,0,0)$, $(0,1,0)$ e $(0,0,1)$, cuja área é $\\frac{\\sqrt3}{2}$. Logo o fluxo é $\\frac{6}{\\sqrt3}\\cdot\\frac{\\sqrt3}{2} = 3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Integral de campo escalar sobre hemisfério",
+    "dificuldade": "medio",
+    "enunciado": "O valor de $\\displaystyle\\iint_S z\\,dS$, em que $S$ é o hemisfério $x^2+y^2+z^2 = 4$ com $z \\ge 0$, é:",
+    "alternativas": {
+      "a": "$4\\pi$",
+      "b": "$16\\pi$",
+      "c": "$\\frac{8\\pi}{3}$",
+      "d": "$2\\pi$",
+      "e": "$8\\pi$"
+    },
+    "gabarito": "e",
+    "resolucao": "Em esféricas com $\\rho = 2$: $z = 2\\cos\\varphi$ e $dS = 4\\operatorname{sen}\\varphi\\,d\\varphi\\,d\\theta$, com $0\\le\\varphi\\le\\frac{\\pi}{2}$. Então $\\iint_S z\\,dS = \\int_0^{2\\pi}\\!\\!\\int_0^{\\pi/2}8\\cos\\varphi\\operatorname{sen}\\varphi\\,d\\varphi\\,d\\theta = 2\\pi\\cdot 8\\cdot\\left[\\frac{\\operatorname{sen}^2\\varphi}{2}\\right]_0^{\\pi/2} = 8\\pi \\approx 25{,}1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Fluxo através de superfície cilíndrica",
+    "dificuldade": "medio",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = (x,y,z)$ através da superfície lateral do cilindro $x^2+y^2 = 9$, $0 \\le z \\le 5$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$45\\pi$",
+      "b": "$90\\pi$",
+      "c": "$180\\pi$",
+      "d": "$30\\pi$",
+      "e": "$60\\pi$"
+    },
+    "gabarito": "b",
+    "resolucao": "Na lateral, a normal unitária é $\\hat{\\mathbf{n}} = \\frac{(x,y,0)}{3}$, logo $\\mathbf{F}\\cdot\\hat{\\mathbf{n}} = \\frac{x^2+y^2}{3} = \\frac{9}{3} = 3$, constante — a componente $z$ do campo é tangente e não contribui. A área lateral é $2\\pi\\cdot 3\\cdot 5 = 30\\pi$, e o fluxo vale $3\\cdot 30\\pi = 90\\pi \\approx 282{,}7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Área lateral de cone truncado",
+    "dificuldade": "facil",
+    "enunciado": "A área da porção do cone $z = \\sqrt{x^2+y^2}$ compreendida entre os planos $z = 1$ e $z = 2$ é:",
+    "alternativas": {
+      "a": "$3\\pi$",
+      "b": "$6\\sqrt{2}\\pi$",
+      "c": "$3\\sqrt{2}\\pi$",
+      "d": "$\\frac{3\\sqrt{2}\\pi}{2}$",
+      "e": "$3\\sqrt{3}\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $z = \\sqrt{x^2+y^2}$ tem-se $z_x = \\frac{x}{\\sqrt{x^2+y^2}}$ e $z_y = \\frac{y}{\\sqrt{x^2+y^2}}$, logo $z_x^2+z_y^2 = 1$ e $dS = \\sqrt{2}\\,dA$ — o cone tem inclinação constante. A projeção é o anel $1 \\le r \\le 2$, de área $\\pi(4-1) = 3\\pi$. Portanto $A = 3\\sqrt{2}\\,\\pi \\approx 13{,}3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Massa de superfície cônica",
+    "dificuldade": "medio",
+    "enunciado": "Uma lâmina tem a forma do cone $z = \\sqrt{x^2+y^2}$, $0 \\le z \\le 3$, e densidade superficial $\\delta(x,y,z) = z$. Sua massa é:",
+    "alternativas": {
+      "a": "$9\\sqrt{2}\\pi$",
+      "b": "$36\\sqrt{2}\\pi$",
+      "c": "$18\\sqrt{2}\\pi$",
+      "d": "$18\\pi$",
+      "e": "$6\\sqrt{2}\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como $dS = \\sqrt2\\,dA$ e sobre o cone $z = r$, a massa é $m = \\iint_D r\\sqrt{2}\\,dA$ com $D$ o disco de raio $3$. Em polares: $m = \\sqrt2\\int_0^{2\\pi}\\!\\!\\int_0^3 r\\cdot r\\,dr\\,d\\theta = \\sqrt2\\cdot 2\\pi\\cdot 9 = 18\\sqrt{2}\\,\\pi \\approx 80{,}0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Fluxo através de hemisfério",
+    "dificuldade": "dificil",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = (0,0,z)$ através do hemisfério $x^2+y^2+z^2 = 1$, $z\\ge 0$, orientado para fora, é:",
+    "alternativas": {
+      "a": "$\\frac{2\\pi}{3}$",
+      "b": "$\\frac{4\\pi}{3}$",
+      "c": "$\\frac{\\pi}{3}$",
+      "d": "$\\frac{2\\pi}{5}$",
+      "e": "$\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "Na esfera unitária a normal exterior é $\\hat{\\mathbf{n}} = (x,y,z)$, logo $\\mathbf{F}\\cdot\\hat{\\mathbf{n}} = z^2$. Em esféricas com $\\rho = 1$, $z^2 = \\cos^2\\varphi$ e $dS = \\operatorname{sen}\\varphi\\,d\\varphi\\,d\\theta$, de modo que o fluxo é $\\int_0^{2\\pi}\\!\\!\\int_0^{\\pi/2}\\cos^2\\varphi\\operatorname{sen}\\varphi\\,d\\varphi\\,d\\theta = 2\\pi\\left[-\\frac{\\cos^3\\varphi}{3}\\right]_0^{\\pi/2} = \\frac{2\\pi}{3} \\approx 2{,}09$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Área de calota esférica",
+    "dificuldade": "medio",
+    "enunciado": "A área da porção da esfera $\\rho = 2$ situada acima do cone $\\varphi = \\dfrac{\\pi}{3}$ é:",
+    "alternativas": {
+      "a": "$8\\pi$",
+      "b": "$4\\pi$",
+      "c": "$2\\pi$",
+      "d": "$6\\pi$",
+      "e": "$\\frac{4\\pi}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $\\rho = 2$ fixo, $dS = 4\\operatorname{sen}\\varphi\\,d\\varphi\\,d\\theta$. A calota corresponde a $0\\le\\varphi\\le\\frac{\\pi}{3}$, logo $A = \\int_0^{2\\pi}\\!\\!\\int_0^{\\pi/3}4\\operatorname{sen}\\varphi\\,d\\varphi\\,d\\theta = 8\\pi\\left[-\\cos\\varphi\\right]_0^{\\pi/3} = 8\\pi\\left(1-\\frac12\\right) = 4\\pi \\approx 12{,}6$. (Confere com $A = 2\\pi a h$, sendo $h = 2 - 1 = 1$ a altura da calota.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais de Superfície",
+    "subtopico": "Integral de superfície sobre plano oblíquo",
+    "dificuldade": "medio",
+    "enunciado": "O valor de $\\displaystyle\\iint_S (x+y+z)\\,dS$, em que $S$ é a porção do plano $x+y+z = 2$ no primeiro octante, é:",
+    "alternativas": {
+      "a": "$2\\sqrt{3}$",
+      "b": "$4\\sqrt{3}$",
+      "c": "$8\\sqrt{3}$",
+      "d": "$4\\sqrt{2}$",
+      "e": "$6\\sqrt{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Sobre $S$ o integrando é constante e vale $2$, de modo que a integral é $2\\cdot\\text{área}(S)$. Com $z = 2-x-y$, $dS = \\sqrt{1+1+1}\\,dA = \\sqrt3\\,dA$, e a projeção é o triângulo $x,y\\ge 0$, $x+y\\le 2$, de área $2$. Logo $\\text{área}(S) = 2\\sqrt3$ e a integral vale $4\\sqrt{3} \\approx 6{,}93$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Cálculo do rotacional",
+    "dificuldade": "medio",
+    "enunciado": "Para $\\mathbf{F}(x,y,z) = \\left(xz,\\; xyz,\\; -y^2\\right)$, o módulo de $\\operatorname{rot}\\mathbf{F}$ no ponto $(1,1,1)$ é:",
+    "alternativas": {
+      "a": "$\\sqrt{10}$",
+      "b": "$\\sqrt{13}$",
+      "c": "$\\sqrt{6}$",
+      "d": "$\\sqrt{14}$",
+      "e": "$\\sqrt{11}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo determinante simbólico, $\\operatorname{rot}\\mathbf{F} = \\left(R_y - Q_z,\\; P_z - R_x,\\; Q_x - P_y\\right)$ com $P = xz$, $Q = xyz$ e $R = -y^2$. Assim $R_y - Q_z = -2y - xy$, $P_z - R_x = x - 0$ e $Q_x - P_y = yz - 0$. Em $(1,1,1)$: $\\operatorname{rot}\\mathbf{F} = (-3,\\,1,\\,1)$, de módulo $\\sqrt{9+1+1} = \\sqrt{11} \\approx 3{,}32$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Circulação por Stokes sobre círculo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $C$ o círculo $x^2+y^2 = 1$ no plano $z = 0$, orientado no sentido anti-horário visto de cima, e $\\mathbf{F} = \\left(-y^3,\\; x^3,\\; z^3\\right)$. O valor de $\\displaystyle\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$\\frac{3\\pi}{4}$",
+      "b": "$3\\pi$",
+      "c": "$\\frac{\\pi}{2}$",
+      "d": "$\\frac{3\\pi}{2}$",
+      "e": "$\\frac{9\\pi}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O rotacional é $\\operatorname{rot}\\mathbf{F} = \\left(0,\\,0,\\,3x^2+3y^2\\right)$. Tomando como superfície o disco $x^2+y^2\\le1$ em $z=0$, com normal $\\hat{\\mathbf{k}}$, Stokes dá $\\oint_C\\mathbf{F}\\cdot d\\mathbf{r} = \\iint_D 3\\left(x^2+y^2\\right)dA = 3\\int_0^{2\\pi}\\!\\!\\int_0^1 r^3dr\\,d\\theta = 3\\cdot\\frac{2\\pi}{4} = \\frac{3\\pi}{2} \\approx 4{,}71$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Stokes sobre contorno triangular",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $C$ o triângulo de vértices $(1,0,0)$, $(0,1,0)$ e $(0,0,1)$, percorrido nessa ordem, e $\\mathbf{F} = \\left(x^2z,\\; xy^2,\\; z^2\\right)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$\\frac{1}{6}$",
+      "b": "$\\frac{1}{3}$",
+      "c": "$\\frac{1}{12}$",
+      "d": "$\\frac{1}{2}$",
+      "e": "$\\frac{2}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O rotacional é $\\operatorname{rot}\\mathbf{F} = \\left(0,\\; x^2,\\; y^2\\right)$. Como superfície tome o triângulo do plano $z = 1-x-y$, cuja normal (compatível com a orientação dada, pela regra da mão direita) satisfaz $d\\mathbf{S} = (1,1,1)\\,dA$. Então $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r} = \\iint_D\\left(x^2+y^2\\right)dA$ sobre o triângulo $x,y\\ge0$, $x+y\\le1$. Por simetria, $\\iint_D x^2dA = \\int_0^1 x^2(1-x)dx = \\frac{1}{12}$, e o total é $2\\cdot\\frac{1}{12} = \\frac{1}{6} \\approx 0{,}17$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Stokes com rotacional constante",
+    "dificuldade": "medio",
+    "enunciado": "Seja $C$ o triângulo de vértices $(2,0,0)$, $(0,2,0)$ e $(0,0,2)$, percorrido nessa ordem, e $\\mathbf{F} = (y,\\,z,\\,x)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$-6$",
+      "b": "$6$",
+      "c": "$-3$",
+      "d": "$-12$",
+      "e": "$-2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Aqui $\\operatorname{rot}\\mathbf{F} = (0-1,\\; 0-1,\\; 0-1) = (-1,-1,-1)$, constante. A superfície é a porção do plano $x+y+z = 2$ no primeiro octante, com $d\\mathbf{S} = (1,1,1)\\,dA$ e projeção de área $2$. Logo $\\oint_C\\mathbf{F}\\cdot d\\mathbf{r} = \\iint_D(-1-1-1)\\,dA = -3\\cdot 2 = -6$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Circulação com rotacional variável",
+    "dificuldade": "medio",
+    "enunciado": "Seja $C$ o círculo $x^2+y^2 = 1$ em $z = 0$, orientado no sentido anti-horário visto de cima, e $\\mathbf{F} = \\left(y^2,\\; x,\\; z^2\\right)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$2\\pi$",
+      "b": "$-\\pi$",
+      "c": "$\\pi$",
+      "d": "$\\frac{\\pi}{2}$",
+      "e": "$3\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "A componente $z$ do rotacional é $Q_x - P_y = 1 - 2y$ (as outras componentes não importam, pois a normal do disco é $\\hat{\\mathbf{k}}$). Por Stokes, $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r} = \\iint_D (1-2y)\\,dA = \\text{área}(D) - 2\\iint_D y\\,dA = \\pi - 0 = \\pi$, já que $\\iint_D y\\,dA = 0$ por simetria do disco em relação ao eixo $x$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Campo irrotacional: determinação de parâmetro",
+    "dificuldade": "medio",
+    "enunciado": "O campo $\\mathbf{F}(x,y,z) = \\left(a\\,xy + z^3,\\; 3x^2 - z,\\; 3xz^2 - y\\right)$ é irrotacional (e portanto conservativo em $\\mathbb{R}^3$) para:",
+    "alternativas": {
+      "a": "$a = 6$",
+      "b": "$a = 3$",
+      "c": "$a = 2$",
+      "d": "$a = 12$",
+      "e": "$a = 9$"
+    },
+    "gabarito": "a",
+    "resolucao": "Impondo $\\operatorname{rot}\\mathbf{F} = \\mathbf{0}$ componente a componente: $R_y - Q_z = -1 - (-1) = 0$ já vale; $P_z - R_x = 3z^2 - 3z^2 = 0$ também; resta $Q_x - P_y = 6x - a x = 0$ para todo $x$, o que exige $a = 6$. Com esse valor, $f(x,y,z) = 3x^2y + xz^3 - yz$ é uma função potencial.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Stokes sobre curva em plano inclinado",
+    "dificuldade": "medio",
+    "enunciado": "Seja $C$ a curva de interseção do cilindro $x^2+y^2 = 4$ com o plano $z = x+2$, orientada no sentido anti-horário vista de cima, e $\\mathbf{F} = \\left(x^2,\\; 2x,\\; z^2\\right)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$4\\pi$",
+      "b": "$16\\pi$",
+      "c": "$2\\pi$",
+      "d": "$8\\pi$",
+      "e": "$12\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "O rotacional é $\\operatorname{rot}\\mathbf{F} = (0,\\,0,\\,2)$. Tomando a porção do plano $z = x+2$ interior ao cilindro, com $d\\mathbf{S} = \\left(-z_x,\\,-z_y,\\,1\\right)dA = (-1,0,1)\\,dA$, resulta $\\operatorname{rot}\\mathbf{F}\\cdot d\\mathbf{S} = 2\\,dA$. A projeção é o disco de raio $2$, logo a circulação vale $2\\cdot 4\\pi = 8\\pi \\approx 25{,}1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Stokes com rotacional linear",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $C$ o triângulo de vértices $(3,0,0)$, $(0,3,0)$ e $(0,0,3)$, percorrido nessa ordem, e $\\mathbf{F} = \\left(z^2,\\; x^2,\\; y^2\\right)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$9$",
+      "b": "$54$",
+      "c": "$27$",
+      "d": "$18$",
+      "e": "$81$"
+    },
+    "gabarito": "c",
+    "resolucao": "O rotacional é $\\operatorname{rot}\\mathbf{F} = (2y,\\; 2z,\\; 2x)$. A superfície é a porção do plano $x+y+z = 3$ no primeiro octante, com $d\\mathbf{S} = (1,1,1)\\,dA$; então $\\operatorname{rot}\\mathbf{F}\\cdot d\\mathbf{S} = 2(x+y+z)\\,dA = 6\\,dA$ — constante sobre o plano. A projeção é o triângulo $x,y\\ge0$, $x+y\\le3$, de área $\\frac{9}{2}$. Logo a circulação é $6\\cdot\\frac92 = 27$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Módulo do rotacional",
+    "dificuldade": "medio",
+    "enunciado": "Para $\\mathbf{F}(x,y,z) = \\left(x^2y,\\; y^2z,\\; z^2x\\right)$, o módulo de $\\operatorname{rot}\\mathbf{F}$ no ponto $(1,2,3)$ é:",
+    "alternativas": {
+      "a": "$7\\sqrt{3}$",
+      "b": "$14\\sqrt{2}$",
+      "c": "$5\\sqrt{2}$",
+      "d": "$7\\sqrt{2}$",
+      "e": "$7\\sqrt{5}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $P = x^2y$, $Q = y^2z$ e $R = z^2x$: $R_y - Q_z = 0 - y^2 = -y^2$; $P_z - R_x = 0 - z^2 = -z^2$; $Q_x - P_y = 0 - x^2 = -x^2$. Em $(1,2,3)$: $\\operatorname{rot}\\mathbf{F} = (-4,-9,-1)$, cujo módulo é $\\sqrt{16+81+1} = \\sqrt{98} = 7\\sqrt{2} \\approx 9{,}90$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Circulação sobre curva em plano horizontal",
+    "dificuldade": "medio",
+    "enunciado": "Seja $C$ a interseção da esfera $x^2+y^2+z^2 = 4$ com o plano $z = 1$, orientada no sentido anti-horário vista de cima, e $\\mathbf{F} = (y,\\,-x,\\,0)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$-6\\pi$",
+      "b": "$6\\pi$",
+      "c": "$-3\\pi$",
+      "d": "$-12\\pi$",
+      "e": "$-2\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "A curva é o círculo $x^2+y^2 = 3$ no plano $z = 1$, de raio $\\sqrt3$. O rotacional é $\\operatorname{rot}\\mathbf{F} = (0,0,-2)$, e tomando como superfície o disco plano limitado por $C$, com normal $\\hat{\\mathbf{k}}$: $\\oint_C\\mathbf{F}\\cdot d\\mathbf{r} = -2\\cdot\\text{área} = -2\\cdot 3\\pi = -6\\pi \\approx -18{,}8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Stokes sobre elipse em plano inclinado",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $C$ a curva de interseção do plano $z = x$ com o cilindro $x^2+y^2 = 4$, orientada no sentido anti-horário vista de cima, e $\\mathbf{F} = \\left(2z,\\; x,\\; 3y\\right)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$8\\pi$",
+      "b": "$-4\\pi$",
+      "c": "$-16\\pi$",
+      "d": "$-8\\pi$",
+      "e": "$-2\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "O rotacional é $\\operatorname{rot}\\mathbf{F} = \\left(3-0,\\; 2-0,\\; 1-0\\right) = (3,2,1)$. Sobre a porção do plano $z = x$ interior ao cilindro, $d\\mathbf{S} = (-1,0,1)\\,dA$, logo $\\operatorname{rot}\\mathbf{F}\\cdot d\\mathbf{S} = (-3+1)\\,dA = -2\\,dA$. Com projeção igual ao disco de raio $2$ (área $4\\pi$), a circulação vale $-8\\pi \\approx -25{,}1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Stokes",
+    "subtopico": "Circulação de campo rotacional puro",
+    "dificuldade": "facil",
+    "enunciado": "Seja $C$ o círculo $x^2+y^2 = 9$ em $z = 0$, orientado no sentido anti-horário visto de cima, e $\\mathbf{F} = (-y,\\,x,\\,0)$. O valor de $\\displaystyle\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}$ é:",
+    "alternativas": {
+      "a": "$9\\pi$",
+      "b": "$36\\pi$",
+      "c": "$6\\pi$",
+      "d": "$18\\pi$",
+      "e": "$27\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "O rotacional é $\\operatorname{rot}\\mathbf{F} = (0,0,2)$, de modo que, por Stokes sobre o disco de raio $3$, $\\oint_C\\mathbf{F}\\cdot d\\mathbf{r} = 2\\cdot\\text{área} = 2\\cdot 9\\pi = 18\\pi \\approx 56{,}5$. (O cálculo direto confirma: com $x = 3\\cos t$ e $y = 3\\operatorname{sen}t$, o integrando vale $9\\,dt$.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Cálculo da divergência",
+    "dificuldade": "facil",
+    "enunciado": "A divergência do campo $\\mathbf{F}(x,y,z) = \\left(xy^2,\\; yz^2,\\; zx^2\\right)$ no ponto $(1,2,3)$ é:",
+    "alternativas": {
+      "a": "$14$",
+      "b": "$12$",
+      "c": "$6$",
+      "d": "$36$",
+      "e": "$11$"
+    },
+    "gabarito": "a",
+    "resolucao": "Derivando cada componente em relação à sua própria variável: $\\operatorname{div}\\mathbf{F} = \\frac{\\partial}{\\partial x}\\left(xy^2\\right) + \\frac{\\partial}{\\partial y}\\left(yz^2\\right) + \\frac{\\partial}{\\partial z}\\left(zx^2\\right) = y^2 + z^2 + x^2$. Em $(1,2,3)$: $4 + 9 + 1 = 14$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Fluxo através de um cubo",
+    "dificuldade": "medio",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = \\left(x^2, y^2, z^2\\right)$ através da fronteira do cubo $[0,1]^3$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$6$",
+      "d": "$9$",
+      "e": "$2$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo teorema da divergência, $\\iint_S\\mathbf{F}\\cdot d\\mathbf{S} = \\iiint_E 2(x+y+z)\\,dV$. Por simetria do cubo, $\\iiint_E x\\,dV = \\iiint_E y\\,dV = \\iiint_E z\\,dV = \\frac{1}{2}$, logo o fluxo é $2\\cdot 3\\cdot\\frac12 = 3$. (Face a face dá o mesmo: só as faces $x=1$, $y=1$ e $z=1$ contribuem, com $1$ cada.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Fluxo através de esfera com divergência variável",
+    "dificuldade": "dificil",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = \\left(x^3, y^3, z^3\\right)$ através da esfera $x^2+y^2+z^2 = 1$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$\\frac{12\\pi}{5}$",
+      "b": "$\\frac{4\\pi}{5}$",
+      "c": "$\\frac{12\\pi}{25}$",
+      "d": "$\\frac{24\\pi}{5}$",
+      "e": "$\\frac{3\\pi}{5}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $\\operatorname{div}\\mathbf{F} = 3\\left(x^2+y^2+z^2\\right) = 3\\rho^2$, o teorema da divergência dá $\\iiint_B 3\\rho^2\\,dV = 3\\int_0^{2\\pi}\\!\\!\\int_0^{\\pi}\\!\\!\\int_0^1\\rho^4\\operatorname{sen}\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta = 3\\cdot 4\\pi\\cdot\\frac{1}{5} = \\frac{12\\pi}{5} \\approx 7{,}54$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Gauss em superfície aberta (fechando com tampa)",
+    "dificuldade": "dificil",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = (x,\\,2y,\\,3z)$ através do paraboloide $z = 4-x^2-y^2$, $z\\ge 0$, orientado para cima, é:",
+    "alternativas": {
+      "a": "$24\\pi$",
+      "b": "$96\\pi$",
+      "c": "$48\\pi$",
+      "d": "$16\\pi$",
+      "e": "$32\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "A superfície é aberta; fecha-se com o disco $D$: $x^2+y^2\\le4$ em $z=0$, orientado para baixo. Como $\\operatorname{div}\\mathbf{F} = 6$ e o volume do sólido é $V = \\int_0^{2\\pi}\\!\\!\\int_0^2(4-r^2)r\\,dr\\,d\\theta = 8\\pi$, o fluxo total pela superfície fechada é $6\\cdot 8\\pi = 48\\pi$. No disco, $\\mathbf{F}\\cdot\\hat{\\mathbf{n}} = -3z = 0$ (pois $z=0$), de modo que sua contribuição é nula e o fluxo pelo paraboloide é $48\\pi \\approx 150{,}8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Fluxo através de cilindro fechado",
+    "dificuldade": "medio",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = \\left(x+z^2,\\; y-xz,\\; z+xy\\right)$ através da fronteira do cilindro sólido $x^2+y^2\\le 1$, $0\\le z\\le 2$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$3\\pi$",
+      "b": "$12\\pi$",
+      "c": "$2\\pi$",
+      "d": "$9\\pi$",
+      "e": "$6\\pi$"
+    },
+    "gabarito": "e",
+    "resolucao": "Apesar do aspecto do campo, $\\operatorname{div}\\mathbf{F} = 1 + 1 + 1 = 3$: os termos $z^2$, $-xz$ e $xy$ não dependem da variável em relação à qual são derivados. Pelo teorema da divergência, o fluxo é $3V$, com $V = \\pi\\cdot 1^2\\cdot 2 = 2\\pi$. Logo o fluxo vale $6\\pi \\approx 18{,}8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Campo do inverso do quadrado",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $\\mathbf{F} = \\dfrac{\\mathbf{r}}{|\\mathbf{r}|^3}$, com $\\mathbf{r} = (x,y,z)$. O fluxo de $\\mathbf{F}$ através de qualquer superfície fechada orientada para fora que envolva a origem é:",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$4\\pi$",
+      "c": "$2\\pi$",
+      "d": "$\\frac{4\\pi}{3}$",
+      "e": "$8\\pi$"
+    },
+    "gabarito": "b",
+    "resolucao": "Fora da origem, $\\operatorname{div}\\mathbf{F} = 0$ — mas o campo não está definido na origem, e o teorema da divergência não se aplica diretamente ao sólido inteiro. Recorta-se uma pequena esfera $S_\\varepsilon$ em torno da origem: na região entre as superfícies a divergência é nula, de modo que o fluxo por $S$ é igual ao fluxo por $S_\\varepsilon$. Nesta, $\\hat{\\mathbf{n}} = \\frac{\\mathbf{r}}{\\varepsilon}$ e $\\mathbf{F}\\cdot\\hat{\\mathbf{n}} = \\frac{1}{\\varepsilon^2}$, logo o fluxo é $\\frac{1}{\\varepsilon^2}\\cdot 4\\pi\\varepsilon^2 = 4\\pi$, independentemente de $\\varepsilon$ e do formato de $S$ (lei de Gauss).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Fluxo através de tetraedro",
+    "dificuldade": "dificil",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = \\left(x,\\; y^2,\\; z\\right)$ através da fronteira do tetraedro $x,y,z\\ge0$, $x+y+z\\le1$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$\\frac{5}{12}$",
+      "b": "$\\frac{1}{3}$",
+      "c": "$\\frac{7}{12}$",
+      "d": "$\\frac{5}{6}$",
+      "e": "$\\frac{1}{4}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Tem-se $\\operatorname{div}\\mathbf{F} = 1 + 2y + 1 = 2 + 2y$. O volume do tetraedro é $\\frac16$ e, por simetria das três variáveis, $\\bar{y} = \\frac{1}{4}$, ou seja $\\iiint_E y\\,dV = \\frac{1}{6}\\cdot\\frac14 = \\frac{1}{24}$. Logo o fluxo é $2\\cdot\\frac16 + 2\\cdot\\frac{1}{24} = \\frac13 + \\frac{1}{12} = \\frac{5}{12} \\approx 0{,}42$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Fluxo com divergência constante",
+    "dificuldade": "facil",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = (2x,\\,3y,\\,-z)$ através da esfera $x^2+y^2+z^2 = 9$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$72\\pi$",
+      "b": "$36\\pi$",
+      "c": "$144\\pi$",
+      "d": "$108\\pi$",
+      "e": "$288\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como $\\operatorname{div}\\mathbf{F} = 2 + 3 - 1 = 4$ é constante, o teorema da divergência dá $\\iint_S\\mathbf{F}\\cdot d\\mathbf{S} = 4V$, em que $V = \\frac{4}{3}\\pi\\cdot 27 = 36\\pi$. Portanto o fluxo é $144\\pi \\approx 452{,}4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Fluxo através de esfera transladada",
+    "dificuldade": "dificil",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = \\left(x^2, y^2, z^2\\right)$ através da esfera $(x-1)^2+y^2+z^2 = 1$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$\\frac{4\\pi}{3}$",
+      "b": "$\\frac{16\\pi}{3}$",
+      "c": "$4\\pi$",
+      "d": "$\\frac{8\\pi}{3}$",
+      "e": "$\\frac{8\\pi}{9}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Aqui $\\operatorname{div}\\mathbf{F} = 2(x+y+z)$, e o fluxo é $2\\iiint_E (x+y+z)\\,dV = 2V\\left(\\bar x + \\bar y + \\bar z\\right)$. O centroide da bola é o próprio centro $(1,0,0)$ e $V = \\frac{4\\pi}{3}$, logo o fluxo vale $2\\cdot\\frac{4\\pi}{3}\\cdot 1 = \\frac{8\\pi}{3} \\approx 8{,}38$. (Note que, centrada na origem, a mesma integral daria zero.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Divergência com funções transcendentes",
+    "dificuldade": "medio",
+    "enunciado": "A divergência de $\\mathbf{F}(x,y,z) = \\left(e^{xy},\\; \\operatorname{sen}(yz),\\; z^2x\\right)$ no ponto $(0,1,\\pi)$ é:",
+    "alternativas": {
+      "a": "$1+\\pi$",
+      "b": "$-\\pi$",
+      "c": "$\\pi-1$",
+      "d": "$1-2\\pi$",
+      "e": "$1-\\pi$"
+    },
+    "gabarito": "e",
+    "resolucao": "Derivando: $\\operatorname{div}\\mathbf{F} = y\\,e^{xy} + z\\cos(yz) + 2zx$. Em $(0,1,\\pi)$: o primeiro termo vale $1\\cdot e^0 = 1$; o segundo, $\\pi\\cos\\pi = -\\pi$; e o terceiro, $2\\pi\\cdot 0 = 0$. Logo $\\operatorname{div}\\mathbf{F} = 1 - \\pi \\approx -2{,}14$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Fluxo pela fronteira de uma casca esférica",
+    "dificuldade": "medio",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = (x,y,z)$ através da fronteira completa da casca $1 \\le x^2+y^2+z^2 \\le 4$, orientada para fora do sólido, é:",
+    "alternativas": {
+      "a": "$12\\pi$",
+      "b": "$32\\pi$",
+      "c": "$84\\pi$",
+      "d": "$21\\pi$",
+      "e": "$28\\pi$"
+    },
+    "gabarito": "e",
+    "resolucao": "A fronteira tem duas partes: a esfera de raio $2$ (normal para fora) e a de raio $1$ (normal apontando para a origem, isto é, para dentro da bola menor). Como $\\operatorname{div}\\mathbf{F} = 3$, o fluxo total é $3V$, com $V = \\frac{4\\pi}{3}(8-1) = \\frac{28\\pi}{3}$. Logo o fluxo vale $28\\pi \\approx 88$ — o mesmo que $3\\cdot\\frac{32\\pi}{3} - 3\\cdot\\frac{4\\pi}{3}$, isto é, o fluxo pela esfera externa menos o da interna.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Teorema de Gauss",
+    "subtopico": "Volume por integral de superfície",
+    "dificuldade": "medio",
+    "enunciado": "O fluxo de $\\mathbf{F}(x,y,z) = (x,\\,0,\\,0)$ através da fronteira do elipsoide sólido $\\dfrac{x^2}{4}+\\dfrac{y^2}{9}+z^2\\le 1$, orientada para fora, é:",
+    "alternativas": {
+      "a": "$24\\pi$",
+      "b": "$8\\pi$",
+      "c": "$\\frac{8\\pi}{3}$",
+      "d": "$4\\pi$",
+      "e": "$12\\pi$"
+    },
+    "gabarito": "b",
+    "resolucao": "Como $\\operatorname{div}\\mathbf{F} = 1$, o teorema da divergência transforma o fluxo no próprio volume do sólido: $\\iint_S\\mathbf{F}\\cdot d\\mathbf{S} = \\iiint_E dV = V$. Para o elipsoide de semi-eixos $2$, $3$ e $1$, $V = \\frac{4}{3}\\pi abc = \\frac{4}{3}\\pi\\cdot 6 = 8\\pi \\approx 25{,}1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

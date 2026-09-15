@@ -1,0 +1,686 @@
+[
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Integral iterada sobre retângulo",
+    "dificuldade": "medio",
+    "enunciado": "O valor de $\\displaystyle\\int_0^1\\!\\!\\int_0^3 x\\,e^{xy}\\,dy\\,dx$ é:",
+    "alternativas": {
+      "a": "$\\frac{e^3-4}{3}$",
+      "b": "$\\frac{e^3-1}{3}$",
+      "c": "$\\frac{e^3-4}{9}$",
+      "d": "$\\frac{e^3-3}{3}$",
+      "e": "$\\frac{e^3+4}{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Integrando primeiro em $y$ (com $x$ fixo), $\\int_0^3 x e^{xy}\\,dy = \\left[e^{xy}\\right]_{y=0}^{y=3} = e^{3x} - 1$ — a ordem escolhida evita integração por partes. Resta $\\int_0^1\\left(e^{3x}-1\\right)dx = \\frac{e^3-1}{3} - 1 = \\frac{e^3-4}{3} \\approx 5{,}36$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Inversão da ordem de integração",
+    "dificuldade": "dificil",
+    "enunciado": "O valor de $\\displaystyle\\int_0^1\\!\\!\\int_{3y}^{3} e^{x^2}\\,dx\\,dy$ é:",
+    "alternativas": {
+      "a": "$\\frac{e^9-1}{6}$",
+      "b": "$\\frac{e^9-1}{3}$",
+      "c": "$\\frac{e^9-1}{2}$",
+      "d": "$\\frac{e^3-1}{6}$",
+      "e": "$\\frac{e^9+1}{6}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A primitiva de $e^{x^2}$ não é elementar, então é preciso inverter a ordem. A região é $\\{(x,y): 0 \\le y \\le 1,\\ 3y \\le x \\le 3\\}$, que descrita em $x$ vira $\\{0 \\le x \\le 3,\\ 0 \\le y \\le \\frac{x}{3}\\}$. Assim a integral é $\\int_0^3\\!\\!\\int_0^{x/3} e^{x^2}dy\\,dx = \\int_0^3 \\frac{x}{3}e^{x^2}dx$. Com $u = x^2$: $\\frac{1}{6}\\left[e^{x^2}\\right]_0^3 = \\frac{e^9-1}{6} \\approx 1350{,}3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Inversão da ordem com integrando não elementar",
+    "dificuldade": "dificil",
+    "enunciado": "O valor de $\\displaystyle\\int_0^1\\!\\!\\int_x^1 \\frac{\\operatorname{sen}y}{y}\\,dy\\,dx$ é:",
+    "alternativas": {
+      "a": "$1-\\cos 1$",
+      "b": "$\\cos 1$",
+      "c": "$1-\\operatorname{sen}1$",
+      "d": "$\\frac{1-\\cos 1}{2}$",
+      "e": "$\\operatorname{sen}1$"
+    },
+    "gabarito": "a",
+    "resolucao": "A função $\\frac{\\operatorname{sen}y}{y}$ não tem primitiva elementar, mas a região $\\{0 \\le x \\le 1,\\ x \\le y \\le 1\\}$ pode ser lida como $\\{0 \\le y \\le 1,\\ 0 \\le x \\le y\\}$. Invertendo, $\\int_0^1\\!\\!\\int_0^y \\frac{\\operatorname{sen}y}{y}dx\\,dy = \\int_0^1 \\frac{\\operatorname{sen}y}{y}\\cdot y\\,dy = \\int_0^1 \\operatorname{sen}y\\,dy = 1 - \\cos 1 \\approx 0{,}46$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Coordenadas polares sobre um anel",
+    "dificuldade": "facil",
+    "enunciado": "Seja $D$ o anel $1 \\le x^2 + y^2 \\le 4$. O valor de $\\displaystyle\\iint_D \\frac{dA}{\\sqrt{x^2+y^2}}$ é:",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$2\\pi$",
+      "c": "$4\\pi$",
+      "d": "$3\\pi$",
+      "e": "$\\frac{2\\pi}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Em coordenadas polares, $\\sqrt{x^2+y^2} = r$ e $dA = r\\,dr\\,d\\theta$, de modo que o integrando vira $\\frac{1}{r}\\cdot r = 1$. Logo $\\iint_D \\frac{dA}{r} = \\int_0^{2\\pi}\\!\\!\\int_1^2 dr\\,d\\theta = 2\\pi(2-1) = 2\\pi \\approx 6{,}28$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Área entre cardioide e círculo",
+    "dificuldade": "dificil",
+    "enunciado": "A área da região interior à cardioide $r = 1 + \\cos\\theta$ e exterior ao círculo $r = 1$ é:",
+    "alternativas": {
+      "a": "$2+\\frac{\\pi}{2}$",
+      "b": "$4+\\frac{\\pi}{4}$",
+      "c": "$1+\\frac{\\pi}{4}$",
+      "d": "$2+\\frac{\\pi}{8}$",
+      "e": "$2+\\frac{\\pi}{4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A cardioide está fora do círculo quando $1 + \\cos\\theta > 1$, isto é para $-\\frac{\\pi}{2} < \\theta < \\frac{\\pi}{2}$. A área é $A = \\frac{1}{2}\\int_{-\\pi/2}^{\\pi/2}\\left[(1+\\cos\\theta)^2 - 1\\right]d\\theta = \\frac{1}{2}\\int_{-\\pi/2}^{\\pi/2}\\left(2\\cos\\theta + \\cos^2\\theta\\right)d\\theta$. O primeiro termo dá $\\frac{1}{2}\\cdot 4 = 2$ e o segundo, usando $\\cos^2\\theta = \\frac{1+\\cos 2\\theta}{2}$, dá $\\frac{1}{2}\\cdot\\frac{\\pi}{2} = \\frac{\\pi}{4}$. Logo $A = 2 + \\frac{\\pi}{4} \\approx 2{,}79$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Volume sob paraboloide",
+    "dificuldade": "medio",
+    "enunciado": "O volume do sólido limitado inferiormente pelo plano $z = 0$, superiormente pela superfície $z = 9 - x^2 - y^2$ e lateralmente pelo cilindro $x^2 + y^2 = 4$ é:",
+    "alternativas": {
+      "a": "$14\\pi$",
+      "b": "$32\\pi$",
+      "c": "$36\\pi$",
+      "d": "$56\\pi$",
+      "e": "$28\\pi$"
+    },
+    "gabarito": "e",
+    "resolucao": "O volume é $\\iint_D (9 - x^2 - y^2)\\,dA$ com $D$ o disco de raio $2$. Em polares, $V = \\int_0^{2\\pi}\\!\\!\\int_0^2 (9 - r^2)r\\,dr\\,d\\theta = 2\\pi\\left[\\frac{9r^2}{2} - \\frac{r^4}{4}\\right]_0^2 = 2\\pi(18 - 4) = 28\\pi \\approx 88$. (Note que o teto está acima do plano em todo $D$, pois $9 - r^2 \\ge 5 > 0$.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Mudança de variáveis com jacobiano",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $R$ a região do plano limitada pelas retas $x + y = 0$, $x + y = 1$, $x - y = 0$ e $x - y = 2$. Usando $u = x+y$ e $v = x-y$, o valor de $\\displaystyle\\iint_R (x+y)\\,e^{x^2-y^2}\\,dA$ é:",
+    "alternativas": {
+      "a": "$\\frac{e^2-3}{2}$",
+      "b": "$\\frac{e^2-3}{4}$",
+      "c": "$\\frac{e^2-1}{4}$",
+      "d": "$\\frac{e^2-3}{8}$",
+      "e": "$\\frac{e^2+3}{4}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $u = x+y$ e $v = x-y$ tem-se $x = \\frac{u+v}{2}$, $y = \\frac{u-v}{2}$ e $x^2 - y^2 = (x+y)(x-y) = uv$. O jacobiano é $\\frac{\\partial(x,y)}{\\partial(u,v)} = \\begin{vmatrix} \\frac12 & \\frac12 \\\\ \\frac12 & -\\frac12\\end{vmatrix} = -\\frac12$, logo $dA = \\frac{1}{2}du\\,dv$, e a região vira o retângulo $0 \\le u \\le 1$, $0 \\le v \\le 2$. Assim a integral é $\\frac{1}{2}\\int_0^1\\!\\!\\int_0^2 u e^{uv}\\,dv\\,du = \\frac{1}{2}\\int_0^1\\left(e^{2u}-1\\right)du = \\frac{1}{2}\\left(\\frac{e^2-1}{2}-1\\right) = \\frac{e^2-3}{4} \\approx 1{,}10$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Valor médio sobre região triangular",
+    "dificuldade": "medio",
+    "enunciado": "O valor médio de $f(x,y) = xy$ sobre o triângulo de vértices $(0,0)$, $(1,0)$ e $(0,1)$ é:",
+    "alternativas": {
+      "a": "$\\frac{1}{24}$",
+      "b": "$\\frac{1}{6}$",
+      "c": "$\\frac{1}{8}$",
+      "d": "$\\frac{1}{12}$",
+      "e": "$\\frac{1}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O valor médio é $\\frac{1}{A(D)}\\iint_D f\\,dA$, com $A(D) = \\frac{1}{2}$. A integral vale $\\int_0^1\\!\\!\\int_0^{1-x} xy\\,dy\\,dx = \\int_0^1 x\\frac{(1-x)^2}{2}dx = \\frac{1}{2}\\left(\\frac12 - \\frac23 + \\frac14\\right) = \\frac{1}{24}$. Portanto o valor médio é $\\frac{1/24}{1/2} = \\frac{1}{12} \\approx 0{,}083$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Centro de massa de lâmina",
+    "dificuldade": "dificil",
+    "enunciado": "Uma lâmina ocupa o triângulo de vértices $(0,0)$, $(1,0)$ e $(1,1)$ e tem densidade $\\delta(x,y) = x$. A abscissa $\\bar{x}$ do centro de massa é:",
+    "alternativas": {
+      "a": "$\\frac{2}{3}$",
+      "b": "$\\frac{1}{2}$",
+      "c": "$\\frac{3}{4}$",
+      "d": "$\\frac{4}{5}$",
+      "e": "$\\frac{5}{8}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A região é $\\{0 \\le x \\le 1,\\ 0 \\le y \\le x\\}$. A massa é $m = \\int_0^1\\!\\!\\int_0^x x\\,dy\\,dx = \\int_0^1 x^2dx = \\frac{1}{3}$, e o momento em relação ao eixo $y$ é $M_y = \\int_0^1\\!\\!\\int_0^x x^2\\,dy\\,dx = \\int_0^1 x^3dx = \\frac{1}{4}$. Logo $\\bar{x} = \\frac{M_y}{m} = \\frac{1/4}{1/3} = \\frac{3}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Integral em polares com potência fracionária",
+    "dificuldade": "medio",
+    "enunciado": "O valor de $\\displaystyle\\iint_D \\left(x^2+y^2\\right)^{3/2}dA$, em que $D$ é o disco $x^2+y^2 \\le 1$, é:",
+    "alternativas": {
+      "a": "$\\frac{2\\pi}{3}$",
+      "b": "$\\frac{\\pi}{5}$",
+      "c": "$\\frac{4\\pi}{5}$",
+      "d": "$\\frac{2\\pi}{5}$",
+      "e": "$\\frac{2\\pi}{7}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Em polares o integrando vira $r^3$ e $dA = r\\,dr\\,d\\theta$, logo $\\iint_D\\left(x^2+y^2\\right)^{3/2}dA = \\int_0^{2\\pi}\\!\\!\\int_0^1 r^4\\,dr\\,d\\theta = 2\\pi\\cdot\\frac{1}{5} = \\frac{2\\pi}{5} \\approx 1{,}26$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Área por integral dupla",
+    "dificuldade": "facil",
+    "enunciado": "A área da região limitada pelas parábolas $y = x^2$ e $y = 2 - x^2$, calculada como $\\iint_D dA$, é:",
+    "alternativas": {
+      "a": "$\\frac{4}{3}$",
+      "b": "$\\frac{16}{3}$",
+      "c": "$\\frac{8}{5}$",
+      "d": "$\\frac{10}{3}$",
+      "e": "$\\frac{8}{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "As curvas se cruzam quando $x^2 = 2 - x^2$, isto é $x = \\pm 1$. Entre elas, $2 - x^2 \\ge x^2$, de modo que $A = \\int_{-1}^{1}\\!\\!\\int_{x^2}^{2-x^2}dy\\,dx = \\int_{-1}^{1}\\left(2-2x^2\\right)dx = \\left[2x - \\frac{2x^3}{3}\\right]_{-1}^{1} = \\frac{8}{3} \\approx 2{,}67$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Duplas",
+    "subtopico": "Integral dupla imprópria",
+    "dificuldade": "dificil",
+    "enunciado": "O valor de $\\displaystyle\\iint_D \\frac{dA}{\\left(x^2+y^2\\right)^2}$, em que $D$ é a região $x^2+y^2 \\ge 1$, é:",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$2\\pi$",
+      "c": "$3\\pi$",
+      "d": "$4\\pi$",
+      "e": "$\\frac{\\pi}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Em polares, $\\iint_D \\frac{dA}{r^4} = \\int_0^{2\\pi}\\!\\!\\int_1^{\\infty} \\frac{r}{r^4}dr\\,d\\theta = 2\\pi\\int_1^{\\infty} r^{-3}dr$. A integral imprópria converge (expoente $-3 < -1$): $\\int_1^{\\infty}r^{-3}dr = \\left[-\\frac{1}{2r^2}\\right]_1^{\\infty} = \\frac{1}{2}$. Logo o valor é $2\\pi\\cdot\\frac12 = \\pi \\approx 3{,}14$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Integral tripla sobre paralelepípedo",
+    "dificuldade": "facil",
+    "enunciado": "O valor de $\\displaystyle\\int_0^1\\!\\!\\int_0^2\\!\\!\\int_0^3 xyz\\,dz\\,dy\\,dx$ é:",
+    "alternativas": {
+      "a": "$\\frac{9}{4}$",
+      "b": "$\\frac{27}{2}$",
+      "c": "$\\frac{9}{8}$",
+      "d": "$\\frac{9}{2}$",
+      "e": "$\\frac{15}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Como o integrando é um produto de funções de uma variável cada e a região é um paralelepípedo, a integral se fatora: $\\left(\\int_0^1 x\\,dx\\right)\\left(\\int_0^2 y\\,dy\\right)\\left(\\int_0^3 z\\,dz\\right) = \\frac{1}{2}\\cdot 2\\cdot\\frac{9}{2} = \\frac{9}{2} = 4{,}5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Volume entre paraboloide e plano inclinado",
+    "dificuldade": "dificil",
+    "enunciado": "O volume do sólido limitado pelo paraboloide $z = x^2+y^2$ e pelo plano $z = 2y$ é:",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$\\frac{\\pi}{2}$",
+      "c": "$\\frac{\\pi}{4}$",
+      "d": "$\\frac{3\\pi}{8}$",
+      "e": "$\\frac{2\\pi}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A projeção do sólido é $x^2+y^2 \\le 2y$, isto é $x^2 + (y-1)^2 \\le 1$, e o volume é $\\iint_D (2y - x^2-y^2)\\,dA$. Em polares essa região é $0 \\le r \\le 2\\operatorname{sen}\\theta$, $0 \\le \\theta \\le \\pi$, e $V = \\int_0^{\\pi}\\!\\!\\int_0^{2\\operatorname{sen}\\theta}\\left(2r\\operatorname{sen}\\theta - r^2\\right)r\\,dr\\,d\\theta = \\int_0^{\\pi}\\frac{4}{3}\\operatorname{sen}^4\\theta\\,d\\theta$. Como $\\int_0^\\pi \\operatorname{sen}^4\\theta\\,d\\theta = \\frac{3\\pi}{8}$, resulta $V = \\frac{4}{3}\\cdot\\frac{3\\pi}{8} = \\frac{\\pi}{2} \\approx 1{,}57$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Massa em coordenadas cilíndricas",
+    "dificuldade": "medio",
+    "enunciado": "Um cilindro sólido de raio $2$ e altura $5$, com eixo no eixo $z$ e base em $z = 0$, tem densidade igual à distância ao eixo. Sua massa é:",
+    "alternativas": {
+      "a": "$\\frac{40\\pi}{3}$",
+      "b": "$\\frac{160\\pi}{3}$",
+      "c": "$\\frac{80\\pi}{9}$",
+      "d": "$\\frac{80\\pi}{3}$",
+      "e": "$20\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $\\delta = \\sqrt{x^2+y^2} = r$ e $dV = r\\,dz\\,dr\\,d\\theta$, a massa é $m = \\int_0^{2\\pi}\\!\\!\\int_0^2\\!\\!\\int_0^5 r\\cdot r\\,dz\\,dr\\,d\\theta = 2\\pi\\cdot 5\\cdot\\int_0^2 r^2dr = 10\\pi\\cdot\\frac{8}{3} = \\frac{80\\pi}{3} \\approx 83{,}8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Coordenadas esféricas com cone",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $E$ o sólido interior à esfera $\\rho = 2$ e acima do cone $\\varphi = \\dfrac{\\pi}{3}$. O valor de $\\displaystyle\\iiint_E z\\,dV$ é:",
+    "alternativas": {
+      "a": "$6\\pi$",
+      "b": "$\\frac{3\\pi}{2}$",
+      "c": "$4\\pi$",
+      "d": "$3\\pi$",
+      "e": "$2\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Em esféricas, $z = \\rho\\cos\\varphi$ e $dV = \\rho^2\\operatorname{sen}\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta$, logo $\\iiint_E z\\,dV = \\int_0^{2\\pi}\\!\\!\\int_0^{\\pi/3}\\!\\!\\int_0^{2}\\rho^3\\cos\\varphi\\operatorname{sen}\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta$. A integral em $\\rho$ dá $4$; a em $\\varphi$, $\\left[\\frac{\\operatorname{sen}^2\\varphi}{2}\\right]_0^{\\pi/3} = \\frac{3}{8}$; e a em $\\theta$, $2\\pi$. Produto: $2\\pi\\cdot 4\\cdot\\frac{3}{8} = 3\\pi \\approx 9{,}42$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Volume comum a esfera e cilindro",
+    "dificuldade": "dificil",
+    "enunciado": "O volume do sólido interior simultaneamente à esfera $x^2+y^2+z^2 = 4$ e ao cilindro $x^2+y^2 = 1$ é:",
+    "alternativas": {
+      "a": "$\\frac{4\\pi}{3}(8-3\\sqrt{2})$",
+      "b": "$\\frac{2\\pi}{3}(8-3\\sqrt{3})$",
+      "c": "$\\frac{4\\pi}{3}(4-3\\sqrt{3})$",
+      "d": "$\\frac{8\\pi}{3}(8-3\\sqrt{3})$",
+      "e": "$\\frac{4\\pi}{3}(8-3\\sqrt{3})$"
+    },
+    "gabarito": "e",
+    "resolucao": "Em cilíndricas o sólido é $0 \\le r \\le 1$, $-\\sqrt{4-r^2} \\le z \\le \\sqrt{4-r^2}$, logo $V = \\int_0^{2\\pi}\\!\\!\\int_0^1 2\\sqrt{4-r^2}\\,r\\,dr\\,d\\theta = 4\\pi\\int_0^1 r\\sqrt{4-r^2}\\,dr$. Com $u = 4-r^2$: $4\\pi\\left[-\\frac{(4-r^2)^{3/2}}{3}\\right]_0^1 = \\frac{4\\pi}{3}\\left(8 - 3\\sqrt{3}\\right) \\approx 11{,}7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Centroide de hemisfério sólido",
+    "dificuldade": "medio",
+    "enunciado": "A cota $\\bar{z}$ do centroide do hemisfério sólido homogêneo $x^2+y^2+z^2 \\le 9$, $z \\ge 0$, é:",
+    "alternativas": {
+      "a": "$\\frac{3}{8}$",
+      "b": "$\\frac{9}{16}$",
+      "c": "$\\frac{9}{8}$",
+      "d": "$\\frac{3}{2}$",
+      "e": "$\\frac{27}{8}$"
+    },
+    "gabarito": "c",
+    "resolucao": "O volume é $V = \\frac{2}{3}\\pi\\cdot 27 = 18\\pi$. Em esféricas, $\\iiint z\\,dV = \\int_0^{2\\pi}\\!\\!\\int_0^{\\pi/2}\\!\\!\\int_0^3 \\rho^3\\cos\\varphi\\operatorname{sen}\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta = 2\\pi\\cdot\\frac{81}{4}\\cdot\\frac12 = \\frac{81\\pi}{4}$. Logo $\\bar z = \\frac{81\\pi/4}{18\\pi} = \\frac{9}{8} = 1{,}125$ — coerente com a fórmula $\\bar z = \\frac{3a}{8}$ para $a = 3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Integral tripla sobre tetraedro",
+    "dificuldade": "medio",
+    "enunciado": "Seja $T$ o tetraedro de vértices $(0,0,0)$, $(1,0,0)$, $(0,2,0)$ e $(0,0,3)$. O valor de $\\displaystyle\\iiint_T x\\,dV$ é:",
+    "alternativas": {
+      "a": "$\\frac{1}{2}$",
+      "b": "$\\frac{1}{4}$",
+      "c": "$\\frac{1}{8}$",
+      "d": "$\\frac{1}{3}$",
+      "e": "$\\frac{1}{6}$"
+    },
+    "gabarito": "b",
+    "resolucao": "O plano que contém os três vértices não nulos é $\\frac{x}{1} + \\frac{y}{2} + \\frac{z}{3} = 1$. Então $\\iiint_T x\\,dV = \\int_0^1\\!\\!\\int_0^{2(1-x)}\\!\\!\\int_0^{3\\left(1-x-\\frac{y}{2}\\right)} x\\,dz\\,dy\\,dx$. Integrando em $z$ e depois em $y$: $\\int_0^1 3x\\left[(1-x)y - \\frac{y^2}{4}\\right]_0^{2(1-x)}dx = \\int_0^1 3x(1-x)^2dx = 3\\left(\\frac12 - \\frac23 + \\frac14\\right) = \\frac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Momento de inércia de cilindro",
+    "dificuldade": "medio",
+    "enunciado": "O momento de inércia em relação ao eixo $z$, $I_z = \\iiint (x^2+y^2)\\,dV$, do cilindro sólido homogêneo de raio $2$ e altura $3$ com eixo em $Oz$ e densidade $1$ é:",
+    "alternativas": {
+      "a": "$12\\pi$",
+      "b": "$48\\pi$",
+      "c": "$16\\pi$",
+      "d": "$24\\pi$",
+      "e": "$32\\pi$"
+    },
+    "gabarito": "d",
+    "resolucao": "Em cilíndricas, $x^2+y^2 = r^2$ e $dV = r\\,dz\\,dr\\,d\\theta$, logo $I_z = \\int_0^{2\\pi}\\!\\!\\int_0^2\\!\\!\\int_0^3 r^3\\,dz\\,dr\\,d\\theta = 2\\pi\\cdot 3\\cdot\\left[\\frac{r^4}{4}\\right]_0^2 = 6\\pi\\cdot 4 = 24\\pi \\approx 75{,}4$. (Como $M = 12\\pi$, isso confirma $I_z = \\frac{Ma^2}{2}$.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Esféricas com integrando exponencial",
+    "dificuldade": "dificil",
+    "enunciado": "O valor de $\\displaystyle\\iiint_B e^{\\left(x^2+y^2+z^2\\right)^{3/2}}dV$, em que $B$ é a bola $x^2+y^2+z^2\\le 1$, é:",
+    "alternativas": {
+      "a": "$\\frac{4\\pi}{3}(e+1)$",
+      "b": "$\\frac{2\\pi}{3}(e-1)$",
+      "c": "$\\frac{4\\pi}{3}e$",
+      "d": "$4\\pi(e-1)$",
+      "e": "$\\frac{4\\pi}{3}(e-1)$"
+    },
+    "gabarito": "e",
+    "resolucao": "Em esféricas o expoente vira $\\rho^3$ e a integral se separa: $\\int_0^{2\\pi}\\!\\!\\int_0^{\\pi}\\!\\!\\int_0^1 e^{\\rho^3}\\rho^2\\operatorname{sen}\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta = 2\\pi\\cdot 2\\cdot\\int_0^1 \\rho^2e^{\\rho^3}d\\rho$. Com $u = \\rho^3$, $\\int_0^1 \\rho^2e^{\\rho^3}d\\rho = \\frac{e-1}{3}$. Logo o valor é $4\\pi\\cdot\\frac{e-1}{3} = \\frac{4\\pi}{3}(e-1) \\approx 7{,}19$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Volume entre cone e plano",
+    "dificuldade": "medio",
+    "enunciado": "O volume do sólido limitado pelo cone $z = \\sqrt{x^2+y^2}$ e pelo plano $z = 2$ é:",
+    "alternativas": {
+      "a": "$\\frac{8\\pi}{3}$",
+      "b": "$\\frac{4\\pi}{3}$",
+      "c": "$\\frac{16\\pi}{3}$",
+      "d": "$\\frac{8\\pi}{9}$",
+      "e": "$4\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "A interseção do cone com $z = 2$ é o círculo $r = 2$, logo a projeção é o disco de raio $2$ e o sólido vai de $z = r$ até $z = 2$. Em cilíndricas, $V = \\int_0^{2\\pi}\\!\\!\\int_0^2 (2-r)\\,r\\,dr\\,d\\theta = 2\\pi\\left[r^2 - \\frac{r^3}{3}\\right]_0^2 = 2\\pi\\left(4 - \\frac83\\right) = \\frac{8\\pi}{3} \\approx 8{,}38$ — um terço do cilindro circunscrito, como esperado para um cone.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Massa com densidade radial",
+    "dificuldade": "medio",
+    "enunciado": "Uma bola de raio $2$ centrada na origem tem densidade $\\delta = \\dfrac{1}{\\sqrt{x^2+y^2+z^2}}$. Sua massa é:",
+    "alternativas": {
+      "a": "$4\\pi$",
+      "b": "$16\\pi$",
+      "c": "$8\\pi$",
+      "d": "$\\frac{8\\pi}{3}$",
+      "e": "$2\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Em esféricas, $\\delta = \\frac{1}{\\rho}$ e $dV = \\rho^2\\operatorname{sen}\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta$, de modo que o integrando vira $\\rho\\operatorname{sen}\\varphi$ — a singularidade na origem é integrável. Então $m = \\int_0^{2\\pi}\\!\\!\\int_0^{\\pi}\\!\\!\\int_0^2\\rho\\operatorname{sen}\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta = 2\\pi\\cdot 2\\cdot\\frac{4}{2} = 8\\pi \\approx 25{,}1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integrais Triplas",
+    "subtopico": "Volume de elipsoide por mudança de variáveis",
+    "dificuldade": "facil",
+    "enunciado": "O volume do sólido $\\dfrac{x^2}{4} + \\dfrac{y^2}{9} + \\dfrac{z^2}{25} \\le 1$ é:",
+    "alternativas": {
+      "a": "$120\\pi$",
+      "b": "$40\\pi$",
+      "c": "$\\frac{40\\pi}{3}$",
+      "d": "$20\\pi$",
+      "e": "$60\\pi$"
+    },
+    "gabarito": "b",
+    "resolucao": "A mudança $x = 2u$, $y = 3v$, $z = 5w$ tem jacobiano constante $\\frac{\\partial(x,y,z)}{\\partial(u,v,w)} = 2\\cdot 3\\cdot 5 = 30$ e leva o elipsoide na bola unitária $u^2+v^2+w^2 \\le 1$. Logo $V = 30\\cdot\\frac{4\\pi}{3} = 40\\pi \\approx 125{,}7$ — a fórmula $\\frac{4}{3}\\pi abc$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Integral de linha de campo escalar sobre arco de círculo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $C$ o arco de $x^2+y^2 = 4$ do ponto $(2,0)$ ao ponto $(0,2)$, no primeiro quadrante. O valor de $\\displaystyle\\int_C \\left(x + y^2\\right)ds$ é:",
+    "alternativas": {
+      "a": "$2+2\\pi$",
+      "b": "$4+\\pi$",
+      "c": "$4+2\\pi$",
+      "d": "$4+4\\pi$",
+      "e": "$8+2\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Parametrize por $\\mathbf{r}(t) = (2\\cos t,\\, 2\\operatorname{sen}t)$, $0 \\le t \\le \\frac{\\pi}{2}$, com $ds = |\\mathbf{r}'|dt = 2\\,dt$. Então $\\int_C (x+y^2)ds = \\int_0^{\\pi/2}\\left(2\\cos t + 4\\operatorname{sen}^2t\\right)2\\,dt = 4\\left[\\operatorname{sen}t\\right]_0^{\\pi/2} + 8\\cdot\\frac{\\pi}{4} = 4 + 2\\pi \\approx 10{,}3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Trabalho de campo não conservativo",
+    "dificuldade": "medio",
+    "enunciado": "O trabalho realizado pelo campo $\\mathbf{F}(x,y) = \\left(y^2,\\, x^2\\right)$ ao longo do arco de $y = x^2$ de $(0,0)$ a $(1,1)$ é:",
+    "alternativas": {
+      "a": "$\\frac{7}{10}$",
+      "b": "$\\frac{3}{10}$",
+      "c": "$\\frac{9}{10}$",
+      "d": "$\\frac{7}{5}$",
+      "e": "$\\frac{1}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $x = t$ e $y = t^2$, $0\\le t\\le 1$, tem-se $dx = dt$ e $dy = 2t\\,dt$. Então $W = \\int_C y^2dx + x^2dy = \\int_0^1\\left(t^4 + t^2\\cdot 2t\\right)dt = \\frac{1}{5} + \\frac{1}{2} = \\frac{7}{10} = 0{,}7$. (O campo não é conservativo: $\\frac{\\partial}{\\partial y}y^2 = 2y \\ne 2x = \\frac{\\partial}{\\partial x}x^2$, logo o valor depende do caminho.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Campo conservativo no espaço",
+    "dificuldade": "medio",
+    "enunciado": "O campo $\\mathbf{F}(x,y,z) = \\left(2xy,\\; x^2+z^2,\\; 2yz\\right)$ é conservativo. O trabalho realizado por ele ao longo de qualquer curva de $(0,0,0)$ a $(1,2,3)$ é:",
+    "alternativas": {
+      "a": "$18$",
+      "b": "$22$",
+      "c": "$11$",
+      "d": "$38$",
+      "e": "$20$"
+    },
+    "gabarito": "e",
+    "resolucao": "Procura-se $f$ com $\\nabla f = \\mathbf{F}$. De $f_x = 2xy$ vem $f = x^2y + g(y,z)$; então $f_y = x^2 + g_y = x^2+z^2$ dá $g_y = z^2$, isto é $g = yz^2 + h(z)$; por fim $f_z = 2yz + h'(z) = 2yz$ dá $h$ constante. Logo $f = x^2y + yz^2$ e, pelo teorema fundamental das integrais de linha, $W = f(1,2,3) - f(0,0,0) = 2 + 18 = 20$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Teorema de Green sobre um círculo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $C$ o círculo $x^2+y^2 = 4$ percorrido no sentido anti-horário. O valor de $\\displaystyle\\oint_C y^3\\,dx - x^3\\,dy$ é:",
+    "alternativas": {
+      "a": "$-24\\pi$",
+      "b": "$-12\\pi$",
+      "c": "$24\\pi$",
+      "d": "$-48\\pi$",
+      "e": "$-8\\pi$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pelo teorema de Green, com $P = y^3$ e $Q = -x^3$: $\\oint_C P\\,dx + Q\\,dy = \\iint_D\\left(Q_x - P_y\\right)dA = \\iint_D\\left(-3x^2-3y^2\\right)dA$. Em polares, $\\iint_D\\left(x^2+y^2\\right)dA = \\int_0^{2\\pi}\\!\\!\\int_0^2 r^3dr\\,d\\theta = 8\\pi$, logo a integral vale $-3\\cdot 8\\pi = -24\\pi \\approx -75{,}4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Teorema de Green sobre região triangular",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $C$ a fronteira do triângulo de vértices $(0,0)$, $(1,0)$ e $(1,1)$, percorrida no sentido anti-horário. O valor de $\\displaystyle\\oint_C \\left(e^{x}+y^2\\right)dx + \\left(x^2+\\operatorname{sen}y\\right)dy$ é:",
+    "alternativas": {
+      "a": "$\\frac{1}{6}$",
+      "b": "$\\frac{1}{3}$",
+      "c": "$\\frac{2}{3}$",
+      "d": "$\\frac{1}{2}$",
+      "e": "$\\frac{1}{4}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Green transforma a integral em $\\iint_D (Q_x - P_y)\\,dA = \\iint_D (2x - 2y)\\,dA$ — os termos $e^x$ e $\\operatorname{sen}y$, que tornariam o cálculo direto trabalhoso, desaparecem na derivação. Com $D = \\{0\\le x\\le 1,\\ 0\\le y\\le x\\}$: $\\int_0^1\\!\\!\\int_0^x (2x-2y)\\,dy\\,dx = \\int_0^1\\left(2x^2 - x^2\\right)dx = \\frac{1}{3} \\approx 0{,}33$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Massa de arame helicoidal",
+    "dificuldade": "dificil",
+    "enunciado": "Um arame tem a forma da hélice $\\mathbf{r}(t) = \\left(\\cos t,\\, \\operatorname{sen}t,\\, t\\right)$, $0 \\le t \\le 2\\pi$, e densidade $\\delta(x,y,z) = x^2+y^2+z^2$. Sua massa é:",
+    "alternativas": {
+      "a": "$\\sqrt{2}\\left(2\\pi+\\frac{4\\pi^3}{3}\\right)$",
+      "b": "$\\sqrt{2}\\left(2\\pi+\\frac{8\\pi^3}{3}\\right)$",
+      "c": "$\\sqrt{2}\\left(\\pi+\\frac{8\\pi^3}{3}\\right)$",
+      "d": "$\\sqrt{3}\\left(2\\pi+\\frac{8\\pi^3}{3}\\right)$",
+      "e": "$\\sqrt{2}\\left(2\\pi+\\frac{8\\pi^3}{9}\\right)$"
+    },
+    "gabarito": "b",
+    "resolucao": "Sobre a hélice, $x^2+y^2 = 1$, logo $\\delta = 1 + t^2$. Além disso $\\mathbf{r}' = (-\\operatorname{sen}t,\\, \\cos t,\\, 1)$ e $ds = \\sqrt{2}\\,dt$. Assim $m = \\int_0^{2\\pi}\\left(1+t^2\\right)\\sqrt{2}\\,dt = \\sqrt{2}\\left(2\\pi + \\frac{(2\\pi)^3}{3}\\right) = \\sqrt{2}\\left(2\\pi + \\frac{8\\pi^3}{3}\\right) \\approx 125{,}8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Área por integral de linha",
+    "dificuldade": "dificil",
+    "enunciado": "A área da região limitada pela astroide $x = \\cos^3 t$, $y = \\operatorname{sen}^3 t$, $0 \\le t \\le 2\\pi$, calculada por $A = \\frac{1}{2}\\oint_C x\\,dy - y\\,dx$, é:",
+    "alternativas": {
+      "a": "$\\frac{3\\pi}{4}$",
+      "b": "$\\frac{\\pi}{8}$",
+      "c": "$\\frac{3\\pi}{16}$",
+      "d": "$\\frac{3\\pi}{8}$",
+      "e": "$\\frac{5\\pi}{8}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $dx = -3\\cos^2t\\operatorname{sen}t\\,dt$ e $dy = 3\\operatorname{sen}^2t\\cos t\\,dt$, o integrando fica $x\\,dy - y\\,dx = 3\\cos^2t\\operatorname{sen}^2t\\left(\\cos^2t + \\operatorname{sen}^2t\\right)dt = 3\\cos^2t\\operatorname{sen}^2t\\,dt = \\frac{3}{4}\\operatorname{sen}^2 2t\\,dt$. Logo $A = \\frac{1}{2}\\int_0^{2\\pi}\\frac{3}{4}\\operatorname{sen}^22t\\,dt = \\frac{3}{8}\\cdot\\pi = \\frac{3\\pi}{8} \\approx 1{,}18$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Independência do caminho",
+    "dificuldade": "medio",
+    "enunciado": "O campo $\\mathbf{F}(x,y) = \\left(3 + 2xy,\\; x^2 - 3y^2\\right)$ é conservativo. O trabalho realizado por ele de $(-1,2)$ até $(1,3)$ é:",
+    "alternativas": {
+      "a": "$-30$",
+      "b": "$12$",
+      "c": "$-12$",
+      "d": "$-21$",
+      "e": "$-9$"
+    },
+    "gabarito": "c",
+    "resolucao": "Como $P_y = 2x = Q_x$ em todo o plano, o campo é conservativo. De $f_x = 3 + 2xy$ vem $f = 3x + x^2y + g(y)$, e $f_y = x^2 + g'(y) = x^2 - 3y^2$ dá $g = -y^3$. Assim $f(x,y) = 3x + x^2y - y^3$, e $W = f(1,3) - f(-1,2) = (3 + 3 - 27) - (-3 + 2 - 8) = -21 + 9 = -12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Campo singular na origem",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $C$ uma curva fechada simples, percorrida no sentido anti-horário, que envolve a origem. O valor de $\\displaystyle\\oint_C \\frac{-y\\,dx + x\\,dy}{x^2+y^2}$ é:",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$4\\pi$",
+      "c": "$2\\pi$",
+      "d": "$\\pi$",
+      "e": "$-2\\pi$"
+    },
+    "gabarito": "c",
+    "resolucao": "Aqui $P_y = Q_x = \\frac{y^2-x^2}{(x^2+y^2)^2}$ em todo ponto diferente da origem, mas o campo não está definido em $(0,0)$, de modo que Green não se aplica diretamente à região interna. Recorta-se um pequeno círculo $C_\\varepsilon$ de raio $\\varepsilon$ em torno da origem: na região entre as curvas Green vale e dá zero, logo $\\oint_C = \\oint_{C_\\varepsilon}$. Sobre $C_\\varepsilon$, com $x = \\varepsilon\\cos t$ e $y = \\varepsilon\\operatorname{sen}t$, o integrando vale $dt$, e a integral é $2\\pi$ — independentemente de $\\varepsilon$ e do formato de $C$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Integral de linha sobre segmento",
+    "dificuldade": "facil",
+    "enunciado": "O valor de $\\displaystyle\\int_C xy\\,ds$, em que $C$ é o segmento de reta de $(1,2)$ a $(4,6)$, é:",
+    "alternativas": {
+      "a": "$55$",
+      "b": "$45$",
+      "c": "$60$",
+      "d": "$50$",
+      "e": "$66$"
+    },
+    "gabarito": "a",
+    "resolucao": "Parametrize por $\\mathbf{r}(t) = (1+3t,\\; 2+4t)$, $0\\le t\\le 1$, de modo que $|\\mathbf{r}'| = \\sqrt{9+16} = 5$ e $ds = 5\\,dt$. Então $\\int_C xy\\,ds = 5\\int_0^1 (1+3t)(2+4t)\\,dt = 5\\int_0^1\\left(2 + 10t + 12t^2\\right)dt = 5\\left(2 + 5 + 4\\right) = 55$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Green com orientação horária",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $C$ a fronteira do triângulo de vértices $(0,0)$, $(2,0)$ e $(2,2)$, percorrida no sentido horário. O valor de $\\displaystyle\\oint_C y^2\\,dx + 3xy\\,dy$ é:",
+    "alternativas": {
+      "a": "$\\frac{4}{3}$",
+      "b": "$-\\frac{8}{3}$",
+      "c": "$-\\frac{4}{3}$",
+      "d": "$-\\frac{2}{3}$",
+      "e": "$-4$"
+    },
+    "gabarito": "c",
+    "resolucao": "O teorema de Green pressupõe orientação anti-horária; percorrendo no sentido horário, o resultado troca de sinal. No sentido positivo, $\\iint_D (Q_x - P_y)\\,dA = \\iint_D (3y - 2y)\\,dA = \\iint_D y\\,dA$, e com $D = \\{0\\le x\\le 2,\\ 0\\le y\\le x\\}$: $\\int_0^2\\frac{x^2}{2}dx = \\frac{4}{3}$. Como a orientação é horária, a resposta é $-\\frac{4}{3} \\approx -1{,}33$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo III",
+    "topico": "Integral de Linha",
+    "subtopico": "Função potencial com funções trigonométricas",
+    "dificuldade": "medio",
+    "enunciado": "O campo $\\mathbf{F}(x,y) = \\left(2x\\cos y,\\; -x^2\\operatorname{sen}y\\right)$ é conservativo. O trabalho realizado por ele de $(1,0)$ a $\\left(2,\\tfrac{\\pi}{3}\\right)$ é:",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$-1$",
+      "c": "$2$",
+      "d": "$5$",
+      "e": "$1$"
+    },
+    "gabarito": "e",
+    "resolucao": "Verifica-se $P_y = -2x\\operatorname{sen}y = Q_x$. De $f_x = 2x\\cos y$ vem $f = x^2\\cos y + g(y)$, e $f_y = -x^2\\operatorname{sen}y + g'(y)$ coincide com $Q$ para $g$ constante. Logo $f = x^2\\cos y$ e $W = f\\left(2,\\frac{\\pi}{3}\\right) - f(1,0) = 4\\cdot\\frac{1}{2} - 1 = 1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

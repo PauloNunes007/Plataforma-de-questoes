@@ -1,0 +1,382 @@
+[
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação de Bernoulli",
+    "dificuldade": "dificil",
+    "enunciado": "Considere o problema de valor inicial $xy' + y = x^2y^2$, com $y(1) = 1$ e $x > 0$. O valor de $y\\left(\\tfrac{3}{2}\\right)$ é:",
+    "alternativas": {
+      "a": "$\\frac{2}{3}$",
+      "b": "$\\frac{3}{4}$",
+      "c": "$\\frac{4}{3}$",
+      "d": "$\\frac{8}{9}$",
+      "e": "$\\frac{6}{5}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Dividindo por $x$: $y' + \\frac{1}{x}y = xy^2$, uma equação de Bernoulli com $n = 2$. A substituição $v = y^{-1}$ dá $v' = -y^{-2}y'$, e multiplicando a equação por $-y^{-2}$ obtém-se $v' - \\frac{1}{x}v = -x$. O fator integrante é $\\mu = e^{-\\int dx/x} = \\frac{1}{x}$, de modo que $\\left(\\frac{v}{x}\\right)' = -1$, ou seja $\\frac{v}{x} = -x + C$ e $v = Cx - x^2$. De $y(1) = 1$ vem $v(1) = 1$, logo $C = 2$ e $v = 2x - x^2$. Portanto $y = \\frac{1}{2x - x^2}$ e $y\\left(\\frac{3}{2}\\right) = \\frac{1}{3 - \\frac{9}{4}} = \\frac{4}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação exata",
+    "dificuldade": "dificil",
+    "enunciado": "A equação $(2xy - 9x^2)\\,dx + (2y + x^2 + 1)\\,dy = 0$ é exata. Para a solução que satisfaz $y(0) = -3$, o valor de $y(1)$ é:",
+    "alternativas": {
+      "a": "$-1+\\sqrt{10}$",
+      "b": "$-2-\\sqrt{10}$",
+      "c": "$-1-\\sqrt{7}$",
+      "d": "$-1-\\sqrt{10}$",
+      "e": "$-3-\\sqrt{10}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $M = 2xy - 9x^2$ e $N = 2y + x^2 + 1$ tem-se $M_y = 2x = N_x$, logo a equação é exata. Integrando $\\psi_x = M$ em $x$: $\\psi = x^2y - 3x^3 + h(y)$. Derivando em $y$ e comparando com $N$: $x^2 + h'(y) = 2y + x^2 + 1$, donde $h(y) = y^2 + y$. A família de soluções é $x^2y - 3x^3 + y^2 + y = C$. Em $(0, -3)$: $9 - 3 = 6$, logo $C = 6$. Em $x = 1$: $y^2 + 2y - 3 = 6$, ou seja $y^2 + 2y - 9 = 0$, cujas raízes são $-1 \\pm \\sqrt{10}$. Como a solução parte de $y = -3$ e a curva é contínua, fica-se no ramo $y = -1 - \\sqrt{10}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação homogênea de grau zero",
+    "dificuldade": "dificil",
+    "enunciado": "Resolvendo o problema de valor inicial $xy' = y + \\sqrt{x^2 + y^2}$, $y(1) = 0$, com $x > 0$, obtém-se $y(3)$ igual a:",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$5$",
+      "c": "$4$",
+      "d": "$6$",
+      "e": "$8$"
+    },
+    "gabarito": "c",
+    "resolucao": "A equação é homogênea de grau zero: $y' = \\frac{y}{x} + \\sqrt{1 + \\left(\\frac{y}{x}\\right)^2}$. Com $v = \\frac{y}{x}$, isto é $y = vx$ e $y' = v + xv'$, resta $xv' = \\sqrt{1 + v^2}$, que é separável: $\\frac{dv}{\\sqrt{1+v^2}} = \\frac{dx}{x}$. Integrando, $\\operatorname{arcsenh} v = \\ln x + C$. De $y(1) = 0$ vem $v(1) = 0$ e $C = 0$, logo $v = \\operatorname{senh}(\\ln x) = \\frac{1}{2}\\left(x - \\frac{1}{x}\\right)$ e $y = vx = \\frac{x^2 - 1}{2}$. Em $x = 3$: $y = \\frac{9-1}{2} = 4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação linear com coeficiente variável",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y$ a solução de $ty' + 2y = t^2 - t + 1$ com $y(1) = \\tfrac{1}{2}$, $t > 0$. O valor de $y(2)$ é:",
+    "alternativas": {
+      "a": "$\\frac{37}{48}$",
+      "b": "$\\frac{41}{48}$",
+      "c": "$\\frac{43}{48}$",
+      "d": "$\\frac{47}{48}$",
+      "e": "$\\frac{29}{48}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Na forma padrão, $y' + \\frac{2}{t}y = t - 1 + \\frac{1}{t}$, cujo fator integrante é $\\mu = e^{\\int 2\\,dt/t} = t^2$. Assim $(t^2y)' = t^3 - t^2 + t$, e integrando: $t^2y = \\frac{t^4}{4} - \\frac{t^3}{3} + \\frac{t^2}{2} + C$. De $y(1) = \\frac{1}{2}$: $\\frac{1}{2} = \\frac{1}{4} - \\frac{1}{3} + \\frac{1}{2} + C$, logo $C = \\frac{1}{12}$. Então $y(t) = \\frac{t^2}{4} - \\frac{t}{3} + \\frac{1}{2} + \\frac{1}{12t^2}$ e $y(2) = 1 - \\frac{2}{3} + \\frac{1}{2} + \\frac{1}{48} = \\frac{41}{48}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Mistura em tanque com volume variável",
+    "dificuldade": "dificil",
+    "enunciado": "Um tanque contém $100$ L de água pura. A partir de $t = 0$ entra salmoura com $2$ g/L a uma vazão de $5$ L/min, e a mistura (mantida homogênea) sai a $3$ L/min. A quantidade de sal, em gramas, no instante $t = 50$ min é:",
+    "alternativas": {
+      "a": "$400-50\\sqrt{2}$",
+      "b": "$400-100\\sqrt{2}$",
+      "c": "$400-50\\sqrt{3}$",
+      "d": "$300-50\\sqrt{2}$",
+      "e": "$200-25\\sqrt{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O volume cresce a $2$ L/min: $V(t) = 100 + 2t$. Com $Q(t)$ em gramas, $\\frac{dQ}{dt} = 2\\cdot 5 - 3\\cdot\\frac{Q}{100+2t}$, isto é $Q' + \\frac{3Q}{100+2t} = 10$. O fator integrante é $\\mu = e^{\\int 3\\,dt/(100+2t)} = (100+2t)^{3/2}$, e $\\left[(100+2t)^{3/2}Q\\right]' = 10(100+2t)^{3/2}$. Integrando, $(100+2t)^{3/2}Q = 2(100+2t)^{5/2} + C$, ou seja $Q = 2(100+2t) + C(100+2t)^{-3/2}$. De $Q(0) = 0$: $C = -200\\cdot 100^{3/2} = -2\\times 10^5$. Em $t = 50$, $V = 200$ e $Q = 400 - \\frac{2\\times 10^5}{200^{3/2}} = 400 - \\frac{1000}{\\sqrt{200}} = 400 - 50\\sqrt{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação logística",
+    "dificuldade": "medio",
+    "enunciado": "Uma população satisfaz $\\frac{dP}{dt} = 0{,}08\\,P\\left(1 - \\frac{P}{1000}\\right)$, com $P(0) = 100$ e $t$ em anos. O tempo necessário para que a população atinja metade da capacidade de suporte é:",
+    "alternativas": {
+      "a": "$\\frac{25\\ln 3}{2}$",
+      "b": "$\\frac{25\\ln 81}{2}$",
+      "c": "$\\frac{25\\ln 19}{2}$",
+      "d": "$\\frac{25\\ln 9}{4}$",
+      "e": "$\\frac{25\\ln 9}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A solução logística é $P(t) = \\frac{K}{1 + Ae^{-rt}}$ com $K = 1000$, $r = 0{,}08$ e $A = \\frac{K - P_0}{P_0} = 9$. Metade da capacidade significa $P = 500$, o que exige $1 + 9e^{-rt} = 2$, isto é $e^{-0{,}08t} = \\frac{1}{9}$. Logo $0{,}08\\,t = \\ln 9$ e $t = \\frac{\\ln 9}{0{,}08} = \\frac{25\\ln 9}{2} \\approx 27{,}5$ anos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Queda com resistência quadrática",
+    "dificuldade": "dificil",
+    "enunciado": "Um corpo de $10$ kg cai a partir do repouso sujeito a $m\\frac{dv}{dt} = mg - kv^2$, com $g = 10$ m/s$^2$ e $k = 0{,}25$ kg/m. O instante, em segundos, em que a velocidade atinge metade da velocidade limite é:",
+    "alternativas": {
+      "a": "$\\ln 2$",
+      "b": "$2\\ln 3$",
+      "c": "$\\ln 3$",
+      "d": "$\\ln 5$",
+      "e": "$\\frac{\\ln 3}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A velocidade limite anula a aceleração: $v_L = \\sqrt{\\frac{mg}{k}} = \\sqrt{\\frac{100}{0{,}25}} = 20$ m/s. A equação $\\frac{dv}{dt} = g\\left(1 - \\frac{v^2}{v_L^2}\\right)$ é separável, e com $v(0) = 0$ dá $v(t) = v_L\\tanh\\!\\left(\\frac{gt}{v_L}\\right)$. Exigindo $v = \\frac{v_L}{2}$: $\\tanh\\!\\left(\\frac{gt}{v_L}\\right) = \\frac{1}{2}$, logo $\\frac{gt}{v_L} = \\operatorname{arctgh}\\frac{1}{2} = \\frac{1}{2}\\ln 3$. Portanto $t = \\frac{v_L}{2g}\\ln 3 = \\ln 3 \\approx 1{,}10$ s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação separável com logaritmo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y > 0$ a solução de $y\\,y' = \\dfrac{x^2}{1+x^3}$ com $y(0) = 2$ e $x > -1$. O valor de $y(2)$ é:",
+    "alternativas": {
+      "a": "$\\sqrt{4+\\frac{1}{3}\\ln 9}$",
+      "b": "$\\sqrt{4+\\frac{2}{3}\\ln 8}$",
+      "c": "$\\sqrt{2+\\frac{2}{3}\\ln 9}$",
+      "d": "$\\sqrt{4+\\frac{2}{3}\\ln 9}$",
+      "e": "$\\sqrt{4+\\frac{3}{2}\\ln 9}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Separando: $y\\,dy = \\frac{x^2\\,dx}{1+x^3}$. O lado direito integra por substituição $u = 1 + x^3$, $du = 3x^2dx$, dando $\\frac{1}{3}\\ln(1+x^3)$. Assim $\\frac{y^2}{2} = \\frac{1}{3}\\ln(1+x^3) + C$, e de $y(0) = 2$ vem $C = 2$. Logo $y^2 = \\frac{2}{3}\\ln(1+x^3) + 4$ e, em $x = 2$, $y = \\sqrt{4 + \\frac{2}{3}\\ln 9}$ (raiz positiva, pois $y(0) > 0$).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Circuito RL",
+    "dificuldade": "facil",
+    "enunciado": "Num circuito em série com $L = 0{,}5$ H, $R = 10\\ \\Omega$ e fonte constante de $20$ V, a corrente satisfaz $L\\frac{di}{dt} + Ri = E$ com $i(0) = 0$. O instante, em segundos, em que a corrente atinge $1$ A é:",
+    "alternativas": {
+      "a": "$\\frac{\\ln 2}{10}$",
+      "b": "$\\frac{\\ln 2}{40}$",
+      "c": "$\\frac{\\ln 3}{20}$",
+      "d": "$\\frac{\\ln 5}{20}$",
+      "e": "$\\frac{\\ln 2}{20}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A equação é linear: $i' + 20i = 40$, com fator integrante $e^{20t}$, de modo que $\\left(e^{20t}i\\right)' = 40e^{20t}$ e $i = 2 + Ce^{-20t}$. De $i(0) = 0$ vem $C = -2$, logo $i(t) = 2\\left(1 - e^{-20t}\\right)$ — note que a corrente limite é $\\frac{E}{R} = 2$ A. Exigindo $i = 1$: $e^{-20t} = \\frac{1}{2}$, portanto $t = \\frac{\\ln 2}{20} \\approx 0{,}035$ s.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Primeira Ordem",
+    "subtopico": "Equação de Riccati",
+    "dificuldade": "dificil",
+    "enunciado": "A equação de Riccati $y' = 1 + t^2 - 2ty + y^2$ admite a solução particular $y_1(t) = t$. Para a solução com $y(0) = \\tfrac{1}{2}$, o valor de $y(1)$ é:",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$4$",
+      "d": "$2$",
+      "e": "$\\frac{3}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Verifica-se que $y_1 = t$ resolve a equação: $y_1' = 1$ e $1 + t^2 - 2t\\cdot t + t^2 = 1$. Pondo $y = t + \\frac{1}{v}$, tem-se $y' = 1 - \\frac{v'}{v^2}$; substituindo e cancelando os termos de $y_1$, resta $-\\frac{v'}{v^2} = \\frac{1}{v^2}$, ou seja $v' = -1$ e $v = C - t$. Logo $y = t + \\frac{1}{C-t}$. De $y(0) = \\frac{1}{2}$ vem $C = 2$, e $y(1) = 1 + \\frac{1}{2-1} = 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Equação de Euler-Cauchy com raiz dupla",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $y$ a solução de $x^2y'' - 3xy' + 4y = 0$, $x > 0$, com $y(1) = 1$ e $y'(1) = 5$. O valor de $y(e)$ é:",
+    "alternativas": {
+      "a": "$3e^2$",
+      "b": "$4e^2$",
+      "c": "$5e^2$",
+      "d": "$2e^2$",
+      "e": "$4e$"
+    },
+    "gabarito": "b",
+    "resolucao": "Procurando soluções da forma $y = x^r$, a equação indicial é $r(r-1) - 3r + 4 = r^2 - 4r + 4 = (r-2)^2 = 0$, com raiz dupla $r = 2$. A solução geral é então $y = (C_1 + C_2\\ln x)x^2$. De $y(1) = 1$ vem $C_1 = 1$. Derivando, $y' = 2x(C_1 + C_2\\ln x) + C_2x$, e $y'(1) = 2C_1 + C_2 = 5$ dá $C_2 = 3$. Portanto $y = (1 + 3\\ln x)x^2$ e $y(e) = (1+3)e^2 = 4e^2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Variação de parâmetros",
+    "dificuldade": "dificil",
+    "enunciado": "A solução de $y'' - 2y' + y = \\dfrac{e^t}{1+t^2}$ com $y(0) = 0$ e $y'(0) = 0$ assume, em $t = 1$, o valor:",
+    "alternativas": {
+      "a": "$e\\left(\\frac{\\pi}{4}+\\frac{\\ln 2}{2}\\right)$",
+      "b": "$e\\left(\\frac{\\pi}{4}-\\frac{\\ln 2}{2}\\right)$",
+      "c": "$e\\left(\\frac{\\pi}{2}-\\frac{\\ln 2}{2}\\right)$",
+      "d": "$e\\left(\\frac{\\pi}{4}-\\ln 2\\right)$",
+      "e": "$e\\left(\\frac{\\pi}{8}-\\frac{\\ln 2}{2}\\right)$"
+    },
+    "gabarito": "b",
+    "resolucao": "A homogênea tem raiz dupla $r = 1$, logo $y_1 = e^t$ e $y_2 = te^t$, com wronskiano $W = e^{2t}$. Por variação de parâmetros, $y_p = -y_1\\int\\frac{y_2g}{W} + y_2\\int\\frac{y_1g}{W}$, em que $g = \\frac{e^t}{1+t^2}$. Como $\\frac{y_2g}{W} = \\frac{t}{1+t^2}$ e $\\frac{y_1g}{W} = \\frac{1}{1+t^2}$, resulta $y_p = -e^t\\cdot\\frac{1}{2}\\ln(1+t^2) + te^t\\operatorname{arctg} t$. Essa $y_p$ já satisfaz $y_p(0) = y_p'(0) = 0$, de modo que ela é a solução do PVI. Em $t = 1$: $y(1) = e\\left(\\operatorname{arctg}1 - \\frac{\\ln 2}{2}\\right) = e\\left(\\frac{\\pi}{4} - \\frac{\\ln 2}{2}\\right)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Raízes complexas em problema de valor inicial",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y$ a solução de $y'' + 2y' + 5y = 0$ com $y(0) = 1$ e $y'(0) = 1$. O valor de $y\\left(\\tfrac{\\pi}{4}\\right)$ é:",
+    "alternativas": {
+      "a": "$e^{-\\pi/4}$",
+      "b": "$e^{-\\pi/2}$",
+      "c": "$2e^{-\\pi/4}$",
+      "d": "$\\frac{e^{-\\pi/4}}{2}$",
+      "e": "$e^{-\\pi/8}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A equação característica $r^2 + 2r + 5 = 0$ tem raízes $r = -1 \\pm 2i$, logo $y = e^{-t}\\left(A\\cos 2t + B\\operatorname{sen}2t\\right)$. De $y(0) = 1$ vem $A = 1$. Derivando, $y' = -y + e^{-t}\\left(-2A\\operatorname{sen}2t + 2B\\cos 2t\\right)$, e em $t = 0$: $-1 + 2B = 1$, logo $B = 1$. Em $t = \\frac{\\pi}{4}$ tem-se $\\cos\\frac{\\pi}{2} = 0$ e $\\operatorname{sen}\\frac{\\pi}{2} = 1$, portanto $y = e^{-\\pi/4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Quase-período da vibração amortecida",
+    "dificuldade": "medio",
+    "enunciado": "O deslocamento de um sistema massa-mola amortecido satisfaz $u'' + u' + 2{,}5\\,u = 0$. O quase-período do movimento é:",
+    "alternativas": {
+      "a": "$\\frac{2\\pi}{3}$",
+      "b": "$\\frac{3\\pi}{4}$",
+      "c": "$\\frac{4\\pi}{5}$",
+      "d": "$\\frac{4\\pi}{3}$",
+      "e": "$\\frac{8\\pi}{3}$"
+    },
+    "gabarito": "d",
+    "resolucao": "As raízes de $r^2 + r + 2{,}5 = 0$ são $r = \\frac{-1 \\pm \\sqrt{1 - 10}}{2} = -\\frac{1}{2} \\pm \\frac{3}{2}i$, um caso subamortecido. A quase-frequência é $\\mu = \\frac{3}{2}$, e o quase-período — intervalo entre dois máximos consecutivos — vale $T_\\mu = \\frac{2\\pi}{\\mu} = \\frac{4\\pi}{3} \\approx 4{,}19$. O fator $e^{-t/2}$ faz a amplitude decair, mas não altera o espaçamento entre os zeros.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Amplitude do regime permanente",
+    "dificuldade": "dificil",
+    "enunciado": "Um sistema forçado obedece a $u'' + 2u' + 5u = 10\\cos t$. A amplitude da resposta de regime permanente é:",
+    "alternativas": {
+      "a": "$\\frac{\\sqrt{5}}{2}$",
+      "b": "$2\\sqrt{5}$",
+      "c": "$\\sqrt{10}$",
+      "d": "$\\frac{\\sqrt{5}}{4}$",
+      "e": "$\\sqrt{5}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Procurando $u_p = A\\cos t + B\\operatorname{sen}t$ e substituindo, os coeficientes satisfazem $(5-1)A + 2B = 10$ e $(5-1)B - 2A = 0$, isto é $4A + 2B = 10$ e $4B = 2A$. Daí $A = 2B$ e $8B + 2B = 10$, ou seja $B = 1$ e $A = 2$. A amplitude é $R = \\sqrt{A^2+B^2} = \\sqrt{5}$ — o mesmo que dá a fórmula $R = \\frac{F_0}{\\sqrt{(k - m\\omega^2)^2 + \\gamma^2\\omega^2}} = \\frac{10}{\\sqrt{16+4}}$. A parte homogênea decai como $e^{-t}$ e não aparece no regime permanente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Coeficientes a determinar com ressonância simples",
+    "dificuldade": "medio",
+    "enunciado": "Seja $y$ a solução de $y'' - 3y' + 2y = e^{t}$ com $y(0) = 0$ e $y'(0) = 0$. O valor de $y(1)$ é:",
+    "alternativas": {
+      "a": "$e^2-e$",
+      "b": "$e^2-3e$",
+      "c": "$e^2-2e$",
+      "d": "$2e^2-2e$",
+      "e": "$e^2-2$"
+    },
+    "gabarito": "c",
+    "resolucao": "As raízes características são $r = 1$ e $r = 2$, logo $y_h = C_1e^t + C_2e^{2t}$. Como $e^t$ já resolve a homogênea, tenta-se $y_p = Ate^t$: substituindo, $A(2+t)e^t - 3A(1+t)e^t + 2Ate^t = -Ae^t$, que deve valer $e^t$, donde $A = -1$ e $y_p = -te^t$. Assim $y = C_1e^t + C_2e^{2t} - te^t$. De $y(0) = 0$: $C_1 + C_2 = 0$; de $y'(0) = 0$: $C_1 + 2C_2 - 1 = 0$. Resolvendo, $C_2 = 1$ e $C_1 = -1$. Em $t = 1$: $y = -e + e^2 - e = e^2 - 2e$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Fórmula de Abel para o wronskiano",
+    "dificuldade": "dificil",
+    "enunciado": "Sejam $y_1$ e $y_2$ soluções de $t^2y'' - t(t+2)y' + (t+2)y = 0$ em $t > 0$, com wronskiano $W(1) = 1$. O valor de $W(2)$ é:",
+    "alternativas": {
+      "a": "$4e$",
+      "b": "$2e$",
+      "c": "$4e^2$",
+      "d": "$8e$",
+      "e": "$\\frac{4}{e}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Na forma padrão, $y'' - \\frac{t+2}{t}y' + \\frac{t+2}{t^2}y = 0$, isto é $p(t) = -\\frac{t+2}{t} = -1 - \\frac{2}{t}$. A fórmula de Abel dá $W(t) = C\\exp\\left(-\\int p\\,dt\\right) = C\\exp\\left(t + 2\\ln t\\right) = Ct^2e^t$. De $W(1) = Ce = 1$ vem $C = \\frac{1}{e}$, logo $W(t) = t^2e^{t-1}$ e $W(2) = 4e$. Note que não foi preciso conhecer $y_1$ e $y_2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Raízes reais distintas em problema de valor inicial",
+    "dificuldade": "facil",
+    "enunciado": "Seja $y$ a solução de $y'' + 4y' + 3y = 0$ com $y(0) = 2$ e $y'(0) = -4$. O valor de $y(\\ln 2)$ é:",
+    "alternativas": {
+      "a": "$\\frac{3}{8}$",
+      "b": "$\\frac{5}{8}$",
+      "c": "$\\frac{9}{8}$",
+      "d": "$\\frac{7}{8}$",
+      "e": "$\\frac{5}{16}$"
+    },
+    "gabarito": "b",
+    "resolucao": "As raízes de $r^2 + 4r + 3 = 0$ são $r = -1$ e $r = -3$, logo $y = C_1e^{-t} + C_2e^{-3t}$. As condições dão $C_1 + C_2 = 2$ e $-C_1 - 3C_2 = -4$; somando, $-2C_2 = -2$, isto é $C_2 = 1$ e $C_1 = 1$. Em $t = \\ln 2$: $e^{-\\ln 2} = \\frac{1}{2}$ e $e^{-3\\ln 2} = \\frac{1}{8}$, portanto $y = \\frac{1}{2} + \\frac{1}{8} = \\frac{5}{8}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Autovalores de problema de contorno",
+    "dificuldade": "dificil",
+    "enunciado": "Considere $y'' + \\lambda y = 0$ em $[0, 2]$ com $y(0) = 0$ e $y'(2) = 0$. O segundo menor autovalor positivo é:",
+    "alternativas": {
+      "a": "$\\frac{\\pi^2}{16}$",
+      "b": "$\\frac{9\\pi^2}{4}$",
+      "c": "$\\frac{25\\pi^2}{16}$",
+      "d": "$\\frac{9\\pi^2}{8}$",
+      "e": "$\\frac{9\\pi^2}{16}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Para $\\lambda > 0$, escreva $\\lambda = k^2$: a solução com $y(0) = 0$ é $y = C\\operatorname{sen}(kt)$. Então $y'(2) = Ck\\cos(2k) = 0$ exige $\\cos(2k) = 0$, isto é $2k = \\frac{(2n-1)\\pi}{2}$, ou $k_n = \\frac{(2n-1)\\pi}{4}$. Os autovalores são $\\lambda_n = \\frac{(2n-1)^2\\pi^2}{16}$: o menor é $\\frac{\\pi^2}{16}$ e o segundo é $\\frac{9\\pi^2}{16} \\approx 5{,}55$. (Para $\\lambda \\le 0$ só existe a solução trivial.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Equações Diferenciais de Segunda Ordem",
+    "subtopico": "Redução de ordem em equação de Euler",
+    "dificuldade": "medio",
+    "enunciado": "A equação $t^2y'' + 2ty' - 2y = 0$, $t > 0$, admite a solução $y_1(t) = t$. Para a solução com $y(1) = 1$ e $y'(1) = 4$, o valor de $y(2)$ é:",
+    "alternativas": {
+      "a": "$\\frac{15}{4}$",
+      "b": "$\\frac{17}{4}$",
+      "c": "$\\frac{13}{4}$",
+      "d": "$\\frac{15}{8}$",
+      "e": "$\\frac{7}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Trata-se de uma equação de Euler: com $y = t^r$, $r(r-1) + 2r - 2 = r^2 + r - 2 = (r+2)(r-1) = 0$, isto é $r = 1$ (a solução dada) e $r = -2$ — o mesmo $y_2 = t^{-2}$ que a redução de ordem produz. A solução geral é $y = C_1t + C_2t^{-2}$, com $y' = C_1 - 2C_2t^{-3}$. As condições dão $C_1 + C_2 = 1$ e $C_1 - 2C_2 = 4$; subtraindo, $3C_2 = -3$, logo $C_2 = -1$ e $C_1 = 2$. Em $t = 2$: $y = 4 - \\frac{1}{4} = \\frac{15}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

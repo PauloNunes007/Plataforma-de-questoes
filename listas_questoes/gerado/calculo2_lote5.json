@@ -1,0 +1,762 @@
+[
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Curvatura de gráfico de função",
+    "dificuldade": "medio",
+    "enunciado": "A curvatura da parábola $y = x^2$ no ponto $(1, 1)$ vale:",
+    "alternativas": {
+      "a": "$\\frac{\\sqrt{5}}{25}$",
+      "b": "$\\frac{2\\sqrt{5}}{5}$",
+      "c": "$\\frac{4\\sqrt{5}}{25}$",
+      "d": "$\\frac{2\\sqrt{5}}{25}$",
+      "e": "$\\frac{3\\sqrt{5}}{25}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Para $y = f(x)$ vale $\\kappa = \\dfrac{|f''|}{\\left(1 + (f')^2\\right)^{3/2}}$. Aqui $f' = 2x$ e $f'' = 2$, de modo que em $x = 1$: $\\kappa = \\frac{2}{(1+4)^{3/2}} = \\frac{2}{5\\sqrt{5}}$. Racionalizando, $\\kappa = \\frac{2\\sqrt{5}}{25} \\approx 0{,}179$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Curvatura de curva no espaço",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $\\mathbf{r}(t) = (t,\\, t^2,\\, t^3)$. A curvatura da curva no ponto correspondente a $t = 1$ é:",
+    "alternativas": {
+      "a": "$\\frac{\\sqrt{266}}{49}$",
+      "b": "$\\frac{\\sqrt{19}}{98}$",
+      "c": "$\\frac{\\sqrt{266}}{196}$",
+      "d": "$\\frac{\\sqrt{266}}{98}$",
+      "e": "$\\frac{2\\sqrt{19}}{49}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Use $\\kappa = \\dfrac{|\\mathbf{r}' \\times \\mathbf{r}''|}{|\\mathbf{r}'|^3}$. Em $t = 1$: $\\mathbf{r}' = (1,2,3)$ e $\\mathbf{r}'' = (0,2,6)$, logo $\\mathbf{r}' \\times \\mathbf{r}'' = (12-6,\\; -6,\\; 2) = (6,-6,2)$, cuja norma é $\\sqrt{76} = 2\\sqrt{19}$. Como $|\\mathbf{r}'| = \\sqrt{14}$, resulta $\\kappa = \\frac{2\\sqrt{19}}{14\\sqrt{14}} = \\frac{\\sqrt{19}}{7\\sqrt{14}} = \\frac{\\sqrt{266}}{98} \\approx 0{,}166$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Componente normal da aceleração",
+    "dificuldade": "medio",
+    "enunciado": "Uma partícula descreve a curva $\\mathbf{r}(t) = (t^2,\\, t^3)$. A componente normal da aceleração em $t = 1$ vale:",
+    "alternativas": {
+      "a": "$\\frac{3\\sqrt{13}}{13}$",
+      "b": "$\\frac{12\\sqrt{13}}{13}$",
+      "c": "$\\frac{6\\sqrt{13}}{39}$",
+      "d": "$\\frac{5\\sqrt{13}}{13}$",
+      "e": "$\\frac{6\\sqrt{13}}{13}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A decomposição da aceleração dá $a_N = \\dfrac{|\\mathbf{r}' \\times \\mathbf{r}''|}{|\\mathbf{r}'|}$. Em $t = 1$: $\\mathbf{r}' = (2,3)$ e $\\mathbf{r}'' = (2,6)$; o produto vetorial (componente $z$) vale $2\\cdot 6 - 3\\cdot 2 = 6$, e $|\\mathbf{r}'| = \\sqrt{13}$. Logo $a_N = \\frac{6}{\\sqrt{13}} = \\frac{6\\sqrt{13}}{13} \\approx 1{,}66$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Torção de curva no espaço",
+    "dificuldade": "dificil",
+    "enunciado": "Para a curva $\\mathbf{r}(t) = \\left(t,\\, \\tfrac{t^2}{2},\\, \\tfrac{t^3}{3}\\right)$, a torção em $t = 1$ é:",
+    "alternativas": {
+      "a": "$\\frac{1}{6}$",
+      "b": "$\\frac{2}{3}$",
+      "c": "$\\frac{1}{2}$",
+      "d": "$\\frac{1}{9}$",
+      "e": "$\\frac{1}{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A torção é $\\tau = \\dfrac{(\\mathbf{r}' \\times \\mathbf{r}'')\\cdot\\mathbf{r}'''}{|\\mathbf{r}' \\times \\mathbf{r}''|^2}$. Aqui $\\mathbf{r}' = (1,t,t^2)$, $\\mathbf{r}'' = (0,1,2t)$ e $\\mathbf{r}''' = (0,0,2)$. O produto vetorial é $\\mathbf{r}' \\times \\mathbf{r}'' = (t^2,\\, -2t,\\, 1)$, cujo produto escalar com $\\mathbf{r}'''$ vale $2$, e cuja norma ao quadrado é $t^4 + 4t^2 + 1$. Em $t = 1$: $\\tau = \\frac{2}{6} = \\frac{1}{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Raio do círculo osculador",
+    "dificuldade": "medio",
+    "enunciado": "O raio do círculo osculador da curva $y = \\ln x$ no ponto $(1, 0)$ é:",
+    "alternativas": {
+      "a": "$\\sqrt{2}$",
+      "b": "$4\\sqrt{2}$",
+      "c": "$2\\sqrt{3}$",
+      "d": "$\\frac{\\sqrt{2}}{2}$",
+      "e": "$2\\sqrt{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "O raio de curvatura é $\\rho = \\frac{1}{\\kappa}$, com $\\kappa = \\frac{|y''|}{\\left(1+(y')^2\\right)^{3/2}}$. Como $y' = \\frac{1}{x}$ e $y'' = -\\frac{1}{x^2}$, em $x = 1$ tem-se $y' = 1$ e $|y''| = 1$, logo $\\kappa = \\frac{1}{2^{3/2}} = \\frac{1}{2\\sqrt{2}}$ e $\\rho = 2\\sqrt{2} \\approx 2{,}83$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Comprimento de arco de hélice cônica",
+    "dificuldade": "facil",
+    "enunciado": "O comprimento do arco da curva $\\mathbf{r}(t) = \\left(e^{t}\\cos t,\\; e^{t}\\operatorname{sen}t,\\; e^{t}\\right)$ para $0 \\le t \\le \\ln 2$ é:",
+    "alternativas": {
+      "a": "$2\\sqrt{3}$",
+      "b": "$\\sqrt{3}$",
+      "c": "$\\sqrt{6}$",
+      "d": "$3\\sqrt{2}$",
+      "e": "$\\frac{\\sqrt{3}}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Derivando, $\\mathbf{r}'(t) = \\left(e^t(\\cos t - \\operatorname{sen}t),\\; e^t(\\operatorname{sen}t + \\cos t),\\; e^t\\right)$. Somando os quadrados e usando $(\\cos t - \\operatorname{sen}t)^2 + (\\operatorname{sen}t+\\cos t)^2 = 2$, obtém-se $|\\mathbf{r}'| = e^t\\sqrt{3}$. Assim $L = \\int_0^{\\ln 2} \\sqrt{3}\\,e^t\\,dt = \\sqrt{3}\\left(e^{\\ln 2} - 1\\right) = \\sqrt{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Reparametrização pelo comprimento de arco",
+    "dificuldade": "dificil",
+    "enunciado": "Considere $\\mathbf{r}(t) = \\left(2t,\\, t^2,\\, \\tfrac{t^3}{3}\\right)$, $t \\ge 0$. A distância da origem ao ponto da curva situado a $15$ unidades de comprimento de arco do ponto $\\mathbf{r}(0)$ é:",
+    "alternativas": {
+      "a": "$3\\sqrt{11}$",
+      "b": "$2\\sqrt{22}$",
+      "c": "$3\\sqrt{22}$",
+      "d": "$3\\sqrt{33}$",
+      "e": "$9\\sqrt{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Tem-se $\\mathbf{r}'(t) = (2,\\, 2t,\\, t^2)$, e $|\\mathbf{r}'|^2 = 4 + 4t^2 + t^4 = (t^2+2)^2$, de modo que $|\\mathbf{r}'| = t^2 + 2$ — o integrando é um quadrado perfeito. Então $s(t) = \\int_0^t (u^2+2)\\,du = \\frac{t^3}{3} + 2t$. Resolvendo $\\frac{t^3}{3} + 2t = 15$, isto é $t^3 + 6t = 45$, vem $t = 3$. O ponto é $\\mathbf{r}(3) = (6, 9, 9)$, cuja distância à origem é $\\sqrt{36+81+81} = \\sqrt{198} = 3\\sqrt{22} \\approx 14{,}07$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Movimento a partir da aceleração",
+    "dificuldade": "medio",
+    "enunciado": "Uma partícula tem aceleração $\\mathbf{a}(t) = (6t,\\, 0,\\, -2)$, com $\\mathbf{v}(0) = (0,1,2)$ e $\\mathbf{r}(0) = (1,0,0)$. A rapidez da partícula em $t = 1$ é:",
+    "alternativas": {
+      "a": "$\\sqrt{13}$",
+      "b": "$2\\sqrt{10}$",
+      "c": "$\\sqrt{10}$",
+      "d": "$\\sqrt{5}$",
+      "e": "$\\sqrt{26}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Integrando a aceleração componente a componente e impondo $\\mathbf{v}(0) = (0,1,2)$: $\\mathbf{v}(t) = \\left(3t^2,\\; 1,\\; 2-2t\\right)$. Em $t = 1$, $\\mathbf{v}(1) = (3, 1, 0)$ e a rapidez é $|\\mathbf{v}(1)| = \\sqrt{9+1+0} = \\sqrt{10} \\approx 3{,}16$. (A posição inicial não interfere na rapidez.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Curvatura máxima de uma elipse",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $\\mathbf{r}(t) = (3\\cos t,\\, 2\\operatorname{sen}t)$ descreve uma elipse. O maior valor da curvatura ao longo dela é:",
+    "alternativas": {
+      "a": "$\\frac{2}{9}$",
+      "b": "$\\frac{3}{4}$",
+      "c": "$\\frac{3}{8}$",
+      "d": "$\\frac{4}{9}$",
+      "e": "$\\frac{2}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $\\mathbf{r}' = (-3\\operatorname{sen}t,\\, 2\\cos t)$ e $\\mathbf{r}'' = (-3\\cos t,\\, -2\\operatorname{sen}t)$, o produto vetorial tem componente $6\\operatorname{sen}^2 t + 6\\cos^2 t = 6$, constante. Logo $\\kappa = \\dfrac{6}{\\left(9\\operatorname{sen}^2t + 4\\cos^2 t\\right)^{3/2}}$, que é máxima onde o denominador é mínimo, isto é onde a rapidez é mínima: $t = 0$ ou $t = \\pi$, os vértices do eixo maior. Aí $|\\mathbf{r}'| = 2$ e $\\kappa_{\\max} = \\frac{6}{8} = \\frac{3}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções Vetoriais e Curvas",
+    "subtopico": "Rapidez mínima",
+    "dificuldade": "facil",
+    "enunciado": "Para a curva $\\mathbf{r}(t) = \\left(t^2 - 2t,\\; t^2 + 2t\\right)$, a menor rapidez atingida pela partícula é:",
+    "alternativas": {
+      "a": "$4\\sqrt{2}$",
+      "b": "$\\sqrt{2}$",
+      "c": "$2\\sqrt{3}$",
+      "d": "$3\\sqrt{2}$",
+      "e": "$2\\sqrt{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Derivando, $\\mathbf{r}'(t) = (2t-2,\\; 2t+2)$, logo $|\\mathbf{r}'|^2 = (2t-2)^2 + (2t+2)^2 = 8t^2 + 8$. Essa expressão é mínima em $t = 0$, onde $|\\mathbf{r}'| = \\sqrt{8} = 2\\sqrt{2} \\approx 2{,}83$. Note que a rapidez nunca se anula: a curva não tem cúspide.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Esfera por completamento de quadrados",
+    "dificuldade": "medio",
+    "enunciado": "A superfície $x^2 + y^2 + z^2 - 4x + 6y - 2z + 5 = 0$ é uma esfera. A distância da origem ao ponto dessa esfera mais próximo dela é:",
+    "alternativas": {
+      "a": "$\\sqrt{14}-2$",
+      "b": "$\\sqrt{14}-3$",
+      "c": "$\\sqrt{11}-3$",
+      "d": "$\\sqrt{17}-3$",
+      "e": "$2\\sqrt{14}-3$"
+    },
+    "gabarito": "b",
+    "resolucao": "Completando quadrados: $(x-2)^2 + (y+3)^2 + (z-1)^2 = -5 + 4 + 9 + 1 = 9$, uma esfera de centro $C = (2,-3,1)$ e raio $3$. Como $|OC| = \\sqrt{4+9+1} = \\sqrt{14} \\approx 3{,}74 > 3$, a origem é exterior à esfera, e a menor distância é $|OC| - r = \\sqrt{14} - 3 \\approx 0{,}74$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Distância entre retas reversas",
+    "dificuldade": "dificil",
+    "enunciado": "As retas $r: (1,0,0) + t(1,2,1)$ e $s: (0,1,0) + u(2,1,-1)$ são reversas. A distância entre elas é:",
+    "alternativas": {
+      "a": "$\\frac{\\sqrt{3}}{3}$",
+      "b": "$\\frac{4\\sqrt{3}}{3}$",
+      "c": "$\\frac{2\\sqrt{3}}{3}$",
+      "d": "$\\frac{2\\sqrt{3}}{9}$",
+      "e": "$\\frac{2\\sqrt{6}}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $\\mathbf{v}_1 = (1,2,1)$ e $\\mathbf{v}_2 = (2,1,-1)$, tem-se $\\mathbf{v}_1 \\times \\mathbf{v}_2 = (-3, 3, -3)$, de norma $3\\sqrt{3}$. O vetor que liga um ponto de cada reta é $\\mathbf{w} = (0,1,0) - (1,0,0) = (-1,1,0)$, e $\\mathbf{w}\\cdot(\\mathbf{v}_1\\times\\mathbf{v}_2) = 3 + 3 + 0 = 6$. Logo $d = \\frac{|\\mathbf{w}\\cdot(\\mathbf{v}_1\\times\\mathbf{v}_2)|}{|\\mathbf{v}_1\\times\\mathbf{v}_2|} = \\frac{6}{3\\sqrt{3}} = \\frac{2}{\\sqrt{3}} = \\frac{2\\sqrt{3}}{3} \\approx 1{,}15$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Superfície de revolução: paraboloide",
+    "dificuldade": "facil",
+    "enunciado": "Girando a parábola $z = 4 - y^2$ do plano $yz$ em torno do eixo $z$, obtém-se uma superfície. A área da região plana limitada pela curva de interseção dessa superfície com o plano $z = 1$ é:",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$4\\pi$",
+      "c": "$9\\pi$",
+      "d": "$3\\pi$",
+      "e": "$\\frac{3\\pi}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Na revolução em torno de $z$, a variável $y$ é substituída pela distância ao eixo, $\\sqrt{x^2+y^2}$: a superfície é $z = 4 - (x^2 + y^2)$, um paraboloide. Em $z = 1$ resulta $x^2 + y^2 = 3$, um círculo de raio $\\sqrt{3}$, cuja região tem área $\\pi\\left(\\sqrt{3}\\right)^2 = 3\\pi \\approx 9{,}42$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Volume do sólido de revolução (toro)",
+    "dificuldade": "dificil",
+    "enunciado": "A elipse $(y-3)^2 + \\dfrac{z^2}{4} = 1$, contida no plano $yz$, gira em torno do eixo $z$ e gera um toro. O volume do sólido limitado por essa superfície é:",
+    "alternativas": {
+      "a": "$6\\pi^2$",
+      "b": "$24\\pi^2$",
+      "c": "$12\\pi^2$",
+      "d": "$18\\pi^2$",
+      "e": "$\\frac{12\\pi^2}{5}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A região que gira é o interior da elipse, de semi-eixos $1$ (em $y$) e $2$ (em $z$), logo de área $A = \\pi\\cdot 1\\cdot 2 = 2\\pi$; seu centroide está a $\\bar{y} = 3$ do eixo de rotação. Pelo teorema de Pappus, $V = 2\\pi\\bar{y}A = 2\\pi\\cdot 3\\cdot 2\\pi = 12\\pi^2 \\approx 118{,}4$. Como $\\bar{y} = 3 > 1$, a região não cruza o eixo e o toro não se autointersecta.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Distância de ponto a reta no espaço",
+    "dificuldade": "medio",
+    "enunciado": "A distância do ponto $P = (1,2,3)$ à reta $(0,1,1) + t(2,-1,2)$ é:",
+    "alternativas": {
+      "a": "$\\frac{\\sqrt{29}}{9}$",
+      "b": "$\\frac{\\sqrt{26}}{3}$",
+      "c": "$\\frac{2\\sqrt{29}}{3}$",
+      "d": "$\\frac{\\sqrt{29}}{3}$",
+      "e": "$\\frac{\\sqrt{29}}{6}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Tome $A = (0,1,1)$ na reta e $\\mathbf{v} = (2,-1,2)$, com $|\\mathbf{v}| = 3$. Então $\\mathbf{w} = P - A = (1,1,2)$ e $\\mathbf{w}\\times\\mathbf{v} = (1\\cdot 2 - 2\\cdot(-1),\\; 2\\cdot 2 - 1\\cdot 2,\\; 1\\cdot(-1) - 1\\cdot 2) = (4, 2, -3)$, de norma $\\sqrt{29}$. Logo $d = \\frac{|\\mathbf{w}\\times\\mathbf{v}|}{|\\mathbf{v}|} = \\frac{\\sqrt{29}}{3} \\approx 1{,}80$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Seção plana de hiperboloide",
+    "dificuldade": "medio",
+    "enunciado": "O plano $z = 1$ corta o hiperboloide de uma folha $\\dfrac{x^2}{4} + \\dfrac{y^2}{9} - z^2 = 1$ segundo uma elipse. A área da região limitada por essa elipse é:",
+    "alternativas": {
+      "a": "$6\\pi$",
+      "b": "$24\\pi$",
+      "c": "$18\\pi$",
+      "d": "$8\\pi$",
+      "e": "$12\\pi$"
+    },
+    "gabarito": "e",
+    "resolucao": "Substituindo $z = 1$: $\\frac{x^2}{4} + \\frac{y^2}{9} = 2$, isto é $\\frac{x^2}{8} + \\frac{y^2}{18} = 1$, uma elipse de semi-eixos $a = 2\\sqrt{2}$ e $b = 3\\sqrt{2}$. Sua área é $\\pi ab = \\pi\\cdot 2\\sqrt{2}\\cdot 3\\sqrt{2} = 12\\pi \\approx 37{,}7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Plano por uma reta, perpendicular a um plano dado",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $\\pi$ o plano que contém a reta $(1,0,2) + t(1,1,-1)$ e é perpendicular ao plano $2x - y + z = 5$. A distância da origem a $\\pi$ é:",
+    "alternativas": {
+      "a": "$2\\sqrt{2}$",
+      "b": "$\\frac{\\sqrt{2}}{2}$",
+      "c": "$\\sqrt{2}$",
+      "d": "$\\sqrt{3}$",
+      "e": "$\\frac{2\\sqrt{3}}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "O plano procurado contém a direção da reta, $\\mathbf{v} = (1,1,-1)$, e — por ser perpendicular ao plano dado — também a direção $\\mathbf{n}_0 = (2,-1,1)$. Assim sua normal é $\\mathbf{n} = \\mathbf{v}\\times\\mathbf{n}_0 = (1\\cdot 1 - (-1)(-1),\\; (-1)\\cdot 2 - 1\\cdot 1,\\; 1\\cdot(-1) - 1\\cdot 2) = (0,-3,-3)$, proporcional a $(0,1,1)$. Passando por $(1,0,2)$: $y + z = 2$. A distância da origem é $\\frac{|0+0-2|}{\\sqrt{2}} = \\sqrt{2} \\approx 1{,}41$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Projeção ortogonal sobre um plano",
+    "dificuldade": "medio",
+    "enunciado": "Seja $P' $ a projeção ortogonal do ponto $P = (2,3,1)$ sobre o plano $x + 2y - z = 4$. A distância de $P'$ à origem é:",
+    "alternativas": {
+      "a": "$\\frac{\\sqrt{34}}{4}$",
+      "b": "$\\frac{\\sqrt{17}}{2}$",
+      "c": "$\\frac{\\sqrt{34}}{2}$",
+      "d": "$\\sqrt{34}$",
+      "e": "$\\frac{\\sqrt{38}}{2}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $\\mathbf{n} = (1,2,-1)$ e $|\\mathbf{n}|^2 = 6$, a projeção é $P' = P - \\frac{\\mathbf{n}\\cdot P - 4}{|\\mathbf{n}|^2}\\,\\mathbf{n}$. Como $\\mathbf{n}\\cdot P = 2 + 6 - 1 = 7$, o fator vale $\\frac{3}{6} = \\frac{1}{2}$ e $P' = (2,3,1) - \\frac{1}{2}(1,2,-1) = \\left(\\frac{3}{2},\\, 2,\\, \\frac{3}{2}\\right)$. Portanto $|OP'| = \\sqrt{\\frac{9}{4} + 4 + \\frac{9}{4}} = \\sqrt{\\frac{17}{2}} = \\frac{\\sqrt{34}}{2} \\approx 2{,}92$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Tetraedro determinado por um plano",
+    "dificuldade": "facil",
+    "enunciado": "O plano $2x + 3y + z = 12$ limita, junto com os planos coordenados, um tetraedro no primeiro octante. O volume desse tetraedro é:",
+    "alternativas": {
+      "a": "$24$",
+      "b": "$96$",
+      "c": "$144$",
+      "d": "$48$",
+      "e": "$36$"
+    },
+    "gabarito": "d",
+    "resolucao": "Os interceptos do plano com os eixos são $x = 6$, $y = 4$ e $z = 12$. O tetraedro tem por base o triângulo retângulo de catetos $6$ e $4$ no plano $xy$, de área $12$, e altura $12$. Logo $V = \\frac{1}{3}\\cdot 12\\cdot 12 = 48$ — equivalentemente, $V = \\frac{abc}{6} = \\frac{6\\cdot 4\\cdot 12}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Superfícies",
+    "subtopico": "Área de superfície de revolução",
+    "dificuldade": "dificil",
+    "enunciado": "A curva $y = \\sqrt{x}$, $0 \\le x \\le 4$, gira em torno do eixo $x$. A área da superfície gerada é:",
+    "alternativas": {
+      "a": "$\\frac{\\pi}{6}(17\\sqrt{17}-1)$",
+      "b": "$\\frac{\\pi}{6}(17\\sqrt{17}+1)$",
+      "c": "$\\frac{\\pi}{3}(17\\sqrt{17}-1)$",
+      "d": "$\\frac{\\pi}{6}(17\\sqrt{17}-8)$",
+      "e": "$\\frac{\\pi}{12}(17\\sqrt{17}-1)$"
+    },
+    "gabarito": "a",
+    "resolucao": "A área é $S = \\int_0^4 2\\pi y\\sqrt{1 + (y')^2}\\,dx$ com $y = \\sqrt{x}$ e $y' = \\frac{1}{2\\sqrt{x}}$. Então $y\\sqrt{1+(y')^2} = \\sqrt{x}\\sqrt{1 + \\frac{1}{4x}} = \\sqrt{x + \\frac{1}{4}}$, e $S = 2\\pi\\int_0^4\\sqrt{x+\\frac14}\\,dx = 2\\pi\\cdot\\frac{2}{3}\\left[\\left(x+\\tfrac14\\right)^{3/2}\\right]_0^4 = \\frac{4\\pi}{3}\\left(\\frac{17\\sqrt{17}}{8} - \\frac{1}{8}\\right) = \\frac{\\pi}{6}\\left(17\\sqrt{17}-1\\right) \\approx 36{,}2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Derivação implícita",
+    "dificuldade": "dificil",
+    "enunciado": "A equação $x^2 + y^2 + z^2 + xyz = 8$ define implicitamente $z = z(x,y)$ numa vizinhança do ponto $(1,1,2)$. O valor de $\\dfrac{\\partial z}{\\partial x}$ nesse ponto é:",
+    "alternativas": {
+      "a": "$-\\frac{5}{4}$",
+      "b": "$-\\frac{4}{5}$",
+      "c": "$-\\frac{4}{3}$",
+      "d": "$\\frac{4}{5}$",
+      "e": "$-\\frac{2}{5}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Seja $F(x,y,z) = x^2+y^2+z^2+xyz - 8$. Pelo teorema da função implícita, $\\frac{\\partial z}{\\partial x} = -\\frac{F_x}{F_z} = -\\frac{2x + yz}{2z + xy}$. No ponto $(1,1,2)$ — que de fato satisfaz a equação, pois $1+1+4+2 = 8$ — vem $F_x = 2 + 2 = 4$ e $F_z = 4 + 1 = 5$, ambos contínuos e com $F_z \\ne 0$. Logo $\\frac{\\partial z}{\\partial x} = -\\frac{4}{5} = -0{,}8$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Diferencial total e propagação de erro",
+    "dificuldade": "medio",
+    "enunciado": "O raio e a altura de um cilindro circular reto medem $5$ cm e $12$ cm, cada um com erro máximo de $0{,}1$ cm. Usando a diferencial total, o erro máximo estimado no volume, em cm$^3$, é:",
+    "alternativas": {
+      "a": "$\\frac{25\\pi}{2}$",
+      "b": "$\\frac{27\\pi}{2}$",
+      "c": "$\\frac{29\\pi}{2}$",
+      "d": "$\\frac{31\\pi}{2}$",
+      "e": "$\\frac{29\\pi}{4}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Com $V = \\pi r^2 h$, tem-se $dV = 2\\pi rh\\,dr + \\pi r^2\\,dh$. Substituindo $r = 5$, $h = 12$ e $|dr| = |dh| = 0{,}1$: $|dV| \\le 2\\pi\\cdot 5\\cdot 12\\cdot 0{,}1 + \\pi\\cdot 25\\cdot 0{,}1 = 12\\pi + 2{,}5\\pi = \\frac{29\\pi}{2} \\approx 45{,}6$ cm$^3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Regra da cadeia ao longo de uma trajetória",
+    "dificuldade": "medio",
+    "enunciado": "A temperatura de uma placa é $T(x,y) = x^2y - y^2$ e uma partícula percorre a trajetória $\\mathbf{r}(t) = \\left(1+2t,\\; t^2+1\\right)$. A taxa de variação da temperatura sentida pela partícula em $t = 1$ é:",
+    "alternativas": {
+      "a": "$34$",
+      "b": "$29$",
+      "c": "$38$",
+      "d": "$24$",
+      "e": "$44$"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela regra da cadeia, $\\frac{dT}{dt} = \\nabla T\\cdot\\mathbf{r}'$. Em $t = 1$ a partícula está em $(3,2)$ e $\\mathbf{r}'(1) = (2,\\, 2)$. Como $\\nabla T = \\left(2xy,\\; x^2 - 2y\\right)$, em $(3,2)$ vale $\\nabla T = (12,\\, 5)$. Logo $\\frac{dT}{dt} = 12\\cdot 2 + 5\\cdot 2 = 34$ unidades de temperatura por unidade de tempo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Gradiente a partir de derivadas direcionais",
+    "dificuldade": "dificil",
+    "enunciado": "Uma função diferenciável $f$ satisfaz, num ponto $P$, $D_{\\mathbf{u}}f(P) = 3\\sqrt{2}$ na direção de $\\mathbf{u} = \\frac{1}{\\sqrt{2}}(1,1)$ e $D_{\\mathbf{w}}f(P) = \\sqrt{2}$ na direção de $\\mathbf{w} = \\frac{1}{\\sqrt{2}}(1,-1)$. A taxa máxima de variação de $f$ em $P$ é:",
+    "alternativas": {
+      "a": "$2\\sqrt{10}$",
+      "b": "$\\sqrt{5}$",
+      "c": "$4\\sqrt{5}$",
+      "d": "$2\\sqrt{3}$",
+      "e": "$2\\sqrt{5}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Escrevendo $\\nabla f(P) = (a,b)$, as derivadas direcionais dão $\\frac{a+b}{\\sqrt{2}} = 3\\sqrt{2}$ e $\\frac{a-b}{\\sqrt{2}} = \\sqrt{2}$, isto é $a+b = 6$ e $a-b = 2$. Logo $a = 4$ e $b = 2$. A taxa máxima de variação é $|\\nabla f(P)| = \\sqrt{16+4} = \\sqrt{20} = 2\\sqrt{5} \\approx 4{,}47$, atingida na direção do próprio gradiente.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Função harmônica",
+    "dificuldade": "medio",
+    "enunciado": "Para que valor de $k$ a função $u(x,y) = x^3 + kxy^2$ é harmônica, isto é, satisfaz $u_{xx} + u_{yy} = 0$?",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$-3$",
+      "c": "$-6$",
+      "d": "$-1$",
+      "e": "$-\\frac{1}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Calculando as derivadas de segunda ordem: $u_x = 3x^2 + ky^2$ e $u_{xx} = 6x$; $u_y = 2kxy$ e $u_{yy} = 2kx$. O laplaciano é $u_{xx} + u_{yy} = 6x + 2kx = (6 + 2k)x$, que só se anula para todo $(x,y)$ se $6 + 2k = 0$, isto é $k = -3$. (A função resultante, $x^3 - 3xy^2$, é a parte real de $z^3$.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Derivada mista de função potência",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x,y) = x^{y}$, com $x > 0$. O valor de $\\dfrac{\\partial^2 f}{\\partial y\\,\\partial x}$ no ponto $(2,1)$ é:",
+    "alternativas": {
+      "a": "$1+2\\ln 2$",
+      "b": "$2+\\ln 2$",
+      "c": "$\\ln 2$",
+      "d": "$1+\\ln 2$",
+      "e": "$1-\\ln 2$"
+    },
+    "gabarito": "d",
+    "resolucao": "Primeiro $f_x = yx^{y-1}$. Derivando essa expressão em relação a $y$ — agora $x$ é constante e aparece a derivada de $x^{y-1} = e^{(y-1)\\ln x}$ — obtém-se $f_{xy} = x^{y-1} + yx^{y-1}\\ln x$. No ponto $(2,1)$: $x^{y-1} = 2^0 = 1$, de modo que $f_{xy} = 1 + \\ln 2 \\approx 1{,}69$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Plano tangente a superfície de nível",
+    "dificuldade": "medio",
+    "enunciado": "Seja $\\pi$ o plano tangente à superfície $x^2 + 2y^2 + 3z^2 = 21$ no ponto $(1,2,2)$. A distância da origem a $\\pi$ é:",
+    "alternativas": {
+      "a": "$\\frac{21\\sqrt{53}}{106}$",
+      "b": "$\\frac{42\\sqrt{53}}{53}$",
+      "c": "$\\frac{21\\sqrt{51}}{51}$",
+      "d": "$\\frac{21\\sqrt{53}}{53}$",
+      "e": "$\\frac{7\\sqrt{53}}{53}$"
+    },
+    "gabarito": "d",
+    "resolucao": "O gradiente de $F = x^2+2y^2+3z^2$ é $\\nabla F = (2x, 4y, 6z)$, que no ponto vale $(2,8,12)$ — uma normal ao plano tangente. O plano é $2(x-1) + 8(y-2) + 12(z-2) = 0$, isto é $x + 4y + 6z = 21$. Sua distância à origem é $\\frac{21}{\\sqrt{1+16+36}} = \\frac{21}{\\sqrt{53}} = \\frac{21\\sqrt{53}}{53} \\approx 2{,}88$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Módulo do gradiente",
+    "dificuldade": "facil",
+    "enunciado": "Para $f(x,y,z) = xyz + z^2$, o módulo do gradiente no ponto $(1,2,3)$ é:",
+    "alternativas": {
+      "a": "$\\sqrt{101}$",
+      "b": "$\\sqrt{109}$",
+      "c": "$\\sqrt{85}$",
+      "d": "$\\sqrt{117}$",
+      "e": "$\\sqrt{94}$"
+    },
+    "gabarito": "b",
+    "resolucao": "As derivadas parciais são $f_x = yz$, $f_y = xz$ e $f_z = xy + 2z$. No ponto $(1,2,3)$: $\\nabla f = (6,\\, 3,\\, 2 + 6) = (6,3,8)$. Portanto $|\\nabla f| = \\sqrt{36+9+64} = \\sqrt{109} \\approx 10{,}44$, que é também a maior taxa de variação de $f$ nesse ponto.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Regra da cadeia em coordenadas polares",
+    "dificuldade": "medio",
+    "enunciado": "Seja $z = f(x,y)$ diferenciável, com $x = r\\cos\\theta$ e $y = r\\operatorname{sen}\\theta$. Sabendo que $f_x = 3$ e $f_y = -1$ no ponto $(x,y) = \\left(1,\\sqrt{3}\\right)$, o valor de $\\dfrac{\\partial z}{\\partial r}$ em $r = 2$, $\\theta = \\dfrac{\\pi}{3}$ é:",
+    "alternativas": {
+      "a": "$\\frac{3-\\sqrt{3}}{2}$",
+      "b": "$\\frac{3+\\sqrt{3}}{2}$",
+      "c": "$\\frac{\\sqrt{3}-3}{2}$",
+      "d": "$\\frac{3-\\sqrt{3}}{4}$",
+      "e": "$3-\\sqrt{3}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Note que $r = 2$ e $\\theta = \\frac{\\pi}{3}$ correspondem exatamente a $(x,y) = \\left(2\\cdot\\frac12,\\; 2\\cdot\\frac{\\sqrt3}{2}\\right) = \\left(1,\\sqrt3\\right)$. Pela regra da cadeia, $\\frac{\\partial z}{\\partial r} = f_x\\frac{\\partial x}{\\partial r} + f_y\\frac{\\partial y}{\\partial r} = f_x\\cos\\theta + f_y\\operatorname{sen}\\theta$. Substituindo: $3\\cdot\\frac{1}{2} + (-1)\\cdot\\frac{\\sqrt3}{2} = \\frac{3-\\sqrt3}{2} \\approx 0{,}63$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Funções de Duas e Três Variáveis",
+    "subtopico": "Taxas relacionadas com duas variáveis",
+    "dificuldade": "dificil",
+    "enunciado": "Num triângulo, dois lados medem $5$ m e $8$ m e crescem a $0{,}1$ m/s e $0{,}2$ m/s, respectivamente, enquanto o ângulo entre eles mede $\\dfrac{\\pi}{6}$ e cresce a $0{,}05$ rad/s. A taxa de variação da área, em m$^2$/s, nesse instante é:",
+    "alternativas": {
+      "a": "$\\frac{9+10\\sqrt{3}}{20}$",
+      "b": "$\\frac{9+5\\sqrt{3}}{20}$",
+      "c": "$\\frac{9+10\\sqrt{3}}{10}$",
+      "d": "$\\frac{9+10\\sqrt{3}}{40}$",
+      "e": "$\\frac{18+5\\sqrt{3}}{20}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $A = \\frac{1}{2}ab\\operatorname{sen}\\theta$, a regra da cadeia dá $\\frac{dA}{dt} = \\frac{1}{2}\\left(\\dot{a}b\\operatorname{sen}\\theta + a\\dot{b}\\operatorname{sen}\\theta + ab\\cos\\theta\\,\\dot{\\theta}\\right)$. Substituindo $a=5$, $b=8$, $\\theta=\\frac{\\pi}{6}$, $\\dot a = 0{,}1$, $\\dot b = 0{,}2$ e $\\dot\\theta = 0{,}05$: $\\frac{dA}{dt} = \\frac{1}{2}\\left(0{,}4 + 0{,}5 + 40\\cdot\\frac{\\sqrt3}{2}\\cdot 0{,}05\\right) = \\frac{1}{2}\\left(0{,}9 + \\sqrt3\\right) = \\frac{9 + 10\\sqrt3}{20} \\approx 1{,}32$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Lagrange com duas restrições",
+    "dificuldade": "dificil",
+    "enunciado": "O valor máximo de $f(x,y,z) = x + 2y + 3z$ sobre a curva definida por $x - y + z = 1$ e $x^2 + y^2 = 1$ é:",
+    "alternativas": {
+      "a": "$3+\\sqrt{26}$",
+      "b": "$3+\\sqrt{29}$",
+      "c": "$3+2\\sqrt{29}$",
+      "d": "$1+\\sqrt{29}$",
+      "e": "$3+\\frac{\\sqrt{29}}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Da primeira restrição, $z = 1 - x + y$, de modo que $f = x + 2y + 3(1-x+y) = -2x + 5y + 3$. Resta maximizar uma função linear sobre o círculo $x^2+y^2=1$: pela desigualdade de Cauchy-Schwarz (ou por Lagrange, $\\nabla f = \\lambda\\nabla g$), o máximo de $-2x+5y$ é $\\sqrt{(-2)^2+5^2} = \\sqrt{29}$. Logo o máximo é $3 + \\sqrt{29} \\approx 8{,}39$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Reta de mínimos quadrados",
+    "dificuldade": "dificil",
+    "enunciado": "Ajusta-se a reta $y = ax + b$ aos pontos $(0,1)$, $(1,3)$, $(2,4)$ e $(3,6)$ minimizando $S(a,b) = \\sum \\left(y_i - ax_i - b\\right)^2$. O valor de $a$ é:",
+    "alternativas": {
+      "a": "$\\frac{8}{5}$",
+      "b": "$\\frac{7}{5}$",
+      "c": "$\\frac{9}{5}$",
+      "d": "$\\frac{8}{3}$",
+      "e": "$\\frac{11}{10}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Anulando $S_a$ e $S_b$ chega-se às equações normais $a\\sum x_i^2 + b\\sum x_i = \\sum x_iy_i$ e $a\\sum x_i + 4b = \\sum y_i$. Com $\\sum x_i = 6$, $\\sum x_i^2 = 14$, $\\sum y_i = 14$ e $\\sum x_iy_i = 0 + 3 + 8 + 18 = 29$, resolve-se $14a + 6b = 29$ e $6a + 4b = 14$. Eliminando $b$: $a = \\frac{4\\cdot 29 - 6\\cdot 14}{4\\cdot 14 - 36} = \\frac{32}{20} = \\frac{8}{5} = 1{,}6$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Distância mínima a uma superfície",
+    "dificuldade": "medio",
+    "enunciado": "A menor distância da origem à superfície $xyz = 8$, com $x, y, z > 0$, é:",
+    "alternativas": {
+      "a": "$2\\sqrt{2}$",
+      "b": "$3\\sqrt{3}$",
+      "c": "$2\\sqrt{6}$",
+      "d": "$4\\sqrt{2}$",
+      "e": "$2\\sqrt{3}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Minimize $g = x^2+y^2+z^2$ sob $xyz = 8$. Por Lagrange, $2x = \\lambda yz$, $2y = \\lambda xz$ e $2z = \\lambda xy$; multiplicando a primeira por $x$, a segunda por $y$ e a terceira por $z$, os lados direitos ficam todos iguais a $8\\lambda$, donde $x^2 = y^2 = z^2$ e, com as variáveis positivas, $x = y = z$. A restrição dá $x^3 = 8$, isto é $x = 2$, e a distância é $\\sqrt{4+4+4} = 2\\sqrt{3} \\approx 3{,}46$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Extremos em região triangular fechada",
+    "dificuldade": "dificil",
+    "enunciado": "O valor mínimo de $f(x,y) = x^2 + 2y^2 - x$ na região triangular fechada de vértices $(0,0)$, $(2,0)$ e $(0,2)$ é:",
+    "alternativas": {
+      "a": "$-\\frac{1}{2}$",
+      "b": "$\\frac{1}{4}$",
+      "c": "$-\\frac{1}{4}$",
+      "d": "$-\\frac{1}{8}$",
+      "e": "$-\\frac{3}{4}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Os pontos críticos interiores exigem $f_x = 2x - 1 = 0$ e $f_y = 4y = 0$, isto é $\\left(\\frac12, 0\\right)$ — que está na fronteira, não no interior; logo o mínimo ocorre na fronteira. No lado $y = 0$, $f = x^2 - x$, cujo mínimo em $[0,2]$ é $-\\frac14$ em $x = \\frac12$. No lado $x = 0$, $f = 2y^2 \\ge 0$. No lado $x + y = 2$, $f = 3x^2 - 9x + 8$, com mínimo $\\frac{5}{4}$ em $x = \\frac32$. Comparando, o mínimo absoluto é $-\\frac{1}{4}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Teste da hessiana",
+    "dificuldade": "medio",
+    "enunciado": "A função $f(x,y) = x^3 + y^3 - 3xy$ possui um mínimo local. O valor de $f$ nesse ponto é:",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$-3$",
+      "c": "$-2$",
+      "d": "$-1$",
+      "e": "$-\\frac{1}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "De $f_x = 3x^2 - 3y = 0$ e $f_y = 3y^2 - 3x = 0$ vem $y = x^2$ e $x = y^2$, logo $x^4 = x$ e os pontos críticos são $(0,0)$ e $(1,1)$. Com $f_{xx} = 6x$, $f_{yy} = 6y$ e $f_{xy} = -3$, o discriminante é $D = 36xy - 9$: em $(0,0)$, $D = -9 < 0$ (sela); em $(1,1)$, $D = 27 > 0$ com $f_{xx} = 6 > 0$, um mínimo local. O valor é $f(1,1) = 1 + 1 - 3 = -1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Caixa de custo mínimo",
+    "dificuldade": "dificil",
+    "enunciado": "Uma caixa retangular sem tampa deve ter volume $4$ m$^3$. O material da base custa R\\$ $3$ por m$^2$ e o das laterais R\\$ $1$ por m$^2$. O custo mínimo, em reais, é:",
+    "alternativas": {
+      "a": "$6\\sqrt[3]{3}$",
+      "b": "$12\\sqrt[3]{3}$",
+      "c": "$12\\sqrt[3]{9}$",
+      "d": "$18\\sqrt[3]{3}$",
+      "e": "$12\\sqrt[3]{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com base $x \\times y$ e altura $z = \\frac{4}{xy}$, o custo é $C = 3xy + 2(xz + yz) = 3xy + \\frac{8}{y} + \\frac{8}{x}$. As condições $C_x = 3y - \\frac{8}{x^2} = 0$ e $C_y = 3x - \\frac{8}{y^2} = 0$ dão, por simetria, $x = y$ e $3x^3 = 8$, isto é $x = \\frac{2}{\\sqrt[3]{3}}$. Então $C = 3x^2 + \\frac{16}{x} = 4\\sqrt[3]{3} + 8\\sqrt[3]{3} = 12\\sqrt[3]{3} \\approx 17{,}31$ reais.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Lagrange sobre uma elipse",
+    "dificuldade": "medio",
+    "enunciado": "O valor máximo de $f(x,y) = xy$ sobre a elipse $\\dfrac{x^2}{8} + \\dfrac{y^2}{2} = 1$ é:",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$4$",
+      "c": "$1$",
+      "d": "$3$",
+      "e": "$8$"
+    },
+    "gabarito": "a",
+    "resolucao": "Parametrizando a elipse por $x = 2\\sqrt{2}\\cos t$ e $y = \\sqrt{2}\\operatorname{sen}t$, tem-se $xy = 4\\cos t\\operatorname{sen}t = 2\\operatorname{sen}2t$, cujo máximo é $2$. Por Lagrange chega-se ao mesmo: $y = \\lambda\\frac{x}{4}$ e $x = \\lambda y$ levam a $x^2 = 4y^2$, e com a restrição $\\frac{4y^2}{8} + \\frac{y^2}{2} = 1$ resulta $y = 1$ e $x = 2$, ponto em que $xy = 2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Mínimo absoluto de função de quarto grau",
+    "dificuldade": "dificil",
+    "enunciado": "O valor mínimo absoluto de $f(x,y) = x^4 + y^4 - 4xy + 5$ é:",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$1$",
+      "c": "$4$",
+      "d": "$2$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "De $f_x = 4x^3 - 4y = 0$ e $f_y = 4y^3 - 4x = 0$ vem $y = x^3$ e $x = y^3$, logo $x^9 = x$ e os pontos críticos são $(0,0)$, $(1,1)$ e $(-1,-1)$. O discriminante $D = 144x^2y^2 - 16$ vale $-16 < 0$ em $(0,0)$ (sela) e $128 > 0$ nos outros dois, com $f_{xx} = 12 > 0$: mínimos locais. Como $f \\to +\\infty$ quando $|(x,y)| \\to \\infty$, o mínimo local é absoluto: $f(1,1) = 1+1-4+5 = 3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Ponto crítico de forma quadrática",
+    "dificuldade": "facil",
+    "enunciado": "O valor mínimo de $f(x,y) = x^2 + y^2 + xy - 3x$ é:",
+    "alternativas": {
+      "a": "$-3$",
+      "b": "$-1$",
+      "c": "$-4$",
+      "d": "$-2$",
+      "e": "$-6$"
+    },
+    "gabarito": "a",
+    "resolucao": "As condições de ponto crítico são $f_x = 2x + y - 3 = 0$ e $f_y = 2y + x = 0$. Da segunda, $x = -2y$; substituindo na primeira, $-4y + y = 3$, logo $y = -1$ e $x = 2$. Como $f_{xx} = 2 > 0$ e $D = f_{xx}f_{yy} - f_{xy}^2 = 4 - 1 = 3 > 0$, trata-se de mínimo (e absoluto, por ser a forma quadrática definida positiva). O valor é $f(2,-1) = 4 + 1 - 2 - 6 = -3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Cálculo II",
+    "topico": "Máximos e Mínimos",
+    "subtopico": "Lagrange com expoentes distintos",
+    "dificuldade": "dificil",
+    "enunciado": "O valor máximo de $f(x,y,z) = x^2y^3z$ com $x + y + z = 12$ e $x, y, z > 0$ é:",
+    "alternativas": {
+      "a": "$6912$",
+      "b": "$3456$",
+      "c": "$5184$",
+      "d": "$8640$",
+      "e": "$6144$"
+    },
+    "gabarito": "a",
+    "resolucao": "Por Lagrange, $2xy^3z = \\lambda$, $3x^2y^2z = \\lambda$ e $x^2y^3 = \\lambda$. Dividindo a primeira pela terceira: $\\frac{2z}{x} = 1$, isto é $x = 2z$; dividindo a segunda pela terceira: $\\frac{3z}{y} = 1$, ou $y = 3z$. A restrição dá $2z + 3z + z = 12$, logo $z = 2$, $x = 4$ e $y = 6$ — os expoentes repartem a soma na proporção $2:3:1$. O máximo é $16\\cdot 216\\cdot 2 = 6912$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]
