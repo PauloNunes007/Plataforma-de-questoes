@@ -9,7 +9,7 @@
 // mouse com tilt 3D, como uma carta segurada na mão.
 import { useRef } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
-import { Crosshair, Crown, Flame, Gauge, Medal, ShieldCheck, Target, X, Zap } from "lucide-react";
+import { Crosshair, Crown, Flame, Medal, Target, X, Zap } from "lucide-react";
 import { RankAvatar } from "@/components/ranking/avatar";
 import {
   LIGA_CARD_BG,
@@ -46,7 +46,7 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
     <AnimatePresence>
       {aberto && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-5 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-5 pt-16 backdrop-blur-md sm:items-center sm:pt-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -55,6 +55,20 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
           }}
           style={{ perspective: 1100 }}
         >
+          {/* Botão de fechar preso à VIEWPORT, não ao cartão — problema real
+              reportado: num celular baixo o cartão passava da tela e o "X"
+              (que ficava colado no canto do cartão) saía junto, impossível
+              de tocar. Fixo aqui ele sempre está acessível, mesmo com o
+              cartão rolando por dentro. */}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="fixed right-4 top-4 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-white/40 bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80"
+          >
+            <X size={18} strokeWidth={2.25} />
+          </button>
+
           {loading || !card ? (
             <motion.div
               className="surface flex w-full max-w-[380px] flex-col items-center gap-3 p-10"
@@ -67,7 +81,7 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
               <div className="h-3 w-24 animate-pulse rounded-full bg-muted" />
             </motion.div>
           ) : (
-            <CartaTcg card={card} onClose={onClose} />
+            <CartaTcg card={card} />
           )}
         </motion.div>
       )}
@@ -75,7 +89,7 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
   );
 }
 
-function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void }) {
+function CartaTcg({ card }: { card: CardUsuario }) {
   const pro = card.pro;
   const raridade = LIGA_RARIDADE[card.liga];
   const numeroCarta = String(Math.max(1, card.nivel)).padStart(3, "0");
@@ -117,17 +131,11 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
       transition={{ type: "spring", stiffness: 280, damping: 22 }}
       style={{ rotateX: springX, rotateY: springY, transformStyle: "preserve-3d" }}
     >
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Fechar"
-        className="absolute -right-2.5 -top-2.5 z-30 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/40 bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
-      >
-        <X size={16} strokeWidth={2.25} />
-      </button>
-
+      {/* teto de altura + rolagem interna — rede de segurança pra telas bem
+          baixas; o "X" de verdade mora fixo na viewport (StudentCardModal),
+          então mesmo se isso rolar o fechar nunca some. */}
       <div
-        className={`relative overflow-hidden rounded-[12px] bg-gradient-to-b p-3.5 ${LIGA_CARD_BG[card.liga]}`}
+        className={`relative max-h-[calc(100dvh-7rem)] overflow-y-auto overflow-x-hidden rounded-[12px] bg-gradient-to-b p-3.5 max-sm:p-2.5 ${LIGA_CARD_BG[card.liga]}`}
       >
         {/* foil prismático do assinante — por cima do holo da liga */}
         {pro && <ProFoil />}
@@ -163,9 +171,9 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
         </div>
 
         {/* janela de arte, com moldura "metálica" como numa carta */}
-        <div className="relative z-10 mx-1 mt-2.5 rounded-lg bg-gradient-to-b from-white/70 via-white/30 to-white/60 p-[3px]">
+        <div className="relative z-10 mx-1 mt-2.5 rounded-lg bg-gradient-to-b from-white/70 via-white/30 to-white/60 p-[3px] max-sm:mt-2">
           <div
-            className={`relative flex items-center justify-center overflow-hidden rounded-[6px] bg-gradient-to-br py-6 ${LIGA_GRADIENTE[card.liga]}`}
+            className={`relative flex items-center justify-center overflow-hidden rounded-[6px] bg-gradient-to-br py-6 max-sm:py-4 ${LIGA_GRADIENTE[card.liga]}`}
           >
             {/* "tipo" da carta = identidade do curso do aluno */}
             {cursoNoCard && (
@@ -185,7 +193,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
             <RankAvatar
               nome={card.username || card.nome}
               fotoUrl={card.fotoUrl}
-              size={112}
+              size={96}
               gradientClassName="from-white/25 to-black/20"
               className={pro ? "ring-4 ring-questly-gold/80" : "ring-4 ring-white/30"}
             />
@@ -201,7 +209,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
         </div>
 
         {/* "ataques": as contribuições reais do aluno */}
-        <div className="relative z-10 mt-3.5 flex flex-col">
+        <div className="relative z-10 mt-3.5 flex flex-col max-sm:mt-2.5">
           <Ataque
             icone={<Zap size={13} strokeWidth={2.25} />}
             corEnergia="bg-questly-gold"
@@ -226,45 +234,23 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
             valor={card.questoesTotal}
             unidade=""
           />
-          {/* Acertabilidade — só aparece com amostra mínima (ver
-              MIN_QUESTOES_ACERTABILIDADE): "100%" em 2 questões não diz
-              nada sobre ninguém. */}
-          {card.pctAcerto != null && (
-            <Ataque
-              icone={<Crosshair size={13} strokeWidth={2.25} />}
-              corEnergia="bg-questly-green"
-              nome="Mira precisa"
-              descricao={`${card.acertosTotal.toLocaleString("pt-BR")} acertos em ${card.questoesTotal.toLocaleString("pt-BR")} questões`}
-              valor={card.pctAcerto}
-              unidade="%"
-            />
-          )}
-
-          {/* Leitura exclusiva do card Pro: o que o assinante já alcançou de
-              auge (melhor liga do histórico) e a eficiência dele em XP por
-              questão. Card grátis não mostra nenhuma das duas. */}
-          {pro && (
-            <>
-              <Ataque
-                icone={<ShieldCheck size={13} strokeWidth={2.25} />}
-                corEnergia="bg-questly-gold"
-                nome={`Auge: Liga ${card.melhorLigaNome}`}
-                descricao="a liga mais alta já alcançada"
-                valor={card.xpTotal}
-                unidade="XP total"
-              />
-              {card.xpMedioPorQuestao != null && (
-                <Ataque
-                  icone={<Gauge size={13} strokeWidth={2.25} />}
-                  corEnergia="bg-questly-blue"
-                  nome="Rendimento"
-                  descricao="XP médio por questão respondida"
-                  valor={card.xpMedioPorQuestao}
-                  unidade="XP/questão"
-                />
-              )}
-            </>
-          )}
+          {/* Mira precisa — SEMPRE 4 "ataques", pro card grátis e pro Pro,
+              com N distintivos ou nenhum: regra de ouro é altura padrão pra
+              todo mundo (pedido explícito do usuário), então essa vaga nunca
+              some — sem amostra mínima (ver MIN_QUESTOES_ACERTABILIDADE),
+              vira um placeholder honesto em vez de sumir e encolher o card. */}
+          <Ataque
+            icone={<Crosshair size={13} strokeWidth={2.25} />}
+            corEnergia="bg-questly-green"
+            nome="Mira precisa"
+            descricao={
+              card.pctAcerto != null
+                ? `${card.acertosTotal.toLocaleString("pt-BR")} acertos em ${card.questoesTotal.toLocaleString("pt-BR")} questões`
+                : "ainda sem amostra suficiente"
+            }
+            valor={card.pctAcerto}
+            unidade={card.pctAcerto != null ? "%" : ""}
+          />
         </div>
 
         {/* distintivos — vagas FIXAS (MAX_DISTINTIVOS_CARD): o card não
@@ -273,7 +259,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
             desenha exatamente essa quantidade de vagas, sempre a mesma
             linha, preenchendo o resto com a moldura "apagada" (ainda não
             escolhida/conquistada) em vez de deixar buraco. */}
-        <div className="relative z-10 mt-3 rounded-xl bg-black/25 p-3">
+        <div className="relative z-10 mt-3 rounded-xl bg-black/25 p-3 max-sm:mt-2 max-sm:p-2.5">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/70">
               Distintivos
@@ -282,15 +268,22 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
               {card.totalDistintivosConquistados}
             </span>
           </div>
-          {pro && (
-            <span
-              title="Assinante Questly Pro"
-              className="mb-2 flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-questly-gold to-amber-300 px-2.5 py-1 text-[10px] font-bold text-[#3a2a05] ring-1 ring-white/50"
-            >
-              <Crown size={11} strokeWidth={2.5} className="fill-current" />
-              Assinante Pro
-            </span>
-          )}
+          {/* Selo Pro — vaga SEMPRE reservada (invisible, não removida) pela
+              mesma regra de ouro dos ataques/distintivos: um card Pro não
+              pode ficar mais alto que um grátis. O "auge" (melhor liga +
+              XP/questão), que antes vinha como 2 ataques extras, virou só o
+              title deste selo (hover no desktop). */}
+          <span
+            title={
+              pro
+                ? `Auge: Liga ${card.melhorLigaNome}${card.xpMedioPorQuestao != null ? ` · ${card.xpMedioPorQuestao.toFixed(1)} XP/questão` : ""}`
+                : undefined
+            }
+            className={`mb-2 flex w-fit max-w-full items-center gap-1.5 truncate rounded-full bg-gradient-to-r from-questly-gold to-amber-300 px-2.5 py-1 text-[10px] font-bold text-[#3a2a05] ring-1 ring-white/50 ${pro ? "" : "invisible"}`}
+          >
+            <Crown size={11} strokeWidth={2.5} className="shrink-0 fill-current" />
+            <span className="truncate">Pro · Auge Liga {card.melhorLigaNome}</span>
+          </span>
           <div className="flex items-center gap-2">
             {Array.from({ length: MAX_DISTINTIVOS_CARD }).map((_, i) => {
               const d = card.distintivos[i];
@@ -312,41 +305,47 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
               );
             })}
           </div>
-          {card.totalDistintivosConquistados === 0 && (
-            <p className="mt-2 text-[10.5px] text-white/70">
-              Ainda sem distintivos — responda questões pra desbloquear os primeiros.
-            </p>
-          )}
+          {/* Reservada sempre (invisible, não removida) — do contrário um
+              aluno recém-chegado (0 distintivos) ganha uma linha A MAIS que
+              alguém com brasões, indo contra a regra de altura padrão. */}
+          <p className={`mt-2 text-[10.5px] text-white/70 ${card.totalDistintivosConquistados === 0 ? "" : "invisible"}`}>
+            Ainda sem distintivos — responda questões pra desbloquear os primeiros.
+          </p>
         </div>
 
-        {/* linha de "fraqueza/resistência" → disciplinas em campanha */}
-        <div className="relative z-10 mt-3 border-t border-white/15 pt-2.5">
+        {/* linha de "fraqueza/resistência" → disciplinas em campanha —
+            altura fixa de 1 linha (nowrap+overflow-hidden): igual pra quem
+            tem 0 ou 4 disciplinas, e nomes longos só cortam em vez de
+            empurrar o card pra baixo. */}
+        <div className="relative z-10 mt-3 border-t border-white/15 pt-2.5 max-sm:mt-2 max-sm:pt-2">
           <div className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.08em] text-white/70">
             Disciplinas em campanha
           </div>
-          {card.disciplinas.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {card.disciplinas.slice(0, MAX_DISCIPLINAS_CARD).map((nome) => (
-                <span
-                  key={nome}
-                  className="rounded-full bg-white/12 px-2.5 py-0.5 text-[10px] font-medium text-white"
-                >
-                  {nome}
-                </span>
-              ))}
-              {card.disciplinas.length > MAX_DISCIPLINAS_CARD && (
-                <span className="rounded-full bg-white/8 px-2.5 py-0.5 text-[10px] font-medium text-white/70">
-                  +{card.disciplinas.length - MAX_DISCIPLINAS_CARD}
-                </span>
-              )}
-            </div>
-          ) : (
-            <p className="text-[10.5px] text-white/70">Nenhuma disciplina cadastrada ainda.</p>
-          )}
+          <div className="flex h-[22px] flex-nowrap items-center gap-1.5 overflow-hidden">
+            {card.disciplinas.length > 0 ? (
+              <>
+                {card.disciplinas.slice(0, MAX_DISCIPLINAS_CARD).map((nome) => (
+                  <span
+                    key={nome}
+                    className="shrink-0 rounded-full bg-white/12 px-2.5 py-0.5 text-[10px] font-medium text-white"
+                  >
+                    {nome}
+                  </span>
+                ))}
+                {card.disciplinas.length > MAX_DISCIPLINAS_CARD && (
+                  <span className="shrink-0 rounded-full bg-white/8 px-2.5 py-0.5 text-[10px] font-medium text-white/70">
+                    +{card.disciplinas.length - MAX_DISCIPLINAS_CARD}
+                  </span>
+                )}
+              </>
+            ) : (
+              <p className="truncate text-[10.5px] text-white/70">Nenhuma disciplina cadastrada ainda.</p>
+            )}
+          </div>
         </div>
 
         {/* rodapé de carta impressa: ilustrador · raridade · numeração */}
-        <div className="relative z-10 mt-3 flex items-center justify-between text-[8.5px] italic text-white/55">
+        <div className="relative z-10 mt-3 flex items-center justify-between text-[8.5px] italic text-white/55 max-sm:mt-2">
           <span>Ilust. Questly</span>
           <span className="tnum not-italic">
             {pro ? "✦" : raridade.simbolo} {numeroCarta}/100 ·{" "}
@@ -371,16 +370,16 @@ function Ataque({
   corEnergia: string;
   nome: string;
   descricao: string;
-  valor: number;
+  /** null = ainda sem dado pra essa métrica (mostra "—", não 0) */
+  valor: number | null;
   unidade: string;
 }) {
-  // O divisor some no último "ataque" via `last:` — quais linhas aparecem
-  // depende do plano e da amostra de acertos, então quem sabe qual é a
-  // última é o CSS, não uma prop calculada em cada chamada.
+  // Exatamente 4 linhas sempre (ver o bloco de "ataques" acima) — o divisor
+  // some na última via `last:`.
   return (
-    <div className="flex items-center gap-2.5 border-b border-white/12 py-2 last:border-b-0">
+    <div className="flex items-center gap-2.5 border-b border-white/12 py-2 last:border-b-0 max-sm:py-1.5">
       <span
-        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white shadow-sm ring-1 ring-white/40 ${corEnergia}`}
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white shadow-sm ring-1 ring-white/40 max-sm:h-5 max-sm:w-5 ${corEnergia}`}
       >
         {icone}
       </span>
@@ -389,7 +388,7 @@ function Ataque({
         <span className="block truncate text-[9.5px] text-white/60">{descricao}</span>
       </span>
       <span className={`tnum shrink-0 font-heading text-lg font-bold text-white ${TEXTO_POP}`}>
-        {valor.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}
+        {valor == null ? "—" : valor.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}
         {unidade && <span className="ml-1 text-[10px] font-semibold text-white/70">{unidade}</span>}
       </span>
     </div>
