@@ -1,0 +1,667 @@
+[
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa de função logística elementar",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{2^{x}}{2^{x}+1}$. Determine $f^{-1}\\left(\\dfrac{1}{3}\\right)$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$-2$",
+      "c": "$-1$",
+      "d": "$2$",
+      "e": "$0$"
+    },
+    "gabarito": "c",
+    "resolucao": "Resolva $f(x)=\\tfrac{1}{3}$ com $t=2^{x}>0$: $\\dfrac{t}{t+1}=\\dfrac{1}{3}$ dá $3t=t+1$, isto é $t=\\tfrac{1}{2}$. Como $2^{x}=2^{-1}$, tem-se $x=-1$. (A função é crescente e tem imagem $\\left(0,1\\right)$, então $\\tfrac{1}{3}$ realmente tem uma única pré-imagem.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Domínio da inversa como imagem da direta",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\sqrt{x-1}+2$, com domínio máximo. Determine o domínio de $f^{-1}$.",
+    "alternativas": {
+      "a": "$\\left[2,+\\infty\\right)$",
+      "b": "$\\left(2,+\\infty\\right)$",
+      "c": "$\\left[1,+\\infty\\right)$",
+      "d": "$\\mathbb{R}$",
+      "e": "$\\left[0,+\\infty\\right)$"
+    },
+    "gabarito": "a",
+    "resolucao": "O domínio da inversa é exatamente a IMAGEM da função direta — essa é a troca de papéis que define $f^{-1}$. O domínio de $f$ é $x\\geq1$; nele, $\\sqrt{x-1}$ percorre $\\left[0,+\\infty\\right)$, e somando $2$ a imagem de $f$ é $\\left[2,+\\infty\\right)$. O extremo $2$ entra porque é atingido em $x=1$. Logo o domínio de $f^{-1}$ é $\\left[2,+\\infty\\right)$ — e não $\\left[1,+\\infty\\right)$, que é o domínio de $f$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Interseção dos gráficos de f e da inversa",
+    "dificuldade": "dificil",
+    "enunciado": "A função $f(x)=x^{2}-4x+6$, restrita a $\\left[2,+\\infty\\right)$, é crescente e portanto invertível. Determine a soma das abscissas dos pontos em que os gráficos de $f$ e $f^{-1}$ se cruzam.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$4$",
+      "c": "$3$",
+      "d": "$5$",
+      "e": "$7$"
+    },
+    "gabarito": "d",
+    "resolucao": "Os gráficos de $f$ e $f^{-1}$ são simétricos em relação à reta $y=x$. Quando $f$ é CRESCENTE, todo cruzamento entre eles está sobre essa reta, de modo que basta resolver $f(x)=x$: $x^{2}-4x+6=x$, isto é $x^{2}-5x+6=0$, com $x=2$ e $x=3$ — ambos no domínio $\\left[2,+\\infty\\right)$. A soma das abscissas é $5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa de quadrática com domínio restrito",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{2}-6x+5$, restrita a $x\\geq3$. Determine a expressão de $f^{-1}(x)$.",
+    "alternativas": {
+      "a": "$3-\\sqrt{x+4}$",
+      "b": "$3+\\sqrt{x-4}$",
+      "c": "$\\sqrt{x+4}-3$",
+      "d": "$3+\\sqrt{x+5}$",
+      "e": "$3+\\sqrt{x+4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Complete o quadrado: $f(x)=(x-3)^{2}-4$. Trocando os papéis, resolva $y=(x-3)^{2}-4$ para $x$: $(x-3)^{2}=y+4$, logo $x-3=\\pm\\sqrt{y+4}$. A restrição $x\\geq3$ obriga $x-3\\geq0$, então fica o sinal POSITIVO: $x=3+\\sqrt{y+4}$. Renomeando a variável, $f^{-1}(x)=3+\\sqrt{x+4}$, cujo domínio $\\left[-4,+\\infty\\right)$ é a imagem de $f$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa de exponencial transladada",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=3+2^{x-1}$. Determine $f^{-1}(11)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$5$",
+      "c": "$4$",
+      "d": "$6$",
+      "e": "$2$"
+    },
+    "gabarito": "c",
+    "resolucao": "Resolva $3+2^{x-1}=11$, isto é $2^{x-1}=8=2^{3}$. Pela injetividade da exponencial, $x-1=3$ e $x=4$. Repare que a translação vertical $+3$ não some: ela precisa ser desfeita ANTES de aplicar o logaritmo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa de função algébrica limitada",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=\\dfrac{x}{\\sqrt{1+x^{2}}}$. Determine $f^{-1}\\left(\\dfrac{3}{5}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{4}{3}$",
+      "b": "$\\dfrac{3}{5}$",
+      "c": "$\\dfrac{5}{4}$",
+      "d": "$\\dfrac{3}{4}$",
+      "e": "$\\dfrac{4}{5}$"
+    },
+    "gabarito": "d",
+    "resolucao": "De $\\dfrac{x}{\\sqrt{1+x^{2}}}=\\dfrac{3}{5}$, com $x$ necessariamente positivo (o sinal de $f$ é o de $x$), eleve ao quadrado: $\\dfrac{x^{2}}{1+x^{2}}=\\dfrac{9}{25}$, isto é $25x^{2}=9+9x^{2}$, ou $16x^{2}=9$. Logo $x=\\tfrac{3}{4}$. (A imagem de $f$ é $\\left(-1,1\\right)$, então $\\tfrac{3}{5}$ de fato é atingido.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Cosseno da soma de dois arcos inversos",
+    "dificuldade": "dificil",
+    "enunciado": "Calcule $\\cos\\left(\\operatorname{arcsen}\\dfrac{3}{5}+\\operatorname{arccos}\\dfrac{5}{13}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{16}{65}$",
+      "b": "$-\\dfrac{33}{65}$",
+      "c": "$-\\dfrac{16}{65}$",
+      "d": "$\\dfrac{56}{65}$",
+      "e": "$-\\dfrac{63}{65}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Chame $\\alpha=\\operatorname{arcsen}\\tfrac{3}{5}$ e $\\beta=\\operatorname{arccos}\\tfrac{5}{13}$; ambos estão no primeiro quadrante, onde todas as razões são positivas. Do triângulo $3$-$4$-$5$: $\\cos\\alpha=\\tfrac{4}{5}$. Do triângulo $5$-$12$-$13$: $\\operatorname{sen}\\beta=\\tfrac{12}{13}$. Então $\\cos(\\alpha+\\beta)=\\cos\\alpha\\cos\\beta-\\operatorname{sen}\\alpha\\operatorname{sen}\\beta=\\tfrac{4}{5}\\cdot\\tfrac{5}{13}-\\tfrac{3}{5}\\cdot\\tfrac{12}{13}=\\tfrac{20-36}{65}=-\\tfrac{16}{65}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Identidade hiperbólica fundamental",
+    "dificuldade": "medio",
+    "enunciado": "Sabendo que $\\cosh x-\\operatorname{senh}x=\\dfrac{1}{3}$, determine $\\cosh x+\\operatorname{senh}x$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$\\dfrac{1}{3}$",
+      "c": "$9$",
+      "d": "$\\dfrac{1}{9}$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Não é preciso achar $x$. A identidade fundamental das hiperbólicas, $\\cosh^{2}x-\\operatorname{senh}^{2}x=1$, fatora como $\\left(\\cosh x-\\operatorname{senh}x\\right)\\left(\\cosh x+\\operatorname{senh}x\\right)=1$: os dois fatores são inversos um do outro. Logo o valor pedido é $\\dfrac{1}{1/3}=3$. (Coerente com as definições: $\\cosh x-\\operatorname{senh}x=e^{-x}$ e $\\cosh x+\\operatorname{senh}x=e^{x}$, de modo que $e^{-x}=\\tfrac{1}{3}$ dá $e^{x}=3$.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa do cosseno hiperbólico",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o único $x>0$ tal que $\\cosh x=2$, onde $\\cosh x=\\dfrac{e^{x}+e^{-x}}{2}$.",
+    "alternativas": {
+      "a": "$\\ln\\left(2+\\sqrt{3}\\right)$",
+      "b": "$\\ln\\left(2-\\sqrt{3}\\right)$",
+      "c": "$\\ln\\left(2+\\sqrt{5}\\right)$",
+      "d": "$\\ln\\left(4+\\sqrt{3}\\right)$",
+      "e": "$\\dfrac{\\ln\\left(2+\\sqrt{3}\\right)}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $t=e^{x}>0$, a equação $\\dfrac{t+t^{-1}}{2}=2$ vira $t^{2}-4t+1=0$, cujas raízes são $t=2\\pm\\sqrt{3}$ — as duas positivas, e uma o inverso da outra. Como $\\cosh$ é par, elas correspondem a $x$ e $-x$; o valor positivo pedido vem de $t=2+\\sqrt{3}>1$, isto é $x=\\ln\\left(2+\\sqrt{3}\\right)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa sem fórmula fechada de polinômio monótono",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x^{5}+x^{3}+x$, que é estritamente crescente em $\\mathbb{R}$. Determine $f^{-1}(42)$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$2$",
+      "c": "$4$",
+      "d": "$1$",
+      "e": "$6$"
+    },
+    "gabarito": "b",
+    "resolucao": "Não há fórmula para a inversa de um polinômio de grau $5$, mas ela existe: a soma $x^{5}+x^{3}+x$ é crescente (cada parcela é), logo $f$ é injetora e sobrejetora sobre $\\mathbb{R}$. Basta então achar $x$ com $f(x)=42$, e o teste dos inteiros pequenos resolve: $f(2)=32+8+2=42$. Portanto $f^{-1}(42)=2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Homográfica que é a própria inversa",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor de $a$ para que $f(x)=\\dfrac{ax+3}{x-2}$ satisfaça $f\\left(f(x)\\right)=x$ para todo $x$ do seu domínio.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$-2$",
+      "c": "$3$",
+      "d": "$-3$",
+      "e": "$1$"
+    },
+    "gabarito": "a",
+    "resolucao": "Uma função que é a própria inversa cumpre $f\\circ f=\\mathrm{id}$. Componha: $f\\left(f(x)\\right)=\\dfrac{a\\cdot\\frac{ax+3}{x-2}+3}{\\frac{ax+3}{x-2}-2}=\\dfrac{\\left(a^{2}+3\\right)x+3a-6}{(a-2)x+7}$. Para isso ser $x$ em todo o domínio, os polinômios $\\left(a^{2}+3\\right)x+3a-6$ e $x\\left[(a-2)x+7\\right]$ têm de coincidir: o termo em $x^{2}$ exige $a=2$, e com esse valor sobra $\\dfrac{7x}{7}=x$, como queríamos. (Em geral, $\\dfrac{ax+b}{cx+d}$ é involutiva exatamente quando $a+d=0$.)",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Ponto do gráfico de uma inversa transladada",
+    "dificuldade": "medio",
+    "enunciado": "Sabe-se que $(3,7)$ pertence ao gráfico da função invertível $f$. Determine a soma das coordenadas do ponto que necessariamente pertence ao gráfico de $g(x)=f^{-1}(x-2)$.",
+    "alternativas": {
+      "a": "$10$",
+      "b": "$8$",
+      "c": "$12$",
+      "d": "$14$",
+      "e": "$5$"
+    },
+    "gabarito": "c",
+    "resolucao": "De $f(3)=7$ segue $f^{-1}(7)=3$ — no gráfico da inversa as coordenadas trocam de papel. Para usar essa informação em $g$, é preciso que o argumento de $f^{-1}$ seja $7$: $x-2=7$, isto é $x=9$. Aí $g(9)=f^{-1}(7)=3$, e o ponto é $(9,3)$, de soma $12$. O deslocamento $-2$ dentro da função empurra o gráfico para a DIREITA, não para a esquerda.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa de soma de identidade com exponencial",
+    "dificuldade": "dificil",
+    "enunciado": "Seja $f(x)=x+e^{x}$, estritamente crescente em $\\mathbb{R}$. Determine $f^{-1}(1+e)$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$2$",
+      "c": "$e$",
+      "d": "$1$",
+      "e": "$e-1$"
+    },
+    "gabarito": "d",
+    "resolucao": "A inversa de $x+e^{x}$ não se escreve com funções elementares, mas o valor pedido sim: procure $x$ com $x+e^{x}=1+e$. A forma do lado direito entrega a resposta — $x=1$ dá $1+e^{1}$ exatamente. Como $f$ é crescente (soma de duas funções crescentes), essa pré-imagem é única, e $f^{-1}(1+e)=1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Compostas de uma função com sua inversa",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=\\dfrac{x+1}{x-3}$, invertível em seu domínio. Calcule $\\left(f^{-1}\\circ f\\right)(5)+\\left(f\\circ f^{-1}\\right)(2)$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$7$",
+      "c": "$2$",
+      "d": "$10$",
+      "e": "$3$"
+    },
+    "gabarito": "b",
+    "resolucao": "Não é preciso calcular $f^{-1}$. Por definição de inversa, $f^{-1}\\left(f(x)\\right)=x$ para todo $x$ do domínio de $f$, e $f\\left(f^{-1}(y)\\right)=y$ para todo $y$ da imagem. Como $5$ está no domínio ($5\\neq3$) e $2$ está na imagem (a imagem é $\\mathbb{R}\\setminus\\{1\\}$), as duas compostas devolvem os próprios argumentos: $5+2=7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Soma de arco-seno com arco-cosseno",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\operatorname{arcsen}\\dfrac{1}{2}+\\operatorname{arccos}\\left(-\\dfrac{1}{2}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\pi}{2}$",
+      "b": "$\\dfrac{2\\pi}{3}$",
+      "c": "$\\dfrac{5\\pi}{6}$",
+      "d": "$\\dfrac{7\\pi}{6}$",
+      "e": "$\\dfrac{\\pi}{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Cada arco inverso devolve um valor no seu intervalo principal. Para $\\operatorname{arcsen}$, o intervalo é $\\left[-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}\\right]$, e o arco com seno $\\tfrac{1}{2}$ ali é $\\tfrac{\\pi}{6}$. Para $\\operatorname{arccos}$, o intervalo é $\\left[0,\\pi\\right]$, e o arco com cosseno $-\\tfrac{1}{2}$ é $\\tfrac{2\\pi}{3}$ (segundo quadrante — não $-\\tfrac{\\pi}{3}$, que tem o mesmo cosseno mas está fora do intervalo principal). A soma é $\\tfrac{\\pi}{6}+\\tfrac{2\\pi}{3}=\\tfrac{5\\pi}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Tangente de um arco-cosseno",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\operatorname{tg}\\left(\\operatorname{arccos}\\dfrac{2}{3}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\sqrt{5}}{3}$",
+      "b": "$\\dfrac{2}{\\sqrt{5}}$",
+      "c": "$\\dfrac{3}{\\sqrt{5}}$",
+      "d": "$\\dfrac{\\sqrt{3}}{2}$",
+      "e": "$\\dfrac{\\sqrt{5}}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Seja $\\theta=\\operatorname{arccos}\\tfrac{2}{3}$, que está em $\\left[0,\\pi\\right]$ e, por ter cosseno positivo, no primeiro quadrante. De $\\operatorname{sen}^{2}\\theta=1-\\tfrac{4}{9}=\\tfrac{5}{9}$ vem $\\operatorname{sen}\\theta=\\tfrac{\\sqrt{5}}{3}$ (positivo). Logo $\\operatorname{tg}\\theta=\\dfrac{\\sqrt{5}/3}{2/3}=\\dfrac{\\sqrt{5}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Função dada por uma composição e inversa pedida",
+    "dificuldade": "dificil",
+    "enunciado": "Uma função $f$ satisfaz $f(2x+1)=3x-4$ para todo $x$ real. Determine $f^{-1}(5)$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$3$",
+      "c": "$9$",
+      "d": "$7$",
+      "e": "$11$"
+    },
+    "gabarito": "d",
+    "resolucao": "Primeiro obtenha $f$ explicitamente: ponha $u=2x+1$, de onde $x=\\dfrac{u-1}{2}$, e substitua: $f(u)=3\\cdot\\dfrac{u-1}{2}-4=\\dfrac{3u-11}{2}$. Agora $f^{-1}(5)$ é o $u$ com $f(u)=5$: $\\dfrac{3u-11}{2}=5$, isto é $3u=21$ e $u=7$. Atalho equivalente: $f(2x+1)=5$ exige $3x-4=5$, ou $x=3$, e o argumento correspondente é $2\\cdot3+1=7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Inversa conhecida e função direta pedida",
+    "dificuldade": "dificil",
+    "enunciado": "Sabe-se que $f^{-1}(x)=\\dfrac{2x+1}{x-3}$. Determine $f(4)$.",
+    "alternativas": {
+      "a": "$\\dfrac{13}{2}$",
+      "b": "$\\dfrac{9}{2}$",
+      "c": "$\\dfrac{13}{4}$",
+      "d": "$\\dfrac{11}{2}$",
+      "e": "$\\dfrac{7}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Calcular $f(4)$ é achar o valor $y$ tal que $f^{-1}(y)=4$ — de novo a troca de papéis. Então $\\dfrac{2y+1}{y-3}=4$, isto é $2y+1=4y-12$, ou $2y=13$ e $y=\\tfrac{13}{2}$. O erro típico é substituir $x=4$ na expressão dada, o que fornece $f^{-1}(4)=9$, e não $f(4)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Maior intervalo simétrico de invertibilidade",
+    "dificuldade": "dificil",
+    "enunciado": "A função $f(x)=x^{3}-3x$ não é injetora em $\\mathbb{R}$. Determine o maior $c>0$ para o qual $f$ é invertível em $\\left[-c,c\\right]$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{3}{2}$",
+      "e": "$1$"
+    },
+    "gabarito": "e",
+    "resolucao": "A função sobe, desce e volta a subir: ela troca de comportamento nos pontos em que $x^{3}-3x$ tem máximo e mínimo locais, que são $x=-1$ e $x=1$ (ali $f$ vale $2$ e $-2$). Num intervalo $\\left[-c,c\\right]$ com $c\\leq1$ a função é monótona decrescente, logo injetora; assim que $c$ passa de $1$, o trecho crescente à direita repete valores já assumidos — por exemplo $f(2)=2=f(-1)$. O maior $c$ é $1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Função Inversa",
+    "subtopico": "Parâmetro a partir de um ponto da inversa",
+    "dificuldade": "medio",
+    "enunciado": "O gráfico de $f^{-1}$ passa pelo ponto $(5,2)$, e sabe-se que $f(x)=ax^{2}+3$ com $x\\geq0$. Determine $a$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4}$",
+      "b": "$\\dfrac{3}{2}$",
+      "c": "$\\dfrac{2}{5}$",
+      "d": "$\\dfrac{1}{2}$",
+      "e": "$\\dfrac{5}{4}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Se $(5,2)$ está no gráfico de $f^{-1}$, então $f^{-1}(5)=2$ e, invertendo, $(2,5)$ está no gráfico de $f$, isto é $f(2)=5$. Substituindo: $4a+3=5$, logo $a=\\tfrac{1}{2}$. Quem usa $f(5)=2$ troca os papéis e chega a $25a+3=2$, um valor negativo que nem seria compatível com a restrição dada.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Duas simetrias que geram periodicidade",
+    "dificuldade": "dificil",
+    "enunciado": "Uma função $f:\\mathbb{R}\\to\\mathbb{R}$ satisfaz $f(2+x)=f(2-x)$ e $f(7+x)=f(7-x)$ para todo $x$ real, e $f(0)=3$. Determine $f(2020)$.",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$7$",
+      "c": "$-3$",
+      "d": "$6$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "Cada identidade diz que o gráfico é simétrico em relação a uma reta vertical: $x=2$ e $x=7$. Duas simetrias de eixos verticais distintos compõem uma TRANSLAÇÃO de amplitude igual ao dobro da distância entre os eixos: $f$ é periódica de período $2(7-2)=10$. Formalmente, $f(x)=f(4-x)=f(4-x+10)$, isto é $f(x+10)=f(x)$. Como $2020=10\\cdot202$, tem-se $f(2020)=f(0)=3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Imagem de função racional ímpar",
+    "dificuldade": "medio",
+    "enunciado": "Determine a imagem da função $f(x)=\\dfrac{x}{x^{2}+1}$.",
+    "alternativas": {
+      "a": "$\\left(-\\dfrac{1}{2},\\dfrac{1}{2}\\right)$",
+      "b": "$\\left[-1,1\\right]$",
+      "c": "$\\left[-\\dfrac{1}{2},\\dfrac{1}{2}\\right]$",
+      "d": "$\\left[0,\\dfrac{1}{2}\\right]$",
+      "e": "$\\left[-\\dfrac{1}{4},\\dfrac{1}{4}\\right]$"
+    },
+    "gabarito": "c",
+    "resolucao": "Procure para quais $y$ a equação $y=\\dfrac{x}{x^{2}+1}$ tem solução. Ela equivale a $yx^{2}-x+y=0$. Se $y=0$, vale $x=0$. Se $y\\neq0$, é uma quadrática em $x$ e precisa de discriminante não negativo: $1-4y^{2}\\geq0$, isto é $-\\tfrac{1}{2}\\leq y\\leq\\tfrac{1}{2}$. Os extremos são atingidos em $x=1$ e $x=-1$, então a imagem é o intervalo FECHADO $\\left[-\\tfrac{1}{2},\\tfrac{1}{2}\\right]$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Período de soma de quartas potências trigonométricas",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o período fundamental de $f(x)=\\operatorname{sen}^{4}x+\\cos^{4}x$.",
+    "alternativas": {
+      "a": "$\\pi$",
+      "b": "$\\dfrac{\\pi}{2}$",
+      "c": "$2\\pi$",
+      "d": "$\\dfrac{\\pi}{4}$",
+      "e": "$\\dfrac{3\\pi}{2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Reescreva usando a identidade fundamental: $\\operatorname{sen}^{4}x+\\cos^{4}x=\\left(\\operatorname{sen}^{2}x+\\cos^{2}x\\right)^{2}-2\\operatorname{sen}^{2}x\\cos^{2}x=1-\\tfrac{1}{2}\\operatorname{sen}^{2}(2x)$. Usando ainda $\\operatorname{sen}^{2}(2x)=\\dfrac{1-\\cos(4x)}{2}$, obtém-se $f(x)=\\dfrac{3+\\cos(4x)}{4}$. O período de $\\cos(4x)$ é $\\dfrac{2\\pi}{4}=\\dfrac{\\pi}{2}$ — bem menor que o $2\\pi$ das funções originais, porque as quartas potências apagam as trocas de sinal.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Valor máximo de um quociente trigonométrico",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor máximo de $f(x)=\\dfrac{\\operatorname{sen}x}{2+\\cos x}$.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{\\sqrt{3}}{3}$",
+      "c": "$\\dfrac{\\sqrt{2}}{2}$",
+      "d": "$\\dfrac{\\sqrt{3}}{2}$",
+      "e": "$\\dfrac{1}{3}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Chame $y=f(x)$ e transforme em uma condição de existência: $y\\left(2+\\cos x\\right)=\\operatorname{sen}x$, isto é $\\operatorname{sen}x-y\\cos x=2y$. O lado esquerdo é da forma $a\\operatorname{sen}x+b\\cos x$, cujo valor absoluto nunca passa de $\\sqrt{1+y^{2}}$. Logo é preciso $\\left|2y\\right|\\leq\\sqrt{1+y^{2}}$, ou $4y^{2}\\leq1+y^{2}$, ou ainda $y^{2}\\leq\\tfrac{1}{3}$. O maior valor possível é $y=\\tfrac{1}{\\sqrt{3}}=\\tfrac{\\sqrt{3}}{3}$, de fato atingido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Centro de simetria de uma homográfica",
+    "dificuldade": "medio",
+    "enunciado": "O gráfico de $f(x)=\\dfrac{2x-1}{x+3}$ é uma hipérbole com centro de simetria no encontro de suas assíntotas. Determine a soma das coordenadas desse centro.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$5$",
+      "c": "$-5$",
+      "d": "$-6$",
+      "e": "$-1$"
+    },
+    "gabarito": "e",
+    "resolucao": "A assíntota vertical está onde o denominador zera: $x=-3$. A horizontal é o limite para $\\left|x\\right|$ grande, que é a razão dos coeficientes de maior grau: $y=2$. Outra forma de ver: $\\dfrac{2x-1}{x+3}=2-\\dfrac{7}{x+3}$, o que exibe o gráfico como a hipérbole $y=-\\dfrac{7}{x}$ transladada $3$ para a esquerda e $2$ para cima. O centro é $(-3,2)$ e a soma pedida é $-1$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Parâmetro que produz exatamente três raízes",
+    "dificuldade": "dificil",
+    "enunciado": "Para quantos valores reais de $k$ a equação $\\left|x^{2}-4x+3\\right|=k$ tem exatamente três soluções reais?",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$3$",
+      "c": "$0$",
+      "d": "$4$",
+      "e": "$1$"
+    },
+    "gabarito": "e",
+    "resolucao": "O gráfico de $\\left|x^{2}-4x+3\\right|$ é a parábola $x^{2}-4x+3$ com a parte negativa refletida para cima, o que cria um \"morro\" entre as raízes $1$ e $3$, de altura igual a $\\left|f(2)\\right|=1$. A reta horizontal $y=k$ corta esse desenho em: $2$ pontos se $k=0$; $4$ pontos se $0<k<1$; $3$ pontos se $k=1$ (ali a reta passa exatamente pelo topo do morro, que conta uma vez, mais os dois ramos externos); e $2$ pontos se $k>1$. Só o valor $k=1$ dá três soluções.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Menor cota superior de uma função limitada",
+    "dificuldade": "medio",
+    "enunciado": "Determine o menor valor de $M$ para o qual $\\left|\\dfrac{3x}{x^{2}+4}\\right|\\leq M$ para todo $x$ real.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}$",
+      "b": "$\\dfrac{1}{4}$",
+      "c": "$\\dfrac{3}{8}$",
+      "d": "$\\dfrac{2}{3}$",
+      "e": "$\\dfrac{3}{4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Como a função é ímpar, basta achar o máximo para $x>0$. Ali vale $\\dfrac{3x}{x^{2}+4}=\\dfrac{3}{x+\\frac{4}{x}}$, e pela desigualdade entre as médias $x+\\dfrac{4}{x}\\geq2\\sqrt{4}=4$, com igualdade em $x=2$. O denominador é mínimo justamente onde o quociente é máximo, que vale $\\tfrac{3}{4}$ — atingido, portanto é o MENOR $M$ que serve.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Função ímpar e periódica",
+    "dificuldade": "dificil",
+    "enunciado": "Uma função ímpar $f:\\mathbb{R}\\to\\mathbb{R}$ é periódica de período $6$, com $f(1)=4$ e $f(2)=-1$. Determine $f(11)+f(16)$.",
+    "alternativas": {
+      "a": "$-3$",
+      "b": "$3$",
+      "c": "$-5$",
+      "d": "$5$",
+      "e": "$-4$"
+    },
+    "gabarito": "a",
+    "resolucao": "Use primeiro a periodicidade para trazer os argumentos para perto de zero, e depois a imparidade. Como $11-12=-1$, vale $f(11)=f(-1)=-f(1)=-4$. Como $16-12=4$ e $4-6=-2$, vale $f(16)=f(-2)=-f(2)=1$. A soma é $-4+1=-3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Parábola determinada por vértice e um ponto",
+    "dificuldade": "medio",
+    "enunciado": "O gráfico de $y=f(x)$ é uma parábola de vértice $(1,-4)$ que passa pelo ponto $(3,0)$. Determine $f(5)$.",
+    "alternativas": {
+      "a": "$8$",
+      "b": "$12$",
+      "c": "$16$",
+      "d": "$20$",
+      "e": "$10$"
+    },
+    "gabarito": "b",
+    "resolucao": "Use a forma canônica $f(x)=a(x-1)^{2}-4$, que já embute o vértice. De $f(3)=0$ vem $4a-4=0$, logo $a=1$ e $f(x)=(x-1)^{2}-4$. Então $f(5)=16-4=12$. Um atalho: $5$ está a $4$ unidades do eixo de simetria, e $3$ está a $2$; como a parábola cresce com o quadrado da distância ao vértice, a altura acima do vértice quadruplica de $4$ para $16$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Mínimo de uma soma de módulos",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor mínimo de $f(x)=\\left|x-1\\right|+\\left|x-4\\right|+\\left|x-6\\right|$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$6$",
+      "c": "$7$",
+      "d": "$5$",
+      "e": "$3$"
+    },
+    "gabarito": "d",
+    "resolucao": "Cada parcela é a distância de $x$ a um dos pontos $1$, $4$ e $6$, então $f(x)$ é a soma das distâncias de $x$ a esses três pontos. O gráfico é poligonal, com quebras exatamente neles, e o mínimo de uma soma de distâncias a um número ÍMPAR de pontos ocorre na MEDIANA — aqui, $x=4$. Ali $f(4)=3+0+2=5$. Um argumento alternativo: $\\left|x-1\\right|+\\left|x-6\\right|\\geq5$ sempre (com igualdade entre $1$ e $6$) e $\\left|x-4\\right|\\geq0$, de modo que $f(x)\\geq5$, valor atingido em $x=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Amplitude, período e deslocamento de uma cossenoide",
+    "dificuldade": "medio",
+    "enunciado": "A função $f(x)=a\\cos(bx)+c$, com $a>0$ e $b>0$, tem valor máximo $7$, valor mínimo $-1$ e período $\\dfrac{2\\pi}{3}$. Determine $a+b+c$.",
+    "alternativas": {
+      "a": "$8$",
+      "b": "$12$",
+      "c": "$10$",
+      "d": "$9$",
+      "e": "$11$"
+    },
+    "gabarito": "c",
+    "resolucao": "O cosseno varia entre $-1$ e $1$, então $f$ varia entre $c-a$ e $c+a$. Da diferença, $2a=7-(-1)=8$, logo $a=4$; da soma, $2c=7+(-1)=6$, logo $c=3$. O período de $\\cos(bx)$ é $\\dfrac{2\\pi}{b}$, e igualando a $\\dfrac{2\\pi}{3}$ vem $b=3$. Portanto $a+b+c=4+3+3=10$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Eixo de simetria após translação do gráfico",
+    "dificuldade": "dificil",
+    "enunciado": "O gráfico de $g(x)=f(x-3)+2$ é simétrico em relação à reta $x=5$. Sabendo que $f$ é uma função quadrática com $f(0)=1$ e $f(3)=4$, determine $f(-2)$.",
+    "alternativas": {
+      "a": "$-7$",
+      "b": "$-11$",
+      "c": "$11$",
+      "d": "$-16$",
+      "e": "$5$"
+    },
+    "gabarito": "b",
+    "resolucao": "A translação horizontal de $3$ unidades leva o eixo de simetria de $f$ para $3$ unidades à direita, e a translação vertical não mexe nele. Se o eixo de $g$ é $x=5$, o de $f$ é $x=2$ — isto é, o vértice de $f$ tem abscissa $2$ e vale $f(x)=a(x-2)^{2}+k$. As duas condições dão $4a+k=1$ e $a+k=4$; subtraindo, $3a=-3$, logo $a=-1$ e $k=5$. Então $f(-2)=-(-4)^{2}+5=-11$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Onde o gráfico coincide com o de seu módulo",
+    "dificuldade": "medio",
+    "enunciado": "Seja $f(x)=x^{2}-3x-4$. Determine o conjunto dos $x$ reais em que $\\left|f(x)\\right|=f(x)$.",
+    "alternativas": {
+      "a": "$\\left(-\\infty,-1\\right]\\cup\\left[4,+\\infty\\right)$",
+      "b": "$\\left[-1,4\\right]$",
+      "c": "$\\left(-\\infty,-1\\right)\\cup\\left(4,+\\infty\\right)$",
+      "d": "$\\left(-\\infty,-4\\right]\\cup\\left[1,+\\infty\\right)$",
+      "e": "$\\mathbb{R}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A igualdade $\\left|u\\right|=u$ vale exatamente quando $u\\geq0$ — nos pontos em que $f$ é negativa, o módulo reflete o gráfico para cima e os dois deixam de coincidir. Basta então resolver $x^{2}-3x-4\\geq0$, isto é $(x-4)(x+1)\\geq0$: uma parábola com concavidade para cima é não negativa FORA das raízes, o que dá $x\\leq-1$ ou $x\\geq4$. Os próprios zeros entram, pois ali $\\left|0\\right|=0$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Parte ímpar de um polinômio",
+    "dificuldade": "dificil",
+    "enunciado": "A função $f(x)=x^{5}+ax^{3}+bx+7$ satisfaz $f(-3)=2$. Determine $f(3)$.",
+    "alternativas": {
+      "a": "$-12$",
+      "b": "$12$",
+      "c": "$2$",
+      "d": "$5$",
+      "e": "$16$"
+    },
+    "gabarito": "b",
+    "resolucao": "Separe a parte ímpar: escreva $f(x)=g(x)+7$ com $g(x)=x^{5}+ax^{3}+bx$, que só tem potências ímpares e portanto satisfaz $g(-x)=-g(x)$. Então $f(3)+f(-3)=g(3)+g(-3)+14=14$, qualquer que sejam $a$ e $b$. Com $f(-3)=2$, resulta $f(3)=14-2=12$. Note que os valores de $a$ e $b$ não são necessários — e nem ficam determinados.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Classes de Funções e seus Gráficos",
+    "subtopico": "Interseções entre módulo e cosseno",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o número de soluções reais da equação $\\left|x\\right|=\\cos x$.",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$3$",
+      "c": "$0$",
+      "d": "$2$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "Os dois gráficos são simétricos em relação ao eixo $y$ (ambas as funções são pares), então basta contar as soluções com $x\\geq0$ e dobrar. Para $x\\geq0$, $\\left|x\\right|=x$ cresce de $0$ a $+\\infty$ enquanto $\\cos x$ decresce de $1$ a $-1$ no primeiro trecho: como $0<1$ em $x=0$ e $1>\\cos 1\\approx0{,}54$ em $x=1$, há exatamente um cruzamento, e depois de $x=1$ a reta já passou de $1$, teto do cosseno, então não há outros. Uma solução positiva e sua simétrica: duas ao todo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]

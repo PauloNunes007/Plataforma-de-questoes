@@ -1,0 +1,952 @@
+[
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Soma de logaritmos de bases potências",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\log_{4}8+\\log_{9}27+\\log_{25}5$.",
+    "alternativas": {
+      "a": "$\\dfrac{7}{2}$",
+      "b": "$\\dfrac{5}{2}$",
+      "c": "$\\dfrac{9}{2}$",
+      "d": "$\\dfrac{11}{4}$",
+      "e": "$\\dfrac{13}{4}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Cada parcela é um logaritmo de potência da mesma base: $\\log_{4}8=\\log_{2^{2}}2^{3}=\\tfrac{3}{2}$, $\\log_{9}27=\\log_{3^{2}}3^{3}=\\tfrac{3}{2}$ e $\\log_{25}5=\\log_{5^{2}}5^{1}=\\tfrac{1}{2}$. Somando, $\\tfrac{3}{2}+\\tfrac{3}{2}+\\tfrac{1}{2}=\\tfrac{7}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Logaritmo de produto com radicais",
+    "dificuldade": "facil",
+    "enunciado": "Calcule $\\log_{2}\\left(\\dfrac{\\sqrt[3]{4}\\cdot 8}{\\sqrt{2}}\\right)$.",
+    "alternativas": {
+      "a": "$\\dfrac{17}{6}$",
+      "b": "$\\dfrac{23}{6}$",
+      "c": "$\\dfrac{19}{6}$",
+      "d": "$\\dfrac{13}{6}$",
+      "e": "$\\dfrac{25}{6}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Escreva tudo como potência de $2$: $\\sqrt[3]{4}=2^{2/3}$, $8=2^{3}$ e $\\sqrt{2}=2^{1/2}$. O argumento vira $2^{2/3+3-1/2}=2^{19/6}$, e o logaritmo na base $2$ devolve o expoente: $\\tfrac{19}{6}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Quantidade de algarismos por logaritmo decimal",
+    "dificuldade": "facil",
+    "enunciado": "Usando $\\log_{10}2=0{,}30103$, determine quantos algarismos tem $2^{100}$ escrito na base decimal.",
+    "alternativas": {
+      "a": "$30$",
+      "b": "$32$",
+      "c": "$29$",
+      "d": "$33$",
+      "e": "$31$"
+    },
+    "gabarito": "e",
+    "resolucao": "O número de algarismos de um inteiro $N$ é $\\lfloor\\log_{10}N\\rfloor+1$. Aqui $\\log_{10}2^{100}=100\\cdot0{,}30103=30{,}103$, cuja parte inteira é $30$. Logo $2^{100}$ tem $30+1=31$ algarismos — repare que o logaritmo entre $30$ e $31$ significa que o número está entre $10^{30}$ e $10^{31}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Produto telescópico de logaritmos",
+    "dificuldade": "medio",
+    "enunciado": "Calcule $\\log_{2}3\\cdot\\log_{3}4\\cdot\\log_{4}5\\cdots\\log_{31}32$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$4$",
+      "c": "$6$",
+      "d": "$15$",
+      "e": "$30$"
+    },
+    "gabarito": "a",
+    "resolucao": "Escreva cada fator pela mudança de base para logaritmo natural: $\\log_{k}(k+1)=\\dfrac{\\ln(k+1)}{\\ln k}$. No produto de $k=2$ até $k=31$ cada numerador cancela o denominador seguinte, sobrando $\\dfrac{\\ln 32}{\\ln 2}=\\log_{2}32=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Mudança de base com logaritmos tabelados",
+    "dificuldade": "medio",
+    "enunciado": "Dados $\\log_{10}2=0{,}301$ e $\\log_{10}3=0{,}477$, calcule $\\log_{6}45$ com duas casas decimais.",
+    "alternativas": {
+      "a": "$2{,}00$",
+      "b": "$2{,}25$",
+      "c": "$1{,}95$",
+      "d": "$2{,}38$",
+      "e": "$2{,}12$"
+    },
+    "gabarito": "e",
+    "resolucao": "Mude para a base $10$: $\\log_{6}45=\\dfrac{\\log_{10}45}{\\log_{10}6}$. No numerador, $45=9\\cdot5=3^{2}\\cdot\\tfrac{10}{2}$, logo $\\log_{10}45=2\\log_{10}3+1-\\log_{10}2=0{,}954+0{,}699=1{,}653$. No denominador, $\\log_{10}6=\\log_{10}2+\\log_{10}3=0{,}778$. A razão dá $2{,}12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Exponencial reduzida a quadrática — produto das raízes",
+    "dificuldade": "medio",
+    "enunciado": "Determine o produto das raízes reais de $4^{x+1}-9\\cdot2^{x}+2=0$.",
+    "alternativas": {
+      "a": "$-1$",
+      "b": "$-3$",
+      "c": "$2$",
+      "d": "$-2$",
+      "e": "$-4$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $t=2^{x}>0$ tem-se $4^{x+1}=4\\cdot(2^{x})^{2}=4t^{2}$, e a equação vira $4t^{2}-9t+2=0$. As raízes são $t=\\dfrac{9\\pm7}{8}$, ou seja $t=2$ e $t=\\tfrac{1}{4}$ — ambas positivas, portanto ambas aceitáveis. Voltando, $2^{x}=2$ dá $x=1$ e $2^{x}=2^{-2}$ dá $x=-2$. O produto pedido é $1\\cdot(-2)=-2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Expoentes polinomiais com bases potências de 3",
+    "dificuldade": "medio",
+    "enunciado": "Determine a soma das raízes reais de $9^{x^{2}-x}=27^{x}$.",
+    "alternativas": {
+      "a": "$\\dfrac{3}{2}$",
+      "b": "$\\dfrac{7}{2}$",
+      "c": "$\\dfrac{1}{2}$",
+      "d": "$\\dfrac{5}{2}$",
+      "e": "$\\dfrac{9}{2}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Reduza as duas potências à base $3$: $3^{2(x^{2}-x)}=3^{3x}$. Como a exponencial é injetora, os expoentes coincidem: $2x^{2}-2x=3x$, isto é $2x^{2}-5x=0$, ou $x(2x-5)=0$. As raízes são $x=0$ e $x=\\tfrac{5}{2}$, cuja soma é $\\tfrac{5}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Equação homogênea em duas bases",
+    "dificuldade": "dificil",
+    "enunciado": "A equação $4^{x}+6^{x}=9^{x}$ tem uma única raiz real. Determine o valor de $\\left(\\dfrac{3}{2}\\right)^{x}$ nessa raiz.",
+    "alternativas": {
+      "a": "$\\dfrac{1+\\sqrt{3}}{2}$",
+      "b": "$\\dfrac{-1+\\sqrt{5}}{2}$",
+      "c": "$\\dfrac{1+\\sqrt{5}}{2}$",
+      "d": "$\\dfrac{3+\\sqrt{5}}{2}$",
+      "e": "$\\dfrac{1+\\sqrt{5}}{4}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Os três termos são homogêneos de grau $x$: divida tudo por $4^{x}$ e use $\\dfrac{6^{x}}{4^{x}}=\\left(\\tfrac{3}{2}\\right)^{x}$ e $\\dfrac{9^{x}}{4^{x}}=\\left(\\tfrac{3}{2}\\right)^{2x}$. Chamando $r=\\left(\\tfrac{3}{2}\\right)^{x}>0$, resta $1+r=r^{2}$, isto é $r^{2}-r-1=0$, cujas raízes são $\\dfrac{1\\pm\\sqrt{5}}{2}$. A raiz negativa é descartada porque $r$ é uma potência de base positiva, sobrando $r=\\dfrac{1+\\sqrt{5}}{2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Bases sem potência comum — logaritmo dos dois lados",
+    "dificuldade": "medio",
+    "enunciado": "Resolva a equação $2^{x}=3^{x-1}$.",
+    "alternativas": {
+      "a": "$\\dfrac{\\ln 2}{\\ln 3-\\ln 2}$",
+      "b": "$\\dfrac{\\ln 6}{\\ln 3-\\ln 2}$",
+      "c": "$\\dfrac{\\ln 3}{\\ln 2-\\ln 3}$",
+      "d": "$\\dfrac{\\ln 3}{\\ln 3-\\ln 2}$",
+      "e": "$\\dfrac{\\ln 3}{\\ln 6}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Não há base comum, então aplique logaritmo natural nos dois lados: $x\\ln 2=(x-1)\\ln 3$. Agrupando os termos em $x$, $x(\\ln 3-\\ln 2)=\\ln 3$, e como $\\ln 3>\\ln 2$ o coeficiente não é nulo: $x=\\dfrac{\\ln 3}{\\ln 3-\\ln 2}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Incógnita na base e no expoente",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o produto das raízes reais de $x^{\\log_{2}x}=8x^{2}$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$8$",
+      "c": "$16$",
+      "d": "$6$",
+      "e": "$4$"
+    },
+    "gabarito": "e",
+    "resolucao": "Tome $\\log_{2}$ dos dois lados, lembrando que $x>0$. À esquerda, $\\log_{2}\\left(x^{\\log_{2}x}\\right)=\\left(\\log_{2}x\\right)^{2}$; à direita, $\\log_{2}(8x^{2})=3+2\\log_{2}x$. Com $u=\\log_{2}x$ isso é $u^{2}-2u-3=0$, ou seja $u=3$ e $u=-1$, de onde $x=8$ e $x=\\tfrac{1}{2}$. O produto é $8\\cdot\\tfrac{1}{2}=4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Parâmetro para raiz única em equação exponencial",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o valor de $k>0$ para que a equação $5^{2x}-5^{x+1}+k=0$ tenha exatamente uma raiz real.",
+    "alternativas": {
+      "a": "$\\dfrac{5}{4}$",
+      "b": "$\\dfrac{25}{2}$",
+      "c": "$\\dfrac{5}{2}$",
+      "d": "$\\dfrac{49}{4}$",
+      "e": "$\\dfrac{25}{4}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com $t=5^{x}>0$ a equação vira $t^{2}-5t+k=0$. Cada raiz positiva em $t$ devolve exatamente um $x$, e com $k>0$ o produto das raízes é positivo e a soma vale $5$: ou as duas são positivas, ou são complexas. Portanto \"uma única raiz real\" exige raiz dupla: $\\Delta=25-4k=0$, isto é $k=\\tfrac{25}{4}$ — e aí $t=\\tfrac{5}{2}>0$, de fato aceitável. Equivalentemente, $k$ é o valor máximo de $5^{x+1}-5^{2x}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Equação exponencial com radical",
+    "dificuldade": "medio",
+    "enunciado": "Resolva a equação $\\sqrt{3^{x}}\\cdot9^{x}=\\dfrac{1}{81}$.",
+    "alternativas": {
+      "a": "$-\\dfrac{8}{5}$",
+      "b": "$-\\dfrac{5}{8}$",
+      "c": "$-\\dfrac{8}{3}$",
+      "d": "$-\\dfrac{4}{5}$",
+      "e": "$-\\dfrac{16}{5}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Passe tudo para a base $3$: $\\sqrt{3^{x}}=3^{x/2}$, $9^{x}=3^{2x}$ e $\\tfrac{1}{81}=3^{-4}$. Somando expoentes à esquerda, $3^{\\frac{x}{2}+2x}=3^{-4}$, ou seja $\\tfrac{5x}{2}=-4$, o que dá $x=-\\tfrac{8}{5}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Potência igual a 1 com base variável",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a soma de todas as raízes reais de $\\left(x^{2}-5x+7\\right)^{x-3}=1$.",
+    "alternativas": {
+      "a": "$3$",
+      "b": "$6$",
+      "c": "$8$",
+      "d": "$5$",
+      "e": "$2$"
+    },
+    "gabarito": "d",
+    "resolucao": "Uma potência vale $1$ em três situações. (i) Base igual a $1$: $x^{2}-5x+7=1$ dá $x^{2}-5x+6=0$, isto é $x=2$ ou $x=3$. (ii) Expoente nulo com base não nula: $x=3$, e a base vale $1\\neq0$ — já contado. (iii) Base $-1$ com expoente par: $x^{2}-5x+8=0$ tem discriminante $-7<0$, não ocorre. Repare ainda que $x^{2}-5x+7$ tem discriminante negativo, logo é sempre positivo e a potência está sempre definida. As raízes são $2$ e $3$, de soma $5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Equação exponencial simétrica",
+    "dificuldade": "medio",
+    "enunciado": "Determine o produto das raízes reais de $2^{x}+2^{-x}=\\dfrac{17}{4}$.",
+    "alternativas": {
+      "a": "$-2$",
+      "b": "$-4$",
+      "c": "$4$",
+      "d": "$-8$",
+      "e": "$-1$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $t=2^{x}>0$, $2^{-x}=\\tfrac{1}{t}$ e a equação vira $t+\\tfrac{1}{t}=\\tfrac{17}{4}$, isto é $4t^{2}-17t+4=0$. As raízes são $t=4$ e $t=\\tfrac{1}{4}$, de onde $x=2$ e $x=-2$ — a simetria era esperada, já que trocar $x$ por $-x$ não altera a equação. O produto é $-4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Soma de logaritmos com raiz estranha",
+    "dificuldade": "medio",
+    "enunciado": "Resolva a equação $\\log_{3}(x+2)+\\log_{3}(x-4)=3$.",
+    "alternativas": {
+      "a": "$-5$",
+      "b": "$5$",
+      "c": "$7$",
+      "d": "$9$",
+      "e": "$35$"
+    },
+    "gabarito": "c",
+    "resolucao": "O domínio exige $x+2>0$ e $x-4>0$, ou seja $x>4$ — anote isso antes de operar. Juntando os logaritmos, $\\log_{3}\\left[(x+2)(x-4)\\right]=3$, logo $(x+2)(x-4)=27$, isto é $x^{2}-2x-35=0$, cujas raízes são $x=7$ e $x=-5$. A segunda viola o domínio (o logaritmo de número negativo não existe) e é descartada: resta $x=7$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Quadrática no logaritmo",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o produto das raízes reais de $\\left(\\log_{2}x\\right)^{2}-\\log_{2}x^{3}+2=0$.",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$8$",
+      "c": "$16$",
+      "d": "$4$",
+      "e": "$12$"
+    },
+    "gabarito": "b",
+    "resolucao": "Como $x>0$, vale $\\log_{2}x^{3}=3\\log_{2}x$. Com $u=\\log_{2}x$ a equação vira $u^{2}-3u+2=0$, de raízes $u=1$ e $u=2$, o que dá $x=2$ e $x=4$. O produto é $8$ — e repare que ele podia ser obtido direto de Girard: $u_{1}+u_{2}=3$, logo $x_{1}x_{2}=2^{u_{1}+u_{2}}=2^{3}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Produto de logaritmos de bases diferentes",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a soma das raízes reais de $\\log_{2}x\\cdot\\log_{4}x=8$.",
+    "alternativas": {
+      "a": "$\\dfrac{255}{16}$",
+      "b": "$\\dfrac{65}{4}$",
+      "c": "$\\dfrac{17}{16}$",
+      "d": "$\\dfrac{257}{16}$",
+      "e": "$\\dfrac{129}{8}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Leve tudo à base $2$: $\\log_{4}x=\\dfrac{\\log_{2}x}{2}$. Com $u=\\log_{2}x$, a equação é $\\dfrac{u^{2}}{2}=8$, isto é $u^{2}=16$ e $u=\\pm4$. O sinal negativo é legítimo (não é o logaritmo de um negativo, é um logaritmo negativo), então $x=16$ e $x=2^{-4}=\\tfrac{1}{16}$. A soma vale $16+\\tfrac{1}{16}=\\tfrac{257}{16}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Logaritmos em bases 5 e 25",
+    "dificuldade": "medio",
+    "enunciado": "Resolva a equação $\\log_{5}(x+3)=\\log_{25}(4x+21)$.",
+    "alternativas": {
+      "a": "$-1+\\sqrt{13}$",
+      "b": "$-1+\\sqrt{11}$",
+      "c": "$1+\\sqrt{13}$",
+      "d": "$-1-\\sqrt{13}$",
+      "e": "$-2+\\sqrt{13}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $25=5^{2}$, vale $\\log_{25}(4x+21)=\\tfrac{1}{2}\\log_{5}(4x+21)$. Multiplicando por $2$: $2\\log_{5}(x+3)=\\log_{5}(4x+21)$, ou seja $(x+3)^{2}=4x+21$. Isso dá $x^{2}+2x-12=0$ e $x=-1\\pm\\sqrt{13}$. O domínio pede $x+3>0$, e como $\\sqrt{13}\\approx3{,}6$ a raiz $-1-\\sqrt{13}$ é descartada; fica $x=-1+\\sqrt{13}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Domínio que elimina toda a solução",
+    "dificuldade": "dificil",
+    "enunciado": "Quantas raízes reais tem a equação $\\ln\\left(x^{2}\\right)=2\\ln(x-1)$?",
+    "alternativas": {
+      "a": "$1$",
+      "b": "$2$",
+      "c": "$3$",
+      "d": "$0$",
+      "e": "$4$"
+    },
+    "gabarito": "d",
+    "resolucao": "O lado direito só existe para $x>1$; o esquerdo, para $x\\neq0$. No domínio comum $x>1$ tem-se $\\ln(x^{2})=2\\ln x$, e a equação vira $2\\ln x=2\\ln(x-1)$, isto é $x=x-1$ — impossível. A armadilha é \"cancelar\" os logaritmos escrevendo $x^{2}=(x-1)^{2}$ e concluir $x=\\tfrac{1}{2}$: esse valor não pertence ao domínio, logo a equação não tem raiz real alguma.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Logaritmo de soma de potências",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a soma das raízes reais de $\\log_{2}\\left(9^{x-1}+7\\right)=2+\\log_{2}\\left(3^{x-1}+1\\right)$.",
+    "alternativas": {
+      "a": "$2$",
+      "b": "$4$",
+      "c": "$5$",
+      "d": "$1$",
+      "e": "$3$"
+    },
+    "gabarito": "e",
+    "resolucao": "Escreva $2=\\log_{2}4$ e junte os logaritmos do lado direito: $\\log_{2}\\left(9^{x-1}+7\\right)=\\log_{2}\\left[4\\left(3^{x-1}+1\\right)\\right]$. Pela injetividade, $9^{x-1}+7=4\\cdot3^{x-1}+4$. Com $t=3^{x-1}>0$ isso é $t^{2}-4t+3=0$, de raízes $t=1$ e $t=3$, ou seja $x-1=0$ e $x-1=1$. As raízes são $x=1$ e $x=2$, de soma $3$; ambas mantêm positivos os dois argumentos.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Igualdade de logaritmos com verificação de domínio",
+    "dificuldade": "medio",
+    "enunciado": "Determine a soma das raízes reais de $\\log_{5}\\left(x^{2}-2x\\right)=\\log_{5}(3x-4)$.",
+    "alternativas": {
+      "a": "$5$",
+      "b": "$4$",
+      "c": "$1$",
+      "d": "$3$",
+      "e": "$9$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pela injetividade do logaritmo, $x^{2}-2x=3x-4$, isto é $x^{2}-5x+4=0$, com $x=1$ e $x=4$. Falta o filtro do domínio: é preciso $x^{2}-2x>0$, ou seja $x<0$ ou $x>2$. O valor $x=1$ não passa (o argumento daria $-1$), enquanto $x=4$ passa nas duas condições. A soma pedida é apenas $4$ — quem soma $1+4=5$ esqueceu de verificar o domínio.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Sistema com logaritmo e diferença",
+    "dificuldade": "medio",
+    "enunciado": "Os reais $x>y>0$ satisfazem $\\log_{2}x+\\log_{2}y=4$ e $x-y=6$. Determine $x+y$.",
+    "alternativas": {
+      "a": "$8$",
+      "b": "$12$",
+      "c": "$14$",
+      "d": "$10$",
+      "e": "$9$"
+    },
+    "gabarito": "d",
+    "resolucao": "A primeira equação diz $\\log_{2}(xy)=4$, ou seja $xy=16$. Junto com $x-y=6$, substitua $x=y+6$: $y^{2}+6y-16=0$, de raízes $y=2$ e $y=-8$; só $y=2$ serve, pois o logaritmo exige $y>0$. Então $x=8$ e $x+y=10$. Alternativa elegante: $(x+y)^{2}=(x-y)^{2}+4xy=36+64=100$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Inequação exponencial de base menor que 1",
+    "dificuldade": "medio",
+    "enunciado": "Resolva, em $\\mathbb{R}$, a inequação $\\left(\\dfrac{1}{3}\\right)^{x^{2}-1}\\geq\\dfrac{1}{27}$.",
+    "alternativas": {
+      "a": "$\\left(-2,2\\right)$",
+      "b": "$\\left[-2,2\\right]$",
+      "c": "$\\left(-\\infty,-2\\right]\\cup\\left[2,+\\infty\\right)$",
+      "d": "$\\left[-\\sqrt{3},\\sqrt{3}\\right]$",
+      "e": "$\\left[-4,4\\right]$"
+    },
+    "gabarito": "b",
+    "resolucao": "Os dois lados são potências de $\\tfrac{1}{3}$: à direita, $\\tfrac{1}{27}=\\left(\\tfrac{1}{3}\\right)^{3}$. Como a base está entre $0$ e $1$, a função é decrescente e a desigualdade entre potências INVERTE ao passar para os expoentes: $x^{2}-1\\leq3$. Daí $x^{2}\\leq4$, isto é $-2\\leq x\\leq2$; os extremos entram porque a desigualdade original não é estrita.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Inequação exponencial quadrática",
+    "dificuldade": "dificil",
+    "enunciado": "Resolva a inequação $2^{2x}-3\\cdot2^{x+1}+8<0$.",
+    "alternativas": {
+      "a": "$\\left[1,2\\right]$",
+      "b": "$\\left(-\\infty,1\\right)\\cup\\left(2,+\\infty\\right)$",
+      "c": "$\\left(0,2\\right)$",
+      "d": "$\\left(1,2\\right)$",
+      "e": "$\\left(1,3\\right)$"
+    },
+    "gabarito": "d",
+    "resolucao": "Com $t=2^{x}>0$, note que $2^{2x}=t^{2}$ e $2^{x+1}=2t$, de modo que a inequação vira $t^{2}-6t+8<0$, isto é $(t-2)(t-4)<0$, ou $2<t<4$. Voltando: $2^{1}<2^{x}<2^{2}$ e, como a base $2$ é maior que $1$, a função é crescente e a desigualdade se transmite aos expoentes sem inverter: $1<x<2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Inequação quociente com exponencial",
+    "dificuldade": "dificil",
+    "enunciado": "Resolva a inequação $\\dfrac{3^{x}-9}{3^{x}-1}\\leq0$.",
+    "alternativas": {
+      "a": "$\\left[0,2\\right]$",
+      "b": "$\\left(0,2\\right]$",
+      "c": "$\\left(0,2\\right)$",
+      "d": "$\\left(-\\infty,0\\right)\\cup\\left[2,+\\infty\\right)$",
+      "e": "$\\left(1,9\\right]$"
+    },
+    "gabarito": "b",
+    "resolucao": "Com $t=3^{x}>0$, o quociente $\\dfrac{t-9}{t-1}$ é negativo ou nulo exatamente quando $1<t\\leq9$: o numerador zera em $t=9$ (entra) e o denominador zera em $t=1$ (sai obrigatoriamente). Traduzindo pela função crescente $t=3^{x}$: $3^{0}<3^{x}\\leq3^{2}$, ou seja $0<x\\leq2$. O erro clássico é responder em $t$ e escrever $\\left(1,9\\right]$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Bases inversas em lados opostos",
+    "dificuldade": "medio",
+    "enunciado": "Resolva a inequação $\\left(\\dfrac{2}{5}\\right)^{x^{2}}>\\left(\\dfrac{5}{2}\\right)^{3x-10}$.",
+    "alternativas": {
+      "a": "$\\left(-2,5\\right)$",
+      "b": "$\\left[-5,2\\right]$",
+      "c": "$\\left(-\\infty,-5\\right)\\cup\\left(2,+\\infty\\right)$",
+      "d": "$\\left(-5,10\\right)$",
+      "e": "$\\left(-5,2\\right)$"
+    },
+    "gabarito": "e",
+    "resolucao": "As bases são inversas: $\\left(\\tfrac{5}{2}\\right)^{3x-10}=\\left(\\tfrac{2}{5}\\right)^{-(3x-10)}$. Com a mesma base $\\tfrac{2}{5}$, menor que $1$, a comparação de potências inverte ao descer aos expoentes: $x^{2}<-(3x-10)$, isto é $x^{2}+3x-10<0$, ou $(x+5)(x-2)<0$. A parábola é negativa entre as raízes: $-5<x<2$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Inequação logarítmica de base 1/2",
+    "dificuldade": "medio",
+    "enunciado": "Resolva a inequação $\\log_{1/2}(x-1)>-2$.",
+    "alternativas": {
+      "a": "$\\left[1,5\\right]$",
+      "b": "$\\left(5,+\\infty\\right)$",
+      "c": "$\\left(1,5\\right)$",
+      "d": "$\\left(1,3\\right)$",
+      "e": "$\\left(-\\infty,5\\right)$"
+    },
+    "gabarito": "c",
+    "resolucao": "Primeiro o domínio: $x-1>0$, isto é $x>1$. Agora escreva $-2=\\log_{1/2}4$, já que $\\left(\\tfrac{1}{2}\\right)^{-2}=4$. Base entre $0$ e $1$ significa logaritmo decrescente, então $\\log_{1/2}(x-1)>\\log_{1/2}4$ equivale a $x-1<4$. Intersectando com o domínio: $1<x<5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Inequação logarítmica com argumento quadrático",
+    "dificuldade": "dificil",
+    "enunciado": "Resolva a inequação $\\log_{3}\\left(x^{2}-4x\\right)\\leq1$.",
+    "alternativas": {
+      "a": "$\\left(2-\\sqrt{7},0\\right)\\cup\\left(4,2+\\sqrt{7}\\right)$",
+      "b": "$\\left[2-\\sqrt{7},0\\right)\\cup\\left(4,2+\\sqrt{7}\\right]$",
+      "c": "$\\left[2-\\sqrt{7},2+\\sqrt{7}\\right]$",
+      "d": "$\\left(-\\infty,0\\right)\\cup\\left(4,+\\infty\\right)$",
+      "e": "$\\left[-1,0\\right)\\cup\\left(4,5\\right]$"
+    },
+    "gabarito": "b",
+    "resolucao": "São duas condições simultâneas. Domínio: $x^{2}-4x>0$, isto é $x<0$ ou $x>4$ (desigualdade ESTRITA, os extremos $0$ e $4$ ficam de fora). Inequação: base $3>1$, logo $x^{2}-4x\\leq3^{1}$, ou $x^{2}-4x-3\\leq0$, cujas raízes são $2\\pm\\sqrt{7}$ e que vale entre elas. Cruzando as duas, $\\left[2-\\sqrt{7},0\\right)\\cup\\left(4,2+\\sqrt{7}\\right]$ — fechado onde manda a inequação, aberto onde manda o domínio.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Inequação logarítmica de base variável",
+    "dificuldade": "dificil",
+    "enunciado": "Resolva a inequação $\\log_{x}(5x-4)>1$.",
+    "alternativas": {
+      "a": "$\\left(1,+\\infty\\right)$",
+      "b": "$\\left(\\dfrac{4}{5},1\\right)$",
+      "c": "$\\left(\\dfrac{4}{5},1\\right)\\cup\\left(1,+\\infty\\right)$",
+      "d": "$\\left(\\dfrac{4}{5},+\\infty\\right)$",
+      "e": "$\\left(0,1\\right)\\cup\\left(1,+\\infty\\right)$"
+    },
+    "gabarito": "c",
+    "resolucao": "Condições de existência: a base pede $x>0$ e $x\\neq1$; o argumento pede $5x-4>0$, isto é $x>\\tfrac{4}{5}$. Agora separe em dois casos, porque o sentido da desigualdade depende da base. Se $x>1$, o logaritmo é crescente e $\\log_{x}(5x-4)>\\log_{x}x$ equivale a $5x-4>x$, ou $x>1$ — verdadeiro em todo o caso. Se $\\tfrac{4}{5}<x<1$, o logaritmo é DECRESCENTE e a condição inverte: $5x-4<x$, isto é $x<1$ — também verdadeiro em todo o caso. Os dois ramos entram, e só o ponto $x=1$ fica de fora (ali não há base legítima).",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Quadrática no logaritmo — inequação",
+    "dificuldade": "medio",
+    "enunciado": "Resolva a inequação $\\left(\\log_{2}x\\right)^{2}-3\\log_{2}x+2\\leq0$.",
+    "alternativas": {
+      "a": "$\\left(2,4\\right)$",
+      "b": "$\\left[1,2\\right]$",
+      "c": "$\\left(0,2\\right]\\cup\\left[4,+\\infty\\right)$",
+      "d": "$\\left[4,8\\right]$",
+      "e": "$\\left[2,4\\right]$"
+    },
+    "gabarito": "e",
+    "resolucao": "O domínio é $x>0$. Com $u=\\log_{2}x$, a inequação é $u^{2}-3u+2\\leq0$, isto é $(u-1)(u-2)\\leq0$, satisfeita para $1\\leq u\\leq2$. Como $\\log_{2}$ é crescente, isso corresponde a $2^{1}\\leq x\\leq2^{2}$, ou seja $2\\leq x\\leq4$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Domínio com logaritmo de base variável",
+    "dificuldade": "medio",
+    "enunciado": "Determine o domínio máximo de $f(x)=\\log_{x-2}\\left(9-x^{2}\\right)$.",
+    "alternativas": {
+      "a": "$\\left(-3,3\\right)$",
+      "b": "$\\left(2,+\\infty\\right)$",
+      "c": "$\\left(2,3\\right)$",
+      "d": "$\\left(2,3\\right)\\cup\\left(3,+\\infty\\right)$",
+      "e": "$\\left[2,3\\right]$"
+    },
+    "gabarito": "c",
+    "resolucao": "Três exigências. O argumento precisa ser positivo: $9-x^{2}>0$, ou $-3<x<3$. A base precisa ser positiva: $x-2>0$, ou $x>2$. E a base não pode valer $1$: $x-2\\neq1$, isto é $x\\neq3$ — que já estava fora pela primeira condição. A interseção é $2<x<3$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Domínio com radical de logaritmo",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o domínio máximo de $f(x)=\\sqrt{\\log_{1/2}\\left(\\dfrac{x-1}{x+2}\\right)}$.",
+    "alternativas": {
+      "a": "$\\left(-\\infty,-2\\right)\\cup\\left(1,+\\infty\\right)$",
+      "b": "$\\left(1,+\\infty\\right)$",
+      "c": "$\\left[1,+\\infty\\right)$",
+      "d": "$\\left(-2,1\\right)$",
+      "e": "$\\left(-\\infty,-2\\right)$"
+    },
+    "gabarito": "b",
+    "resolucao": "Chame $r=\\dfrac{x-1}{x+2}$. O logaritmo pede $r>0$, o que ocorre para $x<-2$ ou $x>1$. O radical pede $\\log_{1/2}r\\geq0$, e como a base é menor que $1$ isso equivale a $r\\leq1$. Ora, $r-1=\\dfrac{-3}{x+2}$, que é $\\leq0$ somente quando $x+2>0$. Cruzando $\\left(x<-2\\ \\text{ou}\\ x>1\\right)$ com $x>-2$, sobra $x>1$; em $x=1$ o argumento zera e o logaritmo não existe.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Imagem de logaritmo de quadrática",
+    "dificuldade": "medio",
+    "enunciado": "Determine a imagem da função $f(x)=\\log_{2}\\left(x^{2}-4x+20\\right)$.",
+    "alternativas": {
+      "a": "$\\left(4,+\\infty\\right)$",
+      "b": "$\\left[2,+\\infty\\right)$",
+      "c": "$\\mathbb{R}$",
+      "d": "$\\left[4,+\\infty\\right)$",
+      "e": "$\\left[0,+\\infty\\right)$"
+    },
+    "gabarito": "d",
+    "resolucao": "Complete o quadrado no argumento: $x^{2}-4x+20=(x-2)^{2}+16$, cujo valor mínimo é $16$, atingido em $x=2$, e que cresce sem limite. O argumento percorre então $\\left[16,+\\infty\\right)$, e como $\\log_{2}$ é crescente e contínua, a imagem é $\\left[\\log_{2}16,+\\infty\\right)=\\left[4,+\\infty\\right)$ — fechada em $4$ porque o mínimo é de fato atingido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Imagem de exponencial com expoente quadrático",
+    "dificuldade": "medio",
+    "enunciado": "Determine a imagem da função $f(x)=3^{x^{2}-4x+1}$.",
+    "alternativas": {
+      "a": "$\\left(\\dfrac{1}{27},+\\infty\\right)$",
+      "b": "$\\left[\\dfrac{1}{27},+\\infty\\right)$",
+      "c": "$\\left[\\dfrac{1}{9},+\\infty\\right)$",
+      "d": "$\\left(0,+\\infty\\right)$",
+      "e": "$\\left[27,+\\infty\\right)$"
+    },
+    "gabarito": "b",
+    "resolucao": "O expoente $x^{2}-4x+1=(x-2)^{2}-3$ tem mínimo $-3$ em $x=2$ e cresce sem limite. Como $3^{u}$ é crescente, o menor valor de $f$ é $3^{-3}=\\tfrac{1}{27}$, atingido em $x=2$, e não há teto superior. A imagem é $\\left[\\tfrac{1}{27},+\\infty\\right)$; ela é fechada à esquerda justamente porque o mínimo do expoente é atingido.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Imagem de função homográfica em exponencial",
+    "dificuldade": "dificil",
+    "enunciado": "Determine a imagem da função $f(x)=\\dfrac{4^{x}+1}{4^{x}+2}$.",
+    "alternativas": {
+      "a": "$\\left(\\dfrac{1}{2},1\\right)$",
+      "b": "$\\left[\\dfrac{1}{2},1\\right]$",
+      "c": "$\\left(\\dfrac{1}{2},1\\right]$",
+      "d": "$\\left(0,1\\right)$",
+      "e": "$\\left(\\dfrac{1}{3},1\\right)$"
+    },
+    "gabarito": "a",
+    "resolucao": "Com $t=4^{x}$, que percorre todo o intervalo $\\left(0,+\\infty\\right)$ sem atingir os extremos, estude $y=\\dfrac{t+1}{t+2}=1-\\dfrac{1}{t+2}$. Essa expressão é crescente em $t$: quando $t\\to0^{+}$ ela tende a $\\tfrac{1}{2}$, e quando $t\\to+\\infty$ tende a $1$. Como nenhum dos dois limites é atingido, a imagem é o intervalo ABERTO $\\left(\\tfrac{1}{2},1\\right)$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Domínio com logaritmo e radical",
+    "dificuldade": "dificil",
+    "enunciado": "Determine o domínio máximo de $f(x)=\\ln\\left(x^{2}-5x+6\\right)+\\sqrt{7-x}$.",
+    "alternativas": {
+      "a": "$\\left(-\\infty,2\\right]\\cup\\left[3,7\\right]$",
+      "b": "$\\left(-\\infty,2\\right)\\cup\\left(3,7\\right)$",
+      "c": "$\\left(2,3\\right)$",
+      "d": "$\\left(-\\infty,2\\right)\\cup\\left(3,+\\infty\\right)$",
+      "e": "$\\left(-\\infty,2\\right)\\cup\\left(3,7\\right]$"
+    },
+    "gabarito": "e",
+    "resolucao": "O logaritmo exige $x^{2}-5x+6>0$, isto é $(x-2)(x-3)>0$, ou seja $x<2$ ou $x>3$ — os pontos $2$ e $3$ saem, pois ali o argumento zera. O radical exige $7-x\\geq0$, isto é $x\\leq7$, e o $7$ ENTRA porque a raiz de zero existe. A interseção é $\\left(-\\infty,2\\right)\\cup\\left(3,7\\right]$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Tempo de duplicação a partir de um crescimento percentual",
+    "dificuldade": "medio",
+    "enunciado": "Uma cultura cresce segundo $P(t)=P_{0}e^{kt}$ e aumenta $40\\%$ em $5$ horas. Em quantas horas, aproximadamente, a população dobra?",
+    "alternativas": {
+      "a": "$10{,}3$",
+      "b": "$8{,}7$",
+      "c": "$12{,}5$",
+      "d": "$9{,}2$",
+      "e": "$14{,}0$"
+    },
+    "gabarito": "a",
+    "resolucao": "De $P(5)=1{,}4P_{0}$ vem $e^{5k}=1{,}4$, ou $k=\\dfrac{\\ln 1{,}4}{5}$. A duplicação pede $e^{kt}=2$, isto é $t=\\dfrac{\\ln 2}{k}=5\\cdot\\dfrac{\\ln 2}{\\ln 1{,}4}$. Numericamente, $5\\cdot\\dfrac{0{,}693}{0{,}336}\\approx10{,}3$ horas. Repare que o tempo de duplicação não depende de $P_{0}$ — é uma característica do modelo exponencial.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Duas amostras com meias-vidas diferentes",
+    "dificuldade": "dificil",
+    "enunciado": "Uma amostra de $40$ g tem meia-vida de $5$ dias e outra, de $10$ g, tem meia-vida de $15$ dias. Após quantos dias as duas massas se igualam?",
+    "alternativas": {
+      "a": "$10$",
+      "b": "$20$",
+      "c": "$12$",
+      "d": "$30$",
+      "e": "$15$"
+    },
+    "gabarito": "e",
+    "resolucao": "As massas são $m_{1}(t)=40\\cdot2^{-t/5}$ e $m_{2}(t)=10\\cdot2^{-t/15}$. Igualando e dividindo, $\\dfrac{40}{10}=\\dfrac{2^{-t/15}}{2^{-t/5}}$, isto é $4=2^{\\frac{t}{5}-\\frac{t}{15}}=2^{\\frac{2t}{15}}$. Logo $\\tfrac{2t}{15}=2$ e $t=15$ dias — instante em que ambas valem $5$ g.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Decaimento de concentração até uma fração dada",
+    "dificuldade": "medio",
+    "enunciado": "A concentração de um fármaco no sangue obedece a $C(t)=C_{0}e^{-0{,}25t}$, com $t$ em horas. Em quantas horas a concentração cai a $20\\%$ do valor inicial?",
+    "alternativas": {
+      "a": "$6{,}44$",
+      "b": "$5{,}54$",
+      "c": "$8{,}05$",
+      "d": "$4{,}62$",
+      "e": "$7{,}20$"
+    },
+    "gabarito": "a",
+    "resolucao": "Imponha $e^{-0{,}25t}=0{,}2$. Tomando logaritmo natural, $-0{,}25t=\\ln 0{,}2=-\\ln 5$, de onde $t=\\dfrac{\\ln 5}{0{,}25}=4\\ln 5$. Como $\\ln 5\\approx1{,}609$, resulta $t\\approx6{,}44$ horas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Taxa nominal que dobra o capital",
+    "dificuldade": "dificil",
+    "enunciado": "A que taxa anual nominal, capitalizada mensalmente, um capital dobra em exatamente $6$ anos? Responda em porcentagem ao ano, com duas casas decimais.",
+    "alternativas": {
+      "a": "$11{,}00$",
+      "b": "$12{,}25$",
+      "c": "$10{,}45$",
+      "d": "$13{,}00$",
+      "e": "$11{,}61$"
+    },
+    "gabarito": "e",
+    "resolucao": "Com taxa nominal anual $i$ capitalizada mensalmente, a taxa mensal é $\\tfrac{i}{12}$ e em $6$ anos há $72$ capitalizações: $\\left(1+\\tfrac{i}{12}\\right)^{72}=2$. Extraindo a raiz, $1+\\tfrac{i}{12}=2^{1/72}=e^{\\frac{\\ln 2}{72}}\\approx1{,}009673$, logo $i\\approx12\\cdot0{,}009673=0{,}11608$, ou seja $11{,}61\\%$ ao ano.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Depreciação percentual e o primeiro inteiro",
+    "dificuldade": "medio",
+    "enunciado": "Uma máquina avaliada em $80$ mil reais desvaloriza $15\\%$ ao ano. Após quantos anos completos o valor cai abaixo de $30$ mil reais?",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$5$",
+      "c": "$7$",
+      "d": "$8$",
+      "e": "$9$"
+    },
+    "gabarito": "c",
+    "resolucao": "O valor após $n$ anos é $80\\cdot0{,}85^{n}$ (em milhares). A condição é $0{,}85^{n}<\\tfrac{30}{80}=0{,}375$, e aplicando logaritmo — cuja base $0{,}85$ é menor que $1$, o que inverte a desigualdade — obtém-se $n>\\dfrac{\\ln 0{,}375}{\\ln 0{,}85}\\approx6{,}03$. Como $n$ é inteiro, o primeiro ano que cumpre é $n=7$: em $6$ anos o valor ainda é cerca de $30{,}2$ mil.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Colônia que triplica em intervalo fixo",
+    "dificuldade": "dificil",
+    "enunciado": "Uma colônia triplica a cada $4$ horas. Quantas horas, aproximadamente, são necessárias para que a população fique $100$ vezes maior?",
+    "alternativas": {
+      "a": "$16{,}8$",
+      "b": "$12{,}0$",
+      "c": "$18{,}4$",
+      "d": "$14{,}6$",
+      "e": "$20{,}2$"
+    },
+    "gabarito": "a",
+    "resolucao": "Triplicar a cada $4$ horas significa $P(t)=P_{0}\\cdot3^{t/4}$. Impondo $3^{t/4}=100$ e tomando logaritmos, $\\tfrac{t}{4}\\ln 3=\\ln 100$, de onde $t=\\dfrac{4\\ln 100}{\\ln 3}=\\dfrac{4\\cdot4{,}605}{1{,}099}\\approx16{,}8$ horas. Note que $100$ está entre $3^{4}=81$ e $3^{5}=243$, o que já situa a resposta entre $16$ e $20$ horas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Modelo exponencial ajustado por dois pontos",
+    "dificuldade": "medio",
+    "enunciado": "Uma população segue $N(t)=Ae^{kt}$, com $N(0)=5$ e $N(3)=40$, sendo $t$ medido em horas. Em que instante a população atinge $1280$?",
+    "alternativas": {
+      "a": "$6$",
+      "b": "$8$",
+      "c": "$7$",
+      "d": "$9$",
+      "e": "$10$"
+    },
+    "gabarito": "b",
+    "resolucao": "De $N(0)=5$ vem $A=5$. De $N(3)=40$ vem $e^{3k}=8$, isto é $e^{k}=2$ e portanto $N(t)=5\\cdot2^{t}$ — o modelo é uma duplicação a cada hora. Impondo $5\\cdot2^{t}=1280$ obtém-se $2^{t}=256=2^{8}$, logo $t=8$ horas.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Juros compostos e o primeiro mês que dobra",
+    "dificuldade": "medio",
+    "enunciado": "Um investimento rende $0{,}8\\%$ ao mês a juros compostos. Em quantos meses completos o montante passa a ser maior que o dobro do capital?",
+    "alternativas": {
+      "a": "$85$",
+      "b": "$87$",
+      "c": "$88$",
+      "d": "$90$",
+      "e": "$92$"
+    },
+    "gabarito": "b",
+    "resolucao": "O montante é $C\\cdot1{,}008^{n}$, e a condição é $1{,}008^{n}>2$, isto é $n>\\dfrac{\\ln 2}{\\ln 1{,}008}=\\dfrac{0{,}6931}{0{,}007968}\\approx86{,}99$. Como $n$ é inteiro, o primeiro mês em que o montante supera o dobro é $n=87$ — a proximidade de $87$ mostra por que arredondar para baixo daria a resposta errada.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Meia-vida a partir da fração remanescente",
+    "dificuldade": "medio",
+    "enunciado": "Uma amostra radioativa decai para $\\dfrac{1}{5}$ da massa inicial em $30$ anos. Determine a meia-vida do material, em anos.",
+    "alternativas": {
+      "a": "$15{,}0$",
+      "b": "$10{,}5$",
+      "c": "$12{,}9$",
+      "d": "$6{,}0$",
+      "e": "$18{,}6$"
+    },
+    "gabarito": "c",
+    "resolucao": "Escreva a massa como $m(t)=m_{0}\\,2^{-t/T}$, em que $T$ é a meia-vida. A condição é $2^{-30/T}=\\tfrac{1}{5}$, isto é $2^{30/T}=5$. Tomando logaritmo natural, $\\tfrac{30}{T}\\ln 2=\\ln 5$, de onde $T=\\dfrac{30\\ln 2}{\\ln 5}=\\dfrac{30\\cdot0{,}693}{1{,}609}\\approx12{,}9$ anos. Faz sentido: em $30$ anos cabem pouco mais de duas meias-vidas, e $\\tfrac{1}{5}$ está mesmo entre $\\tfrac{1}{4}$ e $\\tfrac{1}{8}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Razão de energias na escala Richter",
+    "dificuldade": "medio",
+    "enunciado": "A energia $E$, em joules, liberada por um sismo de magnitude $M$ satisfaz $\\log_{10}E=11{,}8+1{,}5M$. Quantas vezes a energia de um sismo de magnitude $7{,}2$ supera a de um de magnitude $5{,}4$?",
+    "alternativas": {
+      "a": "$1{,}0\\times10^{2}$",
+      "b": "$2{,}5\\times10^{3}$",
+      "c": "$5{,}0\\times10^{2}$",
+      "d": "$6{,}3\\times10^{1}$",
+      "e": "$1{,}6\\times10^{3}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Subtraia as duas relações em vez de calcular cada energia: $\\log_{10}\\dfrac{E_{1}}{E_{2}}=1{,}5\\left(M_{1}-M_{2}\\right)=1{,}5\\cdot1{,}8=2{,}7$. Logo a razão é $10^{2{,}7}=10^{2}\\cdot10^{0{,}7}\\approx100\\cdot5{,}01\\approx5{,}0\\times10^{2}$: uma diferença de menos de dois graus na magnitude significa cerca de $500$ vezes mais energia.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Variação de nível sonoro em decibéis",
+    "dificuldade": "medio",
+    "enunciado": "O nível sonoro é dado por $\\beta=10\\log_{10}\\left(\\dfrac{I}{I_{0}}\\right)$, em decibéis. Se a intensidade $I$ é multiplicada por $250$, de quantos decibéis $\\beta$ aumenta?",
+    "alternativas": {
+      "a": "$24{,}0$",
+      "b": "$25{,}0$",
+      "c": "$20{,}0$",
+      "d": "$22{,}5$",
+      "e": "$27{,}5$"
+    },
+    "gabarito": "a",
+    "resolucao": "O aumento é $\\Delta\\beta=10\\log_{10}\\dfrac{250I}{I}=10\\log_{10}250$. Escreva $250=\\dfrac{1000}{4}$: $\\log_{10}250=3-2\\log_{10}2\\approx3-0{,}602=2{,}398$. Assim $\\Delta\\beta\\approx24{,}0$ dB — e note que a resposta não depende da intensidade original, só do fator multiplicativo.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "pH a partir da concentração de íons",
+    "dificuldade": "facil",
+    "enunciado": "O pH de uma solução é $\\mathrm{pH}=-\\log_{10}\\left[\\mathrm{H}^{+}\\right]$. Calcule o pH de uma solução com $\\left[\\mathrm{H}^{+}\\right]=4{,}0\\times10^{-5}$ mol/L, usando $\\log_{10}2=0{,}30$.",
+    "alternativas": {
+      "a": "$4{,}60$",
+      "b": "$5{,}40$",
+      "c": "$3{,}40$",
+      "d": "$4{,}40$",
+      "e": "$4{,}20$"
+    },
+    "gabarito": "d",
+    "resolucao": "Separe o produto dentro do logaritmo: $\\log_{10}\\left(4{,}0\\times10^{-5}\\right)=\\log_{10}4-5=2\\log_{10}2-5=0{,}60-5=-4{,}40$. Com o sinal trocado, $\\mathrm{pH}=4{,}40$ — levemente ácida, como se espera de uma concentração maior que $10^{-7}$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Sistema exponencial por soma e produto",
+    "dificuldade": "dificil",
+    "enunciado": "O par de inteiros $(x,y)$ satisfaz $2^{x}\\cdot3^{y}=72$ e $2^{x}+3^{y}=17$. Determine $x+y$.",
+    "alternativas": {
+      "a": "$4$",
+      "b": "$6$",
+      "c": "$5$",
+      "d": "$7$",
+      "e": "$3$"
+    },
+    "gabarito": "c",
+    "resolucao": "Chame $u=2^{x}$ e $v=3^{y}$: o sistema vira $uv=72$ e $u+v=17$, de modo que $u$ e $v$ são as raízes de $t^{2}-17t+72=0$, isto é $8$ e $9$. Como $x$ e $y$ são inteiros, $u$ tem de ser potência de $2$ e $v$ potência de $3$: $u=8=2^{3}$ e $v=9=3^{2}$, ou seja $x=3$ e $y=2$. Logo $x+y=5$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  },
+  {
+    "materia": "Fundamentos de Cálculo e Geometria",
+    "topico": "Funções Exponenciais e Logarítmicas",
+    "subtopico": "Sistema com logaritmos recíprocos",
+    "dificuldade": "dificil",
+    "enunciado": "Os reais $x$ e $y$, ambos maiores que $1$, satisfazem $\\log_{x}y+\\log_{y}x=\\dfrac{5}{2}$ e $xy=27$, com $x<y$. Determine $x+y$.",
+    "alternativas": {
+      "a": "$12$",
+      "b": "$10$",
+      "c": "$14$",
+      "d": "$18$",
+      "e": "$9$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como $\\log_{y}x=\\dfrac{1}{\\log_{x}y}$, ponha $t=\\log_{x}y$: a primeira equação é $t+\\tfrac{1}{t}=\\tfrac{5}{2}$, isto é $2t^{2}-5t+2=0$, com $t=2$ ou $t=\\tfrac{1}{2}$. Como $x<y$ e ambos excedem $1$, tem-se $t>1$, logo $t=2$ e $y=x^{2}$. Substituindo em $xy=27$: $x^{3}=27$, $x=3$ e $y=9$. Portanto $x+y=12$.",
+    "instituicao": null,
+    "ano": null,
+    "tikz_code": null
+  }
+]
