@@ -33,6 +33,12 @@ type StudentCardModalProps = {
 
 const TEXTO_POP = "[text-shadow:0_1px_3px_rgba(0,0,0,0.4)]";
 
+// Vagas fixas pras disciplinas, mesmo motivo dos distintivos
+// (MAX_DISTINTIVOS_CARD): sem limite, `card.disciplinas` cresce a cada
+// campanha nova e o flex-wrap empurra o card pra baixo indefinidamente. Só
+// corta a exibição — a lista completa continua em `card.disciplinas`.
+const MAX_DISCIPLINAS_CARD = 4;
+
 export function StudentCardModal({ card, loading, onClose }: StudentCardModalProps) {
   const aberto = loading || card !== null;
 
@@ -320,7 +326,7 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
           </div>
           {card.disciplinas.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
-              {card.disciplinas.map((nome) => (
+              {card.disciplinas.slice(0, MAX_DISCIPLINAS_CARD).map((nome) => (
                 <span
                   key={nome}
                   className="rounded-full bg-white/12 px-2.5 py-0.5 text-[10px] font-medium text-white"
@@ -328,6 +334,11 @@ function CartaTcg({ card, onClose }: { card: CardUsuario; onClose: () => void })
                   {nome}
                 </span>
               ))}
+              {card.disciplinas.length > MAX_DISCIPLINAS_CARD && (
+                <span className="rounded-full bg-white/8 px-2.5 py-0.5 text-[10px] font-medium text-white/70">
+                  +{card.disciplinas.length - MAX_DISCIPLINAS_CARD}
+                </span>
+              )}
             </div>
           ) : (
             <p className="text-[10.5px] text-white/70">Nenhuma disciplina cadastrada ainda.</p>
