@@ -205,6 +205,13 @@ export type ResultadoLote = {
   /** Primeiros erros, pra tela mostrar o motivo em vez de só um número. */
   erros: string[];
   creditos: number | null;
+  /**
+   * Por que o lote não mandou nada, quando não mandou. Sem isto a tela mostra
+   * "0 enviados" e o admin não tem como saber se acabou, se travou no saldo do
+   * dia ou se o botão está quebrado — que foi exatamente a confusão que este
+   * campo existe pra evitar.
+   */
+  bloqueio: "saldo" | "fila-vazia" | null;
 };
 
 export async function enviarLoteCampanha(opcoes: {
@@ -295,6 +302,12 @@ export async function enviarLoteCampanha(opcoes: {
     await Promise.all(alvos.slice(i, i + PARALELO).map(despachar));
   }
 
+  // Fila cheia mas nada pra mandar = parede do saldo do dia (a reserva do
+  // transacional). É um fim de expediente legítimo, não um erro — mas precisa
+  // ser dito, senão vira "o botão não faz nada".
+  const bloqueio: ResultadoLote["bloqueio"] =
+    alvos.length > 0 ? null : fila.length === 0 ? "fila-vazia" : "saldo";
+
   return {
     enviados,
     falhas,
@@ -302,6 +315,7 @@ export async function enviarLoteCampanha(opcoes: {
     restantes: fila.length - enviados - pulados - falhas,
     erros,
     creditos,
+    bloqueio,
   };
 }
 

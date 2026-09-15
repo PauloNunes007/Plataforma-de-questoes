@@ -115,43 +115,69 @@ export function CampanhaEmail({
 
   async function atualizarPrevia() {
     setOcupado("previa");
-    const res = await previaCampanhaAction(conteudo, link);
+    const res = await chamar(() => previaCampanhaAction(conteudo, link));
     setOcupado(null);
-    if ("error" in res) {
-      setAviso({ tipo: "erro", texto: res.error });
-      return;
+    if (res) setPrevia(res.html);
+  }
+
+  /**
+   * Toda chamada de Server Action passa por aqui.
+   *
+   * Server Action que estoura o tempo da função (ou cai a rede) REJEITA a
+   * promessa — não devolve `{error}`. Sem este try/catch, a exceção sobe sem
+   * dono, o `setOcupado(null)` nunca roda e o botão gira pra sempre: do lado de
+   * fora, "o botão não funciona". Um lote de e-mail é justamente a chamada mais
+   * longa do app, ou seja, a que mais tem chance de cair nisso.
+   */
+  async function chamar<T>(fn: () => Promise<T | { error: string }>): Promise<T | null> {
+    try {
+      const res = await fn();
+      if (res && typeof res === "object" && "error" in res) {
+        setAviso({ tipo: "erro", texto: (res as { error: string }).error });
+        return null;
+      }
+      return res as T;
+    } catch (e) {
+      const detalhe = e instanceof Error ? e.message : String(e);
+      setAviso({
+        tipo: "erro",
+        texto:
+          `A chamada ao servidor falhou (${detalhe}). Se foi durante o envio, alguns e-mails ` +
+          `podem ter saído — clique em "Conferir a base" pra ver onde parou antes de tentar de novo.`,
+      });
+      return null;
     }
-    setPrevia(res.html);
+  }
+
+  /** Devolve o resumo além de guardá-lo — o disparo precisa do valor na hora,
+   *  e `setState` não é visível na mesma passada. */
+  async function buscarResumo(): Promise<ResumoCampanha | null> {
+    const res = await chamar(() => resumoCampanhaAction(campanha, incluirNaoConfirmados));
+    if (!res) return null;
+    setResumo(res.resumo);
+    return res.resumo;
   }
 
   async function carregarResumo() {
     setOcupado("resumo");
-    const res = await resumoCampanhaAction(campanha, incluirNaoConfirmados);
+    const r = await buscarResumo();
     setOcupado(null);
-    if ("error" in res) {
-      setAviso({ tipo: "erro", texto: res.error });
-      return;
-    }
-    setResumo(res.resumo);
-    setAviso(null);
+    if (r) setAviso(null);
   }
 
   async function enviarTeste() {
     setOcupado("teste");
-    const res = await enviarTesteCampanhaAction(emailTeste, conteudo, link);
+    const res = await chamar(() => enviarTesteCampanhaAction(emailTeste, conteudo, link));
     setOcupado(null);
-    setAviso(
-      "error" in res
-        ? { tipo: "erro", texto: res.error }
-        : {
-            tipo: "ok",
-            // Onde procurar faz parte da instrução: o e-mail leva cabeçalho de
-            // campanha (List-Unsubscribe), e é justamente isso que o Gmail usa
-            // pra arquivar em Promoções. Sem esta frase, o teste parece ter
-            // falhado quando na verdade foi entregue.
-            texto: `Teste enviado para ${emailTeste}. Procure também em Promoções e Spam — e-mail de campanha costuma cair lá. No Gmail, buscar "in:anywhere" pelo remetente acha na hora.`,
-          },
-    );
+    if (!res) return;
+    setAviso({
+      tipo: "ok",
+      // Onde procurar faz parte da instrução: o e-mail leva cabeçalho de
+      // campanha (List-Unsubscribe), e é justamente isso que o Gmail usa pra
+      // arquivar em Promoções. Sem esta frase, o teste parece ter falhado
+      // quando na verdade foi entregue.
+      texto: `Teste enviado para ${emailTeste}. Procure também em Promoções e Spam — e-mail de campanha costuma cair lá. No Gmail, buscar "in:anywhere" pelo remetente acha na hora.`,
+    });
   }
 
   /**
@@ -159,17 +185,10 @@ export function CampanhaEmail({
    * "enviar tudo" saiba se continua.
    */
   async function rodarLote(limite: number): Promise<number | null> {
-    const res = await enviarLoteCampanhaAction({
-      campanha,
-      conteudo,
-      link,
-      incluirNaoConfirmados,
-      limite,
-    });
-    if ("error" in res) {
-      setAviso({ tipo: "erro", texto: res.error });
-      return null;
-    }
+    const res = await chamar(() =>
+      enviarLoteCampanhaAction({ campanha, conteudo, link, incluirNaoConfirmados, limite }),
+    );
+    if (!res) return null;
     const r = res.resultado;
     setProgresso((prev) => ({
       enviados: (prev?.enviados ?? 0) + r.enviados,
@@ -178,30 +197,62 @@ export function CampanhaEmail({
     if (r.erros.length > 0) {
       setAviso({ tipo: "erro", texto: `Falhas neste lote — ${r.erros.join(" · ")}` });
     }
-    // Nada enviado e nada pulado num lote com fila significa parede (saldo do
-    // dia no limite da reserva). Devolver 0 encerra o laço em vez de girar.
-    if (r.enviados === 0 && r.pulados === 0 && r.falhas === 0) return 0;
+    if (r.bloqueio === "saldo") {
+      setAviso({
+        tipo: "erro",
+        texto:
+          `Parei: o saldo da Brevo hoje (${r.creditos ?? "?"}) chegou na reserva de 60 que fica ` +
+          `guardada pra confirmação de cadastro. Continue amanhã — o que já foi não se repete.`,
+      });
+      return 0;
+    }
+    if (r.bloqueio === "fila-vazia") return 0;
     return r.restantes;
   }
 
-  async function dispararTudo() {
-    const alvo = resumo?.restantes ?? 0;
-    if (alvo === 0) {
-      setAviso({ tipo: "erro", texto: "Carregue o resumo primeiro — preciso saber quantos faltam." });
-      return;
+  /** Explica por que não há o que enviar, em vez de só desabilitar o botão. */
+  function motivoFilaVazia(r: ResumoCampanha): string {
+    if (r.elegiveis === 0) {
+      return incluirNaoConfirmados
+        ? "Nenhuma conta elegível — todas pediram para não receber."
+        : `Nenhuma conta elegível. Há ${r.naoConfirmadas} conta(s) sem confirmar o e-mail, que ficam de fora por padrão.`;
     }
-    if (
-      !confirm(
-        `Enviar o e-mail "${conteudo.assunto}" para ${alvo} aluno(s)?\n\n` +
-          `Isso não tem desfazer. Mande um teste pra você antes, se ainda não mandou.`,
-      )
-    ) {
+    if (r.falhas > 0) {
+      return `Todos já receberam nesta campanha (${r.enviados}). Restam ${r.falhas} falha(s) — use "Tentar as falhas de novo".`;
+    }
+    return `Todos já receberam esta campanha (${r.enviados} aluno(s)). Para um novo disparo, troque o nome da campanha.`;
+  }
+
+  async function dispararTudo() {
+    setOcupado("disparo");
+    setAviso(null);
+
+    // O resumo se resolve aqui se ainda não existir. Antes o botão ficava
+    // cinza esperando um clique em "Conferir a base" — e botão cinza sem
+    // explicação lê como quebrado, não como "falta um passo".
+    const atual = resumo ?? (await buscarResumo());
+    if (!atual) {
+      setOcupado(null);
       return;
     }
 
-    setOcupado("disparo");
+    if (atual.restantes === 0) {
+      setOcupado(null);
+      setAviso({ tipo: "erro", texto: motivoFilaVazia(atual) });
+      return;
+    }
+
+    if (
+      !confirm(
+        `Enviar o e-mail "${conteudo.assunto}" para ${atual.restantes} aluno(s)?\n\n` +
+          `Isso não tem desfazer. Mande um teste pra você antes, se ainda não mandou.`,
+      )
+    ) {
+      setOcupado(null);
+      return;
+    }
+
     setProgresso({ enviados: 0, falhas: 0 });
-    setAviso(null);
 
     // Teto de voltas como rede de segurança: se algo devolver "restantes" que
     // nunca zera, o laço termina mesmo assim em vez de martelar a Brevo.
@@ -211,23 +262,24 @@ export function CampanhaEmail({
       if (faltam <= 0) break;
     }
 
+    await buscarResumo();
     setOcupado(null);
-    await carregarResumo();
   }
 
   async function limparFalhas() {
     setOcupado("falhas");
-    const res = await limparFalhasCampanhaAction(campanha);
+    const res = await chamar(() => limparFalhasCampanhaAction(campanha));
     setOcupado(null);
-    if ("error" in res) {
-      setAviso({ tipo: "erro", texto: res.error });
-      return;
-    }
+    if (!res) return;
     setAviso({ tipo: "ok", texto: `${res.removidas} falha(s) devolvida(s) para a fila.` });
-    await carregarResumo();
+    // `buscarResumo`, não `carregarResumo`: este limpa o aviso, e o aviso é
+    // justamente a resposta que o admin acabou de pedir.
+    await buscarResumo();
   }
 
-  const podeDisparar = !ocupado && Boolean(resumo) && (resumo?.restantes ?? 0) > 0;
+  // Só o "ocupado" desabilita. Qualquer outro impedimento vira FRASE ao clicar
+  // (motivoFilaVazia), nunca botão cinza sem motivo.
+  const podeDisparar = ocupado === null;
 
   return (
     <div className="mx-auto max-w-[1180px] px-4 py-7 sm:px-6 lg:py-9">
