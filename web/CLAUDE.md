@@ -241,6 +241,43 @@ migração `supabase_seguranca_hardening.sql` (documentada no root `CLAUDE.md`).
   de auth (senão o POST do MP levava 307 pro /login). Env novas em `.env.example`:
   `SUPABASE_SERVICE_ROLE_KEY`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`,
   `NEXT_PUBLIC_APP_URL`.
+- **Liberação 100% automática (repasse 2026-09-15).** Antes, o único caminho até
+  a ativação era o webhook — e quando ele falhava (URL não-https, segredo
+  trocado, MP atrasado) o aluno ficava preso num "aguardando pagamento" e só
+  saía se o admin ativasse à mão em `/admin/assinaturas`. Agora há **dois
+  caminhos independentes** pra mesma `ativarAssinatura` idempotente:
+  (1) o webhook, e (2) **`conferirPagamentoAction`** (`lib/plano/actions.ts`),
+  que pergunta o status direto pra API do MP. Ela roda no servidor na volta do
+  checkout (a `/pro` lê `?status=/payment_id=/collection_id=` e confere ANTES de
+  renderizar, então o aluno já cai na tela de assinatura ativa) e depois em
+  **polling** no cliente (3s nas 6 primeiras checagens, 6s depois, teto de ~4min
+  — `planos-view.tsx`), com um botão "Verificar agora". Segurança: a assinatura é
+  sempre lida pelo client do ALUNO com `.eq("user_id", user.id)`, então um
+  `payment_id` alheio não ativa nada; e como o status vem da API autenticada do
+  MP, não existe caminho pra virar Pro sem pagar.
+  - **O webhook deixou de responder 401 em HMAC inválido** — loga e segue. A
+    âncora de confiança é a consulta à API do MP (id inventado volta 404; id real
+    e aprovado É um pagamento real), então falhar fechado ali só servia pra um
+    `MP_WEBHOOK_SECRET` errado derrubar TODAS as vendas em silêncio.
+  - `notification_url`/`auto_return` só são enviados com `NEXT_PUBLIC_APP_URL`
+    https — em localhost o MP rejeitava a preferência inteira.
+  - **`/admin/assinaturas` virou acompanhamento, não fila de aprovação**: tarja
+    de diagnóstico do gateway (`diagnosticoPagamentoAction` — diz qual env falta
+    e a URL do webhook a cadastrar, sem vazar segredo), botão **"Conferir no MP"**
+    por pedido (`conferirAssinaturaAdminAction`, ativa só se o MP disser
+    `approved`) e o "Ativar à mão" rebaixado a contingência, com confirm.
+- **Identidade visual do Pro (mesmo repasse):** a coroa saiu. `components/plano/pro-ui.tsx`
+  é a fonte única — `ProMark` (galão duplo ascendente em `currentColor`, lê como
+  "subir de faixa", escala de 8 a 28px), `ProEmblema` (a marca em pastilha de
+  metal, gradiente de id fixo `qpro-ouro` pela mesma regra das insígnias),
+  `ProBadge` (small-caps espaçado sobre superfície tingida, ouro como ACENTO —
+  `--questly-gold` é calibrado pra texto nos dois temas) e `ProCta` (a pílula de
+  hairline dourado dos headers, no lugar do botão de gradiente saturado com anel
+  branco que lia como microtransação de jogo). A `/pro` foi redesenhada na mesma
+  linguagem: emblema + headline, cards com hierarquia de preço tabular, linha de
+  confiança e um comparativo Grátis × Pro montado a partir de `RECURSOS_FREE`
+  (fonte única compartilhada com a landing). O dourado CHEIO sobrevive só onde é
+  carta comemorativa, não controle de UI: `ranking/pro-visual.tsx`.
 - **"Seja Pro" pós-assinatura:** o gating já existia (`ehPro(profile)` threaded
   pra sidebar/mobile-header/semana-view etc.) — quem é Pro vê "Questly Pro" +
   selo, não o CTA de venda nem os cadeados. Se o "Seja Pro" reaparece pra um

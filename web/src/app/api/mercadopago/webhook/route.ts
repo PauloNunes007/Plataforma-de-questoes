@@ -7,11 +7,21 @@ import { ativarAssinatura } from "@/lib/plano/ativar";
 // rota; nós re-consultamos o pagamento na API do MP (âncora de confiança) e,
 // se aprovado, ativamos o Pro do aluno via service_role. Idempotente.
 //
-// Segurança em camadas:
-//  1) valida a assinatura HMAC (x-signature) com MP_WEBHOOK_SECRET, quando
-//     configurado;
-//  2) INDEPENDENTE disso, o status vem de uma consulta autenticada à API do
-//     MP — uma notificação forjada não consegue simular um "approved".
+// Segurança: a ÂNCORA é a consulta autenticada à API do MP com o nosso token.
+// Ela sozinha já fecha o buraco — o MP só devolve pagamentos da nossa conta, um
+// id inventado volta 404, e um id real e aprovado é... um pagamento real. Não
+// existe caminho pra virar Pro sem pagar, com ou sem assinatura HMAC.
+//
+// Por isso a validação do `x-signature` LOGA e segue, em vez de responder 401:
+// falhar fechado aqui significa que um `MP_WEBHOOK_SECRET` errado (colado torto
+// no painel, rotacionado no MP e não atualizado no Vercel) faz TODO pagamento
+// parar de liberar o Pro em silêncio — que é exatamente a avaria que este
+// arquivo existe pra evitar. A assinatura vira sinal de anti-abuso (fica no
+// log), não porteiro do dinheiro do aluno.
+//
+// A tela /pro também confere o pagamento por conta própria (polling +
+// conferência na volta do checkout, lib/plano/actions.ts), então há dois
+// caminhos independentes até a mesma ativação idempotente.
 export const runtime = "nodejs";
 
 function validarAssinatura(req: Request, dataId: string, secret: string): boolean {
@@ -73,13 +83,18 @@ export async function POST(req: Request) {
     // copy-paste no painel do Vercel pode grudar um "\n" no fim do valor.
     const secret = process.env.MP_WEBHOOK_SECRET?.trim();
     if (secret && !validarAssinatura(req, paymentId, secret)) {
-      return NextResponse.json({ error: "assinatura inválida" }, { status: 401 });
+      console.error(
+        "Webhook MP com assinatura HMAC inválida (seguindo mesmo assim — o status vem da API do MP). Pagamento:",
+        paymentId,
+        "— confira se MP_WEBHOOK_SECRET bate com a assinatura secreta do painel.",
+      );
     }
 
     const pagamento = await buscarPagamentoMP(paymentId);
     if (pagamento?.status === "approved" && pagamento.externalReference) {
       const res = await ativarAssinatura(pagamento.externalReference, "Pago via Mercado Pago");
       if ("error" in res) console.error("Erro ao ativar assinatura pelo webhook:", res.error);
+      else console.log("Pro liberado pelo webhook do MP. Assinatura:", pagamento.externalReference);
     }
 
     return NextResponse.json({ ok: true });

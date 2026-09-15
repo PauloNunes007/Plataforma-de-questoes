@@ -97,9 +97,32 @@ arquivo: vêm do banco em tempo real.
 4. Redeploy no Vercel pra pegar as variáveis novas.
 
 **Como fica pro aluno:** clica em "Assinar" → vai pro checkout do Mercado Pago
-(cartão de crédito, Pix, etc.) → paga → o Mercado Pago avisa nosso webhook → o
-Pro é liberado **automaticamente**. O dinheiro cai na sua conta MP e **nenhum
-dado seu (CPF, chave Pix, nome) aparece** pro pagante.
+(cartão de crédito, Pix, etc.) → paga → o Pro é liberado **automaticamente**,
+sem ninguém aprovar nada. O dinheiro cai na sua conta MP e **nenhum dado seu
+(CPF, chave Pix, nome) aparece** pro pagante.
+
+**São dois caminhos independentes até a mesma ativação** (idempotente — rodar os
+dois não cobra nem libera duas vezes):
+
+1. **Webhook** — o MP avisa `/api/mercadopago/webhook` assim que aprova. É o
+   caminho rápido, e o único que funciona com o aluno de aba fechada.
+2. **Conferência da tela `/pro`** — quando o aluno volta do checkout, a página
+   pergunta o status direto pra API do MP antes de renderizar e, enquanto estiver
+   "processando", fica checando a cada poucos segundos (`conferirPagamentoAction`
+   em `src/lib/plano/actions.ts`). É a rede de segurança: funciona mesmo com o
+   webhook mal configurado, bloqueado ou atrasado.
+
+Por isso o passo 3 do webhook acima **não pode travar uma venda** se sair errado
+— mas configure assim mesmo, é ele que cobre quem paga e fecha a aba.
+
+> **Como saber se está tudo de pé:** abra `/admin/assinaturas` logado como admin.
+> Se faltar `MP_ACCESS_TOKEN`, `NEXT_PUBLIC_APP_URL` (https) ou
+> `MP_WEBHOOK_SECRET`, aparece uma tarja laranja dizendo exatamente o quê — e a
+> URL do webhook pra colar no painel do MP. Sem tarja, está completo.
+>
+> Cada pedido pendente tem **"Conferir no MP"**: pergunta pro Mercado Pago e
+> ativa na hora se estiver aprovado. "Ativar à mão" continua existindo, mas é
+> contingência (pagamento recebido por fora) e pede confirmação.
 
 > Enquanto quiser testar sem cobrar de verdade, use as **credenciais de teste**
 > do Mercado Pago em vez das de produção (cartões de teste na doc deles).

@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { ativarAssinatura } from "@/lib/plano/ativar";
+import { buscarPagamentosPorReferencia, mpConfigurado } from "@/lib/plano/mercadopago";
 import type { ItemImportado, Letra, QuestionPayload } from "@/lib/importar/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -295,9 +296,66 @@ export async function ativarAssinaturaAdminAction(
   if (!supabase) return { error: error! };
 
   // Mesma lógica que o webhook do Mercado Pago usa (lib/plano/ativar.ts) —
-  // escreve as colunas protegidas de `profiles` via service_role. Aqui é a
-  // confirmação manual (fallback quando não há gateway, ou casos especiais).
+  // escreve as colunas protegidas de `profiles` via service_role.
+  //
+  // ATENÇÃO: esta é a ativação MANUAL, e depois da automação do fluxo (webhook
+  // + conferência na /pro) ela virou CONTINGÊNCIA, não rotina. O caminho
+  // normal não passa por aqui: o aluno paga e o Pro entra sozinho. Use
+  // `conferirAssinaturaAdminAction` primeiro — ela pergunta pro Mercado Pago se
+  // o pagamento existe mesmo, em vez de acreditar na palavra de quem pediu.
   return ativarAssinatura(id, observacao);
+}
+
+// Conferência de UMA assinatura contra a API do Mercado Pago. É o que o admin
+// deve usar antes de qualquer ativação: devolve o que o MP realmente diz e, se
+// estiver aprovado, ativa na hora (mesma função idempotente do webhook).
+export async function conferirAssinaturaAdminAction(
+  id: string,
+): Promise<
+  | { estado: "ativada" }
+  | { estado: "sem_pagamento" }
+  | { estado: "em_andamento"; status: string }
+  | { estado: "recusado"; status: string }
+  | { error: string }
+> {
+  const { supabase, error } = await requireAdmin();
+  if (!supabase) return { error: error! };
+  if (!mpConfigurado()) return { error: "MP_ACCESS_TOKEN não está configurado neste deploy." };
+
+  const pagamentos = await buscarPagamentosPorReferencia(id);
+  if (!pagamentos) return { error: "Não foi possível falar com o Mercado Pago agora." };
+  if (pagamentos.length === 0) return { estado: "sem_pagamento" };
+
+  if (pagamentos.some((p) => p.status === "approved")) {
+    const res = await ativarAssinatura(id, "Pago via Mercado Pago (conferido pelo admin)");
+    if ("error" in res) return { error: res.error };
+    return { estado: "ativada" };
+  }
+
+  const emAndamento = pagamentos.find((p) =>
+    ["pending", "in_process", "in_mediation", "authorized"].includes(p.status),
+  );
+  if (emAndamento) return { estado: "em_andamento", status: emAndamento.status };
+  return { estado: "recusado", status: pagamentos[0].status };
+}
+
+// Diagnóstico do gateway — sem isto, um deploy com env faltando só se manifesta
+// como "todo mundo reclamando que pagou e não liberou". Não devolve segredo
+// nenhum, só se cada peça está presente.
+export async function diagnosticoPagamentoAction(): Promise<
+  { tokenMP: boolean; segredoWebhook: boolean; urlApp: string | null; webhookUrl: string | null } | { error: string }
+> {
+  const { supabase, error } = await requireAdmin();
+  if (!supabase) return { error: error! };
+
+  const url = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/+$/, "") || null;
+  const https = !!url && url.startsWith("https://");
+  return {
+    tokenMP: !!process.env.MP_ACCESS_TOKEN?.trim(),
+    segredoWebhook: !!process.env.MP_WEBHOOK_SECRET?.trim(),
+    urlApp: url,
+    webhookUrl: https ? `${url}/api/mercadopago/webhook` : null,
+  };
 }
 
 export async function revogarProAdminAction(userId: string): Promise<{ ok: true } | { error: string }> {

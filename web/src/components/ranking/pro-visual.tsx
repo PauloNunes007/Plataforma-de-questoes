@@ -9,7 +9,7 @@
 // ACABAMENTO (moldura prismática, foil, aro dourado) — como uma edição
 // especial da mesma carta, não uma carta melhor.
 import { motion } from "framer-motion";
-import { Crown } from "lucide-react";
+import { ProMark } from "@/components/plano/pro-ui";
 
 // Moldura "foil prismático" — substitui LIGA_FRAME no card do assinante.
 export const PRO_FRAME = "from-[#f6d97a] via-[#c9903a] to-[#8a5cd6]";
@@ -34,28 +34,30 @@ export function ProFoil() {
   );
 }
 
-/** Selo "PRO" impresso no card — dourado, com a coroa da marca. */
+/** Selo "PRO" impresso no card — chapa de metal com a marca da assinatura.
+ *  Aqui o dourado CHEIO se justifica (é uma carta comemorativa, não um botão
+ *  de UI), mas o motivo é o mesmo galão do resto do app — a coroa saiu. */
 export function ProSelo({ className = "" }: { className?: string }) {
   return (
     <span
       title="Assinante Questly Pro"
-      className={`inline-flex shrink-0 items-center gap-1 rounded-full bg-gradient-to-r from-questly-gold to-amber-300 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] text-[#3a2a05] shadow-sm ring-1 ring-white/50 ${className}`}
+      className={`inline-flex shrink-0 items-center gap-1 rounded-md bg-gradient-to-br from-[#fbe6a4] via-[#d9a52a] to-[#a6760c] px-2 py-[3px] text-[9px] font-bold uppercase tracking-[0.14em] text-[#2a1d02] shadow-sm ring-1 ring-white/40 ${className}`}
     >
-      <Crown size={9} strokeWidth={2.5} className="fill-current" />
+      <ProMark size={9} strokeWidth={2.6} />
       Pro
     </span>
   );
 }
 
-/** Coroa miúda pra marcar a linha do assinante nas listas do ranking. */
+/** Marca miúda pra sinalizar a linha do assinante nas listas do ranking. */
 export function ProMarcaLinha({ className = "" }: { className?: string }) {
   return (
     <span
       title="Assinante Questly Pro"
       aria-label="Assinante Questly Pro"
-      className={`inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-questly-gold to-amber-400 text-[#3a2a05] shadow-sm ${className}`}
+      className={`inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-br from-[#fbe6a4] via-[#d9a52a] to-[#a6760c] text-[#2a1d02] shadow-sm ${className}`}
     >
-      <Crown size={9} strokeWidth={2.75} className="fill-current" />
+      <ProMark size={9} strokeWidth={2.7} />
     </span>
   );
 }

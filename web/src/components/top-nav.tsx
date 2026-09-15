@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Crown, GraduationCap, LogOut, Settings, ShieldAlert, Timer } from "lucide-react";
+import { GraduationCap, LogOut, Settings, ShieldAlert, Timer } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TOP_NAV_ITEMS } from "@/components/nav-items";
-import { ProBadge } from "@/components/plano/pro-ui";
+import { ProBadge, ProCta, ProMark } from "@/components/plano/pro-ui";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { signOutAction } from "@/lib/auth/actions";
@@ -92,17 +92,7 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
               selo saiu do lado do perfil (pedido do usuário): a identidade Pro
               agora aparece onde ela é vista pelos outros — no aro dourado do
               avatar e no card do ranking. */}
-          {!ehPro && (
-            <Link
-              href="/pro"
-              aria-label="Seja Pro"
-              title="Seja Pro"
-              className="hidden h-8 shrink-0 cursor-pointer items-center gap-1 rounded-full px-2.5 text-[12px] font-semibold text-questly-gold transition-transform hover:bg-questly-gold/10 active:scale-95 sm:flex"
-            >
-              <Crown size={13} strokeWidth={2.5} />
-              Seja Pro
-            </Link>
-          )}
+          {!ehPro && <ProCta ehPro={false} className="hidden sm:inline-flex" />}
 
           <ContaMenu
             nome={nome}
@@ -222,7 +212,7 @@ function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavPro
                 Ajustes
               </ItemMenu>
               <ItemMenu href="/pro" onClick={() => setAberto(false)} cor="text-questly-gold">
-                <Crown size={15} strokeWidth={1.75} />
+                <ProMark size={15} strokeWidth={1.9} />
                 {ehPro ? "Questly Pro" : "Seja Pro"}
               </ItemMenu>
 

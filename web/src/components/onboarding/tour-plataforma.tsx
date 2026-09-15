@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { Mascote } from "@/components/trilha/mascote-capivara";
 import { CursoIcone } from "@/components/cursos/curso-icone";
+import { ProMark } from "@/components/plano/pro-ui";
 import { cursoReconhecido, type CursoIdentidade } from "@/lib/cursos/registro";
 
 /* ------------------------------------------------------------------ */
@@ -956,7 +957,7 @@ function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => voi
         transition={{ type: "spring", stiffness: 240, damping: 16, delay: 0.15 }}
         className="relative mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f2ca55] to-[#c9930a] shadow-[0_0_44px_rgba(232,185,49,0.45)] ring-1 ring-inset ring-white/40"
       >
-        <Crown size={26} strokeWidth={2.2} className="fill-[#0a1020]/20 text-[#241a03]" />
+        <ProMark size={26} strokeWidth={2.3} className="text-[#241a03]" />
         <motion.span
           className="absolute inset-0 rounded-2xl bg-[#e8b931]/30 blur-xl"
           animate={rm ? undefined : { opacity: [0.4, 0.9, 0.4], scale: [1, 1.15, 1] }}
@@ -1039,7 +1040,7 @@ function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => voi
               transition={{ delay: 2.4, duration: 1.1, repeat: Infinity, repeatDelay: 3.4, ease: "easeInOut" }}
             />
           )}
-          <Crown size={16} strokeWidth={2.4} className="fill-current" />
+          <ProMark size={16} strokeWidth={2.4} />
           Quero gabaritar com o Pro
         </motion.button>
         <motion.button

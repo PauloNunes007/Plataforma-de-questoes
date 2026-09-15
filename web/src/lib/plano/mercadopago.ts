@@ -53,10 +53,15 @@ export async function criarPreferenciaCheckout(params: {
       pending: `${base}/pro?status=pendente`,
       failure: `${base}/pro?status=falha`,
     },
-    notification_url: `${base}/api/mercadopago/webhook`,
     statement_descriptor: "QUESTLY",
-    // auto_return só é aceito com back_urls https (falha em localhost).
-    ...(ehHttps ? { auto_return: "approved" } : {}),
+    // auto_return e notification_url só são aceitos com URL https pública: em
+    // localhost o MP rejeita a preferência inteira (e o aluno veria "não foi
+    // possível iniciar o pagamento" em vez do checkout). Em dev o webhook não
+    // teria como chegar de qualquer jeito — quem cobre é a conferência da
+    // tela /pro, que pergunta o status direto pra API do MP.
+    ...(ehHttps
+      ? { auto_return: "approved", notification_url: `${base}/api/mercadopago/webhook` }
+      : {}),
   };
   if (params.userEmail) body.payer = { email: params.userEmail };
 
@@ -94,12 +99,13 @@ export async function criarPreferenciaCheckout(params: {
 // do MP autenticada com o NOSSO token — não dá pra falsificar um "approved".
 export async function buscarPagamentoMP(
   paymentId: string,
-): Promise<{ status: string; externalReference: string | null } | null> {
+): Promise<{ status: string; statusDetail: string | null; externalReference: string | null } | null> {
   const token = tokenMP();
   if (!token) return null;
   try {
     const res = await fetch(`${MP_API}/v1/payments/${paymentId}`, {
       headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
     });
     if (!res.ok) {
       console.error("Erro ao buscar pagamento MP:", res.status);
@@ -107,15 +113,69 @@ export async function buscarPagamentoMP(
     }
     const data = (await res.json()) as {
       status?: string;
+      status_detail?: string;
       external_reference?: string | null;
       metadata?: { assinatura_id?: string };
     };
     return {
       status: data.status ?? "",
+      statusDetail: data.status_detail ?? null,
       externalReference: data.external_reference ?? data.metadata?.assinatura_id ?? null,
     };
   } catch (e) {
     console.error("Falha de rede ao buscar pagamento MP:", e);
+    return null;
+  }
+}
+
+// Busca pagamentos pelo `external_reference` (= id da assinatura). Essa é a
+// peça que torna o fluxo automático SEM depender do webhook chegar: quando o
+// aluno volta do checkout (ou enquanto a tela /pro faz polling), perguntamos
+// direto ao Mercado Pago "existe pagamento aprovado pra essa assinatura?".
+// O webhook continua sendo o caminho rápido; isto é a rede de segurança pra
+// quando ele atrasa, é bloqueado, ou o segredo/URL estão desconfigurados.
+export type PagamentoMP = {
+  id: string;
+  status: string;
+  statusDetail: string | null;
+  externalReference: string | null;
+};
+
+export async function buscarPagamentosPorReferencia(
+  assinaturaId: string,
+): Promise<PagamentoMP[] | null> {
+  const token = tokenMP();
+  if (!token) return null;
+  try {
+    const url = new URL(`${MP_API}/v1/payments/search`);
+    url.searchParams.set("external_reference", assinaturaId);
+    url.searchParams.set("sort", "date_created");
+    url.searchParams.set("criteria", "desc");
+    url.searchParams.set("limit", "10");
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      console.error("Erro ao buscar pagamentos por referência no MP:", res.status, await res.text());
+      return null;
+    }
+    const data = (await res.json()) as {
+      results?: Array<{
+        id?: number | string;
+        status?: string;
+        status_detail?: string;
+        external_reference?: string | null;
+      }>;
+    };
+    return (data.results || []).map((p) => ({
+      id: String(p.id ?? ""),
+      status: p.status ?? "",
+      statusDetail: p.status_detail ?? null,
+      externalReference: p.external_reference ?? null,
+    }));
+  } catch (e) {
+    console.error("Falha de rede ao buscar pagamentos por referência no MP:", e);
     return null;
   }
 }

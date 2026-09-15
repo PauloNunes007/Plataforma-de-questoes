@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Crown, GraduationCap, LogOut, ShieldAlert } from "lucide-react";
+import { GraduationCap, LogOut, ShieldAlert } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "@/components/logo";
-import { ProBadge } from "@/components/plano/pro-ui";
+import { ProBadge, ProCta } from "@/components/plano/pro-ui";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { signOutAction } from "@/lib/auth/actions";
@@ -37,13 +37,7 @@ export function MobileHeader({
       <Logo />
 
       <div className="flex items-center gap-2">
-        <Link
-          href="/pro"
-          className="flex h-8 shrink-0 cursor-pointer items-center gap-1 rounded-full bg-gradient-to-r from-questly-gold to-amber-400 px-2.5 text-[11.5px] font-semibold text-[#3a2a05] shadow-sm ring-1 ring-white/40 transition-transform active:scale-95"
-        >
-          <Crown size={13} strokeWidth={2.5} className="fill-current" />
-          {ehPro ? "Pro" : "Seja Pro"}
-        </Link>
+        <ProCta ehPro={ehPro} compacto />
 
         <div className="relative">
           <button
