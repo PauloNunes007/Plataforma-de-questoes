@@ -389,8 +389,20 @@ remetente é metade da entrega. Migração: `supabase_email_campanha.sql` (raiz)
   formulário. A prévia é um `<iframe srcDoc>` com o **HTML real** que vai pra
   Brevo, e há "enviar teste" antes do disparo — erro de texto só aparece de
   verdade dentro do cliente de e-mail.
+- **`auth.admin.listUsers` é a única chamada do app pra API Admin do GoTrue**
+  (todo o resto de escrita privilegiada passa por PostgREST via service_role,
+  caminho muito mais pisado). Já falhou uma vez com uma mensagem imprestável —
+  `Falha ao listar contas: {"url":"...auth/v1/admin/users?..."}` — porque o
+  auth-js, quando o `fetch()` rejeita sem um `.message` (falha de transporte
+  crua, não um erro de negócio com corpo JSON), cai no fallback
+  `JSON.stringify(erro)`. `lib/supabase/resiliencia.ts` (`comRetentativa` +
+  `descreverErro`) cobre isso: reentanta 3x com backoff curto e, se falhar de
+  novo, loga a forma REAL do erro no servidor em vez de só `.message`. Se
+  aparecer de novo, olhar os logs da function no Vercel antes de suspeitar de
+  config — o endpoint em si respondeu normal a um teste manual.
 
 Arquivos: `lib/email/{campanha,templates-campanha,descadastro,actions}.ts`,
+`lib/supabase/resiliencia.ts`,
 `lib/admin/actions-campanha.ts` (requireAdmin próprio — módulo `"use server"` só
 exporta função async, então não dá pra reusar o de `lib/admin/actions.ts`),
 `components/admin/campanha-email.tsx`, `components/email/descadastro-painel.tsx`.

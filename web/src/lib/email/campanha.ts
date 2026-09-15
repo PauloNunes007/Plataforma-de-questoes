@@ -20,6 +20,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { lerPaginado } from "@/lib/supabase/paginado";
+import { descreverErro, comRetentativa } from "@/lib/supabase/resiliencia";
 import { creditosBrevo, enviarEmail } from "./enviar";
 import { linkDescadastro } from "./descadastro";
 import { montarEmailCampanha, type ConteudoCampanha } from "./templates-campanha";
@@ -75,9 +76,31 @@ async function listarUsuarios(): Promise<Usuario[]> {
   const porPagina = 200;
   const usuarios: Usuario[] = [];
 
+  // A API Admin do GoTrue (auth.admin.listUsers) é um caminho bem menos
+  // pisado que o resto do app: todo write privilegiado daqui (XP, liga, Pro)
+  // passa por PostgREST via service_role, que é testado o tempo todo. Isto
+  // aqui é a ÚNICA chamada do app pra esse endpoint específico — e foi
+  // justamente ela que falhou com um erro sem mensagem legível ("{"url":
+  // ..."}"): o objeto que o fetch rejeitou não tinha `.message`, então o
+  // auth-js caiu no fallback `JSON.stringify(erro)`, que só tinha `url`.
+  //
+  // `comRetentativa` cobre o caso comum (engasgo passageiro de rede entre a
+  // function da Vercel e o Supabase — o supabase-js NÃO reencaminha essas
+  // chamadas sozinho) e `descreverErro` garante que, se falhar de novo, o
+  // log do servidor mostra a forma REAL do erro em vez de um `.message`
+  // vazio — ver lib/supabase/resiliencia.ts.
   for (let pagina = 1; pagina <= 60; pagina++) {
-    const { data, error } = await admin.auth.admin.listUsers({ page: pagina, perPage: porPagina });
-    if (error) throw new Error(`Falha ao listar contas: ${error.message}`);
+    const { data, error } = await comRetentativa(
+      () => admin.auth.admin.listUsers({ page: pagina, perPage: porPagina }),
+      `auth.admin.listUsers(pagina=${pagina})`,
+    );
+    if (error) {
+      console.error(`[campanha] listUsers pagina ${pagina} falhou:`, descreverErro(error));
+      throw new Error(
+        `Falha ao listar contas ao ler a página ${pagina} do Auth (${descreverErro(error)}). ` +
+          `Se persistir, confira SUPABASE_SERVICE_ROLE_KEY no Vercel e os logs da function.`,
+      );
+    }
 
     const lote = data?.users ?? [];
     for (const u of lote) {
