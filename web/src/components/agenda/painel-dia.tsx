@@ -17,7 +17,7 @@
 // ofensiva: planejar não é conquistar, e pagar por plano marcado abriria o
 // caminho de forjar ranking.
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Check, ChevronRight, Clock, ListTodo, Swords, Target, Trash2, X } from "lucide-react";
 import type { ProvaDia } from "@/lib/agenda/agenda-data";
@@ -25,6 +25,8 @@ import type { TarefaRow, TipoItemAgenda } from "@/lib/tarefas/tarefas-data";
 import type { NovoItemAgenda } from "@/lib/tarefas/actions";
 import { minutosReservados } from "@/lib/tarefas/tarefas-data";
 import { fmtDuracao, rotuloData } from "@/lib/agenda/formato";
+import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
+import { Select } from "@/components/ui/select";
 import { corDoItem } from "./celula-dia";
 
 /** Durações que o aluno escolhe num toque — o resto vai no campo livre. */
@@ -35,6 +37,15 @@ const QUANTIDADES = [10, 20, 30, 50] as const;
 const NOMES_PROVA = ["P1", "P2", "P3", "Final"];
 
 type Modo = "sessao" | "tarefa" | "meta" | "prova";
+
+/** O mesmo ícone do botão que abriu o formulário, repetido no cabeçalho dele:
+ *  é o que diz "você está no que clicou" sem precisar ler o título. */
+const ICONE_FORM: Record<Modo, React.ReactNode> = {
+  sessao: <Clock size={13} strokeWidth={2.5} />,
+  tarefa: <ListTodo size={13} strokeWidth={2.5} />,
+  meta: <Target size={13} strokeWidth={2.5} />,
+  prova: <Swords size={13} strokeWidth={2.5} />,
+};
 
 export function PainelDia({
   data,
@@ -79,6 +90,18 @@ export function PainelDia({
   const reservado = minutosReservados(itens);
   const semDisciplinas = subjects.length === 0;
 
+  // Meta e prova são sempre DE uma disciplina; sessão e tarefa podem ser
+  // soltas — por isso a opção vazia só entra nesses dois modos. O ponto
+  // colorido é o mesmo `corDaDisciplina` do resto do app: a disciplina tem UMA
+  // cor em qualquer tela.
+  const opcoesDisciplina = useMemo(() => {
+    const livres = modo === "sessao" || modo === "tarefa";
+    return [
+      ...(livres ? [{ value: "", label: "Sem disciplina" }] : []),
+      ...subjects.map((s) => ({ value: s.id, label: s.nome, cor: corDaDisciplina(s.nome).de })),
+    ];
+  }, [modo, subjects]);
+
   function abrir(m: Modo) {
     setErro(null);
     setModo(m);
@@ -93,43 +116,50 @@ export function PainelDia({
     setErro(null);
   }
 
+  // O `finally` não é zelo decorativo: quando a Server Action falhava, a
+  // promise REJEITAVA e o `setSalvando(false)` que existia no fim de cada
+  // caminho nunca rodava — o botão ficava "Salvando..." pra sempre, sem erro
+  // na tela, e não havia como o aluno saber que o pedido tinha morrido. Um
+  // reset num caminho só é um reset que um dia não acontece.
   async function salvar() {
     if (salvando || !modo) return;
     setSalvando(true);
     setErro(null);
 
-    if (modo === "prova") {
-      const msg = await onMarcarProva(subjectId, nomeProva.trim() || "Prova");
-      if (msg) setErro(msg);
-      else fechar();
-      setSalvando(false);
-      return;
-    }
+    try {
+      if (modo === "prova") {
+        const msg = await onMarcarProva(subjectId, nomeProva.trim() || "Prova");
+        if (msg) setErro(msg);
+        else fechar();
+        return;
+      }
 
-    const disciplina = subjects.find((s) => s.id === subjectId);
-    // A meta não pede título: o título DELA é o número mais a disciplina, e
-    // obrigar o aluno a escrever "30 questões de Cálculo II" seria pedir que
-    // ele repita o que já escolheu nos dois campos acima.
-    const titulo =
-      modo === "meta" ? `${quantidade} questões de ${disciplina?.nome || "estudo"}` : nome.trim();
-    if (!titulo) {
-      setSalvando(false);
-      return;
-    }
+      const disciplina = subjects.find((s) => s.id === subjectId);
+      // A meta não pede título: o título DELA é o número mais a disciplina, e
+      // obrigar o aluno a escrever "30 questões de Cálculo II" seria pedir que
+      // ele repita o que já escolheu nos dois campos acima.
+      const titulo =
+        modo === "meta" ? `${quantidade} questões de ${disciplina?.nome || "estudo"}` : nome.trim();
+      if (!titulo) return;
 
-    const ok = await onAdicionar({
-      nome: titulo,
-      descricao: null,
-      subjectId: subjectId || null,
-      data,
-      tipo: modo as TipoItemAgenda,
-      hora: modo === "sessao" ? hora : null,
-      duracaoMin: modo === "sessao" ? duracao : null,
-      metaQuestoes: modo === "meta" ? quantidade : null,
-    });
-    if (ok) fechar();
-    else setErro("Não foi possível salvar. Tente de novo.");
-    setSalvando(false);
+      const ok = await onAdicionar({
+        nome: titulo,
+        descricao: null,
+        subjectId: subjectId || null,
+        data,
+        tipo: modo as TipoItemAgenda,
+        hora: modo === "sessao" ? hora : null,
+        duracaoMin: modo === "sessao" ? duracao : null,
+        metaQuestoes: modo === "meta" ? quantidade : null,
+      });
+      if (ok) fechar();
+      else setErro("Não foi possível salvar. Tente de novo.");
+    } catch (e) {
+      console.error("Falha ao salvar item da agenda:", e);
+      setErro("Não deu pra falar com o servidor. Confira a conexão e tente de novo.");
+    } finally {
+      setSalvando(false);
+    }
   }
 
   const tituloForm: Record<Modo, string> = {
@@ -209,132 +239,148 @@ export function PainelDia({
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-muted/50 p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-[0.07em] text-muted-foreground">
+            <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3.5 shadow-xs">
+              <div className="flex items-center gap-2 border-b border-border pb-2.5">
+                <span
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${
+                    modo === "prova"
+                      ? "bg-questly-orange-light text-questly-orange-dark"
+                      : "bg-questly-green-light text-questly-green-dark dark:text-questly-green"
+                  }`}
+                >
+                  {ICONE_FORM[modo]}
+                </span>
+                <span className="min-w-0 flex-1 truncate font-heading text-[13.5px] font-semibold tracking-tight">
                   {tituloForm[modo]}
                 </span>
                 <button
                   type="button"
                   onClick={fechar}
                   aria-label="Fechar"
-                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground"
+                  className="-mr-1 flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
                   <X size={14} strokeWidth={2.2} />
                 </button>
               </div>
 
               {(modo === "sessao" || modo === "tarefa") && (
-                <input
-                  autoFocus
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") void salvar();
-                  }}
-                  placeholder={modo === "sessao" ? "Ex.: Revisar derivadas" : "Ex.: Entregar lista 3"}
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-[13px] outline-none focus:border-questly-green"
-                />
+                <Campo rotulo={modo === "sessao" ? "O que você vai estudar" : "O que precisa fazer"}>
+                  <input
+                    autoFocus
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") void salvar();
+                    }}
+                    placeholder={modo === "sessao" ? "Ex.: Revisar derivadas" : "Ex.: Entregar lista 3"}
+                    className="w-full rounded-xl border border-input bg-background px-3 py-2 text-[13px] font-medium outline-none transition-colors placeholder:font-normal placeholder:text-muted-foreground hover:border-questly-green/45 focus:border-questly-green focus:ring-[3px] focus:ring-questly-green/25"
+                  />
+                </Campo>
               )}
 
-              <select
-                value={subjectId}
-                onChange={(e) => setSubjectId(e.target.value)}
-                aria-label="Disciplina"
-                className="w-full cursor-pointer rounded-xl border border-input bg-background px-3 py-2 text-[13px] outline-none focus:border-questly-green"
-              >
-                {/* Meta e prova são sempre DE uma disciplina; sessão e tarefa
-                    podem ser soltas. */}
-                {(modo === "sessao" || modo === "tarefa") && <option value="">Sem disciplina</option>}
-                {subjects.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.nome}
-                  </option>
-                ))}
-              </select>
+              <Campo rotulo="Disciplina">
+                <Select
+                  value={subjectId}
+                  onValueChange={setSubjectId}
+                  opcoes={opcoesDisciplina}
+                  aria-label="Disciplina"
+                  placeholder="Escolha uma disciplina"
+                />
+              </Campo>
 
               {modo === "sessao" && (
                 <>
-                  <label className="flex items-center gap-2 text-[11.5px] font-semibold text-muted-foreground">
-                    Começa às
+                  <Campo rotulo="Começa às">
                     <input
                       type="time"
                       value={hora}
                       onChange={(e) => setHora(e.target.value)}
-                      className="tnum flex-1 cursor-pointer rounded-xl border border-input bg-background px-3 py-2 text-[13px] text-foreground outline-none focus:border-questly-green"
+                      className="tnum w-full cursor-pointer rounded-xl border border-input bg-background px-3 py-2 text-[13px] font-medium text-foreground outline-none transition-colors hover:border-questly-green/45 focus:border-questly-green focus:ring-[3px] focus:ring-questly-green/25"
                     />
-                  </label>
-                  <Chips valores={DURACOES} ativo={duracao} onEscolher={setDuracao} rotulo={fmtDuracao} />
+                  </Campo>
+                  <Campo rotulo="Quanto tempo">
+                    <Chips valores={DURACOES} ativo={duracao} onEscolher={setDuracao} rotulo={fmtDuracao} />
+                  </Campo>
                 </>
               )}
 
               {modo === "meta" && (
                 <>
-                  <Chips
-                    valores={QUANTIDADES}
-                    ativo={quantidade}
-                    onEscolher={setQuantidade}
-                    rotulo={(q) => String(q)}
-                  />
-                  <label className="flex items-center gap-2 text-[11.5px] font-semibold text-muted-foreground">
-                    Ou
-                    <input
-                      type="number"
-                      min={1}
-                      max={500}
-                      value={quantidade}
-                      onChange={(e) =>
-                        setQuantidade(Math.max(1, Math.min(500, Number(e.target.value) || 1)))
-                      }
-                      className="tnum w-20 rounded-xl border border-input bg-background px-2.5 py-1.5 text-[13px] text-foreground outline-none focus:border-questly-green"
+                  <Campo rotulo="Quantas questões">
+                    <Chips
+                      valores={QUANTIDADES}
+                      ativo={quantidade}
+                      onEscolher={setQuantidade}
+                      rotulo={(q) => String(q)}
                     />
-                    questões
-                  </label>
-                  <p className="text-[11px] leading-relaxed text-muted-foreground">
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <span className="text-[11.5px] font-medium text-muted-foreground">Ou</span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={500}
+                        value={quantidade}
+                        onChange={(e) =>
+                          setQuantidade(Math.max(1, Math.min(500, Number(e.target.value) || 1)))
+                        }
+                        className="tnum w-[72px] rounded-xl border border-input bg-background px-2.5 py-1.5 text-[13px] font-semibold text-foreground outline-none transition-colors hover:border-questly-green/45 focus:border-questly-green focus:ring-[3px] focus:ring-questly-green/25"
+                      />
+                      <span className="text-[11.5px] font-medium text-muted-foreground">questões</span>
+                    </div>
+                  </Campo>
+                  <Nota>
                     O progresso conta sozinho: toda questão que você responder nessa disciplina nesse dia
                     entra na meta.
-                  </p>
+                  </Nota>
                 </>
               )}
 
               {modo === "prova" && (
-                <>
-                  <div className="flex gap-1">
+                <Campo rotulo="Qual prova">
+                  <SegmentedControl>
                     {NOMES_PROVA.map((n) => (
                       <button
                         key={n}
                         type="button"
+                        aria-pressed={nomeProva === n}
                         onClick={() => setNomeProva(n)}
-                        className={`flex-1 cursor-pointer rounded-lg px-1 py-1.5 text-[11.5px] font-bold transition-colors ${
+                        className={`flex-1 cursor-pointer rounded-[9px] px-1 py-1.5 text-[11.5px] font-bold transition-all ${
                           nomeProva === n
-                            ? "bg-questly-orange-dark text-white dark:text-[#1a1206]"
-                            : "bg-background text-muted-foreground hover:text-foreground"
+                            ? "bg-questly-orange-dark text-white shadow-xs dark:text-[#1a1206]"
+                            : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
                         {n}
                       </button>
                     ))}
-                  </div>
+                  </SegmentedControl>
                   <input
                     value={nomeProva}
                     onChange={(e) => setNomeProva(e.target.value)}
                     placeholder="Nome da prova"
-                    className="w-full rounded-xl border border-input bg-background px-3 py-2 text-[13px] outline-none focus:border-questly-orange"
+                    className="mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2 text-[13px] font-medium outline-none transition-colors placeholder:font-normal placeholder:text-muted-foreground hover:border-questly-orange/45 focus:border-questly-orange focus:ring-[3px] focus:ring-questly-orange/25"
                   />
-                  <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  <Nota>
                     A prova entra na trilha e na contagem regressiva da disciplina — não é só uma marca no
                     calendário.
-                  </p>
-                </>
+                  </Nota>
+                </Campo>
               )}
 
-              {erro && <p className="text-[11.5px] font-medium text-questly-red-dark">{erro}</p>}
+              {erro && (
+                <p
+                  role="alert"
+                  className="rounded-xl border border-questly-red/35 bg-questly-red-light px-2.5 py-2 text-[11.5px] font-medium leading-relaxed text-questly-red-dark"
+                >
+                  {erro}
+                </p>
+              )}
 
               <button
                 type="button"
                 onClick={salvar}
                 disabled={salvando || ((modo === "sessao" || modo === "tarefa") && !nome.trim())}
-                className={`mt-0.5 min-h-[42px] cursor-pointer rounded-xl px-3 text-[13px] font-bold text-white transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-50 ${
+                className={`mt-0.5 min-h-[42px] cursor-pointer rounded-xl px-3 text-[13px] font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${
                   modo === "prova"
                     ? "bg-questly-orange-dark dark:text-[#1a1206]"
                     : "bg-questly-green dark:text-[#0c1512]"
@@ -419,6 +465,41 @@ function BotaoAdicionar({
   );
 }
 
+/** Rótulo + campo. Antes cada linha do formulário se explicava sozinha (ou
+ *  não se explicava): um `<select>` cru sem rótulo, um `<label>` com o texto
+ *  colado no input, chips sem título nenhum. Um rótulo só, sempre no mesmo
+ *  lugar e no mesmo tamanho, é o que faz as quatro linhas lerem como um
+ *  formulário em vez de uma pilha de controles. */
+function Campo({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
+  return (
+    <label className="flex flex-col gap-1.5">
+      <span className="text-[10.5px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
+        {rotulo}
+      </span>
+      {children}
+    </label>
+  );
+}
+
+/** Observação de rodapé do formulário — nunca um erro, sempre contexto. */
+function Nota({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="rounded-xl bg-muted/70 px-2.5 py-2 text-[11px] leading-relaxed text-muted-foreground">
+      {children}
+    </p>
+  );
+}
+
+/** Trilho de escolha única. Os botões soltos de antes flutuavam sobre o fundo
+ *  do cartão sem nada que os amarrasse — dava pra ler como quatro botões
+ *  independentes, e não como "escolha um destes". O trilho afundado resolve
+ *  isso e é o padrão que o resto do app já usa pra alternar visão. */
+function SegmentedControl({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex gap-0.5 rounded-xl border border-border bg-muted/70 p-1">{children}</div>
+  );
+}
+
 function Chips({
   valores,
   ativo,
@@ -431,22 +512,23 @@ function Chips({
   rotulo: (v: number) => string;
 }) {
   return (
-    <div className="flex gap-1">
+    <SegmentedControl>
       {valores.map((v) => (
         <button
           key={v}
           type="button"
+          aria-pressed={ativo === v}
           onClick={() => onEscolher(v)}
-          className={`tnum flex-1 cursor-pointer rounded-lg px-1 py-1.5 text-[11.5px] font-bold transition-colors ${
+          className={`tnum flex-1 cursor-pointer rounded-[9px] px-1 py-1.5 text-[11.5px] font-bold transition-all ${
             ativo === v
-              ? "bg-questly-green text-white dark:text-[#0c1512]"
-              : "bg-background text-muted-foreground hover:text-foreground"
+              ? "bg-questly-green text-white shadow-xs dark:text-[#0c1512]"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           {rotulo(v)}
         </button>
       ))}
-    </div>
+    </SegmentedControl>
   );
 }
 

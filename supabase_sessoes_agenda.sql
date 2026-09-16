@@ -28,9 +28,18 @@ alter table tarefas add column if not exists duracao_min integer;
 -- `tipo`: 'tarefa' = item de lista; 'sessao' = bloco de estudo com horário.
 -- (drop+create em vez de "add constraint if not exists" — Postgres não tem a
 -- forma IF NOT EXISTS pra constraint, e assim a migração continua idempotente.)
+-- SUPERSEDIDO por supabase_agenda_consolidado.sql — use aquele.
+-- Este bloco continua aqui como registro do que foi rodado na epoca, mas
+-- 'meta' entrou na lista: a versao antiga recriava o CHECK com apenas
+-- ('tarefa','sessao') e, rodada DEPOIS de supabase_agenda_metas.sql (que e
+-- exatamente o que se faz ao tentar "consertar a ordem"), proibia 'meta' de
+-- novo. Consertar a ordem passava a quebrar o que a ordem certa tinha
+-- arrumado. Incluir 'meta' aqui torna o arquivo inofensivo em qualquer ordem:
+-- se meta_questoes ainda nao existir, o CHECK so fica permissivo, e nada
+-- insere 'meta' antes da coluna existir.
 alter table tarefas drop constraint if exists tarefas_tipo_check;
 alter table tarefas add constraint tarefas_tipo_check
-  check (tipo in ('tarefa', 'sessao'));
+  check (tipo in ('tarefa', 'sessao', 'meta'));
 
 alter table tarefas drop constraint if exists tarefas_duracao_check;
 alter table tarefas add constraint tarefas_duracao_check

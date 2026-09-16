@@ -1,5 +1,10 @@
 -- ============================================================
 -- QUESTLY — Metas de questões na agenda (calendário dedicado)
+--
+-- SUPERSEDIDO por supabase_agenda_consolidado.sql. Rode AQUELE: ele declara o
+-- estado final da tabela `tarefas` de uma vez e nao depende de ordem nenhuma.
+-- Este arquivo fica como registro do que foi rodado na epoca.
+--
 -- Rodar DEPOIS de supabase_sessoes_agenda.sql — SEM ELE, ESTE SCRIPT FALHA
 -- E É REVERTIDO POR INTEIRO. A constraint tarefas_tipo_check abaixo
 -- referencia a coluna `tipo`, que só existe depois de supabase_sessoes_agenda.sql

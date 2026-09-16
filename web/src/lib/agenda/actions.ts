@@ -16,7 +16,15 @@ import { carregarMesAgenda, type MesAgenda, type ProvaDia } from "./agenda-data"
 // Criar uma prova solta só pra pintar o quadradinho deixaria duas verdades
 // sobre a mesma prova.
 
-export type { MesAgenda, ProvaDia };
+// NÃO re-exporte tipos daqui (`export type { MesAgenda } from ...`).
+// Num arquivo "use server" o Turbopack transforma CADA export num binding de
+// runtime, e um re-export de tipo importado NÃO é apagado: o chunk compilado
+// tenta ler uma variável que o TypeScript já removeu e a avaliação do módulo
+// morre com `ReferenceError: MesAgenda is not defined`. Como quem quebra é o
+// MÓDULO, e não a função, TODAS as actions do chunk passam a devolver 500 —
+// foi o que apagou o calendário inteiro (criar sessão/tarefa/meta ficava em
+// "Salvando..." pra sempre e a seta de mês caía na tela de erro). Tipo
+// compartilhado mora em `agenda-data.ts`, que todo consumidor já importa.
 
 export async function carregarMesAgendaAction(ano: number, mes: number): Promise<MesAgenda | null> {
   const supabase = await createClient();

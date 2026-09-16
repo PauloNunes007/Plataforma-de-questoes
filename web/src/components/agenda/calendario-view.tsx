@@ -57,6 +57,7 @@ export function CalendarioView({
   );
   const [sheetAberto, setSheetAberto] = useState(false);
   const [navegando, iniciarNavegacao] = useTransition();
+  const [erroRede, setErroRede] = useState<string | null>(null);
   const arrastando = useRef<string | null>(null);
   const [alvoArraste, setAlvoArraste] = useState<string | null>(null);
 
@@ -98,12 +99,34 @@ export function CalendarioView({
     setSelecionado(diaAlvo || novo.days.find((d) => d.data === hoje)?.data || novo.days[0]?.data || null);
   }
 
+  /**
+   * Toda leitura de outro mês passa por aqui, e o try/catch NÃO é opcional:
+   * uma Server Action que rejeita dentro de `startTransition` sobe pro error
+   * boundary mais próximo — ou seja, a página INTEIRA vira "algo quebrou do
+   * nosso lado" porque o aluno clicou numa seta. Falhar em buscar um mês é um
+   * contratempo de rede; o mês que já está na tela continua perfeitamente
+   * válido. Aqui isso vira um aviso na régua do calendário e nada mais.
+   */
+  function carregarMes(ano: number, mesIdx: number, diaAlvo?: string) {
+    iniciarNavegacao(async () => {
+      try {
+        const novo = await carregarMesAgendaAction(ano, mesIdx);
+        if (novo) {
+          aplicarMes(novo, diaAlvo);
+          setErroRede(null);
+        } else {
+          setErroRede("Não foi possível carregar esse mês.");
+        }
+      } catch (e) {
+        console.error("Falha ao carregar o mês da agenda:", e);
+        setErroRede("Sem resposta do servidor. Confira a conexão e tente de novo.");
+      }
+    });
+  }
+
   function irParaMes(delta: number) {
     const alvo = new Date(mes.ano, mes.mes + delta, 1);
-    iniciarNavegacao(async () => {
-      const novo = await carregarMesAgendaAction(alvo.getFullYear(), alvo.getMonth());
-      if (novo) aplicarMes(novo);
-    });
+    carregarMes(alvo.getFullYear(), alvo.getMonth());
   }
 
   function voltarPraHoje() {
@@ -111,12 +134,7 @@ export function CalendarioView({
       setSelecionado(hoje);
       return;
     }
-    const ano = Number(hoje.slice(0, 4));
-    const mesIdx = Number(hoje.slice(5, 7)) - 1;
-    iniciarNavegacao(async () => {
-      const novo = await carregarMesAgendaAction(ano, mesIdx);
-      if (novo) aplicarMes(novo, hoje);
-    });
+    carregarMes(Number(hoje.slice(0, 4)), Number(hoje.slice(5, 7)) - 1, hoje);
   }
 
   function selecionar(data: string) {
@@ -149,44 +167,99 @@ export function CalendarioView({
     // Cálculo" depois de responder 10 hoje veria 0/30 até recarregar. Relê o
     // mês (uma ida, só nesse caso) pra a barra já abrir com a verdade.
     if (linha.tipo === "meta") {
-      const atualizado = await carregarMesAgendaAction(mes.ano, mes.mes);
-      if (atualizado) setMes(atualizado);
+      // Falhar aqui não desfaz nada: a meta JÁ está salva e já aparece na
+      // lista. O que se perde é só a barra abrir com o progresso de hoje em
+      // vez de 0 — não vale propagar o erro e fazer o painel dizer que não
+      // salvou uma coisa que salvou.
+      try {
+        const atualizado = await carregarMesAgendaAction(mes.ano, mes.mes);
+        if (atualizado) setMes(atualizado);
+      } catch (e) {
+        console.error("Meta criada, mas não deu pra reler o progresso do mês:", e);
+      }
     }
     return true;
   }
 
+  // As três escritas abaixo são otimistas: a tela muda antes da confirmação.
+  // O desfazer no `catch`/`!ok` é o que impede a mentira silenciosa — marcar
+  // como feito, excluir ou arrastar uma linha que o servidor nunca aceitou, e
+  // o aluno só descobrir no próximo F5.
   async function alternar(data: string, id: string, concluidaAtual: boolean) {
-    setItens((prev) => ({
-      ...prev,
-      [data]: (prev[data] || []).map((t) => (t.id === id ? { ...t, concluida: !concluidaAtual } : t)),
-    }));
-    await alternarTarefaAction(id, !concluidaAtual);
+    const inverter = () =>
+      setItens((prev) => ({
+        ...prev,
+        [data]: (prev[data] || []).map((t) => (t.id === id ? { ...t, concluida: !t.concluida } : t)),
+      }));
+    inverter();
+    try {
+      const { ok } = await alternarTarefaAction(id, !concluidaAtual);
+      if (!ok) {
+        inverter();
+        setErroRede("Não foi possível atualizar esse item.");
+      }
+    } catch (e) {
+      console.error("Falha ao alternar item da agenda:", e);
+      inverter();
+      setErroRede("Sem resposta do servidor. Confira a conexão e tente de novo.");
+    }
   }
 
   async function remover(data: string, id: string) {
+    const antes = itens[data] || [];
     setItens((prev) => ({ ...prev, [data]: (prev[data] || []).filter((t) => t.id !== id) }));
-    await excluirTarefaAction(id);
+    try {
+      const { ok } = await excluirTarefaAction(id);
+      if (!ok) {
+        setItens((prev) => ({ ...prev, [data]: antes }));
+        setErroRede("Não foi possível excluir esse item.");
+      }
+    } catch (e) {
+      console.error("Falha ao excluir item da agenda:", e);
+      setItens((prev) => ({ ...prev, [data]: antes }));
+      setErroRede("Sem resposta do servidor. Confira a conexão e tente de novo.");
+    }
   }
 
   async function mover(id: string, de: string, para: string) {
     if (de === para) return;
     const item = (itens[de] || []).find((t) => t.id === id);
     if (!item) return;
+    const antesDe = itens[de] || [];
+    const antesPara = itens[para] || [];
     setItens((prev) => ({
       ...prev,
       [de]: (prev[de] || []).filter((t) => t.id !== id),
       [para]: ordenarDia([...(prev[para] || []), { ...item, data: para }]),
     }));
-    await moverTarefaAction(id, para);
+    const desfazer = () => setItens((prev) => ({ ...prev, [de]: antesDe, [para]: antesPara }));
+    try {
+      const { ok } = await moverTarefaAction(id, para);
+      if (!ok) {
+        desfazer();
+        setErroRede("Não foi possível mover esse item.");
+      }
+    } catch (e) {
+      console.error("Falha ao mover item da agenda:", e);
+      desfazer();
+      setErroRede("Sem resposta do servidor. Confira a conexão e tente de novo.");
+    }
   }
 
   /** Devolve a mensagem de erro (ou null) — quem mostra é o painel do dia. */
   async function marcarProva(subjectId: string, nome: string): Promise<string | null> {
     if (!selecionado) return "Escolha um dia.";
-    const { prova, error } = await marcarProvaAction({ subjectId, nome, data: selecionado });
-    if (error || !prova) return error || "Não foi possível marcar essa prova.";
-    setProvas((prev) => ({ ...prev, [selecionado]: prova }));
-    return null;
+    try {
+      const { prova, error } = await marcarProvaAction({ subjectId, nome, data: selecionado });
+      if (error || !prova) return error || "Não foi possível marcar essa prova.";
+      setProvas((prev) => ({ ...prev, [selecionado]: prova }));
+      return null;
+    } catch (e) {
+      // Devolve string em vez de deixar estourar: quem chama é o `salvar()` do
+      // painel, e uma rejeição ali deixava o botão em "Salvando..." pra sempre.
+      console.error("Falha ao marcar prova:", e);
+      return "Sem resposta do servidor. Confira a conexão e tente de novo.";
+    }
   }
 
   async function desmarcarProva(bossId: string) {
@@ -198,10 +271,19 @@ export function CalendarioView({
       delete copia[data];
       return copia;
     });
-    const { error } = await desmarcarProvaAction(bossId);
     // Devolve a prova pro lugar se o servidor recusou — sumir da tela uma
     // prova que continua no banco é pior do que não remover.
-    if (error) setProvas((prev) => ({ ...prev, [data]: anterior }));
+    try {
+      const { error } = await desmarcarProvaAction(bossId);
+      if (error) {
+        setProvas((prev) => ({ ...prev, [data]: anterior }));
+        setErroRede(error);
+      }
+    } catch (e) {
+      console.error("Falha ao desmarcar prova:", e);
+      setProvas((prev) => ({ ...prev, [data]: anterior }));
+      setErroRede("Sem resposta do servidor. Confira a conexão e tente de novo.");
+    }
   }
 
   const painel = diaSelecionado ? (
@@ -297,6 +379,25 @@ export function CalendarioView({
               </button>
             </div>
           </header>
+
+          {erroRede && (
+            <div
+              role="alert"
+              className="mb-3 flex items-start gap-2 rounded-xl border border-questly-red/35 bg-questly-red-light px-3 py-2"
+            >
+              <span className="min-w-0 flex-1 text-[11.5px] font-medium leading-relaxed text-questly-red-dark">
+                {erroRede}
+              </span>
+              <button
+                type="button"
+                onClick={() => setErroRede(null)}
+                aria-label="Fechar aviso"
+                className="-mr-0.5 shrink-0 cursor-pointer p-0.5 text-questly-red-dark/70 transition-colors hover:text-questly-red-dark"
+              >
+                <X size={13} strokeWidth={2.4} />
+              </button>
+            </div>
+          )}
 
           <div className={`transition-opacity ${navegando ? "opacity-50" : ""}`}>
             <div className="mb-1 grid grid-cols-7 gap-1.5 sm:gap-2">
