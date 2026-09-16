@@ -325,6 +325,7 @@ export async function finalizarMissaoAction(input: {
   if (missao.subject_id) {
     await atualizarMetricasSubject(supabase, user.id, missao.subject_id);
   }
+  await riscarBlocoPlanejado(supabase, user.id, missao.id as string);
   const topicIdsDasPerguntas = (Array.isArray(missao.topic_ids) ? missao.topic_ids : []) as string[];
   const novosMestresNomes = await celebrarNovasMaestrias(
     supabase,
@@ -335,6 +336,34 @@ export async function finalizarMissaoAction(input: {
   const desafio = missao.avulsa ? null : await prepararDesafioRecuperacao(supabase, user.id);
 
   return { recapResultado, novosMestresNomes, desafio, placar };
+}
+
+/**
+ * Se essa lista nasceu de um bloco de estudo do calendário
+ * (`tarefas.mission_id`, supabase_sessao_lista.sql), o bloco é marcado como
+ * feito agora — pelo trabalho, não pelo aluno.
+ *
+ * Note a direção: o plano NÃO paga nada ao ser marcado (agendar continua sem
+ * XP, sem ofensiva e sem missão automática). É o registro real que risca o
+ * plano, e não o contrário — o caminho oposto seria a porta pra forjar
+ * ranking marcando compromissos que nunca aconteceram.
+ *
+ * Falhar aqui não desfaz a missão concluída: o XP já foi pago pelo que o aluno
+ * de fato respondeu, e o pior caso é um quadradinho do calendário que ele
+ * marca na mão.
+ */
+async function riscarBlocoPlanejado(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  missaoId: string,
+) {
+  const { error } = await supabase
+    .from("tarefas")
+    .update({ concluida: true })
+    .eq("user_id", userId)
+    .eq("mission_id", missaoId)
+    .eq("concluida", false);
+  if (error) console.error("Erro ao riscar o bloco de estudo da agenda:", error);
 }
 
 // atualizarXpELiga/atualizarStreakEDailyLog vivem em lib/questly/economia.ts

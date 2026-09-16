@@ -10,7 +10,7 @@
 // `corDaDisciplina(nome)`, a mesma função que pinta o card de questão e o card
 // de retomar: a disciplina tem UMA cor no app inteiro, não uma por tela.
 
-import { Check, Swords, Target } from "lucide-react";
+import { Check, Swords } from "lucide-react";
 import type { CalDay } from "@/lib/questly/dashboard-data";
 import type { ProvaDia } from "@/lib/agenda/agenda-data";
 import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
@@ -124,7 +124,11 @@ export function CelulaDia({
         {visiveis.map((t) => {
           const cor = corDoItem(t);
           const feitas = t.subjectId ? progresso[t.subjectId] || 0 : 0;
-          const batida = t.tipo === "meta" && t.metaQuestoes != null && feitas >= t.metaQuestoes;
+          // O alvo é lido pelo CAMPO, não pelo `tipo`: bloco de estudo com
+          // horário também pode ter alvo desde que sessão e meta viraram a
+          // mesma marcação (ver painel-dia.tsx).
+          const alvo = t.metaQuestoes || 0;
+          const batida = alvo > 0 && feitas >= alvo;
           return (
             <span
               key={t.id}
@@ -139,19 +143,14 @@ export function CelulaDia({
               }`}
             >
               <i aria-hidden className="h-[5px] w-[5px] shrink-0 rounded-full" style={{ background: cor }} />
-              {t.tipo === "meta" ? (
-                <>
-                  <Target size={9} strokeWidth={2.6} className="shrink-0 opacity-70" />
-                  <span className="tnum shrink-0">
-                    {feitas}/{t.metaQuestoes}
-                  </span>
-                  <span className="truncate opacity-75">{t.subjectNome}</span>
-                </>
-              ) : (
-                <>
-                  {t.hora && <span className="tnum shrink-0 opacity-75">{t.hora}</span>}
-                  <span className={`truncate ${t.concluida ? "line-through" : ""}`}>{t.nome}</span>
-                </>
+              {t.hora && <span className="tnum shrink-0 opacity-75">{t.hora}</span>}
+              <span className={`min-w-0 truncate ${t.concluida ? "line-through" : ""}`}>{t.nome}</span>
+              {/* O alvo vira o placar do chip: é o único número da marcação que
+                  muda sozinho durante o dia, e é o que o aluno vem conferir. */}
+              {alvo > 0 && (
+                <span className="tnum ml-auto shrink-0 opacity-70">
+                  {feitas}/{alvo}
+                </span>
               )}
             </span>
           );

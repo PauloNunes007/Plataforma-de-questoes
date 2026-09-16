@@ -23,15 +23,17 @@ import { CalendarDays, ChevronLeft, ChevronRight, Clock, Flame, Target, X } from
 import { PageHeader } from "@/components/page-header";
 import type { MesAgenda, ProvaDia } from "@/lib/agenda/agenda-data";
 import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
-import { minutosReservados, ordenarDia } from "@/lib/tarefas/tarefas-data";
+import { ehEstudo, minutosReservados, ordenarDia } from "@/lib/tarefas/tarefas-data";
 import {
   alternarTarefaAction,
   criarTarefaAction,
   excluirTarefaAction,
+  iniciarEstudoPlanejadoAction,
   moverTarefaAction,
   type NovoItemAgenda,
 } from "@/lib/tarefas/actions";
 import { carregarMesAgendaAction, desmarcarProvaAction, marcarProvaAction } from "@/lib/agenda/actions";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 import { DOW_CURTO, DOW_LETRA, fmtDuracao, somarDias } from "@/lib/agenda/formato";
 import { CelulaDia } from "./celula-dia";
 import { PainelDia } from "./painel-dia";
@@ -72,7 +74,7 @@ export function CalendarioView({
   // Resumo do mês exibido — aritmética pura sobre o que já está em memória,
   // sem consulta nova.
   const resumo = useMemo(() => {
-    let sessoes = 0;
+    let blocos = 0;
     let minutos = 0;
     let metas = 0;
     let metasBatidas = 0;
@@ -80,15 +82,17 @@ export function CalendarioView({
       const doDia = itens[d.data] || [];
       minutos += minutosReservados(doDia);
       doDia.forEach((t) => {
-        if (t.tipo === "sessao") sessoes += 1;
-        if (t.tipo === "meta" && t.metaQuestoes != null) {
+        if (ehEstudo(t)) blocos += 1;
+        // O alvo é contado pelo CAMPO, não pelo tipo: um bloco com horário
+        // também pode ter alvo desde que sessão e meta viraram a mesma coisa.
+        if (t.metaQuestoes != null) {
           metas += 1;
           const feitas = t.subjectId ? mes.questoesPorDia[d.data]?.[t.subjectId] || 0 : 0;
           if (feitas >= t.metaQuestoes) metasBatidas += 1;
         }
       });
     });
-    return { sessoes, minutos, metas, metasBatidas };
+    return { blocos, minutos, metas, metasBatidas };
   }, [mes.days, mes.questoesPorDia, itens]);
 
   function aplicarMes(novo: MesAgenda, diaAlvo?: string) {
@@ -160,6 +164,7 @@ export function CalendarioView({
       hora: novo.hora || null,
       duracaoMin: novo.duracaoMin ?? null,
       metaQuestoes: novo.metaQuestoes ?? null,
+      missionId: null,
     };
     setItens((prev) => ({ ...prev, [novo.data]: ordenarDia([...(prev[novo.data] || []), linha]) }));
     // Uma meta recém-criada já nasce com o progresso certo: `questoesPorDia` é
@@ -233,6 +238,32 @@ export function CalendarioView({
     }
   }
 
+  /**
+   * "Começar" num bloco de hoje: monta a lista de questões da disciplina e
+   * devolve o link dela (quem navega é o item, que sabe mostrar o "Montando
+   * lista..."). Guarda o `missionId` no estado local pra que, se o aluno
+   * voltar pro calendário, o mesmo bloco ofereça "Continuar" em vez de
+   * sortear uma segunda lista.
+   */
+  async function iniciarEstudo(data: string, id: string): Promise<string | null> {
+    try {
+      const { missaoId, erro } = await iniciarEstudoPlanejadoAction(id);
+      if (!missaoId) {
+        setErroRede(erro || "Não foi possível montar a lista desse bloco.");
+        return null;
+      }
+      setItens((prev) => ({
+        ...prev,
+        [data]: (prev[data] || []).map((t) => (t.id === id ? { ...t, missionId: missaoId } : t)),
+      }));
+      return hrefQuestao(missaoId, "/calendario");
+    } catch (e) {
+      console.error("Falha ao começar o bloco de estudo:", e);
+      setErroRede("Sem resposta do servidor. Confira a conexão e tente de novo.");
+      return null;
+    }
+  }
+
   /** Devolve a mensagem de erro (ou null) — quem mostra é o painel do dia. */
   async function marcarProva(subjectId: string, nome: string): Promise<string | null> {
     if (!selecionado) return "Escolha um dia.";
@@ -289,6 +320,7 @@ export function CalendarioView({
       onAdiar={(id) => void mover(id, diaSelecionado.data, somarDias(diaSelecionado.data, 1))}
       onMarcarProva={marcarProva}
       onDesmarcarProva={(bossId) => void desmarcarProva(bossId)}
+      onIniciarEstudo={(id) => iniciarEstudo(diaSelecionado.data, id)}
       onDragStartItem={(id) => {
         arrastando.current = id;
       }}
@@ -301,7 +333,7 @@ export function CalendarioView({
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <PageHeader
         titulo="Calendário"
-        descricao="Toque num dia pra agendar uma sessão, definir uma meta de questões ou marcar o dia da prova."
+        descricao="Toque num dia pra marcar um bloco de estudo, anotar uma tarefa ou registrar o dia da prova."
         voltarHref="/dashboard"
         voltarLabel="Início"
       />
@@ -322,14 +354,14 @@ export function CalendarioView({
         <Indicador
           icone={<CalendarDays size={15} strokeWidth={2.2} />}
           tom="purple"
-          valor={String(resumo.sessoes)}
-          rotulo="sessões marcadas"
+          valor={String(resumo.blocos)}
+          rotulo="blocos de estudo"
         />
         <Indicador
           icone={<Target size={15} strokeWidth={2.2} />}
           tom="orange"
           valor={resumo.metas > 0 ? `${resumo.metasBatidas}/${resumo.metas}` : "—"}
-          rotulo="metas batidas"
+          rotulo="alvos batidos"
         />
       </div>
 

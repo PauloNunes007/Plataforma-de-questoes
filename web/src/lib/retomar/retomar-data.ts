@@ -8,6 +8,11 @@ export type RetomarInfo = {
   pct: number;
   avulsa: boolean;
   recap: boolean;
+  /** O bloco do calendário que originou essa lista, quando ela veio de um
+   *  ("Revisar derivadas"). É o que faz o cartão de progresso continuar
+   *  chamando o estudo pelo nome que o ALUNO deu, em vez de trocá-lo pelo
+   *  nome da disciplina assim que a primeira questão é respondida. */
+  planoNome: string | null;
 } | null;
 
 type MissaoLinha = {
@@ -46,10 +51,14 @@ export async function carregarRetomar(
   if (missoes.length === 0) return null;
 
   const ids = missoes.map((m) => m.id);
-  const { data: tentativas } = await supabase
-    .from("question_attempts")
-    .select("mission_id, question_id")
-    .in("mission_id", ids);
+  const [{ data: tentativas }, { data: blocos }] = await Promise.all([
+    supabase.from("question_attempts").select("mission_id, question_id").in("mission_id", ids),
+    // O bloco do calendário que virou cada uma dessas listas, se houver
+    // (supabase_sessao_lista.sql). Vem na mesma onda das tentativas: são as
+    // mesmas ~15 missões, e uma segunda ida ao banco depois de escolher a
+    // missão custaria um round-trip serial no caminho crítico da home.
+    supabase.from("tarefas").select("nome, mission_id").eq("user_id", userId).in("mission_id", ids),
+  ]);
 
   // respondidas distintas por missão
   const respondidasPorMissao = new Map<string, Set<string>>();
@@ -61,6 +70,11 @@ export async function carregarRetomar(
       respondidasPorMissao.set(t.mission_id, set);
     }
     if (t.question_id) set.add(t.question_id);
+  }
+
+  const nomePorMissao = new Map<string, string>();
+  for (const b of (blocos as { nome: string; mission_id: string | null }[] | null) ?? []) {
+    if (b.mission_id && b.nome?.trim()) nomePorMissao.set(b.mission_id, b.nome.trim());
   }
 
   // missoes já vem por `data` desc → a primeira parcialmente feita é a mais recente.
@@ -79,6 +93,7 @@ export async function carregarRetomar(
       pct: Math.round((respondidas / total) * 100),
       avulsa: !!m.avulsa,
       recap: !!m.recap_topico_id,
+      planoNome: nomePorMissao.get(m.id) ?? null,
     };
   }
 

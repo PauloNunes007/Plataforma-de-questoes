@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Library } from "lucide-react";
 import type { DashboardData } from "@/lib/questly/dashboard-data";
@@ -8,6 +8,7 @@ import type { HeroDados } from "@/lib/dashboard/hero-data";
 import type { DesempenhoDados } from "@/lib/dashboard/desempenho-data";
 import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
 import type { RetomarInfo } from "@/lib/retomar/retomar-data";
+import { ehEstudo } from "@/lib/tarefas/tarefas-data";
 import { QUESTLY_LIGA_INFO, QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
 import { buscarCardUsuarioAction, type CardUsuario } from "@/lib/ranking/actions";
 import { StudentCardModal } from "@/components/ranking/student-card-modal";
@@ -46,7 +47,8 @@ import { ConquistasView } from "./conquistas-view";
 // estudo (não há mais dois modos — é tudo prática livre). A coluna principal
 // ficou com uma ordem só, de cima pra baixo:
 //
-//   1. a faixa de ação — continuar a lista aberta, ou o resumo honesto do dia;
+//   1. a faixa de ação — continuar a lista aberta, começar o bloco de estudo
+//      que o aluno marcou pra hoje no calendário, ou o resumo honesto do dia;
 //   2. as duas portas de entrada, lado a lado e do mesmo tamanho: montar
 //      prática (banco/simulados/trilha) e o atalho de Simulados;
 //   3. a faixa "Questões feitas" — histórico, por isso no pé.
@@ -82,6 +84,16 @@ export function DashboardView({
 
   const subjectsResumo = dados.subjects.map((s) => ({ id: s.id, nome: s.nome }));
   const hojeStr = dados.calendar.days.find((d) => d.estado === "hoje")?.data || "";
+
+  // O bloco de estudo de hoje que ainda não foi fechado — o elo entre o que o
+  // aluno PLANEJOU no calendário e o que a home oferece pra fazer agora. Os
+  // itens já vêm na ordem do relógio (`ordenarDia`), então o primeiro
+  // pendente é o próximo da fila. Tarefa solta não entra: ela não vira lista
+  // de questões, e oferecer "Começar" nela seria uma promessa falsa.
+  const planoHoje = useMemo(
+    () => dados.tarefasHoje.find((t) => ehEstudo(t) && !t.concluida) ?? null,
+    [dados.tarefasHoje],
+  );
 
   async function abrirCarta() {
     setCarregandoCard(true);
@@ -140,7 +152,7 @@ export function DashboardView({
                   </Link>
                 </div>
 
-                <AcaoCard retomar={retomar} metas={dados.metasHoje} />
+                <AcaoCard retomar={retomar} plano={planoHoje} metas={dados.metasHoje} />
 
                 {/* As duas portas de entrada, com o mesmo peso visual:
                     "monte a sua prática" e "faça uma prova cronometrada".

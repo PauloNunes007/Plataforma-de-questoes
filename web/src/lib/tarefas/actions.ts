@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { contagemDasMaterias } from "@/lib/questly/contagem-questoes";
+import { criarListaDeQuestoes, questoesQueCabem, SEG_PADRAO_QUESTAO } from "@/lib/questly/criar-lista";
 import type { TipoItemAgenda } from "./tarefas-data";
 
 // CRUD simples e owner-scoped dos itens da agenda — sem lógica derivada (ao
@@ -24,7 +26,7 @@ function duracaoValida(min: number | null | undefined): number | null {
   return n > 0 && n <= 600 ? n : null;
 }
 
-/** Espelha o CHECK de `meta_questoes` (1..500) — ver supabase_agenda_metas.sql. */
+/** Espelha o CHECK de `meta_questoes` (1..500) — ver supabase_agenda_consolidado.sql. */
 function metaValida(qtd: number | null | undefined): number | null {
   if (qtd == null || !Number.isFinite(qtd)) return null;
   const n = Math.round(qtd);
@@ -51,16 +53,22 @@ export async function criarTarefaAction(
   } = await supabase.auth.getUser();
   if (!user || !input.nome.trim()) return { ok: false, id: null };
 
+  // "meta" ainda é aceito pra não quebrar chamada antiga, mas o app só grava
+  // "sessao" ou "tarefa": bloco de estudo e afazer solto (ver tarefas-data.ts).
   const tipo: TipoItemAgenda =
     input.tipo === "sessao" || input.tipo === "meta" ? input.tipo : "tarefa";
+  const estudo = tipo !== "tarefa";
   const hora = horaValida(input.hora);
-  // Duração só faz sentido num bloco de estudo — numa tarefa de lista ela não
-  // seria mostrada em lugar nenhum e só sujaria a linha.
-  const duracao = tipo === "sessao" ? duracaoValida(input.duracaoMin) : null;
-  const meta = tipo === "meta" ? metaValida(input.metaQuestoes) : null;
-  // Uma meta sem número não é meta — recusa antes do insert em vez de gravar
-  // uma linha que o calendário não saberia desenhar.
-  if (tipo === "meta" && (meta === null || !input.subjectId)) return { ok: false, id: null };
+  // Hora, duração e alvo de questões só fazem sentido num bloco de estudo —
+  // numa tarefa de lista não seriam mostrados em lugar nenhum e só sujariam a
+  // linha. O bloco pode ter os três, um ou nenhum: são formas de dizer o
+  // tamanho do estudo, não tipos diferentes de marcação.
+  const duracao = estudo ? duracaoValida(input.duracaoMin) : null;
+  const meta = estudo ? metaValida(input.metaQuestoes) : null;
+  // O bloco de estudo é sempre DE uma disciplina: é ela que diz de onde as
+  // questões saem quando o aluno clica em "Começar", e é ela que o progresso
+  // do dia conta. Sem disciplina, o que ele quer marcar é uma tarefa.
+  if (estudo && !input.subjectId) return { ok: false, id: null };
 
   const { data: criada, error } = await supabase
     .from("tarefas")
@@ -71,7 +79,7 @@ export async function criarTarefaAction(
       descricao: input.descricao?.trim() || null,
       data: input.data,
       tipo,
-      hora,
+      hora: estudo ? hora : null,
       duracao_min: duracao,
       meta_questoes: meta,
     })
@@ -124,4 +132,117 @@ export async function moverTarefaAction(id: string, data: string): Promise<{ ok:
   const { error } = await supabase.from("tarefas").update({ data }).eq("id", id).eq("user_id", user.id);
   if (error) console.error("Erro ao mover item da agenda:", error);
   return { ok: !error };
+}
+
+// ---------------------------------------------------------------------------
+// Do plano pra execução
+// ---------------------------------------------------------------------------
+// O elo que faltava. Até aqui, marcar "Estudar Cálculo II, quarta, 19h" e
+// DE FATO estudar eram duas coisas sem ligação nenhuma: na quarta o aluno
+// tinha que ir ao Banco de Questões e remontar na mão a decisão que já tinha
+// tomado dias antes — a plataforma sabia do plano e fingia que não.
+//
+// Esta action é o "Começar" do bloco: ela sorteia as questões da disciplina
+// marcada, cria a lista (a mesma linha de `missions` que o Banco cria — não
+// existe um segundo tipo de lista) e grava `tarefas.mission_id`, que é o que
+// mantém o NOME do bloco no cartão de progresso da home e o que permite
+// riscá-lo quando a lista fecha.
+//
+// Continua valendo que agendar não paga XP nem acende a ofensiva: a missão só
+// nasce quando o aluno clica. O que muda é que o clique dele vira UM clique,
+// e não seis.
+const QTD_PADRAO_BLOCO = 10;
+/** Teto pro tamanho DERIVADO da duração. Um alvo digitado pelo aluno é
+ *  respeitado como está (o CHECK do banco já o limita em 500); é a conta
+ *  automática que não pode transformar "2h de Física" em 48 questões. */
+const QTD_MAX_DERIVADA = 30;
+
+export async function iniciarEstudoPlanejadoAction(
+  tarefaId: string,
+): Promise<{ missaoId: string | null; erro: string | null }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { missaoId: null, erro: "Sessão expirada." };
+
+  const { data: item } = await supabase
+    .from("tarefas")
+    .select("id, tipo, subject_id, duracao_min, meta_questoes, mission_id")
+    .eq("id", tarefaId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!item) return { missaoId: null, erro: "Esse item não é seu." };
+
+  // Já começou: devolve a MESMA lista em vez de sortear outra. Sem isso, um
+  // duplo clique (ou abrir a home em duas abas) criaria duas listas pro mesmo
+  // bloco e o aluno perderia o progresso de vista na que ficou órfã.
+  if (item.mission_id) return { missaoId: item.mission_id as string, erro: null };
+  if (item.tipo === "tarefa") return { missaoId: null, erro: "Esse item não é um bloco de estudo." };
+  if (!item.subject_id) return { missaoId: null, erro: "Esse bloco não tem disciplina." };
+
+  const { data: subject } = await supabase
+    .from("subjects")
+    .select("id, materia_id")
+    .eq("id", item.subject_id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!subject?.materia_id) return { missaoId: null, erro: "Disciplina não encontrada." };
+
+  // A lista do bloco cobre a disciplina INTEIRA (todo assunto com questão
+  // regular no banco). Não há motor escolhendo por ele desde 2026-09-16: o
+  // bloco diz a matéria e o tamanho, o sorteio faz o resto, e quem quiser
+  // recortar assunto e dificuldade usa o Banco de Questões.
+  const topicos = (await contagemDasMaterias(supabase, [subject.materia_id as string])).filter(
+    (t) => t.totalRegular > 0,
+  );
+  if (topicos.length === 0) {
+    return { missaoId: null, erro: "Ainda não há questões dessa disciplina no banco." };
+  }
+
+  const quantidade = tamanhoDoBloco(item.meta_questoes, item.duracao_min, topicos);
+
+  const { missaoId } = await criarListaDeQuestoes(supabase, user.id, {
+    subjectId: subject.id as string,
+    topicIds: topicos.map((t) => t.topicId),
+    dificuldades: [],
+    quantidade,
+  });
+  if (!missaoId) return { missaoId: null, erro: "Não foi possível montar a lista." };
+
+  // O elo. Falhar aqui não invalida a lista — ela existe e funciona; o que se
+  // perde é o bloco saber que ela é dele. Por isso o erro é logado e a lista
+  // é entregue mesmo assim, em vez de sumir com o trabalho já criado.
+  const { error } = await supabase
+    .from("tarefas")
+    .update({ mission_id: missaoId })
+    .eq("id", tarefaId)
+    .eq("user_id", user.id);
+  if (error) console.error("Erro ao ligar o bloco de estudo à lista:", error);
+
+  return { missaoId, erro: null };
+}
+
+/** O tamanho da lista que o bloco pede, na ordem em que o aluno foi explícito:
+ *  o alvo de questões que ele digitou, senão o que cabe na duração marcada,
+ *  senão um padrão curto. */
+function tamanhoDoBloco(
+  metaQuestoes: number | null,
+  duracaoMin: number | null,
+  topicos: { totalRegular: number; tempoMedioSeg: number | null }[],
+): number {
+  const meta = metaValida(metaQuestoes);
+  if (meta) return meta;
+  if (duracaoMin && duracaoMin > 0) {
+    // Média ponderada por volume: um assunto com 200 questões pesa mais na
+    // média do tempo da disciplina do que um com 6.
+    const totalQ = topicos.reduce((a, t) => a + t.totalRegular, 0);
+    const somaSeg = topicos.reduce(
+      (a, t) => a + (t.tempoMedioSeg ?? SEG_PADRAO_QUESTAO) * t.totalRegular,
+      0,
+    );
+    const media = totalQ > 0 ? somaSeg / totalQ : SEG_PADRAO_QUESTAO;
+    return Math.min(QTD_MAX_DERIVADA, questoesQueCabem(duracaoMin, media));
+  }
+  return QTD_PADRAO_BLOCO;
 }

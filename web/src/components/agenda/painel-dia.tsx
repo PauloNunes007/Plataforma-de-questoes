@@ -4,60 +4,78 @@
 // desktop e dentro do bottom sheet do celular — a diferença é só quem o
 // envolve (ver `calendario-view.tsx`).
 //
-// Quatro coisas podem ser marcadas num dia, e elas não são variações do mesmo
-// campo:
-//   • SESSÃO  — bloco de estudo com hora e duração;
-//   • TAREFA  — afazer solto, sem horário;
-//   • META    — "N questões de tal disciplina". O progresso é RECONTADO das
-//               listas daquele dia, nunca digitado;
+// TRÊS coisas podem ser marcadas num dia — eram quatro:
+//   • ESTUDO  — um bloco de estudo de UMA disciplina. Pode ter horário,
+//               duração e/ou um alvo de questões; nenhum dos três é
+//               obrigatório e os três podem conviver. É o único item que vira
+//               lista de questões com um clique ("Começar");
+//   • TAREFA  — afazer solto, sem disciplina obrigatória e sem horário:
+//               entregar a lista 3, falar com o professor;
 //   • PROVA   — a data da prova, pintada no mês. Desde o fim do motor de
 //               missões ela é SÓ AGENDA: nada no app lê essa data pra
 //               recomendar assunto, projetar nota ou montar plano.
 //
+// **Por que caiu de quatro pra três.** "Sessão" e "Meta" eram dois botões
+// respondendo à mesma pergunta — "vou estudar tal matéria hoje" — e só
+// divergiam na unidade: minutos num, questões no outro. O aluno tinha que
+// escolher entre dois formulários quase idênticos ANTES de escrever a mesma
+// coisa, e o dia acabava com duas marcações ("Cálculo 19h" + "30 questões de
+// Cálculo") que eram um compromisso só. Agora tempo e alvo são dois campos
+// opcionais do mesmo bloco. As linhas antigas gravadas como `tipo='meta'`
+// continuam válidas e são desenhadas aqui do mesmo jeito (ver `ehEstudo`).
+//
 // Marcar qualquer uma delas NÃO dá XP e não acende a ofensiva: planejar não é
 // conquistar, e pagar por plano marcado abriria o caminho de forjar ranking.
+// O caminho existe na direção contrária — fechar a lista risca o bloco.
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
+  BookOpen,
   Check,
   ChevronRight,
-  Clock,
   FileText,
   ListTodo,
+  Play,
   Swords,
-  Target,
   Trash2,
   X,
 } from "lucide-react";
 import type { HistoricoDia, MissaoDia, ProvaDia, SimuladoDia } from "@/lib/agenda/agenda-data";
 import { hrefQuestao } from "@/lib/questao/navegacao";
-import type { TarefaRow, TipoItemAgenda } from "@/lib/tarefas/tarefas-data";
+import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
 import type { NovoItemAgenda } from "@/lib/tarefas/actions";
-import { minutosReservados } from "@/lib/tarefas/tarefas-data";
+import { ehEstudo, minutosReservados } from "@/lib/tarefas/tarefas-data";
 import { fmtDuracao, rotuloData } from "@/lib/agenda/formato";
 import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 import { Select } from "@/components/ui/select";
 import { corDoItem } from "./celula-dia";
 
-/** Durações que o aluno escolhe num toque — o resto vai no campo livre. */
-const DURACOES = [25, 50, 90, 120] as const;
-/** Metas de questões que cobrem quase todo dia de estudo real. */
-const QUANTIDADES = [10, 20, 30, 50] as const;
+/** "Sem tempo marcado" / "sem alvo": o zero é a ausência do campo, não um
+ *  valor. Fica como chip pra que "não quero definir isso" seja uma escolha
+ *  visível, e não um campo que o aluno precise adivinhar que pode deixar em
+ *  branco. */
+const SEM_VALOR = 0;
+
+/** Durações que o aluno escolhe num toque. `SEM_VALOR` é "não vou cronometrar". */
+const DURACOES = [SEM_VALOR, 25, 50, 90] as const;
+/** Alvos de questões que cobrem quase todo dia de estudo real. */
+const QUANTIDADES = [SEM_VALOR, 10, 20, 30] as const;
 /** Nomes de prova que a faculdade usa; o campo continua livre. */
 const NOMES_PROVA = ["P1", "P2", "P3", "Final"];
 
-type Modo = "sessao" | "tarefa" | "meta" | "prova";
+type Modo = "estudo" | "tarefa" | "prova";
 
 /** O mesmo ícone do botão que abriu o formulário, repetido no cabeçalho dele:
  *  é o que diz "você está no que clicou" sem precisar ler o título. */
 const ICONE_FORM: Record<Modo, React.ReactNode> = {
-  sessao: <Clock size={13} strokeWidth={2.5} />,
+  estudo: <BookOpen size={13} strokeWidth={2.5} />,
   tarefa: <ListTodo size={13} strokeWidth={2.5} />,
-  meta: <Target size={13} strokeWidth={2.5} />,
   prova: <Swords size={13} strokeWidth={2.5} />,
 };
+
 
 export function PainelDia({
   data,
@@ -75,6 +93,7 @@ export function PainelDia({
   onMarcarProva,
   onDesmarcarProva,
   onDragStartItem,
+  onIniciarEstudo,
 }: {
   data: string;
   hoje: string;
@@ -91,14 +110,20 @@ export function PainelDia({
   onMarcarProva: (subjectId: string, nome: string) => Promise<string | null>;
   onDesmarcarProva: (bossId: string) => void;
   onDragStartItem: (id: string) => void;
+  /** Transforma o bloco em lista de questões e devolve o link pra ela. */
+  onIniciarEstudo: (id: string) => Promise<string | null>;
 }) {
   const semMovimento = useReducedMotion();
   const [modo, setModo] = useState<Modo | null>(null);
   const [nome, setNome] = useState("");
   const [subjectId, setSubjectId] = useState("");
-  const [hora, setHora] = useState("19:00");
-  const [duracao, setDuracao] = useState<number>(50);
-  const [quantidade, setQuantidade] = useState<number>(20);
+  // Os três campos de TAMANHO do bloco nascem vazios de propósito: o mínimo
+  // que o aluno precisa dizer é a disciplina. Tempo, alvo e horário entram só
+  // se ele quiser — e o formulário não pergunta antes qual deles ele "vai
+  // usar", que era exatamente a escolha vazia dos dois botões antigos.
+  const [hora, setHora] = useState("");
+  const [duracao, setDuracao] = useState<number>(SEM_VALOR);
+  const [quantidade, setQuantidade] = useState<number>(SEM_VALOR);
   const [nomeProva, setNomeProva] = useState("P1");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -106,24 +131,25 @@ export function PainelDia({
   const reservado = minutosReservados(itens);
   const semDisciplinas = subjects.length === 0;
 
-  // Meta e prova são sempre DE uma disciplina; sessão e tarefa podem ser
-  // soltas — por isso a opção vazia só entra nesses dois modos. O ponto
-  // colorido é o mesmo `corDaDisciplina` do resto do app: a disciplina tem UMA
-  // cor em qualquer tela.
-  const opcoesDisciplina = useMemo(() => {
-    const livres = modo === "sessao" || modo === "tarefa";
-    return [
-      ...(livres ? [{ value: "", label: "Sem disciplina" }] : []),
+  // Estudo e prova são sempre DE uma disciplina — no estudo porque é ela que
+  // diz de onde saem as questões quando o aluno clica em "Começar". Só a
+  // tarefa pode ser solta, e por isso é o único modo com a opção vazia. O
+  // ponto colorido é o mesmo `corDaDisciplina` do resto do app: a disciplina
+  // tem UMA cor em qualquer tela.
+  const opcoesDisciplina = useMemo(
+    () => [
+      ...(modo === "tarefa" ? [{ value: "", label: "Sem disciplina" }] : []),
       ...subjects.map((s) => ({ value: s.id, label: s.nome, cor: corDaDisciplina(s.nome).de })),
-    ];
-  }, [modo, subjects]);
+    ],
+    [modo, subjects],
+  );
 
   function abrir(m: Modo) {
     setErro(null);
     setModo(m);
-    // Meta e prova exigem disciplina: já deixa a primeira escolhida pra que o
-    // caminho feliz seja "escolher número → salvar".
-    if ((m === "meta" || m === "prova") && !subjectId && subjects[0]) setSubjectId(subjects[0].id);
+    // Estudo e prova exigem disciplina: já deixa a primeira escolhida pra que
+    // o caminho feliz seja "escolher a matéria → salvar".
+    if (m !== "tarefa" && !subjectId && subjects[0]) setSubjectId(subjects[0].id);
   }
 
   function fechar() {
@@ -150,23 +176,25 @@ export function PainelDia({
         return;
       }
 
+      const estudo = modo === "estudo";
       const disciplina = subjects.find((s) => s.id === subjectId);
-      // A meta não pede título: o título DELA é o número mais a disciplina, e
-      // obrigar o aluno a escrever "30 questões de Cálculo II" seria pedir que
-      // ele repita o que já escolheu nos dois campos acima.
-      const titulo =
-        modo === "meta" ? `${quantidade} questões de ${disciplina?.nome || "estudo"}` : nome.trim();
-      if (!titulo) return;
+      // O bloco não exige título: se o aluno não escrever nada, ele se chama
+      // pelo que já foi escolhido ("Estudar Cálculo II"). Obrigá-lo a digitar
+      // isso seria pedir que repita o campo de cima. O que ele escreve, por
+      // outro lado, é guardado e segue com ele até o cartão de progresso da
+      // home — é o nome DELE pro estudo, não o da disciplina.
+      const titulo = nome.trim() || (estudo ? `Estudar ${disciplina?.nome || "hoje"}` : "");
+      if (!titulo || (estudo && !subjectId)) return;
 
       const ok = await onAdicionar({
         nome: titulo,
         descricao: null,
         subjectId: subjectId || null,
         data,
-        tipo: modo as TipoItemAgenda,
-        hora: modo === "sessao" ? hora : null,
-        duracaoMin: modo === "sessao" ? duracao : null,
-        metaQuestoes: modo === "meta" ? quantidade : null,
+        tipo: estudo ? "sessao" : "tarefa",
+        hora: estudo && hora ? hora : null,
+        duracaoMin: estudo && duracao ? duracao : null,
+        metaQuestoes: estudo && quantidade ? quantidade : null,
       });
       if (ok) fechar();
       else setErro("Não foi possível salvar. Tente de novo.");
@@ -179,15 +207,13 @@ export function PainelDia({
   }
 
   const tituloForm: Record<Modo, string> = {
-    sessao: "Nova sessão",
+    estudo: "Novo bloco de estudo",
     tarefa: "Nova tarefa",
-    meta: "Meta de questões",
     prova: "Marcar prova",
   };
   const rotuloSalvar: Record<Modo, string> = {
-    sessao: "Agendar sessão",
+    estudo: "Marcar estudo",
     tarefa: "Adicionar tarefa",
-    meta: "Definir meta",
     prova: "Marcar prova",
   };
 
@@ -240,6 +266,12 @@ export function PainelDia({
               onRemover={() => onRemover(t.id)}
               onAdiar={() => onAdiar(t.id)}
               onDragStart={() => onDragStartItem(t.id)}
+              // Só o bloco de HOJE oferece "Começar": a lista nasce com a data
+              // de hoje (`missions.data`), então começar terça o bloco de
+              // sexta gravaria o estudo no dia errado e furaria a contagem do
+              // próprio calendário.
+              podeIniciar={data === hoje && ehEstudo(t) && !t.concluida}
+              onIniciar={() => onIniciarEstudo(t.id)}
             />
           ))}
         </ul>
@@ -279,8 +311,10 @@ export function PainelDia({
                 </button>
               </div>
 
-              {(modo === "sessao" || modo === "tarefa") && (
-                <Campo rotulo={modo === "sessao" ? "O que você vai estudar" : "O que precisa fazer"}>
+              {modo !== "prova" && (
+                <Campo
+                  rotulo={modo === "estudo" ? "O que você vai estudar (opcional)" : "O que precisa fazer"}
+                >
                   <input
                     autoFocus
                     value={nome}
@@ -288,7 +322,7 @@ export function PainelDia({
                     onKeyDown={(e) => {
                       if (e.key === "Enter") void salvar();
                     }}
-                    placeholder={modo === "sessao" ? "Ex.: Revisar derivadas" : "Ex.: Entregar lista 3"}
+                    placeholder={modo === "estudo" ? "Ex.: Revisar derivadas" : "Ex.: Entregar lista 3"}
                     className="w-full rounded-xl border border-input bg-background px-3 py-2 text-[13px] font-medium outline-none transition-colors placeholder:font-normal placeholder:text-muted-foreground hover:border-questly-green/45 focus:border-questly-green focus:ring-[3px] focus:ring-questly-green/25"
                   />
                 </Campo>
@@ -304,9 +338,43 @@ export function PainelDia({
                 />
               </Campo>
 
-              {modo === "sessao" && (
+              {modo === "estudo" && (
                 <>
-                  <Campo rotulo="Começa às">
+                  <Campo rotulo="Quanto tempo">
+                    <Chips
+                      valores={DURACOES}
+                      ativo={duracao}
+                      onEscolher={setDuracao}
+                      rotulo={(v) => (v === SEM_VALOR ? "—" : fmtDuracao(v))}
+                    />
+                  </Campo>
+
+                  <Campo rotulo="Alvo de questões">
+                    <Chips
+                      valores={QUANTIDADES}
+                      ativo={quantidade}
+                      onEscolher={setQuantidade}
+                      rotulo={(q) => (q === SEM_VALOR ? "—" : String(q))}
+                    />
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <span className="text-[11.5px] font-medium text-muted-foreground">Ou</span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={500}
+                        value={quantidade || ""}
+                        placeholder="—"
+                        onChange={(e) =>
+                          setQuantidade(Math.max(0, Math.min(500, Number(e.target.value) || 0)))
+                        }
+                        aria-label="Alvo de questões"
+                        className="tnum w-[72px] rounded-xl border border-input bg-background px-2.5 py-1.5 text-[13px] font-semibold text-foreground outline-none transition-colors placeholder:text-muted-foreground hover:border-questly-green/45 focus:border-questly-green focus:ring-[3px] focus:ring-questly-green/25"
+                      />
+                      <span className="text-[11.5px] font-medium text-muted-foreground">questões</span>
+                    </div>
+                  </Campo>
+
+                  <Campo rotulo="Começa às (opcional)">
                     <input
                       type="time"
                       value={hora}
@@ -314,39 +382,15 @@ export function PainelDia({
                       className="tnum w-full cursor-pointer rounded-xl border border-input bg-background px-3 py-2 text-[13px] font-medium text-foreground outline-none transition-colors hover:border-questly-green/45 focus:border-questly-green focus:ring-[3px] focus:ring-questly-green/25"
                     />
                   </Campo>
-                  <Campo rotulo="Quanto tempo">
-                    <Chips valores={DURACOES} ativo={duracao} onEscolher={setDuracao} rotulo={fmtDuracao} />
-                  </Campo>
-                </>
-              )}
 
-              {modo === "meta" && (
-                <>
-                  <Campo rotulo="Quantas questões">
-                    <Chips
-                      valores={QUANTIDADES}
-                      ativo={quantidade}
-                      onEscolher={setQuantidade}
-                      rotulo={(q) => String(q)}
-                    />
-                    <div className="mt-1.5 flex items-center gap-2">
-                      <span className="text-[11.5px] font-medium text-muted-foreground">Ou</span>
-                      <input
-                        type="number"
-                        min={1}
-                        max={500}
-                        value={quantidade}
-                        onChange={(e) =>
-                          setQuantidade(Math.max(1, Math.min(500, Number(e.target.value) || 1)))
-                        }
-                        className="tnum w-[72px] rounded-xl border border-input bg-background px-2.5 py-1.5 text-[13px] font-semibold text-foreground outline-none transition-colors hover:border-questly-green/45 focus:border-questly-green focus:ring-[3px] focus:ring-questly-green/25"
-                      />
-                      <span className="text-[11.5px] font-medium text-muted-foreground">questões</span>
-                    </div>
-                  </Campo>
+                  {/* Os três campos acima são o TAMANHO do estudo, e nenhum é
+                      obrigatório: o alvo é o que vira lista com um clique, o
+                      tempo é o que o mês soma como reservado, e o horário é o
+                      que põe o bloco na ordem do dia. */}
                   <Nota>
-                    O progresso conta sozinho: toda questão que você responder nessa disciplina nesse dia
-                    entra na meta.
+                    {quantidade > 0
+                      ? "O alvo conta sozinho: toda questão que você responder nessa disciplina nesse dia entra nele."
+                      : "No dia, o botão “Começar” monta a lista dessa disciplina — aqui ou na tela inicial."}
                   </Nota>
                 </>
               )}
@@ -395,7 +439,11 @@ export function PainelDia({
               <button
                 type="button"
                 onClick={salvar}
-                disabled={salvando || ((modo === "sessao" || modo === "tarefa") && !nome.trim())}
+                disabled={
+                  salvando ||
+                  (modo === "tarefa" && !nome.trim()) ||
+                  (modo === "estudo" && !subjectId)
+                }
                 className={`mt-0.5 min-h-[42px] cursor-pointer rounded-xl px-3 text-[13px] font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${
                   modo === "prova"
                     ? "bg-questly-orange-dark dark:text-[#1a1206]"
@@ -413,38 +461,39 @@ export function PainelDia({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.12 }}
-            className="grid grid-cols-2 gap-2"
+            className="flex flex-col gap-2"
           >
+            {/* O bloco de estudo ocupa a linha inteira porque é o que o aluno
+                vem fazer aqui nove vezes em dez; tarefa e prova dividem a de
+                baixo. Antes eram quatro botões do mesmo tamanho, e dois deles
+                ("Sessão" e "Meta") queriam dizer a mesma coisa. */}
             <BotaoAdicionar
-              icone={<Clock size={14} strokeWidth={2.4} />}
-              rotulo="Sessão"
+              icone={<BookOpen size={14} strokeWidth={2.4} />}
+              rotulo="Estudo"
               primario
-              onClick={() => abrir("sessao")}
-            />
-            <BotaoAdicionar
-              icone={<Target size={14} strokeWidth={2.4} />}
-              rotulo="Meta"
               desabilitado={semDisciplinas}
-              onClick={() => abrir("meta")}
+              onClick={() => abrir("estudo")}
             />
-            <BotaoAdicionar
-              icone={<ListTodo size={14} strokeWidth={2.4} />}
-              rotulo="Tarefa"
-              onClick={() => abrir("tarefa")}
-            />
-            <BotaoAdicionar
-              icone={<Swords size={14} strokeWidth={2.4} />}
-              rotulo="Prova"
-              desabilitado={semDisciplinas}
-              onClick={() => abrir("prova")}
-            />
+            <div className="grid grid-cols-2 gap-2">
+              <BotaoAdicionar
+                icone={<ListTodo size={14} strokeWidth={2.4} />}
+                rotulo="Tarefa"
+                onClick={() => abrir("tarefa")}
+              />
+              <BotaoAdicionar
+                icone={<Swords size={14} strokeWidth={2.4} />}
+                rotulo="Prova"
+                desabilitado={semDisciplinas}
+                onClick={() => abrir("prova")}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {semDisciplinas && !modo && (
         <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-          Meta e prova precisam de uma disciplina — adicione as suas em Ajustes.
+          Estudo e prova precisam de uma disciplina — adicione as suas em Ajustes.
         </p>
       )}
 
@@ -732,23 +781,53 @@ function Chips({
 function ItemDia({
   item,
   feitas,
+  podeIniciar,
   onAlternar,
   onRemover,
   onAdiar,
+  onIniciar,
   onDragStart,
 }: {
   item: TarefaRow;
   feitas: number;
+  podeIniciar: boolean;
   onAlternar: () => void;
   onRemover: () => void;
   onAdiar: () => void;
+  onIniciar: () => Promise<string | null>;
   onDragStart: () => void;
 }) {
+  const router = useRouter();
+  const [iniciando, setIniciando] = useState(false);
   const cor = corDoItem(item);
-  const meta = item.tipo === "meta" && item.metaQuestoes != null;
   const alvo = item.metaQuestoes || 0;
-  const pct = meta && alvo > 0 ? Math.min(100, Math.round((feitas / alvo) * 100)) : 0;
-  const batida = meta && feitas >= alvo;
+  // O alvo é lido pelo CAMPO, não pelo `tipo`: desde que sessão e meta viraram
+  // o mesmo bloco, um item com horário também pode ter alvo de questões.
+  const temAlvo = alvo > 0;
+  const pct = temAlvo ? Math.min(100, Math.round((feitas / alvo) * 100)) : 0;
+  const batida = temAlvo && feitas >= alvo;
+
+  async function comecar() {
+    if (iniciando) return;
+    setIniciando(true);
+    try {
+      const href = await onIniciar();
+      if (href) router.push(href);
+      else setIniciando(false);
+    } catch (e) {
+      console.error("Falha ao começar o bloco de estudo:", e);
+      setIniciando(false);
+    }
+  }
+
+  const detalhe =
+    [
+      item.hora || null,
+      item.duracaoMin ? fmtDuracao(item.duracaoMin) : null,
+      item.subjectNome,
+    ]
+      .filter(Boolean)
+      .join(" · ") || (ehEstudo(item) ? "Bloco de estudo" : "Tarefa");
 
   return (
     <li
@@ -782,9 +861,18 @@ function ItemDia({
           {item.nome}
         </span>
 
-        {meta ? (
-          // A meta mostra o que JÁ FOI FEITO, não o que foi prometido: o
-          // número vem das questões respondidas naquele dia nessa disciplina.
+        <span className="mt-0.5 flex items-center gap-1 text-[10.5px] font-medium text-muted-foreground">
+          {ehEstudo(item) ? (
+            <BookOpen size={9} strokeWidth={2.4} />
+          ) : (
+            <ListTodo size={9} strokeWidth={2.4} />
+          )}
+          <span className="tnum truncate">{detalhe}</span>
+        </span>
+
+        {/* O alvo mostra o que JÁ FOI FEITO, não o que foi prometido: o número
+            vem das questões respondidas naquele dia nessa disciplina. */}
+        {temAlvo && (
           <>
             <span className="mt-1 flex items-center gap-1.5">
               <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
@@ -798,27 +886,34 @@ function ItemDia({
               </span>
             </span>
             <span className="mt-0.5 block text-[10.5px] font-medium text-muted-foreground">
-              {batida ? "Meta batida" : `Faltam ${alvo - feitas} questões`}
+              {batida ? "Alvo batido" : `Faltam ${alvo - feitas} questões`}
             </span>
           </>
-        ) : (
-          <span className="mt-0.5 flex items-center gap-1 text-[10.5px] font-medium text-muted-foreground">
-            {item.tipo === "sessao" ? (
-              <Clock size={9} strokeWidth={2.4} />
-            ) : (
-              <ListTodo size={9} strokeWidth={2.4} />
-            )}
-            <span className="tnum truncate">
-              {[
-                item.tipo === "sessao" && item.hora ? item.hora : null,
-                item.tipo === "sessao" && item.duracaoMin ? fmtDuracao(item.duracaoMin) : null,
-                item.subjectNome,
-              ]
-                .filter(Boolean)
-                .join(" · ") || (item.tipo === "sessao" ? "Sessão de estudo" : "Tarefa")}
-            </span>
-          </span>
         )}
+
+        {/* O caminho do plano pra execução. Já existe lista? o botão continua
+            ela. Ainda não? ele monta uma da disciplina do bloco. Fora do dia
+            de hoje não aparece nenhum dos dois. */}
+        {podeIniciar &&
+          (item.missionId ? (
+            <Link
+              href={hrefQuestao(item.missionId, "/calendario")}
+              className="mt-1.5 inline-flex h-8 items-center gap-1.5 rounded-lg bg-questly-green-light px-2.5 text-[11.5px] font-bold text-questly-green-dark transition-colors hover:brightness-95 dark:text-questly-green"
+            >
+              <Play size={11} strokeWidth={2.6} fill="currentColor" />
+              Continuar lista
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={comecar}
+              disabled={iniciando}
+              className="mt-1.5 inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg bg-questly-green px-2.5 text-[11.5px] font-bold text-white shadow-xs transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:text-[#0c1512]"
+            >
+              <Play size={11} strokeWidth={2.6} fill="currentColor" />
+              {iniciando ? "Montando lista..." : "Começar"}
+            </button>
+          ))}
       </span>
 
       <span className="flex shrink-0 gap-0.5 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">

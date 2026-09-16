@@ -13,10 +13,16 @@ import { alternarTarefaAction, criarTarefaAction, excluirTarefaAction } from "@/
 //
 // A divisão de trabalho com o calendário é de proximidade, não de dados: aqui
 // o aluno marca um afazer de hoje sem sair da home; lá ele planeja o mês,
-// escolhe hora e duração, define metas de questões e arrasta entre dias. Por
-// isso este cartão CRIA sempre tipo "tarefa" (rápido, sem horário) mas EXIBE
-// também as sessões e metas do dia — senão o aluno marcaria um bloco no
-// calendário e não o veria na lista de hoje.
+// escolhe hora, duração e alvo de questões e arrasta entre dias. Por isso este
+// cartão CRIA sempre tipo "tarefa" (rápido, sem horário) mas EXIBE também os
+// blocos de estudo do dia — senão o aluno marcaria um bloco no calendário e
+// não o veria na lista de hoje.
+//
+// O que ele deliberadamente NÃO tem é um segundo "Começar": o bloco de estudo
+// da vez já é o protagonista da faixa de ação, no topo da mesma tela. Repetir
+// o CTA a duas colunas de distância daria ao aluno dois botões que fazem a
+// mesma coisa — e é justamente o tipo de duplicata que este repasse foi
+// desfazer.
 export function TarefasDoDiaCard({
   tarefasIniciais,
   hoje,
@@ -58,6 +64,7 @@ export function TarefasDoDiaCard({
           hora: null,
           duracaoMin: null,
           metaQuestoes: null,
+          missionId: null,
         },
       ]);
       setNome("");
@@ -146,7 +153,7 @@ export function TarefasDoDiaCard({
           </span>
           <p className="mb-1 text-[13px] font-medium">Nada marcado para hoje</p>
           <p className="mb-4 max-w-[220px] text-xs text-muted-foreground">
-            Anote um afazer rápido aqui, ou abra o calendário pra agendar uma sessão com hora.
+            Anote um afazer rápido aqui, ou abra o calendário pra marcar um bloco de estudo.
           </p>
           <button
             type="button"
@@ -178,12 +185,11 @@ export function TarefasDoDiaCard({
                 >
                   {t.nome}
                 </span>
-                {(t.hora || t.subjectNome || t.descricao) && (
+                {(t.hora || t.subjectNome || t.descricao || t.metaQuestoes) && (
                   <span className="tnum block truncate text-[11px] text-muted-foreground">
                     {[
-                      t.hora && t.duracaoMin
-                        ? `${t.hora} · ${t.duracaoMin}min`
-                        : t.hora || null,
+                      t.hora && t.duracaoMin ? `${t.hora} · ${t.duracaoMin}min` : t.hora || null,
+                      t.metaQuestoes ? `${t.metaQuestoes} questões` : null,
                       t.subjectNome,
                       t.descricao,
                     ]
