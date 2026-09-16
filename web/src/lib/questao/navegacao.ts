@@ -45,6 +45,7 @@ export function rotuloOrigem(href: string): string {
   if (href.startsWith("/questoes/anotacoes")) return "Voltar pras anotações";
   if (href.startsWith("/questoes")) return "Voltar pro banco";
   if (href.startsWith("/trilha")) return "Voltar pra trilha";
+  if (href.startsWith("/calendario")) return "Voltar pro calendário";
   if (href.startsWith("/simulados")) return "Voltar pros simulados";
   if (href.startsWith("/disciplinas")) return "Voltar pra prática";
   if (href.startsWith("/aprovacao")) return "Voltar pro Modo Aprovação";

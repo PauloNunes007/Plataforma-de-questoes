@@ -161,23 +161,9 @@ export function CalendarioView({
       metaQuestoes: novo.metaQuestoes ?? null,
     };
     setItens((prev) => ({ ...prev, [novo.data]: ordenarDia([...(prev[novo.data] || []), linha]) }));
-
-    // Uma meta recém-criada nasce sem progresso na tela: `questoesPorDia` só é
-    // calculado quando o mês JÁ tinha meta, então quem define "30 questões de
-    // Cálculo" depois de responder 10 hoje veria 0/30 até recarregar. Relê o
-    // mês (uma ida, só nesse caso) pra a barra já abrir com a verdade.
-    if (linha.tipo === "meta") {
-      // Falhar aqui não desfaz nada: a meta JÁ está salva e já aparece na
-      // lista. O que se perde é só a barra abrir com o progresso de hoje em
-      // vez de 0 — não vale propagar o erro e fazer o painel dizer que não
-      // salvou uma coisa que salvou.
-      try {
-        const atualizado = await carregarMesAgendaAction(mes.ano, mes.mes);
-        if (atualizado) setMes(atualizado);
-      } catch (e) {
-        console.error("Meta criada, mas não deu pra reler o progresso do mês:", e);
-      }
-    }
+    // Uma meta recém-criada já nasce com o progresso certo: `questoesPorDia` é
+    // lido pro mês inteiro, independente de existir meta — não há o que
+    // recarregar aqui.
     return true;
   }
 
@@ -289,10 +275,12 @@ export function CalendarioView({
   const painel = diaSelecionado ? (
     <PainelDia
       data={diaSelecionado.data}
+      hoje={hoje}
       estudou={diaSelecionado.estado === "estudou"}
       itens={itensDoDia}
       prova={provas[diaSelecionado.data] || null}
       progresso={mes.questoesPorDia[diaSelecionado.data] || {}}
+      historico={mes.historico[diaSelecionado.data] || null}
       subjects={subjects}
       onAdicionar={adicionar}
       onAlternar={(id, concluida) => void alternar(diaSelecionado.data, id, concluida)}

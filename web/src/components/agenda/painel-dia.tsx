@@ -18,9 +18,21 @@
 // caminho de forjar ranking.
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Check, ChevronRight, Clock, ListTodo, Swords, Target, Trash2, X } from "lucide-react";
-import type { ProvaDia } from "@/lib/agenda/agenda-data";
+import {
+  Check,
+  ChevronRight,
+  Clock,
+  FileText,
+  ListTodo,
+  Swords,
+  Target,
+  Trash2,
+  X,
+} from "lucide-react";
+import type { HistoricoDia, MissaoDia, ProvaDia, SimuladoDia } from "@/lib/agenda/agenda-data";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 import type { TarefaRow, TipoItemAgenda } from "@/lib/tarefas/tarefas-data";
 import type { NovoItemAgenda } from "@/lib/tarefas/actions";
 import { minutosReservados } from "@/lib/tarefas/tarefas-data";
@@ -49,10 +61,12 @@ const ICONE_FORM: Record<Modo, React.ReactNode> = {
 
 export function PainelDia({
   data,
+  hoje,
   estudou,
   itens,
   prova,
   progresso,
+  historico,
   subjects,
   onAdicionar,
   onAlternar,
@@ -63,10 +77,12 @@ export function PainelDia({
   onDragStartItem,
 }: {
   data: string;
+  hoje: string;
   estudou: boolean;
   itens: TarefaRow[];
   prova: ProvaDia | null;
   progresso: Record<string, number>;
+  historico: HistoricoDia | null;
   subjects: { id: string; nome: string }[];
   onAdicionar: (novo: NovoItemAgenda) => Promise<boolean>;
   onAlternar: (id: string, concluida: boolean) => void;
@@ -431,7 +447,186 @@ export function PainelDia({
           Meta e prova precisam de uma disciplina — adicione as suas em Ajustes.
         </p>
       )}
+
+      {/* Dia futuro não tem histórico pra mostrar — só plano. */}
+      {data <= hoje && <HistoricoDoDia historico={historico} />}
     </div>
+  );
+}
+
+// ------------------------------------------------------- histórico do dia
+
+/**
+ * O que o aluno REALMENTE fez nesse dia, embaixo do que ele planejou fazer.
+ *
+ * As duas metades do painel não são a mesma coisa e por isso não se misturam:
+ * acima, o que está marcado (e dá pra editar); aqui, o registro do que
+ * aconteceu — leitura pura, sem checkbox nem excluir. Nada disto é digitado:
+ * vem das missões, das tentativas e dos simulados daquele dia.
+ */
+function HistoricoDoDia({ historico }: { historico: HistoricoDia | null }) {
+  const missoes = historico?.missoes ?? [];
+  const simulados = historico?.simulados ?? [];
+  const questoes = historico?.questoes ?? 0;
+  const acertos = historico?.acertos ?? 0;
+  const xp = historico?.xp ?? 0;
+  const vazio = missoes.length === 0 && simulados.length === 0;
+
+  return (
+    <section className="mt-4 border-t border-border pt-3.5">
+      <div className="mb-2.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h3 className="font-heading text-[12.5px] font-semibold tracking-tight">O que você fez</h3>
+        {questoes > 0 && (
+          <p className="tnum text-[11px] font-medium text-muted-foreground">
+            {questoes} {questoes === 1 ? "questão" : "questões"} ·{" "}
+            <span className="font-bold text-foreground">{Math.round((acertos / questoes) * 100)}%</span>
+            {xp > 0 && ` · +${xp} XP`}
+          </p>
+        )}
+      </div>
+
+      {vazio ? (
+        <p className="rounded-xl bg-muted/60 px-2.5 py-2 text-[11px] leading-relaxed text-muted-foreground">
+          Nada registrado nesse dia. Missões, listas e simulados aparecem aqui assim que você responde a
+          primeira questão.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-1.5">
+          {simulados.map((s) => (
+            <LinhaSimulado key={s.id} simulado={s} />
+          ))}
+          {missoes.map((m) => (
+            <LinhaMissao key={m.id} missao={m} />
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+/** Verde ≥ 7, laranja ≥ 5, vermelho abaixo — a mesma régua de aprovação que o
+ *  aluno usa na faculdade, não um gradiente inventado. */
+function tomDaNota(nota: number): { texto: string; fundo: string } {
+  if (nota >= 7)
+    return {
+      texto: "text-questly-green-dark dark:text-questly-green",
+      fundo: "bg-questly-green-light",
+    };
+  if (nota >= 5) return { texto: "text-questly-orange-dark", fundo: "bg-questly-orange-light" };
+  return { texto: "text-questly-red-dark", fundo: "bg-questly-red-light" };
+}
+
+function LinhaSimulado({ simulado }: { simulado: SimuladoDia }) {
+  const concluido = simulado.status === "concluido" && simulado.nota != null;
+  const tom = concluido ? tomDaNota(simulado.nota as number) : null;
+  const minutos = simulado.tempoGastoSeg ? Math.max(1, Math.round(simulado.tempoGastoSeg / 60)) : null;
+
+  const detalhe = concluido
+    ? [
+        simulado.total ? `${simulado.acertos ?? 0}/${simulado.total} acertos` : null,
+        minutos ? fmtDuracao(minutos) : null,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : simulado.status === "em_andamento"
+      ? "Em andamento"
+      : "Abandonado";
+
+  return (
+    <li>
+      <Link
+        href={`/simulados/${simulado.id}`}
+        className="group flex items-center gap-2.5 rounded-xl border border-border bg-card px-2.5 py-2 transition-colors hover:border-questly-green/45"
+      >
+        <span
+          className={`tnum flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[13px] font-bold ${
+            tom ? `${tom.fundo} ${tom.texto}` : "bg-muted text-muted-foreground"
+          }`}
+        >
+          {concluido ? (simulado.nota as number).toFixed(1) : <FileText size={14} strokeWidth={2.3} />}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[12.5px] font-semibold leading-tight">
+            {simulado.titulo}
+          </span>
+          <span className="tnum mt-0.5 block truncate text-[10.5px] font-medium text-muted-foreground">
+            Simulado{detalhe && ` · ${detalhe}`}
+          </span>
+        </span>
+        {/* O gabarito é a razão de o simulado aparecer aqui: o aluno volta pra
+            ver o que errou, não pra reler a nota. */}
+        <span className="flex shrink-0 items-center gap-0.5 text-[11px] font-bold text-questly-green-dark transition-transform group-hover:translate-x-0.5 dark:text-questly-green">
+          {concluido ? "Revisar" : "Abrir"}
+          <ChevronRight size={13} strokeWidth={2.6} />
+        </span>
+      </Link>
+    </li>
+  );
+}
+
+function LinhaMissao({ missao }: { missao: MissaoDia }) {
+  const nome = missao.subjectNome || "Prática livre";
+  const cor = corDaDisciplina(nome).de;
+  const pendente = !missao.concluida && missao.respondidas < missao.alvo;
+
+  // A missão em andamento fala de PROGRESSO; o acerto só entra quando ela
+  // fechou. Sem isso a linha ainda disputa espaço com o "Continuar" e é o
+  // número útil que acaba cortado.
+  const detalhe = [
+    missao.avulsa ? "Lista avulsa" : "Missão do dia",
+    missao.alvo > 0 ? `${missao.respondidas}/${missao.alvo} questões` : null,
+    missao.concluida && missao.respondidas > 0
+      ? `${missao.acertos} ${missao.acertos === 1 ? "acerto" : "acertos"}`
+      : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  const conteudo = (
+    <>
+      <span
+        className={`flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-full border-2 ${
+          missao.concluida ? "border-questly-green bg-questly-green text-white dark:text-[#0c1512]" : "border-border"
+        }`}
+      >
+        {missao.concluida && <Check size={10} strokeWidth={3} />}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[12.5px] font-semibold leading-tight">{nome}</span>
+        <span className="tnum mt-0.5 block truncate text-[10.5px] font-medium text-muted-foreground">
+          {detalhe}
+        </span>
+      </span>
+      {pendente && (
+        <span className="flex shrink-0 items-center gap-0.5 text-[11px] font-bold text-questly-green-dark transition-transform group-hover:translate-x-0.5 dark:text-questly-green">
+          Continuar
+          <ChevronRight size={13} strokeWidth={2.6} />
+        </span>
+      )}
+    </>
+  );
+
+  const classe = "flex items-center gap-2.5 rounded-xl border border-border bg-card px-2.5 py-2";
+  const faixa = { borderLeft: `3px solid ${cor}` };
+
+  return (
+    <li>
+      {/* Missão fechada não vira link: não há tela de revisão de missão, e um
+          link que reabre as questões respondidas confundiria com "refazer". */}
+      {pendente ? (
+        <Link
+          href={hrefQuestao(missao.id, "/calendario")}
+          style={faixa}
+          className={`group ${classe} transition-colors hover:border-questly-green/45`}
+        >
+          {conteudo}
+        </Link>
+      ) : (
+        <div style={faixa} className={classe}>
+          {conteudo}
+        </div>
+      )}
+    </li>
   );
 }
 
