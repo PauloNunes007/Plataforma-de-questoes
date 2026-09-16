@@ -103,13 +103,21 @@ export async function carregarTarefasIntervalo(
   inicio: string,
   fim: string,
 ): Promise<Record<string, TarefaRow[]>> {
-  const { data } = await supabase
+  // Loga o erro em vez de só descartar: um SELECT quebrado aqui (coluna
+  // faltando por uma migração que não rodou, RLS mudada, etc.) antes falhava
+  // em silêncio — o calendário simplesmente aparecia vazio, sem pista
+  // nenhuma no log de por quê (foi exatamente o que aconteceu quando
+  // supabase_agenda_metas.sql rodou fora de ordem e `meta_questoes` ficou
+  // faltando: todo insert falhava barulhento no console, mas essa leitura
+  // falhava calada).
+  const { data, error } = await supabase
     .from("tarefas")
     .select(COLUNAS)
     .eq("user_id", user.id)
     .gte("data", inicio)
     .lte("data", fim)
     .order("criado_em");
+  if (error) console.error("Erro ao carregar tarefas do intervalo:", error);
 
   const porData: Record<string, TarefaRow[]> = {};
   ((data || []) as unknown as TarefaQueryRow[]).forEach((t) => {

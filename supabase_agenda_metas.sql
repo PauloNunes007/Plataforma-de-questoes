@@ -1,7 +1,20 @@
 -- ============================================================
 -- QUESTLY — Metas de questões na agenda (calendário dedicado)
--- Rodar DEPOIS de supabase_sessoes_agenda.sql. Migração aditiva e
--- idempotente (ADD COLUMN IF NOT EXISTS + drop/create de CHECK).
+-- Rodar DEPOIS de supabase_sessoes_agenda.sql — SEM ELE, ESTE SCRIPT FALHA
+-- E É REVERTIDO POR INTEIRO. A constraint tarefas_tipo_check abaixo
+-- referencia a coluna `tipo`, que só existe depois de supabase_sessoes_agenda.sql
+-- rodar. O SQL Editor do Supabase executa um script colado como uma única
+-- transação implícita (comportamento padrão do Postgres pra múltiplos
+-- comandos separados por ";" numa mesma mensagem): se UM statement falhar,
+-- TODOS os anteriores desse mesmo "Run" são desfeitos — inclusive o
+-- `add column meta_questoes` que vem antes na ordem do arquivo. Isso já
+-- aconteceu em produção (2026-09-15): rodado fora de ordem, o script inteiro
+-- reverteu, `meta_questoes` nunca foi criada, e como `criarTarefaAction`
+-- sempre inclui essa coluna no INSERT (mesmo pra sessão/tarefa comuns, com
+-- valor null), TODO insert em `tarefas` passou a falhar — não só o de meta.
+-- Migração aditiva e idempotente (ADD COLUMN IF NOT EXISTS + drop/create de
+-- CHECK) — pode ser rodada de novo com segurança assim que a ordem estiver
+-- certa.
 --
 -- POR QUE: a agenda sabia marcar duas coisas — um afazer sem horário
 -- ("tarefa") e um bloco de estudo com hora e duração ("sessao"). Faltava a
