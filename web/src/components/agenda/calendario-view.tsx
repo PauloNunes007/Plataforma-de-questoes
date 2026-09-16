@@ -45,7 +45,7 @@ export function CalendarioView({
   diaInicial,
 }: {
   mesInicial: MesAgenda;
-  subjects: { id: string; nome: string }[];
+  subjects: { id: string; nome: string; materiaId: string | null }[];
   hoje: string;
   /** Dia pré-selecionado (`/calendario?dia=YYYY-MM-DD`, vindo do card da home). */
   diaInicial: string | null;
@@ -164,6 +164,7 @@ export function CalendarioView({
       hora: novo.hora || null,
       duracaoMin: novo.duracaoMin ?? null,
       metaQuestoes: novo.metaQuestoes ?? null,
+      topicoIds: novo.topicoIds ?? [],
       missionId: null,
     };
     setItens((prev) => ({ ...prev, [novo.data]: ordenarDia([...(prev[novo.data] || []), linha]) }));

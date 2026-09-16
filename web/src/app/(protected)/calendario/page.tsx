@@ -40,7 +40,9 @@ export default async function CalendarioPage({
 
   const [mes, subjectsRes] = await Promise.all([
     carregarMesAgenda(supabase, user, ano, mesIdx),
-    supabase.from("subjects").select("id, nome").eq("user_id", user.id).order("nome"),
+    // `materia_id` vem junto porque o painel do dia precisa listar os ASSUNTOS
+    // da disciplina pra o aluno escolher o que entra no bloco de estudo.
+    supabase.from("subjects").select("id, nome, materia_id").eq("user_id", user.id).order("nome"),
   ]);
 
   if (!mes) return null;
@@ -48,7 +50,9 @@ export default async function CalendarioPage({
   return (
     <CalendarioView
       mesInicial={mes}
-      subjects={(subjectsRes.data || []) as { id: string; nome: string }[]}
+      subjects={((subjectsRes.data || []) as { id: string; nome: string; materia_id: string | null }[]).map(
+        (s) => ({ id: s.id, nome: s.nome, materiaId: s.materia_id }),
+      )}
       hoje={hoje}
       diaInicial={usarPedido ? diaInicial : null}
     />

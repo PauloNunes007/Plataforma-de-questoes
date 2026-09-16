@@ -26,6 +26,22 @@ function duracaoValida(min: number | null | undefined): number | null {
   return n > 0 && n <= 600 ? n : null;
 }
 
+/** Teto de assuntos num bloco. Não é regra de negócio, é sanidade: o campo
+ *  vira querystring no sorteio (ver lib/supabase/paginado.ts) e ninguém marca
+ *  um bloco com 200 assuntos. */
+const MAX_TOPICOS_BLOCO = 60;
+
+/** Só uuid, sem repetição, com teto. O array vem do cliente e vira filtro de
+ *  query; lixo aqui é lixo no `.in()`. */
+function topicosValidos(ids: string[] | null | undefined): string[] {
+  if (!Array.isArray(ids)) return [];
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return Array.from(new Set(ids.filter((id) => typeof id === "string" && uuid.test(id)))).slice(
+    0,
+    MAX_TOPICOS_BLOCO,
+  );
+}
+
 /** Espelha o CHECK de `meta_questoes` (1..500) — ver supabase_agenda_consolidado.sql. */
 function metaValida(qtd: number | null | undefined): number | null {
   if (qtd == null || !Number.isFinite(qtd)) return null;
@@ -42,6 +58,8 @@ export type NovoItemAgenda = {
   hora?: string | null;
   duracaoMin?: number | null;
   metaQuestoes?: number | null;
+  /** Os assuntos do bloco de estudo. Ignorado em tarefa solta. */
+  topicoIds?: string[];
 };
 
 export async function criarTarefaAction(
@@ -65,6 +83,10 @@ export async function criarTarefaAction(
   // tamanho do estudo, não tipos diferentes de marcação.
   const duracao = estudo ? duracaoValida(input.duracaoMin) : null;
   const meta = estudo ? metaValida(input.metaQuestoes) : null;
+  // Os assuntos são O QUE o bloco vai estudar. Aceita vazio (o formulário é
+  // que exige pelo menos um) pra não quebrar uma chamada antiga, e nesse caso
+  // o "Começar" cai na disciplina inteira, como era antes.
+  const topicos = estudo ? topicosValidos(input.topicoIds) : [];
   // O bloco de estudo é sempre DE uma disciplina: é ela que diz de onde as
   // questões saem quando o aluno clica em "Começar", e é ela que o progresso
   // do dia conta. Sem disciplina, o que ele quer marcar é uma tarefa.
@@ -82,6 +104,7 @@ export async function criarTarefaAction(
       hora: estudo ? hora : null,
       duracao_min: duracao,
       meta_questoes: meta,
+      topico_ids: topicos.length > 0 ? topicos : null,
     })
     .select("id")
     .single();
@@ -168,7 +191,7 @@ export async function iniciarEstudoPlanejadoAction(
 
   const { data: item } = await supabase
     .from("tarefas")
-    .select("id, tipo, subject_id, duracao_min, meta_questoes, mission_id")
+    .select("id, tipo, subject_id, duracao_min, meta_questoes, topico_ids, mission_id")
     .eq("id", tarefaId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -189,15 +212,28 @@ export async function iniciarEstudoPlanejadoAction(
     .maybeSingle();
   if (!subject?.materia_id) return { missaoId: null, erro: "Disciplina não encontrada." };
 
-  // A lista do bloco cobre a disciplina INTEIRA (todo assunto com questão
-  // regular no banco). Não há motor escolhendo por ele desde 2026-09-16: o
-  // bloco diz a matéria e o tamanho, o sorteio faz o resto, e quem quiser
-  // recortar assunto e dificuldade usa o Banco de Questões.
-  const topicos = (await contagemDasMaterias(supabase, [subject.materia_id as string])).filter(
+  // Todo assunto da matéria que tem questão regular no banco — a base contra a
+  // qual a escolha do aluno é validada.
+  const daMateria = (await contagemDasMaterias(supabase, [subject.materia_id as string])).filter(
     (t) => t.totalRegular > 0,
   );
-  if (topicos.length === 0) {
+  if (daMateria.length === 0) {
     return { missaoId: null, erro: "Ainda não há questões dessa disciplina no banco." };
+  }
+
+  // O QUE o bloco vai estudar são os assuntos que o aluno escolheu ao marcá-lo.
+  // A interseção com a matéria não é zelo decorativo: o array vem do cliente e
+  // vira filtro de `.in()`, então um id de outra disciplina montaria uma lista
+  // que não tem nada a ver com o bloco.
+  //
+  // Bloco SEM assunto é sempre um bloco criado antes de `topico_ids` existir:
+  // pra ele vale o comportamento antigo (a disciplina inteira), porque recusar
+  // seria quebrar um compromisso que o aluno marcou de boa-fé.
+  const escolhidos = new Set((item.topico_ids as string[] | null) ?? []);
+  const doBloco = escolhidos.size > 0 ? daMateria.filter((t) => escolhidos.has(t.topicId)) : [];
+  const topicos = doBloco.length > 0 ? doBloco : daMateria;
+  if (escolhidos.size > 0 && doBloco.length === 0) {
+    console.error("Bloco com assuntos que não são da matéria; sorteando a disciplina inteira:", tarefaId);
   }
 
   const quantidade = tamanhoDoBloco(item.meta_questoes, item.duracao_min, topicos);

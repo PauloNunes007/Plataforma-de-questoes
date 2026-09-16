@@ -335,6 +335,11 @@ function detalheDoPlano(plano: TarefaRow): string {
     plano.duracaoMin ? fmtDuracao(plano.duracaoMin) : null,
     plano.metaQuestoes ? `${plano.metaQuestoes} questões` : null,
     plano.subjectNome,
+    // Os assuntos escolhidos: é a diferença entre "vou estudar Cálculo" e uma
+    // lista que cobre o que a aula cobriu.
+    plano.topicoIds.length > 0
+      ? `${plano.topicoIds.length} ${plano.topicoIds.length === 1 ? "assunto" : "assuntos"}`
+      : null,
   ].filter(Boolean);
   return partes.length > 0 ? partes.join(" · ") : "Marcado por você no calendário";
 }

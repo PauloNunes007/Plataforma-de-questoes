@@ -38,6 +38,7 @@ import {
   ChevronRight,
   FileText,
   ListTodo,
+  Loader2,
   Play,
   Swords,
   Trash2,
@@ -51,6 +52,8 @@ import { ehEstudo, minutosReservados } from "@/lib/tarefas/tarefas-data";
 import { fmtDuracao, rotuloData } from "@/lib/agenda/formato";
 import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 import { Select } from "@/components/ui/select";
+import { buscarTopicosPraticaAction } from "@/lib/disciplinas/actions";
+import type { TopicoPratica } from "@/lib/disciplinas/disciplinas-data";
 import { corDoItem } from "./celula-dia";
 
 /** "Sem tempo marcado" / "sem alvo": o zero é a ausência do campo, não um
@@ -102,7 +105,7 @@ export function PainelDia({
   prova: ProvaDia | null;
   progresso: Record<string, number>;
   historico: HistoricoDia | null;
-  subjects: { id: string; nome: string }[];
+  subjects: { id: string; nome: string; materiaId: string | null }[];
   onAdicionar: (novo: NovoItemAgenda) => Promise<boolean>;
   onAlternar: (id: string, concluida: boolean) => void;
   onRemover: (id: string) => void;
@@ -124,6 +127,12 @@ export function PainelDia({
   const [hora, setHora] = useState("");
   const [duracao, setDuracao] = useState<number>(SEM_VALOR);
   const [quantidade, setQuantidade] = useState<number>(SEM_VALOR);
+  // Os assuntos do bloco. Ficam num cache por matéria porque trocar de
+  // disciplina e voltar é comum enquanto se planeja, e recarregar a mesma
+  // lista a cada ida e volta seria um round-trip por clique.
+  const [topicosPorMateria, setTopicosPorMateria] = useState<Record<string, TopicoPratica[]>>({});
+  const [carregandoTopicos, setCarregandoTopicos] = useState(false);
+  const [topicosSel, setTopicosSel] = useState<string[]>([]);
   const [nomeProva, setNomeProva] = useState("P1");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -144,17 +153,48 @@ export function PainelDia({
     [modo, subjects],
   );
 
+  const materiaAtual = subjects.find((s) => s.id === subjectId)?.materiaId ?? null;
+  const listaTopicos = materiaAtual ? topicosPorMateria[materiaAtual] : undefined;
+
+  /** Busca os assuntos da disciplina — por evento, nunca num efeito: o efeito
+   *  precisaria escrever estado no render seguinte (o compilador do React 19
+   *  recusa) e dispararia também quando o formulário nem está aberto. */
+  async function carregarTopicos(idSubject: string) {
+    const materiaId = subjects.find((s) => s.id === idSubject)?.materiaId;
+    if (!materiaId || topicosPorMateria[materiaId]) return;
+    setCarregandoTopicos(true);
+    try {
+      const lista = await buscarTopicosPraticaAction(materiaId);
+      setTopicosPorMateria((prev) => ({ ...prev, [materiaId]: lista }));
+    } catch (e) {
+      console.error("Falha ao carregar os assuntos da disciplina:", e);
+    }
+    setCarregandoTopicos(false);
+  }
+
+  // Trocar de disciplina zera a escolha: assunto de Cálculo não existe em
+  // Física, e manter a seleção antiga só produziria um bloco que não sorteia
+  // nada.
+  function escolherDisciplina(v: string) {
+    setSubjectId(v);
+    setTopicosSel([]);
+    if (v) void carregarTopicos(v);
+  }
+
   function abrir(m: Modo) {
     setErro(null);
     setModo(m);
     // Estudo e prova exigem disciplina: já deixa a primeira escolhida pra que
     // o caminho feliz seja "escolher a matéria → salvar".
-    if (m !== "tarefa" && !subjectId && subjects[0]) setSubjectId(subjects[0].id);
+    const alvo = subjectId || subjects[0]?.id || "";
+    if (m !== "tarefa" && !subjectId && alvo) setSubjectId(alvo);
+    if (m === "estudo" && alvo) void carregarTopicos(alvo);
   }
 
   function fechar() {
     setModo(null);
     setNome("");
+    setTopicosSel([]);
     setErro(null);
   }
 
@@ -184,7 +224,7 @@ export function PainelDia({
       // outro lado, é guardado e segue com ele até o cartão de progresso da
       // home — é o nome DELE pro estudo, não o da disciplina.
       const titulo = nome.trim() || (estudo ? `Estudar ${disciplina?.nome || "hoje"}` : "");
-      if (!titulo || (estudo && !subjectId)) return;
+      if (!titulo || (estudo && (!subjectId || topicosSel.length === 0))) return;
 
       const ok = await onAdicionar({
         nome: titulo,
@@ -195,6 +235,7 @@ export function PainelDia({
         hora: estudo && hora ? hora : null,
         duracaoMin: estudo && duracao ? duracao : null,
         metaQuestoes: estudo && quantidade ? quantidade : null,
+        topicoIds: estudo ? topicosSel : undefined,
       });
       if (ok) fechar();
       else setErro("Não foi possível salvar. Tente de novo.");
@@ -331,7 +372,7 @@ export function PainelDia({
               <Campo rotulo="Disciplina">
                 <Select
                   value={subjectId}
-                  onValueChange={setSubjectId}
+                  onValueChange={escolherDisciplina}
                   opcoes={opcoesDisciplina}
                   aria-label="Disciplina"
                   placeholder="Escolha uma disciplina"
@@ -340,6 +381,25 @@ export function PainelDia({
 
               {modo === "estudo" && (
                 <>
+                  {/* O QUE estudar vem antes de quanto: o bloco existe porque
+                      a aula de ontem foi sobre alguma coisa. Sem esta escolha,
+                      "Começar" sorteava a disciplina inteira e devolvia
+                      integral pra quem marcou o bloco por regra da cadeia. */}
+                  <Campo rotulo="Assuntos">
+                    <SeletorAssuntos
+                      topicos={listaTopicos}
+                      carregando={carregandoTopicos}
+                      selecionados={topicosSel}
+                      onAlternar={(id) =>
+                        setTopicosSel((prev) =>
+                          prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
+                        )
+                      }
+                      onTodos={() => setTopicosSel((listaTopicos || []).map((t) => t.id))}
+                      onLimpar={() => setTopicosSel([])}
+                    />
+                  </Campo>
+
                   <Campo rotulo="Quanto tempo">
                     <Chips
                       valores={DURACOES}
@@ -390,7 +450,7 @@ export function PainelDia({
                   <Nota>
                     {quantidade > 0
                       ? "O alvo conta sozinho: toda questão que você responder nessa disciplina nesse dia entra nele."
-                      : "No dia, o botão “Começar” monta a lista dessa disciplina — aqui ou na tela inicial."}
+                      : "No dia, o botão “Começar” monta a lista com os assuntos escolhidos — aqui ou na tela inicial."}
                   </Nota>
                 </>
               )}
@@ -442,7 +502,7 @@ export function PainelDia({
                 disabled={
                   salvando ||
                   (modo === "tarefa" && !nome.trim()) ||
-                  (modo === "estudo" && !subjectId)
+                  (modo === "estudo" && (!subjectId || topicosSel.length === 0))
                 }
                 className={`mt-0.5 min-h-[42px] cursor-pointer rounded-xl px-3 text-[13px] font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${
                   modo === "prova"
@@ -776,6 +836,105 @@ function Chips({
   );
 }
 
+/**
+ * A escolha do que entra no bloco. É um multi-seleção simples de propósito:
+ * a mesma tela já tem disciplina, tempo, alvo e horário, e um combobox com
+ * busca aqui viraria o quinto controle diferente do mesmo formulário.
+ *
+ * Mostra a contagem de questões por assunto porque é a informação que muda a
+ * escolha: marcar um tópico com 4 questões e pedir 30 é o jeito silencioso de
+ * receber uma lista que não fecha.
+ *
+ * "Todos" existe e não é o padrão: estudar a disciplina inteira é uma decisão
+ * legítima, só não pode ser a que acontece quando ninguém decidiu nada.
+ */
+function SeletorAssuntos({
+  topicos,
+  carregando,
+  selecionados,
+  onAlternar,
+  onTodos,
+  onLimpar,
+}: {
+  topicos: TopicoPratica[] | undefined;
+  carregando: boolean;
+  selecionados: string[];
+  onAlternar: (id: string) => void;
+  onTodos: () => void;
+  onLimpar: () => void;
+}) {
+  if (carregando && !topicos) {
+    return (
+      <p className="flex items-center gap-2 rounded-xl bg-muted/70 px-2.5 py-2.5 text-[11.5px] font-medium text-muted-foreground">
+        <Loader2 size={13} strokeWidth={2.4} className="animate-spin" />
+        Carregando os assuntos...
+      </p>
+    );
+  }
+
+  if (!topicos || topicos.length === 0) {
+    return (
+      <p className="rounded-xl bg-muted/70 px-2.5 py-2 text-[11px] leading-relaxed text-muted-foreground">
+        Nenhum assunto dessa disciplina tem questão no banco ainda.
+      </p>
+    );
+  }
+
+  const escolhidos = topicos.filter((t) => selecionados.includes(t.id));
+  const questoes = escolhidos.reduce((acc, t) => acc + t.totalQuestoes, 0);
+
+  return (
+    <div className="rounded-xl border border-input bg-background">
+      <div className="flex items-center gap-2 border-b border-border px-2.5 py-1.5">
+        <span className="tnum min-w-0 flex-1 truncate text-[11px] font-semibold text-muted-foreground">
+          {escolhidos.length === 0
+            ? "Escolha pelo menos um"
+            : `${escolhidos.length} de ${topicos.length} · ${questoes} questões`}
+        </span>
+        <button
+          type="button"
+          onClick={escolhidos.length === topicos.length ? onLimpar : onTodos}
+          className="shrink-0 cursor-pointer text-[11px] font-bold text-questly-green-dark transition-opacity hover:opacity-75 dark:text-questly-green"
+        >
+          {escolhidos.length === topicos.length ? "Limpar" : "Todos"}
+        </button>
+      </div>
+
+      <ul className="max-h-[186px] overflow-y-auto p-1">
+        {topicos.map((t) => {
+          const marcado = selecionados.includes(t.id);
+          return (
+            <li key={t.id}>
+              <button
+                type="button"
+                onClick={() => onAlternar(t.id)}
+                aria-pressed={marcado}
+                className={`flex w-full cursor-pointer items-center gap-2 rounded-lg px-1.5 py-1.5 text-left transition-colors ${
+                  marcado ? "bg-questly-green-light" : "hover:bg-muted/70"
+                }`}
+              >
+                <span
+                  className={`flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded border-2 transition-colors ${
+                    marcado
+                      ? "border-questly-green bg-questly-green text-white dark:text-[#0c1512]"
+                      : "border-border"
+                  }`}
+                >
+                  {marcado && <Check size={9} strokeWidth={3} />}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-[12px] font-medium">{t.nome}</span>
+                <span className="tnum shrink-0 text-[10.5px] font-semibold text-muted-foreground">
+                  {t.totalQuestoes}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 // ------------------------------------------------------------- item do dia
 
 function ItemDia({
@@ -825,6 +984,11 @@ function ItemDia({
       item.hora || null,
       item.duracaoMin ? fmtDuracao(item.duracaoMin) : null,
       item.subjectNome,
+      // Quantos assuntos o bloco vai sortear. É o que separa "Estudar Cálculo"
+      // (a lista ruim de antes) de um bloco que sabe o que cobra.
+      item.topicoIds.length > 0
+        ? `${item.topicoIds.length} ${item.topicoIds.length === 1 ? "assunto" : "assuntos"}`
+        : null,
     ]
       .filter(Boolean)
       .join(" · ") || (ehEstudo(item) ? "Bloco de estudo" : "Tarefa");

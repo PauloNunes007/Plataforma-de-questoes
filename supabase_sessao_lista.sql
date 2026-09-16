@@ -4,8 +4,8 @@
 -- forma final de `tarefas`).
 --
 -- É um DEPLOY BLOCKER: `carregarTarefasIntervalo` passa a pedir `mission_id`
--- no SELECT, e uma coluna faltando ali derruba a leitura do mês inteiro — o
--- calendário aparece vazio e a home perde as marcações do dia.
+-- e `topico_ids` no SELECT, e uma coluna faltando ali derruba a leitura do mês
+-- inteiro — o calendário aparece vazio e a home perde as marcações do dia.
 --
 -- ---------------------------------------------------------------------------
 -- Por que existe: o elo entre o PLANO e a EXECUÇÃO
@@ -46,6 +46,31 @@ create index if not exists ix_tarefas_mission_id
   where mission_id is not null;
 
 -- ---------------------------------------------------------------------------
+-- topico_ids — o bloco diz O QUE estudar, não só QUAL matéria
+-- ---------------------------------------------------------------------------
+-- A primeira versão do "Começar" sorteava a disciplina INTEIRA, e a lista que
+-- saía era ruim de um jeito previsível: quem marcou o bloco porque a aula de
+-- ontem foi regra da cadeia recebia limite, continuidade e integral no meio.
+-- Uma lista que mistura tudo não é uma lista de estudo, é um sorteio.
+--
+-- Quem sabe o que caiu na aula é o aluno — é a premissa da plataforma desde o
+-- fim do motor de missões. Então escolher os assuntos passou a ser parte de
+-- MARCAR o bloco, e é isso que esta coluna guarda. No dia, "Começar" já sabe
+-- de onde tirar as questões e continua sendo um clique só.
+--
+-- Sem FK: Postgres não faz chave estrangeira de elemento de array. É o mesmo
+-- desenho de `missions.topic_ids` e `bosses.topico_ids`, e quem lê valida os
+-- ids contra os tópicos da matéria antes de sortear (um id de outra
+-- disciplina simplesmente não sobrevive à interseção).
+--
+-- NULL / array vazio = assunto não escolhido. Acontece nas linhas criadas
+-- ANTES desta migração (as sessões e metas antigas): pra elas o app cai no
+-- comportamento anterior, a disciplina inteira. Linha nova sempre tem pelo
+-- menos um assunto — o formulário não deixa salvar sem.
+alter table tarefas
+  add column if not exists topico_ids uuid[];
+
+-- ---------------------------------------------------------------------------
 -- Nenhuma mudança de CHECK é necessária — e isso é o ponto
 -- ---------------------------------------------------------------------------
 -- O app passou a tratar SESSÃO e META como a mesma marcação ("Estudo"): um
@@ -61,8 +86,9 @@ create index if not exists ix_tarefas_mission_id
 -- precisa ser convertido.
 --
 -- ---------------------------------------------------------------------------
--- Verificação (esperado: uma linha)
+-- Verificação (esperado: duas linhas — mission_id uuid, topico_ids ARRAY)
 -- ---------------------------------------------------------------------------
 -- select column_name, data_type, is_nullable
 --   from information_schema.columns
---  where table_name = 'tarefas' and column_name = 'mission_id';
+--  where table_name = 'tarefas'
+--    and column_name in ('mission_id', 'topico_ids');

@@ -64,6 +64,7 @@ export function TarefasDoDiaCard({
           hora: null,
           duracaoMin: null,
           metaQuestoes: null,
+          topicoIds: [],
           missionId: null,
         },
       ]);

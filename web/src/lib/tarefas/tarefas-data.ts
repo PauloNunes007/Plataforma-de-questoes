@@ -24,10 +24,16 @@
 // contador nesta linha criaria um segundo lugar pra mesma verdade — e um
 // jeito óbvio de forjá-la.
 //
-// `missionId` (supabase_sessao_lista.sql) é o elo com a EXECUÇÃO: a lista de
-// questões que nasceu deste bloco. É o que deixa a home oferecer "Começar" no
-// próprio plano, manter o nome que o aluno deu ao bloco enquanto ele resolve,
-// e riscar o bloco quando a lista fecha.
+// `topicoIds` (supabase_sessao_lista.sql) é O QUE o bloco vai estudar: os
+// assuntos que o aluno escolheu ao marcá-lo. Sem isso o "Começar" sorteava a
+// disciplina inteira e devolvia limite e integral pra quem marcou o bloco por
+// causa da aula de regra da cadeia. Vazio só nas linhas criadas antes da
+// migração — pra elas o app cai na disciplina inteira, como antes.
+//
+// `missionId` (mesma migração) é o elo com a EXECUÇÃO: a lista de questões que
+// nasceu deste bloco. É o que deixa a home oferecer "Começar" no próprio
+// plano, manter o nome que o aluno deu ao bloco enquanto ele resolve, e riscar
+// o bloco quando a lista fecha.
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type TipoItemAgenda = "tarefa" | "sessao" | "meta";
@@ -46,6 +52,8 @@ export type TarefaRow = {
   duracaoMin: number | null;
   /** Quantas questões o bloco pede; null quando ele é medido só em tempo. */
   metaQuestoes: number | null;
+  /** Os assuntos escolhidos pro bloco. Vazio = bloco antigo, sem escolha. */
+  topicoIds: string[];
   /** A lista de questões que já nasceu deste bloco, se o aluno começou. */
   missionId: string | null;
 };
@@ -68,11 +76,12 @@ type TarefaQueryRow = {
   hora: string | null;
   duracao_min: number | null;
   meta_questoes: number | null;
+  topico_ids: string[] | null;
   mission_id: string | null;
 };
 
 const COLUNAS =
-  "id, nome, descricao, data, concluida, subject_id, subjects(nome), tipo, hora, duracao_min, meta_questoes, mission_id";
+  "id, nome, descricao, data, concluida, subject_id, subjects(nome), tipo, hora, duracao_min, meta_questoes, topico_ids, mission_id";
 
 /** "19:00:00" (time do Postgres) → "19:00", que é o que o <input type="time"> quer. */
 export function normalizarHora(hora: string | null): string | null {
@@ -94,6 +103,7 @@ function paraRow(t: TarefaQueryRow): TarefaRow {
     hora: normalizarHora(t.hora),
     duracaoMin: t.duracao_min ?? null,
     metaQuestoes: t.meta_questoes ?? null,
+    topicoIds: Array.isArray(t.topico_ids) ? t.topico_ids : [],
     missionId: t.mission_id ?? null,
   };
 }
