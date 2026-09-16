@@ -11,10 +11,24 @@
 //
 // O bloco do perfil é CLICÁVEL e abre a carta do aluno (o mesmo card TCG do
 // ranking) sem sair da home — pedido do usuário.
+//
+// **Repasse de 2026-09-16 — compactação no celular.** Em 375px os quatro
+// tiles viravam uma grade 2×2 de ~220px que, somada ao retrato, ocupava a tela
+// inteira: o aluno abria a home e via só estatística, com "Seu dia" e a
+// prática em aberto empurrados pra baixo da dobra (queixa do dono). Agora, no
+// celular, a faixa nasce RECOLHIDA — os quatro números viram uma tira de 4
+// colunas com ~54px de altura, os mesmos dados num oitavo do espaço. Tocar a
+// tira expande pros tiles completos (barra de XP, brasões, marcos do streak,
+// recorde), e a escolha fica gravada no `localStorage`, então quem prefere a
+// versão cheia não a recolhe de novo a cada visita.
+//
+// A partir de `lg` nada disso existe: a faixa é sempre a completa (a largura
+// sobra e recolher só esconderia informação de graça), por isso o estado só
+// governa classes sem prefixo, sempre sobrescritas no `lg:`.
 
-
+import { useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ChevronRight, IdCard, Trophy, Zap } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, IdCard, Medal, Trophy, Zap } from "lucide-react";
 import Link from "next/link";
 import { LigaEmblema } from "@/components/ranking/liga-emblema";
 import { LIGA_COR, LIGA_GRADIENTE } from "@/components/ranking/liga-visual";
@@ -23,6 +37,53 @@ import { FocoHojeChip } from "@/components/foco/foco-bar";
 import type { Liga } from "@/lib/questly/liga";
 import type { HeroDados } from "@/lib/dashboard/hero-data";
 import { ChamaStreak } from "./chama-streak";
+
+const CHAVE_LS = "questly_perfil_expandido_v1";
+
+// A preferência de recolhimento é uma loja externa minúscula lida por
+// `useSyncExternalStore`, e não `useState` + `useEffect`: ler `localStorage` no
+// render inicial faria servidor e cliente discordarem do HTML, e escrever o
+// estado dentro de um efeito esbarra na regra `react-hooks/set-state-in-effect`
+// do compilador do React 19 (a mesma armadilha registrada em `web/CLAUDE.md`).
+// `useSyncExternalStore` resolve os dois: hidrata com o retrato do servidor
+// (recolhido) e re-renderiza sozinho com o valor real logo em seguida.
+const ouvintes = new Set<() => void>();
+let cachePreferencia: boolean | null = null;
+
+function assinarPreferencia(aoMudar: () => void) {
+  ouvintes.add(aoMudar);
+  return () => {
+    ouvintes.delete(aoMudar);
+  };
+}
+
+// Precisa devolver SEMPRE a mesma referência entre renders sem mudança — daí o
+// cache; um `localStorage.getItem` cru a cada chamada é estável por acaso, mas
+// o cache também evita ir ao disco em todo render.
+function lerPreferencia() {
+  if (cachePreferencia === null) {
+    try {
+      cachePreferencia = localStorage.getItem(CHAVE_LS) === "1";
+    } catch {
+      cachePreferencia = false;
+    }
+  }
+  return cachePreferencia;
+}
+
+function lerPreferenciaNoServidor() {
+  return false;
+}
+
+function gravarPreferencia(valor: boolean) {
+  cachePreferencia = valor;
+  try {
+    localStorage.setItem(CHAVE_LS, valor ? "1" : "0");
+  } catch {
+    /* a preferência não persiste; a tela continua funcionando */
+  }
+  ouvintes.forEach((aoMudar) => aoMudar());
+}
 
 type PerfilBarProps = {
   nome: string;
@@ -61,6 +122,13 @@ export function PerfilBar({
   const cor = LIGA_COR[liga];
   const marcosStreak = 7;
 
+  // Recolhido é o padrão no celular (ver a nota da loja, no topo do arquivo).
+  const expandido = useSyncExternalStore(
+    assinarPreferencia,
+    lerPreferencia,
+    lerPreferenciaNoServidor,
+  );
+
   return (
     <section className="surface relative overflow-hidden p-0">
       {/* brilhos de fundo na cor da liga: dão profundidade sem texto por cima */}
@@ -74,12 +142,12 @@ export function PerfilBar({
         className="pointer-events-none absolute -bottom-28 right-1/3 h-64 w-64 rounded-full bg-questly-blue/10 blur-3xl dark:bg-questly-blue/20"
       />
 
-      <div className="relative flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:gap-6 lg:p-5">
+      <div className="relative flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:gap-6 lg:p-5">
         {/* ------------------------------------------------- identidade */}
         <button
           type="button"
           onClick={onAbrirCarta}
-          className="group -m-1 flex min-w-0 cursor-pointer items-center gap-3.5 rounded-2xl p-1 text-left transition-colors hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-questly-green sm:gap-4"
+          className="group -m-1 flex min-w-0 cursor-pointer items-center gap-3 rounded-2xl p-1 text-left transition-colors hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-questly-green sm:gap-4"
           aria-label="Ver minha carta"
         >
           <span className="relative shrink-0">
@@ -90,12 +158,16 @@ export function PerfilBar({
               animate={semMovimento ? undefined : { scale: [1, 1.14, 1], opacity: [0.4, 0.16, 0.4] }}
               transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
             />
-            <LigaEmblema liga={liga} size={78} className="relative drop-shadow-xl" />
+            {/* dois tamanhos em vez de um escalado por transform: `scale` não
+                encolhe a caixa de layout, e o emblema de 78px espremia o nome
+                em 375px */}
+            <LigaEmblema liga={liga} size={58} className="relative drop-shadow-xl sm:hidden" />
+            <LigaEmblema liga={liga} size={78} className="relative hidden drop-shadow-xl sm:block" />
           </span>
 
           <span className="flex min-w-0 items-center gap-3">
             <span
-              className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-base font-bold text-white transition-transform group-hover:scale-105 dark:text-[#0c1512] ${
+              className={`flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-questly-green to-questly-green-deep text-base font-bold text-white transition-transform group-hover:scale-105 dark:text-[#0c1512] sm:h-12 sm:w-12 ${
                 pro ? "ring-2 ring-questly-gold ring-offset-2 ring-offset-card" : "ring-2 ring-border"
               }`}
             >
@@ -108,7 +180,7 @@ export function PerfilBar({
             </span>
 
             <span className="min-w-0">
-              <span className="block truncate font-heading text-[19px] font-semibold leading-tight tracking-tight sm:text-[21px]">
+              <span className="block truncate font-heading text-[18px] font-semibold leading-tight tracking-tight sm:text-[21px]">
                 {nome}
               </span>
               <span className="mt-1 flex flex-wrap items-center gap-2">
@@ -128,8 +200,63 @@ export function PerfilBar({
           </span>
         </button>
 
+        {/* ------------------------------------------ tira compacta (mobile) */}
+        {/* Os mesmos quatro números da grade, em uma linha de ~54px. É também o
+            botão de expandir: alvo de toque largo, sem ícone solto pra caçar. */}
+        <button
+          type="button"
+          onClick={() => gravarPreferencia(true)}
+          aria-expanded={false}
+          aria-label="Ver estatísticas completas"
+          className={`relative w-full cursor-pointer items-center gap-1 overflow-hidden rounded-2xl border border-border bg-background/70 py-2 pl-1 pr-2 text-left backdrop-blur-sm transition-colors hover:border-questly-green/45 dark:bg-background/55 lg:hidden ${
+            expandido ? "hidden" : "flex"
+          }`}
+        >
+          <span className="grid flex-1 grid-cols-4 divide-x divide-border/70">
+            <MiniStat
+              icone={<Zap size={12} strokeWidth={2.4} className="text-questly-purple" />}
+              valor={nivel.toLocaleString("pt-BR")}
+              rotulo="Nível"
+            />
+            <MiniStat
+              icone={<Trophy size={12} strokeWidth={2.4} className="text-questly-gold-dark" />}
+              valor={`${hero.posicaoGeral.toLocaleString("pt-BR")}º`}
+              rotulo="Ranking"
+            />
+            <MiniStat
+              icone={
+                <Medal
+                  size={12}
+                  strokeWidth={2.4}
+                  className="text-questly-green-dark dark:text-questly-green"
+                />
+              }
+              valor={hero.conquistas.toLocaleString("pt-BR")}
+              rotulo="Conquistas"
+            />
+            <MiniStat
+              icone={<ChamaStreak size={14} apagada={streakAtual === 0} idGradiente="chama-tira" />}
+              valor={streakAtual.toLocaleString("pt-BR")}
+              rotulo="Dias"
+              destaque={streakAtual > 0}
+            />
+          </span>
+          <ChevronDown size={16} strokeWidth={2.2} className="shrink-0 text-muted-foreground" />
+          {/* fio de XP rente à base: o único progresso que sumiria ao recolher */}
+          <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] bg-muted/70">
+            <span
+              className="block h-full bg-gradient-to-r from-questly-purple to-questly-blue"
+              style={{ width: `${pctNivel}%` }}
+            />
+          </span>
+        </button>
+
         {/* ------------------------------------------------------ tiles */}
-        <div className="grid grid-cols-2 gap-2.5 lg:ml-auto lg:w-[620px] lg:shrink-0 lg:grid-cols-4">
+        <div
+          className={`grid-cols-2 gap-2.5 lg:ml-auto lg:grid lg:w-[620px] lg:shrink-0 lg:grid-cols-4 ${
+            expandido ? "grid" : "hidden"
+          }`}
+        >
           {/* Nível */}
           <Tile rotulo="Nível" icone={<Zap size={13} strokeWidth={2.3} className="text-questly-purple" />}>
             <p className="tnum font-heading text-[30px] font-bold leading-none tracking-tight">{nivel}</p>
@@ -231,8 +358,53 @@ export function PerfilBar({
             </div>
           </Tile>
         </div>
+
+        {/* ------------------------------------------- recolher (mobile) */}
+        <button
+          type="button"
+          onClick={() => gravarPreferencia(false)}
+          aria-expanded
+          className={`w-full cursor-pointer items-center justify-center gap-1 rounded-xl py-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground lg:hidden ${
+            expandido ? "flex" : "hidden"
+          }`}
+        >
+          Mostrar menos
+          <ChevronUp size={14} strokeWidth={2.4} />
+        </button>
       </div>
     </section>
+  );
+}
+
+// Uma célula da tira recolhida: ícone + número na mesma linha (o número é o que
+// se procura, o ícone só diz de que ele é) e o rótulo minúsculo embaixo.
+function MiniStat({
+  icone,
+  valor,
+  rotulo,
+  destaque = false,
+}: {
+  icone: React.ReactNode;
+  valor: string;
+  rotulo: string;
+  destaque?: boolean;
+}) {
+  return (
+    <span className="flex min-w-0 flex-col items-center justify-center px-1">
+      <span className="flex min-w-0 items-center gap-1">
+        <span className="flex shrink-0 items-center">{icone}</span>
+        <span
+          className={`tnum truncate font-heading text-[17px] font-bold leading-none tracking-tight ${
+            destaque ? "text-questly-orange-dark dark:text-questly-orange" : ""
+          }`}
+        >
+          {valor}
+        </span>
+      </span>
+      <span className="mt-1 truncate text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+        {rotulo}
+      </span>
+    </span>
   );
 }
 

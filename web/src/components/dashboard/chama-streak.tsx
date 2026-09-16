@@ -21,10 +21,19 @@ export function ChamaStreak({
   size = 56,
   apagada = false,
   className = "",
+  idGradiente = "chama",
 }: {
   size?: number;
   apagada?: boolean;
   className?: string;
+  /** Prefixo dos ids de gradiente. Id de SVG é GLOBAL no documento: com duas
+   *  chamas na mesma página (a do tile e a da tira compacta da faixa de
+   *  perfil), `url(#chama-externa)` resolve na PRIMEIRA que aparecer no DOM —
+   *  e se essa estiver num contêiner escondido, a outra some. Determinístico
+   *  por instância em vez de `useId` pela mesma razão do cabeçalho de
+   *  `insignias/insignia.tsx`: `useId` reinicia o contador por raiz React e
+   *  volta a colidir. */
+  idGradiente?: string;
 }) {
   const semMovimento = useReducedMotion();
   const anima = !semMovimento && !apagada;
@@ -61,18 +70,18 @@ export function ChamaStreak({
         style={{ overflow: "visible" }}
       >
         <defs>
-          <linearGradient id="chama-externa" x1="32" y1="62" x2="32" y2="2" gradientUnits="userSpaceOnUse">
+          <linearGradient id={`${idGradiente}-externa`} x1="32" y1="62" x2="32" y2="2" gradientUnits="userSpaceOnUse">
             <stop offset="0" stopColor="#c2410c" />
             <stop offset="0.35" stopColor="#f97316" />
             <stop offset="0.75" stopColor="#fbbf24" />
             <stop offset="1" stopColor="#fde68a" />
           </linearGradient>
-          <linearGradient id="chama-interna" x1="32" y1="60" x2="32" y2="18" gradientUnits="userSpaceOnUse">
+          <linearGradient id={`${idGradiente}-interna`} x1="32" y1="60" x2="32" y2="18" gradientUnits="userSpaceOnUse">
             <stop offset="0" stopColor="#fb923c" />
             <stop offset="0.5" stopColor="#fcd34d" />
             <stop offset="1" stopColor="#fffbeb" />
           </linearGradient>
-          <linearGradient id="chama-brasa" x1="32" y1="58" x2="32" y2="34" gradientUnits="userSpaceOnUse">
+          <linearGradient id={`${idGradiente}-brasa`} x1="32" y1="58" x2="32" y2="34" gradientUnits="userSpaceOnUse">
             <stop offset="0" stopColor="#fff7ed" />
             <stop offset="1" stopColor="#ffffff" stopOpacity="0.9" />
           </linearGradient>
@@ -81,7 +90,7 @@ export function ChamaStreak({
         {/* Corpo da chama: base larga, lambida à esquerda, ponta torcida. */}
         <motion.path
           d="M32 3C38 14 44 20 48 27c4 6 5 10 5 14 0 11-9 20-21 20S11 52 11 41c0-7 3-13 8-17-1 5 1 8 4 9-3-10 0-21 9-30Z"
-          fill={apagada ? "none" : "url(#chama-externa)"}
+          fill={apagada ? "none" : `url(#${idGradiente}-externa)`}
           stroke={apagada ? "currentColor" : "none"}
           strokeWidth={apagada ? 3 : 0}
           strokeLinejoin="round"
@@ -94,13 +103,13 @@ export function ChamaStreak({
           <>
             <motion.path
               d="M32 20c4 8 9 13 11 19 2 5 1 11-3 15-3 3-6 4-8 4s-5-1-8-4c-4-4-5-10-3-15 2-6 7-11 11-19Z"
-              fill="url(#chama-interna)"
+              fill={`url(#${idGradiente}-interna)`}
               style={{ transformOrigin: "32px 58px" }}
               {...respirar(1.7, 1.09)}
             />
             <motion.path
               d="M32 36c2 5 5 8 6 12 1 4-2 8-6 8s-7-4-6-8c1-4 4-7 6-12Z"
-              fill="url(#chama-brasa)"
+              fill={`url(#${idGradiente}-brasa)`}
               style={{ transformOrigin: "32px 56px" }}
               {...respirar(2.9, 1.12)}
             />
