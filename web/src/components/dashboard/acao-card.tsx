@@ -19,19 +19,25 @@
 // **Repasse de 2026-09-16 (b) — o plano entra na faixa.** Faltava o meio do
 // caminho. O aluno marcava "Estudar Cálculo II" na quarta e, na quarta, a home
 // dizia "Nada aberto no momento" — o plano dele existia no calendário e a tela
-// principal fingia que não, mandando-o remontar tudo no Banco de Questões. Os
-// QUATRO estados, em ordem de urgência:
+// principal fingia que não, mandando-o remontar tudo no Banco de Questões.
 //
-//   1. tem lista começada → "Você parou aqui" + Continuar. Se a lista nasceu
-//      de um bloco do calendário, o título continua sendo o nome que o ALUNO
-//      deu ("Revisar derivadas"), não o da disciplina: o plano não é
-//      substituído pela execução, ele VIRA a execução;
-//   2. tem bloco marcado pra hoje e ainda não começado → o bloco, com hora,
-//      duração e alvo, e um "Começar" que monta a lista daquela disciplina
-//      num clique;
-//   3. nada aberto, mas fez algo hoje → o resumo honesto do que JÁ foi feito;
-//   4. nada de nada → o caminho pro Banco de Questões. Sem meta, sem "você
-//      está atrasado".
+// **Repasse de 2026-09-16 (c) — quem ganha a faixa.** A primeira versão dava a
+// faixa pra QUALQUER lista aberta, e o resultado foi o oposto do pedido: uma
+// lista de dias atrás parada em 6% ocupava a dobra inteira enquanto "Revisar
+// derivadas, 20:30" — o bloco que o aluno tinha acabado de marcar pra hoje —
+// ficava como uma linha de checkbox no trilho da direita. A regra agora é por
+// TEMPERATURA, não por tipo:
+//
+//   • lista aberta HOJE ganha — é o que ele está fazendo agora;
+//   • bloco marcado pra hoje ganha de lista FRIA (de outro dia) — o plano é o
+//     assunto do dia, a lista de semana passada não é;
+//   • quando a lista aberta É o bloco (elo `tarefas.mission_id`), não há
+//     disputa: são a mesma coisa, e o título continua sendo o nome que o ALUNO
+//     deu ("Revisar derivadas"), com a disciplina descendo pra legenda.
+//
+// Quem perde a disputa não some: vira uma pílula clicável rente à base da
+// faixa, nos dois sentidos. Perder a dobra é uma coisa; perder o caminho de
+// volta pro trabalho já começado é outra.
 
 import { useState } from "react";
 import Link from "next/link";
@@ -54,11 +60,14 @@ export function AcaoCard({
   retomar,
   plano,
   metas,
+  hoje,
 }: {
   retomar: RetomarInfo;
   /** O bloco de estudo de hoje ainda não concluído, se houver. */
   plano: TarefaRow | null;
   metas: MetasHoje;
+  /** "YYYY-MM-DD" de hoje — a régua que separa lista quente de lista fria. */
+  hoje: string;
 }) {
   const foco = useFoco();
   const router = useRouter();
@@ -68,62 +77,78 @@ export function AcaoCard({
   const [erro, setErro] = useState<string | null>(null);
 
   const fezAlgoHoje = metas.questoesRespondidas > 0;
-  // O plano só assume a faixa quando não há lista aberta: retomar é sempre
-  // mais urgente que começar do zero.
-  const planoNaFaixa = !retomar && plano ? plano : null;
 
-  const nomeDisciplina = retomar?.subjectNome ?? planoNaFaixa?.subjectNome ?? "Prática livre";
-  const cor = corDaDisciplina(nomeDisciplina);
-  const daDisciplina = Boolean(retomar || planoNaFaixa);
+  // A lista aberta É o bloco de hoje: uma coisa só, sem disputa.
+  const planoLigado = Boolean(plano?.missionId && retomar && plano.missionId === retomar.missaoId);
+  const listaQuente = Boolean(retomar && retomar.data === hoje);
+  const planoVence = Boolean(plano) && !planoLigado && !listaQuente;
 
-  const fundo = daDisciplina ? cor.gradienteProfundo : fezAlgoHoje ? GRAD_DIA_FEITO : GRAD_NEUTRO;
-  const corCta = daDisciplina ? cor.profundo : fezAlgoHoje ? "#04412e" : "#1d2836";
-
-  const kicker = retomar
-    ? "Você parou aqui"
-    : planoNaFaixa
-      ? "No seu plano de hoje"
+  const modo: "plano" | "retomar" | "dia" | "vazio" = planoVence
+    ? "plano"
+    : retomar
+      ? "retomar"
       : fezAlgoHoje
-        ? "Seu dia até agora"
-        : "Comece por onde quiser";
+        ? "dia"
+        : "vazio";
+
+  const naFaixa = modo === "plano" ? plano : null;
+  const emCima = modo === "retomar" ? retomar : null;
+
+  const nomeDisciplina = emCima?.subjectNome ?? naFaixa?.subjectNome ?? "Prática livre";
+  const cor = corDaDisciplina(nomeDisciplina);
+  const daDisciplina = modo === "plano" || modo === "retomar";
+
+  const fundo = daDisciplina ? cor.gradienteProfundo : modo === "dia" ? GRAD_DIA_FEITO : GRAD_NEUTRO;
+  const corCta = daDisciplina ? cor.profundo : modo === "dia" ? "#04412e" : "#1d2836";
+
+  const kicker =
+    modo === "retomar"
+      ? "Você parou aqui"
+      : modo === "plano"
+        ? "No seu plano de hoje"
+        : modo === "dia"
+          ? "Seu dia até agora"
+          : "Comece por onde quiser";
 
   // O nome que o aluno deu ao bloco sobrevive à execução — é ele que titula a
   // faixa enquanto a lista corre, com a disciplina descendo pra legenda.
-  const titulo = retomar
-    ? retomar.planoNome || nomeDisciplina
-    : planoNaFaixa
-      ? planoNaFaixa.nome
-      : fezAlgoHoje
-        ? "Bom trabalho hoje"
-        : "Nada aberto no momento";
+  const titulo =
+    modo === "retomar"
+      ? emCima!.planoNome || nomeDisciplina
+      : modo === "plano"
+        ? naFaixa!.nome
+        : modo === "dia"
+          ? "Bom trabalho hoje"
+          : "Nada aberto no momento";
 
   const plural = (n: number, um: string, varios: string) => (n === 1 ? um : varios);
-  const legenda = retomar
-    ? [
-        retomar.planoNome ? nomeDisciplina : null,
-        `${retomar.respondidas} de ${retomar.total} questões`,
-        `faltam ${retomar.total - retomar.respondidas} pra fechar`,
-      ]
-        .filter(Boolean)
-        .join(" · ")
-    : planoNaFaixa
-      ? detalheDoPlano(planoNaFaixa)
-      : fezAlgoHoje
-        ? `${metas.questoesRespondidas} ${plural(metas.questoesRespondidas, "questão", "questões")} · ${metas.xpHoje} XP · ${metas.listasConcluidas} ${plural(metas.listasConcluidas, "lista fechada", "listas fechadas")}`
-        : "Monte uma lista com a disciplina, o assunto e o tamanho que você quiser.";
+  const legenda =
+    modo === "retomar"
+      ? [
+          emCima!.planoNome ? nomeDisciplina : null,
+          `${emCima!.respondidas} de ${emCima!.total} questões`,
+          `faltam ${emCima!.total - emCima!.respondidas} pra fechar`,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : modo === "plano"
+        ? detalheDoPlano(naFaixa!)
+        : modo === "dia"
+          ? `${metas.questoesRespondidas} ${plural(metas.questoesRespondidas, "questão", "questões")} · ${metas.xpHoje} XP · ${metas.listasConcluidas} ${plural(metas.listasConcluidas, "lista fechada", "listas fechadas")}`
+          : "Monte uma lista com a disciplina, o assunto e o tamanho que você quiser.";
 
   async function comecarPlano() {
-    if (!planoNaFaixa || iniciando) return;
+    if (!plano || iniciando) return;
     // Bloco que já virou lista (o aluno começou e saiu antes da 1ª questão):
     // abre a MESMA lista em vez de sortear outra.
-    if (planoNaFaixa.missionId) {
-      router.push(hrefQuestao(planoNaFaixa.missionId, origem));
+    if (plano.missionId) {
+      router.push(hrefQuestao(plano.missionId, origem));
       return;
     }
     setIniciando(true);
     setErro(null);
     try {
-      const { missaoId, erro: falha } = await iniciarEstudoPlanejadoAction(planoNaFaixa.id);
+      const { missaoId, erro: falha } = await iniciarEstudoPlanejadoAction(plano.id);
       if (missaoId) {
         router.push(hrefQuestao(missaoId, origem));
         return;
@@ -138,8 +163,8 @@ export function AcaoCard({
 
   const cta = (
     <Cta
-      retomar={retomar}
-      plano={planoNaFaixa}
+      retomar={emCima}
+      plano={naFaixa}
       iniciando={iniciando}
       onComecarPlano={comecarPlano}
       cor={corCta}
@@ -160,18 +185,18 @@ export function AcaoCard({
       <div className="relative flex items-center gap-4 p-4 sm:gap-5 sm:p-5">
         <Capa
           nome={nomeDisciplina}
-          de={daDisciplina ? cor.de : fezAlgoHoje ? "#10b981" : "#5c7085"}
-          para={daDisciplina ? cor.para : fezAlgoHoje ? "#047857" : "#2b3a4c"}
-          concluido={!daDisciplina && fezAlgoHoje}
+          de={daDisciplina ? cor.de : modo === "dia" ? "#10b981" : "#5c7085"}
+          para={daDisciplina ? cor.para : modo === "dia" ? "#047857" : "#2b3a4c"}
+          concluido={modo === "dia"}
         />
 
         <div className="min-w-0 flex-1">
           <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/70">
-            {retomar ? (
+            {modo === "retomar" ? (
               <Play size={10} strokeWidth={2.6} fill="currentColor" />
-            ) : planoNaFaixa ? (
+            ) : modo === "plano" ? (
               <CalendarDays size={12} strokeWidth={2.4} />
-            ) : fezAlgoHoje ? (
+            ) : modo === "dia" ? (
               <CheckCircle2 size={12} strokeWidth={2.4} />
             ) : (
               <Sparkles size={12} strokeWidth={2.2} />
@@ -214,23 +239,90 @@ export function AcaoCard({
         </p>
       )}
 
+      {/* Quem perdeu a faixa continua a um clique. Sem isto, dar a dobra ao
+          plano esconderia a lista já começada — trocaria um problema pelo
+          outro, que é justamente o que esta faixa existe pra evitar. */}
+      {modo === "plano" && retomar && (
+        <Secundaria
+          icone={<Play size={11} strokeWidth={2.6} fill="currentColor" />}
+          href={hrefQuestao(retomar.missaoId, origem)}
+          rotulo={`Continuar ${retomar.planoNome || retomar.subjectNome || "a lista aberta"}`}
+          detalhe={`${retomar.respondidas} de ${retomar.total} · ${retomar.pct}%`}
+        />
+      )}
+      {modo === "retomar" && plano && !planoLigado && (
+        <Secundaria
+          icone={<CalendarDays size={11} strokeWidth={2.5} />}
+          onClick={comecarPlano}
+          desabilitado={iniciando}
+          rotulo={iniciando ? "Montando lista..." : `Começar ${plano.nome}`}
+          detalhe={detalheDoPlano(plano)}
+        />
+      )}
+
       {/* Progresso rente à base — só existe quando há uma lista aberta de
-          verdade. Um bloco só planejado não tem "quanto falta": ele ainda não
-          começou, e desenhar 0% seria cobrar algo que ninguém prometeu. */}
-      {retomar && (
+          verdade NA FAIXA. Um bloco só planejado não tem "quanto falta": ele
+          ainda não começou, e desenhar 0% seria cobrar algo que ninguém
+          prometeu. */}
+      {emCima && (
         <div className="relative flex items-center gap-3 px-4 pb-3.5 sm:px-5">
-          <span className="tnum shrink-0 text-[11px] font-bold text-white/70">{retomar.pct}% concluído</span>
+          <span className="tnum shrink-0 text-[11px] font-bold text-white/70">{emCima.pct}% concluído</span>
           <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/20">
             <motion.span
               className="block h-full rounded-full bg-white"
               initial={semMovimento ? false : { width: 0 }}
-              animate={{ width: `${Math.max(2, retomar.pct)}%` }}
+              animate={{ width: `${Math.max(2, emCima.pct)}%` }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             />
           </span>
         </div>
       )}
     </section>
+  );
+}
+
+/**
+ * A pílula do que perdeu a dobra: translúcida sobre a capa, uma linha só,
+ * claramente subordinada ao CTA branco. É link quando o destino é uma lista
+ * que já existe e botão quando ainda é preciso montá-la.
+ */
+function Secundaria({
+  icone,
+  rotulo,
+  detalhe,
+  href,
+  onClick,
+  desabilitado,
+}: {
+  icone: React.ReactNode;
+  rotulo: string;
+  detalhe: string;
+  href?: string;
+  onClick?: () => void;
+  desabilitado?: boolean;
+}) {
+  const classe =
+    "relative mx-4 mb-3.5 flex w-[calc(100%-2rem)] items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-left ring-1 ring-inset ring-white/20 transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-70 sm:mx-5 sm:w-[calc(100%-2.5rem)]";
+  const conteudo = (
+    <>
+      <span className="shrink-0 text-white/80">{icone}</span>
+      <span className="min-w-0 flex-1 truncate text-[12px] font-bold text-white/90">{rotulo}</span>
+      <span className="tnum hidden shrink-0 text-[11px] font-medium text-white/60 sm:block">{detalhe}</span>
+      <ArrowRight size={13} strokeWidth={2.4} className="shrink-0 text-white/70" />
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={classe}>
+        {conteudo}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" onClick={onClick} disabled={desabilitado} className={`${classe} cursor-pointer`}>
+      {conteudo}
+    </button>
   );
 }
 

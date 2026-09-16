@@ -8,6 +8,11 @@ export type RetomarInfo = {
   pct: number;
   avulsa: boolean;
   recap: boolean;
+  /** O dia da lista ("YYYY-MM-DD", `missions.data`). A home usa isto pra
+   *  decidir quem fica com a faixa: uma lista aberta HOJE é o que o aluno está
+   *  fazendo agora e ganha do plano; uma que ficou pela metade semana passada
+   *  não pode ocupar a dobra no lugar do bloco marcado pra hoje. */
+  data: string;
   /** O bloco do calendário que originou essa lista, quando ela veio de um
    *  ("Revisar derivadas"). É o que faz o cartão de progresso continuar
    *  chamando o estudo pelo nome que o ALUNO deu, em vez de trocá-lo pelo
@@ -93,6 +98,7 @@ export async function carregarRetomar(
       pct: Math.round((respondidas / total) * 100),
       avulsa: !!m.avulsa,
       recap: !!m.recap_topico_id,
+      data: String(m.data ?? "").slice(0, 10),
       planoNome: nomePorMissao.get(m.id) ?? null,
     };
   }

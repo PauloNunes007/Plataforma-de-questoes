@@ -152,7 +152,7 @@ export function DashboardView({
                   </Link>
                 </div>
 
-                <AcaoCard retomar={retomar} plano={planoHoje} metas={dados.metasHoje} />
+                <AcaoCard retomar={retomar} plano={planoHoje} metas={dados.metasHoje} hoje={hojeStr} />
 
                 {/* As duas portas de entrada, com o mesmo peso visual:
                     "monte a sua prática" e "faça uma prova cronometrada".
