@@ -37,6 +37,7 @@ import {
   Loader2,
   PlayCircle,
   SlidersHorizontal,
+  Sparkles,
   TrendingDown,
 } from "lucide-react";
 import type { FonteSimulado, MateriaSimulado, OpcoesSimulado } from "@/lib/simulados/simulados-data";
@@ -44,6 +45,7 @@ import {
   CHAVES_DIFICULDADE,
   ROTULO_DIFICULDADE_SIMULADO,
   SIMULADO_DURACOES_SUGERIDAS,
+  SIMULADO_QTD_MAX,
   SIMULADO_QTD_MIN,
   SIMULADO_QTD_PADRAO,
   SIMULADO_QUANTIDADES,
@@ -73,6 +75,10 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
   const [fontesSel, setFontesSel] = useState<Set<string>>(new Set());
   const [topicosSel, setTopicosSel] = useState<Set<string>>(new Set());
   const [quantidade, setQuantidade] = useState<number>(SIMULADO_QTD_PADRAO);
+  // Texto do campo livre, separado do número: enquanto o aluno digita "15" ele
+  // passa por "1", e reagir a cada tecla faria a prova encolher pra 1 questão
+  // no meio da digitação. O número vale quando é válido; o texto é o que ele vê.
+  const [qtdTexto, setQtdTexto] = useState<string>(String(SIMULADO_QTD_PADRAO));
   const [duracao, setDuracao] = useState<number | null>(null); // null = seguir a sugestão
   const [difsSel, setDifsSel] = useState<Set<ChaveDificuldade>>(new Set());
   const [anosSel, setAnosSel] = useState<Set<number>>(new Set());
@@ -129,7 +135,8 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
 
   const temMedicao = useMemo(() => (materia?.topicos ?? []).some((t) => t.aproveitamento != null), [materia]);
 
-  const qtdEfetiva = Math.max(SIMULADO_QTD_MIN, Math.min(quantidade, Math.max(SIMULADO_QTD_MIN, disponiveis)));
+  const tetoQuantidade = Math.max(SIMULADO_QTD_MIN, Math.min(SIMULADO_QTD_MAX, disponiveis));
+  const qtdEfetiva = Math.max(SIMULADO_QTD_MIN, Math.min(quantidade, tetoQuantidade));
   const duracaoEfetiva = duracao ?? duracaoSugerida(qtdEfetiva);
   const podeIniciar = topicosSel.size > 0 && fontesSel.size > 0 && disponiveis >= SIMULADO_QTD_MIN && !enviando;
 
@@ -161,7 +168,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
     setAnosSel(new Set());
     setFocarFracos(false);
     setAvancadoAberto(false);
-    setQuantidade(SIMULADO_QTD_PADRAO);
+    escolherQuantidade(SIMULADO_QTD_PADRAO);
     setDuracao(null);
   }
 
@@ -176,6 +183,21 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
       else n.add(id);
       return n;
     });
+  }
+
+  function escolherQuantidade(q: number) {
+    setQuantidade(q);
+    setQtdTexto(String(q));
+  }
+
+  // O clamp fica no BLUR (e no qtdEfetiva), não a cada tecla: digitar 45 num
+  // recorte de 30 questões deve mostrar 45 e virar 30 ao sair do campo, não
+  // recusar o "4" antes do "5".
+  function digitarQuantidade(texto: string) {
+    const limpo = texto.replace(/[^0-9]/g, "").slice(0, 3);
+    setQtdTexto(limpo);
+    const n = Number(limpo);
+    if (Number.isFinite(n) && n > 0) setQuantidade(n);
   }
 
   function alternarTopico(id: string) {
@@ -422,18 +444,39 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
         <h2 className="mb-3 text-[14px] font-bold">Formato da prova</h2>
 
         <Campo icone={<Layers size={13} />} rotulo="Questões">
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             {SIMULADO_QUANTIDADES.filter((q) => q <= Math.max(SIMULADO_QTD_MIN, disponiveis)).map((q) => (
-              <Chip key={q} ativo={qtdEfetiva === q} onClick={() => setQuantidade(q)}>
+              <Chip key={q} ativo={qtdEfetiva === q} onClick={() => escolherQuantidade(q)}>
                 {q}
               </Chip>
             ))}
             {disponiveis > SIMULADO_QTD_MIN && !(SIMULADO_QUANTIDADES as readonly number[]).includes(disponiveis) && (
-              <Chip ativo={qtdEfetiva === disponiveis} onClick={() => setQuantidade(disponiveis)}>
+              <Chip ativo={qtdEfetiva === disponiveis} onClick={() => escolherQuantidade(disponiveis)}>
                 Todas ({disponiveis})
               </Chip>
             )}
+
+            {/* Campo livre: os números acima são atalhos, não a lista de
+                opções. Prova de faculdade com 4 ou 5 questões é comum, e antes
+                disto o menor simulado possível era de 10. */}
+            <label className="ml-0.5 inline-flex items-center gap-1.5 rounded-full border border-input px-2.5 py-1 focus-within:border-questly-green">
+              <span className="text-[12px] font-medium text-muted-foreground">ou</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={SIMULADO_QTD_MIN}
+                max={tetoQuantidade}
+                value={qtdTexto}
+                onChange={(e) => digitarQuantidade(e.target.value)}
+                onBlur={() => setQtdTexto(String(qtdEfetiva))}
+                aria-label="Quantidade exata de questões"
+                className="tnum w-11 bg-transparent text-center text-[13px] font-bold outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
+            </label>
           </div>
+          <p className="tnum mt-2 text-[11.5px] font-medium text-muted-foreground">
+            De {SIMULADO_QTD_MIN} a {tetoQuantidade} questões neste recorte.
+          </p>
         </Campo>
 
         <Campo icone={<Clock size={13} />} rotulo="Tempo de relógio">
@@ -449,6 +492,14 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
             {duracao == null && " · sugerido pelo tamanho da prova"}
           </p>
         </Campo>
+
+        {/* O sorteio prefere questão inédita (ver `sortear` em actions.ts). Dizer
+            isso aqui evita a leitura errada de que o app repete questão à toa —
+            e explica por que a mesma configuração dá provas diferentes. */}
+        <p className="mt-1 flex items-start gap-1.5 text-[11.5px] font-medium text-muted-foreground">
+          <Sparkles size={12} className="mt-0.5 shrink-0 text-questly-green" />
+          Questões que você ainda não respondeu vêm primeiro; as já vistas só entram se faltar.
+        </p>
       </motion.section>
 
       {/* --------------------------------------------------- mais opções */}

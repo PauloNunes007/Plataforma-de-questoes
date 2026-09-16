@@ -13,11 +13,17 @@ export const SIMULADO_DURACOES_MIN = [30, 45, 60, 90, 120, 180, 240] as const;
 // tomar. O servidor continua aceitando qualquer valor de SIMULADO_DURACOES_MIN.
 export const SIMULADO_DURACOES_SUGERIDAS = [30, 60, 90, 120] as const;
 
-// Quantidades sugeridas de questões (o aluno pode digitar outra até o teto).
+// Quantidades sugeridas de questões — os atalhos, não a lista fechada: o
+// montador tem um campo pra digitar qualquer número entre MIN e MAX.
 export const SIMULADO_QUANTIDADES = [10, 15, 20, 30] as const;
 export const SIMULADO_QTD_PADRAO = 20;
 export const SIMULADO_QTD_MAX = 60;
-export const SIMULADO_QTD_MIN = 5;
+// Piso 1, e não 5 (2026-09-16): prova de faculdade com 4 ou 5 questões é
+// comum, e o piso antigo respondia "monte pelo menos 5" a quem estava
+// justamente tentando reproduzir a prova dele. Quem quer treinar UMA questão
+// contra o relógio também não está fazendo nada errado — o piso existia só
+// pra evitar um simulado degenerado, que é decisão do aluno, não do app.
+export const SIMULADO_QTD_MIN = 1;
 
 // Plano: free monta um número limitado de simulados por semana; Pro é ilimitado.
 // A checagem é AUTORITATIVA no servidor (montarSimuladoAction) e a UI só

@@ -3,7 +3,12 @@ import Link from "next/link";
 import { FileQuestion } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
-import { carregarHistorico, carregarSimulado } from "@/lib/simulados/simulados-data";
+import {
+  carregarHistorico,
+  carregarRankingProva,
+  carregarSimulado,
+} from "@/lib/simulados/simulados-data";
+import { lerCodigoProva, rotuloProva } from "@/lib/simulados/provas-oficiais";
 import { SimuladoRunner } from "@/components/simulados/simulado-runner";
 import { SimuladoResultado } from "@/components/simulados/simulado-resultado";
 
@@ -44,7 +49,15 @@ export default async function SimuladoPage({ params }: { params: Promise<{ id: s
     // Comparação com o próprio histórico: só os simulados concluídos ANTES
     // deste entram, senão a "média anterior" incluiria a nota que está sendo
     // comparada e o delta ficaria sempre amortecido.
-    const historico = await carregarHistorico(supabase, user);
+    // Ranking só pra prova antiga oficial: é a única em que todos os alunos
+    // responderam exatamente as mesmas questões. Ver ranking-prova.tsx.
+    const partes = simulado.prova_codigo ? lerCodigoProva(simulado.prova_codigo) : null;
+    const [historico, ranking] = await Promise.all([
+      carregarHistorico(supabase, user),
+      partes && simulado.prova_codigo
+        ? carregarRankingProva(supabase, user, simulado.prova_codigo)
+        : Promise.resolve(null),
+    ]);
     const anteriores = historico
       .filter((s) => s.status === "concluido" && s.id !== simulado.id && s.criado_em < simulado.criado_em)
       .map((s) => Number(s.nota ?? 0));
@@ -52,6 +65,8 @@ export default async function SimuladoPage({ params }: { params: Promise<{ id: s
     return (
       <SimuladoResultado
         simulado={simulado}
+        ranking={ranking}
+        rotuloProva={partes ? rotuloProva(partes) : null}
         contexto={{
           anteriores: anteriores.length,
           mediaAnterior:

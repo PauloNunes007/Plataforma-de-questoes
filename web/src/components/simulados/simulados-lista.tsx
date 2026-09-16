@@ -18,6 +18,7 @@ import {
   BarChart3,
   Clock,
   Crown,
+  FileCheck2,
   FileText,
   Lock,
   Play,
@@ -36,6 +37,8 @@ type Props = {
   nomeInstituicao: string | null;
   universidade: string | null;
   instituicoesDisponiveis: InstituicaoAgregada[];
+  /** quantas provas antigas oficiais existem no acervo (0 esconde o card) */
+  provasOficiais: number;
 };
 
 export function SimuladosLista({
@@ -45,6 +48,7 @@ export function SimuladosLista({
   nomeInstituicao,
   universidade,
   instituicoesDisponiveis,
+  provasOficiais,
 }: Props) {
   const semMovimento = useReducedMotion();
   const concluidos = useMemo(() => historico.filter((s) => s.status === "concluido"), [historico]);
@@ -124,6 +128,33 @@ export function SimuladosLista({
           <span className="shrink-0 text-xs font-bold text-questly-blue-dark">Continuar →</span>
         </Link>
       ))}
+
+      {/* Provas antigas: o caminho mais curto pra "quero fazer a prova que
+          caiu", que é diferente de "quero uma prova com estas características".
+          Fica acima do resumo porque é conteúdo novo que o aluno não descobre
+          sozinho — o montador ele já conhece. */}
+      {provasOficiais > 0 && (
+        <motion.div {...anim}>
+          <Link
+            href="/simulados/provas"
+            className="group surface-interativa flex items-center gap-3.5 p-4"
+          >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-questly-green-light text-questly-green-dark">
+              <FileCheck2 size={19} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[14.5px] font-bold">Provas antigas</span>
+              <span className="tnum block text-[12px] font-medium text-muted-foreground">
+                {provasOficiais} provas reais, inteiras e na ordem original — com ranking entre quem fez
+              </span>
+            </span>
+            <ArrowRight
+              size={17}
+              className="shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5"
+            />
+          </Link>
+        </motion.div>
+      )}
 
       {/* Sem provas da universidade do aluno: NOTA, não parede. Antes isto era o
           estado vazio que ocupava a tela e escondia a ação principal — e o
@@ -248,7 +279,14 @@ export function SimuladosLista({
                   {nota.toFixed(1)}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] font-semibold">{s.titulo}</p>
+                  <p className="flex items-center gap-1.5 truncate text-[14px] font-semibold">
+                    <span className="truncate">{s.titulo}</span>
+                    {s.prova_codigo && (
+                      <span className="shrink-0 rounded bg-questly-green/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-questly-green-dark dark:text-questly-green">
+                        prova real
+                      </span>
+                    )}
+                  </p>
                   <p className="tnum flex flex-wrap items-center gap-x-2.5 text-xs font-medium text-muted-foreground">
                     <span>{fmtDataCurta(s.criado_em)}</span>
                     <span>

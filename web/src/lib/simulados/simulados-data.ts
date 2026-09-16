@@ -20,6 +20,14 @@ import {
   melhorRotulo,
   type FonteSimulado,
 } from "./fontes";
+import {
+  compararProvas,
+  duracaoProvaOficial,
+  lerCodigoProva,
+  posicoesDoRanking,
+  type MinhaTentativa,
+  type ProvaOficial,
+} from "./provas-oficiais";
 
 import {
   analisarHistorico,
@@ -396,6 +404,8 @@ export async function carregarStatusPlano(
 export type SimuladoResumo = {
   id: string;
   titulo: string;
+  /** prova oficial reaplicada; null = sorteado pelo montador */
+  prova_codigo: string | null;
   instituicao: string | null;
   status: "em_andamento" | "concluido" | "abandonado";
   qtd_questoes: number;
@@ -413,20 +423,38 @@ export async function carregarHistorico(
   supabase: SupabaseClient,
   user: { id: string },
 ): Promise<SimuladoResumo[]> {
-  const { data } = await supabase
-    .from("simulados_aluno")
-    .select(
-      "id, titulo, instituicao, status, qtd_questoes, duracao_min, acertos, total, nota, tempo_gasto_seg, iniciado_em, concluido_em, criado_em",
-    )
-    .eq("user_id", user.id)
-    .order("criado_em", { ascending: false })
-    .limit(100);
-  return (data || []) as SimuladoResumo[];
+  const COLUNAS_BASE =
+    "id, titulo, instituicao, status, qtd_questoes, duracao_min, acertos, total, nota, tempo_gasto_seg, iniciado_em, concluido_em, criado_em";
+
+  const buscar = (colunas: string) =>
+    supabase
+      .from("simulados_aluno")
+      .select(colunas)
+      .eq("user_id", user.id)
+      .order("criado_em", { ascending: false })
+      .limit(100);
+
+  // Mesma proteção do `tempos`: `prova_codigo` só existe depois de
+  // supabase_provas_oficiais.sql, e sem ela o erro de coluna faz o SELECT
+  // inteiro voltar vazio — o aluno veria o histórico de simulados APAGADO por
+  // causa de um selo. Repete sem a coluna: some o selo, fica a lista.
+  const comProva = await buscar(`${COLUNAS_BASE}, prova_codigo`);
+  const { data } = comProva.error ? await buscar(COLUNAS_BASE) : comProva;
+
+  return ((data || []) as unknown as SimuladoResumo[]).map((s) => ({
+    ...s,
+    prova_codigo: s.prova_codigo ?? null,
+  }));
 }
 
 export type SimuladoCompleto = {
   id: string;
   titulo: string;
+  /** prova oficial reaplicada (supabase_provas_oficiais.sql); null = sorteado */
+  prova_codigo: string | null;
+  /** o aluno autorizou aparecer no ranking desta prova (só faz sentido com
+   *  prova_codigo preenchido) */
+  publico: boolean;
   instituicao: string | null;
   status: "em_andamento" | "concluido" | "abandonado";
   duracao_min: number;
@@ -484,6 +512,8 @@ export async function carregarSimulado(
   return {
     id: s.id,
     titulo: s.titulo,
+    prova_codigo: s.prova_codigo ?? null,
+    publico: s.publico === true,
     instituicao: s.instituicao,
     status: s.status,
     duracao_min: s.duracao_min,
@@ -708,4 +738,243 @@ function calcularAproveitamento(
     total += c.total;
   }
   return total > 0 ? Math.round((acertos / total) * 100) : null;
+}
+
+// ---------------------------------------------------------------------------
+// Provas antigas oficiais (supabase_provas_oficiais.sql)
+// ---------------------------------------------------------------------------
+
+export type ProvaOficialComTentativa = ProvaOficial & {
+  /** o que ESTE aluno já fez desta prova (vazio se nunca fez) */
+  tentativas: MinhaTentativa[];
+};
+
+export type CatalogoProvas = {
+  provas: ProvaOficialComTentativa[];
+  /** matérias que têm prova oficial, na ordem em que a tela agrupa */
+  materias: { id: string; nome: string; provas: number; minha: boolean }[];
+};
+
+/**
+ * Catálogo de provas reais + o que o aluno já fez de cada uma. Duas leituras:
+ * a view agregada (uma linha por prova, dezenas) e os simulados dele que
+ * apontam pra alguma prova (owner-only por RLS).
+ *
+ * A view NÃO é filtrada pela universidade do aluno. Uma prova antiga da UFF é
+ * treino legítimo pra quem estuda em qualquer lugar — é a mesma decisão que
+ * abriu as fontes do montador em 2026-09-16 — e a tela só ORDENA colocando as
+ * disciplinas dele na frente.
+ */
+export async function carregarCatalogoProvas(
+  supabase: SupabaseClient,
+  user: { id: string },
+): Promise<CatalogoProvas> {
+  const [{ data: linhas }, { data: meus }, { data: minhasMaterias }] = await Promise.all([
+    supabase.from("vw_provas_oficiais").select("codigo, instituicao, materia_id, materia_nome, ano, questoes"),
+    supabase
+      .from("simulados_aluno")
+      .select("id, prova_codigo, status, nota, acertos, total, publico, criado_em")
+      .eq("user_id", user.id)
+      .not("prova_codigo", "is", null)
+      .order("criado_em", { ascending: false }),
+    supabase.from("subjects").select("materia_id").eq("user_id", user.id),
+  ]);
+
+  const tentativasPorCodigo = new Map<string, MinhaTentativa[]>();
+  for (const s of (meus || []) as unknown as {
+    id: string;
+    prova_codigo: string;
+    status: MinhaTentativa["status"];
+    nota: number | null;
+    acertos: number | null;
+    total: number | null;
+    publico: boolean | null;
+    criado_em: string;
+  }[]) {
+    const lista = tentativasPorCodigo.get(s.prova_codigo) ?? [];
+    lista.push({
+      simuladoId: s.id,
+      status: s.status,
+      nota: s.nota == null ? null : Number(s.nota),
+      acertos: s.acertos,
+      total: s.total,
+      publico: s.publico === true,
+      criadoEm: s.criado_em,
+    });
+    tentativasPorCodigo.set(s.prova_codigo, lista);
+  }
+
+  const materiasDoAluno = new Set(
+    ((minhasMaterias || []) as { materia_id: string | null }[])
+      .map((m) => m.materia_id)
+      .filter(Boolean) as string[],
+  );
+
+  const provas: ProvaOficialComTentativa[] = [];
+  for (const l of (linhas || []) as unknown as {
+    codigo: string;
+    instituicao: string | null;
+    materia_id: string;
+    materia_nome: string;
+    ano: number | null;
+    questoes: number;
+  }[]) {
+    // O código é a identidade da prova; se um dia entrar um fora do formato,
+    // ele simplesmente não aparece — a tela não tenta adivinhar o rótulo.
+    const partes = lerCodigoProva(l.codigo);
+    if (!partes) continue;
+    const questoes = Number(l.questoes) || 0;
+    provas.push({
+      codigo: l.codigo,
+      materiaId: l.materia_id,
+      materiaNome: l.materia_nome,
+      instituicao: l.instituicao,
+      ano: partes.ano,
+      semestre: partes.semestre,
+      prova: partes.prova,
+      sigla: partes.sigla,
+      questoes,
+      duracaoMin: duracaoProvaOficial(questoes),
+      tentativas: tentativasPorCodigo.get(l.codigo) ?? [],
+    });
+  }
+  provas.sort(compararProvas);
+
+  const porMateria = new Map<string, { id: string; nome: string; provas: number; minha: boolean }>();
+  for (const p of provas) {
+    const atual = porMateria.get(p.materiaId);
+    if (atual) atual.provas += 1;
+    else
+      porMateria.set(p.materiaId, {
+        id: p.materiaId,
+        nome: p.materiaNome,
+        provas: 1,
+        minha: materiasDoAluno.has(p.materiaId),
+      });
+  }
+
+  return {
+    provas,
+    materias: [...porMateria.values()].sort(
+      (a, b) => Number(b.minha) - Number(a.minha) || b.provas - a.provas || a.nome.localeCompare(b.nome),
+    ),
+  };
+}
+
+export type LinhaRanking = {
+  simuladoId: string;
+  userId: string;
+  nome: string;
+  fotoUrl: string | null;
+  acertos: number;
+  total: number;
+  nota: number;
+  tempoGastoSeg: number | null;
+  concluidoEm: string | null;
+  posicao: number;
+  euMesmo: boolean;
+};
+
+export type RankingProva = {
+  codigo: string;
+  linhas: LinhaRanking[];
+  /** o aluno terminou esta prova mas escolheu não aparecer */
+  euForaDoRanking: boolean;
+};
+
+/** Quantas linhas do placar a tela mostra. Acima disso vira lista telefônica. */
+const MAX_RANKING = 50;
+
+/**
+ * Placar de uma prova oficial. Lê `vw_ranking_provas_oficiais`, que é
+ * SECURITY DEFINER e já devolve só as linhas PÚBLICAS e concluídas, com só as
+ * colunas do placar — ninguém enxerga a linha inteira do simulado de outro
+ * aluno (nem as respostas que ele marcou). Ver supabase_provas_oficiais.sql.
+ *
+ * A ordenação é feita aqui (nota desc, tempo asc) e a colocação sai de
+ * `posicoesDoRanking`, que dá a MESMA posição pra mesma nota: o tempo desempata
+ * a ordem de exibição, não a colocação.
+ */
+export async function carregarRankingProva(
+  supabase: SupabaseClient,
+  user: { id: string },
+  codigo: string,
+): Promise<RankingProva> {
+  const vazio: RankingProva = { codigo, linhas: [], euForaDoRanking: false };
+  if (!lerCodigoProva(codigo)) return vazio;
+
+  const [{ data }, { data: meus }] = await Promise.all([
+    supabase
+      .from("vw_ranking_provas_oficiais")
+      .select("simulado_id, user_id, nome, foto_url, acertos, total, nota, tempo_gasto_seg, concluido_em")
+      .eq("prova_codigo", codigo)
+      .order("nota", { ascending: false })
+      .limit(MAX_RANKING * 4),
+    supabase
+      .from("simulados_aluno")
+      .select("id, publico")
+      .eq("user_id", user.id)
+      .eq("prova_codigo", codigo)
+      .eq("status", "concluido"),
+  ]);
+
+  const brutas = ((data || []) as unknown as {
+    simulado_id: string;
+    user_id: string;
+    nome: string | null;
+    foto_url: string | null;
+    acertos: number | null;
+    total: number | null;
+    nota: number | null;
+    tempo_gasto_seg: number | null;
+    concluido_em: string | null;
+  }[])
+    .map((l) => ({
+      simuladoId: l.simulado_id,
+      userId: l.user_id,
+      nome: (l.nome || "").trim() || "Aluno",
+      fotoUrl: l.foto_url,
+      acertos: l.acertos ?? 0,
+      total: l.total ?? 0,
+      nota: Number(l.nota ?? 0),
+      tempoGastoSeg: l.tempo_gasto_seg,
+      concluidoEm: l.concluido_em,
+    }))
+    // Uma pessoa entra uma vez, com a MELHOR nota: refazer a prova três vezes
+    // não pode virar três linhas ocupando o pódio.
+    .sort((a, b) => b.nota - a.nota || (a.tempoGastoSeg ?? Infinity) - (b.tempoGastoSeg ?? Infinity));
+
+  const vistos = new Set<string>();
+  const unicas = brutas.filter((l) => {
+    if (vistos.has(l.userId)) return false;
+    vistos.add(l.userId);
+    return true;
+  });
+  const recorte = unicas.slice(0, MAX_RANKING);
+  const posicoes = posicoesDoRanking(recorte);
+
+  const concluidosMeus = (meus || []) as unknown as { id: string; publico: boolean | null }[];
+
+  return {
+    codigo,
+    linhas: recorte.map((l, i) => ({ ...l, posicao: posicoes[i], euMesmo: l.userId === user.id })),
+    euForaDoRanking: concluidosMeus.length > 0 && concluidosMeus.every((s) => s.publico !== true),
+  };
+}
+
+/**
+ * Só o número de provas antigas disponíveis, pro card do hub. Uma consulta de
+ * contagem (head), e não o catálogo inteiro: o hub é a tela mais visitada dos
+ * simulados e não pode pagar a conta da tela seguinte a cada abertura — a
+ * mesma razão pela qual ele lê `carregarContextoInstituicao` em vez de
+ * `carregarOpcoesSimulado`.
+ */
+export async function contarProvasOficiais(supabase: SupabaseClient): Promise<number> {
+  const { count, error } = await supabase
+    .from("vw_provas_oficiais")
+    .select("codigo", { count: "exact", head: true });
+  // Sem supabase_provas_oficiais.sql rodado a view não existe: o hub perde o
+  // card e não a página.
+  if (error) return 0;
+  return count ?? 0;
 }

@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { createClient } from "@/lib/supabase/server";
 import { lerPaginado } from "@/lib/supabase/paginado";
 import { questlyEmbaralhar } from "@/lib/questly/shared";
@@ -8,6 +10,11 @@ import { ehPro } from "@/lib/plano/plano";
 import { iniciarPraticaLivreAction } from "@/lib/disciplinas/actions";
 import { nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
 import { listarInstituicoes } from "@/lib/questly/contagem-questoes";
+import {
+  duracaoProvaOficial,
+  lerCodigoProva,
+  tituloProvaOficial,
+} from "./provas-oficiais";
 import {
   FONTE_AUTORAL,
   ROTULO_AUTORAL,
@@ -71,7 +78,7 @@ const PESO_DIFICULDADE: Record<string, number> = { facil: 0, medio: 1, dificil: 
  *    dentro de cada ano (ano sem catalogação vai pro fim);
  *  - `aleatoria`: embaralho limpo (o comportamento original).
  */
-function sortear(
+function sortearPuro(
   pool: Candidata[],
   quantidade: number,
   estrategia: EstrategiaSimulado,
@@ -137,6 +144,82 @@ function sortear(
 }
 
 /**
+ * Sorteio de verdade: o mesmo de `sortearPuro`, com as questões INÉDITAS na
+ * frente (pedido do dono, 2026-09-16).
+ *
+ * A prova sai primeiro do que o aluno nunca respondeu; só quando o inédito
+ * acaba é que as já vistas completam o número pedido. Isso é uma PRIORIDADE,
+ * não um filtro: quem já resolveu o banco inteiro de um tópico continua
+ * conseguindo montar a prova, em vez de receber "sem questões".
+ *
+ * A estratégia escolhida (fracos/recentes/aleatória) roda dentro de cada
+ * camada, então "focar no que eu erro mais" continua valendo — ele só passa a
+ * escolher entre as inéditas antes de repetir questão.
+ */
+function sortear(
+  pool: Candidata[],
+  quantidade: number,
+  estrategia: EstrategiaSimulado,
+  fraquezaPorTopico: Map<string, number>,
+  jaVistas: Set<string>,
+): Candidata[] {
+  const alvo = Math.min(quantidade, pool.length);
+  if (alvo <= 0) return [];
+  if (jaVistas.size === 0) return sortearPuro(pool, alvo, estrategia, fraquezaPorTopico);
+
+  const ineditas = pool.filter((q) => !jaVistas.has(q.id));
+  if (ineditas.length === 0) return sortearPuro(pool, alvo, estrategia, fraquezaPorTopico);
+  if (ineditas.length >= alvo) return sortearPuro(ineditas, alvo, estrategia, fraquezaPorTopico);
+
+  const vistas = pool.filter((q) => jaVistas.has(q.id));
+  const primeiras = sortearPuro(ineditas, alvo, estrategia, fraquezaPorTopico);
+  return [
+    ...primeiras,
+    ...sortearPuro(vistas, alvo - primeiras.length, estrategia, fraquezaPorTopico),
+  ];
+}
+
+/**
+ * Tudo que este aluno já respondeu — as questões das missões (question_attempts)
+ * mais as que caíram em simulados anteriores (que não geram attempt, porque um
+ * simulado não alimenta o motor de maestria).
+ *
+ * Lê o histórico DELE, e não os attempts das questões do pool: o histórico de
+ * um aluno é um conjunto pequeno e limitado pela própria atividade, enquanto o
+ * pool pode ter mil ids e viraria cinco idas ao banco por causa do teto de
+ * tamanho de URL (ver lib/supabase/paginado.ts). Falhar aqui não é fatal — o
+ * sorteio só perde a preferência por inédito.
+ */
+async function questoesJaVistas(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<Set<string>> {
+  const vistas = new Set<string>();
+  try {
+    const attempts = await lerPaginado<{ question_id: string | null }>(
+      () => supabase.from("question_attempts").select("question_id").eq("user_id", userId),
+      // Teto: além disso a preferência já não muda nada (o aluno viu tudo) e
+      // não vale segurar a montagem da prova.
+      { ordenarPor: "question_id", maxPaginas: 12 },
+    );
+    for (const a of attempts) if (a.question_id) vistas.add(a.question_id);
+
+    const { data: simulados } = await supabase
+      .from("simulados_aluno")
+      .select("question_ids")
+      .eq("user_id", userId)
+      .order("criado_em", { ascending: false })
+      .limit(100);
+    for (const s of (simulados || []) as { question_ids: string[] | null }[]) {
+      for (const qid of s.question_ids || []) vistas.add(qid);
+    }
+  } catch (e) {
+    console.error("Não foi possível ler o histórico pra priorizar questões inéditas:", e);
+  }
+  return vistas;
+}
+
+/**
  * Título do simulado: precisa ser reconhecível numa lista de vinte. Como toda
  * prova é de UMA disciplina, o nome dela é o escopo; a FONTE ("UFF",
  * "Autorais", "UFF + autorais") entra na frente porque, desde que o aluno pode
@@ -173,6 +256,32 @@ function montarTitulo(
 // da fonte: os ids pedidos são casados contra `vw_instituicoes` e viram valores
 // crus de `questions.instituicao` aqui dentro — o cliente nunca manda um filtro
 // de banco, só um id de um conjunto fechado.
+/**
+ * Gate do plano, AUTORITATIVO no servidor: free monta um simulado por semana
+ * (janela = semana da liga), Pro é ilimitado. Vale igual pro montador e pra
+ * prova antiga oficial — as duas consomem uma prova da semana, porque as duas
+ * são uma prova cronometrada inteira.
+ */
+async function dentroDoLimiteSemanal(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<boolean> {
+  const { data: perfil } = await supabase
+    .from("profiles")
+    .select("plano, plano_expira_em")
+    .eq("id", userId)
+    .maybeSingle();
+  if (ehPro(perfil)) return true;
+
+  const segunda = questlySegundaDaSemana(new Date());
+  const { count } = await supabase
+    .from("simulados_aluno")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .gte("criado_em", segunda);
+  return (count ?? 0) < SIMULADO_FREE_LIMITE_SEMANA;
+}
+
 export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<MontarSimuladoResultado> {
   const supabase = await createClient();
   const {
@@ -189,22 +298,7 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
   const difsPedidas = new Set((input.dificuldades || []).map((d) => normalizarChaveDificuldade(d)));
   const anosPedidos = new Set((input.anos || []).filter((a) => Number.isFinite(a)));
 
-  const { data: perfil } = await supabase
-    .from("profiles")
-    .select("plano, plano_expira_em")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  // Gate do plano free — checagem autoritativa no servidor.
-  if (!ehPro(perfil)) {
-    const segunda = questlySegundaDaSemana(new Date());
-    const { count } = await supabase
-      .from("simulados_aluno")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .gte("criado_em", segunda);
-    if ((count ?? 0) >= SIMULADO_FREE_LIMITE_SEMANA) return { ok: false, erro: "limite" };
-  }
+  if (!(await dentroDoLimiteSemanal(supabase, user.id))) return { ok: false, erro: "limite" };
 
   // Fontes: o id que veio do cliente só vale se existir no banco. Os valores
   // crus de `questions.instituicao` ("UFF", "UFF (1º sem.)"…) são reagrupados
@@ -332,8 +426,9 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
     new Map([...poolPorFonte].map(([id, lista]) => [id, lista.length])),
     quantidade,
   );
+  const jaVistas = await questoesJaVistas(supabase, user.id);
   const escolhidas = [...poolPorFonte.entries()].flatMap(([id, lista]) =>
-    sortear(lista, cotas.get(id) ?? 0, estrategia, fraqueza),
+    sortear(lista, cotas.get(id) ?? 0, estrategia, fraqueza, jaVistas),
   );
   if (escolhidas.length === 0) return { ok: false, erro: "sem_questoes" };
 
@@ -577,4 +672,146 @@ export async function treinarTopicosDoSimuladoAction(input: {
     dificuldades: [],
     quantidade: Math.max(1, Math.min(30, Math.round(Number(input.quantidade) || 10))),
   });
+}
+
+// ---------------------------------------------------------------------------
+// Provas antigas oficiais (supabase_provas_oficiais.sql)
+// ---------------------------------------------------------------------------
+
+export type IniciarProvaResultado =
+  | { ok: true; id: string; retomada: boolean }
+  | { ok: false; erro: "limite" | "sem_questoes" | "invalido" };
+
+/**
+ * Reaplica uma prova REAL: as questões que caíram nela, na ordem em que
+ * caíram, com o relógio do formato original.
+ *
+ * Nada aqui é sorteado — é o oposto do montador. Por isso não há estratégia,
+ * nem recorte, nem preferência por questão inédita: mudar qualquer uma dessas
+ * coisas deixaria de ser a prova. O cliente manda só o CÓDIGO, que é casado
+ * contra `vw_provas_oficiais` antes de virar filtro de banco.
+ *
+ * Refazer é permitido (treinar a mesma prova de novo é uso legítimo), mas uma
+ * prova com o relógio já correndo é RETOMADA em vez de duplicada — senão o
+ * aluno que recarrega a página perde o simulado grátis da semana.
+ */
+export async function iniciarProvaOficialAction(codigo: string): Promise<IniciarProvaResultado> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, erro: "invalido" };
+
+  const partes = lerCodigoProva(codigo);
+  if (!partes) return { ok: false, erro: "invalido" };
+
+  // Existência autoritativa: o código só vale se a view o conhece.
+  const { data: prova } = await supabase
+    .from("vw_provas_oficiais")
+    .select("codigo, instituicao, materia_id, materia_nome, questoes")
+    .eq("codigo", codigo)
+    .maybeSingle();
+  if (!prova) return { ok: false, erro: "invalido" };
+
+  // Já tem esta prova aberta? Volta pra ela.
+  const { data: aberta } = await supabase
+    .from("simulados_aluno")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("prova_codigo", codigo)
+    .eq("status", "em_andamento")
+    .order("criado_em", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (aberta) return { ok: true, id: aberta.id as string, retomada: true };
+
+  if (!(await dentroDoLimiteSemanal(supabase, user.id))) return { ok: false, erro: "limite" };
+
+  const { data: questoes } = await supabase
+    .from("questions")
+    .select("id, topic_id, prova_ordem")
+    .eq("prova_codigo", codigo)
+    .order("prova_ordem", { ascending: true });
+
+  const linhas = (questoes || []) as unknown as {
+    id: string;
+    topic_id: string | null;
+    prova_ordem: number | null;
+  }[];
+  if (linhas.length === 0) return { ok: false, erro: "sem_questoes" };
+
+  const questionIds = linhas.map((q) => q.id);
+  const topicoIds = [...new Set(linhas.map((q) => q.topic_id).filter(Boolean))] as string[];
+  const duracaoMin = duracaoProvaOficial(questionIds.length);
+
+  const { data: criado, error } = await supabase
+    .from("simulados_aluno")
+    .insert({
+      user_id: user.id,
+      titulo: tituloProvaOficial({
+        codigo,
+        materiaId: prova.materia_id as string,
+        materiaNome: (prova.materia_nome as string) || "",
+        instituicao: (prova.instituicao as string) ?? null,
+        ano: partes.ano,
+        semestre: partes.semestre,
+        prova: partes.prova,
+        sigla: partes.sigla,
+        questoes: questionIds.length,
+        duracaoMin,
+      }),
+      instituicao: partes.sigla,
+      prova_codigo: codigo,
+      materia_ids: prova.materia_id ? [prova.materia_id] : [],
+      topico_ids: topicoIds,
+      question_ids: questionIds,
+      duracao_min: duracaoMin,
+      qtd_questoes: questionIds.length,
+      status: "em_andamento",
+      respostas: {},
+    })
+    .select("id")
+    .single();
+
+  if (error || !criado) {
+    console.error("Erro ao iniciar prova oficial:", error);
+    return { ok: false, erro: "invalido" };
+  }
+  return { ok: true, id: criado.id as string, retomada: false };
+}
+
+/**
+ * Liga/desliga a aparição do resultado no ranking daquela prova.
+ *
+ * Só mexe em simulado CONCLUÍDO e de prova oficial do próprio aluno: prova
+ * sorteada não tem ranking (cada aluno fez um exame diferente — comparar
+ * seria inventar uma disputa) e prova em andamento não tem nota pra mostrar.
+ * O padrão do banco é `false`; isto aqui é o único caminho que o torna true.
+ */
+export async function definirVisibilidadeSimuladoAction(
+  id: string,
+  publico: boolean,
+): Promise<{ ok: boolean; publico: boolean }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, publico: false };
+
+  const { data, error } = await supabase
+    .from("simulados_aluno")
+    .update({ publico })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .eq("status", "concluido")
+    .not("prova_codigo", "is", null)
+    .select("publico")
+    .maybeSingle();
+
+  if (error || !data) {
+    if (error) console.error("Erro ao mudar a visibilidade do simulado:", error);
+    return { ok: false, publico: false };
+  }
+  revalidatePath(`/simulados/${id}`);
+  return { ok: true, publico: data.publico === true };
 }

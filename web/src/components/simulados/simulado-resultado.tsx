@@ -42,6 +42,8 @@ import { CLASSE_TEXTO_STATUS, CartaoGrafico } from "./graficos/base";
 import { BarrasDesempenho } from "./graficos/barras-desempenho";
 import { RitmoProva } from "./graficos/ritmo-prova";
 import { GabaritoSimulado } from "./gabarito-simulado";
+import { RankingProva } from "./ranking-prova";
+import type { RankingProva as DadosRanking } from "@/lib/simulados/simulados-data";
 import { hrefQuestao } from "@/lib/questao/navegacao";
 
 /** Comparação com o próprio histórico — calculada na page, não aqui. */
@@ -61,9 +63,14 @@ function corNota(nota: number): { texto: string; anel: string } {
 export function SimuladoResultado({
   simulado,
   contexto,
+  ranking,
+  rotuloProva,
 }: {
   simulado: SimuladoCompleto;
   contexto: ContextoResultado;
+  /** só vem preenchido quando o simulado é uma prova antiga oficial */
+  ranking?: DadosRanking | null;
+  rotuloProva?: string | null;
 }) {
   const analise = simulado.analise;
   const nota = Number(simulado.nota ?? 0);
@@ -180,6 +187,18 @@ export function SimuladoResultado({
           </Link>
         </div>
       </motion.section>
+
+      {/* Ranking logo depois da nota: numa prova que todo mundo fez igual, "e
+          os outros?" é a pergunta seguinte imediata — antes do diagnóstico por
+          tópico, que é a conversa do aluno com ele mesmo. */}
+      {ranking && (
+        <RankingProva
+          simuladoId={simulado.id}
+          rotulo={rotuloProva || simulado.titulo}
+          linhas={ranking.linhas}
+          publico={simulado.publico}
+        />
+      )}
 
       {/* ---------------- Diagnóstico ---------------- */}
       <CartaoGrafico
