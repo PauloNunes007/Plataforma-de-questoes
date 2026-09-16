@@ -10,11 +10,11 @@ export const revalidate = 3600;
 
 const TITULO = CAMPANHA.ativa
   ? `Questly — Simulados e questões de provas antigas da ${CAMPANHA.instituicao}`
-  : "Questly — Estude o que importa. Passe em todas as provas.";
+  : "Questly — Treine com a prova de verdade. Chegue pronto na sua.";
 
 const DESCRICAO = CAMPANHA.ativa
-  ? `Questões de ${CAMPANHA.materiaLabel} da ${CAMPANHA.instituicao} catalogadas tópico a tópico: monte simulados cronometrados com questões reais de provas anteriores, com resolução passo a passo, e receba um plano de estudos por dia.`
-  : "Plataforma de estudos que equilibra as disciplinas do seu semestre por urgência, ponto fraco e meta de nota — com simulados cronometrados e questões de provas antigas.";
+  ? `Questões de ${CAMPANHA.materiaLabel} da ${CAMPANHA.instituicao} catalogadas tópico a tópico: monte listas e simulados cronometrados com questões reais de provas anteriores, com resolução passo a passo, e acompanhe seu aproveitamento assunto por assunto.`
+  : "Banco de questões de provas antigas com resolução passo a passo, simulados cronometrados e a ementa da sua disciplina num mapa — você escolhe o que praticar.";
 
 export const metadata: Metadata = {
   // `absolute` porque o TITULO já carrega a marca — sem isso o template do
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "questões resolvidas",
     CAMPANHA.instituicao,
     `${CAMPANHA.materiaLabel} ${CAMPANHA.instituicao}`,
-    "plano de estudos",
+    "banco de questões",
     "universitário",
   ],
   alternates: { canonical: "/" },

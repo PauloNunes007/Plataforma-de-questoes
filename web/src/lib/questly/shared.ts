@@ -1,5 +1,5 @@
 // Portado de js/supabase-client.js — helpers puros compartilhados entre
-// mission-engine, rotina-engine, liga e a UI do dashboard. Mantém os
+// liga, trilha e a UI do dashboard. Mantém os
 // mesmos nomes/constantes do app legado (ver CLAUDE.md, seção "Learning
 // science") para as duas versões não dessincronizarem.
 
@@ -15,17 +15,25 @@ export const QUESTLY_DIAS_SEMANA = [
 
 export type DiaSemana = (typeof QUESTLY_DIAS_SEMANA)[number];
 
-// Formato mínimo de um boss (prova) usado por rotina-engine/mission-engine
-// pra calcular peso/urgência — os dois módulos enxergam o mesmo shape, daí
-// viver aqui em vez de duplicado com campos diferentes em cada um.
-export type Boss = {
+// Uma linha de `missions`. Desde o repasse de 2026-09-16 TODA missão é
+// avulsa: o motor que gerava uma missão por dia foi removido, e o que sobra
+// são as listas que o próprio aluno monta (Banco de Questões, prática de um
+// tópico da trilha, revisão relâmpago, desafio de recuperação). A tabela
+// continua sendo a unidade de trabalho de `/questao` — é ela que guarda quais
+// questões estão na lista e quanto XP ela vale.
+export type Mission = {
   id: string;
-  nome: string;
-  data_prova: string;
-  preparo_percentual?: number | null;
-  // escopo da prova (supabase_prova_topicos.sql): quais tópicos caem NESTA
-  // prova. null/vazio = não definido → projeções usam todos os cai_na_prova.
-  topico_ids?: string[] | null;
+  user_id: string;
+  subject_id: string | null;
+  data: string;
+  topic_ids: string[];
+  question_ids: string[];
+  qtd_questoes: number;
+  tempo_previsto_min: number | null;
+  xp_recompensa: number;
+  concluida: boolean;
+  avulsa: boolean;
+  subjects?: { nome: string } | null;
 };
 
 // Plural em pt-BR sem gambiarra de concatenar sufixo. Colar `"ões"` no fim de
@@ -210,7 +218,7 @@ export function toISODate(d: Date): string {
 
 // Data de HOJE (YYYY-MM-DD) no fuso LOCAL do dispositivo. Não use
 // new Date().toISOString().slice(0,10): isso devolve a data em UTC e, à noite
-// no Brasil (UTC-3), já rolou pro dia seguinte — então daily_log, missão do dia
+// no Brasil (UTC-3), já rolou pro dia seguinte — então daily_log, lista do dia
 // e heatmap caíam no dia errado, e discordavam do dia da semana escolhido pela
 // grade (que usa Date.getDay(), local). Toda "data de hoje" persistida/comparada
 // no app passa por aqui.

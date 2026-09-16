@@ -136,7 +136,7 @@ export function ResumoPratica({
           {!iniciando && <ArrowRight size={15} strokeWidth={2.25} />}
         </button>
         <p className="mt-2.5 text-center text-[11px] leading-relaxed text-muted-foreground">
-          Treino extra: não ocupa a missão do dia, mas conta XP e cobertura do Boss do mesmo jeito.
+          Conta XP e entra no seu progresso da trilha, como qualquer outra lista.
         </p>
       </div>
     </div>

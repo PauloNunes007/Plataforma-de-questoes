@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 // telas baixas (formulários longos no celular).
 //
 // Nasceu no Modo Aprovação e foi promovido pra ui/ em 2026-09-16, quando o
-// controle manual da missão do dia (components/dashboard/missao-controles.tsx)
+// painel de detalhe da trilha e afins
 // passou a precisar do mesmo comportamento na home.
 export function ModalPainel({
   aberto,

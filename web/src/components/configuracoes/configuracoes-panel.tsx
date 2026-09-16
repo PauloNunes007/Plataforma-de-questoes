@@ -12,36 +12,23 @@ import {
   AtSign,
   BookOpen,
   CalendarDays,
-  CalendarRange,
   Camera,
   Check,
   Lock,
   Plus,
-  Compass,
-  Sparkles,
-  Swords,
   Trash2,
   X,
   type LucideIcon,
 } from "lucide-react";
 import {
-  QUESTLY_DIAS_SEMANA,
-  questlyNormalizarDia,
 } from "@/lib/questly/shared";
-import { questlyRecomendarRotina, type RotinaLinha } from "@/lib/questly/rotina-engine";
-import { questlyModoEstudo, type ModoEstudo } from "@/lib/questly/modo-estudo";
 import { redimensionarAvatar } from "@/lib/configuracoes/avatar-resize";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import {
-  adicionarProvaAction,
-  atualizarProvaAction,
   criarDisciplinaAction,
   removerDisciplinaAction,
   removerFotoAction,
-  removerProvaAction,
-  salvarGradeAction,
-  salvarModoEstudoAction,
   salvarNomeAction,
   salvarNotaAction,
   salvarRotinaAction,
@@ -53,16 +40,6 @@ import {
 const USERNAME_CARENCIA_DIAS = 15;
 
 const DIAS_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-const TEMPO_OPCOES: { label: string; minutos: number }[] = [
-  { label: "30 min", minutos: 30 },
-  { label: "1 hora", minutos: 60 },
-  { label: "1h30", minutos: 90 },
-  { label: "2h", minutos: 120 },
-  { label: "3h", minutos: 180 },
-  { label: "4h", minutos: 240 },
-  { label: "6h", minutos: 360 },
-  { label: "8h ou mais", minutos: 480 },
-];
 const DISCIPLINAS_PADRAO = [
   "Fundamentos de Cálculo e Geometria",
   "Cálculo I",
@@ -95,8 +72,6 @@ type ProfileMin = {
   curso: string | null;
   foto_url: string | null;
   dias_disponiveis: string[] | null;
-  tempo_diario_min: number | null;
-  modo_estudo?: string | null;
 };
 
 function Card({
@@ -169,132 +144,39 @@ function SecaoKicker({ children }: { children: React.ReactNode }) {
   return <div className="kicker mt-3 px-1">{children}</div>;
 }
 
+// **Repasse de 2026-09-16 — fim do motor de missões.** Saíram daqui três
+// cartões, todos entradas de um motor que não existe mais: o modo de estudo
+// (não há mais dois modos), a grade semanal por disciplina (quem estuda o quê
+// em cada dia) e as provas por disciplina — a data da prova agora é marcada em
+// /calendario, como qualquer outro compromisso, e não alimenta recomendação
+// nenhuma. Sobraram conta, ritmo e disciplinas.
 export function ConfiguracoesPanel({
   profile,
   subjectsIniciais,
-  rotinaInicial,
 }: {
   profile: ProfileMin | null;
   subjectsIniciais: SubjectComBosses[];
-  rotinaInicial: RotinaLinha[];
 }) {
   const [subjects, setSubjects] = useState(subjectsIniciais);
   const [dias, setDias] = useState<string[]>(profile?.dias_disponiveis || []);
-  const [tempoMin, setTempoMin] = useState<number | null>(profile?.tempo_diario_min ?? null);
-  const [modo, setModo] = useState<ModoEstudo>(questlyModoEstudo(profile));
-  const guiado = modo === "guiado";
 
   return (
     <div className="mx-auto flex max-w-[760px] flex-col gap-4 px-5 py-8 sm:px-6">
       <div className="mb-1">
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Configurações</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Sua conta, sua rotina e suas provas — tudo num lugar só.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Sua conta, seu ritmo e suas disciplinas — tudo num lugar só.
+        </p>
       </div>
 
       <ContaCard profile={profile} />
 
-      <SecaoKicker>Plano de estudo</SecaoKicker>
-      <ModoEstudoCard modo={modo} onModo={setModo} />
-      {/* Tudo daqui pra baixo só existe na trajetória guiada: rotina, grade e
-          provas são as entradas do motor. Na prática livre elas não têm o que
-          alimentar — e mostrá-las seria pedir um planejamento que ninguém vai
-          usar. Os dados continuam salvos: voltar pro guiado traz tudo de volta. */}
-      {guiado && (
-        <>
-          <RotinaCard dias={dias} tempoMin={tempoMin} onSalvar={(d, t) => { setDias(d); setTempoMin(t); }} />
-          <GradeSemanalCard subjects={subjects} dias={dias} tempoMin={tempoMin} rotinaInicial={rotinaInicial} />
-        </>
-      )}
+      <SecaoKicker>Ritmo</SecaoKicker>
+      <RotinaCard dias={dias} onSalvar={setDias} />
 
-      <SecaoKicker>{guiado ? "Disciplinas e provas" : "Disciplinas"}</SecaoKicker>
+      <SecaoKicker>Disciplinas</SecaoKicker>
       <DisciplinasCard subjects={subjects} onSubjectsChange={setSubjects} />
-      {guiado && <ProvasCard subjects={subjects} onSubjectsChange={setSubjects} />}
     </div>
-  );
-}
-
-// ————— Modo de estudo: a plataforma é modular —————
-//
-// Duas opções, escritas pelo que o aluno GANHA e pelo que ele PERDE — não há
-// opção "melhor" aqui, e esconder o custo de cada uma faria o aluno escolher
-// errado. Ver lib/questly/modo-estudo.ts e supabase_modo_estudo.sql.
-const MODOS: { valor: ModoEstudo; titulo: string; desc: string; inclui: string }[] = [
-  {
-    valor: "guiado",
-    titulo: "Trajetória guiada",
-    desc: "O app monta sua missão do dia a partir das datas das suas provas e do seu desempenho.",
-    inclui: "Missão do dia · Grade semanal · Cerco ao Boss · Projeção da nota",
-  },
-  {
-    valor: "livre",
-    titulo: "Prática livre",
-    desc: "Nada de plano automático: você monta a lista que quiser, na hora que quiser.",
-    inclui: "Banco de questões · Simulados · Ranking · Trilha",
-  },
-];
-
-function ModoEstudoCard({ modo, onModo }: { modo: ModoEstudo; onModo: (m: ModoEstudo) => void }) {
-  const [salvando, setSalvando] = useState<ModoEstudo | null>(null);
-  const [saved, setSaved] = useState(false);
-
-  async function escolher(novo: ModoEstudo) {
-    if (novo === modo) return;
-    setSalvando(novo);
-    const resultado = await salvarModoEstudoAction(novo);
-    setSalvando(null);
-    if (resultado.error) {
-      alert(resultado.error);
-      return;
-    }
-    onModo(novo);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1800);
-  }
-
-  return (
-    <Card
-      icon={Compass}
-      title="Modo de estudo"
-      sub="Você decide se o app planeja o seu dia ou se só te dá as ferramentas."
-    >
-      <div className="flex flex-col gap-2.5">
-        {MODOS.map((m) => {
-          const ativo = m.valor === modo;
-          return (
-            <button
-              key={m.valor}
-              type="button"
-              disabled={salvando !== null}
-              onClick={() => escolher(m.valor)}
-              className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3.5 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
-                ativo
-                  ? "border-questly-green/60 bg-questly-green-light/60"
-                  : "border-border bg-card hover:border-questly-green/40"
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <span className={`text-sm font-semibold ${ativo ? "text-questly-green-dark" : ""}`}>
-                  {m.titulo}
-                </span>
-                {ativo && <Check size={15} strokeWidth={2.4} className="text-questly-green-dark" />}
-                {salvando === m.valor && (
-                  <span className="text-xs font-medium text-muted-foreground">salvando…</span>
-                )}
-              </span>
-              <span className="text-[13px] leading-snug text-muted-foreground">{m.desc}</span>
-              <span className="mt-0.5 text-[11.5px] font-semibold text-muted-foreground">{m.inclui}</span>
-            </button>
-          );
-        })}
-      </div>
-      <p className="mt-3 text-[12px] leading-snug text-muted-foreground">
-        Trocar de modo não apaga nada: suas provas, missões e progresso continuam salvos e voltam
-        inteiros se você voltar pra trajetória guiada.
-      </p>
-      <div className="mt-2">
-        <SavedTag show={saved} />
-      </div>
-    </Card>
   );
 }
 
@@ -696,28 +578,21 @@ function UsernameRow({
   );
 }
 
-// ————— Plano de estudo —————
-
-function RotinaCard({
-  dias,
-  tempoMin,
-  onSalvar,
-}: {
-  dias: string[];
-  tempoMin: number | null;
-  onSalvar: (dias: string[], tempoMin: number | null) => void;
-}) {
+// ————— Ritmo —————
+//
+// Os dias marcados aqui não geram nada nem cobram nada: eles só dizem em
+// quantos dias por semana o aluno pretende estudar, e é isso que a home usa
+// pra dimensionar a meta semanal de XP. O "tempo por dia" saiu junto com o
+// motor — era o orçamento que ele dividia entre as disciplinas do dia, e sem
+// motor nenhuma tela lia aquele número.
+function RotinaCard({ dias, onSalvar }: { dias: string[]; onSalvar: (dias: string[]) => void }) {
   const [diasSel, setDiasSel] = useState<string[]>(dias);
-  const [tempoLabel, setTempoLabel] = useState<string | null>(
-    TEMPO_OPCOES.find((t) => t.minutos === tempoMin)?.label ?? null,
-  );
   const [salvando, setSalvando] = useState(false);
   const [saved, setSaved] = useState(false);
 
   async function salvar() {
     setSalvando(true);
-    const minutos = TEMPO_OPCOES.find((t) => t.label === tempoLabel)?.minutos ?? null;
-    const resultado = await salvarRotinaAction(diasSel, minutos);
+    const resultado = await salvarRotinaAction(diasSel);
     setSalvando(false);
     if (resultado.error) {
       alert(resultado.error);
@@ -725,11 +600,15 @@ function RotinaCard({
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 1800);
-    onSalvar(diasSel, minutos);
+    onSalvar(diasSel);
   }
 
   return (
-    <Card icon={CalendarDays} title="Rotina de estudos" sub="As missões diárias só são geradas nos dias marcados abaixo.">
+    <Card
+      icon={CalendarDays}
+      title="Dias de estudo"
+      sub="Em quantos dias por semana você pretende estudar. Serve pra calibrar sua meta de XP da semana — não gera tarefa nem cobrança."
+    >
       <div className="mb-5">
         <div className="kicker mb-2.5">Dias disponíveis</div>
         <div className="flex flex-wrap gap-2">
@@ -744,19 +623,9 @@ function RotinaCard({
           ))}
         </div>
       </div>
-      <div className="mb-5">
-        <div className="kicker mb-2.5">Tempo por dia</div>
-        <div className="flex flex-wrap gap-2">
-          {TEMPO_OPCOES.map((t) => (
-            <Chip key={t.label} active={tempoLabel === t.label} onClick={() => setTempoLabel(t.label)}>
-              {t.label}
-            </Chip>
-          ))}
-        </div>
-      </div>
       <div className="flex items-center gap-3">
         <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
-          {salvando ? "Salvando..." : "Salvar rotina"}
+          {salvando ? "Salvando..." : "Salvar"}
         </button>
         <SavedTag show={saved} />
       </div>
@@ -764,143 +633,7 @@ function RotinaCard({
   );
 }
 
-function GradeSemanalCard({
-  subjects,
-  dias,
-  tempoMin,
-  rotinaInicial,
-}: {
-  subjects: SubjectComBosses[];
-  dias: string[];
-  tempoMin: number | null;
-  rotinaInicial: RotinaLinha[];
-}) {
-  const marcadoInicial: Record<string, boolean> = {};
-  rotinaInicial.forEach((r) => (marcadoInicial[`${r.subject_id}|${r.dia_semana}`] = true));
-  const [marcado, setMarcado] = useState<Record<string, boolean>>(marcadoInicial);
-  const [salvando, setSalvando] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  const diasOrdenados = QUESTLY_DIAS_SEMANA.map((abrev) => {
-    const label = dias.find((d) => questlyNormalizarDia(d) === abrev);
-    return label ? { abrev, label } : null;
-  }).filter((d): d is { abrev: (typeof QUESTLY_DIAS_SEMANA)[number]; label: string } => d !== null);
-
-  function toggle(subjectId: string, dia: string) {
-    const chave = `${subjectId}|${dia}`;
-    setMarcado((m) => ({ ...m, [chave]: !m[chave] }));
-  }
-
-  function recomendar() {
-    const recomendacao = questlyRecomendarRotina(
-      subjects.map((s) => ({ id: s.id, bosses: s.bosses, chance_aprovacao: null, nota_desejada: s.nota_desejada })),
-      diasOrdenados.map((d) => d.abrev),
-      tempoMin || 30,
-    );
-    const novoMarcado: Record<string, boolean> = {};
-    Object.keys(recomendacao).forEach((dia) => {
-      recomendacao[dia].forEach((subjectId) => {
-        novoMarcado[`${subjectId}|${dia}`] = true;
-      });
-    });
-    setMarcado(novoMarcado);
-  }
-
-  async function salvar() {
-    setSalvando(true);
-    const rotinaPorDia: Record<string, string[]> = {};
-    diasOrdenados.forEach((d) => (rotinaPorDia[d.abrev] = []));
-    Object.entries(marcado).forEach(([chave, ativo]) => {
-      if (!ativo) return;
-      const [subjectId, dia] = chave.split("|");
-      if (rotinaPorDia[dia]) rotinaPorDia[dia].push(subjectId);
-    });
-    const resultado = await salvarGradeAction(rotinaPorDia);
-    setSalvando(false);
-    if (resultado.error) {
-      alert(resultado.error);
-      return;
-    }
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1800);
-  }
-
-  return (
-    <Card
-      icon={CalendarRange}
-      title="Grade semanal por disciplina"
-      sub="Marque em quais dias você estuda cada disciplina. A recomendação usa a proximidade das provas, seu desempenho e sua meta de nota — mas quem decide é você."
-      action={
-        subjects.length > 0 && diasOrdenados.length > 0 ? (
-          <button type="button" onClick={recomendar} className={BTN_SECUNDARIO}>
-            <Sparkles size={14} strokeWidth={1.75} /> Recomendar
-          </button>
-        ) : undefined
-      }
-    >
-      {subjects.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Adicione uma disciplina abaixo pra montar sua grade semanal.</p>
-      ) : diasOrdenados.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Escolha seus dias disponíveis em &quot;Rotina de estudos&quot; acima primeiro.
-        </p>
-      ) : (
-        <>
-          <div className="overflow-x-auto">
-            <div
-              className="grid items-center gap-y-1.5"
-              style={{ gridTemplateColumns: `160px repeat(${diasOrdenados.length}, 44px)` }}
-            >
-              <div />
-              {diasOrdenados.map((d) => (
-                <div key={d.abrev} className="kicker pb-1 text-center">
-                  {d.label}
-                </div>
-              ))}
-              {subjects.map((s) => (
-                <div key={s.id} className="contents">
-                  <div className="truncate pr-2 text-sm font-medium">{s.nome}</div>
-                  {diasOrdenados.map((d) => {
-                    const ativo = !!marcado[`${s.id}|${d.abrev}`];
-                    return (
-                      // célula-toggle no lugar do checkbox nativo — mesma
-                      // área de toque (44px de coluna), visual de app de
-                      // banco: pill verde preenchida quando ativa.
-                      <div key={d.abrev} className="flex h-10 w-11 items-center justify-center">
-                        <button
-                          type="button"
-                          role="checkbox"
-                          aria-checked={ativo}
-                          aria-label={`${s.nome} — ${d.label}`}
-                          onClick={() => toggle(s.id, d.abrev)}
-                          className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${
-                            ativo
-                              ? "border-questly-green bg-questly-green text-white shadow-sm dark:text-[#0c1512]"
-                              : "border-border bg-card text-transparent hover:border-questly-green/40 hover:bg-muted"
-                          }`}
-                        >
-                          <Check size={14} strokeWidth={3} />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="mt-5 flex items-center gap-3">
-            <button type="button" disabled={salvando} onClick={salvar} className={BTN_PRIMARIO}>
-              {salvando ? "Salvando..." : "Salvar grade"}
-            </button>
-            <SavedTag show={saved} />
-          </div>
-        </>
-      )}
-    </Card>
-  );
-}
-
-// ————— Disciplinas e provas —————
+// ————— Disciplinas —————
 
 function DisciplinasCard({
   subjects,
@@ -1026,89 +759,3 @@ function DisciplinasCard({
   );
 }
 
-function ProvasCard({
-  subjects,
-  onSubjectsChange,
-}: {
-  subjects: SubjectComBosses[];
-  onSubjectsChange: (subjects: SubjectComBosses[]) => void;
-}) {
-  async function adicionarProva(subject: SubjectComBosses) {
-    const resultado = await adicionarProvaAction(subject.id, subject.bosses.length + 1);
-    if (resultado.error) {
-      alert(resultado.error);
-      return;
-    }
-    if (resultado.subjects) onSubjectsChange(resultado.subjects);
-  }
-
-  async function atualizarProva(bossId: string, campos: { nome?: string; data_prova?: string }) {
-    const resultado = await atualizarProvaAction(bossId, campos);
-    if (resultado.error) alert(resultado.error);
-  }
-
-  async function removerProva(subject: SubjectComBosses, bossId: string) {
-    if (!confirm("Remover essa prova?")) return;
-    const resultado = await removerProvaAction(bossId);
-    if (resultado.error) {
-      alert(resultado.error);
-      return;
-    }
-    if (resultado.subjects) onSubjectsChange(resultado.subjects);
-  }
-
-  return (
-    <Card
-      icon={Swords}
-      title="Provas por disciplina"
-      sub="Mudou a data de uma prova? Atualize aqui — a campanha recalcula sozinha."
-    >
-      {subjects.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Adicione uma disciplina pra poder cadastrar provas.</p>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {subjects.map((s) => (
-            <div key={s.id} className="rounded-xl border border-border bg-muted/40 p-4">
-              <div className="kicker mb-2.5">{s.nome}</div>
-              {s.bosses.length === 0 && (
-                <p className="mb-2 text-xs text-muted-foreground">Nenhuma prova cadastrada ainda.</p>
-              )}
-              <div className="flex flex-col gap-2">
-                {s.bosses.map((b) => (
-                  <div key={b.id} className="flex items-center gap-2">
-                    <input
-                      defaultValue={b.nome}
-                      onBlur={(e) => atualizarProva(b.id, { nome: e.target.value })}
-                      className="w-[70px] rounded-lg border border-input bg-background px-2.5 py-2 text-xs font-medium outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
-                    />
-                    <input
-                      type="date"
-                      defaultValue={b.data_prova ? String(b.data_prova).slice(0, 10) : ""}
-                      onBlur={(e) => atualizarProva(b.id, { data_prova: e.target.value })}
-                      className="tnum flex-1 rounded-lg border border-input bg-background px-2.5 py-2 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removerProva(s, b.id)}
-                      aria-label="Remover prova"
-                      className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-questly-red transition-colors hover:bg-questly-red-light"
-                    >
-                      <X size={16} strokeWidth={2} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => adicionarProva(s)}
-                className="mt-2.5 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-questly-green-dark transition-opacity hover:opacity-80"
-              >
-                <Plus size={14} strokeWidth={2} /> Adicionar prova
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </Card>
-  );
-}

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
-import { questlyBuscarRotinaCompleta } from "@/lib/questly/rotina-engine";
 import { ConfiguracoesPanel } from "@/components/configuracoes/configuracoes-panel";
 import type { SubjectComBosses } from "@/lib/configuracoes/actions";
 
@@ -17,7 +16,7 @@ export default async function ConfiguracoesPage() {
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "nome, username, username_alterado_em, curso, foto_url, dias_disponiveis, tempo_diario_min, modo_estudo",
+      "nome, username, username_alterado_em, curso, foto_url, dias_disponiveis",
     )
     .eq("id", user.id)
     .single();
@@ -28,13 +27,10 @@ export default async function ConfiguracoesPage() {
     .eq("user_id", user.id)
     .order("nome");
 
-  const rotinaInicial = await questlyBuscarRotinaCompleta(supabase, user.id);
-
   return (
     <ConfiguracoesPanel
       profile={profile}
       subjectsIniciais={(subjectsData as SubjectComBosses[]) || []}
-      rotinaInicial={rotinaInicial}
     />
   );
 }

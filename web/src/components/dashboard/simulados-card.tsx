@@ -38,7 +38,7 @@ export function SimuladosCard({ atalho }: { atalho: AtalhoSimulados }) {
       : null;
 
   return (
-    <div className="surface p-5">
+    <div className="surface flex h-full flex-col p-5">
       <div className="mb-4 flex items-center justify-between">
         <span className="flex items-center gap-2 text-[13.5px] font-semibold tracking-tight">
           <FileText size={15} className="text-questly-green" />

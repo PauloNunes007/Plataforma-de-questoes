@@ -35,7 +35,6 @@ import {
   LineChart,
   Microscope,
   RefreshCcw,
-  Scale,
   ShieldCheck,
   Sparkles,
   Swords,
@@ -177,8 +176,8 @@ const RECURSOS: {
   {
     icon: Target,
     cor: "text-questly-green",
-    titulo: "Acordou? Já tem plano.",
-    desc: "Nada de encarar o caderno sem saber por onde começar. Todo dia a Questly monta sua missão — do tamanho certo pro tempo que você tem.",
+    titulo: "A lista é sua, do seu jeito",
+    desc: "Disciplina, assunto e tamanho escolhidos por você. Vinte minutos no corredor entre aulas ou três horas num sábado — a lista sai na hora, no tamanho que você pediu.",
   },
   {
     icon: FileText,
@@ -195,20 +194,20 @@ const RECURSOS: {
   {
     icon: Swords,
     cor: "text-questly-orange",
-    titulo: "Cada prova vira um chefe",
-    desc: "Data marcada, barra de preparo subindo. Você vê exatamente o quanto falta pra derrotar aquela P1 — calculado pelo que cai de verdade.",
+    titulo: "Prova antiga inteira, como ela caiu",
+    desc: "P1, P2 e P3 remontadas questão a questão, na ordem original. Você faz a prova que a sua turma fez — e vê como teria ido.",
   },
   {
-    icon: Scale,
+    icon: CalendarClock,
     cor: "text-questly-blue",
-    titulo: "Nenhuma matéria fica pra trás",
-    desc: "O motor divide sua semana por peso: a prova mais próxima e o assunto mais fraco ganham mais tempo, sem nenhuma disciplina sumir do mapa.",
+    titulo: "Seu mês, planejado por você",
+    desc: "Sessão de estudo com hora marcada, meta de questões do dia, tarefa solta e a data da prova. É a sua agenda — a gente não põe nada lá dentro sem você pedir.",
   },
   {
     icon: RefreshCcw,
     cor: "text-questly-purple",
-    titulo: "Revisa antes de você esquecer",
-    desc: "A gente sabe a hora exata em que a memória começa a cair e traz o assunto de volta — antes de virar aquele branco na hora da prova.",
+    titulo: "Vê o que está escapando",
+    desc: "A trilha marca os assuntos cuja memória já começou a cair desde a última vez que você praticou. Quando revisar continua sendo decisão sua.",
   },
   {
     icon: BrainCircuit,
@@ -219,14 +218,14 @@ const RECURSOS: {
   {
     icon: Compass,
     cor: "text-questly-green",
-    titulo: "Do começo ao fim da ementa",
-    desc: "Seguimos a ordem certa, sem pular etapa. Entrou no meio do semestre? Marca o que já sabe e a trilha avança contigo.",
+    titulo: "A ementa inteira num mapa",
+    desc: "Cada assunto da disciplina, na ordem do curso, com o que você já estudou e o quanto acertou em cada um. Entrou no meio do semestre? Marca o que já sabe e segue.",
   },
   {
     icon: LineChart,
     cor: "text-questly-red",
-    titulo: "Sua nota, prevista com antecedência",
-    desc: "Não é só o quanto você sabe hoje: mostramos como você vai chegar no dia D — e onde vai chegar fraco a tempo de corrigir.",
+    titulo: "Seu desempenho, sem maquiagem",
+    desc: "Acertos e erros por assunto, evolução ao longo do tempo e os tópicos onde você mais erra. Número que você conferiu, não previsão.",
   },
   {
     icon: Trophy,
@@ -256,7 +255,7 @@ const CIENCIA: {
   {
     icon: RefreshCcw,
     titulo: "Repetição espaçada",
-    desc: "Revisar no exato momento em que a memória começa a cair fixa muito mais do que reler tudo de véspera.",
+    desc: "Revisar no momento em que a memória começa a cair fixa muito mais do que reler tudo de véspera — e a trilha te mostra quando esse momento chegou.",
   },
   {
     icon: Layers,
@@ -271,35 +270,35 @@ const CIENCIA: {
   {
     icon: Microscope,
     titulo: "Metacognição",
-    desc: "Ao errar, você diz o motivo (conceito, cálculo, interpretação, chute) — e o plano dos próximos dias se ajusta a isso.",
+    desc: "Ao errar, você diz o motivo (conceito, cálculo, interpretação, chute) — e passa a enxergar o padrão por trás dos seus erros.",
   },
 ];
 
 const PASSOS: { n: string; titulo: string; desc: string }[] = [
   {
     n: "01",
-    titulo: "Você cadastra suas provas e metas",
-    desc: "Cada matéria do semestre, a data da prova e a nota que você quer tirar. Pronto: seu trabalho acaba aqui.",
+    titulo: "Você escolhe o assunto",
+    desc: "Disciplina, tópicos da ementa e nível. Nada de decidir por você: quem sabe o que caiu na aula de ontem é você.",
   },
   {
     n: "02",
-    titulo: "A gente pesa cada disciplina",
-    desc: "Urgência da prova, seus pontos fracos e a meta de nota entram na conta. Quanto mais perto e mais frágil, mais atenção ela recebe.",
+    titulo: "A lista sai do tamanho que você pediu",
+    desc: "Cinco questões entre uma aula e outra ou quarenta num domingo. Cada uma com resolução passo a passo, fórmula renderizada e a figura da prova original.",
   },
   {
     n: "03",
-    titulo: "Sua semana se divide sozinha",
-    desc: "Um escalonador por crédito — o mesmo truque que redes e sistemas usam pra repartir recursos — distribui os dias por peso. Sem monopólio, sem ninguém esquecido.",
+    titulo: "A trilha registra o que você fez",
+    desc: "Cada questão respondida vai pro mapa da ementa: quanto você já cobriu de cada assunto, quanto acertou e o que a memória já começou a soltar.",
   },
   {
     n: "04",
-    titulo: "A missão do dia aparece pronta",
-    desc: "Na ordem certa da ementa, com a revisão do que está em risco vindo antes do conteúdo novo. Do tamanho exato do tempo que você tem hoje.",
+    titulo: "O simulado mede de verdade",
+    desc: "Prova cronometrada montada com provas antigas da sua universidade — ou a prova antiga inteira, na ordem original. No fim, boletim e revisão questão a questão.",
   },
   {
     n: "05",
-    titulo: "Você enxerga a prova antes dela chegar",
-    desc: "A projeção pro dia D mostra onde você vai chegar fraco — e os próximos dias já corrigem a rota. Fim das surpresas ruins.",
+    titulo: "O ranking mantém o ritmo",
+    desc: "XP por dificuldade, ofensiva diária e ligas semanais do bronze ao diamante. Estudar sozinho, no silêncio, nunca mais.",
   },
 ];
 
@@ -405,7 +404,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 rounded-full border border-questly-green/30 bg-questly-green/10 px-3 py-1 text-xs font-medium text-questly-green-dark dark:text-questly-green"
             >
-              <Sparkles className="size-3.5" />O copiloto da sua aprovação
+              <Sparkles className="size-3.5" />Prova antiga, resolvida passo a passo
             </motion.span>
 
             <motion.h1
@@ -414,9 +413,9 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="mt-5 text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
             >
-              Estude o que importa.{" "}
+              Treine com a prova de verdade.{" "}
               <span className="bg-gradient-to-br from-questly-green to-questly-green-deep bg-clip-text text-transparent">
-                Passe em todas as provas.
+                Chegue pronto na sua.
               </span>
             </motion.h1>
 
@@ -426,15 +425,14 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty"
             >
-              Uma <strong className="font-semibold text-foreground">missão por dia</strong>,{" "}
-              <strong className="font-semibold text-foreground">simulados cronometrados</strong> e{" "}
               <strong className="font-semibold text-foreground">
-                questões das provas antigas da sua universidade
+                Questões das provas antigas da sua universidade
               </strong>
-              . O motor equilibra suas disciplinas por urgência, ponto fraco e meta de nota — pra
-              você chegar preparado em{" "}
-              <em className="font-medium text-foreground not-italic">todas</em> as provas, não só na
-              que está batendo na porta.
+              , com resolução passo a passo,{" "}
+              <strong className="font-semibold text-foreground">simulados cronometrados</strong> e a{" "}
+              <strong className="font-semibold text-foreground">ementa inteira num mapa</strong>. Você
+              escolhe o assunto e o tamanho da lista — a plataforma não decide o seu dia por você,{" "}
+              <em className="font-medium text-foreground not-italic">mostra</em> onde você está.
             </motion.p>
 
             <motion.div
@@ -504,12 +502,12 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
         <div className="mx-auto max-w-6xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              Como a gente equilibra suas matérias pra você passar em todas
+              Como você estuda aqui
             </h2>
             <p className="mt-4 text-lg text-muted-foreground text-pretty">
-              O erro mais comum do universitário é mergulhar na prova da semana e chegar cru nas
-              outras. A Questly resolve isso na origem: trata sua semana como um recurso escasso e
-              divide entre tudo que você precisa passar — com justiça matemática, não no chute.
+              Sem plano automático e sem cronograma imposto. Você resolve questão de prova antiga do
+              assunto que quiser, e a plataforma guarda o resultado num mapa da ementa — pra você
+              enxergar, a qualquer momento, o que já domina e o que ainda não encarou.
             </p>
           </Revelar>
 
@@ -917,13 +915,15 @@ function MascoteBand() {
   );
 }
 
-/** Mockup do painel "missão de hoje" usado no hero, com barras animadas. */
+/** Mockup do painel da trilha usado no hero, com barras animadas. Mostra o
+ *  que a plataforma de fato entrega hoje — cobertura e acerto por assunto —
+ *  em vez do "plano do dia" que ela deixou de montar. */
 function HeroPreview() {
   const reduzir = useReducedMotion();
   const barras = [
-    { nome: "Física I", pct: 46, cor: "bg-questly-green", tag: "prova em 6d" },
-    { nome: "Cálculo II", pct: 32, cor: "bg-questly-blue", tag: "ponto fraco" },
-    { nome: "Álgebra Linear", pct: 22, cor: "bg-questly-purple", tag: "meta 9,0" },
+    { nome: "Leis de Newton", pct: 82, cor: "bg-questly-green", tag: "24 questões · 82%" },
+    { nome: "Trabalho e energia", pct: 61, cor: "bg-questly-blue", tag: "18 questões · 61%" },
+    { nome: "Momento linear", pct: 22, cor: "bg-questly-purple", tag: "não estudado" },
   ];
   return (
     <TiltCard intensidade={7} className="relative">
@@ -934,8 +934,8 @@ function HeroPreview() {
               Q
             </span>
             <div>
-              <p className="text-sm leading-tight font-semibold">Missão de hoje</p>
-              <p className="text-xs text-muted-foreground">3 disciplinas equilibradas</p>
+              <p className="text-sm leading-tight font-semibold">Física I · sua trilha</p>
+              <p className="text-xs text-muted-foreground">7 de 12 assuntos da ementa</p>
             </div>
           </div>
           <span className="tnum flex items-center gap-1 rounded-full bg-questly-orange/12 px-2.5 py-1 text-xs font-semibold text-questly-orange-dark dark:text-questly-orange">
@@ -968,24 +968,24 @@ function HeroPreview() {
         <div className="mt-5 grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-questly-orange/25 bg-questly-orange/8 p-3">
             <div className="flex items-center gap-1.5 text-xs font-medium text-questly-orange-dark dark:text-questly-orange">
-              <Swords className="size-3.5" /> Boss: P1 de Física
+              <Swords className="size-3.5" /> Questões feitas
             </div>
-            <p className="tnum mt-1.5 text-2xl font-semibold">68%</p>
-            <p className="text-[11px] text-muted-foreground">preparo atual</p>
+            <p className="tnum mt-1.5 text-2xl font-semibold">342</p>
+            <p className="text-[11px] text-muted-foreground">nesta disciplina</p>
           </div>
           <div className="rounded-2xl border border-questly-green/25 bg-questly-green/8 p-3">
             <div className="flex items-center gap-1.5 text-xs font-medium text-questly-green-dark dark:text-questly-green">
-              <LineChart className="size-3.5" /> No dia da prova
+              <LineChart className="size-3.5" /> Aproveitamento
             </div>
-            <p className="tnum mt-1.5 text-2xl font-semibold">~81%</p>
-            <p className="text-[11px] text-muted-foreground">nota projetada</p>
+            <p className="tnum mt-1.5 text-2xl font-semibold">74%</p>
+            <p className="text-[11px] text-muted-foreground">acertos até aqui</p>
           </div>
         </div>
 
         <div className="mt-5 flex items-center justify-between rounded-2xl bg-questly-green px-4 py-3 text-white dark:text-[#0c1512]">
           <div className="flex items-center gap-2">
             <Target className="size-4" />
-            <span className="text-sm font-semibold">Começar missão · 18 questões</span>
+            <span className="text-sm font-semibold">Montar lista · 18 questões</span>
           </div>
           <span className="tnum text-sm font-semibold">+95 XP</span>
         </div>
@@ -994,55 +994,49 @@ function HeroPreview() {
   );
 }
 
-/** Visualização didática do escalonamento por peso, na seção Método. */
+/** Visualização da trilha na seção Método: a ementa de uma disciplina, assunto
+ *  por assunto, com o que já foi estudado e o aproveitamento em cada um. É o
+ *  que substituiu a grade "sua semana dividida por peso" — a plataforma não
+ *  divide mais a semana de ninguém. */
 function PesoVisual() {
-  const dias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-  const grade = [
-    { nome: "Física I", cor: "bg-questly-green", dias: [0, 1, 2, 4, 5], peso: "urgente" },
-    { nome: "Cálculo II", cor: "bg-questly-blue", dias: [0, 2, 4], peso: "ponto fraco" },
-    { nome: "Álgebra", cor: "bg-questly-purple", dias: [1, 3, 5], peso: "meta alta" },
-    { nome: "Química", cor: "bg-questly-orange", dias: [3, 6], peso: "prova longe" },
+  const assuntos = [
+    { nome: "Limites e continuidade", cor: "bg-questly-green", cobertura: 100, acerto: "88%" },
+    { nome: "Derivadas", cor: "bg-questly-green", cobertura: 100, acerto: "74%" },
+    { nome: "Aplicações da derivada", cor: "bg-questly-blue", cobertura: 60, acerto: "52%" },
+    { nome: "Integral definida", cor: "bg-questly-purple", cobertura: 20, acerto: "—" },
+    { nome: "Técnicas de integração", cor: "bg-muted-foreground/30", cobertura: 0, acerto: "—" },
   ];
   return (
     <div className="surface rounded-3xl p-6">
       <div className="flex items-center gap-2">
         <CalendarClock className="size-5 text-questly-green" />
-        <h3 className="font-semibold tracking-tight">Sua semana, dividida por peso</h3>
+        <h3 className="font-semibold tracking-tight">A ementa inteira, assunto por assunto</h3>
       </div>
       <p className="mt-1 text-sm text-muted-foreground text-pretty">
-        Quanto mais urgente e mais fraca a disciplina, mais dias ela ocupa — sem nunca sumir do seu
-        radar.
+        O que você já cobriu de cada tópico e quanto acertou nele. Nenhum número aqui é previsão —
+        é o registro do que você respondeu.
       </p>
 
-      <div className="mt-5 space-y-3">
-        {grade.map((g) => (
-          <div key={g.nome}>
-            <div className="mb-1.5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className={`h-2.5 w-2.5 rounded-full ${g.cor}`} />
-                <span className="text-sm font-medium">{g.nome}</span>
+      <div className="mt-5 space-y-3.5">
+        {assuntos.map((a) => (
+          <div key={a.nome}>
+            <div className="mb-1.5 flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${a.cor}`} />
+                <span className="truncate text-sm font-medium">{a.nome}</span>
               </div>
-              <span className="text-xs text-muted-foreground">{g.peso}</span>
+              <span className="tnum shrink-0 text-xs text-muted-foreground">{a.acerto}</span>
             </div>
-            <div className="grid grid-cols-7 gap-1.5">
-              {dias.map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-7 rounded-md ${g.dias.includes(i) ? g.cor : "bg-muted"}`}
-                />
-              ))}
+            <div className="h-2 overflow-hidden rounded-full bg-muted">
+              <div className={`h-full rounded-full ${a.cor}`} style={{ width: `${a.cobertura}%` }} />
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-4 grid grid-cols-7 gap-1.5">
-        {dias.map((d) => (
-          <span key={d} className="text-center text-[10px] font-medium text-muted-foreground">
-            {d}
-          </span>
-        ))}
-      </div>
+      <p className="mt-4 text-[11px] text-muted-foreground">
+        Barra = quanto da cobertura do tópico você já fez · número = seu acerto nele.
+      </p>
     </div>
   );
 }

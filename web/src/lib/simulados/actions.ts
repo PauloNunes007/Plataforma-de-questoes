@@ -116,7 +116,7 @@ function sortearPuro(
     const somaPeso = linhas.reduce((s, l) => s + l.peso, 0);
     if (somaPeso <= 0) return questlyEmbaralhar(pool).slice(0, alvo);
 
-    // maior resto (Hamilton) — o mesmo método do rotina-engine
+    // maior resto (Hamilton)
     const exatos = linhas.map((l) => (l.peso / somaPeso) * alvo);
     const cotas = exatos.map((e, i) => Math.min(Math.floor(e), linhas[i].questoes.length));
     let sobra = alvo - cotas.reduce((a, b) => a + b, 0);

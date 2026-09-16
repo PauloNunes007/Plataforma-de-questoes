@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { TipoItemAgenda } from "./tarefas-data";
 
 // CRUD simples e owner-scoped dos itens da agenda — sem lógica derivada (ao
-// contrário de trilha/mission-engine), então o componente cliente atualiza o
+// contrário da trilha), então o componente cliente atualiza o
 // próprio estado local depois de um "ok: true" em vez de refetch/revalidatePath.
 //
 // Agendar um bloco NÃO gera missão, XP nem ofensiva: é o plano do aluno, e

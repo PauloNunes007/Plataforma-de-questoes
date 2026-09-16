@@ -11,7 +11,7 @@ import type { Pergunta } from "@/lib/questao/types";
 import { PARAM_ORIGEM, origemSegura, rotuloOrigem } from "@/lib/questao/navegacao";
 
 export const metadata: Metadata = {
-  title: "Missão",
+  title: "Praticar",
 };
 
 function EmptyState({
@@ -51,7 +51,7 @@ export default async function QuestaoPage({
   if (!missaoId) {
     return (
       <EmptyState
-        mensagem='Nenhuma missão selecionada. Volte e clique em "Cumprir missão".'
+        mensagem="Nenhuma lista selecionada. Volte e monte uma no Banco de Questões."
         voltarHref={voltarHref}
       />
     );
@@ -69,10 +69,10 @@ export default async function QuestaoPage({
     .single();
 
   if (missaoError || !missao) {
-    return <EmptyState mensagem="Não foi possível encontrar essa missão." voltarHref={voltarHref} />;
+    return <EmptyState mensagem="Não foi possível encontrar essa lista." voltarHref={voltarHref} />;
   }
   if (missao.concluida) {
-    return <EmptyState mensagem="Essa missão já foi concluída. Volte amanhã pra uma nova!" voltarHref={voltarHref} />;
+    return <EmptyState mensagem="Essa lista já foi concluída. Monte outra quando quiser!" voltarHref={voltarHref} />;
   }
 
   const questionIds: string[] = missao.question_ids || [];
@@ -86,11 +86,11 @@ export default async function QuestaoPage({
     const { data } = await supabase.from("questions").select("*").in("topic_id", topicIds);
     questoes = data;
   } else {
-    return <EmptyState mensagem="Essa missão não tem tópicos definidos." voltarHref={voltarHref} />;
+    return <EmptyState mensagem="Essa lista não tem tópicos definidos." voltarHref={voltarHref} />;
   }
 
   if (!questoes || questoes.length === 0) {
-    return <EmptyState mensagem="Ainda não há questões cadastradas pros tópicos dessa missão." voltarHref={voltarHref} />;
+    return <EmptyState mensagem="Ainda não há questões cadastradas pros tópicos dessa lista." voltarHref={voltarHref} />;
   }
 
   const perguntas = questlyEmbaralhar(questoes).slice(0, missao.qtd_questoes || questoes.length);

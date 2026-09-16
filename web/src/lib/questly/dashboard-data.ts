@@ -1,33 +1,35 @@
-// Orquestra os dados do dashboard: portado de js/dashboard.js
-// (iniciarDashboard + as funções carregarX), mas rodando no servidor
-// (Server Component) numa passada só em vez de várias buscas no
-// browser. O "medidor de cerco ao Boss" substitui a trilha de nós estilo
-// Duolingo do app legado — ver decisão de design na conversa da Etapa 3
-// (o usuário pediu algo mais autoral que combine com a identidade
-// "Boss"/RPG da Questly em vez de replicar o path do Duolingo).
+// Orquestra os dados da home num Server Component — uma passada no servidor
+// em vez de várias buscas no browser (era assim no app legado, js/dashboard.js).
+//
+// **Repasse de 2026-09-16 — fim do motor de missões.** A home deixou de
+// planejar o dia do aluno. Saíram daqui: a geração de missões do dia, o
+// boss-alvo, a projeção de nota pro dia da prova e o modo de estudo (não há
+// mais dois modos — a plataforma inteira é de prática livre). O que sobrou é
+// o que a home ainda precisa responder: quem é o aluno, o que ele já fez hoje,
+// como está a semana/liga e o que está marcado no calendário. A `missions`
+// continua sendo lida, mas agora só como HISTÓRICO: toda missão é uma lista
+// que o próprio aluno montou.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
-  diasAte,
   addDias,
   toISODate,
   fmtDataCurta,
-  questlyEhMestre,
-  questlyNormalizarDia,
   saudacaoPorHorario,
 } from "./shared";
-import { questlyGerarMissoesDoDia, type Mission, type MissoesDoDiaResultado, type Subject } from "./mission-engine";
 import { questlyGarantirSemanaLiga, QUESTLY_LIGA_INFO, type EstadoLiga } from "./liga";
-import { carregarModeloAtivo, projetarProvaComRede } from "@/lib/ml/inferencia";
-import {
-  questlyMotivoTopico,
-  questlyPorqueDaMissao,
-  type ProgressoTopico,
-  type TopicoDaMissao,
-} from "./plano-do-dia";
 import { ehPro } from "@/lib/plano/plano";
-import { questlyModoEstudo, type ModoEstudo } from "./modo-estudo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
+
+/** O que a home precisa de uma linha de `subjects` (+ as provas marcadas no
+ *  calendário, que hoje servem só pra pintar o mês). */
+type SubjectRow = {
+  id: string;
+  nome: string;
+  materia_id: string | null;
+  nivel?: number | null;
+  bosses?: { id: string; nome: string; data_prova: string }[] | null;
+};
 
 const XP_POR_NIVEL = 1000;
 const DOW_ABREV = ["dom", "seg", "ter", "qua", "qui", "sex", "sab"];
@@ -54,7 +56,6 @@ export type ProfileRow = {
   nivel: number | null;
   streak_atual: number | null;
   dias_disponiveis: string[] | null;
-  tempo_diario_min: number | null;
   foto_url: string | null;
   liga: string | null;
   // vêm do mesmo `select("*")`; declaradas porque `ehPro(profile)` as lê.
@@ -63,64 +64,12 @@ export type ProfileRow = {
   // idem — `hero-data.ts` lê pra saber quais distintivos o aluno escolheu
   // pro card público (ver lib/ranking/badges.ts).
   distintivos_selecionados?: string[] | null;
-  /** 'guiado' (padrão) | 'livre' — ver lib/questly/modo-estudo.ts e
-   *  supabase_modo_estudo.sql. No modo livre a home não gera missão, não
-   *  projeta prova e não mostra Boss. */
-  modo_estudo?: string | null;
-};
-
-export type MissionCardData = Mission & {
-  mestre: boolean;
-  /** Os tópicos da missão com NOME e MOTIVO — é o que substituiu o cartão do
-   *  GPS: a explicação vive dentro da própria missão (ver plano-do-dia.ts). */
-  topicos: TopicoDaMissao[];
-  /** Uma linha explicando por que é ISSO hoje. */
-  porque: string;
-};
-
-/** Missão que o aluno empurrou pra frente (missions.adiada_para). */
-export type MissaoAdiada = {
-  id: string;
-  subjectNome: string | null;
-  para: string;
-};
-
-/** Disciplina sem missão hoje, oferecida como troca. */
-export type AlternativaDoDia = {
-  id: string;
-  nome: string;
-  naGradeDeHoje: boolean;
-};
-
-export type BossAlvo = {
-  subjectId: string;
-  subjectNome: string;
-  bossNome: string;
-  dataProva: string;
-  diasAteProva: number;
-  preparoPercentual: number;
-  chanceAprovacao: number | null;
-  notaProjetada: number | null; // nota esperada na prova se nada mudar (motor)
-  emRiscoCount: number; // tópicos que chegam fracos no dia D
-  // escopo da prova (bosses.topico_ids): o aluno marcou o que cai?
-  // false = projeção/GPS estão assumindo a ementa inteira (menos preciso)
-  escopoDefinido: boolean;
-  escopoTopicos: number | null; // quantos tópicos caem, quando definido
 };
 
 export type SubjectListItem = {
   id: string;
   nome: string;
   nivel: number;
-  diasBoss: number | null;
-  preparo: number;
-  aprovacao: number | null;
-};
-
-export type DiaTicker = {
-  data: string;
-  label: string;
-  estado: "feito" | "perdido" | "hoje" | "bloqueado";
 };
 
 export type CalDay = {
@@ -131,18 +80,14 @@ export type CalDay = {
   temTarefa: boolean;
 };
 
-// "Metas" do dia (card do hero da aba Hoje) — reinterpreta o "Aulas
-// concluídas" do print de referência com métricas que existem de fato no
-// domínio do Questly (não há conceito de aula/vídeo aqui): missões,
-// questões respondidas e XP, todos derivados de dados.missions — sem
-// query extra.
+// O que o aluno FEZ hoje — não o que ele "deveria" ter feito. Desde o fim do
+// motor de missões não existe meta diária: a home conta o trabalho real do dia
+// (listas fechadas, questões respondidas, XP ganho) e não cobra um alvo que
+// ninguém pediu. Derivado das linhas de `missions` de hoje, sem query extra.
 export type MetasHoje = {
-  missoesConcluidas: number;
-  missoesTotal: number;
+  listasConcluidas: number;
   questoesRespondidas: number;
-  questoesTotal: number;
   xpHoje: number;
-  xpMetaHoje: number;
 };
 
 export type DiaSemanaResumo = {
@@ -188,20 +133,12 @@ export type DashboardData = {
   greeting: string;
   subheading: string;
   subjects: SubjectListItem[];
-  missions: MissionCardData[];
-  semMissaoHoje: boolean;
-  todasConcluidas: boolean;
-  motivoSemMissao?: string;
-  missoesAdiadas: MissaoAdiada[];
-  alternativasDoDia: AlternativaDoDia[];
-  /** 'guiado' | 'livre'. No 'livre', missions/bossAlvo vêm vazios e a home
-   *  esconde o ecossistema inteiro de trajetória. */
-  modoEstudo: ModoEstudo;
-  bossAlvo: BossAlvo | null;
   ligaEstado: (EstadoLiga & { nomeExibicao: string }) | null;
-  streakHeat: boolean[];
-  dayTicker: DiaTicker[];
   calendar: { monthLabel: string; dowOffset: number; days: CalDay[] };
+  /** A prova futura mais próxima que o aluno marcou no calendário — puro
+   *  compromisso de agenda, igual a uma tarefa. Nada no app deriva plano,
+   *  recomendação ou projeção de nota a partir dela. */
+  proximaProva: { nome: string; data: string } | null;
   tarefasHoje: TarefaRow[];
   tarefasPorData: Record<string, TarefaRow[]>;
   metasHoje: MetasHoje;
@@ -215,15 +152,14 @@ export type DashboardData = {
 // tudo que é independente sobe junto:
 //
 //   onda 1  perfil + disciplinas
-//   onda 2  missões do dia (precisa do perfil pra saber o orçamento do dia)
-//   onda 3  progresso, projeção do Boss, missões da janela, liga+comparativo,
-//           daily_logs e tarefas — nenhuma depende da outra
+//   onda 2  listas da semana, liga+comparativo, daily_logs e tarefas —
+//           nenhuma depende da outra
 //
-// Três leituras também foram FUNDIDAS em vez de paralelizadas, porque eram
-// recortes de um mesmo conjunto: `missions` (ticker + semana), `daily_logs`
-// (heatmap + mês + recorde) e o comparativo semanal, que puxava a coluna
-// xp_semana de TODOS os perfis da base pra contar quantos estão na frente —
-// agora são dois COUNT com head:true, O(índice) em vez de O(nº de alunos).
+// Duas leituras também foram FUNDIDAS em vez de paralelizadas, porque eram
+// recortes de um mesmo conjunto: `missions` (resumo de hoje + XP da semana) e
+// `daily_logs` (mês + recorde). O comparativo semanal, que puxava a coluna
+// xp_semana de TODOS os perfis da base pra contar quantos estão na frente,
+// virou dois COUNT com head:true — O(índice) em vez de O(nº de alunos).
 export async function carregarDadosDashboard(
   supabase: SupabaseClient,
   user: { id: string },
@@ -239,7 +175,7 @@ export async function carregarDadosDashboard(
       : supabase.from("profiles").select("*").eq("id", user.id).single(),
     supabase
       .from("subjects")
-      .select("*, bosses(id, nome, data_prova, preparo_percentual, topico_ids)")
+      .select("*, bosses(id, nome, data_prova)")
       .eq("user_id", user.id),
   ]);
   const profile = profileResultado.data as ProfileRow | null;
@@ -247,110 +183,25 @@ export async function carregarDadosDashboard(
   const primeiroNome = profile?.nome ? profile.nome.split(" ")[0] : "Aluno(a)";
   const greeting = `${saudacaoPorHorario()}, ${primeiroNome}`;
 
-  const subjects = (subjectsRaw || []) as Subject[];
+  const subjects = (subjectsRaw || []) as SubjectRow[];
   const hoje = new Date(new Date().toDateString());
 
-  const subjectListItems: SubjectListItem[] = subjects.map((s) => {
-    const bossesFuturos = (s.bosses || [])
-      .filter((b) => new Date(b.data_prova) >= hoje)
-      .sort((a, b) => new Date(a.data_prova).getTime() - new Date(b.data_prova).getTime());
-    const proximoBoss = bossesFuturos[0] || null;
-    return {
-      id: s.id,
-      nome: s.nome,
-      nivel: (s as unknown as { nivel?: number }).nivel || 1,
-      diasBoss: proximoBoss ? diasAte(proximoBoss.data_prova) : null,
-      preparo: proximoBoss?.preparo_percentual != null ? Math.round(proximoBoss.preparo_percentual) : 0,
-      aprovacao: s.chance_aprovacao != null ? Math.round(s.chance_aprovacao) : null,
-    };
-  });
+  const subjectListItems: SubjectListItem[] = subjects.map((s) => ({
+    id: s.id,
+    nome: s.nome,
+    nivel: s.nivel || 1,
+  }));
 
-  const comBoss = subjects
-    .map((s) => {
-      const proximos = (s.bosses || []).filter((b) => new Date(b.data_prova) >= hoje);
-      return {
-        nome: s.nome,
-        boss: proximos.sort((a, b) => new Date(a.data_prova).getTime() - new Date(b.data_prova).getTime())[0],
-      };
-    })
-    .filter((x): x is { nome: string; boss: NonNullable<typeof x.boss> } => Boolean(x.boss))
-    .sort((a, b) => new Date(a.boss.data_prova).getTime() - new Date(b.boss.data_prova).getTime())[0];
-
-  const subheading = !subjects.length
-    ? "Vamos configurar sua primeira campanha."
-    : comBoss
-      ? `Sua campanha de ${comBoss.nome} está a ${diasAte(comBoss.boss.data_prova)} dias do Boss ${comBoss.boss.nome}.`
-      : "Nenhuma prova marcada ainda.";
-
-  // ------------------------------------------------------------ onda 2
-  // Missões do dia (mission-engine) — recebe as disciplinas já lidas acima
-  // em vez de repetir a mesma query.
-  //
-  // No modo LIVRE o motor nem roda: além de não haver onde mostrar o
-  // resultado, gerar missão escreveria uma linha em `missions` todo dia pra
-  // um aluno que não pediu trajetória nenhuma.
-  const modoEstudo = questlyModoEstudo(profile);
-  const guiado = modoEstudo === "guiado";
-  const missaoResultado: MissoesDoDiaResultado = guiado
-    ? await questlyGerarMissoesDoDia(supabase, user, profile, subjects)
-    : { missoes: [], semMissaoHoje: false, adiadas: [], alternativas: [] };
-  const missoes = missaoResultado.missoes;
-  const todasConcluidas = missoes.length > 0 && missoes.every((m) => m.concluida);
-
-  // ---- Metas de hoje — tudo derivado de missoes, sem query nova ----
-  const missoesConcluidasHoje = missoes.filter((m) => m.concluida);
-  const metasHoje: MetasHoje = {
-    missoesConcluidas: missoesConcluidasHoje.length,
-    missoesTotal: missoes.length,
-    questoesRespondidas: missoesConcluidasHoje.reduce((acc, m) => acc + m.qtd_questoes, 0),
-    questoesTotal: missoes.reduce((acc, m) => acc + m.qtd_questoes, 0),
-    xpHoje: missoesConcluidasHoje.reduce((acc, m) => acc + m.xp_recompensa, 0),
-    xpMetaHoje: missoes.reduce((acc, m) => acc + m.xp_recompensa, 0),
-  };
-
-  const topicIdsRelevantes = Array.from(new Set(missoes.flatMap((m) => m.topic_ids || [])));
-
-  // ---- Boss-alvo (disciplina com boss futuro mais próximo) ----
-  // Só existe no modo guiado: no livre não há campanha por data de prova.
-  const alvo = !guiado
-    ? undefined
-    : subjects
-    .map((s) => {
-      const futuros = (s.bosses || [])
-        .filter((b) => new Date(b.data_prova) >= hoje)
-        .sort((a, b) => new Date(a.data_prova).getTime() - new Date(b.data_prova).getTime());
-      return { subject: s, boss: futuros[0] || null };
-    })
-    .filter((x): x is { subject: Subject; boss: NonNullable<typeof x.boss> } => Boolean(x.boss))
-    .sort((a, b) => new Date(a.boss.data_prova).getTime() - new Date(b.boss.data_prova).getTime())[0];
-
-  const escopoProva =
-    alvo?.boss.topico_ids && alvo.boss.topico_ids.length > 0 ? new Set(alvo.boss.topico_ids) : null;
+  const subheading = subjects.length
+    ? "Escolha o que praticar hoje — a plataforma não escolhe por você."
+    : "Vamos configurar suas disciplinas.";
 
   // ---- Janelas de data (puras — nenhuma query, mas definem os recortes) ----
-  let diasSet: Set<string> | null = null;
-  if (profile?.dias_disponiveis && profile.dias_disponiveis.length > 0) {
-    diasSet = new Set(profile.dias_disponiveis.map(questlyNormalizarDia));
-  }
-  const ehDiaDeEstudo = (d: Date) => !diasSet || diasSet.has(DOW_ABREV[d.getDay()]);
-
-  const passados: Date[] = [];
-  let dCursor = addDias(hoje, -1);
-  for (let guard = 0; passados.length < 4 && guard < 30; guard++) {
-    if (ehDiaDeEstudo(dCursor)) passados.unshift(new Date(dCursor));
-    dCursor = addDias(dCursor, -1);
-  }
-
-  const limiteFuturo = alvo ? new Date(new Date(alvo.boss.data_prova).toDateString()) : addDias(hoje, 14);
-  const futuros: Date[] = [];
-  dCursor = new Date(hoje);
-  while (dCursor < limiteFuturo && futuros.length < 3) {
-    dCursor = addDias(dCursor, 1);
-    if (ehDiaDeEstudo(dCursor)) futuros.push(new Date(dCursor));
-  }
-
-  const janela = [...passados, hoje, ...futuros];
-  const inicioJanelaStr = toISODate(janela[0]);
+  //
+  // A janela móvel de "dias de estudo" que existia aqui morreu com o ticker de
+  // ritmo (ele era o painel do motor de missões). Sobrou a semana corrente,
+  // que é o recorte de tudo que a home ainda mostra: o resumo de hoje e o XP
+  // por dia da aba Semana.
   const hojeStr = toISODate(hoje);
 
   const diaSemanaHoje = hoje.getDay();
@@ -368,54 +219,21 @@ export async function carregarDadosDashboard(
   const inicioMesStr = toISODate(primeiroDia);
   const fimMesStr = toISODate(new Date(ano, mes + 1, 0));
 
-  // `missions` era lida duas vezes (ticker de dias e XP da semana). Uma query
-  // só, cobrindo a mais antiga das duas janelas, e o recorte fica em memória.
-  const inicioMissoesStr = inicioJanelaStr < inicioSemanaStr ? inicioJanelaStr : inicioSemanaStr;
+  // Uma query só de `missions`, cobrindo a semana inteira: dela saem tanto o
+  // resumo de hoje quanto o XP por dia da semana.
+  const inicioMissoesStr = inicioSemanaStr;
 
-  // ------------------------------------------------------------ onda 3
-  const [blocoTopicos, blocoBoss, missoesRange, blocoLiga, todosLogs, tarefasPorData] =
+  // ------------------------------------------------------------ onda 2
+  const [missoesRange, blocoLiga, todosLogs, tarefasPorData] =
     await Promise.all([
-      // (a) tópicos das missões de hoje: progresso (selo "Mestre" e o MOTIVO de
-      //     cada tópico estar ali) + nome. O nome é o que permitiu tirar o
-      //     cartão do GPS da home: a missão passou a dizer o assunto e o
-      //     porquê dele em vez de listar ids de tópico — ver plano-do-dia.ts.
-      (async (): Promise<{
-        progresso: Record<string, ProgressoTopico>;
-        nomes: Record<string, string>;
-      }> => {
-        if (topicIdsRelevantes.length === 0) return { progresso: {}, nomes: {} };
-        const [{ data: progressos }, { data: topicosNomes }] = await Promise.all([
-          supabase
-            .from("aluno_topico_progresso")
-            .select(
-              "topico_id, taxa_acerto, num_questoes_respondidas, ultima_revisao, maestria, estabilidade",
-            )
-            .eq("user_id", user.id)
-            .in("topico_id", topicIdsRelevantes),
-          supabase.from("topicos").select("id, nome").in("id", topicIdsRelevantes),
-        ]);
-        const progresso: Record<string, ProgressoTopico> = {};
-        (progressos || []).forEach((p) => {
-          progresso[p.topico_id] = p as ProgressoTopico;
-        });
-        const nomes: Record<string, string> = {};
-        (topicosNomes || []).forEach((t) => {
-          nomes[t.id as string] = t.nome as string;
-        });
-        return { progresso, nomes };
-      })(),
-
-      // (b) projeção pra data da prova + GPS
-      carregarProjecaoBoss(supabase, user, alvo, escopoProva),
-
-      // (c) missões da janela do ticker + da semana (fundidas)
+      // (a) listas fechadas na janela do resumo de hoje + da semana (fundidas)
       supabase
         .from("missions")
-        .select("data, concluida, xp_recompensa")
+        .select("data, concluida, xp_recompensa, qtd_questoes")
         .eq("user_id", user.id)
         .gte("data", inicioMissoesStr),
 
-      // (d) liga (pode virar a semana) e, na sequência, o comparativo — que
+      // (b) liga (pode virar a semana) e, na sequência, o comparativo — que
       //     depende do xp_semana já normalizado por essa virada
       (async () => {
         const estadoLiga = await questlyGarantirSemanaLiga(supabase, user, () => createAdminClient());
@@ -432,70 +250,23 @@ export async function carregarDadosDashboard(
         return { estadoLiga, xpSemana, comparativo };
       })(),
 
-      // (e) daily_logs inteiro: alimenta o heatmap de 10 dias, o calendário do
-      //     mês E o recorde de streak — antes eram três queries do mesmo lugar.
+      // (c) daily_logs inteiro: alimenta o calendário do mês E o recorde de
+      //     streak — antes eram duas queries do mesmo lugar.
       supabase.from("daily_logs").select("data, estudou").eq("user_id", user.id).order("data"),
 
-      // (f) tarefas do mês exibido
+      // (d) tarefas do mês exibido
       carregarTarefasIntervalo(supabase, user, inicioMesStr, fimMesStr),
     ]);
 
-  const progressoPorTopico = blocoTopicos.progresso;
-  const nomePorTopico = blocoTopicos.nomes;
-  const dataProvaAlvoMs = alvo ? new Date(alvo.boss.data_prova).getTime() : null;
-  const agoraMsMissao = Date.now();
-
-  const missionCards: MissionCardData[] = missoes.map((m) => {
-    const topicIds = m.topic_ids || [];
-    const mestre =
-      !m.concluida && topicIds.length > 0 && topicIds.every((id) => questlyEhMestre(progressoPorTopico[id]));
-    // A missão do boss-alvo é a única que pode falar em "dia da prova"; as
-    // outras disciplinas não têm essa data e a frase não a inventa.
-    const ehDoAlvo = Boolean(alvo && m.subject_id === alvo.subject.id);
-    const provaMs = ehDoAlvo ? dataProvaAlvoMs : null;
-    const topicos: TopicoDaMissao[] = topicIds.map((id) => ({
-      id,
-      nome: nomePorTopico[id] || "Tópico",
-      motivo: questlyMotivoTopico(progressoPorTopico[id], provaMs, agoraMsMissao),
-    }));
-    const porque = questlyPorqueDaMissao(
-      topicos,
-      ehDoAlvo && alvo ? diasAte(alvo.boss.data_prova) : null,
-    );
-    return { ...m, mestre, topicos, porque };
-  });
-
-  const bossAlvo: BossAlvo | null = alvo
-    ? {
-        subjectId: alvo.subject.id,
-        subjectNome: alvo.subject.nome,
-        bossNome: alvo.boss.nome,
-        dataProva: alvo.boss.data_prova,
-        diasAteProva: diasAte(alvo.boss.data_prova),
-        preparoPercentual: alvo.boss.preparo_percentual || 0,
-        chanceAprovacao: alvo.subject.chance_aprovacao != null ? Math.round(alvo.subject.chance_aprovacao) : null,
-        notaProjetada: blocoBoss.notaProjetada,
-        emRiscoCount: blocoBoss.emRiscoCount,
-        escopoDefinido: escopoProva != null,
-        escopoTopicos: escopoProva ? escopoProva.size : null,
-      }
-    : null;
-
-  // ---- Ticker de dias (ritmo recente — substitui a trilha de nós) ----
-  const cumpriuNoDia: Record<string, boolean> = {};
-  (missoesRange.data || []).forEach((m) => {
-    if (m.concluida) cumpriuNoDia[String(m.data).slice(0, 10)] = true;
-  });
-
-  const dayTicker: DiaTicker[] = janela.map((d) => {
-    const dataStr = toISODate(d);
-    const label = DOW_ABREV[d.getDay()];
-    let estado: DiaTicker["estado"];
-    if (dataStr === hojeStr) estado = "hoje";
-    else if (d < hoje) estado = cumpriuNoDia[dataStr] ? "feito" : "perdido";
-    else estado = "bloqueado";
-    return { data: dataStr, label, estado };
-  });
+  // ---- O que já foi feito hoje (listas fechadas, não metas) ----
+  const fechadasHoje = (missoesRange.data || []).filter(
+    (m) => m.concluida && String(m.data).slice(0, 10) === hojeStr,
+  );
+  const metasHoje: MetasHoje = {
+    listasConcluidas: fechadasHoje.length,
+    questoesRespondidas: fechadasHoje.reduce((acc, m) => acc + (m.qtd_questoes || 0), 0),
+    xpHoje: fechadasHoje.reduce((acc, m) => acc + (m.xp_recompensa || 0), 0),
+  };
 
   // ---- Liga ----
   const estadoLiga = blocoLiga.estadoLiga;
@@ -506,25 +277,26 @@ export async function carregarDadosDashboard(
       }
     : null;
 
-  // ---- daily_logs: um único conjunto, três leituras ----
+  // ---- daily_logs: um único conjunto, duas leituras ----
   const logs = (todosLogs.data || []) as { data: string; estudou: boolean }[];
   const estudouPorData: Record<string, boolean> = {};
   logs.forEach((l) => {
     estudouPorData[String(l.data).slice(0, 10)] = l.estudou;
   });
 
-  const streakHeat: boolean[] = [];
-  for (let i = 9; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    streakHeat.push(Boolean(estudouPorData[toISODate(d)]));
-  }
+  // ---- Próxima prova marcada (agenda, não motor) ----
+  const proximaProva =
+    subjects
+      .flatMap((s) => (s.bosses || []).map((b) => ({ nome: `${s.nome} — ${b.nome}`, data: String(b.data_prova).slice(0, 10) })))
+      .filter((p) => p.data >= hojeStr)
+      .sort((a, b) => a.data.localeCompare(b.data))[0] || null;
 
   // ---- Calendário do mês ----
-  // No modo livre o aluno não segue prova nenhuma — as datas que por acaso
-  // existam no banco (de antes de ele desligar a trajetória) não pintam o mês.
+  // Prova aqui é COMPROMISSO DE AGENDA, não entrada de motor: o aluno marca a
+  // data em /calendario e ela pinta o dia. Nada no app lê essa data pra
+  // recomendar, projetar nota ou montar plano — esse motor não existe mais.
   const provasPorDia: Record<string, string> = {};
-  (guiado ? subjects : []).forEach((s) => {
+  subjects.forEach((s) => {
     (s.bosses || []).forEach((b) => {
       if (!b.data_prova) return;
       const dataProvaStr = String(b.data_prova).slice(0, 10);
@@ -570,7 +342,7 @@ export async function carregarDadosDashboard(
   const mediaDiaPontuado = xpDiasComPonto.length
     ? Math.round(xpDiasComPonto.reduce((a, b) => a + b, 0) / xpDiasComPonto.length)
     : 0;
-  const metaDiariaXp = metasHoje.xpMetaHoje || mediaDiaPontuado || 100;
+  const metaDiariaXp = mediaDiaPontuado || 100;
   const metaSemanalXp = Math.max(metaDiariaXp * diasEstudoSemana, xpSemana, 1);
 
   // Recorde: maior sequência de dias seguidos estudando (mesmo daily_logs).
@@ -619,96 +391,14 @@ export async function carregarDadosDashboard(
     greeting,
     subheading,
     subjects: subjectListItems,
-    missions: missionCards,
-    semMissaoHoje: missaoResultado.semMissaoHoje,
-    todasConcluidas,
-    motivoSemMissao: missaoResultado.motivo,
-    missoesAdiadas: missaoResultado.adiadas.map((m) => ({
-      id: m.id,
-      subjectNome: m.subjects?.nome ?? null,
-      para: String(m.adiada_para).slice(0, 10),
-    })),
-    alternativasDoDia: missaoResultado.alternativas,
-    modoEstudo,
-    bossAlvo,
     ligaEstado,
-    streakHeat,
-    dayTicker,
     calendar: { monthLabel: `${MESES_PT[mes]} ${ano}`, dowOffset, days },
+    proximaProva,
     tarefasHoje,
     tarefasPorData,
     metasHoje,
     semana,
   };
-}
-
-type ProjecaoBoss = {
-  notaProjetada: number | null;
-  emRiscoCount: number;
-};
-
-// Projeção pra data da prova (motor): que nota o aluno tira no dia D se nada
-// mudar e quantos tópicos chegam fracos lá.
-// Escopo: o que o aluno marcou que CAI NESTA prova (bosses.topico_ids) — sem
-// escopo definido, fallback pra flag global cai_na_prova da ementa (menos
-// preciso; o card avisa). Sempre sem os 'pulado'.
-//
-// Extraída de carregarDadosDashboard pra rodar como um bloco só dentro do
-// Promise.all da onda 3. Por dentro ela ainda é sequencial onde precisa ser
-// (os ids dos tópicos definem a query seguinte), mas o modelo de ML sobe
-// junto com a lista de tópicos.
-async function carregarProjecaoBoss(
-  supabase: SupabaseClient,
-  user: { id: string },
-  alvo: { subject: Subject; boss: { data_prova: string } } | undefined,
-  escopoProva: Set<string> | null,
-): Promise<ProjecaoBoss> {
-  const vazio: ProjecaoBoss = { notaProjetada: null, emRiscoCount: 0 };
-  if (!alvo || !alvo.subject.materia_id) return vazio;
-
-  const [{ data: topicosMateria }, modeloMl] = await Promise.all([
-    supabase.from("topicos").select("id, nome, cai_na_prova").eq("materia_id", alvo.subject.materia_id),
-    carregarModeloAtivo(supabase),
-  ]);
-
-  const topicosProva = (topicosMateria || []).filter((t) =>
-    escopoProva ? escopoProva.has(t.id) : t.cai_na_prova,
-  );
-  const idsProva = topicosProva.map((t) => t.id);
-  if (idsProva.length === 0) return vazio;
-
-  // Repasse de 2026-09-16: a contagem de questões por tópico saiu daqui junto
-  // com o cartão do GPS — ela só servia pra dimensionar a rota Δnota/min. A
-  // projeção da nota nunca precisou dela.
-  const { data: progProva } = await supabase
-    .from("aluno_topico_progresso")
-    .select("topico_id, status, maestria, estabilidade, taxa_acerto, num_questoes_respondidas, ultima_revisao")
-    .eq("user_id", user.id)
-    .in("topico_id", idsProva);
-
-  type ProgProva = {
-    topico_id: string;
-    status?: string | null;
-    maestria?: number | null;
-    estabilidade?: number | null;
-    taxa_acerto?: number | null;
-    num_questoes_respondidas?: number | null;
-    ultima_revisao?: string | null;
-  };
-  const progPorId: Record<string, ProgProva> = {};
-  ((progProva || []) as ProgProva[]).forEach((p) => (progPorId[p.topico_id] = p));
-
-  const topicosParaProjecao = idsProva
-    .map((id) => ({ id, ...(progPorId[id] || {}) }))
-    .filter((t) => t.status !== "pulado");
-
-  // Rede neural quando há modelo ativo (venceu o baseline na validação);
-  // sem modelo, projetarProvaComRede É questlyProjetarProva — zero mudança.
-  const dataProvaMs = new Date(alvo.boss.data_prova).getTime();
-  const agoraMs = Date.now();
-  const projecao = projetarProvaComRede(modeloMl, topicosParaProjecao, dataProvaMs, agoraMs);
-
-  return { notaProjetada: projecao.notaProjetada, emRiscoCount: projecao.emRisco.length };
 }
 
 /** Leitura única do perfil, compartilhada pela home entre o hero e o

@@ -10,8 +10,8 @@
 //
 // Deliberadamente NÃO reusa `carregarDadosDashboard`: aquilo gera as missões
 // do dia, projeta nota e calcula liga — nada disso muda por olhar setembro, e
-// rodar o mission-engine a cada clique de seta seria caro e com efeito
-// colateral (missão gerada).
+// recarregar a home inteira a cada clique de seta seria caro e traria dados
+// que o calendário não usa.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
 import { emLotes } from "@/lib/supabase/paginado";
@@ -52,7 +52,8 @@ export type SimuladoDia = {
   tempoGastoSeg: number | null;
 };
 
-/** Uma missão daquele dia — a do dia ou uma prática avulsa (lista/rota/recap). */
+/** Uma lista de questões daquele dia (Banco de Questões, prática de tópico,
+ *  recap ou desafio de recuperação). */
 export type MissaoDia = {
   id: string;
   subjectNome: string | null;

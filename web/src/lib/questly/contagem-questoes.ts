@@ -121,7 +121,7 @@ export type ContagemInstituicao = {
 };
 
 // Não herda de LinhaTopico de propósito: a view por instituição não tem as
-// colunas de tempo médio (o GPS agrega por tópico, não por instituição), e
+// colunas de tempo médio (quem agrega por tópico não precisa delas), e
 // herdar faria o tipo prometer campos que o select não pede.
 type LinhaInstituicao = {
   instituicao: string | null;

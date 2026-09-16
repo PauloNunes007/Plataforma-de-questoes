@@ -8,19 +8,17 @@ import {
   salvarCampanhaAction,
   verificarUsernameAction,
   type DisciplinaInput,
-  type ProvaInput,
 } from "@/lib/onboarding/actions";
 import type { MateriaComQuestoes } from "@/lib/disciplinas/disciplinas-data";
 import type { InstituicaoAgregada } from "@/lib/cursos/instituicao";
 import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cursos/registro";
-import type { ModoEstudo } from "@/lib/questly/modo-estudo";
 import { CursoReveal } from "@/components/onboarding/curso-reveal";
 import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
 import { TourPlataforma } from "@/components/onboarding/tour-plataforma";
 import { Insignia, type NomeInsignia, type TomInsignia } from "@/components/insignias/insignia";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 
-const TOTAL_STEPS = 11;
+const TOTAL_STEPS = 9;
 
 const USERNAME_REGEX = /^[a-z0-9][a-z0-9_.]{2,19}$/;
 type UsernameStatus = "idle" | "verificando" | "disponivel" | "indisponivel" | "invalido";
@@ -39,17 +37,6 @@ const DISCIPLINAS_SUGERIDAS = [
 
 const DIAS_SEMANA_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
-const TEMPO_OPCOES: { label: string; minutos: number }[] = [
-  { label: "30 min", minutos: 30 },
-  { label: "1 hora", minutos: 60 },
-  { label: "1h30", minutos: 90 },
-  { label: "2h", minutos: 120 },
-  { label: "3h", minutos: 180 },
-  { label: "4h", minutos: 240 },
-  { label: "6h", minutos: 360 },
-  { label: "8h ou mais", minutos: 480 },
-];
-
 // Brasões em vez de emoji (ver components/insignias/insignia.tsx): o material
 // sobe junto com o nível declarado, então a escolha já se lê como progressão.
 const NIVEL_OPCOES: { valor: string; insignia: NomeInsignia; tom: TomInsignia; titulo: string; desc: string }[] = [
@@ -58,24 +45,7 @@ const NIVEL_OPCOES: { valor: string; insignia: NomeInsignia; tom: TomInsignia; t
   { valor: "avancado", insignia: "trofeu", tom: "ouro", titulo: "Avançado", desc: "Domino o conteúdo, quero manter o ritmo" },
 ];
 
-// Os dois modos da plataforma, descritos pelo que cada um ENTREGA — sem
-// "recomendado", sem opção certa. Ver lib/questly/modo-estudo.ts.
-const MODOS_ESTUDO: { valor: ModoEstudo; titulo: string; desc: string; inclui: string }[] = [
-  {
-    valor: "guiado",
-    titulo: "Monte pra mim",
-    desc: "Você diz quando tem suas provas e quanto tempo tem por dia; o app decide o que estudar hoje.",
-    inclui: "Missão do dia · Grade semanal · Contagem pra prova",
-  },
-  {
-    valor: "livre",
-    titulo: "Eu escolho na hora",
-    desc: "Sem plano automático e sem data de prova: você monta a lista que quiser, quando quiser.",
-    inclui: "Banco de questões · Simulados · Ranking",
-  },
-];
-
-type DiscCfg = { nota: number; provas: ProvaInput[] };
+type DiscCfg = { nota: number };
 
 type WizardState = {
   curso: string;
@@ -87,9 +57,7 @@ type WizardState = {
   disciplinas: string[];
   discCfg: Record<string, DiscCfg>;
   dias: string[];
-  tempoLabel: string | null;
   nivel: string | null;
-  modo: ModoEstudo;
 };
 
 const ESTADO_INICIAL: WizardState = {
@@ -102,9 +70,7 @@ const ESTADO_INICIAL: WizardState = {
   disciplinas: [],
   discCfg: {},
   dias: [],
-  tempoLabel: null,
   nivel: null,
-  modo: "guiado",
 };
 
 // Passo 2 pede o nome (obrigatório) e o @ (opcional) — o @ só bloqueia o
@@ -123,49 +89,33 @@ function ehValido(step: number, s: WizardState): boolean {
       return s.semestre !== null;
     case 5:
       return s.disciplinas.length > 0;
-    case 8:
+    case 7:
       return s.dias.length > 0;
-    case 9:
-      return s.tempoLabel !== null;
-    case 10:
+    case 8:
       return s.nivel !== null;
     default:
       return true;
   }
 }
 
+// **Repasse de 2026-09-16 — fim do motor de missões.** O wizard tinha 11
+// passos e dois caminhos (guiado × livre). Saíram três perguntas, todas
+// entradas do motor: o MODO de estudo (não há mais dois modos), a DATA DAS
+// PROVAS (virou compromisso de calendário, marcado em /calendario quando o
+// aluno quiser) e o TEMPO POR DIA (era o orçamento que o motor repartia entre
+// as disciplinas do dia). Sem dois caminhos, o wizard voltou a ser uma fila
+// reta: nada de passos condicionais.
 const EYEBROWS: Record<number, string> = {
   1: "Sobre você",
   2: "Sobre você",
   3: "Sobre você",
   4: "Sobre você",
-  5: "Sua campanha",
-  6: "Seu jeito de estudar",
-  7: "Sua campanha",
-  8: "Sua rotina",
-  9: "Sua rotina",
-  10: "Sua rotina",
-  11: "Tudo pronto",
+  5: "Suas disciplinas",
+  6: "Suas disciplinas",
+  7: "Seu ritmo",
+  8: "Seu ritmo",
+  9: "Tudo pronto",
 };
-
-// Passos que só existem na trajetória guiada: provas (7), dias (8) e tempo
-// por dia (9) são as entradas do motor. Quem escolhe prática livre pula
-// direto do passo do modo pro nível — pedir data de prova a quem acabou de
-// dizer que não quer planejamento por prova seria contradizer a própria
-// pergunta. Ver lib/questly/modo-estudo.ts.
-const PASSOS_SO_GUIADO = new Set([7, 8, 9]);
-
-function proximoPasso(step: number, s: WizardState): number {
-  let n = step + 1;
-  while (n < TOTAL_STEPS && s.modo === "livre" && PASSOS_SO_GUIADO.has(n)) n++;
-  return n;
-}
-
-function passoAnterior(step: number, s: WizardState): number {
-  let n = step - 1;
-  while (n > 1 && s.modo === "livre" && PASSOS_SO_GUIADO.has(n)) n--;
-  return n;
-}
 
 function Chip({
   active,
@@ -234,7 +184,7 @@ export function OnboardingWizard({
   }
 
   function garantirDiscCfg(nome: string): DiscCfg {
-    return state.discCfg[nome] || { nota: 8, provas: [{ nome: "P1", data: "" }] };
+    return state.discCfg[nome] || { nota: 8 };
   }
 
   // Identidade do curso digitado — dirige acento visual e sugestões.
@@ -257,19 +207,17 @@ export function OnboardingWizard({
       if (step === 1 && state.disciplinas.length === 0) {
         adicionarDisciplinas(identidade.disciplinasNucleo);
       }
-      irPara(proximoPasso(step, state));
+      irPara(step + 1);
       return;
     }
 
     setSalvando(true);
     setErro(null);
 
-    const disciplinas: DisciplinaInput[] = state.disciplinas.map((nome) => {
-      const cfg = garantirDiscCfg(nome);
-      return { nome, nota: cfg.nota, provas: cfg.provas };
-    });
-
-    const tempoOpcao = TEMPO_OPCOES.find((t) => t.label === state.tempoLabel);
+    const disciplinas: DisciplinaInput[] = state.disciplinas.map((nome) => ({
+      nome,
+      nota: garantirDiscCfg(nome).nota,
+    }));
 
     const resultado = await salvarCampanhaAction({
       nome: state.nome.trim(),
@@ -279,9 +227,7 @@ export function OnboardingWizard({
       semestre: state.semestre,
       nivel: state.nivel,
       dias: state.dias,
-      tempoDiarioMin: tempoOpcao?.minutos ?? null,
       disciplinas,
-      modoEstudo: state.modo,
     });
 
     if (resultado.error) {
@@ -299,7 +245,7 @@ export function OnboardingWizard({
   const podeContinuar = ehValido(step, state);
   // Passo 2 deixou de ser pulável: o nome é obrigatório (o @ continua opcional
   // dentro do próprio passo — basta deixar em branco).
-  const mostrarPular = step === 3 || step === 7;
+  const mostrarPular = step === 3;
 
   if (mostrarTour) {
     return <TourPlataforma identidade={acento} onFinalizar={() => router.push("/dashboard")} />;
@@ -312,7 +258,7 @@ export function OnboardingWizard({
           <div className="flex items-center gap-3.5 px-7 pt-6">
             <button
               type="button"
-              onClick={() => irPara(passoAnterior(step, state))}
+              onClick={() => irPara(step - 1)}
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-base text-muted-foreground transition-opacity ${
                 step === 1 ? "pointer-events-none opacity-0" : "opacity-100"
               }`}
@@ -364,7 +310,7 @@ export function OnboardingWizard({
                   {mostrarPular && (
                     <button
                       type="button"
-                      onClick={() => irPara(proximoPasso(step, state))}
+                      onClick={() => irPara(step + 1)}
                       className="text-xs font-bold text-muted-foreground"
                     >
                       Pular
@@ -628,46 +574,10 @@ function StepContent({
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
-            Você quer que a gente monte seu dia?
+            Que nota você quer em cada disciplina?
           </h2>
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
-            Dá pra trocar quando quiser nas configurações — nada se perde.
-          </p>
-          <div className="flex flex-col gap-3">
-            {MODOS_ESTUDO.map((m) => {
-              const ativo = state.modo === m.valor;
-              return (
-                <button
-                  key={m.valor}
-                  type="button"
-                  onClick={() => setState((s) => ({ ...s, modo: m.valor }))}
-                  className={`flex cursor-pointer flex-col gap-1.5 rounded-2xl border-2 p-4 text-left transition-all ${
-                    ativo
-                      ? "border-questly-green bg-questly-green-light/60"
-                      : "border-border hover:border-questly-green/40"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="font-heading text-[16px] font-semibold">{m.titulo}</span>
-                    {ativo && <Check size={16} strokeWidth={2.6} className="text-questly-green-dark" />}
-                  </span>
-                  <span className="text-sm leading-snug text-muted-foreground">{m.desc}</span>
-                  <span className="mt-0.5 text-xs font-semibold text-muted-foreground">{m.inclui}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      );
-
-    case 7:
-      return (
-        <div>
-          <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
-            Meta e provas de cada disciplina
-          </h2>
-          <p className="mb-6 text-sm font-semibold text-muted-foreground">
-            Defina a nota que você quer tirar e as datas das provas.
+            É a sua meta pessoal, pra você se situar — a plataforma não vai cobrar isso de você.
           </p>
           {state.disciplinas.length === 0 ? (
             <p className="text-sm font-semibold text-muted-foreground">
@@ -688,14 +598,15 @@ function StepContent({
         </div>
       );
 
-    case 8:
+    case 7:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
-            Quais dias você tem disponíveis pra estudar?
+            Em quais dias você costuma estudar?
           </h2>
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
-            As missões diárias só aparecem nesses dias.
+            Serve pra calibrar sua meta de XP da semana. Ninguém vai te cobrar nesses dias — e você
+            pode estudar em qualquer outro.
           </p>
           <div className="flex flex-wrap gap-2.5">
             {DIAS_SEMANA_LABELS.map((dia) => (
@@ -711,31 +622,7 @@ function StepContent({
         </div>
       );
 
-    case 9:
-      return (
-        <div>
-          <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
-            Quanto tempo por dia você consegue estudar?
-          </h2>
-          <p className="mb-6 text-sm font-semibold text-muted-foreground">
-            Suas missões diárias são dimensionadas pra caber nesse tempo — dividido entre as disciplinas que você
-            estuda no dia.
-          </p>
-          <div className="flex flex-wrap gap-2.5">
-            {TEMPO_OPCOES.map((t) => (
-              <Chip
-                key={t.label}
-                active={state.tempoLabel === t.label}
-                onClick={() => setState((s) => ({ ...s, tempoLabel: t.label }))}
-              >
-                {t.label}
-              </Chip>
-            ))}
-          </div>
-        </div>
-      );
-
-    case 10:
+    case 8:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -766,8 +653,7 @@ function StepContent({
         </div>
       );
 
-    case 11: {
-      const tempoOpcao = TEMPO_OPCOES.find((t) => t.label === state.tempoLabel);
+    case 9: {
       const rows: [string, string][] = [
         ["Nome", state.nome.trim() || "—"],
         ["Curso", state.curso || "—"],
@@ -775,20 +661,13 @@ function StepContent({
         ["Universidade", state.universidade || "não informado"],
         ["Semestre", state.semestre ? `${state.semestre}º` : "—"],
         ["Disciplinas", state.disciplinas.length ? state.disciplinas.join(", ") : "—"],
-        // No modo livre não há rotina a resumir: esses passos nem foram
-        // mostrados, e listá-los como "—" pareceria pendência.
-        ...(state.modo === "guiado"
-          ? ([
-              ["Dias de estudo", state.dias.length ? state.dias.join(", ") : "—"],
-              ["Tempo diário", tempoOpcao?.label || "—"],
-            ] as [string, string][])
-          : ([["Modo", "Prática livre — sem plano automático"]] as [string, string][])),
+        ["Dias de estudo", state.dias.length ? state.dias.join(", ") : "—"],
         ["Nível", NIVEL_OPCOES.find((n) => n.valor === state.nivel)?.titulo || "—"],
       ];
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
-            Sua campanha está pronta
+            Tudo pronto
           </h2>
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
             Confira antes de começar — dá pra mudar tudo isso depois nas configurações.
@@ -956,7 +835,7 @@ function DisciplinaCard({
       <div className="mb-2 text-[11.5px] font-extrabold uppercase tracking-wide text-muted-foreground">
         Nota desejada
       </div>
-      <div className="mb-4 flex gap-2">
+      <div className="flex gap-2">
         {[6, 7, 8, 9, 10].map((n) => (
           <button
             key={n}
@@ -971,46 +850,6 @@ function DisciplinaCard({
         ))}
       </div>
 
-      <div className="mb-2 text-[11.5px] font-extrabold uppercase tracking-wide text-muted-foreground">Provas</div>
-      <div className="flex flex-col gap-2">
-        {cfg.provas.map((p, idx) => (
-          <div key={idx} className="flex items-center gap-2">
-            <input
-              value={p.nome}
-              onChange={(e) => {
-                const provas = cfg.provas.map((pr, i) => (i === idx ? { ...pr, nome: e.target.value } : pr));
-                onChange({ ...cfg, provas });
-              }}
-              className="w-[70px] rounded-lg border-2 border-border px-2.5 py-2 text-xs font-bold outline-none"
-            />
-            <input
-              type="date"
-              value={p.data}
-              onChange={(e) => {
-                const provas = cfg.provas.map((pr, i) => (i === idx ? { ...pr, data: e.target.value } : pr));
-                onChange({ ...cfg, provas });
-              }}
-              className="flex-1 rounded-lg border-2 border-border px-2.5 py-2 text-xs font-semibold outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => onChange({ ...cfg, provas: cfg.provas.filter((_, i) => i !== idx) })}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-border bg-card font-bold text-questly-red"
-            >
-              ×
-            </button>
-          </div>
-        ))}
-      </div>
-      <button
-        type="button"
-        onClick={() =>
-          onChange({ ...cfg, provas: [...cfg.provas, { nome: `P${cfg.provas.length + 1}`, data: "" }] })
-        }
-        className="mt-2 text-xs font-extrabold text-questly-green-dark"
-      >
-        + Adicionar prova
-      </button>
     </div>
   );
 }

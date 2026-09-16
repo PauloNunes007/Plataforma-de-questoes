@@ -13,14 +13,13 @@ import { motion } from "framer-motion";
 import type { TopicoTrilha } from "@/lib/trilha/trilha-data";
 import { COR_ESTADO, visual, type EstadoVisual } from "./no-jornada";
 
-export type FiltroJornada = "tudo" | "fila" | "revisar" | "risco" | "mestre" | "pulado";
+export type FiltroJornada = "tudo" | "fila" | "revisar" | "mestre" | "pulado";
 export type ModoJornada = "mapa" | "lista";
 
 const FILTROS: Array<{ id: FiltroJornada; rotulo: string }> = [
   { id: "tudo", rotulo: "Tudo" },
   { id: "fila", rotulo: "Na fila" },
   { id: "revisar", rotulo: "Revisar" },
-  { id: "risco", rotulo: "Em risco" },
   { id: "mestre", rotulo: "Mestres" },
   { id: "pulado", rotulo: "Puladas" },
 ];
@@ -29,7 +28,6 @@ const CLASSE_FILTRO: Record<FiltroJornada, string> = {
   tudo: "border-border bg-muted text-foreground",
   fila: "border-border bg-muted text-foreground",
   revisar: "border-questly-orange/40 bg-questly-orange-light text-questly-orange-dark",
-  risco: "border-questly-red/40 bg-questly-red-light text-questly-red-dark",
   mestre: "border-questly-gold/40 bg-questly-gold-light text-questly-gold-dark",
   pulado: "border-border bg-muted text-foreground",
 };
@@ -41,8 +39,6 @@ export function casaFiltro(t: TopicoTrilha, f: FiltroJornada): boolean {
       return est === "pendente" || est === "fronteira";
     case "revisar":
       return t.memoriaCaindo;
-    case "risco":
-      return t.emRiscoProva;
     case "mestre":
       return est === "mestre";
     case "pulado":
@@ -292,9 +288,6 @@ export function ListaJornada({
                   )}
                   {t.memoriaCaindo && (
                     <span className="font-semibold text-questly-orange-dark">memória caindo</span>
-                  )}
-                  {t.emRiscoProva && !t.memoriaCaindo && (
-                    <span className="font-semibold text-questly-red-dark">risco na prova</span>
                   )}
                 </span>
               </span>

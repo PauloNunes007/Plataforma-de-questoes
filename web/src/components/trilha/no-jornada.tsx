@@ -5,11 +5,11 @@
 // no caminho serpenteante e, quando selecionado, abre este painel com as
 // mesmas ações de sempre (Já sei / recap / voltar / treinar) MAIS as
 // camadas inteligentes que já estavam calculadas e escondidas: cobertura,
-// precisão, memória (Ebbinghaus) e projeção pro dia da prova.
+// precisão e memória (Ebbinghaus). Nada aqui projeta nota pra frente: o
+// painel conta o que o aluno já fez, não o que ele "vai" tirar.
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  AlertTriangle,
   BrainCircuit,
   CalendarClock,
   Check,
@@ -205,15 +205,6 @@ export function NoJornada({
           <span className="tnum">{ICONE_ESTADO[est] || numero}</span>
         </span>
 
-        {/* selo de risco na prova (canto) */}
-        {topico.emRiscoProva && !topico.memoriaCaindo && (
-          <span
-            className="absolute -right-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-questly-red text-white shadow"
-            title="Você chega fraco nesse tópico no dia da prova"
-          >
-            <AlertTriangle size={11} strokeWidth={2.5} />
-          </span>
-        )}
       </button>
 
       {/* etiqueta no hover (desktop): dá pra varrer o mapa lendo os nomes
@@ -382,8 +373,7 @@ function CamadasInteligentes({ topico, est }: { topico: TopicoTrilha; est: Estad
   const temAlgo =
     topico.precisao != null ||
     topico.memoriaCaindo ||
-    (topico.rumoMestre && !topico.rumoMestre.pronto) ||
-    topico.emRiscoProva;
+    (topico.rumoMestre && !topico.rumoMestre.pronto);
 
   return (
     <div className="flex flex-col gap-2">
@@ -445,21 +435,11 @@ function CamadasInteligentes({ topico, est }: { topico: TopicoTrilha; est: Estad
         />
       )}
 
-      {/* projeção pro dia da prova */}
-      {topico.emRiscoProva && topico.forcaNaProva != null && (
-        <Callout
-          cor="red"
-          icone={<AlertTriangle size={14} strokeWidth={2} />}
-          titulo={`No dia da prova: ~${Math.round(topico.forcaNaProva * 100)}%`}
-          texto="Você estudou, mas a projeção diz que chega fraco no dia D. Reforce antes."
-        />
-      )}
-
       {!temAlgo && est !== "vazio" && est !== "pulado" && (
         <p className="text-[11.5px] text-muted-foreground">
           {est === "fronteira" || est === "pendente"
-            ? "É por aqui que a sua trilha avança agora."
-            : "Tópico em dia — nada urgente por aqui."}
+            ? "Você ainda não respondeu questões desse tópico."
+            : "Tópico em dia — nada escapando por aqui."}
         </p>
       )}
     </div>

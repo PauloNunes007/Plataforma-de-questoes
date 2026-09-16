@@ -88,7 +88,7 @@ export function FiltrosPratica({
         </button>
         <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">
           Questões de desafio vão além do nível cobrado na prova. Ficam fora da
-          missão do dia e dos simulados — só aparecem quando você pede. Valem XP
+          prática automática e dos simulados — só aparecem quando você pede. Valem XP
           normalmente.
         </p>
       </div>

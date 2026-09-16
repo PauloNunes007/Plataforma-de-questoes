@@ -21,7 +21,7 @@ export default async function BancoDeQuestoesPage() {
     <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
       <PageHeader
         titulo="Banco de Questões"
-        descricao="Monte sua prática em 3 passos: disciplina, tópicos e dificuldade. Conta XP normalmente e não ocupa sua missão do dia."
+        descricao="Monte sua prática em 3 passos: disciplina, tópicos e dificuldade. Conta XP e entra na sua trilha normalmente."
         voltarHref="/questoes"
         voltarLabel="Questões"
       />

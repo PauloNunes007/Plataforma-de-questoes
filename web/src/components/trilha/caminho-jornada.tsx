@@ -2,24 +2,27 @@
 
 // A jornada de uma disciplina como um MAPA de verdade: um vale gramado
 // (dia/noite conforme o tema) com lagos, árvores, pedras e flores
-// (cenario-trilha.tsx), cortado por uma estrada de terra que serpenteia
-// do "Início" até o castelo do Boss. Cada tópico da ementa é uma estação
-// na estrada; o trecho já percorrido ganha pegadas verdes; o mascote
-// (corpo inteiro) fica parado na fronteira ("você está aqui"). Clicar num
-// nó abre o painel de detalhe (mesmas ações de sempre + camadas
-// inteligentes). Substitui o quest-log vertical de caminho-disciplina.tsx.
+// (cenario-trilha.tsx), cortado por uma estrada de terra que serpenteia do
+// "Início" até o fim da ementa. Cada tópico é uma estação na estrada; o
+// trecho já percorrido ganha pegadas verdes; o mascote (corpo inteiro) fica
+// parado no primeiro tópico ainda pendente ("você está aqui"). Clicar num nó
+// abre o painel de detalhe.
+//
+// **Repasse de 2026-09-16.** A trilha virou PANORAMA. Saíram o encontro com o
+// Boss (a prova deixou de ser um estágio da trilha), o "plano de ataque" (era
+// recomendação — a plataforma não recomenda mais), o ritmo até a prova e a
+// projeção de nota. O castelo no fim da estrada virou a bandeira de chegada da
+// ementa. O que ficou responde só "o que eu já estudei e como eu vou nisso".
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Castle, Flag, Gauge, Sparkles, X } from "lucide-react";
+import { Flag, FlagTriangleRight, Target, X } from "lucide-react";
 import type { CaminhoDisciplina as CaminhoDisciplinaData } from "@/lib/trilha/trilha-data";
 import {
   buscarCaminhoDisciplinaAction,
   iniciarPraticaTopicoAction,
-  iniciarRevisaoRelampagoAction,
   mudarStatusTopicoAction,
 } from "@/lib/trilha/actions";
-import { BossEncontro } from "./boss-encontro";
 import { CenarioTrilha } from "./cenario-trilha";
 import { COR_ESTADO, NoJornada, PainelTopico } from "./no-jornada";
 import {
@@ -30,16 +33,15 @@ import {
   type FiltroJornada,
   type ModoJornada,
 } from "./barra-jornada";
-import { PlanoDeAtaque } from "./plano-ataque";
 import { hrefQuestao } from "@/lib/questao/navegacao";
 
 const ROW_H = 136; // distância vertical entre nós (folga pro cenário)
 // PAD_TOP precisa comportar mascote (72px) + bandeira de largada quando a
 // fronteira é o 1º nó — senão o mascote estoura o overflow-hidden e corta.
 const PAD_TOP = 152;
-// PAD_BOTTOM comporta o castelo + nome do boss + contagem de dias (o bloco
-// é centralizado em bossY, então metade dele desce além de bossY) — senão
-// ele cai em cima da legenda.
+// PAD_BOTTOM comporta a bandeira de chegada + o rótulo dela (o bloco é
+// centralizado em bossY, então metade dele desce além de bossY) — senão ele
+// cai em cima da legenda.
 const PAD_BOTTOM = 200;
 const AMP_PCT = 26; // amplitude horizontal da serpente (% da largura)
 
@@ -76,13 +78,28 @@ const VARS_CENARIO = [
 type Props = {
   caminho: CaminhoDisciplinaData;
   onAtualizar: (caminho: CaminhoDisciplinaData) => void;
-  onSalvo: () => void;
-  /** false = modo livre: sem encontro com o Boss no fim da jornada, porque
-   *  não há prova marcada nem escopo de prova a definir. */
-  guiado?: boolean;
 };
 
-export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }: Props) {
+/** A largura em que o painel de detalhe deixa de ser bottom sheet e passa a
+ *  morar no rail lateral — o MESMO ponto do breakpoint `xl` do Tailwind, que
+ *  é quem esconde o sheet no CSS (`xl:hidden`). Os dois precisam concordar:
+ *  ver o comentário de `telaEstreita` abaixo. */
+const LARGURA_SHEET = "(max-width: 1279.98px)";
+
+/** true enquanto a viewport está na faixa em que o bottom sheet existe. */
+function useTelaEstreita(): boolean {
+  const [estreita, setEstreita] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(LARGURA_SHEET);
+    const aplicar = () => setEstreita(mq.matches);
+    aplicar();
+    mq.addEventListener("change", aplicar);
+    return () => mq.removeEventListener("change", aplicar);
+  }, []);
+  return estreita;
+}
+
+export function CaminhoJornada({ caminho, onAtualizar }: Props) {
   const router = useRouter();
   // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
   const origem = usePathname();
@@ -92,12 +109,22 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }:
   // existe no desktop — sem isso, tocar num nó "não fazia nada": o painel
   // renderizava abaixo do mapa inteiro, fora da tela). Só abre em toque
   // explícito do aluno, nunca na seleção padrão da fronteira.
+  //
+  // **Bug corrigido em 2026-09-16 (tela travada no desktop).** O sheet é
+  // escondido por CSS (`xl:hidden`), mas o ESTADO era ligado em qualquer
+  // largura — e o efeito abaixo travava `document.body.overflow` junto. No
+  // desktop isso significava: clicar num checkpoint não mostrava sheet nenhum
+  // (estava oculto), não havia overlay nem botão de fechar pra desfazer, e a
+  // página inteira perdia o scroll. Agora o estado só liga onde o sheet
+  // realmente existe, e a trava segue essa mesma condição — inclusive quando
+  // a janela é redimensionada com ele aberto.
+  const telaEstreita = useTelaEstreita();
   const [sheetAberto, setSheetAberto] = useState(false);
+  const sheetVisivel = sheetAberto && telaEstreita;
   // barra de comando: busca, filtro por estado e mapa ↔ lista
   const [filtro, setFiltro] = useState<FiltroJornada>("tudo");
   const [busca, setBusca] = useState("");
   const [modo, setModo] = useState<ModoJornada>("mapa");
-  const [revisandoTudo, setRevisandoTudo] = useState(false);
   const areaRef = useRef<HTMLDivElement>(null);
 
   const { topicos, progresso } = caminho;
@@ -117,15 +144,16 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }:
     alvo?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  // trava o scroll da página enquanto o sheet está aberto
+  // trava o scroll da página enquanto o sheet está VISÍVEL (nunca no desktop,
+  // onde não há sheet nenhum pra travar por trás — ver a nota acima)
   useEffect(() => {
-    if (!sheetAberto) return;
+    if (!sheetVisivel) return;
     const anterior = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = anterior;
     };
-  }, [sheetAberto]);
+  }, [sheetVisivel]);
 
   // seleção padrão: a fronteira; senão o 1º tópico. Persiste entre
   // refetches se o tópico ainda existir.
@@ -159,21 +187,12 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }:
     setPendingId(null);
   }
 
-  // uma missão só cobrindo todos os tópicos atrasados (ver plano de ataque)
-  async function revisarTudo(topicoIds: string[]) {
-    setRevisandoTudo(true);
-    const { missaoId } = await iniciarRevisaoRelampagoAction(caminho.subjectId, topicoIds, 10);
-    if (missaoId) {
-      router.push(hrefQuestao(missaoId, origem));
-      return;
-    }
-    setRevisandoTudo(false);
-  }
-
-  // abre uma parada (do plano de ataque ou da lista) e leva o olho até ela
+  // abre uma parada (do mapa ou da lista) e leva o olho até ela. No desktop o
+  // painel já está no rail lateral — abrir um sheet ali seria abrir um modal
+  // invisível (ver a nota do bug em `sheetAberto`).
   function abrirTopico(topicoId: string, rolar = true) {
     setSelId(topicoId);
-    setSheetAberto(true);
+    setSheetAberto(telaEstreita);
     if (rolar) setTimeout(() => irAte(topicoId), 60);
   }
 
@@ -213,10 +232,8 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }:
                 filtrando={filtro !== "tudo" || busca.trim() !== ""}
                 onSelect={(id) => {
                   setSelId(id);
-                  setSheetAberto(true);
+                  setSheetAberto(telaEstreita);
                 }}
-                bossNome={caminho.bossNome}
-                diasAteProva={caminho.diasAteProva}
               />
             ) : (
               <ListaJornada
@@ -227,15 +244,11 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }:
             )}
           </div>
 
+          {/* Rail do desktop: só o detalhe da parada selecionada. O "plano de
+              ataque" (uma fila priorizada do que atacar primeiro) morava aqui
+              e saiu com o resto das recomendações — quem escolhe a próxima
+              parada é o aluno, olhando o mapa. */}
           <div className="flex flex-col gap-4 xl:sticky xl:top-7">
-            <PlanoDeAtaque
-              topicos={topicos}
-              pendingId={pendingId}
-              revisandoTudo={revisandoTudo}
-              onPraticar={(id) => praticar(id, 5)}
-              onSelecionar={(id) => abrirTopico(id)}
-              onRevisarTudo={revisarTudo}
-            />
             {selecionado && (
               <div className="hidden xl:block">
                 <PainelTopico
@@ -248,27 +261,13 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }:
                 />
               </div>
             )}
-            {guiado && (
-            <BossEncontro
-              subjectId={caminho.subjectId}
-              bossId={caminho.bossId}
-              bossNome={caminho.bossNome}
-              bossData={caminho.bossData}
-              diasAteProva={caminho.diasAteProva}
-              preparoPercentual={caminho.preparoPercentual}
-              chanceAprovacao={caminho.chanceAprovacao}
-              topicosEmenta={caminho.topicos.map((t) => ({ id: t.id, nome: t.nome }))}
-              bossTopicoIds={caminho.bossTopicoIds}
-              onSalvo={onSalvo}
-            />
-            )}
           </div>
         </div>
       )}
 
       {/* Bottom sheet do tópico (só < xl) — mesma PainelTopico do rail */}
       <AnimatePresence>
-        {sheetAberto && selecionado && (
+        {sheetVisivel && selecionado && (
           <div className="fixed inset-0 z-50 xl:hidden" role="dialog" aria-modal="true" aria-label={`Detalhes da missão ${selIdx + 1}: ${selecionado.nome}`}>
             <motion.button
               type="button"
@@ -319,15 +318,19 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }:
 }
 
 function CabecalhoJornada({ caminho }: { caminho: CaminhoDisciplinaData }) {
-  const { progresso, projecao } = caminho;
+  const { progresso, precisaoMedia, questoesRespondidas } = caminho;
+  const pctAcerto = precisaoMedia != null ? Math.round(precisaoMedia * 100) : null;
   return (
     <div className="surface p-5 sm:p-6">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-heading text-[17px] font-semibold tracking-tight">
-          Jornada de {caminho.subjectNome}
+          Trilha de {caminho.subjectNome}
         </h2>
         <div className="flex flex-wrap items-center gap-2">
-          {projecao.notaProjetada != null && <ChipProjecao projecao={projecao} />}
+          {/* Aproveitamento REAL da disciplina (ponderado por volume), não uma
+              nota projetada: é o que o aluno acertou, não o que ele "vai"
+              acertar. */}
+          {pctAcerto != null && <ChipAproveitamento pct={pctAcerto} questoes={questoesRespondidas} />}
           <span className="tnum rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
             {progresso.pct}% percorrido
           </span>
@@ -344,79 +347,32 @@ function CabecalhoJornada({ caminho }: { caminho: CaminhoDisciplinaData }) {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
-        <Contador valor={progresso.concluidos} rotulo="estudadas" />
-        <Contador valor={progresso.pulados} rotulo="puladas" />
+        <Contador valor={progresso.concluidos} rotulo="estudados" />
+        <Contador valor={progresso.pulados} rotulo="pulados" />
         <Contador valor={progresso.naFila} rotulo="na fila" />
-        <Contador valor={progresso.total} rotulo="missões na trilha" />
+        <Contador valor={progresso.total} rotulo="tópicos na ementa" />
       </div>
-
-      <Ritmo naFila={progresso.naFila} diasAteProva={caminho.diasAteProva} />
     </div>
   );
 }
 
-// Ritmo necessário: quantas paradas por semana pra fechar a ementa antes da
-// prova. É aritmética explícita (paradas restantes ÷ semanas restantes), não
-// previsão — por isso o texto diz "pra fechar a ementa", não "pra passar".
-function Ritmo({ naFila, diasAteProva }: { naFila: number; diasAteProva: number | null }) {
-  if (diasAteProva == null || diasAteProva <= 0) return null;
-
-  if (naFila === 0) {
-    return (
-      <p className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-questly-green-light px-2.5 py-1.5 text-[11.5px] font-medium text-questly-green-dark">
-        <Gauge size={12.5} strokeWidth={2.25} />
-        Ementa percorrida — agora é revisar e consolidar até o dia da prova.
-      </p>
-    );
-  }
-
-  const semanas = diasAteProva / 7;
-  const porSemana = naFila / semanas;
-  const texto =
-    porSemana <= 7
-      ? `${porSemana.toFixed(1).replace(".", ",").replace(",0", "")} paradas por semana`
-      : `${Math.ceil(naFila / diasAteProva)} paradas por dia`;
-
-  const apertado = porSemana > 7;
-
-  return (
-    <p
-      className={`mt-2.5 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium ${
-        apertado
-          ? "bg-questly-red-light text-questly-red-dark"
-          : "bg-muted text-muted-foreground"
-      }`}
-      title="Paradas que faltam ÷ semanas até a prova"
-    >
-      <Gauge size={12.5} strokeWidth={2.25} />
-      Ritmo pra fechar a ementa: <b className="tnum font-semibold">{texto}</b>
-      <span className="opacity-70">
-        ({naFila} {naFila === 1 ? "parada" : "paradas"} em {diasAteProva}{" "}
-        {diasAteProva === 1 ? "dia" : "dias"})
-      </span>
-    </p>
-  );
-}
-
-function ChipProjecao({ projecao }: { projecao: { notaProjetada: number | null; emRisco: number } }) {
-  const nota = projecao.notaProjetada ?? 0;
+// Aproveitamento da disciplina inteira: acertos ÷ questões respondidas,
+// ponderado pelo volume de cada tópico. Cor por faixa, sem promessa nenhuma
+// embutida — é histórico, não previsão.
+function ChipAproveitamento({ pct, questoes }: { pct: number; questoes: number }) {
   const cor =
-    nota >= 70
+    pct >= 70
       ? "bg-questly-green-light text-questly-green-dark"
-      : nota >= 50
+      : pct >= 50
         ? "bg-questly-orange-light text-questly-orange-dark"
         : "bg-questly-red-light text-questly-red-dark";
   return (
     <span
       className={`tnum inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${cor}`}
-      title={
-        projecao.emRisco > 0
-          ? `${projecao.emRisco} tópico(s) devem chegar fracos no dia da prova`
-          : "Projeção da sua força média no dia da prova"
-      }
+      title={`Média ponderada dos seus acertos em ${questoes} ${questoes === 1 ? "questão respondida" : "questões respondidas"} nesta disciplina`}
     >
-      <Sparkles size={12} strokeWidth={2.25} />
-      No dia D: ~{nota}%{projecao.emRisco > 0 ? ` · ${projecao.emRisco} em risco` : ""}
+      <Target size={12} strokeWidth={2.25} />
+      {pct}% de acerto
     </span>
   );
 }
@@ -437,8 +393,6 @@ function MapaVale({
   atenuados,
   filtrando,
   onSelect,
-  bossNome,
-  diasAteProva,
 }: {
   topicos: CaminhoDisciplinaData["topicos"];
   fronteiraIdx: number;
@@ -447,8 +401,6 @@ function MapaVale({
   atenuados: Set<string>;
   filtrando: boolean;
   onSelect: (id: string) => void;
-  bossNome: string | null;
-  diasAteProva: number | null;
 }) {
   const reduzir = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
@@ -552,29 +504,26 @@ function MapaVale({
           </motion.div>
         ))}
 
-        {/* castelo do Boss no fim da estrada */}
+        {/* fim da estrada: a chegada da EMENTA. Era o castelo do Boss (a
+            prova) — a prova saiu da trilha, mas a estrada ainda precisa de um
+            ponto final, senão ela some no gramado. */}
         <div
           className="absolute z-10 flex flex-col items-center"
           style={{ left: "50%", top: bossY, transform: "translate(-50%,-50%)" }}
         >
-          <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-questly-orange text-white shadow-[inset_0_-4px_0_rgba(0,0,0,0.18),0_8px_16px_rgba(0,0,0,0.25)] dark:text-[#241703]">
-            <Castle size={27} strokeWidth={1.75} />
+          <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-questly-green text-white shadow-[inset_0_-4px_0_rgba(0,0,0,0.18),0_8px_16px_rgba(0,0,0,0.25)] dark:text-[#0c1512]">
+            <FlagTriangleRight size={27} strokeWidth={1.75} />
             {!reduzir && (
               <motion.span
-                className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-questly-orange"
+                className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-questly-green"
                 animate={{ scale: [1, 1.22, 1], opacity: [0.5, 0, 0.5] }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
               />
             )}
           </span>
-          <span className="mt-1.5 max-w-[150px] truncate rounded-full bg-black/25 px-2.5 py-0.5 text-center text-[11px] font-semibold text-white backdrop-blur-sm">
-            {bossNome || "Boss da prova"}
+          <span className="mt-1.5 max-w-[170px] truncate rounded-full bg-black/25 px-2.5 py-0.5 text-center text-[11px] font-semibold text-white backdrop-blur-sm">
+            Fim da ementa
           </span>
-          {diasAteProva != null && (
-            <span className="tnum mt-1 rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
-              em {diasAteProva} {diasAteProva === 1 ? "dia" : "dias"}
-            </span>
-          )}
         </div>
 
         {/* bandeira de largada — fica acima da zona do mascote (ver PAD_TOP) */}

@@ -11,11 +11,9 @@ import type { CaminhoDisciplina as CaminhoDisciplinaData, RegiaoMapa } from "@/l
 
 type TrilhaViewProps = {
   regioes: RegiaoMapa[];
-  /** false = modo livre: a jornada fica, o card do Boss/prova não. */
-  guiado?: boolean;
 };
 
-export function TrilhaView({ regioes, guiado = true }: TrilhaViewProps) {
+export function TrilhaView({ regioes }: TrilhaViewProps) {
   const [selecionada, setSelecionada] = useState<string | null>(null);
   const [caminho, setCaminho] = useState<CaminhoDisciplinaData | null>(null);
   const [carregando, setCarregando] = useState(false);
@@ -48,12 +46,6 @@ export function TrilhaView({ regioes, guiado = true }: TrilhaViewProps) {
     setCarregando(false);
   }
 
-  async function recarregarCaminho() {
-    if (!selecionada) return;
-    const dados = await buscarCaminhoDisciplinaAction(selecionada);
-    setCaminho(dados);
-  }
-
   // deriva as estatísticas da região selecionada a partir do caminho
   // recém-carregado, pra não fazer duas viagens ao servidor a cada
   // pular/recap
@@ -63,17 +55,16 @@ export function TrilhaView({ regioes, guiado = true }: TrilhaViewProps) {
     const revisar = caminho.topicos.filter((t) => t.memoriaCaindo).length;
     return {
       ...r,
-      bossNome: caminho.bossNome,
-      diasAteProva: caminho.diasAteProva,
-      preparoPercentual: caminho.preparoPercentual,
       totalTopicos: caminho.progresso.total,
       concluidos: caminho.progresso.concluidos,
       pulados: caminho.progresso.pulados,
       mestres,
       revisar,
-      completo: caminho.progresso.total > 0 && caminho.progresso.concluidos + caminho.progresso.pulados === caminho.progresso.total,
-      notaProjetada: caminho.projecao.notaProjetada,
-      emRisco: caminho.projecao.emRisco,
+      completo:
+        caminho.progresso.total > 0 &&
+        caminho.progresso.concluidos + caminho.progresso.pulados === caminho.progresso.total,
+      precisaoMedia: caminho.precisaoMedia,
+      questoesRespondidas: caminho.questoesRespondidas,
     };
   });
 
@@ -83,9 +74,9 @@ export function TrilhaView({ regioes, guiado = true }: TrilhaViewProps) {
         <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
           <MapIcon size={18} strokeWidth={1.75} className="text-muted-foreground" />
         </span>
-        <p className="mb-1 text-[15px] font-medium">Sua campanha nasce aqui</p>
+        <p className="mb-1 text-[15px] font-medium">Sua trilha nasce aqui</p>
         <p className="mb-5 max-w-[360px] text-sm text-muted-foreground">
-          Configure suas disciplinas pra desenhar o mapa da sua trilha.
+          Configure suas disciplinas pra desenhar o mapa da sua ementa.
         </p>
         <Link
           href="/onboarding"
@@ -131,7 +122,7 @@ export function TrilhaView({ regioes, guiado = true }: TrilhaViewProps) {
                 </div>
               </div>
             ) : (
-              <CaminhoJornada caminho={caminho} onAtualizar={setCaminho} onSalvo={recarregarCaminho} guiado={guiado} />
+              <CaminhoJornada caminho={caminho} onAtualizar={setCaminho} />
             )}
           </motion.div>
         )}

@@ -198,7 +198,7 @@ export function QuestaoEditor({
             </div>
 
             {/* Marcar como aprofundamento tira a questão de todo sorteio
-                automático (missão, GPS, simulado) e põe o selo em /questao —
+                automático (lista do Banco de Questões, recap da trilha, simulado) e põe o selo em /questao —
                 é como o banco guarda conteúdo acima do nível da prova sem ter
                 que apagá-lo. Ver supabase_questao_desafio.sql. */}
             <label className="mb-4 flex cursor-pointer items-start gap-2.5 rounded-xl border border-border bg-card px-3.5 py-2.5">
@@ -211,7 +211,7 @@ export function QuestaoEditor({
               <span className="text-[12.5px] leading-relaxed">
                 <b className="font-semibold">Questão de desafio (aprofundamento)</b>
                 <span className="block text-muted-foreground">
-                  Vai além do nível da prova: fica fora da missão do dia, do GPS e dos simulados, e só
+                  Vai além do nível da prova: fica fora de todo sorteio automático e dos simulados, e só
                   aparece quando o aluno pede no Banco de Questões.
                 </span>
               </span>

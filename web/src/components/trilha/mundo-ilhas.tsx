@@ -8,7 +8,6 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import {
-  AlertTriangle,
   Atom,
   BrainCircuit,
   BookOpen,
@@ -21,7 +20,7 @@ import {
   Globe,
   Landmark,
   MessageCircle,
-  Swords,
+  Target,
   type LucideIcon,
 } from "lucide-react";
 import type { RegiaoMapa } from "@/lib/trilha/trilha-data";
@@ -154,14 +153,6 @@ function Ilha({
             <Check size={10} strokeWidth={3} />
             Completa
           </span>
-        ) : r.emRisco > 0 ? (
-          <span
-            className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5 text-[9.5px] font-bold text-amber-200 backdrop-blur-sm"
-            title={`${r.emRisco} tópico(s) devem chegar fracos no dia da prova`}
-          >
-            <AlertTriangle size={10} strokeWidth={2.75} />
-            {r.emRisco} em risco
-          </span>
         ) : r.revisar > 0 ? (
           <span
             className="inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-0.5 text-[9.5px] font-bold text-white backdrop-blur-sm"
@@ -187,7 +178,7 @@ function Ilha({
         <span className="mt-0.5 line-clamp-2 text-[13.5px] font-bold leading-tight text-white">{r.nome}</span>
       </div>
 
-      {/* rodapé: progresso + prova */}
+      {/* rodapé: quanto da ementa foi percorrido + aproveitamento real */}
       <div className="absolute inset-x-3 bottom-2.5" style={{ transform: "translateZ(18px)" }}>
         {r.temEmenta ? (
           <>
@@ -201,15 +192,16 @@ function Ilha({
             </div>
             <div className="mt-1.5 flex items-center justify-between text-[9.5px] font-semibold text-white/85">
               <span className="tnum">{pct}%</span>
-              {r.bossNome ? (
-                <span className="inline-flex min-w-0 items-center gap-1">
-                  <Swords size={10} strokeWidth={2.25} />
-                  <span className="tnum truncate">
-                    {r.diasAteProva} {r.diasAteProva === 1 ? "dia" : "dias"}
-                  </span>
+              {r.precisaoMedia != null ? (
+                <span
+                  className="inline-flex min-w-0 items-center gap-1"
+                  title={`${r.questoesRespondidas} questões respondidas nesta disciplina`}
+                >
+                  <Target size={10} strokeWidth={2.25} />
+                  <span className="tnum truncate">{Math.round(r.precisaoMedia * 100)}% acerto</span>
                 </span>
               ) : (
-                <span className="truncate opacity-80">sem prova</span>
+                <span className="truncate opacity-80">sem questões ainda</span>
               )}
             </div>
           </>

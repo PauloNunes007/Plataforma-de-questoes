@@ -1,8 +1,8 @@
 "use client";
 
 // FAQ da landing. Além de responder o que trava a decisão, é o lugar honesto
-// pra dizer o que a plataforma NÃO é — o mesmo padrão de franqueza do resto do
-// app (chance de aprovação e projeção são heurísticas, não promessa).
+// pra dizer o que a plataforma NÃO é — inclusive que ela não monta o seu dia
+// (desde o repasse de 2026-09-16 não existe mais plano automático nenhum).
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
@@ -15,19 +15,19 @@ const PERGUNTAS: { p: string; r: string }[] = [
   },
   {
     p: "E se a minha universidade não estiver no banco?",
-    r: "A plataforma funciona igual: o plano diário, a trilha da ementa, a revisão espaçada e as questões do banco geral valem pra qualquer curso. O que fica indisponível é só o simulado com provas antigas da sua instituição — e a gente diz isso na sua cara, sem enrolar, em vez de fingir que tem.",
+    r: "A plataforma funciona igual: a trilha da ementa, o banco de questões geral (com resolução passo a passo), as anotações e o ranking valem pra qualquer curso. O que fica indisponível é só o simulado com provas antigas da sua instituição — e a gente diz isso na sua cara, sem enrolar, em vez de fingir que tem.",
   },
   {
     p: "Quanto tempo por dia eu preciso?",
-    r: "O que você tiver. Você diz quantos minutos tem e a missão do dia é montada exatamente desse tamanho — 20 minutos no corredor entre aulas ou 3 horas num sábado. O motor divide esse tempo entre as suas disciplinas por urgência da prova e ponto fraco, então nenhum dia é desperdiçado na matéria errada.",
+    r: "O que você tiver. Você monta a lista do tamanho que couber — 5 questões no corredor entre aulas ou 40 num sábado. A Questly não tem cota diária nem cobra presença: o que ela guarda é o que você já fez, pra você enxergar onde está.",
   },
   {
     p: "Preciso pagar pra usar?",
-    r: "Não. O plano grátis dá conta de uma matéria: missão do dia, boss por prova, trilha da ementa, streak e ligas. O Pro tira os limites (disciplinas ilimitadas, missões sem teto, simulados ilimitados, projeção pro dia da prova e repetição espaçada completa) por R$ 15/mês, ou R$ 10/mês no semestral.",
+    r: "Não. O plano grátis tem o banco de questões inteiro com resolução, listas sem limite, disciplinas ilimitadas, a trilha da ementa, anotações, streak, ligas e um simulado cronometrado por semana. O Pro tira o limite de simulados e abre a autópsia do erro e as estatísticas avançadas, por R$ 15/mês ou R$ 10/mês no semestral.",
   },
   {
-    p: "Essa “nota projetada” é confiança ou chute?",
-    r: "É uma estimativa, e a gente fala isso em toda tela onde ela aparece. O modelo combina o quanto você domina cada tópico (separando sorte de domínio real) com o quanto disso você ainda vai lembrar no dia da prova. Serve pra apontar onde você vai chegar fraco a tempo de corrigir — não é uma promessa de nota, e nunca vamos vender como se fosse.",
+    p: "A Questly monta um cronograma pra mim?",
+    r: "Não, e isso é decisão de produto, não falta. A gente já tentou: o motor empilhava quatro matérias diferentes no mesmo dia e virava uma lista que ninguém executa. Quem sabe o que caiu na aula de ontem e o que a prova de sexta cobra é você. A Questly te dá as questões, o mapa da ementa com o seu aproveitamento e o simulado — a ordem é sua. Se quiser planejar, o calendário é seu: sessão, meta de questões, tarefa e a data da prova, tudo marcado por você.",
   },
   {
     p: "Isso substitui a aula e o livro?",

@@ -51,7 +51,7 @@ function probParaForca(p: number): number {
 // Força de UM tópico projetada pro dia da prova, na régua que estiver
 // valendo: BKT puro sem modelo, rede quando há modelo ativo. É o átomo
 // de projetarProvaComRede e também a régua injetada na rota Δnota/min
-// (lib/questly/rota-aprovacao.ts) — a rota precisa enxergar exatamente
+// (a extinta rota Δnota/min) — ela precisava enxergar exatamente
 // a mesma força da nota exibida, senão prometeria ganhos noutra escala.
 export function forcaTopicoComRede(
   modelo: ModeloAtivo | null,

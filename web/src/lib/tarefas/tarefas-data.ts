@@ -1,6 +1,6 @@
 // Itens da agenda do aluno — tarefas pontuais E sessões de estudo agendadas.
-// Diferente de rotina_semanal (recorrente, dia-da-semana fixo, alimenta o
-// mission-engine), cada linha aqui é amarrada a uma DATA específica
+// Diferente de rotina_semanal (recorrente, dia-da-semana fixo, sobra do motor
+// de missões que não existe mais), cada linha aqui é amarrada a uma DATA específica
 // (ver supabase_tarefas_semanais.sql + supabase_sessoes_agenda.sql).
 //
 // `tipo` separa as duas leituras que a agenda faz do mesmo registro:

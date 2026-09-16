@@ -57,8 +57,8 @@ function montarPerks(stats: StatsBanco) {
     },
     {
       icon: Target,
-      title: "Missão do dia pronta",
-      desc: "Você nunca decide sozinho o que estudar",
+      title: "Sua lista, do seu jeito",
+      desc: "Disciplina, assunto e tamanho escolhidos por você",
     },
   ];
 }

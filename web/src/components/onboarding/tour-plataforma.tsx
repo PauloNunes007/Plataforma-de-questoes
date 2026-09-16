@@ -37,7 +37,6 @@ import {
   Sparkles,
   Swords,
   Target,
-  TrendingUp,
   Trophy,
   X,
   Zap,
@@ -467,7 +466,7 @@ function CenaAbertura({ identidade, rm }: { identidade: CursoIdentidade | null; 
 }
 
 /* ------------------------------------------------------------------ */
-/* Capítulo 2 — Missão diária                                           */
+/* Capítulo 2 — A lista que você monta                                  */
 /* ------------------------------------------------------------------ */
 
 const QUESTOES_DEMO = [
@@ -486,7 +485,7 @@ function CenaMissao({ rm }: { rm: boolean }) {
               <Target size={17} strokeWidth={2.2} />
             </span>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">Missão de hoje</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">Sua lista</p>
               <p className="font-heading text-sm font-semibold">Cálculo II · 3 questões · 35 min</p>
             </div>
           </div>
@@ -518,9 +517,9 @@ function CenaMissao({ rm }: { rm: boolean }) {
         </div>
       </Vidro>
 
-      <Legenda kicker="Missões diárias" titulo="Abra o app. Sua missão já está pronta.">
-        Chega de perder meia hora decidindo o que estudar: a Questly escolhe as questões certas, na ordem
-        certa da ementa, no tempo que você tem hoje. Você só resolve.
+      <Legenda kicker="Banco de questões" titulo="Você escolhe o assunto. A lista sai na hora.">
+        Disciplina, tópicos da ementa, nível e tamanho — do jeito que couber no seu dia. Todas as questões
+        vêm de provas antigas ou são autorais, e todas têm resolução passo a passo.
       </Legenda>
     </>
   );
@@ -574,11 +573,12 @@ function LinhaQuestao({ nome, xp, delay, rm }: { nome: string; xp: number; delay
 }
 
 /* ------------------------------------------------------------------ */
-/* Capítulo 3 — Jornada até o Boss                                      */
+/* Capítulo 3 — A trilha da ementa                                      */
 /* ------------------------------------------------------------------ */
 
-// Trilha serpenteante em SVG: o traço se desenha, os marcos acendem em
-// sequência e o último é o Boss.
+// Trilha serpenteante em SVG: o traço se desenha e os marcos acendem em
+// sequência. O último marco é a chegada da ementa (era o Boss da prova, antes
+// de a plataforma parar de planejar por data de prova).
 const MARCOS = [
   { x: 30, y: 96 },
   { x: 110, y: 44 },
@@ -594,7 +594,7 @@ function CenaJornada({ rm }: { rm: boolean }) {
         <div className="mb-1 flex items-center justify-between">
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">Trilha de Cálculo II</p>
           <span className="rounded-full border border-[#f5a623]/25 bg-[#f5a623]/12 px-2.5 py-1 text-[10px] font-bold text-[#f5a623]">
-            P1 em 12 dias
+            7 de 12 assuntos
           </span>
         </div>
 
@@ -667,10 +667,10 @@ function CenaJornada({ rm }: { rm: boolean }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Swords size={14} strokeWidth={2.4} className="text-[#f5a623]" />
-              <span className="text-xs font-bold text-white/90">Boss: P1 de Cálculo II</span>
+              <span className="text-xs font-bold text-white/90">Aproveitamento na disciplina</span>
             </div>
             <span className="text-[10px] font-bold text-[#f5a623]">
-              HP <Contador ate={64} delay={3.7} dur={1.6} rm={rm} sufixo="%" />
+              <Contador ate={64} delay={3.7} dur={1.6} rm={rm} sufixo="% de acerto" />
             </span>
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
@@ -685,9 +685,9 @@ function CenaJornada({ rm }: { rm: boolean }) {
         </motion.div>
       </Vidro>
 
-      <Legenda kicker="Trilha & Bosses" titulo="Sua prova é o Boss. Cada questão é um golpe.">
-        A trilha avança com você pela ementa e mostra, em tempo real, o quanto falta pra chegar pronto.
-        Quando o dia da prova chegar, o jogo já está virado.
+      <Legenda kicker="Minha trilha" titulo="A ementa inteira, e onde você está nela.">
+        Cada parada é um assunto da disciplina, na ordem do curso, com quantas questões você já fez ali e
+        quanto acertou. Nada aqui é previsão — é o registro do que você respondeu.
       </Legenda>
     </>
   );
@@ -941,11 +941,10 @@ function CenaCiencia({ rm }: { rm: boolean }) {
 /* ------------------------------------------------------------------ */
 
 const BENEFICIOS_TOUR = [
-  { icone: TrendingUp, texto: "Nota prevista pro dia da prova, tópico por tópico" },
   { icone: CalendarCheck, texto: "Grade de estudos que se monta sozinha" },
   { icone: BrainCircuit, texto: "Diagnóstico do porquê de cada erro" },
   { icone: Trophy, texto: "Percentil, recordes e estatísticas avançadas" },
-  { icone: InfinityIcon, texto: "Disciplinas e provas ilimitadas" },
+  { icone: InfinityIcon, texto: "Disciplinas e listas ilimitadas" },
 ];
 
 function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => void; onComecar: () => void }) {
@@ -1061,7 +1060,7 @@ function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => voi
         className="mt-3 flex items-center gap-1.5 text-[11px] text-white/40"
       >
         <Flame size={11} strokeWidth={2.4} />
-        Sua primeira missão já te espera no dashboard.
+        Seu banco de questões já está aberto no painel.
       </motion.p>
     </>
   );

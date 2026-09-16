@@ -35,9 +35,10 @@ export async function carregarRetomar(
     .select("id, question_ids, qtd_questoes, subject_id, avulsa, recap_topico_id, data, subjects(nome)")
     .eq("user_id", userId)
     .eq("concluida", false)
-    // Missão adiada pelo aluno não é "de onde parou": ele decidiu que ela
-    // não é hoje. Ver missions.adiada_para (supabase_modo_estudo.sql).
-    .is("adiada_para", null)
+    // O filtro `adiada_para is null` saiu com o motor de missões: adiar era
+    // uma ação da missão do dia, que não existe mais. Uma lista que ficou
+    // pela metade é exatamente "de onde você parou", inclusive as que foram
+    // empurradas pra frente na época em que dava pra adiar.
     .order("data", { ascending: false })
     .limit(15);
 

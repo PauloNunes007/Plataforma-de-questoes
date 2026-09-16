@@ -2,7 +2,6 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { questlySalvarRotina } from "@/lib/questly/rotina-engine";
 import { questlyHojeISO } from "@/lib/questly/shared";
 
 export type Boss = { id: string; nome: string; data_prova: string };
@@ -120,7 +119,11 @@ export async function salvarUsernameAction(
   return { error: null, username: novo, usernameAlteradoEm: agora };
 }
 
-export async function salvarRotinaAction(dias: string[], tempoDiarioMin: number | null) {
+// Dias em que o aluno pretende estudar. Não gera nada — é o divisor da meta
+// semanal de XP na home. `tempo_diario_min` saiu junto com o motor de missões
+// (era o orçamento do dia que ele repartia entre as disciplinas); a coluna
+// continua no banco, sem leitor.
+export async function salvarRotinaAction(dias: string[]) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -129,35 +132,12 @@ export async function salvarRotinaAction(dias: string[], tempoDiarioMin: number 
 
   const { error } = await supabase
     .from("profiles")
-    .update({ dias_disponiveis: dias, tempo_diario_min: tempoDiarioMin })
+    .update({ dias_disponiveis: dias })
     .eq("id", user.id);
 
   if (error) {
     console.error("Erro ao salvar rotina:", error);
     return { error: "Não foi possível salvar sua rotina." };
-  }
-  return { error: null };
-}
-
-// Modo de estudo (guiado | livre) — ver lib/questly/modo-estudo.ts.
-//
-// Escreve numa coluna que o trigger questly_proteger_colunas_profile NÃO
-// protege, de propósito: é preferência de estudo, não plano/XP/liga/streak.
-// Trocar de modo não apaga missão, prova nem progresso — só muda o que a
-// interface mostra, então voltar atrás restaura tudo.
-export async function salvarModoEstudoAction(modo: "guiado" | "livre") {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "Sessão expirada." };
-
-  if (modo !== "guiado" && modo !== "livre") return { error: "Modo de estudo inválido." };
-
-  const { error } = await supabase.from("profiles").update({ modo_estudo: modo }).eq("id", user.id);
-  if (error) {
-    console.error("Erro ao salvar modo de estudo:", error);
-    return { error: "Não foi possível salvar o modo de estudo." };
   }
   return { error: null };
 }
@@ -295,18 +275,6 @@ export async function removerProvaAction(bossId: string) {
   }
 
   return { subjects: await buscarSubjectsComBosses(supabase, user.id), error: null };
-}
-
-export async function salvarGradeAction(rotinaPorDia: Record<string, string[]>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "Sessão expirada." };
-
-  const { error } = await questlySalvarRotina(supabase, user.id, rotinaPorDia);
-  if (error) return { error: "Não foi possível salvar sua grade semanal." };
-  return { error: null };
 }
 
 export async function uploadFotoAction(formData: FormData) {

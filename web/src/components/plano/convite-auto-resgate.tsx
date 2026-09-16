@@ -85,7 +85,7 @@ export function ConviteAutoResgate() {
                 Convite aplicado — <span className="tnum">{diasLiberados}</span> dias de Pro.
               </p>
               <p className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">
-                Simulados ilimitados, projeção da nota e autópsia do erro já estão liberados.
+                Simulados ilimitados, autópsia do erro e estatísticas avançadas já estão liberados.
               </p>
               <Link
                 href="/pro"

@@ -14,12 +14,8 @@ import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 export function ContinuarCard({ info }: { info: RetomarInfo }) {
   if (!info) return null;
 
-  const rotulo = info.recap
-    ? "Recap em andamento"
-    : info.avulsa
-      ? "Lista em andamento"
-      : "Missão do dia em andamento";
-  const titulo = info.subjectNome || (info.avulsa ? "Prática livre" : "Sua missão");
+  const rotulo = info.recap ? "Recap em andamento" : "Lista em andamento";
+  const titulo = info.subjectNome || "Prática livre";
   const cor = corDaDisciplina(info.subjectNome);
 
   return (

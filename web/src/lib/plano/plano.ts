@@ -101,7 +101,6 @@ export function acharOpcao(id: string): OpcaoPlano | undefined {
 // ⚠️ REGRA: cada item marcado como exclusivo do Pro tem que ter um gate REAL no
 // código. Hoje os gates são exatamente estes:
 //   • simulados ...... SIMULADO_FREE_LIMITE_SEMANA (lib/simulados/actions.ts, servidor)
-//   • projeção D ..... lib/trilha/trilha-data.ts + lib/questly/dashboard-data.ts
 //   • autópsia ....... components/questao/questao-runner.tsx
 //   • estatísticas ... components/dashboard/semana-view.tsx
 //   • selo Pro ....... components/plano/pro-ui.tsx (ranking/menu)
@@ -109,26 +108,29 @@ export function acharOpcao(id: string): OpcaoPlano | undefined {
 // automática", "repetição espaçada" e "prática livre ilimitada" como exclusivos
 // do Pro — nenhum deles é gated (o plano grátis já tem os quatro). Se quiser
 // que virem exclusivos, implemente o gate ANTES de voltar a anunciar.
+//
+// **Repasse de 2026-09-16.** "Projeção da sua nota pro dia da prova" saiu das
+// duas listas: o motor que a calculava foi removido com o resto do
+// planejamento automático, e anunciar um recurso que não existe mais é pior
+// que não ter o recurso.
 
 export type ItemPlano = { texto: string; incluso: boolean };
 
 export const RECURSOS_FREE: ItemPlano[] = [
-  { texto: "Missão do dia montada pelo motor", incluso: true },
-  { texto: "Disciplinas e provas ilimitadas", incluso: true },
-  { texto: "Trilha da ementa e boss por prova", incluso: true },
   { texto: "Banco de questões completo, com resolução", incluso: true },
+  { texto: "Listas montadas por você: disciplina, assunto e tamanho", incluso: true },
+  { texto: "Disciplinas ilimitadas", incluso: true },
+  { texto: "Trilha da ementa com seu aproveitamento por assunto", incluso: true },
   { texto: "Anotações e favoritos por questão", incluso: true },
   { texto: "Streak, XP e ligas semanais", incluso: true },
   { texto: "1 simulado cronometrado por semana", incluso: true },
   { texto: "Simulados cronometrados ilimitados", incluso: false },
-  { texto: "Projeção da sua nota pro dia da prova", incluso: false },
   { texto: "Autópsia do erro", incluso: false },
   { texto: "Estatísticas avançadas de desempenho", incluso: false },
 ];
 
 export const BENEFICIOS_PRO: string[] = [
   "Simulados cronometrados ilimitados",
-  "Projeção da sua nota pro dia da prova (e a rota pra subir ela)",
   "Autópsia do erro: descubra por que errou e corrija o padrão",
   "Estatísticas avançadas: comparativo, percentil e recordes",
   "Selo Pro no seu card do ranking",

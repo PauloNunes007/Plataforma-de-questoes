@@ -23,7 +23,7 @@ export default function NotFound() {
         </h1>
         <p className="mt-3 max-w-[46ch] text-[15px] leading-relaxed text-muted-foreground text-pretty">
           O endereço não existe (ou não existe mais). Volte pro início e siga de onde parou — sua
-          missão continua lá.
+          trilha continua lá.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link href="/dashboard" className={`${buttonVariants()} h-11 px-5`}>

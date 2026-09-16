@@ -149,7 +149,7 @@ function ConviteValido({
           Pronto — {diasPro} dias de Pro na sua conta.
         </h1>
         <p className="mt-2.5 text-[14.5px] leading-relaxed text-muted-foreground">
-          Tudo já está liberado. Comece pela missão do dia ou monte um simulado com questões de
+          Tudo já está liberado. Monte sua primeira lista ou um simulado com questões de
           provas anteriores.
         </p>
         <Link
@@ -310,7 +310,7 @@ function ConviteIndisponivel({
         {texto}
       </p>
       <p className="mt-4 text-[13.5px] leading-relaxed text-muted-foreground">
-        A Questly continua de portas abertas: o plano grátis tem missão do dia, trilha da ementa,
+        A Questly continua de portas abertas: o plano grátis tem o banco de questões, a trilha da ementa,
         banco de questões com resolução e um simulado cronometrado por semana.
       </p>
       <Link

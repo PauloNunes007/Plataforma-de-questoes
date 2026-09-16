@@ -1,53 +1,37 @@
-// Dados de "Minha trilha": portado de js/trilha.js, mas cobrindo TODAS as
-// disciplinas de uma vez (mapa da campanha) além do detalhe de uma só
-// (o caminho até o Boss dela). Mesma classificação de estado por tópico
-// do arquivo legado — pulado/mestre/dominado/vazio/coberto/pendente — e
-// a mesma fronteira curricular (1º pendente com questões) do
-// mission-engine.
+// Dados de "Minha trilha": o PANORAMA do aluno, disciplina por disciplina.
+//
+// **Repasse de 2026-09-16.** A trilha era o mapa até a prova: contagem
+// regressiva, nota projetada pro dia D, tópicos "em risco" e o Boss no fim da
+// estrada. Com o fim do motor de missões e da projeção, ela passou a
+// responder UMA pergunta só, que é a que o aluno faz de verdade: *o que eu já
+// estudei em cada matéria, e como eu vou nisso?* Sobraram cobertura, precisão
+// e retenção (memória) por tópico — tudo derivado do que o aluno já
+// respondeu, nada previsto.
+//
+// A classificação de estado por tópico é a mesma de sempre
+// (pulado/mestre/dominado/vazio/coberto/pendente), e a "fronteira" continua
+// sendo o 1º tópico pendente da ementa — agora com o sentido literal de "você
+// parou aqui", não de entrada de um motor de recomendação.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { contagemDosTopicos } from "@/lib/questly/contagem-questoes";
 import {
-  diasAte,
   questlyEhMestre,
   QUESTLY_MAESTRIA_MIN_QUESTOES,
   QUESTLY_MAESTRIA_TAXA,
   QUESTLY_RETENCAO_LIMIAR,
 } from "@/lib/questly/shared";
-// motor preditivo (BKT + estabilidade persistida) — as MESMAS funções puras
-// que o dashboard usa; aqui só LEMOS pra iluminar os nós da trilha.
-import {
-  QUESTLY_FORCA_RISCO,
-  questlyForcaNaProva,
-  questlyRetencaoEfetiva,
-} from "@/lib/questly/motor-aprovacao";
-// projeção via rede neural quando há modelo ativo em ml_modelos; sem
-// modelo, projetarProvaComRede é exatamente questlyProjetarProva.
-import { carregarModeloAtivo, projetarProvaComRede, type ModeloAtivo } from "@/lib/ml/inferencia";
+// retenção (Ebbinghaus sobre a estabilidade persistida) — ciência de memória,
+// não previsão de nota: diz o que já está escapando, com base no que o aluno
+// respondeu e em quando respondeu.
+import { questlyRetencaoEfetiva } from "@/lib/questly/motor-aprovacao";
 // reaproveita a constante já exportada por chance-aprovacao.ts em vez de
-// duplicar o literal — mantém em sincronia com COBERTURA_TOPICO_QUESTOES
-// (mission-engine.ts) e COBERTURA_TOPICO (js/trilha.js legado)
+// duplicar o literal — mantém em sincronia com COBERTURA_TOPICO (js/trilha.js)
 import { META_QUESTOES_TOPICO as COBERTURA_TOPICO } from "@/lib/questly/chance-aprovacao";
-import { ehPro } from "@/lib/plano/plano";
-
-// A PROJEÇÃO PRO DIA D é recurso do Pro (ver landing/plano.ts). Fica gated no
-// data layer — único ponto por onde SSR e a ação de troca de região passam,
-// então esconder aqui cobre a re-derivação otimista do trilha-view também.
-async function alunoEhPro(supabase: SupabaseClient, userId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from("profiles")
-    .select("plano, plano_expira_em")
-    .eq("id", userId)
-    .maybeSingle();
-  return ehPro(data);
-}
 
 export type EstadoTopico = "pulado" | "mestre" | "dominado" | "vazio" | "coberto" | "pendente";
 
 // gap que ainda falta pra um tópico já coberto virar "Mestre"
 export type RumoMestre = { faltamQuestoes: number; faltaPrecisao: number; pronto: boolean };
-
-// projeção agregada de uma disciplina pra o dia da prova
-export type ProjecaoTrilha = { notaProjetada: number | null; emRisco: number };
 
 export type TopicoTrilha = {
   id: string;
@@ -62,8 +46,6 @@ export type TopicoTrilha = {
   retencao: number | null; // 0..1 — Ebbinghaus; null = nunca tocado
   memoriaCaindo: boolean; // tópico coberto cuja retenção caiu abaixo do limiar
   rumoMestre: RumoMestre | null; // só coberto/dominado (mestre já é o teto)
-  forcaNaProva: number | null; // 0..1 — força projetada pro dia da prova
-  emRiscoProva: boolean; // estudado mas chega fraco no dia D
   // quantas questões do banco existem pra esse tópico — o aluno decide o
   // tamanho da prática com esse número na mão (e "vazio" fica honesto)
   questoesDisponiveis: number;
@@ -74,37 +56,28 @@ export type RegiaoMapa = {
   subjectId: string;
   nome: string;
   temEmenta: boolean;
-  bossNome: string | null;
-  diasAteProva: number | null;
-  preparoPercentual: number;
   totalTopicos: number;
   concluidos: number;
   pulados: number;
   mestres: number;
-  // tópicos já estudados cuja memória caiu abaixo do limiar (Ebbinghaus).
-  // Não é Pro-gated: retenção é ciência de memória, não projeção preditiva.
+  /** tópicos já estudados cuja memória caiu abaixo do limiar (Ebbinghaus) */
   revisar: number;
   completo: boolean;
-  // resumo preditivo por região (pro selo de risco da ilha)
-  notaProjetada: number | null;
-  emRisco: number;
+  /** média de acerto da disciplina, ponderada por volume de questões
+   *  respondidas. null = o aluno ainda não respondeu nada aqui. */
+  precisaoMedia: number | null;
+  /** total de questões que o aluno já respondeu nessa disciplina */
+  questoesRespondidas: number;
 };
 
 export type CaminhoDisciplina = {
   subjectId: string;
   subjectNome: string;
-  bossId: string | null;
-  bossNome: string | null;
-  bossData: string | null;
-  // escopo da prova (bosses.topico_ids): quais tópicos caem NESTA prova.
-  // null = não definido → projeção/risco caem no fallback (ementa toda).
-  bossTopicoIds: string[] | null;
-  diasAteProva: number | null;
-  preparoPercentual: number;
-  chanceAprovacao: number | null;
   topicos: TopicoTrilha[];
   progresso: { total: number; concluidos: number; pulados: number; naFila: number; pct: number };
-  projecao: ProjecaoTrilha;
+  /** média de acerto da disciplina (ponderada por volume) + o volume */
+  precisaoMedia: number | null;
+  questoesRespondidas: number;
 };
 
 type ProgressoRow = {
@@ -120,23 +93,16 @@ type ProgressoRow = {
 // os estados em que o aluno JÁ tocou o tópico (têm dado de memória/força)
 const ESTADOS_TOCADOS = new Set<EstadoTopico>(["coberto", "dominado", "mestre"]);
 
-// Deriva as camadas inteligentes de um tópico a partir do progresso bruto.
-// dataProvaMs = null quando não há Boss futuro (sem projeção pra prova).
+// Deriva as camadas de leitura de um tópico a partir do progresso bruto.
+// Tudo aqui é retrospectivo: quanto o aluno já respondeu, com que precisão e
+// quanto disso a memória ainda segura hoje. Nada projeta nota pra frente.
 function derivarInteligencia(
   progresso: ProgressoRow | undefined,
   estado: EstadoTopico,
-  dataProvaMs: number | null,
   agoraMs: number,
 ): Pick<
   TopicoTrilha,
-  | "cobertura"
-  | "precisao"
-  | "retencao"
-  | "memoriaCaindo"
-  | "rumoMestre"
-  | "forcaNaProva"
-  | "emRiscoProva"
-  | "ultimaRevisao"
+  "cobertura" | "precisao" | "retencao" | "memoriaCaindo" | "rumoMestre" | "ultimaRevisao"
 > {
   const num = progresso?.num_questoes_respondidas || 0;
   const taxa = progresso?.taxa_acerto ?? 0;
@@ -157,61 +123,34 @@ function derivarInteligencia(
         }
       : null;
 
-  // força/risco na prova: só com Boss futuro e tópico já tocado
-  let forcaNaProva: number | null = null;
-  let emRiscoProva = false;
-  if (dataProvaMs != null && tocado) {
-    forcaNaProva = questlyForcaNaProva(progresso, dataProvaMs, agoraMs);
-    emRiscoProva = forcaNaProva < QUESTLY_FORCA_RISCO;
-  }
-
   return {
     cobertura,
     precisao,
     retencao,
     memoriaCaindo,
     rumoMestre,
-    forcaNaProva,
-    emRiscoProva,
     ultimaRevisao: progresso?.ultima_revisao ? String(progresso.ultima_revisao).slice(0, 10) : null,
   };
 }
 
-// Projeção agregada da disciplina pro dia da prova, no mesmo espírito do
-// dashboard: média das forças dos tópicos NÃO pulados (denominador igual
-// ao da chance de aprovação), restrita ao ESCOPO da prova quando o aluno
-// marcou o que cai (bosses.topico_ids). Sem Boss futuro → sem nota.
-function projetarDisciplina(
-  progressoPorTopico: Record<string, ProgressoRow>,
-  topicoIds: string[],
-  estadoPorTopico: Record<string, EstadoTopico>,
-  dataProvaMs: number | null,
-  agoraMs: number,
-  modeloMl: ModeloAtivo | null,
-  escopoProva: Set<string> | null,
-): ProjecaoTrilha {
-  if (dataProvaMs == null) return { notaProjetada: null, emRisco: 0 };
-  const entradas = topicoIds
-    .filter((id) => estadoPorTopico[id] !== "pulado")
-    .filter((id) => !escopoProva || escopoProva.has(id))
-    .map((id) => ({ id, ...(progressoPorTopico[id] || {}) }));
-  const { notaProjetada, emRisco } = projetarProvaComRede(modeloMl, entradas, dataProvaMs, agoraMs);
-  return { notaProjetada, emRisco: emRisco.length };
-}
-
-type BossRow = {
-  id: string;
-  nome: string;
-  data_prova: string;
-  preparo_percentual: number | null;
-  topico_ids?: string[] | null;
-};
-
-// Escopo da prova como Set, ou null quando o aluno ainda não marcou o
-// que cai (aí tudo conta — comportamento anterior à migração).
-function escopoDaProva(boss: BossRow | null): Set<string> | null {
-  if (!boss?.topico_ids || boss.topico_ids.length === 0) return null;
-  return new Set(boss.topico_ids);
+/** Precisão média da disciplina, ponderada pelo volume de cada tópico (um
+ *  tópico com 40 questões pesa mais que um com 3) + o volume total. */
+function resumoPrecisao(linhas: (ProgressoRow | undefined)[]): {
+  precisaoMedia: number | null;
+  questoesRespondidas: number;
+} {
+  let acertosEstimados = 0;
+  let total = 0;
+  linhas.forEach((p) => {
+    const n = p?.num_questoes_respondidas || 0;
+    if (n <= 0) return;
+    total += n;
+    acertosEstimados += n * (p?.taxa_acerto ?? 0);
+  });
+  return {
+    precisaoMedia: total > 0 ? acertosEstimados / total : null,
+    questoesRespondidas: total,
+  };
 }
 
 function classificarEstado(progresso: ProgressoRow | undefined, temQuestoes: boolean): EstadoTopico {
@@ -224,53 +163,19 @@ function classificarEstado(progresso: ProgressoRow | undefined, temQuestoes: boo
   return "pendente";
 }
 
-function bossMaisProximo(bosses: BossRow[] | null | undefined): BossRow | null {
-  const hoje = new Date(new Date().toDateString());
-  const futuros = (bosses || [])
-    .filter((b) => new Date(b.data_prova) >= hoje)
-    .sort((a, b) => new Date(a.data_prova).getTime() - new Date(b.data_prova).getTime());
-  return futuros[0] || null;
-}
-
-// Mapa da campanha: uma "região" por disciplina, cada uma com seu próprio
-// Boss — em vez de olhar só a prova mais próxima, o aluno vê o caminho até
-// TODAS as provas de uma vez.
-/** Modo livre: a trilha CONTINUA (é o mapa de progresso da ementa, não um
- *  plano por data de prova), mas tudo que fala de prova sai — o aluno que
- *  desligou a trajetória não deveria ver "faltam 9 dias" numa contagem que
- *  ele não pediu. Os dados seguem no banco; só não são exibidos.
- *  Ver lib/questly/modo-estudo.ts. */
-export function semProva(regiao: RegiaoMapa): RegiaoMapa {
-  return { ...regiao, bossNome: null, diasAteProva: null, notaProjetada: null, emRisco: 0 };
-}
-
-export function caminhoSemProva(caminho: CaminhoDisciplina): CaminhoDisciplina {
-  return {
-    ...caminho,
-    bossId: null,
-    bossNome: null,
-    bossData: null,
-    bossTopicoIds: null,
-    diasAteProva: null,
-    projecao: { ...caminho.projecao, notaProjetada: null, emRisco: 0 },
-  };
-}
-
+// Mapa do panorama: uma "região" por disciplina, com o quanto da ementa já
+// foi percorrido e como o aluno vem indo nela.
 export async function carregarMapaTrilha(
   supabase: SupabaseClient,
   user: { id: string },
 ): Promise<RegiaoMapa[]> {
   const { data: subjectsRaw } = await supabase
     .from("subjects")
-    .select("id, nome, materia_id, bosses(id, nome, data_prova, preparo_percentual, topico_ids)")
+    .select("id, nome, materia_id")
     .eq("user_id", user.id)
     .order("nome");
   const subjects = subjectsRaw || [];
   if (subjects.length === 0) return [];
-
-  const pro = await alunoEhPro(supabase, user.id);
-  // Carregado uma vez por request (a projeção é Pro-gated, então só pra Pro).
-  const modeloMl = pro ? await carregarModeloAtivo(supabase) : null;
 
   const materiaIds = Array.from(new Set(subjects.map((s) => s.materia_id).filter(Boolean))) as string[];
 
@@ -309,18 +214,14 @@ export async function carregarMapaTrilha(
   const agoraMs = Date.now();
 
   return subjects.map((s) => {
-    const proximoBoss = bossMaisProximo(s.bosses as BossRow[]);
-    const dataProvaMs = proximoBoss ? new Date(proximoBoss.data_prova).getTime() : null;
     const topicoIds = s.materia_id ? topicosPorMateria[s.materia_id] || [] : [];
 
     let concluidos = 0;
     let pulados = 0;
     let mestres = 0;
     let revisar = 0;
-    const estadoPorTopico: Record<string, EstadoTopico> = {};
     topicoIds.forEach((id) => {
       const estado = classificarEstado(progressoPorTopico[id], Boolean(temQuestaoPorTopico[id]));
-      estadoPorTopico[id] = estado;
       if (estado === "mestre") mestres++;
       if (estado === "coberto" || estado === "dominado" || estado === "mestre") concluidos++;
       if (estado === "pulado") pulados++;
@@ -331,37 +232,25 @@ export async function carregarMapaTrilha(
       }
     });
 
-    const projecao = projetarDisciplina(
-      progressoPorTopico,
-      topicoIds,
-      estadoPorTopico,
-      dataProvaMs,
-      agoraMs,
-      modeloMl,
-      escopoDaProva(proximoBoss),
-    );
+    const resumo = resumoPrecisao(topicoIds.map((id) => progressoPorTopico[id]));
 
     return {
       subjectId: s.id,
       nome: s.nome,
       temEmenta: topicoIds.length > 0,
-      bossNome: proximoBoss?.nome || null,
-      diasAteProva: proximoBoss ? diasAte(proximoBoss.data_prova) : null,
-      preparoPercentual: proximoBoss?.preparo_percentual || 0,
       totalTopicos: topicoIds.length,
       concluidos,
       pulados,
       mestres,
       revisar,
       completo: topicoIds.length > 0 && concluidos + pulados === topicoIds.length,
-      notaProjetada: pro ? projecao.notaProjetada : null,
-      emRisco: pro ? projecao.emRisco : 0,
+      ...resumo,
     };
   });
 }
 
-// Detalhe de uma disciplina: a ementa em ordem curricular + o Boss no fim
-// da trilha.
+// Detalhe de uma disciplina: a ementa em ordem curricular, com o estado de
+// cada tópico.
 export async function carregarCaminhoDisciplina(
   supabase: SupabaseClient,
   user: { id: string },
@@ -369,13 +258,11 @@ export async function carregarCaminhoDisciplina(
 ): Promise<CaminhoDisciplina | null> {
   const { data: subject } = await supabase
     .from("subjects")
-    .select("id, nome, materia_id, chance_aprovacao, bosses(id, nome, data_prova, preparo_percentual, topico_ids)")
+    .select("id, nome, materia_id")
     .eq("id", subjectId)
     .eq("user_id", user.id)
     .single();
   if (!subject || !subject.materia_id) return null;
-
-  const pro = await alunoEhPro(supabase, user.id);
 
   const { data: topicosRaw } = await supabase
     .from("topicos")
@@ -413,20 +300,16 @@ export async function carregarCaminhoDisciplina(
     qtdQuestoes = tq;
   }
 
-  const proximoBoss = bossMaisProximo(subject.bosses as BossRow[]);
-  const dataProvaMs = proximoBoss ? new Date(proximoBoss.data_prova).getTime() : null;
   const agoraMs = Date.now();
-  const escopoProva = escopoDaProva(proximoBoss);
 
+  // A "fronteira" é só o 1º tópico pendente da ementa — o marcador de "você
+  // parou aqui" na estrada. Não bloqueia nada: qualquer parada é praticável a
+  // qualquer momento, inclusive as que vêm depois dela.
   let fronteiraId: string | null = null;
-  const estadoPorTopico: Record<string, EstadoTopico> = {};
   const topicos: TopicoTrilha[] = topicosOrdenados.map((t) => {
     const progresso = progressoPorTopico[t.id];
     const estado = classificarEstado(progresso, (qtdQuestoes[t.id] || 0) > 0);
-    estadoPorTopico[t.id] = estado;
     if (fronteiraId === null && estado === "pendente") fronteiraId = t.id;
-    // tópico fora do escopo da prova não ganha força/selo de risco pro dia D
-    const dataProvaDoTopico = !escopoProva || escopoProva.has(t.id) ? dataProvaMs : null;
     return {
       id: t.id,
       nome: t.nome,
@@ -435,44 +318,20 @@ export async function carregarCaminhoDisciplina(
       estado,
       ehFronteira: false,
       questoesDisponiveis: qtdQuestoes[t.id] || 0,
-      ...derivarInteligencia(progresso, estado, dataProvaDoTopico, agoraMs),
+      ...derivarInteligencia(progresso, estado, agoraMs),
     };
   });
   topicos.forEach((t) => {
     if (t.id === fronteiraId) t.ehFronteira = true;
-    // força/risco projetados pro dia D são recurso do Pro
-    if (!pro) {
-      t.forcaNaProva = null;
-      t.emRiscoProva = false;
-    }
   });
 
   const total = topicos.length;
   const concluidos = topicos.filter((t) => t.estado === "coberto" || t.estado === "dominado" || t.estado === "mestre").length;
   const pulados = topicos.filter((t) => t.estado === "pulado").length;
 
-  const projecao = pro
-    ? projetarDisciplina(
-        progressoPorTopico,
-        topicoIds,
-        estadoPorTopico,
-        dataProvaMs,
-        agoraMs,
-        await carregarModeloAtivo(supabase),
-        escopoProva,
-      )
-    : { notaProjetada: null, emRisco: 0 };
-
   return {
     subjectId: subject.id,
     subjectNome: subject.nome,
-    bossId: proximoBoss?.id || null,
-    bossNome: proximoBoss?.nome || null,
-    bossData: proximoBoss?.data_prova || null,
-    bossTopicoIds: proximoBoss?.topico_ids?.length ? proximoBoss.topico_ids : null,
-    diasAteProva: proximoBoss ? diasAte(proximoBoss.data_prova) : null,
-    preparoPercentual: proximoBoss?.preparo_percentual || 0,
-    chanceAprovacao: subject.chance_aprovacao != null ? Math.round(subject.chance_aprovacao) : null,
     topicos,
     progresso: {
       total,
@@ -481,6 +340,6 @@ export async function carregarCaminhoDisciplina(
       naFila: total - concluidos - pulados,
       pct: total > 0 ? Math.round(((concluidos + pulados) / total) * 100) : 0,
     },
-    projecao,
+    ...resumoPrecisao(topicoIds.map((id) => progressoPorTopico[id])),
   };
 }

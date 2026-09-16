@@ -9,13 +9,13 @@
 //   • SESSÃO  — bloco de estudo com hora e duração;
 //   • TAREFA  — afazer solto, sem horário;
 //   • META    — "N questões de tal disciplina". O progresso é RECONTADO das
-//               missões daquele dia, nunca digitado;
-//   • PROVA   — escreve em `bosses`, a mesma prova que a trilha, a contagem
-//               regressiva e a projeção de nota leem. Não é um post-it.
+//               listas daquele dia, nunca digitado;
+//   • PROVA   — a data da prova, pintada no mês. Desde o fim do motor de
+//               missões ela é SÓ AGENDA: nada no app lê essa data pra
+//               recomendar assunto, projetar nota ou montar plano.
 //
-// Marcar qualquer uma delas NÃO dá XP, não gera missão e não acende a
-// ofensiva: planejar não é conquistar, e pagar por plano marcado abriria o
-// caminho de forjar ranking.
+// Marcar qualquer uma delas NÃO dá XP e não acende a ofensiva: planejar não é
+// conquistar, e pagar por plano marcado abriria o caminho de forjar ranking.
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -75,7 +75,6 @@ export function PainelDia({
   onMarcarProva,
   onDesmarcarProva,
   onDragStartItem,
-  guiado = true,
 }: {
   data: string;
   hoje: string;
@@ -92,9 +91,6 @@ export function PainelDia({
   onMarcarProva: (subjectId: string, nome: string) => Promise<string | null>;
   onDesmarcarProva: (bossId: string) => void;
   onDragStartItem: (id: string) => void;
-  /** false = modo livre: sem "marcar prova" (é a porta do ecossistema de
-   *  trajetória, que esse aluno desligou). Ver lib/questly/modo-estudo.ts. */
-  guiado?: boolean;
 }) {
   const semMovimento = useReducedMotion();
   const [modo, setModo] = useState<Modo | null>(null);
@@ -436,23 +432,19 @@ export function PainelDia({
               rotulo="Tarefa"
               onClick={() => abrir("tarefa")}
             />
-            {guiado && (
-              <BotaoAdicionar
-                icone={<Swords size={14} strokeWidth={2.4} />}
-                rotulo="Prova"
-                desabilitado={semDisciplinas}
-                onClick={() => abrir("prova")}
-              />
-            )}
+            <BotaoAdicionar
+              icone={<Swords size={14} strokeWidth={2.4} />}
+              rotulo="Prova"
+              desabilitado={semDisciplinas}
+              onClick={() => abrir("prova")}
+            />
           </motion.div>
         )}
       </AnimatePresence>
 
       {semDisciplinas && !modo && (
         <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-          {guiado
-            ? "Meta e prova precisam de uma disciplina — adicione as suas em Ajustes."
-            : "A meta precisa de uma disciplina — adicione as suas em Ajustes."}
+          Meta e prova precisam de uma disciplina — adicione as suas em Ajustes.
         </p>
       )}
 
@@ -495,7 +487,7 @@ function HistoricoDoDia({ historico }: { historico: HistoricoDia | null }) {
 
       {vazio ? (
         <p className="rounded-xl bg-muted/60 px-2.5 py-2 text-[11px] leading-relaxed text-muted-foreground">
-          Nada registrado nesse dia. Missões, listas e simulados aparecem aqui assim que você responde a
+          Nada registrado nesse dia. Listas e simulados aparecem aqui assim que você responde a
           primeira questão.
         </p>
       ) : (
@@ -577,11 +569,11 @@ function LinhaMissao({ missao }: { missao: MissaoDia }) {
   const cor = corDaDisciplina(nome).de;
   const pendente = !missao.concluida && missao.respondidas < missao.alvo;
 
-  // A missão em andamento fala de PROGRESSO; o acerto só entra quando ela
+  // A lista em andamento fala de PROGRESSO; o acerto só entra quando ela
   // fechou. Sem isso a linha ainda disputa espaço com o "Continuar" e é o
   // número útil que acaba cortado.
   const detalhe = [
-    missao.avulsa ? "Lista avulsa" : "Missão do dia",
+    "Lista de questões",
     missao.alvo > 0 ? `${missao.respondidas}/${missao.alvo} questões` : null,
     missao.concluida && missao.respondidas > 0
       ? `${missao.acertos} ${missao.acertos === 1 ? "acerto" : "acertos"}`
