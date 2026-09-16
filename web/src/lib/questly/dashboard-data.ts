@@ -15,14 +15,19 @@ import {
   questlyNormalizarDia,
   saudacaoPorHorario,
 } from "./shared";
-import { questlyGerarMissoesDoDia, type Mission, type Subject } from "./mission-engine";
+import { questlyGerarMissoesDoDia, type Mission, type MissoesDoDiaResultado, type Subject } from "./mission-engine";
 import { questlyGarantirSemanaLiga, QUESTLY_LIGA_INFO, type EstadoLiga } from "./liga";
-import { carregarModeloAtivo, forcaTopicoComRede, projetarProvaComRede } from "@/lib/ml/inferencia";
-import { questlyRotaAprovacao, type RotaAprovacao, type TopicoRota } from "./rota-aprovacao";
+import { carregarModeloAtivo, projetarProvaComRede } from "@/lib/ml/inferencia";
+import {
+  questlyMotivoTopico,
+  questlyPorqueDaMissao,
+  type ProgressoTopico,
+  type TopicoDaMissao,
+} from "./plano-do-dia";
 import { ehPro } from "@/lib/plano/plano";
+import { questlyModoEstudo, type ModoEstudo } from "./modo-estudo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
-import { contagemDosTopicos } from "@/lib/questly/contagem-questoes";
 
 const XP_POR_NIVEL = 1000;
 const DOW_ABREV = ["dom", "seg", "ter", "qua", "qui", "sex", "sab"];
@@ -58,9 +63,34 @@ export type ProfileRow = {
   // idem — `hero-data.ts` lê pra saber quais distintivos o aluno escolheu
   // pro card público (ver lib/ranking/badges.ts).
   distintivos_selecionados?: string[] | null;
+  /** 'guiado' (padrão) | 'livre' — ver lib/questly/modo-estudo.ts e
+   *  supabase_modo_estudo.sql. No modo livre a home não gera missão, não
+   *  projeta prova e não mostra Boss. */
+  modo_estudo?: string | null;
 };
 
-export type MissionCardData = Mission & { mestre: boolean };
+export type MissionCardData = Mission & {
+  mestre: boolean;
+  /** Os tópicos da missão com NOME e MOTIVO — é o que substituiu o cartão do
+   *  GPS: a explicação vive dentro da própria missão (ver plano-do-dia.ts). */
+  topicos: TopicoDaMissao[];
+  /** Uma linha explicando por que é ISSO hoje. */
+  porque: string;
+};
+
+/** Missão que o aluno empurrou pra frente (missions.adiada_para). */
+export type MissaoAdiada = {
+  id: string;
+  subjectNome: string | null;
+  para: string;
+};
+
+/** Disciplina sem missão hoje, oferecida como troca. */
+export type AlternativaDoDia = {
+  id: string;
+  nome: string;
+  naGradeDeHoje: boolean;
+};
 
 export type BossAlvo = {
   subjectId: string;
@@ -72,7 +102,6 @@ export type BossAlvo = {
   chanceAprovacao: number | null;
   notaProjetada: number | null; // nota esperada na prova se nada mudar (motor)
   emRiscoCount: number; // tópicos que chegam fracos no dia D
-  rota: RotaAprovacao | null; // GPS: onde investir os minutos de hoje
   // escopo da prova (bosses.topico_ids): o aluno marcou o que cai?
   // false = projeção/GPS estão assumindo a ementa inteira (menos preciso)
   escopoDefinido: boolean;
@@ -163,6 +192,11 @@ export type DashboardData = {
   semMissaoHoje: boolean;
   todasConcluidas: boolean;
   motivoSemMissao?: string;
+  missoesAdiadas: MissaoAdiada[];
+  alternativasDoDia: AlternativaDoDia[];
+  /** 'guiado' | 'livre'. No 'livre', missions/bossAlvo vêm vazios e a home
+   *  esconde o ecossistema inteiro de trajetória. */
+  modoEstudo: ModoEstudo;
   bossAlvo: BossAlvo | null;
   ligaEstado: (EstadoLiga & { nomeExibicao: string }) | null;
   streakHeat: boolean[];
@@ -251,7 +285,15 @@ export async function carregarDadosDashboard(
   // ------------------------------------------------------------ onda 2
   // Missões do dia (mission-engine) — recebe as disciplinas já lidas acima
   // em vez de repetir a mesma query.
-  const missaoResultado = await questlyGerarMissoesDoDia(supabase, user, profile, subjects);
+  //
+  // No modo LIVRE o motor nem roda: além de não haver onde mostrar o
+  // resultado, gerar missão escreveria uma linha em `missions` todo dia pra
+  // um aluno que não pediu trajetória nenhuma.
+  const modoEstudo = questlyModoEstudo(profile);
+  const guiado = modoEstudo === "guiado";
+  const missaoResultado: MissoesDoDiaResultado = guiado
+    ? await questlyGerarMissoesDoDia(supabase, user, profile, subjects)
+    : { missoes: [], semMissaoHoje: false, adiadas: [], alternativas: [] };
   const missoes = missaoResultado.missoes;
   const todasConcluidas = missoes.length > 0 && missoes.every((m) => m.concluida);
 
@@ -269,7 +311,10 @@ export async function carregarDadosDashboard(
   const topicIdsRelevantes = Array.from(new Set(missoes.flatMap((m) => m.topic_ids || [])));
 
   // ---- Boss-alvo (disciplina com boss futuro mais próximo) ----
-  const alvo = subjects
+  // Só existe no modo guiado: no livre não há campanha por data de prova.
+  const alvo = !guiado
+    ? undefined
+    : subjects
     .map((s) => {
       const futuros = (s.bosses || [])
         .filter((b) => new Date(b.data_prova) >= hoje)
@@ -328,25 +373,40 @@ export async function carregarDadosDashboard(
   const inicioMissoesStr = inicioJanelaStr < inicioSemanaStr ? inicioJanelaStr : inicioSemanaStr;
 
   // ------------------------------------------------------------ onda 3
-  const [progressoPorTopico, blocoBoss, missoesRange, blocoLiga, todosLogs, tarefasPorData] =
+  const [blocoTopicos, blocoBoss, missoesRange, blocoLiga, todosLogs, tarefasPorData] =
     await Promise.all([
-      // (a) progresso nos tópicos das missões de hoje — pro selo "Mestre"
-      (async (): Promise<Record<string, { taxa_acerto: number; num_questoes_respondidas: number }>> => {
-        if (topicIdsRelevantes.length === 0) return {};
-        const { data: progressos } = await supabase
-          .from("aluno_topico_progresso")
-          .select("topico_id, taxa_acerto, num_questoes_respondidas")
-          .eq("user_id", user.id)
-          .in("topico_id", topicIdsRelevantes);
-        const mapa: Record<string, { taxa_acerto: number; num_questoes_respondidas: number }> = {};
+      // (a) tópicos das missões de hoje: progresso (selo "Mestre" e o MOTIVO de
+      //     cada tópico estar ali) + nome. O nome é o que permitiu tirar o
+      //     cartão do GPS da home: a missão passou a dizer o assunto e o
+      //     porquê dele em vez de listar ids de tópico — ver plano-do-dia.ts.
+      (async (): Promise<{
+        progresso: Record<string, ProgressoTopico>;
+        nomes: Record<string, string>;
+      }> => {
+        if (topicIdsRelevantes.length === 0) return { progresso: {}, nomes: {} };
+        const [{ data: progressos }, { data: topicosNomes }] = await Promise.all([
+          supabase
+            .from("aluno_topico_progresso")
+            .select(
+              "topico_id, taxa_acerto, num_questoes_respondidas, ultima_revisao, maestria, estabilidade",
+            )
+            .eq("user_id", user.id)
+            .in("topico_id", topicIdsRelevantes),
+          supabase.from("topicos").select("id, nome").in("id", topicIdsRelevantes),
+        ]);
+        const progresso: Record<string, ProgressoTopico> = {};
         (progressos || []).forEach((p) => {
-          mapa[p.topico_id] = p;
+          progresso[p.topico_id] = p as ProgressoTopico;
         });
-        return mapa;
+        const nomes: Record<string, string> = {};
+        (topicosNomes || []).forEach((t) => {
+          nomes[t.id as string] = t.nome as string;
+        });
+        return { progresso, nomes };
       })(),
 
       // (b) projeção pra data da prova + GPS
-      carregarProjecaoBoss(supabase, user, profile, alvo, escopoProva),
+      carregarProjecaoBoss(supabase, user, alvo, escopoProva),
 
       // (c) missões da janela do ticker + da semana (fundidas)
       supabase
@@ -380,11 +440,29 @@ export async function carregarDadosDashboard(
       carregarTarefasIntervalo(supabase, user, inicioMesStr, fimMesStr),
     ]);
 
+  const progressoPorTopico = blocoTopicos.progresso;
+  const nomePorTopico = blocoTopicos.nomes;
+  const dataProvaAlvoMs = alvo ? new Date(alvo.boss.data_prova).getTime() : null;
+  const agoraMsMissao = Date.now();
+
   const missionCards: MissionCardData[] = missoes.map((m) => {
     const topicIds = m.topic_ids || [];
     const mestre =
       !m.concluida && topicIds.length > 0 && topicIds.every((id) => questlyEhMestre(progressoPorTopico[id]));
-    return { ...m, mestre };
+    // A missão do boss-alvo é a única que pode falar em "dia da prova"; as
+    // outras disciplinas não têm essa data e a frase não a inventa.
+    const ehDoAlvo = Boolean(alvo && m.subject_id === alvo.subject.id);
+    const provaMs = ehDoAlvo ? dataProvaAlvoMs : null;
+    const topicos: TopicoDaMissao[] = topicIds.map((id) => ({
+      id,
+      nome: nomePorTopico[id] || "Tópico",
+      motivo: questlyMotivoTopico(progressoPorTopico[id], provaMs, agoraMsMissao),
+    }));
+    const porque = questlyPorqueDaMissao(
+      topicos,
+      ehDoAlvo && alvo ? diasAte(alvo.boss.data_prova) : null,
+    );
+    return { ...m, mestre, topicos, porque };
   });
 
   const bossAlvo: BossAlvo | null = alvo
@@ -398,7 +476,6 @@ export async function carregarDadosDashboard(
         chanceAprovacao: alvo.subject.chance_aprovacao != null ? Math.round(alvo.subject.chance_aprovacao) : null,
         notaProjetada: blocoBoss.notaProjetada,
         emRiscoCount: blocoBoss.emRiscoCount,
-        rota: blocoBoss.rota,
         escopoDefinido: escopoProva != null,
         escopoTopicos: escopoProva ? escopoProva.size : null,
       }
@@ -444,8 +521,10 @@ export async function carregarDadosDashboard(
   }
 
   // ---- Calendário do mês ----
+  // No modo livre o aluno não segue prova nenhuma — as datas que por acaso
+  // existam no banco (de antes de ele desligar a trajetória) não pintam o mês.
   const provasPorDia: Record<string, string> = {};
-  subjects.forEach((s) => {
+  (guiado ? subjects : []).forEach((s) => {
     (s.bosses || []).forEach((b) => {
       if (!b.data_prova) return;
       const dataProvaStr = String(b.data_prova).slice(0, 10);
@@ -544,6 +623,13 @@ export async function carregarDadosDashboard(
     semMissaoHoje: missaoResultado.semMissaoHoje,
     todasConcluidas,
     motivoSemMissao: missaoResultado.motivo,
+    missoesAdiadas: missaoResultado.adiadas.map((m) => ({
+      id: m.id,
+      subjectNome: m.subjects?.nome ?? null,
+      para: String(m.adiada_para).slice(0, 10),
+    })),
+    alternativasDoDia: missaoResultado.alternativas,
+    modoEstudo,
     bossAlvo,
     ligaEstado,
     streakHeat,
@@ -559,27 +645,25 @@ export async function carregarDadosDashboard(
 type ProjecaoBoss = {
   notaProjetada: number | null;
   emRiscoCount: number;
-  rota: RotaAprovacao | null;
 };
 
 // Projeção pra data da prova (motor): que nota o aluno tira no dia D se nada
-// mudar, quantos tópicos chegam fracos lá, e onde investir os minutos de hoje.
+// mudar e quantos tópicos chegam fracos lá.
 // Escopo: o que o aluno marcou que CAI NESTA prova (bosses.topico_ids) — sem
 // escopo definido, fallback pra flag global cai_na_prova da ementa (menos
 // preciso; o card avisa). Sempre sem os 'pulado'.
 //
 // Extraída de carregarDadosDashboard pra rodar como um bloco só dentro do
 // Promise.all da onda 3. Por dentro ela ainda é sequencial onde precisa ser
-// (os ids dos tópicos definem as duas queries seguintes), mas o modelo de ML
-// sobe junto com a lista de tópicos, e progresso + questões sobem juntos.
+// (os ids dos tópicos definem a query seguinte), mas o modelo de ML sobe
+// junto com a lista de tópicos.
 async function carregarProjecaoBoss(
   supabase: SupabaseClient,
   user: { id: string },
-  profile: ProfileRow | null,
   alvo: { subject: Subject; boss: { data_prova: string } } | undefined,
   escopoProva: Set<string> | null,
 ): Promise<ProjecaoBoss> {
-  const vazio: ProjecaoBoss = { notaProjetada: null, emRiscoCount: 0, rota: null };
+  const vazio: ProjecaoBoss = { notaProjetada: null, emRiscoCount: 0 };
   if (!alvo || !alvo.subject.materia_id) return vazio;
 
   const [{ data: topicosMateria }, modeloMl] = await Promise.all([
@@ -593,24 +677,14 @@ async function carregarProjecaoBoss(
   const idsProva = topicosProva.map((t) => t.id);
   if (idsProva.length === 0) return vazio;
 
-  const nomePorId: Record<string, string> = {};
-  topicosProva.forEach((t) => (nomePorId[t.id] = t.nome));
-
-  // Precisa do progresso do aluno E do tempo médio/nº de questões por tópico;
-  // as duas leituras saem dos mesmos ids.
-  const [{ data: progProva }, contagensProva] = await Promise.all([
-    supabase
-      .from("aluno_topico_progresso")
-      .select("topico_id, status, maestria, estabilidade, taxa_acerto, num_questoes_respondidas, ultima_revisao")
-      .eq("user_id", user.id)
-      .in("topico_id", idsProva),
-    // Mesmo recorte do mission-engine: a estimativa de tempo/volume da prova
-    // fala do que o aluno vai praticar, e aprofundamento não é sorteado.
-    // A view já entrega o total e a média de tempo por tópico — antes isso
-    // baixava uma linha por questão da matéria só pra tirar dois números, e
-    // batia no teto de 1000 do PostgREST em matéria grande.
-    contagemDosTopicos(supabase, idsProva),
-  ]);
+  // Repasse de 2026-09-16: a contagem de questões por tópico saiu daqui junto
+  // com o cartão do GPS — ela só servia pra dimensionar a rota Δnota/min. A
+  // projeção da nota nunca precisou dela.
+  const { data: progProva } = await supabase
+    .from("aluno_topico_progresso")
+    .select("topico_id, status, maestria, estabilidade, taxa_acerto, num_questoes_respondidas, ultima_revisao")
+    .eq("user_id", user.id)
+    .in("topico_id", idsProva);
 
   type ProgProva = {
     topico_id: string;
@@ -634,30 +708,7 @@ async function carregarProjecaoBoss(
   const agoraMs = Date.now();
   const projecao = projetarProvaComRede(modeloMl, topicosParaProjecao, dataProvaMs, agoraMs);
 
-  // ---- GPS: rota Δnota/min pros minutos de hoje ----
-  // Só tópicos com questão entram na rota — os demais seguem na projeção.
-  const topicosRota: TopicoRota[] = topicosParaProjecao.map((t) => {
-    const c = contagensProva.get(t.id);
-    return {
-      ...t,
-      nome: nomePorId[t.id] || "Tópico",
-      questoesDisponiveis: c?.totalRegular ?? 0,
-      tempoMedioSeg: c?.tempoMedioSeg ?? null,
-    };
-  });
-
-  // Orçamento = tempo diário configurado (com piso/teto sensatos);
-  // é uma recomendação pro dia, não um contrato.
-  const tempoRotaMin = Math.min(180, Math.max(15, profile?.tempo_diario_min || 60));
-  const rota = questlyRotaAprovacao({
-    topicos: topicosRota,
-    dataProvaMs,
-    agoraMs,
-    tempoDisponivelMin: tempoRotaMin,
-    calcularForca: (t) => forcaTopicoComRede(modeloMl, t, dataProvaMs, agoraMs),
-  });
-
-  return { notaProjetada: projecao.notaProjetada, emRiscoCount: projecao.emRisco.length, rota };
+  return { notaProjetada: projecao.notaProjetada, emRiscoCount: projecao.emRisco.length };
 }
 
 /** Leitura única do perfil, compartilhada pela home entre o hero e o

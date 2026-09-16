@@ -75,6 +75,7 @@ export function PainelDia({
   onMarcarProva,
   onDesmarcarProva,
   onDragStartItem,
+  guiado = true,
 }: {
   data: string;
   hoje: string;
@@ -91,6 +92,9 @@ export function PainelDia({
   onMarcarProva: (subjectId: string, nome: string) => Promise<string | null>;
   onDesmarcarProva: (bossId: string) => void;
   onDragStartItem: (id: string) => void;
+  /** false = modo livre: sem "marcar prova" (é a porta do ecossistema de
+   *  trajetória, que esse aluno desligou). Ver lib/questly/modo-estudo.ts. */
+  guiado?: boolean;
 }) {
   const semMovimento = useReducedMotion();
   const [modo, setModo] = useState<Modo | null>(null);
@@ -432,19 +436,23 @@ export function PainelDia({
               rotulo="Tarefa"
               onClick={() => abrir("tarefa")}
             />
-            <BotaoAdicionar
-              icone={<Swords size={14} strokeWidth={2.4} />}
-              rotulo="Prova"
-              desabilitado={semDisciplinas}
-              onClick={() => abrir("prova")}
-            />
+            {guiado && (
+              <BotaoAdicionar
+                icone={<Swords size={14} strokeWidth={2.4} />}
+                rotulo="Prova"
+                desabilitado={semDisciplinas}
+                onClick={() => abrir("prova")}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
       {semDisciplinas && !modo && (
         <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-          Meta e prova precisam de uma disciplina — adicione as suas em Ajustes.
+          {guiado
+            ? "Meta e prova precisam de uma disciplina — adicione as suas em Ajustes."
+            : "A meta precisa de uma disciplina — adicione as suas em Ajustes."}
         </p>
       )}
 

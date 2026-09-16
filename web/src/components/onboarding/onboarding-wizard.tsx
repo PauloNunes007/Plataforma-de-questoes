@@ -13,13 +13,14 @@ import {
 import type { MateriaComQuestoes } from "@/lib/disciplinas/disciplinas-data";
 import type { InstituicaoAgregada } from "@/lib/cursos/instituicao";
 import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cursos/registro";
+import type { ModoEstudo } from "@/lib/questly/modo-estudo";
 import { CursoReveal } from "@/components/onboarding/curso-reveal";
 import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
 import { TourPlataforma } from "@/components/onboarding/tour-plataforma";
 import { Insignia, type NomeInsignia, type TomInsignia } from "@/components/insignias/insignia";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 
-const TOTAL_STEPS = 10;
+const TOTAL_STEPS = 11;
 
 const USERNAME_REGEX = /^[a-z0-9][a-z0-9_.]{2,19}$/;
 type UsernameStatus = "idle" | "verificando" | "disponivel" | "indisponivel" | "invalido";
@@ -57,6 +58,23 @@ const NIVEL_OPCOES: { valor: string; insignia: NomeInsignia; tom: TomInsignia; t
   { valor: "avancado", insignia: "trofeu", tom: "ouro", titulo: "Avançado", desc: "Domino o conteúdo, quero manter o ritmo" },
 ];
 
+// Os dois modos da plataforma, descritos pelo que cada um ENTREGA — sem
+// "recomendado", sem opção certa. Ver lib/questly/modo-estudo.ts.
+const MODOS_ESTUDO: { valor: ModoEstudo; titulo: string; desc: string; inclui: string }[] = [
+  {
+    valor: "guiado",
+    titulo: "Monte pra mim",
+    desc: "Você diz quando tem suas provas e quanto tempo tem por dia; o app decide o que estudar hoje.",
+    inclui: "Missão do dia · Grade semanal · Contagem pra prova",
+  },
+  {
+    valor: "livre",
+    titulo: "Eu escolho na hora",
+    desc: "Sem plano automático e sem data de prova: você monta a lista que quiser, quando quiser.",
+    inclui: "Banco de questões · Simulados · Ranking",
+  },
+];
+
 type DiscCfg = { nota: number; provas: ProvaInput[] };
 
 type WizardState = {
@@ -71,6 +89,7 @@ type WizardState = {
   dias: string[];
   tempoLabel: string | null;
   nivel: string | null;
+  modo: ModoEstudo;
 };
 
 const ESTADO_INICIAL: WizardState = {
@@ -85,6 +104,7 @@ const ESTADO_INICIAL: WizardState = {
   dias: [],
   tempoLabel: null,
   nivel: null,
+  modo: "guiado",
 };
 
 // Passo 2 pede o nome (obrigatório) e o @ (opcional) — o @ só bloqueia o
@@ -103,11 +123,11 @@ function ehValido(step: number, s: WizardState): boolean {
       return s.semestre !== null;
     case 5:
       return s.disciplinas.length > 0;
-    case 7:
-      return s.dias.length > 0;
     case 8:
-      return s.tempoLabel !== null;
+      return s.dias.length > 0;
     case 9:
+      return s.tempoLabel !== null;
+    case 10:
       return s.nivel !== null;
     default:
       return true;
@@ -120,12 +140,32 @@ const EYEBROWS: Record<number, string> = {
   3: "Sobre você",
   4: "Sobre você",
   5: "Sua campanha",
-  6: "Sua campanha",
-  7: "Sua rotina",
+  6: "Seu jeito de estudar",
+  7: "Sua campanha",
   8: "Sua rotina",
   9: "Sua rotina",
-  10: "Tudo pronto",
+  10: "Sua rotina",
+  11: "Tudo pronto",
 };
+
+// Passos que só existem na trajetória guiada: provas (7), dias (8) e tempo
+// por dia (9) são as entradas do motor. Quem escolhe prática livre pula
+// direto do passo do modo pro nível — pedir data de prova a quem acabou de
+// dizer que não quer planejamento por prova seria contradizer a própria
+// pergunta. Ver lib/questly/modo-estudo.ts.
+const PASSOS_SO_GUIADO = new Set([7, 8, 9]);
+
+function proximoPasso(step: number, s: WizardState): number {
+  let n = step + 1;
+  while (n < TOTAL_STEPS && s.modo === "livre" && PASSOS_SO_GUIADO.has(n)) n++;
+  return n;
+}
+
+function passoAnterior(step: number, s: WizardState): number {
+  let n = step - 1;
+  while (n > 1 && s.modo === "livre" && PASSOS_SO_GUIADO.has(n)) n--;
+  return n;
+}
 
 function Chip({
   active,
@@ -217,7 +257,7 @@ export function OnboardingWizard({
       if (step === 1 && state.disciplinas.length === 0) {
         adicionarDisciplinas(identidade.disciplinasNucleo);
       }
-      irPara(step + 1);
+      irPara(proximoPasso(step, state));
       return;
     }
 
@@ -241,6 +281,7 @@ export function OnboardingWizard({
       dias: state.dias,
       tempoDiarioMin: tempoOpcao?.minutos ?? null,
       disciplinas,
+      modoEstudo: state.modo,
     });
 
     if (resultado.error) {
@@ -258,7 +299,7 @@ export function OnboardingWizard({
   const podeContinuar = ehValido(step, state);
   // Passo 2 deixou de ser pulável: o nome é obrigatório (o @ continua opcional
   // dentro do próprio passo — basta deixar em branco).
-  const mostrarPular = step === 3 || step === 6;
+  const mostrarPular = step === 3 || step === 7;
 
   if (mostrarTour) {
     return <TourPlataforma identidade={acento} onFinalizar={() => router.push("/dashboard")} />;
@@ -271,7 +312,7 @@ export function OnboardingWizard({
           <div className="flex items-center gap-3.5 px-7 pt-6">
             <button
               type="button"
-              onClick={() => irPara(step - 1)}
+              onClick={() => irPara(passoAnterior(step, state))}
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-base text-muted-foreground transition-opacity ${
                 step === 1 ? "pointer-events-none opacity-0" : "opacity-100"
               }`}
@@ -323,7 +364,7 @@ export function OnboardingWizard({
                   {mostrarPular && (
                     <button
                       type="button"
-                      onClick={() => irPara(step + 1)}
+                      onClick={() => irPara(proximoPasso(step, state))}
                       className="text-xs font-bold text-muted-foreground"
                     >
                       Pular
@@ -587,6 +628,42 @@ function StepContent({
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
+            Você quer que a gente monte seu dia?
+          </h2>
+          <p className="mb-6 text-sm font-semibold text-muted-foreground">
+            Dá pra trocar quando quiser nas configurações — nada se perde.
+          </p>
+          <div className="flex flex-col gap-3">
+            {MODOS_ESTUDO.map((m) => {
+              const ativo = state.modo === m.valor;
+              return (
+                <button
+                  key={m.valor}
+                  type="button"
+                  onClick={() => setState((s) => ({ ...s, modo: m.valor }))}
+                  className={`flex cursor-pointer flex-col gap-1.5 rounded-2xl border-2 p-4 text-left transition-all ${
+                    ativo
+                      ? "border-questly-green bg-questly-green-light/60"
+                      : "border-border hover:border-questly-green/40"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="font-heading text-[16px] font-semibold">{m.titulo}</span>
+                    {ativo && <Check size={16} strokeWidth={2.6} className="text-questly-green-dark" />}
+                  </span>
+                  <span className="text-sm leading-snug text-muted-foreground">{m.desc}</span>
+                  <span className="mt-0.5 text-xs font-semibold text-muted-foreground">{m.inclui}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+
+    case 7:
+      return (
+        <div>
+          <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
             Meta e provas de cada disciplina
           </h2>
           <p className="mb-6 text-sm font-semibold text-muted-foreground">
@@ -611,7 +688,7 @@ function StepContent({
         </div>
       );
 
-    case 7:
+    case 8:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -634,7 +711,7 @@ function StepContent({
         </div>
       );
 
-    case 8:
+    case 9:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -658,7 +735,7 @@ function StepContent({
         </div>
       );
 
-    case 9:
+    case 10:
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -689,7 +766,7 @@ function StepContent({
         </div>
       );
 
-    case 10: {
+    case 11: {
       const tempoOpcao = TEMPO_OPCOES.find((t) => t.label === state.tempoLabel);
       const rows: [string, string][] = [
         ["Nome", state.nome.trim() || "—"],
@@ -698,8 +775,14 @@ function StepContent({
         ["Universidade", state.universidade || "não informado"],
         ["Semestre", state.semestre ? `${state.semestre}º` : "—"],
         ["Disciplinas", state.disciplinas.length ? state.disciplinas.join(", ") : "—"],
-        ["Dias de estudo", state.dias.length ? state.dias.join(", ") : "—"],
-        ["Tempo diário", tempoOpcao?.label || "—"],
+        // No modo livre não há rotina a resumir: esses passos nem foram
+        // mostrados, e listá-los como "—" pareceria pendência.
+        ...(state.modo === "guiado"
+          ? ([
+              ["Dias de estudo", state.dias.length ? state.dias.join(", ") : "—"],
+              ["Tempo diário", tempoOpcao?.label || "—"],
+            ] as [string, string][])
+          : ([["Modo", "Prática livre — sem plano automático"]] as [string, string][])),
         ["Nível", NIVEL_OPCOES.find((n) => n.valor === state.nivel)?.titulo || "—"],
       ];
       return (

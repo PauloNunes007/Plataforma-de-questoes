@@ -4,10 +4,14 @@ import { useEffect } from "react";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Modal genérico do Modo Aprovação (form de erro, fichamento de obra,
-// novo simulado). Overlay clicável + Esc fecham; painel rola sozinho
-// em telas baixas (formularios longos no celular).
-export function ModalAprovacao({
+// Painel modal genérico do app: no celular sobe do rodapé (bottom sheet), no
+// desktop centraliza. Overlay clicável + Esc fecham; o miolo rola sozinho em
+// telas baixas (formulários longos no celular).
+//
+// Nasceu no Modo Aprovação e foi promovido pra ui/ em 2026-09-16, quando o
+// controle manual da missão do dia (components/dashboard/missao-controles.tsx)
+// passou a precisar do mesmo comportamento na home.
+export function ModalPainel({
   aberto,
   titulo,
   onFechar,

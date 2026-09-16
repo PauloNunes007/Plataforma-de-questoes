@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CalendarClock, Loader2, Plus, Timer, Trash2, TrendingUp } from "lucide-react";
-import { ModalAprovacao } from "./modal";
+import { ModalPainel } from "@/components/ui/modal-painel";
 import { excluirSimuladoAction, salvarSimuladoAction } from "@/lib/aprovacao/actions";
 import {
   DISCIPLINAS_SIMULADO,
@@ -110,7 +110,7 @@ export function SimuladosView({
         </div>
       )}
 
-      <ModalAprovacao aberto={modal} titulo="Novo simulado" onFechar={() => setModal(false)}>
+      <ModalPainel aberto={modal} titulo="Novo simulado" onFechar={() => setModal(false)}>
         <SimuladoForm
           hoje={hoje}
           escada={escada}
@@ -122,7 +122,7 @@ export function SimuladosView({
           }}
           onCancelar={() => setModal(false)}
         />
-      </ModalAprovacao>
+      </ModalPainel>
     </div>
   );
 }

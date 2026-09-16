@@ -17,6 +17,7 @@ import {
   Check,
   Lock,
   Plus,
+  Compass,
   Sparkles,
   Swords,
   Trash2,
@@ -28,6 +29,7 @@ import {
   questlyNormalizarDia,
 } from "@/lib/questly/shared";
 import { questlyRecomendarRotina, type RotinaLinha } from "@/lib/questly/rotina-engine";
+import { questlyModoEstudo, type ModoEstudo } from "@/lib/questly/modo-estudo";
 import { redimensionarAvatar } from "@/lib/configuracoes/avatar-resize";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { CursoIcone } from "@/components/cursos/curso-icone";
@@ -39,6 +41,7 @@ import {
   removerFotoAction,
   removerProvaAction,
   salvarGradeAction,
+  salvarModoEstudoAction,
   salvarNomeAction,
   salvarNotaAction,
   salvarRotinaAction,
@@ -93,6 +96,7 @@ type ProfileMin = {
   foto_url: string | null;
   dias_disponiveis: string[] | null;
   tempo_diario_min: number | null;
+  modo_estudo?: string | null;
 };
 
 function Card({
@@ -177,6 +181,8 @@ export function ConfiguracoesPanel({
   const [subjects, setSubjects] = useState(subjectsIniciais);
   const [dias, setDias] = useState<string[]>(profile?.dias_disponiveis || []);
   const [tempoMin, setTempoMin] = useState<number | null>(profile?.tempo_diario_min ?? null);
+  const [modo, setModo] = useState<ModoEstudo>(questlyModoEstudo(profile));
+  const guiado = modo === "guiado";
 
   return (
     <div className="mx-auto flex max-w-[760px] flex-col gap-4 px-5 py-8 sm:px-6">
@@ -188,13 +194,107 @@ export function ConfiguracoesPanel({
       <ContaCard profile={profile} />
 
       <SecaoKicker>Plano de estudo</SecaoKicker>
-      <RotinaCard dias={dias} tempoMin={tempoMin} onSalvar={(d, t) => { setDias(d); setTempoMin(t); }} />
-      <GradeSemanalCard subjects={subjects} dias={dias} tempoMin={tempoMin} rotinaInicial={rotinaInicial} />
+      <ModoEstudoCard modo={modo} onModo={setModo} />
+      {/* Tudo daqui pra baixo só existe na trajetória guiada: rotina, grade e
+          provas são as entradas do motor. Na prática livre elas não têm o que
+          alimentar — e mostrá-las seria pedir um planejamento que ninguém vai
+          usar. Os dados continuam salvos: voltar pro guiado traz tudo de volta. */}
+      {guiado && (
+        <>
+          <RotinaCard dias={dias} tempoMin={tempoMin} onSalvar={(d, t) => { setDias(d); setTempoMin(t); }} />
+          <GradeSemanalCard subjects={subjects} dias={dias} tempoMin={tempoMin} rotinaInicial={rotinaInicial} />
+        </>
+      )}
 
-      <SecaoKicker>Disciplinas e provas</SecaoKicker>
+      <SecaoKicker>{guiado ? "Disciplinas e provas" : "Disciplinas"}</SecaoKicker>
       <DisciplinasCard subjects={subjects} onSubjectsChange={setSubjects} />
-      <ProvasCard subjects={subjects} onSubjectsChange={setSubjects} />
+      {guiado && <ProvasCard subjects={subjects} onSubjectsChange={setSubjects} />}
     </div>
+  );
+}
+
+// ————— Modo de estudo: a plataforma é modular —————
+//
+// Duas opções, escritas pelo que o aluno GANHA e pelo que ele PERDE — não há
+// opção "melhor" aqui, e esconder o custo de cada uma faria o aluno escolher
+// errado. Ver lib/questly/modo-estudo.ts e supabase_modo_estudo.sql.
+const MODOS: { valor: ModoEstudo; titulo: string; desc: string; inclui: string }[] = [
+  {
+    valor: "guiado",
+    titulo: "Trajetória guiada",
+    desc: "O app monta sua missão do dia a partir das datas das suas provas e do seu desempenho.",
+    inclui: "Missão do dia · Grade semanal · Cerco ao Boss · Projeção da nota",
+  },
+  {
+    valor: "livre",
+    titulo: "Prática livre",
+    desc: "Nada de plano automático: você monta a lista que quiser, na hora que quiser.",
+    inclui: "Banco de questões · Simulados · Ranking · Trilha",
+  },
+];
+
+function ModoEstudoCard({ modo, onModo }: { modo: ModoEstudo; onModo: (m: ModoEstudo) => void }) {
+  const [salvando, setSalvando] = useState<ModoEstudo | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  async function escolher(novo: ModoEstudo) {
+    if (novo === modo) return;
+    setSalvando(novo);
+    const resultado = await salvarModoEstudoAction(novo);
+    setSalvando(null);
+    if (resultado.error) {
+      alert(resultado.error);
+      return;
+    }
+    onModo(novo);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  }
+
+  return (
+    <Card
+      icon={Compass}
+      title="Modo de estudo"
+      sub="Você decide se o app planeja o seu dia ou se só te dá as ferramentas."
+    >
+      <div className="flex flex-col gap-2.5">
+        {MODOS.map((m) => {
+          const ativo = m.valor === modo;
+          return (
+            <button
+              key={m.valor}
+              type="button"
+              disabled={salvando !== null}
+              onClick={() => escolher(m.valor)}
+              className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3.5 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                ativo
+                  ? "border-questly-green/60 bg-questly-green-light/60"
+                  : "border-border bg-card hover:border-questly-green/40"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <span className={`text-sm font-semibold ${ativo ? "text-questly-green-dark" : ""}`}>
+                  {m.titulo}
+                </span>
+                {ativo && <Check size={15} strokeWidth={2.4} className="text-questly-green-dark" />}
+                {salvando === m.valor && (
+                  <span className="text-xs font-medium text-muted-foreground">salvando…</span>
+                )}
+              </span>
+              <span className="text-[13px] leading-snug text-muted-foreground">{m.desc}</span>
+              <span className="mt-0.5 text-[11.5px] font-semibold text-muted-foreground">{m.inclui}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-3 text-[12px] leading-snug text-muted-foreground">
+        Trocar de modo não apaga nada: suas provas, missões e progresso continuam salvos e voltam
+        inteiros se você voltar pra trajetória guiada.
+      </p>
+      <div className="mt-2">
+        <SavedTag show={saved} />
+      </div>
+    </Card>
   );
 }
 

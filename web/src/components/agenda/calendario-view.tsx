@@ -41,12 +41,15 @@ export function CalendarioView({
   subjects,
   hoje,
   diaInicial,
+  guiado = true,
 }: {
   mesInicial: MesAgenda;
   subjects: { id: string; nome: string }[];
   hoje: string;
   /** Dia pré-selecionado (`/calendario?dia=YYYY-MM-DD`, vindo do card da home). */
   diaInicial: string | null;
+  /** false = modo livre: o dia não oferece "marcar prova". */
+  guiado?: boolean;
 }) {
   const semMovimento = useReducedMotion();
   const [mes, setMes] = useState(mesInicial);
@@ -291,6 +294,7 @@ export function CalendarioView({
       onDragStartItem={(id) => {
         arrastando.current = id;
       }}
+      guiado={guiado}
     />
   ) : (
     <p className="py-8 text-center text-[12.5px] text-muted-foreground">Escolha um dia no calendário.</p>
@@ -300,7 +304,11 @@ export function CalendarioView({
     <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <PageHeader
         titulo="Calendário"
-        descricao="Toque num dia pra agendar uma sessão, definir uma meta de questões ou marcar o dia da prova."
+        descricao={
+          guiado
+            ? "Toque num dia pra agendar uma sessão, definir uma meta de questões ou marcar o dia da prova."
+            : "Toque num dia pra agendar uma sessão, definir uma meta de questões ou anotar uma tarefa."
+        }
         voltarHref="/dashboard"
         voltarLabel="Início"
       />

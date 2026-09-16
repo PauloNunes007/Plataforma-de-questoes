@@ -12,7 +12,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { ModalAprovacao } from "./modal";
+import { ModalPainel } from "@/components/ui/modal-painel";
 import { ErroForm } from "./erro-form";
 import {
   arquivarErroAction,
@@ -197,7 +197,7 @@ export function ErrosView({ errosIniciais, hoje }: { errosIniciais: Erro[]; hoje
         </div>
       )}
 
-      <ModalAprovacao aberto={modalNovo} titulo="Novo erro" onFechar={() => setModalNovo(false)}>
+      <ModalPainel aberto={modalNovo} titulo="Novo erro" onFechar={() => setModalNovo(false)}>
         <ErroForm
           onSalvo={(novo) => {
             setErros((lista) => [novo, ...lista]);
@@ -205,9 +205,9 @@ export function ErrosView({ errosIniciais, hoje }: { errosIniciais: Erro[]; hoje
           }}
           onCancelar={() => setModalNovo(false)}
         />
-      </ModalAprovacao>
+      </ModalPainel>
 
-      <ModalAprovacao aberto={!!editando} titulo="Editar erro" onFechar={() => setEditando(null)}>
+      <ModalPainel aberto={!!editando} titulo="Editar erro" onFechar={() => setEditando(null)}>
         {editando && (
           <ErroForm
             inicial={editando}
@@ -218,7 +218,7 @@ export function ErrosView({ errosIniciais, hoje }: { errosIniciais: Erro[]; hoje
             onCancelar={() => setEditando(null)}
           />
         )}
-      </ModalAprovacao>
+      </ModalPainel>
     </div>
   );
 }

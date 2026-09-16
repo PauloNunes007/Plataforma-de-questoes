@@ -1,3 +1,12 @@
+// NOTA (2026-09-16): este motor NÃO está ligado a nenhuma tela.
+//
+// O "GPS da Aprovação" foi fundido na missão do dia — a home deixou de ter um
+// segundo plano concorrendo com o primeiro, e a explicação de "por que isso
+// hoje" passou a sair dos mesmos sinais que o mission-engine já usa (ver
+// lib/questly/plano-do-dia.ts). O arquivo fica porque a matemática é boa e
+// está coberta por scripts/rota-sintetica.ts; se um dia a rota voltar, ela
+// volta por dentro da missão, não como cartão separado.
+//
 // ============================================================
 // GPS da Aprovação — a ROTA Δnota/min (lado do PLANEJAMENTO).
 //

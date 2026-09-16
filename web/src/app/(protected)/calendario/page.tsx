@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarMesAgenda, isoDia, mesValido } from "@/lib/agenda/agenda-data";
 import { CalendarioView } from "@/components/agenda/calendario-view";
+import { questlyModoEstudo } from "@/lib/questly/modo-estudo";
 
 export const metadata: Metadata = {
   title: "Calendário",
@@ -39,12 +40,20 @@ export default async function CalendarioPage({
   const ano = usarPedido ? pedido.ano : agora.getFullYear();
   const mesIdx = usarPedido ? pedido.mes : agora.getMonth();
 
-  const [mes, subjectsRes] = await Promise.all([
+  const [mesBruto, subjectsRes, { data: profile }] = await Promise.all([
     carregarMesAgenda(supabase, user, ano, mesIdx),
     supabase.from("subjects").select("id, nome").eq("user_id", user.id).order("nome"),
+    supabase.from("profiles").select("modo_estudo").eq("id", user.id).maybeSingle(),
   ]);
 
-  if (!mes) return null;
+  if (!mesBruto) return null;
+
+  // Modo livre: sessões, tarefas e metas continuam — quem não quer plano
+  // automático ainda organiza o próprio mês. A PROVA é que sai: ela escreve
+  // em `bosses`, que é a porta de entrada do ecossistema de trajetória que
+  // esse aluno desligou. Ver lib/questly/modo-estudo.ts.
+  const guiado = questlyModoEstudo(profile) === "guiado";
+  const mes = guiado ? mesBruto : { ...mesBruto, provas: {} };
 
   return (
     <CalendarioView
@@ -52,6 +61,7 @@ export default async function CalendarioPage({
       subjects={(subjectsRes.data || []) as { id: string; nome: string }[]}
       hoje={hoje}
       diaInicial={usarPedido ? diaInicial : null}
+      guiado={guiado}
     />
   );
 }

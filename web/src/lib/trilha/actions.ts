@@ -2,7 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { questlyEmbaralhar, questlyHojeISO, questlyXpDaQuestao } from "@/lib/questly/shared";
-import { carregarCaminhoDisciplina } from "./trilha-data";
+import { questlyModoEstudo } from "@/lib/questly/modo-estudo";
+import { caminhoSemProva, carregarCaminhoDisciplina } from "./trilha-data";
 
 export async function buscarCaminhoDisciplinaAction(subjectId: string) {
   const supabase = await createClient();
@@ -10,7 +11,15 @@ export async function buscarCaminhoDisciplinaAction(subjectId: string) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
-  return carregarCaminhoDisciplina(supabase, user, subjectId);
+
+  const [caminho, { data: profile }] = await Promise.all([
+    carregarCaminhoDisciplina(supabase, user, subjectId),
+    supabase.from("profiles").select("modo_estudo").eq("id", user.id).maybeSingle(),
+  ]);
+
+  if (!caminho) return caminho;
+  // Modo livre: a jornada fica, a prova some (ver caminhoSemProva).
+  return questlyModoEstudo(profile) === "guiado" ? caminho : caminhoSemProva(caminho);
 }
 
 export async function mudarStatusTopicoAction(topicoId: string, novoStatus: "pendente" | "pulado") {

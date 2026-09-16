@@ -139,6 +139,29 @@ export async function salvarRotinaAction(dias: string[], tempoDiarioMin: number 
   return { error: null };
 }
 
+// Modo de estudo (guiado | livre) — ver lib/questly/modo-estudo.ts.
+//
+// Escreve numa coluna que o trigger questly_proteger_colunas_profile NÃO
+// protege, de propósito: é preferência de estudo, não plano/XP/liga/streak.
+// Trocar de modo não apaga missão, prova nem progresso — só muda o que a
+// interface mostra, então voltar atrás restaura tudo.
+export async function salvarModoEstudoAction(modo: "guiado" | "livre") {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessão expirada." };
+
+  if (modo !== "guiado" && modo !== "livre") return { error: "Modo de estudo inválido." };
+
+  const { error } = await supabase.from("profiles").update({ modo_estudo: modo }).eq("id", user.id);
+  if (error) {
+    console.error("Erro ao salvar modo de estudo:", error);
+    return { error: "Não foi possível salvar o modo de estudo." };
+  }
+  return { error: null };
+}
+
 export async function criarDisciplinaAction(nome: string) {
   const supabase = await createClient();
   const {

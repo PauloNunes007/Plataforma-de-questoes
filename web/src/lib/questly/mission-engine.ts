@@ -20,14 +20,27 @@ import {
   questlyForcaNaProva,
   QUESTLY_FORCA_RISCO,
 } from "./motor-aprovacao";
-import { questlyApportionarMinutos, questlyBuscarRotinaCompleta, type SubjectComPeso } from "./rotina-engine";
+import {
+  questlyApportionarMinutos,
+  questlyBuscarRotinaCompleta,
+  questlyDisciplinasPorDia,
+  questlyPesoDisciplina,
+  type SubjectComPeso,
+} from "./rotina-engine";
 
 export type { Boss } from "./shared";
 
 const TEMPO_MEDIO_POR_QUESTAO_MIN = 3;
-const MAX_TOPICOS_POR_MISSAO = 5;
-const MIN_QUESTOES = 4;
-const MAX_QUESTOES = 40;
+// **Repasse de 2026-09-16 — simplificação didática.** Uma missão cobria até 5
+// tópicos ao mesmo tempo; na tela isso virava uma lista sem foco, e o aluno não
+// conseguia dizer o que estava estudando hoje. Agora a missão tem UM assunto —
+// e, no máximo, um segundo quando há revisão vencida ou um tópico que chega
+// fraco no dia da prova. Dois papéis, dois tópicos, nunca uma lista.
+const MAX_TOPICOS_POR_MISSAO = 2;
+export const QUESTLY_MIN_QUESTOES_MISSAO = 4;
+export const QUESTLY_MAX_QUESTOES_MISSAO = 40;
+const MIN_QUESTOES = QUESTLY_MIN_QUESTOES_MISSAO;
+const MAX_QUESTOES = QUESTLY_MAX_QUESTOES_MISSAO;
 const COBERTURA_TOPICO_QUESTOES = 5;
 const BONUS_FRONTEIRA = 35;
 const BONUS_REVISAO_URGENTE = 45;
@@ -57,6 +70,10 @@ export type Mission = {
   xp_recompensa: number;
   concluida: boolean;
   avulsa: boolean;
+  /** Data pra onde o aluno empurrou esta missão (null = missão normal de hoje).
+   *  Ver supabase_modo_estudo.sql: a linha fica no dia ORIGINAL pra segurar o
+   *  índice único e impedir que o motor regere a mesma missão na hora. */
+  adiada_para?: string | null;
   subjects?: { nome: string } | null;
 };
 
@@ -64,6 +81,13 @@ export type MissoesDoDiaResultado = {
   missoes: Mission[];
   semMissaoHoje: boolean;
   motivo?: string;
+  /** Missões de hoje que o aluno adiou — não são pendências, mas a home
+   *  precisa poder dizer "você empurrou Cálculo II pra quinta". */
+  adiadas: Mission[];
+  /** Disciplinas do aluno que NÃO ganharam missão hoje. É o que alimenta o
+   *  "estudar outra matéria hoje": inclui as que a grade marcou e o teto
+   *  diário cortou, e as que nem estavam marcadas. */
+  alternativas: { id: string; nome: string; naGradeDeHoje: boolean }[];
 };
 
 type TopicoComProgresso = {
@@ -106,19 +130,28 @@ export async function questlyGerarMissoesDoDia(
   subjectsPrefetch?: Subject[] | null,
 ): Promise<MissoesDoDiaResultado> {
   const hojeAbrev = QUESTLY_DIAS_SEMANA[new Date().getDay()];
+  const vazio = (motivo: string): MissoesDoDiaResultado => ({
+    missoes: [],
+    semMissaoHoje: true,
+    motivo,
+    adiadas: [],
+    alternativas: [],
+  });
+
   if (profile?.dias_disponiveis && profile.dias_disponiveis.length > 0) {
     const diasNormalizados = profile.dias_disponiveis.map(questlyNormalizarDia);
     if (!diasNormalizados.includes(hojeAbrev)) {
-      return { missoes: [], semMissaoHoje: true, motivo: "Hoje não está nos seus dias de estudo configurados." };
+      return vazio("Hoje não está nos seus dias de estudo configurados.");
     }
   }
 
   const hojeStr = questlyHojeISO();
 
-  // As três leituras são independentes entre si (todas dependem só do
-  // user_id) — em série custavam 3 RTTs até o Supabase antes de qualquer
-  // decisão ser tomada. A grade e as missões de hoje já sobem junto.
-  const [subjectsResultado, rotinaCompleta, missoesHojeResultado] = await Promise.all([
+  // As quatro leituras são independentes entre si (todas dependem só do
+  // user_id) — em série custavam um round-trip cada antes de qualquer decisão
+  // ser tomada. A grade, as missões de hoje e o que foi EMPURRADO pra hoje
+  // sobem junto com as disciplinas.
+  const [subjectsResultado, rotinaCompleta, missoesHojeResultado, empurradasResultado] = await Promise.all([
     subjectsPrefetch
       ? Promise.resolve({ data: subjectsPrefetch, error: null })
       : supabase
@@ -132,42 +165,93 @@ export async function questlyGerarMissoesDoDia(
       .eq("user_id", user.id)
       .eq("data", hojeStr)
       .eq("avulsa", false),
+    // Missões de dias anteriores que o aluno adiou PRA HOJE: a disciplina
+    // volta hoje mesmo que a grade semanal não a tenha marcado. Um
+    // compromisso que o próprio aluno remarcou vale mais que a recomendação.
+    supabase
+      .from("missions")
+      .select("subject_id")
+      .eq("user_id", user.id)
+      .eq("adiada_para", hojeStr),
   ]);
 
   const { data: subjects, error: subjectsError } = subjectsResultado;
 
   if (subjectsError || !subjects || subjects.length === 0) {
-    return { missoes: [], semMissaoHoje: true, motivo: "Nenhuma disciplina configurada ainda." };
+    return vazio("Nenhuma disciplina configurada ainda.");
   }
 
-  let subjectsHoje: Subject[];
-  if (rotinaCompleta.length === 0) {
-    subjectsHoje = [questlyDisciplinaComBossMaisProximo(subjects)];
-  } else {
-    const idsHoje = new Set(
-      rotinaCompleta.filter((r) => r.dia_semana === hojeAbrev).map((r) => r.subject_id),
-    );
-    subjectsHoje = subjects.filter((s) => idsHoje.has(s.id));
-    if (subjectsHoje.length === 0) {
-      return {
-        missoes: [],
-        semMissaoHoje: true,
-        motivo:
-          "Nenhuma disciplina programada pra hoje na sua grade semanal. Ajuste em Configurações → Grade semanal.",
-      };
-    }
-  }
+  const hoje = new Date(new Date().toDateString());
+  const pesoDe = (s: Subject) => questlyPesoDisciplina(s, hoje);
 
-  const { data: missoesExistentes } = missoesHojeResultado;
+  // Missões de hoje que o aluno EMPURROU pra frente não são pendência: elas
+  // seguem ocupando o índice único do dia (por isso o motor não as regera),
+  // mas saem da lista do que há pra fazer agora.
+  const missoesTodasDeHoje = (missoesHojeResultado.data || []) as Mission[];
+  const adiadas = missoesTodasDeHoje.filter((m) => m.adiada_para);
+  const missoesExistentes = missoesTodasDeHoje.filter((m) => !m.adiada_para);
+  const idsComLinhaHoje = new Set(missoesTodasDeHoje.map((m) => m.subject_id));
 
-  const subjectIdsComMissao = new Set((missoesExistentes || []).map((m) => m.subject_id));
-  const subjectsFaltando = subjectsHoje.filter((s) => !subjectIdsComMissao.has(s.id));
+  const idsEmpurradasPraHoje = new Set(
+    ((empurradasResultado.data || []) as { subject_id: string }[]).map((m) => m.subject_id),
+  );
 
+  const idsNaGradeDeHoje = new Set(
+    rotinaCompleta.filter((r) => r.dia_semana === hojeAbrev).map((r) => r.subject_id),
+  );
+
+  // Candidatas do dia, em ordem de prioridade: primeiro o que o aluno
+  // remarcou pra hoje, depois o que a grade marcou, cada grupo por peso.
+  const naGrade = rotinaCompleta.length === 0
+    ? [questlyDisciplinaComBossMaisProximo(subjects)]
+    : subjects.filter((s) => idsNaGradeDeHoje.has(s.id));
+
+  const empurradas = subjects.filter((s) => idsEmpurradasPraHoje.has(s.id));
+  const ordenar = (lista: Subject[]) => lista.slice().sort((a, b) => pesoDe(b) - pesoDe(a));
+  const candidatasDoDia = [
+    ...ordenar(empurradas),
+    ...ordenar(naGrade.filter((s) => !idsEmpurradasPraHoje.has(s.id))),
+  ];
+
+  // **O teto diário** (repasse 2026-09-16). Uma grade antiga pode ter 4
+  // disciplinas marcadas na mesma segunda-feira; isso NÃO vira 4 missões. O
+  // motor fica com as de maior peso até o teto (1 disciplina, ou 2 com 2h+ de
+  // rotina) e as demais viram opção de troca, visível na home. Quem já tem
+  // missão hoje ocupa vaga — inclusive uma criada pela troca manual.
   const tempoDiarioMin = profile?.tempo_diario_min || 30;
-  const minutosPorSubject = questlyApportionarMinutos(subjectsHoje, tempoDiarioMin);
+  const teto = questlyDisciplinasPorDia(Math.max(1, candidatasDoDia.length), tempoDiarioMin);
+  const vagas = Math.max(0, teto - missoesExistentes.length);
+  const subjectsFaltando = candidatasDoDia.filter((s) => !idsComLinhaHoje.has(s.id)).slice(0, vagas);
+
+  const alternativas = subjects
+    .filter((s) => !idsComLinhaHoje.has(s.id) && !subjectsFaltando.some((f) => f.id === s.id))
+    .sort((a, b) => {
+      const gradeA = idsNaGradeDeHoje.has(a.id) ? 1 : 0;
+      const gradeB = idsNaGradeDeHoje.has(b.id) ? 1 : 0;
+      if (gradeA !== gradeB) return gradeB - gradeA;
+      return pesoDe(b) - pesoDe(a);
+    })
+    .map((s) => ({ id: s.id, nome: s.nome, naGradeDeHoje: idsNaGradeDeHoje.has(s.id) }));
+
+  if (candidatasDoDia.length === 0 && missoesExistentes.length === 0) {
+    return {
+      ...vazio(
+        "Nenhuma disciplina programada pra hoje na sua grade semanal. Você pode escolher uma abaixo ou ajustar em Configurações → Grade semanal.",
+      ),
+      adiadas,
+      alternativas,
+    };
+  }
+
+  // O tempo do dia se divide entre as disciplinas que de fato terão missão.
+  const ativasHoje = [
+    ...subjects.filter((s) => missoesExistentes.some((m) => m.subject_id === s.id)),
+    ...subjectsFaltando,
+  ];
+  const minutosPorSubject = questlyApportionarMinutos(ativasHoje, tempoDiarioMin);
 
   // Uma disciplina não depende da outra pra gerar missão — em série, um dia
-  // com 3 disciplinas agendadas pagava 3× a cadeia inteira de queries.
+  // com 2 disciplinas agendadas pagava 2× a cadeia inteira de queries.
   const resultados = await Promise.all(
     subjectsFaltando.map((subject) =>
       questlyGerarMissaoParaSubject(
@@ -183,26 +267,104 @@ export async function questlyGerarMissoesDoDia(
     (r): r is Mission => Boolean(r) && !("semMissaoHoje" in r),
   );
 
-  const missoes = [...(missoesExistentes || []), ...geradas];
+  const missoes = [...missoesExistentes, ...geradas];
 
   if (missoes.length === 0) {
+    const motivoDeAlguma = resultados.find((r) => r && "semMissaoHoje" in r) as
+      | { semMissaoHoje: true; motivo: string }
+      | undefined;
     return {
-      missoes: [],
-      semMissaoHoje: true,
-      motivo: "Ainda não há questões cadastradas pros tópicos das disciplinas de hoje.",
+      ...vazio(
+        adiadas.length > 0
+          ? "Você adiou a missão de hoje. Dá pra estudar outra disciplina mesmo assim."
+          : motivoDeAlguma?.motivo ||
+              "Ainda não há questões cadastradas pros tópicos das disciplinas de hoje.",
+      ),
+      adiadas,
+      alternativas,
     };
   }
 
-  return { missoes, semMissaoHoje: false };
+  return { missoes, semMissaoHoje: false, adiadas, alternativas };
 }
 
 /** Linha mínima de `questions` que o sorteio da missão consome. */
-type CandidataQuestao = {
+export type CandidataQuestao = {
   id: string;
   topic_id: string;
   tempo_medio_seg: number | null;
   dificuldade: string | null;
 };
+
+/** Questões sorteáveis de um conjunto de tópicos. Paginada de propósito: as
+ *  LINHAS são necessárias (é delas que saem os ids), e o teto de 1000 do
+ *  PostgREST cortava o fim do conjunto em matéria grande — ver
+ *  lib/supabase/paginado.ts. Aprofundamento (`desafio`) nunca entra em sorteio
+ *  automático (supabase_questao_desafio.sql). */
+export async function questlyBuscarCandidatas(
+  supabase: SupabaseClient,
+  topicIds: string[],
+): Promise<CandidataQuestao[]> {
+  if (topicIds.length === 0) return [];
+  return lerPaginado<CandidataQuestao>(() =>
+    supabase
+      .from("questions")
+      .select("id, topic_id, tempo_medio_seg, dificuldade")
+      .in("topic_id", topicIds)
+      .eq("desafio", false),
+  );
+}
+
+/** Percorre `lista` (já na ordem de prioridade) montando a missão.
+ *
+ *  Com `qtdAlvo` — o caso do controle manual, quando o aluno diz "hoje quero
+ *  10 questões" — o número dele manda e o orçamento de minutos é ignorado;
+ *  é a diferença entre uma recomendação e uma decisão. Sem ele, enche até o
+ *  tempo alocado pro dia, respeitando o piso e o teto de tamanho. */
+export function questlyEscolherQuestoes(
+  lista: CandidataQuestao[],
+  { orcamentoMin, qtdAlvo }: { orcamentoMin?: number; qtdAlvo?: number },
+): CandidataQuestao[] {
+  if (lista.length === 0) return [];
+
+  if (qtdAlvo != null) {
+    const alvo = Math.max(1, Math.min(Math.round(qtdAlvo), MAX_QUESTOES, lista.length));
+    return lista.slice(0, alvo);
+  }
+
+  const orcamentoSeg = (orcamentoMin || 30) * 60;
+  const escolhidas: CandidataQuestao[] = [];
+  let somaSeg = 0;
+  for (let i = 0; i < lista.length && escolhidas.length < MAX_QUESTOES; i++) {
+    const q = lista[i];
+    const tempoEstimadoSeg = q.tempo_medio_seg || TEMPO_MEDIO_POR_QUESTAO_MIN * 60;
+    if (escolhidas.length >= MIN_QUESTOES && somaSeg + tempoEstimadoSeg > orcamentoSeg) break;
+    escolhidas.push(q);
+    somaSeg += tempoEstimadoSeg;
+  }
+  if (escolhidas.length === 0) escolhidas.push(lista[0]);
+  return escolhidas;
+}
+
+/** Os números que vão pra linha de `missions`: tamanho, tempo previsto (soma
+ *  real quando há dado, nunca média genérica) e XP (soma exata por questão). */
+export function questlyResumoMissao(escolhidas: CandidataQuestao[]) {
+  const qtdQuestoes = escolhidas.length;
+  const comDadoReal = escolhidas.filter((q) => q.tempo_medio_seg);
+  let tempoPrevistoMin: number | null = null;
+  if (comDadoReal.length > 0) {
+    const somaRealSeg = comDadoReal.reduce((acc, q) => acc + (q.tempo_medio_seg || 0), 0);
+    const mediaRealSeg = somaRealSeg / comDadoReal.length;
+    const somaTotalEstimadaSeg = somaRealSeg + (qtdQuestoes - comDadoReal.length) * mediaRealSeg;
+    tempoPrevistoMin = Math.round(somaTotalEstimadaSeg / 60);
+  }
+  return {
+    questionIds: escolhidas.map((q) => q.id),
+    qtdQuestoes,
+    tempoPrevistoMin,
+    xpRecompensa: escolhidas.reduce((acc, q) => acc + questlyXpDaQuestao(q), 0),
+  };
+}
 
 export async function questlyGerarMissaoParaSubject(
   supabase: SupabaseClient,
@@ -344,19 +506,7 @@ export async function questlyGerarMissaoParaSubject(
   const topicosEscolhidos = pontuados.slice(0, MAX_TOPICOS_POR_MISSAO).map((p) => p.topic);
   const topicIds = topicosEscolhidos.map((t) => t.id);
 
-  // Aqui as LINHAS são necessárias (é delas que saem os ids sorteados), então
-  // pagina em vez de agregar — sem isso o teto de 1000 do PostgREST cortava o
-  // fim do conjunto e o sorteio só via as primeiras questões dos tópicos.
-  const candidatas = await lerPaginado<CandidataQuestao>(() =>
-    supabase
-      .from("questions")
-      .select("id, topic_id, tempo_medio_seg, dificuldade")
-      .in("topic_id", topicIds)
-      // Aprofundamento (questions.desafio) fica fora de sorteio automático:
-      // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
-      // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
-      .eq("desafio", false),
-  );
+  const candidatas = await questlyBuscarCandidatas(supabase, topicIds);
 
   if (candidatas.length === 0) {
     return { semMissaoHoje: true, motivo: "Ainda não há questões cadastradas pros tópicos dessa disciplina." };
@@ -393,32 +543,8 @@ export async function questlyGerarMissaoParaSubject(
     const resto = embaralhadas.filter((q) => !prioritarias.includes(q));
     embaralhadas = [...prioritarias, ...resto];
   }
-  const orcamentoSeg = (tempoAlocadoMin || 30) * 60;
-
-  const escolhidas: typeof candidatas = [];
-  let somaSegParaTamanho = 0;
-  for (let i = 0; i < embaralhadas.length && escolhidas.length < MAX_QUESTOES; i++) {
-    const q = embaralhadas[i];
-    const tempoEstimadoSeg = q.tempo_medio_seg || TEMPO_MEDIO_POR_QUESTAO_MIN * 60;
-    if (escolhidas.length >= MIN_QUESTOES && somaSegParaTamanho + tempoEstimadoSeg > orcamentoSeg) break;
-    escolhidas.push(q);
-    somaSegParaTamanho += tempoEstimadoSeg;
-  }
-  if (escolhidas.length === 0) escolhidas.push(embaralhadas[0]);
-
-  const qtdQuestoes = escolhidas.length;
-  const questionIds = escolhidas.map((q) => q.id);
-
-  const comDadoReal = escolhidas.filter((q) => q.tempo_medio_seg);
-  let tempoPrevistoMin: number | null = null;
-  if (comDadoReal.length > 0) {
-    const somaRealSeg = comDadoReal.reduce((acc, q) => acc + (q.tempo_medio_seg || 0), 0);
-    const mediaRealSeg = somaRealSeg / comDadoReal.length;
-    const somaTotalEstimadaSeg = somaRealSeg + (qtdQuestoes - comDadoReal.length) * mediaRealSeg;
-    tempoPrevistoMin = Math.round(somaTotalEstimadaSeg / 60);
-  }
-
-  const xpRecompensa = escolhidas.reduce((acc, q) => acc + questlyXpDaQuestao(q), 0);
+  const escolhidas = questlyEscolherQuestoes(embaralhadas, { orcamentoMin: tempoAlocadoMin });
+  const { questionIds, qtdQuestoes, tempoPrevistoMin, xpRecompensa } = questlyResumoMissao(escolhidas);
 
   const { data: missaoCriada, error: insertError } = await supabase
     .from("missions")

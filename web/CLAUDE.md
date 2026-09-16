@@ -593,6 +593,41 @@ Duas coisas que não devem ser desfeitas sem remedir:
   **os oito tons passam AA** (mínimo medido 5,35:1 no painel e 6,85:1 pro tom
   usado como texto sobre branco no CTA).
 
+## Plataforma modular + missão do dia sob controle do aluno (2026-09-16)
+
+Três queixas do dono, resolvidas juntas porque eram a mesma coisa vista de três ângulos: o app decidia demais, decidia mal, e explicava o que decidiu numa linguagem própria.
+
+**1. Modo de estudo (`profiles.modo_estudo`, `supabase_modo_estudo.sql`, `lib/questly/modo-estudo.ts`)** — a plataforma deixou de assumir que todo aluno quer uma trajetória guiada por data de prova. São dois modos, escolhidos no onboarding (passo 6) e trocáveis em Configurações → Modo de estudo:
+
+- `guiado` (padrão, e o que toda conta existente já tem): o motor planeja — missão do dia, grade semanal, cerco ao Boss, projeção da nota.
+- `livre`: **o ecossistema inteiro de trajetória some da interface**. `carregarDadosDashboard` nem chama `questlyGerarMissoesDoDia` (gerar missão escreveria uma linha em `missions` todo dia pra quem não pediu plano nenhum) e nem calcula `bossAlvo`/projeção; a home troca o `MissoesCard` pelo `PraticaLivreCard`; a coluna de diagnóstico (`BossSiegeMeter`) não é renderizada; Configurações esconde Rotina, Grade semanal e Provas; `/calendario` perde o botão "Prova" (é a porta de entrada de `bosses`) e não pinta provas; `/trilha` **continua** — ela é o mapa da ementa, não um plano por prova — mas sem o `BossEncontro` e sem contagem regressiva/projeção (`semProva`/`caminhoSemProva` em `lib/trilha/trilha-data.ts`).
+
+  **Trocar de modo não apaga nada.** É uma decisão de exibição: provas, missões e progresso continuam no banco e voltam inteiros no caminho de volta. Por isso a coluna não é protegida pelo trigger `questly_proteger_colunas_profile` (é preferência, não plano/XP/liga/streak) e o UPDATE dono-only que já existe em `profiles` a alcança.
+
+**2. Um dia = uma matéria (`rotina-engine.ts`, `mission-engine.ts`)** — o motor recomendava até **4** disciplinas no mesmo dia, o que não é plano, é lista de coisas que ninguém faz. `questlyDisciplinasPorDia` agora devolve 1, ou 2 a partir de `QUESTLY_MIN_MINUTOS_PARA_SEGUNDA_DISCIPLINA` (120min) de rotina; `QUESTLY_MAX_DISCIPLINAS_POR_DIA` caiu pra 2. Três consequências que não devem ser desfeitas separadamente:
+
+- o teto vale também na **geração**, não só na recomendação: uma grade antiga com 4 disciplinas numa segunda-feira não vira 4 missões — o motor fica com as de maior peso e devolve as outras em `alternativas`, que viram o botão "Trocar matéria" na home. Contas existentes se corrigem sozinhas, sem o aluno precisar refazer a grade;
+- o **onboarding parou de semear "toda disciplina em todo dia"** (com 5 disciplinas e 5 dias, a segunda nascia com 5 matérias marcadas — a origem da queixa). A grade inicial sai do mesmo escalonador ponderado de Configurações, `questlyRecomendarRotina`;
+- `MAX_TOPICOS_POR_MISSAO` caiu de 5 pra **2**: uma missão tem UM assunto, e um segundo só quando há revisão vencida ou tópico que chega fraco no dia da prova. Dois papéis, dois tópicos, nunca uma lista.
+
+**3. O GPS da Aprovação foi FUNDIDO na missão (`lib/questly/plano-do-dia.ts`)** — havia dois planos concorrendo na mesma tela: a missão dizia o que fazer e o cartão do GPS dizia o que fazer, com números diferentes porque eram dois algoritmos; o aluno tinha que escolher em qual acreditar. Agora existe um plano só. A missão continua sendo montada pelo `mission-engine` e `plano-do-dia.ts` **apenas traduz os sinais que ela já usou** — `questlyMotivoTopico` classifica cada tópico em `risco | revisao | novo | reforco` com os MESMOS limiares (`QUESTLY_FORCA_RISCO`, `QUESTLY_RETENCAO_LIMIAR`), e `questlyPorqueDaMissao` vira uma frase ("Derivadas é o assunto que chega mais fraco no dia da prova — faltam 9 dias."). Nenhum cálculo novo. `MissionCardData` ganhou `topicos` (com nome, que antes nunca virava texto) e `porque`.
+
+  `components/dashboard/gps-aprovacao-card.tsx` e `lib/gps/actions.ts` foram apagados; `dashboard-data.ts` parou de computar a rota (e de ler a contagem de questões por tópico, que só a rota usava — uma query a menos por carga da home). `lib/questly/rota-aprovacao.ts` **fica no disco, desligado de qualquer tela**, com nota no topo: a matemática é boa e está coberta por `scripts/rota-sintetica.ts`; se voltar, volta por dentro da missão, não como cartão.
+
+**4. Controle manual (`lib/missao/actions.ts`, `components/dashboard/missao-controles.tsx`)** — o motor recomenda, o aluno decide. Quatro ações, todas com o dono re-checado no servidor:
+
+- **Ajustar** — quantas questões hoje (`TAMANHOS_MISSAO`) e qual assunto (a ementa inteira da disciplina, não só o que a fronteira curricular liberou);
+- **Trocar matéria** — gera missão pra outra disciplina hoje; a atual é **adiada, nunca apagada** (`question_attempts.mission_id` aponta pra ela). A nova é criada ANTES de a antiga sair do dia, pra uma falha na geração não deixar o aluno sem missão nenhuma;
+- **Adiar** — empurra pro próximo dia marcado na rotina.
+
+  Duas invariantes que o servidor garante e que não devem ser relaxadas: **questão já respondida nunca sai de `question_ids`** (`recomputarPlacarMissao` só pontua o que está lá — removê-la apagaria XP que o aluno ganhou), e **missão concluída é intocável** (reabrir o passado abriria caminho pra refazer a mesma missão e cobrar XP de novo). Nada disso paga XP nem acende streak: são mudanças de PLANO.
+
+  **Como o adiamento não vira missão zumbi** (`missions.adiada_para`, nullable date): a linha continua com `data` = o dia original — é isso que segura o índice único `ux_missions_dia` e impede o motor de regerar a mesma missão cinco segundos depois. Quem diz que ela não é mais pendência é `adiada_para`. No dia apontado, `questlyGerarMissoesDoDia` traz aquela disciplina de volta **mesmo fora da grade semanal** (um compromisso que o próprio aluno remarcou vale mais que a recomendação). `carregarRetomar` filtra `adiada_para is null` — missão adiada não é "de onde você parou".
+
+**5. Listas E simulados (`questlySugerirSimulado`)** — praticar a lista do dia todo dia treina conteúdo, mas não responde "eu passo?". Com a prova a ≤14 dias E nenhum simulado nos últimos 7, o plano do dia ganha um convite pro simulado — as duas condições juntas de propósito, porque um aviso que aparece sempre vira paisagem. A regra é pura e mora em `plano-do-dia.ts`; a home só junta os dados (fica no Server Component porque `Date.now()` num componente quebra a regra `react-hooks/purity`).
+
+**Divergência deliberada do app legado**: `js/rotina-engine.js` e `js/mission-engine.js` na raiz continuam com 4 disciplinas/dia e 5 tópicos/missão. Isso aqui **não** é pra ser "portado de volta" nem re-sincronizado — foi uma mudança de produto pedida, não uma tradução.
+
 ## Conventions carried over from the legacy app
 
-Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign is the one deliberate exception).
+Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

@@ -77,9 +77,12 @@ type Props = {
   caminho: CaminhoDisciplinaData;
   onAtualizar: (caminho: CaminhoDisciplinaData) => void;
   onSalvo: () => void;
+  /** false = modo livre: sem encontro com o Boss no fim da jornada, porque
+   *  não há prova marcada nem escopo de prova a definir. */
+  guiado?: boolean;
 };
 
-export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
+export function CaminhoJornada({ caminho, onAtualizar, onSalvo, guiado = true }: Props) {
   const router = useRouter();
   // De onde o aluno saiu — o "X" da tela de questões devolve pra cá.
   const origem = usePathname();
@@ -245,6 +248,7 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
                 />
               </div>
             )}
+            {guiado && (
             <BossEncontro
               subjectId={caminho.subjectId}
               bossId={caminho.bossId}
@@ -257,6 +261,7 @@ export function CaminhoJornada({ caminho, onAtualizar, onSalvo }: Props) {
               bossTopicoIds={caminho.bossTopicoIds}
               onSalvo={onSalvo}
             />
+            )}
           </div>
         </div>
       )}

@@ -235,6 +235,27 @@ function bossMaisProximo(bosses: BossRow[] | null | undefined): BossRow | null {
 // Mapa da campanha: uma "região" por disciplina, cada uma com seu próprio
 // Boss — em vez de olhar só a prova mais próxima, o aluno vê o caminho até
 // TODAS as provas de uma vez.
+/** Modo livre: a trilha CONTINUA (é o mapa de progresso da ementa, não um
+ *  plano por data de prova), mas tudo que fala de prova sai — o aluno que
+ *  desligou a trajetória não deveria ver "faltam 9 dias" numa contagem que
+ *  ele não pediu. Os dados seguem no banco; só não são exibidos.
+ *  Ver lib/questly/modo-estudo.ts. */
+export function semProva(regiao: RegiaoMapa): RegiaoMapa {
+  return { ...regiao, bossNome: null, diasAteProva: null, notaProjetada: null, emRisco: 0 };
+}
+
+export function caminhoSemProva(caminho: CaminhoDisciplina): CaminhoDisciplina {
+  return {
+    ...caminho,
+    bossId: null,
+    bossNome: null,
+    bossData: null,
+    bossTopicoIds: null,
+    diasAteProva: null,
+    projecao: { ...caminho.projecao, notaProjetada: null, emRisco: 0 },
+  };
+}
+
 export async function carregarMapaTrilha(
   supabase: SupabaseClient,
   user: { id: string },

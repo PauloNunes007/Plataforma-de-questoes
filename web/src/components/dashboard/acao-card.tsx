@@ -36,12 +36,16 @@ export function AcaoCard({
   semMissaoHoje,
   motivoSemMissao,
   metas,
+  modoLivre = false,
 }: {
   retomar: RetomarInfo;
   missions: MissionCardData[];
   semMissaoHoje: boolean;
   motivoSemMissao?: string;
   metas: MetasHoje;
+  /** No modo livre não existe "missão do dia" — o vazio aqui não é uma falha
+   *  do motor, é o estado normal de quem só quer praticar. */
+  modoLivre?: boolean;
 }) {
   const foco = useFoco();
   const semMovimento = useReducedMotion();
@@ -51,24 +55,35 @@ export function AcaoCard({
   const proxima = pendentes[0] || null;
   const tudoFeito = missions.length > 0 && pendentes.length === 0;
 
-  // Dia sem missão: estado honesto, sem inventar tarefa.
-  if (semMissaoHoje || missions.length === 0) {
+  // Sem missão E sem nada começado: estado honesto, sem inventar tarefa.
+  //
+  // A ordem importa: `retomar` (uma lista do Banco de Questões, um recap, um
+  // desafio de recuperação) é uma missão AVULSA e não aparece em `missions`.
+  // Antes, quem tinha uma lista pela metade e nenhuma missão do dia via "Sem
+  // missão hoje" e perdia o caminho de volta — no modo livre isso seria a
+  // tela inteira, já que lá o motor nunca gera missão.
+  if (!retomar && (semMissaoHoje || missions.length === 0)) {
     return (
       <section className="surface flex min-h-[168px] flex-col items-center justify-center gap-3 px-6 py-8 text-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
           <Moon size={20} strokeWidth={1.75} className="text-muted-foreground" />
         </span>
         <div>
-          <p className="font-heading text-[16px] font-semibold">Sem missão hoje</p>
+          <p className="font-heading text-[16px] font-semibold">
+            {modoLivre ? "Bora praticar?" : "Sem missão hoje"}
+          </p>
           <p className="mx-auto mt-1 max-w-[48ch] text-[13px] leading-relaxed text-muted-foreground">
-            {motivoSemMissao || "Não foi possível gerar sua missão agora. Tente recarregar a página."}
+            {modoLivre
+              ? "Monte uma lista com os assuntos que você quiser, no tamanho que quiser."
+              : motivoSemMissao || "Não foi possível gerar sua missão agora. Tente recarregar a página."}
           </p>
         </div>
         <Link
           href="/questoes/banco"
           className="mt-1 inline-flex h-11 items-center gap-1.5 rounded-xl border border-border px-5 text-[13px] font-semibold text-muted-foreground transition-colors hover:border-questly-green/45 hover:text-foreground"
         >
-          Praticar mesmo assim <ArrowRight size={14} strokeWidth={2.2} />
+          {modoLivre ? "Montar minha lista" : "Praticar mesmo assim"}{" "}
+          <ArrowRight size={14} strokeWidth={2.2} />
         </Link>
       </section>
     );
@@ -84,7 +99,7 @@ export function AcaoCard({
   const mestreAlvo = Boolean(proxima?.mestre) && !retomar;
 
   const fundo = tudoFeito ? GRAD_CONCLUIDO : mestreAlvo ? GRAD_MESTRE : cor.gradienteProfundo;
-  const kicker = tudoFeito ? "Dia cumprido" : retomar ? "Você parou aqui" : "Seu foco de hoje";
+  const kicker = tudoFeito ? "Dia cumprido" : retomar ? "Você parou aqui" : modoLivre ? "Prática livre" : "Seu foco de hoje";
   const titulo = tudoFeito ? "Tudo feito por hoje" : nomeDisciplina;
   const pct = retomar
     ? retomar.pct

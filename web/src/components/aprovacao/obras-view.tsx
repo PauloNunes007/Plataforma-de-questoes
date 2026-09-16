@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { BookOpenText, Check, CheckCircle2, Loader2, NotebookPen } from "lucide-react";
-import { ModalAprovacao } from "./modal";
+import { ModalPainel } from "@/components/ui/modal-painel";
 import { salvarFichamentoAction, salvarProgressoObraAction } from "@/lib/aprovacao/actions";
 import type { Fichamento, ObraComProgresso } from "@/lib/aprovacao/tipos";
 
@@ -105,7 +105,7 @@ export function ObrasView({ obrasIniciais, hoje }: { obrasIniciais: ObraComProgr
         );
       })}
 
-      <ModalAprovacao
+      <ModalPainel
         aberto={!!fichando}
         titulo={fichando ? `Fichamento — ${fichando.titulo}` : "Fichamento"}
         onFechar={() => setFichando(null)}
@@ -118,7 +118,7 @@ export function ObrasView({ obrasIniciais, hoje }: { obrasIniciais: ObraComProgr
             onMudou={(fich) => trocarObra(fichando.id, { fichamento: fich })}
           />
         )}
-      </ModalAprovacao>
+      </ModalPainel>
     </div>
   );
 }

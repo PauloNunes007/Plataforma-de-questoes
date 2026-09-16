@@ -6,6 +6,7 @@ import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
 import { carregarDesempenho } from "@/lib/dashboard/desempenho-data";
 import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
+import { questlySugerirSimulado } from "@/lib/questly/plano-do-dia";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
 
 export const metadata: Metadata = {
@@ -36,6 +37,21 @@ export default async function DashboardPage() {
     carregarDesempenho(supabase, user.id),
   ]);
 
+  // "Distribuir listas E simulados de forma inteligente" (repasse 2026-09-16).
+  // A regra vive em lib/questly/plano-do-dia.ts — aqui só se junta o que ela
+  // precisa saber.
+  const ultimaNota = atalhoSimulados.notas[atalhoSimulados.notas.length - 1];
+  const sugestaoSimulado = questlySugerirSimulado(
+    dados.modoEstudo === "guiado" && dados.bossAlvo
+      ? {
+          subjectNome: dados.bossAlvo.subjectNome,
+          diasAteProva: dados.bossAlvo.diasAteProva,
+          temSimuladoEmAndamento: Boolean(atalhoSimulados.emAndamento),
+          ultimoSimuladoISO: ultimaNota?.criadoEm ?? null,
+        }
+      : null,
+  );
+
   return (
     <DashboardView
       dados={dados}
@@ -44,6 +60,7 @@ export default async function DashboardPage() {
       atalhoSimulados={atalhoSimulados}
       retomar={retomar}
       userId={user.id}
+      sugestaoSimulado={sugestaoSimulado}
     />
   );
 }

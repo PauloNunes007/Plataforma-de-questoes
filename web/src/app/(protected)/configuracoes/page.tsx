@@ -16,7 +16,9 @@ export default async function ConfiguracoesPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("nome, username, username_alterado_em, curso, foto_url, dias_disponiveis, tempo_diario_min")
+    .select(
+      "nome, username, username_alterado_em, curso, foto_url, dias_disponiveis, tempo_diario_min, modo_estudo",
+    )
     .eq("id", user.id)
     .single();
 

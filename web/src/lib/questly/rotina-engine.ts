@@ -17,8 +17,14 @@ export const QUESTLY_PESO_FRAGILIDADE = 0.35;
 export const QUESTLY_PESO_META = 0.2;
 const QUESTLY_ESCALA_URGENCIA = 3;
 
-export const QUESTLY_MIN_MINUTOS_POR_DISCIPLINA = 75;
-export const QUESTLY_MAX_DISCIPLINAS_POR_DIA = 4;
+// Quantas disciplinas cabem num dia. **Repasse de 2026-09-16**: o motor
+// recomendava até QUATRO disciplinas no mesmo dia, o que não é um plano de
+// estudo — é uma lista de coisas que ninguém faz. Um dia de estudo agora é de
+// UMA disciplina; a segunda só aparece pra quem reservou 2h ou mais, e não
+// existe terceira. A grade semanal é que distribui a cobertura ao longo da
+// semana, não o empilhamento diário.
+export const QUESTLY_MIN_MINUTOS_PARA_SEGUNDA_DISCIPLINA = 120;
+export const QUESTLY_MAX_DISCIPLINAS_POR_DIA = 2;
 
 export function questlyPesoDisciplina(subject: SubjectComPeso, hoje: Date): number {
   const bossesFuturos = (subject.bosses || [])
@@ -42,9 +48,15 @@ export function questlyPesoDisciplina(subject: SubjectComPeso, hoje: Date): numb
   );
 }
 
+/** Teto de disciplinas num mesmo dia: 1 por padrão, 2 só com >= 2h
+ *  reservadas. Vale pra RECOMENDAÇÃO da grade e também pra geração das
+ *  missões — uma grade antiga com 4 disciplinas numa segunda-feira não vira
+ *  4 missões; o motor escolhe as de maior peso e oferece as outras como troca
+ *  (ver mission-engine.ts). */
 export function questlyDisciplinasPorDia(numDisciplinas: number, tempoDiarioMin: number): number {
-  const bruto = Math.round((tempoDiarioMin || 30) / QUESTLY_MIN_MINUTOS_POR_DISCIPLINA);
-  return Math.max(1, Math.min(bruto, numDisciplinas, QUESTLY_MAX_DISCIPLINAS_POR_DIA));
+  const minutos = tempoDiarioMin || 30;
+  const teto = minutos >= QUESTLY_MIN_MINUTOS_PARA_SEGUNDA_DISCIPLINA ? QUESTLY_MAX_DISCIPLINAS_POR_DIA : 1;
+  return Math.max(1, Math.min(teto, numDisciplinas));
 }
 
 export function questlyRecomendarRotina(

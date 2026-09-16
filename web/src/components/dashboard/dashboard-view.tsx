@@ -16,9 +16,9 @@ import { PerfilBar } from "./perfil-bar";
 import { HomeRail, type VisaoHome } from "./home-rail";
 import { AcaoCard } from "./acao-card";
 import { MissoesCard } from "./missoes-card";
+import { PraticaLivreCard } from "./pratica-livre-card";
 import { QuestoesFeitasCard } from "./questoes-feitas-card";
 import { BossSiegeMeter } from "./boss-siege-meter";
-import { GpsAprovacaoCard } from "./gps-aprovacao-card";
 import { TarefasDoDiaCard } from "./tarefas-do-dia-card";
 import { MapaProgressoCard } from "./mapa-progresso-card";
 import { SimuladosCard } from "./simulados-card";
@@ -51,6 +51,18 @@ import { ConquistasView } from "./conquistas-view";
 // largura inteira pra planejar. O calendário no rodapé só era visto por quem
 // rolava até o fim — ou seja, quase ninguém.
 //
+// **Repasse de 2026-09-16.** Duas mudanças estruturais:
+//
+//   • A home é MODULAR. Quem escolheu "prática livre" em Configurações
+//     (profile.modo_estudo, ver lib/questly/modo-estudo.ts) não vê missão,
+//     nem cerco ao Boss, nem projeção de nota: no lugar do plano entra o
+//     PraticaLivreCard, e a coluna de diagnóstico simplesmente não existe.
+//     Nada é apagado no banco — voltar pro guiado restaura tudo.
+//   • O cartão do GPS da Aprovação saiu. A direção que ele dava virou a
+//     própria missão do dia: o assunto e o porquê agora vivem dentro do
+//     MissoesCard (ver lib/questly/plano-do-dia.ts). Eram dois planos
+//     concorrendo na mesma tela, com números diferentes.
+//
 // A carta do aluno (o card TCG do ranking) abre POR CIMA da home, a partir do
 // botão do trilho ou do bloco de perfil — sem trocar de página.
 export function DashboardView({
@@ -60,6 +72,7 @@ export function DashboardView({
   atalhoSimulados,
   retomar,
   userId,
+  sugestaoSimulado,
 }: {
   dados: DashboardData;
   hero: HeroDados;
@@ -67,6 +80,9 @@ export function DashboardView({
   atalhoSimulados: AtalhoSimulados;
   retomar: RetomarInfo;
   userId: string;
+  /** Calculada no servidor (depende de Date.now(), impuro num componente).
+   *  Ver a nota em app/(protected)/dashboard/page.tsx. */
+  sugestaoSimulado: { subjectNome: string; diasAteProva: number } | null;
 }) {
   const [visao, setVisao] = useState<VisaoHome>("global");
   const [card, setCard] = useState<CardUsuario | null>(null);
@@ -75,6 +91,7 @@ export function DashboardView({
   const liga: Liga = (dados.profile?.liga as Liga) || QUESTLY_LIGAS[0];
   const ligaNome = (QUESTLY_LIGA_INFO[liga] || QUESTLY_LIGA_INFO.bronze).nome;
 
+  const guiado = dados.modoEstudo === "guiado";
   const missoesPendentesIds = dados.missions.filter((m) => !m.concluida).map((m) => m.id);
   const subjectsResumo = dados.subjects.map((s) => ({ id: s.id, nome: s.nome }));
   const hojeStr = dados.calendar.days.find((d) => d.estado === "hoje")?.data || "";
@@ -142,6 +159,7 @@ export function DashboardView({
                   semMissaoHoje={dados.semMissaoHoje}
                   motivoSemMissao={dados.motivoSemMissao}
                   metas={dados.metasHoje}
+                  modoLivre={!guiado}
                 />
 
                 {/* As duas coisas que o aluno PODE FAZER agora, com o mesmo
@@ -159,7 +177,17 @@ export function DashboardView({
                     bem — o simulado é a prova de agora, o anel é o histórico
                     que ela vai mexer. */}
                 <div className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-                  <MissoesCard missions={dados.missions} metas={dados.metasHoje} />
+                  {guiado ? (
+                    <MissoesCard
+                      missions={dados.missions}
+                      metas={dados.metasHoje}
+                      adiadas={dados.missoesAdiadas}
+                      alternativas={dados.alternativasDoDia}
+                      sugestaoSimulado={sugestaoSimulado}
+                    />
+                  ) : (
+                    <PraticaLivreCard hero={hero} />
+                  )}
                   <div className="flex min-w-0 flex-col gap-4">
                     <SimuladosCard atalho={atalhoSimulados} />
                     <QuestoesFeitasCard hero={hero} />
@@ -196,23 +224,18 @@ export function DashboardView({
               </aside>
 
               {/* Diagnóstico: leitura, não ação — fica abaixo do que se faz
-                  agora, ocupando a coluna principal inteira. */}
-              <div className="order-3 flex min-w-0 flex-col gap-4 xl:order-none xl:col-start-1 xl:row-start-2">
-                <BossSiegeMeter
-                  bossAlvo={dados.bossAlvo}
-                  hasSubjects={dados.subjects.length > 0}
-                  dayTicker={dados.dayTicker}
-                  missoesPendentesIds={missoesPendentesIds}
-                />
-
-                {dados.bossAlvo && (
-                  <GpsAprovacaoCard
-                    rota={dados.bossAlvo.rota}
-                    subjectId={dados.bossAlvo.subjectId}
-                    subjectNome={dados.bossAlvo.subjectNome}
+                  agora, ocupando a coluna principal inteira. Só existe no modo
+                  guiado: sem data de prova não há cerco a medir. */}
+              {guiado && (
+                <div className="order-3 flex min-w-0 flex-col gap-4 xl:order-none xl:col-start-1 xl:row-start-2">
+                  <BossSiegeMeter
+                    bossAlvo={dados.bossAlvo}
+                    hasSubjects={dados.subjects.length > 0}
+                    dayTicker={dados.dayTicker}
+                    missoesPendentesIds={missoesPendentesIds}
                   />
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { CheckCircle2, NotebookPen } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ModalAprovacao } from "./modal";
+import { ModalPainel } from "@/components/ui/modal-painel";
 import { ErroForm } from "./erro-form";
 
 // Botão flutuante "+ Erro rápido" — montado no (protected)/layout.tsx,
@@ -31,7 +31,7 @@ export function BotaoErroRapido() {
         <span className="hidden sm:inline">Erro rápido</span>
       </button>
 
-      <ModalAprovacao aberto={aberto} titulo="Registrar erro" onFechar={() => setAberto(false)}>
+      <ModalPainel aberto={aberto} titulo="Registrar erro" onFechar={() => setAberto(false)}>
         <ErroForm
           onSalvo={() => {
             setAberto(false);
@@ -40,7 +40,7 @@ export function BotaoErroRapido() {
           }}
           onCancelar={() => setAberto(false)}
         />
-      </ModalAprovacao>
+      </ModalPainel>
 
       <AnimatePresence>
         {salvo && (

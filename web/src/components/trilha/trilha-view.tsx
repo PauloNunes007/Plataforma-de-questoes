@@ -11,9 +11,11 @@ import type { CaminhoDisciplina as CaminhoDisciplinaData, RegiaoMapa } from "@/l
 
 type TrilhaViewProps = {
   regioes: RegiaoMapa[];
+  /** false = modo livre: a jornada fica, o card do Boss/prova não. */
+  guiado?: boolean;
 };
 
-export function TrilhaView({ regioes }: TrilhaViewProps) {
+export function TrilhaView({ regioes, guiado = true }: TrilhaViewProps) {
   const [selecionada, setSelecionada] = useState<string | null>(null);
   const [caminho, setCaminho] = useState<CaminhoDisciplinaData | null>(null);
   const [carregando, setCarregando] = useState(false);
@@ -129,7 +131,7 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
                 </div>
               </div>
             ) : (
-              <CaminhoJornada caminho={caminho} onAtualizar={setCaminho} onSalvo={recarregarCaminho} />
+              <CaminhoJornada caminho={caminho} onAtualizar={setCaminho} onSalvo={recarregarCaminho} guiado={guiado} />
             )}
           </motion.div>
         )}
