@@ -417,13 +417,17 @@ export async function listarCuponsAdminAction(): Promise<{ cupons: CupomAdmin[] 
   return { cupons };
 }
 
+// Devolve o cupom JÁ GRAVADO (com o id real do banco) — a lista do admin
+// precisa dele pra poder desativar o cupom recém-criado sem recarregar a
+// página. Inventar um uuid no cliente fazia o "Desativar" bater num id que não
+// existe: update em 0 linhas, sem erro, e a tela mentindo que desativou.
 export async function criarCupomAdminAction(input: {
   codigo: string;
   diasPro: number;
   limiteUsos: number | null;
   expiraEm: string | null; // ISO, ou null
   descricao: string | null;
-}): Promise<{ ok: true } | { error: string }> {
+}): Promise<{ ok: true; cupom: CupomAdmin } | { error: string }> {
   const { supabase, error } = await requireAdmin();
   if (!supabase) return { error: error! };
 
@@ -440,19 +444,36 @@ export async function criarCupomAdminAction(input: {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { error: err } = await supabase.from("cupons").insert({
-    codigo,
-    dias_pro: input.diasPro,
-    limite_usos: input.limiteUsos,
-    expira_em: input.expiraEm,
-    descricao: input.descricao?.trim() || null,
-    criado_por: user?.email ?? null,
-  });
+  const { data, error: err } = await supabase
+    .from("cupons")
+    .insert({
+      codigo,
+      dias_pro: input.diasPro,
+      limite_usos: input.limiteUsos,
+      expira_em: input.expiraEm,
+      descricao: input.descricao?.trim() || null,
+      criado_por: user?.email ?? null,
+    })
+    .select("id, codigo, descricao, dias_pro, limite_usos, usos, ativo, expira_em, criado_em")
+    .single();
   if (err) {
     if (err.code === "23505") return { error: "Já existe um cupom com esse código." };
     return { error: err.message };
   }
-  return { ok: true };
+  return {
+    ok: true,
+    cupom: {
+      id: data.id,
+      codigo: data.codigo,
+      descricao: data.descricao,
+      diasPro: data.dias_pro,
+      limiteUsos: data.limite_usos,
+      usos: data.usos,
+      ativo: data.ativo,
+      expiraEm: data.expira_em,
+      criadoEm: data.criado_em,
+    },
+  };
 }
 
 export async function alternarCupomAdminAction(

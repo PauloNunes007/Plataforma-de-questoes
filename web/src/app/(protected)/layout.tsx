@@ -9,6 +9,7 @@ import { FocoBar } from "@/components/foco/foco-bar";
 import { TopNav } from "@/components/top-nav";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { BotaoErroRapido } from "@/components/aprovacao/botao-erro-rapido";
+import { ConviteAutoResgate } from "@/components/plano/convite-auto-resgate";
 
 export default async function ProtectedLayout({
   children,
@@ -67,6 +68,11 @@ export default async function ProtectedLayout({
         {/* Modo Aprovação (feature de conta única): registrar um erro de
             qualquer página do app — só a conta admin vê. */}
         {isAdmin && <BotaoErroRapido />}
+
+        {/* Convite de testador (/convite/[codigo]) guardou um cupom no cookie:
+            aqui é o primeiro ponto do fluxo em que o profile já existe e o Pro
+            pode ser ligado sozinho. Sem cookie, não renderiza nada. */}
+        <ConviteAutoResgate />
         <MobileBottomNav />
       </div>
     </FocoProvider>

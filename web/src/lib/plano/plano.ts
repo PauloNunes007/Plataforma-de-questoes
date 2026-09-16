@@ -138,3 +138,34 @@ export const RECURSOS_PRO: ItemPlano[] = [
   { texto: "Tudo do plano grátis, sem limite", incluso: true },
   ...BENEFICIOS_PRO.map((texto) => ({ texto, incluso: true })),
 ];
+
+/* ------------------------------------------------------------- convite */
+
+// Nome do cookie que carrega o código do convite do clique no link até a
+// primeira tela logada. É legível pelo cliente de propósito (não é httpOnly):
+// o código já estava na URL que a pessoa recebeu no WhatsApp — não há segredo
+// nenhum a proteger aqui, e quem escreve/limpa é o componente de cliente.
+export const COOKIE_CONVITE = "questly_convite";
+
+// Só letras/números/hífen: o código vem da URL e é ecoado na tela.
+export function normalizarCodigoCupom(bruto: string): string {
+  return bruto
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9_-]/g, "")
+    .slice(0, 40);
+}
+
+// URL de convite pronta pra colar no WhatsApp. Usa a MESMA base do resto do
+// app (NEXT_PUBLIC_APP_URL) — se o domínio mudar, o link muda junto, e não há
+// um segundo lugar com o endereço digitado à mão.
+//
+// `base` existe pro cliente poder passar `location.origin`: se a variável não
+// estiver definida no deploy, o admin copiaria um link pro domínio errado sem
+// perceber, e o convite morreria na mão do testador. No browser a origem real
+// é a fonte mais confiável que existe.
+export function linkConvite(codigo: string, base?: string): string {
+  const raiz = (base?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://questly.com.br")
+    .replace(/\/+$/, "");
+  return `${raiz}/convite/${normalizarCodigoCupom(codigo)}`;
+}

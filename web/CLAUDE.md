@@ -296,6 +296,47 @@ migração `supabase_seguranca_hardening.sql` (documentada no root `CLAUDE.md`).
   assinante, a causa é a migração do Pro não ter sido rodada (a query do layout
   falha e `ehPro` cai pra false).
 
+## Link de convite — `/convite/[codigo]` (2026-09-15)
+
+O cupom de Pro (`supabase_cupons_pro.sql`, `/admin/cupons`) já existia, mas o
+único jeito de usá-lo era o aluno **digitar o código** no campo "Tenho um cupom"
+da `/pro`. Pra mandar acesso pros primeiros testadores por WhatsApp isso perde
+gente em cada passo. O link de convite é o cupom com uma porta na frente:
+
+- **Rota pública** `app/convite/[codigo]` (prefixo liberado em `PREFIXOS_PUBLICOS`,
+  `src/proxy.ts`) — quem clica ainda não tem conta, é o ponto todo. O código
+  **não é segredo** (viaja na URL e é reencaminhável): quem limita o alcance é o
+  `limite_usos` do cupom e o índice único `(cupom_id, user_id)`.
+- `consultarConviteAction` (`lib/plano/actions.ts`) lê o cupom por código exato
+  via `service_role` e devolve `EstadoConvite` (`valido` com dias + vagas
+  restantes, ou `invalido`/`expirado`/`esgotado`/`ja_usado`). Nunca lista cupons
+  — não há varredura, só busca pontual. Sem `SUPABASE_SERVICE_ROLE_KEY` degrada
+  pra `invalido` em vez de estourar tela de erro (o visitante veio de um link de
+  amigo; crash ali é pior que "não encontramos este convite").
+- **Nada de número digitado à mão** (mesma regra da landing): dias e vagas saem
+  do cupom, e os recursos vêm de `BENEFICIOS_PRO` — se um gate mudar, a tela
+  muda junto. O card de OG (`convite/[codigo]/opengraph-image.tsx`) é o único
+  lugar sem número **de propósito**: a imagem é gerada uma vez e reencaminhada
+  meses depois; prometer "7 dias" nela seria mentir com atraso.
+- **Resgate automático**: a página grava o código num cookie (`COOKIE_CONVITE`,
+  30 dias, legível pelo cliente — não há segredo a proteger) assim que abre, e
+  `components/plano/convite-auto-resgate.tsx`, montado no layout de `(protected)`,
+  resgata na primeira tela logada. **É ali e não antes**: o resgate escreve em
+  `profiles`, e antes do onboarding essa linha pode não existir — o update
+  afetaria 0 linhas sem erro e o cupom seria consumido à toa (por isso
+  `resgatarCupomAction` agora recusa quando não acha o profile). O cookie é
+  apagado **antes** da chamada: uma tentativa por convite, e o caminho manual
+  da `/pro` continua de pé como rede.
+- **`/admin/cupons`**: cada cupom mostra o link pronto, "Copiar convite pronto"
+  (mensagem já com os dias daquele cupom) e "Enviar no WhatsApp" (`wa.me`), mais
+  o preset "Turma de teste". A base do link vem de `NEXT_PUBLIC_APP_URL` no
+  servidor e de `location.origin` no browser (`useSyncExternalStore`) — sem isso,
+  um deploy sem a env faria o admin copiar um endereço morto sem perceber.
+- Bug corrigido de passagem: `criarCupomAdminAction` devolve a linha gravada.
+  A lista inventava um `crypto.randomUUID()` pro cupom recém-criado, então
+  "Desativar" batia num id inexistente — update em 0 linhas, sem erro, e a tela
+  dizendo que desativou.
+
 ## Confirmação de email — Send Email Hook + Brevo (2026-09-10)
 
 **O problema:** o serviço de email embutido do Supabase manda **2 emails/hora no

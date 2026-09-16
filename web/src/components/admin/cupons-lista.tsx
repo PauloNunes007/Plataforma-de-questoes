@@ -1,14 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Loader2, Plus, Ticket, X } from "lucide-react";
+import { Check, Copy, Link2, Loader2, Plus, Send, Ticket, Users, X } from "lucide-react";
 import {
   alternarCupomAdminAction,
   criarCupomAdminAction,
   type CupomAdmin,
 } from "@/lib/admin/actions";
 import { AdminTabs } from "@/components/admin/admin-tabs";
+import { linkConvite } from "@/lib/plano/plano";
+
+// Preenchimento do lote de convites dos primeiros testadores — o caso que
+// motivou o link de convite. Fica aqui, e não num cupom criado por migração,
+// porque código/validade/tamanho do lote são decisão de lançamento e mudam a
+// cada rodada de convites.
+const PRESET_TESTADORES = {
+  codigo: "TESTADOR7",
+  dias: 7,
+  vagas: 10,
+  descricao: "Primeiros testadores (WhatsApp)",
+};
 
 function fmt(iso: string | null): string {
   if (!iso) return "—";
@@ -126,6 +138,7 @@ export function CuponsLista({ cuponsIniciais }: { cuponsIniciais: CupomAdmin[] }
                       ) : null}
                     </p>
                     {c.descricao && <p className="mt-1 text-[12px] text-muted-foreground/80">{c.descricao}</p>}
+                    <CompartilharConvite cupom={c} />
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">
@@ -195,17 +208,9 @@ function FormNovoCupom({
       setErro(res.error);
       return;
     }
-    onCriado({
-      id: crypto.randomUUID(),
-      codigo: codigo.trim().toUpperCase(),
-      descricao: descricao.trim() || null,
-      diasPro: dias,
-      limiteUsos: limite,
-      usos: 0,
-      ativo: true,
-      expiraEm: expiraEm ? new Date(expiraEm).toISOString() : null,
-      criadoEm: new Date().toISOString(),
-    });
+    // A linha vem do banco (id real) — sem isso o "Desativar" do cupom
+    // recém-criado bateria num uuid inventado aqui e não faria nada.
+    onCriado(res.cupom);
   }
 
   return (
@@ -214,6 +219,23 @@ function FormNovoCupom({
       animate={{ opacity: 1, y: 0 }}
       className="surface mb-5 flex flex-col gap-3.5 p-4"
     >
+      {/* Atalho do caso real de lançamento: um lote pequeno de testadores,
+          uma semana de Pro. Só preenche o formulário — nada é criado sem o
+          botão abaixo, e todo campo continua editável. */}
+      <button
+        type="button"
+        onClick={() => {
+          setDiasPro(String(PRESET_TESTADORES.dias));
+          setLimiteUsos(String(PRESET_TESTADORES.vagas));
+          setDescricao(PRESET_TESTADORES.descricao);
+          if (!codigo.trim()) setCodigo(PRESET_TESTADORES.codigo);
+        }}
+        className="inline-flex w-fit items-center gap-1.5 rounded-lg bg-questly-purple/10 px-2.5 py-1.5 text-[11.5px] font-semibold text-questly-purple transition-colors hover:bg-questly-purple/20"
+      >
+        <Users size={12} strokeWidth={2.2} />
+        Turma de teste ({PRESET_TESTADORES.vagas} pessoas, {PRESET_TESTADORES.dias} dias)
+      </button>
+
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Campo label="Código">
           <input
@@ -291,5 +313,83 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
       <span className="text-[11px] font-semibold text-muted-foreground">{label}</span>
       {children}
     </label>
+  );
+}
+
+/* -------------------------------------------------- link de convite */
+
+// O que o admin realmente faz com um cupom é MANDAR pra alguém. Digitar o
+// código num grupo e pedir pro aluno achar o campo "Tenho um cupom" em /pro
+// perde gente em cada passo; o link já cai numa tela que explica o convite e
+// liga o Pro sozinho depois do cadastro (app/convite/[codigo]).
+//
+// A mensagem do WhatsApp sai daqui pronta, com o número de dias do PRÓPRIO
+// cupom — nada digitado à mão que possa divergir do que o resgate concede.
+function CompartilharConvite({ cupom }: { cupom: CupomAdmin }) {
+  const [copiado, setCopiado] = useState<"link" | "texto" | null>(null);
+  // No servidor (e durante a hidratação) a base vem da env; já no browser vem
+  // a origem real — que acerta o link mesmo se NEXT_PUBLIC_APP_URL não estiver
+  // configurada no deploy e o admin fosse copiar um endereço morto sem notar.
+  // useSyncExternalStore, e não estado + efeito, pra as duas renderizações
+  // baterem sem aviso de hidratação.
+  const base = useSyncExternalStore(
+    () => () => {},
+    () => window.location.origin,
+    () => undefined,
+  );
+  const url = linkConvite(cupom.codigo, base);
+  const mensagem =
+    `Tô abrindo a Questly pra um grupo pequeno de testadores e separei um acesso pra você: ` +
+    `${cupom.diasPro} dias do plano Pro, sem cartão e sem cobrança depois.
+
+` +
+    `É só criar a conta por este link que o Pro já entra ligado:
+${url}`;
+
+  async function copiar(texto: string, qual: "link" | "texto") {
+    try {
+      await navigator.clipboard.writeText(texto);
+      setCopiado(qual);
+      setTimeout(() => setCopiado(null), 1800);
+    } catch {
+      // clipboard negado (http sem localhost, permissão): o link segue visível
+      // no campo ao lado pra seleção manual.
+    }
+  }
+
+  return (
+    <div className="mt-2.5 flex flex-col gap-1.5">
+      <div className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
+        <Link2 size={12} strokeWidth={2} />
+        <span className="truncate font-mono">{url}</span>
+      </div>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => copiar(url, "link")}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-[11.5px] font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          {copiado === "link" ? <Check size={12} strokeWidth={2.4} /> : <Copy size={12} strokeWidth={2.2} />}
+          {copiado === "link" ? "Copiado" : "Copiar link"}
+        </button>
+        <button
+          type="button"
+          onClick={() => copiar(mensagem, "texto")}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-[11.5px] font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          {copiado === "texto" ? <Check size={12} strokeWidth={2.4} /> : <Copy size={12} strokeWidth={2.2} />}
+          {copiado === "texto" ? "Copiado" : "Copiar convite pronto"}
+        </button>
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(mensagem)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-questly-green/12 px-2.5 py-1.5 text-[11.5px] font-semibold text-questly-green-dark transition-colors hover:bg-questly-green/20 dark:text-questly-green"
+        >
+          <Send size={12} strokeWidth={2.2} />
+          Enviar no WhatsApp
+        </a>
+      </div>
+    </div>
   );
 }

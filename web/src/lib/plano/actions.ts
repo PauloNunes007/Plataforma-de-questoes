@@ -13,7 +13,7 @@
 //      contingência (gateway fora do ar, pagamento por fora).
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { acharOpcao, ehPro } from "@/lib/plano/plano";
+import { acharOpcao, ehPro, normalizarCodigoCupom } from "@/lib/plano/plano";
 import {
   buscarPagamentoMP,
   buscarPagamentosPorReferencia,
@@ -330,6 +330,13 @@ export async function resgatarCupomAction(
     .eq("id", user.id)
     .maybeSingle();
   if (errProfile) return { error: errProfile.message };
+  // Sem linha em `profiles` o update abaixo afetaria ZERO linhas sem erro
+  // nenhum (RLS/`eq` não acham nada) — o cupom seria consumido e o Pro nunca
+  // apareceria. Acontece se o resgate for disparado antes do onboarding criar
+  // o profile; melhor recusar e mandar terminar o cadastro.
+  if (!profile) {
+    return { error: "Termine seu cadastro antes de usar o cupom." };
+  }
 
   // Já é Pro (pago ou de outro cupom): soma os dias em cima da validade atual
   // em vez de reiniciar — resgatar um cupom nunca deve ENCURTAR o que o aluno
@@ -362,4 +369,82 @@ export async function resgatarCupomAction(
   await admin.from("cupons").update({ usos: cupom.usos + 1 }).eq("id", cupom.id);
 
   return { ok: true, diasConcedidos: cupom.dias_pro };
+}
+
+/* ------------------------------------------------------- convite (link) */
+
+// Estado de um código consultado a partir do link de convite. É o suficiente
+// pra desenhar a tela /convite/[codigo] com honestidade — inclusive quando o
+// convite já não vale mais — sem NUNCA listar os cupons existentes: a busca é
+// por código exato, nada de varredura.
+export type EstadoConvite =
+  | {
+      estado: "valido";
+      codigo: string;
+      diasPro: number;
+      /** null = cupom sem limite de usos. */
+      vagasRestantes: number | null;
+    }
+  | { estado: "invalido" | "expirado" | "esgotado"; codigo: string }
+  | { estado: "ja_usado"; codigo: string; diasPro: number };
+
+export async function consultarConviteAction(codigoBruto: string): Promise<EstadoConvite> {
+  const codigo = normalizarCodigoCupom(codigoBruto);
+  if (!codigo) return { estado: "invalido", codigo: "" };
+
+  // Sem SUPABASE_SERVICE_ROLE_KEY o createAdminClient LANÇA. Aqui isso não
+  // pode virar tela de erro: a pessoa chegou por um link que um amigo mandou,
+  // e a resposta honesta ("não encontramos este convite") é melhor do que um
+  // crash. Vale sobretudo em ambiente de desenvolvimento, onde a chave costuma
+  // não estar configurada.
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return { estado: "invalido", codigo };
+  }
+
+  const { data: cupom } = await admin
+    .from("cupons")
+    .select("id, codigo, dias_pro, ativo, limite_usos, usos, expira_em")
+    .ilike("codigo", codigo)
+    .maybeSingle();
+
+  // Cupom desativado à mão pelo admin é tratado como inexistente: quem recebeu
+  // o link não precisa saber a diferença, e as duas telas seriam iguais.
+  if (!cupom || !cupom.ativo) return { estado: "invalido", codigo };
+  if (cupom.expira_em && new Date(cupom.expira_em).getTime() < Date.now()) {
+    return { estado: "expirado", codigo: cupom.codigo };
+  }
+
+  // Se a pessoa JÁ resgatou este convite, a tela vira um "seu acesso já está
+  // liberado" em vez de um botão que só daria erro. Vale só com sessão — quem
+  // ainda não entrou vê o convite normal.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const { data: jaResgatado } = await admin
+      .from("cupom_resgates")
+      .select("id")
+      .eq("cupom_id", cupom.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (jaResgatado) {
+      return { estado: "ja_usado", codigo: cupom.codigo, diasPro: cupom.dias_pro };
+    }
+  }
+
+  if (cupom.limite_usos !== null && cupom.usos >= cupom.limite_usos) {
+    return { estado: "esgotado", codigo: cupom.codigo };
+  }
+
+  return {
+    estado: "valido",
+    codigo: cupom.codigo,
+    diasPro: cupom.dias_pro,
+    vagasRestantes:
+      cupom.limite_usos === null ? null : Math.max(0, cupom.limite_usos - cupom.usos),
+  };
 }

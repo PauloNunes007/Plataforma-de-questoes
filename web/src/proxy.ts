@@ -11,6 +11,12 @@ import { updateSession } from "@/lib/supabase/middleware";
 // botão de spam, que queima o remetente que entrega a confirmação de cadastro.
 const PUBLIC_ROUTES = ["/", "/login", "/verificar-email", "/descadastrar"];
 
+// /convite/[codigo] é o link mandado pros primeiros testadores (WhatsApp).
+// Quem clica ainda NÃO tem conta — é o ponto todo. Prefixo, não igualdade,
+// porque o código vai no caminho. O cupom em si continua protegido pelo
+// limite de usos e pelo índice único (cupom_id, user_id), não por sessão.
+const PREFIXOS_PUBLICOS = ["/convite/"];
+
 // Arquivos de metadado gerados pelo App Router (robots.txt, sitemap.xml,
 // ícones e o card de preview do link). São pedidos SEM sessão — por crawler do
 // Google e pelo bot do WhatsApp/Instagram quando alguém cola o link num grupo.
@@ -50,7 +56,9 @@ export async function proxy(request: NextRequest) {
   }
 
   const isPublicRoute =
-    PUBLIC_ROUTES.includes(pathname) || ARQUIVOS_PUBLICOS.some((p) => pathname.startsWith(p));
+    PUBLIC_ROUTES.includes(pathname) ||
+    PREFIXOS_PUBLICOS.some((p) => pathname.startsWith(p)) ||
+    ARQUIVOS_PUBLICOS.some((p) => pathname.startsWith(p));
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
