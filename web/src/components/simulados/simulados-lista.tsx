@@ -49,7 +49,11 @@ export function SimuladosLista({
   const semMovimento = useReducedMotion();
   const concluidos = useMemo(() => historico.filter((s) => s.status === "concluido"), [historico]);
   const emAndamento = useMemo(() => historico.filter((s) => s.status === "em_andamento"), [historico]);
-  const podeMontar = reconhecida && status.podeMontar;
+  // 2026-09-16: a universidade do aluno NÃO decide mais se ele pode montar.
+  // Quem não estuda numa faculdade com provas catalogadas monta com as
+  // questões autorais (ou com as provas de outra universidade, de propósito) —
+  // `reconhecida` sobrou só pra escolher o texto.
+  const podeMontar = status.podeMontar;
 
   // Os três números do hub saem do próprio histórico — nenhuma análise pesada
   // é carregada aqui só pra pintar um resumo.
@@ -75,11 +79,12 @@ export function SimuladosLista({
           <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
             {reconhecida ? (
               <>
-                Uma prova cronometrada com questões reais de{" "}
-                <b className="font-semibold text-foreground">{nomeInstituicao}</b>.
+                Uma prova cronometrada com as provas de{" "}
+                <b className="font-semibold text-foreground">{nomeInstituicao}</b>, questões autorais — ou as
+                duas misturadas.
               </>
             ) : (
-              <>Uma prova cronometrada com questões reais da sua universidade.</>
+              <>Uma prova cronometrada. Você escolhe de onde saem as questões.</>
             )}
           </p>
         </div>
@@ -120,35 +125,38 @@ export function SimuladosLista({
         </Link>
       ))}
 
-      {/* Sem provas da universidade catalogadas — estado honesto, mas com saída:
-          a causa mais comum é a universidade escrita de outro jeito (ou não
-          preenchida), não a ausência real de conteúdo. */}
+      {/* Sem provas da universidade do aluno: NOTA, não parede. Antes isto era o
+          estado vazio que ocupava a tela e escondia a ação principal — e o
+          aluno de fora da UFF concluía que simulado não era pra ele. Hoje ele
+          monta do mesmo jeito; a nota só explica o que tem no banco e oferece
+          a correção da universidade, que continua sendo a causa mais comum
+          (grafia diferente ou campo em branco, não ausência de conteúdo). */}
       {!reconhecida && (
-        <div className="surface flex flex-col items-center gap-3 p-8 text-center">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <FileText size={20} className="text-muted-foreground" strokeWidth={1.75} />
-          </span>
-          <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+        <motion.div {...anim} className="surface flex flex-col gap-2.5 p-4">
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
             {universidade ? (
               <>
-                Ainda não temos provas catalogadas de{" "}
-                <b className="font-semibold text-foreground">{universidade}</b> pra montar um simulado. Assim
-                que tivermos, ele aparece aqui.
+                Ainda não temos provas de{" "}
+                <b className="font-semibold text-foreground">{universidade}</b> catalogadas. Monte com as{" "}
+                <b className="font-semibold text-foreground">questões autorais</b> — ou treine com as provas de
+                outra universidade, se quiser.
               </>
             ) : (
               <>
-                Você ainda não disse em qual universidade estuda — é isso que libera os simulados com as provas
-                dela.
+                Você ainda não disse onde estuda. Dá pra montar com as{" "}
+                <b className="font-semibold text-foreground">questões autorais</b> mesmo assim; com a
+                universidade preenchida, as provas dela vêm marcadas por padrão.
               </>
             )}
           </p>
 
           {instituicoesDisponiveis.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
+              <span className="text-[12px] font-medium text-muted-foreground">No banco hoje:</span>
               {instituicoesDisponiveis.slice(0, 6).map((i) => (
                 <span
                   key={i.nome}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-questly-green/30 bg-questly-green/10 px-2.5 py-1 text-[12px] font-semibold text-questly-green-dark dark:text-questly-green"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-questly-green/30 bg-questly-green/10 px-2.5 py-0.5 text-[12px] font-semibold text-questly-green-dark dark:text-questly-green"
                 >
                   {i.nome}
                 </span>
@@ -158,16 +166,16 @@ export function SimuladosLista({
 
           <Link
             href="/configuracoes"
-            className="mt-1 inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-questly-green px-4 text-sm font-semibold text-white transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+            className="inline-flex items-center gap-1 self-start text-[12.5px] font-bold text-questly-green-dark hover:underline dark:text-questly-green"
           >
             {universidade ? "Corrigir minha universidade" : "Definir minha universidade"}
-            <ArrowRight size={15} strokeWidth={2.5} />
+            <ArrowRight size={14} strokeWidth={2.5} />
           </Link>
-        </div>
+        </motion.div>
       )}
 
       {/* Gate: free que estourou o limite da semana */}
-      {reconhecida && !status.ehPro && !status.podeMontar && (
+      {!status.ehPro && !status.podeMontar && (
         <div className="surface flex flex-col gap-3 border-questly-gold/40 p-4 sm:flex-row sm:items-center">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-questly-gold-light text-questly-gold-dark">
             <Lock size={18} />
@@ -212,9 +220,7 @@ export function SimuladosLista({
               <FileText size={19} className="text-muted-foreground" strokeWidth={1.75} />
             </span>
             <p className="max-w-[40ch] text-sm leading-relaxed text-muted-foreground">
-              {reconhecida
-                ? "Escolha uma disciplina, marque os tópicos e faça sua primeira prova cronometrada."
-                : "Nenhum simulado ainda."}
+              Escolha uma disciplina, de onde saem as questões e faça sua primeira prova cronometrada.
             </p>
             {podeMontar && (
               <Link
@@ -266,22 +272,20 @@ export function SimuladosLista({
 
       {/* Limite do plano vira uma linha discreta no rodapé — informação de
           contexto, não um cartão competindo com a ação principal. */}
-      {reconhecida && (
-        <p className="tnum flex items-center justify-center gap-1.5 text-[11.5px] font-medium text-muted-foreground">
-          {status.ehPro ? (
-            <>
-              <Crown size={12} className="text-questly-gold-dark" /> Pro · simulados ilimitados
-            </>
-          ) : (
-            <>
-              {status.restantes} de {status.limite} simulados grátis nesta semana ·{" "}
-              <Link href="/pro" className="font-bold text-questly-green-dark hover:underline dark:text-questly-green">
-                ver o Pro
-              </Link>
-            </>
-          )}
-        </p>
-      )}
+      <p className="tnum flex items-center justify-center gap-1.5 text-[11.5px] font-medium text-muted-foreground">
+        {status.ehPro ? (
+          <>
+            <Crown size={12} className="text-questly-gold-dark" /> Pro · simulados ilimitados
+          </>
+        ) : (
+          <>
+            {status.restantes} de {status.limite} simulados grátis nesta semana ·{" "}
+            <Link href="/pro" className="font-bold text-questly-green-dark hover:underline dark:text-questly-green">
+              ver o Pro
+            </Link>
+          </>
+        )}
+      </p>
     </div>
   );
 }

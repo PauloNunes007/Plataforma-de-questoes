@@ -5,9 +5,16 @@ import { lerPaginado } from "@/lib/supabase/paginado";
 import { questlyEmbaralhar } from "@/lib/questly/shared";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { ehPro } from "@/lib/plano/plano";
-import { instituicoesDoAluno } from "./simulados-data";
 import { iniciarPraticaLivreAction } from "@/lib/disciplinas/actions";
 import { nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
+import { listarInstituicoes } from "@/lib/questly/contagem-questoes";
+import {
+  FONTE_AUTORAL,
+  ROTULO_AUTORAL,
+  idDaFonte,
+  repartirEntreFontes,
+  rotuloDasFontes,
+} from "./fontes";
 import {
   SIMULADO_FREE_LIMITE_SEMANA,
   clampQuantidade,
@@ -24,6 +31,8 @@ import {
 export type MontarSimuladoInput = {
   /** tópicos escolhidos — TODOS de uma disciplina só (ver `misturado` abaixo) */
   topicIds: string[];
+  /** de onde as questões podem sair (ids de fonte). Vazio = todas as fontes. */
+  fontes?: string[];
   duracaoMin: number;
   quantidade: number;
   /** vazio = todas as dificuldades */
@@ -38,9 +47,15 @@ export type MontarSimuladoInput = {
 
 export type MontarSimuladoResultado =
   | { ok: true; id: string }
-  | { ok: false; erro: "limite" | "sem_instituicao" | "sem_questoes" | "misturado" | "invalido" };
+  | { ok: false; erro: "limite" | "sem_questoes" | "misturado" | "invalido" };
 
-type Candidata = { id: string; ano: number | null; dificuldade: string | null; topic_id: string | null };
+type Candidata = {
+  id: string;
+  ano: number | null;
+  dificuldade: string | null;
+  topic_id: string | null;
+  instituicao: string | null;
+};
 
 const PESO_DIFICULDADE: Record<string, number> = { facil: 0, medio: 1, dificil: 2, outra: 1 };
 
@@ -123,12 +138,13 @@ function sortear(
 
 /**
  * Título do simulado: precisa ser reconhecível numa lista de vinte. Como toda
- * prova é de UMA disciplina, o nome dela é o escopo; a estratégia entra como
- * sufixo quando não é o sorteio comum — é o que diferencia duas provas montadas
- * no mesmo dia sobre o mesmo conteúdo.
+ * prova é de UMA disciplina, o nome dela é o escopo; a FONTE ("UFF",
+ * "Autorais", "UFF + autorais") entra na frente porque, desde que o aluno pode
+ * misturar, duas provas da mesma disciplina no mesmo dia podem ser coisas bem
+ * diferentes. A estratégia vira sufixo quando não é o sorteio comum.
  */
 function montarTitulo(
-  instituicao: string | null,
+  fonte: string | null,
   materiaNome: string | null,
   estrategia: EstrategiaSimulado,
   duracaoMin: number,
@@ -136,20 +152,27 @@ function montarTitulo(
   const escopo = materiaNome || rotuloDuracao(duracaoMin);
   const sufixo =
     estrategia === "fracos" ? " · pontos fracos" : estrategia === "recentes" ? " · anos recentes" : "";
-  return instituicao ? `Simulado ${instituicao} · ${escopo}${sufixo}` : `Simulado · ${escopo}${sufixo}`;
+  return fonte ? `Simulado ${fonte} · ${escopo}${sufixo}` : `Simulado · ${escopo}${sufixo}`;
 }
 
 // Cria um simulado: valida o plano (free tem limite semanal, Pro é ilimitado),
-// deriva a instituição do aluno pelo profile e a DISCIPLINA pelos tópicos
-// (ambos AUTORITATIVOS — o cliente não escolhe de que universidade sortear nem
-// declara de que matéria a prova é), sorteia questões reais daquela instituição
-// no recorte pedido (tópicos + dificuldade + anos, com a estratégia escolhida) e
-// fixa a ordem de aplicação no registro.
+// deriva a DISCIPLINA pelos tópicos (autoritativo — o cliente não declara de
+// que matéria a prova é), resolve as FONTES pedidas contra o que existe de
+// verdade no banco, sorteia dentro do recorte (tópicos + dificuldade + anos,
+// com a estratégia escolhida) e fixa a ordem de aplicação no registro.
 //
 // Regra de produto (2026-09-10): um simulado = UMA disciplina. Misturar matérias
 // numa prova só existe no vestibular; na graduação a prova é de uma disciplina,
 // e a escolha "quais das minhas matérias entram" era a decisão que mais travava
 // o aluno no montador antigo.
+//
+// Regra de produto (2026-09-16): a FONTE é do aluno. Antes a instituição saía
+// do profile e quem não estudasse numa universidade catalogada não montava
+// simulado nenhum; hoje ele escolhe as provas da própria faculdade, as de
+// outra, as autorais ou uma mistura. O que continua autoritativo é a EXISTÊNCIA
+// da fonte: os ids pedidos são casados contra `vw_instituicoes` e viram valores
+// crus de `questions.instituicao` aqui dentro — o cliente nunca manda um filtro
+// de banco, só um id de um conjunto fechado.
 export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<MontarSimuladoResultado> {
   const supabase = await createClient();
   const {
@@ -168,7 +191,7 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
 
   const { data: perfil } = await supabase
     .from("profiles")
-    .select("universidade, plano, plano_expira_em")
+    .select("plano, plano_expira_em")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -183,8 +206,32 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
     if ((count ?? 0) >= SIMULADO_FREE_LIMITE_SEMANA) return { ok: false, erro: "limite" };
   }
 
-  const casadas = await instituicoesDoAluno(supabase, perfil?.universidade ?? null);
-  if (casadas.length === 0) return { ok: false, erro: "sem_instituicao" };
+  // Fontes: o id que veio do cliente só vale se existir no banco. Os valores
+  // crus de `questions.instituicao` ("UFF", "UFF (1º sem.)"…) são reagrupados
+  // aqui, pela MESMA regra do montador, e a fonte autoral é `instituicao null`
+  // (mais o rótulo de autoria própria, ver `idDaFonte`). Nenhum id reconhecido
+  // = sortear de tudo, que é o padrão permissivo da regra nova.
+  const valoresPorFonte = new Map<string, string[]>();
+  for (const { instituicao } of await listarInstituicoes(supabase)) {
+    const bruto = (instituicao || "").trim();
+    if (!bruto) continue;
+    const id = idDaFonte(bruto);
+    const lista = valoresPorFonte.get(id);
+    if (lista) lista.push(bruto);
+    else valoresPorFonte.set(id, [bruto]);
+  }
+  // `vw_instituicoes` não lista a linha nula, então a fonte autoral entra aqui
+  // sempre: se o banco não tiver questão autoral, o sorteio devolve vazio e o
+  // aluno recebe "sem_questoes" — honesto, sem opção fantasma no meio.
+  if (!valoresPorFonte.has(FONTE_AUTORAL)) valoresPorFonte.set(FONTE_AUTORAL, []);
+
+  const pedidas = [...new Set((input.fontes || []).map((f) => String(f)))].filter((f) =>
+    valoresPorFonte.has(f),
+  );
+  const fontesAlvo = pedidas.length > 0 ? pedidas : [...valoresPorFonte.keys()];
+
+  const nomeDaFonte = (id: string): string =>
+    id === FONTE_AUTORAL ? ROTULO_AUTORAL : nomeExibicaoInstituicao(valoresPorFonte.get(id) || []) || id;
 
   // Disciplina derivada dos próprios tópicos: uma só, sempre.
   const { data: tops } = await supabase
@@ -206,17 +253,43 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
   // que parecia: o teto do PostgREST é 1000 e o .limit só consegue abaixá-lo —
   // uma disciplina grande tinha o fim do conjunto cortado e as mesmas questões
   // eram sorteadas pra todo mundo. Ver lib/supabase/paginado.ts.
-  const brutas = await lerPaginado<Candidata>(() =>
-    supabase
-      .from("questions")
-      .select("id, ano, dificuldade, topic_id")
-      .in("instituicao", casadas)
-      .in("topic_id", input.topicIds)
-      // Aprofundamento (questions.desafio) fica fora de sorteio automático:
-      // é conteúdo além do nível da prova e o aluno só o encontra quando pede,
-      // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
-      .eq("desafio", false),
-  );
+  //
+  // Duas leituras no máximo, e não uma por fonte: as instituições cabem num
+  // `in` só, e o autoral é um `is null` à parte porque NULL nunca casa num
+  // `in` (juntar os dois num `.or()` exigiria escapar vírgula e parêntese dos
+  // rótulos do banco — mais frágil que uma segunda ida).
+  const valoresPedidos = [...new Set(fontesAlvo.flatMap((f) => valoresPorFonte.get(f) || []))];
+  const querAutoral = fontesAlvo.includes(FONTE_AUTORAL);
+
+  const colunas = "id, ano, dificuldade, topic_id, instituicao";
+  // Aprofundamento (questions.desafio) fica fora de sorteio automático: é
+  // conteúdo além do nível da prova e o aluno só o encontra quando pede, pelo
+  // Banco de Questões. Ver supabase_questao_desafio.sql.
+  const brutas: Candidata[] = [];
+  if (valoresPedidos.length > 0) {
+    brutas.push(
+      ...(await lerPaginado<Candidata>(() =>
+        supabase
+          .from("questions")
+          .select(colunas)
+          .in("instituicao", valoresPedidos)
+          .in("topic_id", input.topicIds)
+          .eq("desafio", false),
+      )),
+    );
+  }
+  if (querAutoral) {
+    brutas.push(
+      ...(await lerPaginado<Candidata>(() =>
+        supabase
+          .from("questions")
+          .select(colunas)
+          .is("instituicao", null)
+          .in("topic_id", input.topicIds)
+          .eq("desafio", false),
+      )),
+    );
+  }
 
   let pool = brutas;
   if (difsPedidas.size > 0) pool = pool.filter((q) => difsPedidas.has(normalizarChaveDificuldade(q.dificuldade)));
@@ -243,7 +316,27 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
     }
   }
 
-  const escolhidas = sortear(pool, quantidade, estrategia, fraqueza);
+  // Sorteio em duas camadas: primeiro QUANTAS questões cada fonte entrega
+  // (parte igual, ver repartirEntreFontes — proporcional devolveria "29
+  // autorais e 1 da UFF"), depois QUAIS dentro de cada fonte, pela estratégia
+  // que o aluno escolheu. Com uma fonte só, a cota é a prova inteira e o
+  // resultado é idêntico ao de antes desta divisão existir.
+  const poolPorFonte = new Map<string, Candidata[]>();
+  for (const q of pool) {
+    const id = idDaFonte(q.instituicao);
+    const lista = poolPorFonte.get(id);
+    if (lista) lista.push(q);
+    else poolPorFonte.set(id, [q]);
+  }
+  const cotas = repartirEntreFontes(
+    new Map([...poolPorFonte].map(([id, lista]) => [id, lista.length])),
+    quantidade,
+  );
+  const escolhidas = [...poolPorFonte.entries()].flatMap(([id, lista]) =>
+    sortear(lista, cotas.get(id) ?? 0, estrategia, fraqueza),
+  );
+  if (escolhidas.length === 0) return { ok: false, erro: "sem_questoes" };
+
   const aplicadas =
     ordem === "crescente"
       ? [...escolhidas].sort(
@@ -253,15 +346,25 @@ export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<
       : questlyEmbaralhar(escolhidas);
   const questionIds = aplicadas.map((q) => q.id);
 
-  const nomeInstituicao = nomeExibicaoInstituicao(casadas);
-  const titulo = montarTitulo(nomeInstituicao, materiaNome, estrategia, input.duracaoMin);
+  // Só as fontes que de fato entregaram questão entram no rótulo — uma fonte
+  // pedida que ficou com cota zero não pode aparecer no título de uma prova
+  // onde ela não está.
+  const contribuicao = new Map<string, number>();
+  for (const q of escolhidas) {
+    const id = idDaFonte(q.instituicao);
+    contribuicao.set(id, (contribuicao.get(id) || 0) + 1);
+  }
+  const rotuloFonte = rotuloDasFontes(
+    [...contribuicao.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => nomeDaFonte(id)),
+  );
+  const titulo = montarTitulo(rotuloFonte, materiaNome, estrategia, input.duracaoMin);
 
   const { data: criado, error } = await supabase
     .from("simulados_aluno")
     .insert({
       user_id: user.id,
       titulo,
-      instituicao: nomeInstituicao,
+      instituicao: rotuloFonte,
       materia_ids: materiaIds,
       topico_ids: input.topicIds,
       question_ids: questionIds,

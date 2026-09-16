@@ -8,6 +8,13 @@
 //     era a decisão que mais travava o montador antigo — e não corresponde à
 //     realidade: prova de graduação é de uma disciplina. A escolha do aluno é
 //     QUAIS TÓPICOS daquela disciplina caem.
+//  1b. (2026-09-16) A FONTE também é escolha dele: as provas da própria
+//     universidade, as de outra, as questões autorais, ou uma mistura. Antes
+//     a instituição vinha do perfil e quem não era de uma faculdade catalogada
+//     não tinha simulado nenhum. Ao misturar, a prova é dividida em partes
+//     IGUAIS entre as fontes (ver repartirEntreFontes) e o montador mostra a
+//     divisão prevista antes de começar — misturar não pode virar "19 autorais
+//     e 1 da UFF".
 //  2. O caminho curto cabe em dois toques: tocar na disciplina já marca todos
 //     os tópicos dela e propõe um formato pronto; "Começar" fica sempre à mão.
 //  3. Ajuste fino (dificuldade, anos, focar no que eu erro mais) nasce FECHADO
@@ -26,12 +33,13 @@ import {
   ChevronDown,
   Clock,
   Layers,
+  Library,
   Loader2,
   PlayCircle,
   SlidersHorizontal,
   TrendingDown,
 } from "lucide-react";
-import type { MateriaSimulado, OpcoesSimulado } from "@/lib/simulados/simulados-data";
+import type { FonteSimulado, MateriaSimulado, OpcoesSimulado } from "@/lib/simulados/simulados-data";
 import {
   CHAVES_DIFICULDADE,
   ROTULO_DIFICULDADE_SIMULADO,
@@ -39,17 +47,17 @@ import {
   SIMULADO_QTD_MIN,
   SIMULADO_QTD_PADRAO,
   SIMULADO_QUANTIDADES,
-  contarNaGrade,
   duracaoSugerida,
   rotuloDuracao,
   type ChaveDificuldade,
 } from "@/lib/simulados/constantes";
+import { contarNoTopico, repartirEntreFontes, rotuloDaDivisao } from "@/lib/simulados/fontes";
 import { montarSimuladoAction } from "@/lib/simulados/actions";
 
 const ERROS: Record<string, string> = {
   limite: "Você já usou seu simulado grátis desta semana. Assine o Pro pra montar quantos quiser.",
-  sem_instituicao: "Não encontramos provas da sua universidade pra montar o simulado.",
-  sem_questoes: "Não há questões suficientes no recorte que você escolheu. Marque mais tópicos.",
+  sem_questoes:
+    "Não há questões no recorte que você escolheu. Marque mais tópicos, ou inclua outra fonte de questões.",
   misturado: "Um simulado é de uma disciplina só. Escolha os tópicos de uma matéria.",
   invalido: "Não foi possível montar o simulado. Tente de novo.",
 };
@@ -62,6 +70,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
   const semMovimento = useReducedMotion();
 
   const [materiaId, setMateriaId] = useState<string | null>(null);
+  const [fontesSel, setFontesSel] = useState<Set<string>>(new Set());
   const [topicosSel, setTopicosSel] = useState<Set<string>>(new Set());
   const [quantidade, setQuantidade] = useState<number>(SIMULADO_QTD_PADRAO);
   const [duracao, setDuracao] = useState<number | null>(null); // null = seguir a sugestão
@@ -79,14 +88,38 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
 
   const difsArr = useMemo(() => [...difsSel], [difsSel]);
   const anosArr = useMemo(() => [...anosSel], [anosSel]);
+  const fontesArr = useMemo(() => [...fontesSel], [fontesSel]);
 
-  // Quantas questões cada tópico oferece no recorte atual (dificuldade/ano).
-  // Sai do índice `grade` que veio do banco: nenhum número aqui é estimado.
+  // As fontes que existem NESTA disciplina, na ordem em que o servidor as
+  // devolveu (a do aluno primeiro, depois autorais, depois por tamanho).
+  const fontesDaMateria = useMemo<FonteSimulado[]>(() => {
+    if (!materia) return [];
+    const daMateria = new Set(materia.fontes);
+    return opcoes.fontes.filter((f) => daMateria.has(f.id));
+  }, [opcoes.fontes, materia]);
+
+  // Quantas questões cada tópico oferece no recorte atual (fonte/dificuldade/
+  // ano). Sai do índice que veio do banco: nenhum número aqui é estimado.
   const disponivelPorTopico = useMemo(() => {
     const mapa = new Map<string, number>();
-    for (const t of materia?.topicos ?? []) mapa.set(t.id, contarNaGrade(t.grade, difsArr, anosArr));
+    for (const t of materia?.topicos ?? []) mapa.set(t.id, contarNoTopico(t.porFonte, fontesArr, difsArr, anosArr));
     return mapa;
-  }, [materia, difsArr, anosArr]);
+  }, [materia, fontesArr, difsArr, anosArr]);
+
+  // Quanto cada fonte tem dentro do recorte de tópicos já marcado — é o número
+  // do chip e a base da divisão prevista.
+  const disponivelPorFonte = useMemo(() => {
+    const mapa = new Map<string, number>();
+    for (const f of fontesDaMateria) {
+      let n = 0;
+      for (const t of materia?.topicos ?? []) {
+        if (topicosSel.size > 0 && !topicosSel.has(t.id)) continue;
+        n += contarNoTopico(t.porFonte, [f.id], difsArr, anosArr);
+      }
+      mapa.set(f.id, n);
+    }
+    return mapa;
+  }, [fontesDaMateria, materia, topicosSel, difsArr, anosArr]);
 
   const disponiveis = useMemo(() => {
     let n = 0;
@@ -98,7 +131,23 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
 
   const qtdEfetiva = Math.max(SIMULADO_QTD_MIN, Math.min(quantidade, Math.max(SIMULADO_QTD_MIN, disponiveis)));
   const duracaoEfetiva = duracao ?? duracaoSugerida(qtdEfetiva);
-  const podeIniciar = topicosSel.size > 0 && disponiveis >= SIMULADO_QTD_MIN && !enviando;
+  const podeIniciar = topicosSel.size > 0 && fontesSel.size > 0 && disponiveis >= SIMULADO_QTD_MIN && !enviando;
+
+  // A MESMA função que o servidor usa pra repartir — a prévia não pode ser uma
+  // estimativa paralela que depois não bate com a prova entregue.
+  const divisao = useMemo(() => {
+    if (fontesSel.size < 2) return null;
+    const cotas = repartirEntreFontes(
+      new Map(fontesArr.map((id) => [id, disponivelPorFonte.get(id) || 0])),
+      qtdEfetiva,
+    );
+    const partes = fontesDaMateria
+      .filter((f) => fontesSel.has(f.id))
+      .map((f) => ({ nome: f.autoral ? "autorais" : f.nome, questoes: cotas.get(f.id) || 0 }))
+      .sort((a, b) => b.questoes - a.questoes);
+    const rotulo = rotuloDaDivisao(partes);
+    return rotulo ? rotulo : null;
+  }, [fontesSel, fontesArr, fontesDaMateria, disponivelPorFonte, qtdEfetiva]);
 
   function escolherMateria(m: MateriaSimulado) {
     setErro(null);
@@ -107,12 +156,26 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
     // uma prova da matéria não precisa tocar em mais nada.
     const comQuestao = m.topicos.filter((t) => t.questoes > 0);
     setTopicosSel(new Set((comQuestao.length > 0 ? comQuestao : m.topicos).map((t) => t.id)));
+    setFontesSel(new Set(fontePadrao(m, opcoes.fontePropriaId)));
     setDifsSel(new Set());
     setAnosSel(new Set());
     setFocarFracos(false);
     setAvancadoAberto(false);
     setQuantidade(SIMULADO_QTD_PADRAO);
     setDuracao(null);
+  }
+
+  // Desmarcar a última fonte deixaria a prova sem origem nenhuma: o toque na
+  // única marcada não faz nada (em vez de virar um estado inválido silencioso).
+  function alternarFonte(id: string) {
+    setErro(null);
+    setFontesSel((prev) => {
+      if (prev.has(id) && prev.size === 1) return prev;
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
   }
 
   function alternarTopico(id: string) {
@@ -131,6 +194,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
     setErro(null);
     const r = await montarSimuladoAction({
       topicIds: [...topicosSel],
+      fontes: fontesArr,
       duracaoMin: duracaoEfetiva,
       quantidade: qtdEfetiva,
       dificuldades: difsArr,
@@ -149,6 +213,47 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
 
   // ------------------------------------------------------------------ passo 1
   if (!materia) {
+    // Desde que a fonte deixou de ser a universidade do aluno, o passo 1 lista
+    // o banco INTEIRO — dezenas de disciplinas onde antes havia meia dúzia.
+    // Sem separar as dele, o caminho curto (tocar na disciplina e apertar
+    // Começar) viraria uma caçada; com a separação, continua sendo o topo da
+    // tela, e o resto fica disponível pra quem quiser treinar fora da grade.
+    const minhas = opcoes.materias.filter((m) => m.minha);
+    const outras = opcoes.materias.filter((m) => !m.minha);
+
+    const cartao = (m: MateriaSimulado, i: number) => (
+      <motion.button
+        key={m.id}
+        type="button"
+        onClick={() => escolherMateria(m)}
+        {...(semMovimento
+          ? {}
+          : {
+              initial: { opacity: 0, y: 8 },
+              animate: { opacity: 1, y: 0 },
+              transition: { delay: Math.min(i * 0.04, 0.24) },
+            })}
+        className="group surface-interativa flex min-h-[76px] items-center gap-3.5 p-4 text-left"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-questly-green-light font-heading text-[15px] font-bold text-questly-green-dark">
+          {iniciais(m.nome)}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[14.5px] font-bold">{m.nome}</span>
+          <span className="tnum mt-0.5 block truncate text-[12px] font-medium text-muted-foreground">
+            {m.questoes.toLocaleString("pt-BR")} questões · {resumoFontes(m, opcoes.fontes)}
+          </span>
+        </span>
+        {m.aproveitamento != null && (
+          <span className="tnum shrink-0 text-[12px] font-bold text-muted-foreground">{m.aproveitamento}%</span>
+        )}
+        <ArrowRight
+          size={17}
+          className="shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5"
+        />
+      </motion.button>
+    );
+
     return (
       <div className="flex flex-col gap-4">
         <Passos atual={1} />
@@ -158,43 +263,19 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
             Cada simulado é de uma disciplina só — como a prova de verdade.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-          {opcoes.materias.map((m, i) => (
-            <motion.button
-              key={m.id}
-              type="button"
-              onClick={() => escolherMateria(m)}
-              {...(semMovimento
-                ? {}
-                : {
-                    initial: { opacity: 0, y: 8 },
-                    animate: { opacity: 1, y: 0 },
-                    transition: { delay: Math.min(i * 0.04, 0.24) },
-                  })}
-              className="group surface-interativa flex min-h-[76px] items-center gap-3.5 p-4 text-left"
-            >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-questly-green-light font-heading text-[15px] font-bold text-questly-green-dark">
-                {iniciais(m.nome)}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14.5px] font-bold">{m.nome}</span>
-                <span className="tnum mt-0.5 block text-[12px] font-medium text-muted-foreground">
-                  {m.questoes.toLocaleString("pt-BR")} questões · {m.topicos.length}{" "}
-                  {m.topicos.length === 1 ? "tópico" : "tópicos"}
-                </span>
-              </span>
-              {m.aproveitamento != null && (
-                <span className="tnum shrink-0 text-[12px] font-bold text-muted-foreground">
-                  {m.aproveitamento}%
-                </span>
-              )}
-              <ArrowRight
-                size={17}
-                className="shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5"
-              />
-            </motion.button>
-          ))}
-        </div>
+
+        {minhas.length > 0 && (
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">{minhas.map(cartao)}</div>
+        )}
+
+        {outras.length > 0 && (
+          <>
+            <span className="kicker">
+              {minhas.length > 0 ? "Outras disciplinas do banco" : "Disciplinas do banco"}
+            </span>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">{outras.map(cartao)}</div>
+          </>
+        )}
       </div>
     );
   }
@@ -230,6 +311,51 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
           Trocar
         </button>
       </div>
+
+      {/* --------------------------------------------------------- fontes */}
+      <motion.section {...anim} className="surface p-4 sm:p-5">
+        <div className="mb-1 flex items-center justify-between gap-3">
+          <h2 className="text-[14px] font-bold">De onde saem as questões</h2>
+          {fontesDaMateria.length > 1 && (
+            <button
+              type="button"
+              onClick={() => setFontesSel(new Set(fontesDaMateria.map((f) => f.id)))}
+              className="min-h-8 rounded-lg px-2 text-[12px] font-bold text-questly-green-dark transition-opacity hover:opacity-75 dark:text-questly-green"
+            >
+              Usar todas
+            </button>
+          )}
+        </div>
+        <p className="mb-3 text-[12px] leading-relaxed text-muted-foreground">
+          {fontesDaMateria.length > 1
+            ? "Provas de universidade, questões autorais, ou as duas — marque quantas quiser."
+            : "É daqui que as questões desta disciplina saem hoje."}
+        </p>
+
+        <div className="flex flex-wrap gap-1.5">
+          {fontesDaMateria.map((f) => {
+            const n = disponivelPorFonte.get(f.id) || 0;
+            return (
+              <Chip key={f.id} ativo={fontesSel.has(f.id)} onClick={() => alternarFonte(f.id)}>
+                <Library size={12} className="mr-1.5 opacity-70" />
+                {f.nome}
+                <span className="tnum ml-1.5 opacity-60">{n}</span>
+                {f.propria && (
+                  <span className="ml-1.5 rounded bg-questly-green/20 px-1 text-[10px] uppercase tracking-wide">
+                    sua
+                  </span>
+                )}
+              </Chip>
+            );
+          })}
+        </div>
+
+        {divisao && (
+          <p className="tnum mt-2.5 text-[11.5px] font-medium text-muted-foreground">
+            Divisão prevista: {divisao} — partes iguais entre as fontes, até onde cada uma tem questão.
+          </p>
+        )}
+      </motion.section>
 
       {/* -------------------------------------------------------- tópicos */}
       <motion.section {...anim} className="surface p-4 sm:p-5">
@@ -360,7 +486,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
                       Todas
                     </Chip>
                     {CHAVES_DIFICULDADE.map((d) => {
-                      const n = contarSelecao(materia, topicosSel, [d], anosArr);
+                      const n = contarSelecao(materia, topicosSel, fontesArr, [d], anosArr);
                       if (n === 0) return null;
                       return (
                         <Chip
@@ -390,7 +516,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
                         Todos
                       </Chip>
                       {opcoes.anos.map((ano) => {
-                        const n = contarSelecao(materia, topicosSel, difsArr, [ano]);
+                        const n = contarSelecao(materia, topicosSel, fontesArr, difsArr, [ano]);
                         if (n === 0) return null;
                         return (
                           <Chip
@@ -463,8 +589,8 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
       {topicosSel.size > 0 && disponiveis < SIMULADO_QTD_MIN && (
         <p className="rounded-xl bg-muted/70 px-4 py-3 text-[12.5px] font-medium text-muted-foreground">
           Esse recorte tem só {disponiveis}{" "}
-          {disponiveis === 1 ? "questão disponível" : "questões disponíveis"} — marque mais tópicos (ou tire um
-          filtro) pra montar a prova.
+          {disponiveis === 1 ? "questão disponível" : "questões disponíveis"} — marque mais tópicos, inclua
+          outra fonte ou tire um filtro pra montar a prova.
         </p>
       )}
 
@@ -615,15 +741,42 @@ function iniciais(nome: string): string {
 function contarSelecao(
   materia: MateriaSimulado,
   topicosSel: Set<string>,
+  fontes: readonly string[],
   difs: readonly ChaveDificuldade[],
   anos: readonly number[],
 ): number {
   let n = 0;
   for (const t of materia.topicos) {
     if (topicosSel.size > 0 && !topicosSel.has(t.id)) continue;
-    n += contarNaGrade(t.grade, difs, anos);
+    n += contarNoTopico(t.porFonte, fontes, difs, anos);
   }
   return n;
+}
+
+/**
+ * Fontes marcadas quando o aluno entra numa disciplina.
+ *
+ * A da universidade dele quando ela sozinha dá uma prova de pé (>= o mínimo de
+ * questões) — prova real da própria faculdade é o conteúdo mais valioso e era
+ * o comportamento de antes desta tela ter fontes. Caso contrário, tudo: pra
+ * quem não tem provas catalogadas (a maioria) o simulado precisa funcionar no
+ * primeiro toque, sem ele ter que descobrir que existe um seletor.
+ */
+function fontePadrao(m: MateriaSimulado, fontePropriaId: string | null): string[] {
+  if (fontePropriaId && m.fontes.includes(fontePropriaId)) {
+    const propria = m.topicos.reduce((s, t) => s + contarNoTopico(t.porFonte, [fontePropriaId], [], []), 0);
+    if (propria >= SIMULADO_QTD_MIN) return [fontePropriaId];
+  }
+  return m.fontes;
+}
+
+/** Linha de fontes do cartão da disciplina no passo 1 ("UFF · autorais"). */
+function resumoFontes(m: MateriaSimulado, fontes: readonly FonteSimulado[]): string {
+  const porId = new Map(fontes.map((f) => [f.id, f]));
+  const nomes = m.fontes.map((id) => porId.get(id)?.nome).filter(Boolean) as string[];
+  if (nomes.length === 0) return `${m.topicos.length} ${m.topicos.length === 1 ? "tópico" : "tópicos"}`;
+  if (nomes.length <= 2) return nomes.join(" · ");
+  return `${nomes.slice(0, 2).join(" · ")} +${nomes.length - 2}`;
 }
 
 function resumoAvancado(difs: number, anos: number, fracos: boolean): string {

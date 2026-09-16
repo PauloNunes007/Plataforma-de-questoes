@@ -105,7 +105,10 @@ export async function contagemPorMateria(supabase: SupabaseClient): Promise<Map<
 // -------------------------------------------------------------- instituição
 
 export type ContagemInstituicao = {
-  instituicao: string;
+  /** null = questão autoral (feita pela equipe, sem prova de origem). Desde
+   *  supabase_simulados_fontes.sql a view devolve essas linhas também — antes
+   *  ela filtrava `instituicao is not null` e o autoral era invisível aqui. */
+  instituicao: string | null;
   topicId: string;
   topicoNome: string;
   topicoOrdem: number | null;
@@ -121,7 +124,7 @@ export type ContagemInstituicao = {
 // colunas de tempo médio (o GPS agrega por tópico, não por instituição), e
 // herdar faria o tipo prometer campos que o select não pede.
 type LinhaInstituicao = {
-  instituicao: string;
+  instituicao: string | null;
   topic_id: string;
   topico_nome: string | null;
   topico_ordem: number | null;
@@ -176,7 +179,9 @@ export async function contagemPorInstituicao(
   return linhas.map(paraContagemInstituicao);
 }
 
-/** A grade inteira, sem recorte — só a landing pública precisa disso. */
+/** A grade inteira, sem recorte — a landing pública e o montador de simulados
+ *  (que desde 2026-09-16 oferece TODAS as fontes, não só a universidade do
+ *  aluno). Inclui as linhas autorais (`instituicao = null`). */
 export async function contagemInstituicaoCompleta(
   supabase: SupabaseClient,
 ): Promise<ContagemInstituicao[]> {

@@ -2,7 +2,7 @@
 // SupabaseClient). `questions` é leitura pública pra autenticado; `simulados_aluno`
 // é dono-only (RLS) — então tudo aqui já roda no cliente SSR normal do usuário.
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { contagemPorInstituicao, listarInstituicoes } from "@/lib/questly/contagem-questoes";
+import { contagemInstituicaoCompleta, listarInstituicoes } from "@/lib/questly/contagem-questoes";
 import type { Pergunta } from "@/lib/questao/types";
 import { instituicoesQueCasam, nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
 import { ehPro } from "@/lib/plano/plano";
@@ -13,6 +13,13 @@ import {
   normalizarChaveDificuldade,
   type GradeTopico,
 } from "./constantes";
+import {
+  FONTE_AUTORAL,
+  ROTULO_AUTORAL,
+  idDaFonte,
+  melhorRotulo,
+  type FonteSimulado,
+} from "./fontes";
 
 import {
   analisarHistorico,
@@ -25,12 +32,16 @@ import {
 } from "./analise";
 
 export type { ChaveDificuldade, GradeTopico } from "./constantes";
+export type { FonteSimulado } from "./fontes";
 
 export type TopicoSimulado = {
   id: string;
   nome: string;
+  /** questões do tópico somando TODAS as fontes */
   questoes: number;
-  grade: GradeTopico;
+  /** índice de disponibilidade por fonte: fonteId -> dificuldade -> ano -> nº.
+   *  Esparso de propósito: a maioria dos tópicos só tem uma ou duas fontes. */
+  porFonte: Record<string, GradeTopico>;
   /** aproveitamento do aluno neste tópico (0..100), null sem amostra */
   aproveitamento: number | null;
   /** quantas questões deste tópico o aluno já respondeu (fora do simulado) */
@@ -41,29 +52,44 @@ export type MateriaSimulado = {
   id: string;
   nome: string;
   questoes: number;
+  /** o aluno cursa esta disciplina (tem `subjects`) — ordena e agrupa o passo 1 */
+  minha: boolean;
+  /** ids das fontes que têm questão nesta disciplina, da maior pra menor */
+  fontes: string[];
   topicos: TopicoSimulado[];
   /** aproveitamento médio do aluno na matéria (ponderado por volume), null sem amostra */
   aproveitamento: number | null;
 };
 
-// Tudo que o montador precisa: a universidade do aluno, se temos provas dela no
-// banco, e o escopo montável (matérias→tópicos com contagem e índice de
-// disponibilidade, só do que tem questão daquela instituição). `instituicoes`
-// fica só no servidor — a action re-deriva pelo profile, então o cliente nunca
-// decide de que universidade sortear.
+// Tudo que o montador precisa: as FONTES disponíveis (as provas de cada
+// universidade catalogada + as questões autorais), qual delas é a da
+// universidade do aluno, e o escopo montável (matérias -> tópicos com o índice
+// de disponibilidade quebrado por fonte).
+//
+// Até 2026-09-16 isto era recortado à universidade do aluno, e quem não tinha
+// provas catalogadas via uma tela vazia. Agora o recorte é do ALUNO: ele
+// escolhe as fontes, e a única coisa derivada do perfil é qual fonte vem
+// marcada por padrão. `montarSimuladoAction` revalida as fontes pedidas contra
+// o banco — o cliente escolhe de onde sortear, mas não inventa de onde.
 export type OpcoesSimulado = {
   universidade: string | null;
+  /** a universidade do aluno tem provas no banco (só muda texto e padrão) */
   reconhecida: boolean;
   nomeInstituicao: string | null;
+  /** id da fonte que corresponde à universidade do aluno, quando existe */
+  fontePropriaId: string | null;
+  fontes: FonteSimulado[];
   totalQuestoes: number;
-  /** anos catalogados no recorte da instituição, do mais recente pro mais antigo */
+  /** anos catalogados, do mais recente pro mais antigo */
   anos: number[];
   materias: MateriaSimulado[];
 };
 
 // Resolve os valores crus de questions.instituicao que casam com o texto de
-// profiles.universidade do aluno. Reusado pela action de montar (autoritativo).
-export async function instituicoesDoAluno(
+// profiles.universidade do aluno. Não é mais filtro de nada (a fonte é escolha
+// do aluno desde 2026-09-16): serve pra saber QUAL das fontes é a da faculdade
+// dele — a que vem marcada por padrão e ganha o selo "sua".
+async function instituicoesDoAluno(
   supabase: SupabaseClient,
   universidade: string | null,
 ): Promise<string[]> {
@@ -81,10 +107,43 @@ export async function instituicoesDoAluno(
   );
 }
 
+export type ContextoInstituicao = {
+  universidade: string | null;
+  reconhecida: boolean;
+  nomeInstituicao: string | null;
+};
+
+/**
+ * Versão leve pro hub: só "qual é a universidade do aluno e temos provas
+ * dela?", que é tudo que a lista usa — pra escolher o TEXTO, não pra liberar
+ * ou bloquear coisa alguma. Lê 8 linhas de `vw_instituicoes` em vez de montar
+ * a árvore inteira de matérias, que era o que a página fazia antes por reusar
+ * `carregarOpcoesSimulado`.
+ */
+export async function carregarContextoInstituicao(
+  supabase: SupabaseClient,
+  user: { id: string },
+): Promise<ContextoInstituicao> {
+  const { data: perfil } = await supabase
+    .from("profiles")
+    .select("universidade")
+    .eq("id", user.id)
+    .maybeSingle();
+  const universidade = perfil?.universidade ?? null;
+  const casadas = await instituicoesDoAluno(supabase, universidade);
+  return {
+    universidade,
+    reconhecida: casadas.length > 0,
+    nomeInstituicao: nomeExibicaoInstituicao(casadas),
+  };
+}
+
 const VAZIO: OpcoesSimulado = {
   universidade: null,
   reconhecida: false,
   nomeInstituicao: null,
+  fontePropriaId: null,
+  fontes: [],
   totalQuestoes: 0,
   anos: [],
   materias: [],
@@ -102,29 +161,46 @@ export async function carregarOpcoesSimulado(
 
   const universidade = perfil?.universidade ?? null;
   const casadas = await instituicoesDoAluno(supabase, universidade);
-  if (casadas.length === 0) return { ...VAZIO, universidade };
+  const idsProprios = new Set(casadas.map((c) => idDaFonte(c)));
 
-  // Grade agregada por tópico/dificuldade/ano (view), não as linhas cruas das
-  // questões: eram ~310 KB e 1000 linhas por abertura do montador — o maior
-  // consumidor de banda do app — e o teto do PostgREST cortava o resto, fazendo
-  // o montador exibir contagem errada e esconder tópicos.
+  // As disciplinas que o aluno CURSA — só pra ordenar o passo 1. Com o escopo
+  // aberto pro banco inteiro, a lista passou de "as poucas com prova da minha
+  // faculdade" pra todas, e sem isto o caminho curto (tocar na disciplina e
+  // apertar Começar) viraria uma caçada. Cinco linhas, não é filtro.
+  const { data: minhas } = await supabase
+    .from("subjects")
+    .select("materia_id")
+    .eq("user_id", user.id);
+  const materiasDoAluno = new Set(
+    ((minhas || []) as { materia_id: string | null }[]).map((m) => m.materia_id).filter(Boolean) as string[],
+  );
+
+  // A grade INTEIRA (view agregada), não só a da universidade do aluno: o
+  // montador agora oferece todas as fontes. Continua sendo contagem agregada —
+  // algumas centenas de linhas — e não as linhas cruas das questões, que eram
+  // ~310 KB por abertura e ainda vinham truncadas no teto do PostgREST.
   // `totalRegular` mantém o mesmo recorte de montarSimuladoAction:
   // aprofundamento (questions.desafio) não é sorteado, logo não é contado.
-  const grade = await contagemPorInstituicao(supabase, casadas);
+  const grade = await contagemInstituicaoCompleta(supabase);
 
-  type Acc = {
-    nome: string;
-    questoes: number;
-    topicos: Map<string, { nome: string; questoes: number; grade: GradeTopico }>;
-  };
-  const porMateria = new Map<string, Acc>();
+  type AccTopico = { nome: string; questoes: number; porFonte: Record<string, GradeTopico> };
+  type AccMateria = { nome: string; questoes: number; topicos: Map<string, AccTopico> };
+  const porMateria = new Map<string, AccMateria>();
   const anos = new Set<number>();
+  const totalPorFonte = new Map<string, number>();
+  const rotuloPorFonte = new Map<string, string>();
 
   for (const linha of grade) {
     if (linha.totalRegular === 0) continue;
     const { materiaId, materiaNome, topicId } = linha;
     if (!materiaId || !materiaNome || !topicId) continue;
     if (typeof linha.ano === "number") anos.add(linha.ano);
+
+    const fonteId = idDaFonte(linha.instituicao);
+    totalPorFonte.set(fonteId, (totalPorFonte.get(fonteId) || 0) + linha.totalRegular);
+    if (fonteId !== FONTE_AUTORAL && linha.instituicao) {
+      rotuloPorFonte.set(fonteId, melhorRotulo(rotuloPorFonte.get(fonteId) ?? null, linha.instituicao));
+    }
 
     let m = porMateria.get(materiaId);
     if (!m) {
@@ -135,40 +211,42 @@ export async function carregarOpcoesSimulado(
 
     let tp = m.topicos.get(topicId);
     if (!tp) {
-      tp = { nome: linha.topicoNome || "Tópico", questoes: 0, grade: gradeVazia() };
+      tp = { nome: linha.topicoNome || "Tópico", questoes: 0, porFonte: {} };
       m.topicos.set(topicId, tp);
     }
     tp.questoes += linha.totalRegular;
+
+    const gradeFonte = (tp.porFonte[fonteId] ??= gradeVazia());
     const dif = normalizarChaveDificuldade(linha.dificuldade);
     const anoChave = typeof linha.ano === "number" ? String(linha.ano) : "0";
-    tp.grade[dif][anoChave] = (tp.grade[dif][anoChave] || 0) + linha.totalRegular;
+    gradeFonte[dif][anoChave] = (gradeFonte[dif][anoChave] || 0) + linha.totalRegular;
   }
 
+  if (porMateria.size === 0) return { ...VAZIO, universidade };
+
+  const fontes: FonteSimulado[] = [...totalPorFonte.entries()]
+    .map(([id, questoes]) => ({
+      id,
+      nome: id === FONTE_AUTORAL ? ROTULO_AUTORAL : rotuloPorFonte.get(id) || id.toUpperCase(),
+      questoes,
+      propria: idsProprios.has(id),
+      autoral: id === FONTE_AUTORAL,
+    }))
+    // A do aluno primeiro (é o padrão), depois a autoral, depois por tamanho:
+    // a ordem da lista é a ordem em que ele lê os chips.
+    .sort(
+      (a, b) =>
+        Number(b.propria) - Number(a.propria) ||
+        Number(b.autoral) - Number(a.autoral) ||
+        b.questoes - a.questoes ||
+        a.nome.localeCompare(b.nome),
+    );
+
   // Aproveitamento do aluno por tópico — é o que deixa o montador dizer "você
-  // vai a 42% aqui" e o preset "focar no que erro mais" existir sem chutar.
+  // vai a 42% aqui" e o switch "focar no que erro mais" existir sem chutar.
   // Owner-only por RLS: o SELECT só devolve as linhas do próprio aluno.
   const todosTopicos = [...porMateria.values()].flatMap((m) => [...m.topicos.keys()]);
-  const progresso = new Map<string, { pct: number | null; respondidas: number }>();
-  if (todosTopicos.length > 0) {
-    const { data: prog } = await supabase
-      .from("aluno_topico_progresso")
-      .select("topico_id, taxa_acerto, num_questoes_respondidas")
-      .eq("user_id", user.id)
-      .in("topico_id", todosTopicos.slice(0, 1000));
-    for (const linha of (prog || []) as unknown as {
-      topico_id: string;
-      taxa_acerto: number | null;
-      num_questoes_respondidas: number | null;
-    }[]) {
-      const respondidas = linha.num_questoes_respondidas || 0;
-      progresso.set(linha.topico_id, {
-        // Sem amostra não existe aproveitamento — null, nunca 0% (a mesma
-        // regra de honestidade de chance-aprovacao.ts).
-        pct: respondidas >= MIN_AMOSTRA_APROVEITAMENTO ? Math.round((linha.taxa_acerto || 0) * 100) : null,
-        respondidas,
-      });
-    }
-  }
+  const progresso = await carregarProgressoTopicos(supabase, user, todosTopicos);
 
   const materias: MateriaSimulado[] = [...porMateria.entries()]
     .map(([id, m]) => {
@@ -179,7 +257,7 @@ export async function carregarOpcoesSimulado(
             id: tid,
             nome: t.nome,
             questoes: t.questoes,
-            grade: t.grade,
+            porFonte: t.porFonte,
             aproveitamento: p?.pct ?? null,
             respondidas: p?.respondidas ?? 0,
           };
@@ -193,17 +271,43 @@ export async function carregarOpcoesSimulado(
           ? Math.round(comDado.reduce((s, t) => s + (t.aproveitamento || 0) * t.respondidas, 0) / peso)
           : null;
 
-      return { id, nome: m.nome, questoes: m.questoes, topicos, aproveitamento };
+      const porFonteNaMateria = new Map<string, number>();
+      for (const t of topicos) {
+        for (const [fonteId, g] of Object.entries(t.porFonte)) {
+          let n = 0;
+          for (const porAno of Object.values(g)) for (const v of Object.values(porAno)) n += v;
+          porFonteNaMateria.set(fonteId, (porFonteNaMateria.get(fonteId) || 0) + n);
+        }
+      }
+
+      return {
+        id,
+        nome: m.nome,
+        questoes: m.questoes,
+        minha: materiasDoAluno.has(id),
+        fontes: [...porFonteNaMateria.entries()].sort((a, b) => b[1] - a[1]).map(([fonteId]) => fonteId),
+        topicos,
+        aproveitamento,
+      };
     })
-    .sort((a, b) => b.questoes - a.questoes || a.nome.localeCompare(b.nome));
+    // Ordem do passo 1: o que ele cursa primeiro, depois o que tem prova da
+    // universidade dele, depois pelo tamanho do acervo.
+    .sort(
+      (a, b) =>
+        Number(b.minha) - Number(a.minha) ||
+        Number(b.fontes.some((f) => idsProprios.has(f))) - Number(a.fontes.some((f) => idsProprios.has(f))) ||
+        b.questoes - a.questoes ||
+        a.nome.localeCompare(b.nome),
+    );
 
   const totalQuestoes = materias.reduce((s, m) => s + m.questoes, 0);
-  const nomeInstituicao = nomeExibicaoInstituicao(casadas);
 
   return {
     universidade,
-    reconhecida: totalQuestoes > 0,
-    nomeInstituicao,
+    reconhecida: fontes.some((f) => f.propria),
+    nomeInstituicao: nomeExibicaoInstituicao(casadas),
+    fontePropriaId: fontes.find((f) => f.propria)?.id ?? null,
+    fontes,
     totalQuestoes,
     anos: [...anos].sort((a, b) => b - a),
     materias,
@@ -212,6 +316,41 @@ export async function carregarOpcoesSimulado(
 
 /** Amostra mínima pra um tópico ter aproveitamento exibível no montador. */
 const MIN_AMOSTRA_APROVEITAMENTO = 3;
+
+async function carregarProgressoTopicos(
+  supabase: SupabaseClient,
+  user: { id: string },
+  topicIds: string[],
+): Promise<Map<string, { pct: number | null; respondidas: number }>> {
+  const progresso = new Map<string, { pct: number | null; respondidas: number }>();
+  if (topicIds.length === 0) return progresso;
+
+  // Sem `.in(topicIds)`: o escopo agora é o banco inteiro e uma lista de
+  // centenas de uuids vira uma URL de dezenas de KB, que o PostgREST recusa
+  // (ver lib/supabase/paginado.ts). Só voltam os tópicos que o aluno JÁ tocou,
+  // que é um conjunto pequeno, e o recorte é feito aqui.
+  const { data: prog } = await supabase
+    .from("aluno_topico_progresso")
+    .select("topico_id, taxa_acerto, num_questoes_respondidas")
+    .eq("user_id", user.id);
+
+  const doEscopo = new Set(topicIds);
+  for (const linha of (prog || []) as unknown as {
+    topico_id: string;
+    taxa_acerto: number | null;
+    num_questoes_respondidas: number | null;
+  }[]) {
+    if (!doEscopo.has(linha.topico_id)) continue;
+    const respondidas = linha.num_questoes_respondidas || 0;
+    progresso.set(linha.topico_id, {
+      // Sem amostra não existe aproveitamento — null, nunca 0% (a mesma
+      // regra de honestidade de chance-aprovacao.ts).
+      pct: respondidas >= MIN_AMOSTRA_APROVEITAMENTO ? Math.round((linha.taxa_acerto || 0) * 100) : null,
+      respondidas,
+    });
+  }
+  return progresso;
+}
 
 export type StatusPlanoSimulado = {
   ehPro: boolean;

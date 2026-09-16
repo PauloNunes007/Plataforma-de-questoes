@@ -41,7 +41,8 @@ export default function QuestoesPage() {
         />
       </div>
 
-      {/* Simulados — prova cronometrada no estilo da universidade do aluno */}
+      {/* Simulados — prova cronometrada montada pelo aluno (a fonte das
+          questões é escolha dele desde 2026-09-16, não mais o perfil) */}
       <Link
         href="/simulados"
         className="group surface relative flex items-center gap-4 overflow-hidden p-5 transition-all hover:border-questly-green/30 hover:shadow-md"
@@ -59,11 +60,12 @@ export default function QuestoesPage() {
           <div className="flex items-center gap-2">
             <p className="text-[15px] font-bold">Simulados</p>
             <span className="rounded-full bg-questly-green-light px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-questly-green-dark">
-              Sua universidade
+              Cronometrado
             </span>
           </div>
           <p className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">
-            Monte uma prova cronometrada com questões reais de anos anteriores e veja seu resultado.
+            Monte uma prova cronometrada com provas de universidade, questões autorais ou as duas — e veja
+            seu resultado.
           </p>
         </div>
         <ArrowRight

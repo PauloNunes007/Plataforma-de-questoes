@@ -87,7 +87,10 @@ export async function carregarStatsBanco(): Promise<StatsBanco> {
     let instituicao = 0;
     let instituicaoMateriaFoco = 0;
     for (const l of porInstituicao) {
-      if (!casadas.has(l.instituicao.trim())) continue;
+      // A view passou a devolver também as questões autorais (instituicao
+      // null, ver supabase_simulados_fontes.sql) — elas não são de nenhuma
+      // instituição, então nunca entram nesta contagem.
+      if (!l.instituicao || !casadas.has(l.instituicao.trim())) continue;
       instituicao += l.total;
       if (materiasFoco.has(l.materiaNome)) instituicaoMateriaFoco += l.total;
     }

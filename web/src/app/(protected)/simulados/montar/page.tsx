@@ -20,10 +20,10 @@ export default async function MontarSimuladoPage() {
     carregarStatusPlano(supabase, user),
   ]);
 
-  // Sem provas da universidade catalogadas, ou free que já bateu o limite da
-  // semana: a página de lista trata os dois estados (honesto / gate). Aqui só
-  // montamos quando de fato dá.
-  if (!opcoes.reconhecida || !status.podeMontar) {
+  // Dois motivos pra não montar, e nenhum deles é mais a universidade do aluno
+  // (2026-09-16): free que já bateu o limite da semana, ou banco sem questão
+  // nenhuma. A lista trata os dois estados.
+  if (opcoes.materias.length === 0 || !status.podeMontar) {
     redirect("/simulados");
   }
 
@@ -31,7 +31,7 @@ export default async function MontarSimuladoPage() {
     <div className="mx-auto w-full max-w-[760px] px-4 py-6 sm:px-6 lg:py-8">
       <PageHeader
         titulo="Montar simulado"
-        descricao={`Escolha uma disciplina e os tópicos. As questões são provas reais de ${opcoes.nomeInstituicao}.`}
+        descricao="Escolha a disciplina, de onde saem as questões e os tópicos que caem."
         voltarHref="/simulados"
         voltarLabel="Simulados"
       />

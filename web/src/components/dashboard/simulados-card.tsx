@@ -152,8 +152,8 @@ export function SimuladosCard({ atalho }: { atalho: AtalhoSimulados }) {
       ) : (
         <>
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            Uma prova cronometrada com questões reais da sua universidade — o jeito mais rápido de descobrir o
-            que ainda não está pronto.
+            Uma prova cronometrada, montada por você: provas da sua universidade, questões autorais, ou as
+            duas — o jeito mais rápido de descobrir o que ainda não está pronto.
           </p>
           <Link
             href="/simulados"

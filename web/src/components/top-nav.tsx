@@ -45,8 +45,11 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
           <Logo />
         </Link>
 
-        {/* Navegação (desktop) — pill vibrante no ativo, com glow */}
-        <nav className="ml-3 hidden min-w-0 flex-1 items-center gap-0.5 md:flex lg:ml-4 lg:gap-1">
+        {/* Navegação (desktop) — pill vibrante no ativo, com glow. Só aparece
+            a partir de `lg` (1024px), o mesmo ponto em que a MobileBottomNav
+            some — entre 768 e 1023px (iPad portrait) as duas apareciam juntas
+            e o header espremia logo+6 links+cluster numa faixa estreita. */}
+        <nav className="ml-3 hidden min-w-0 flex-1 items-center gap-0.5 lg:ml-4 lg:flex lg:gap-1">
           {TOP_NAV_ITEMS.map((item) => {
             const active =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -83,7 +86,7 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
         </nav>
 
         {/* Cluster à direita */}
-        <div className="ml-auto flex shrink-0 items-center gap-1 md:ml-0">
+        <div className="ml-auto flex shrink-0 items-center gap-1 lg:ml-0">
           <FocoHojeChip className="mr-1 hidden sm:inline" />
           <ThemeToggle />
           <FocoBotao />

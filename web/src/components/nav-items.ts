@@ -19,18 +19,19 @@ export type NavItem = {
   icon: LucideIcon;
 };
 
-// Barra inferior do mobile: travada em 5 abas (regra do design system).
+// Barra inferior do mobile: continua travada em 5 abas, mas Simulados
+// substituiu Ajustes (2026-09) — Simulados pedia dois toques (hub /questoes →
+// card) e o aluno não achava; Ajustes não repete porque continua a um toque
+// no avatar (ContaMenu, dentro de TopNav), visível em qualquer largura.
 export const NAV_ITEMS: readonly NavItem[] = [
   { href: "/dashboard", label: "Início", mobileLabel: "Início", icon: LayoutDashboard },
   { href: "/questoes", label: "Questões", mobileLabel: "Questões", icon: Layers },
   { href: "/trilha", label: "Minha trilha", mobileLabel: "Trilha", icon: Map },
+  { href: "/simulados", label: "Simulados", mobileLabel: "Simulados", icon: FileText },
   { href: "/ranking", label: "Ranking", mobileLabel: "Ranking", icon: Trophy },
-  { href: "/configuracoes", label: "Ajustes", mobileLabel: "Ajustes", icon: Settings },
 ] as const;
 
-// Header horizontal do desktop (redesign inspirado nos prints do usuário):
-// cabe mais itens que a barra mobile, então Simulados entra aqui como link
-// direto (no mobile continua acessível pelo hub /questoes).
+// Header horizontal do desktop (redesign inspirado nos prints do usuário).
 export const TOP_NAV_ITEMS: readonly NavItem[] = [
   { href: "/dashboard", label: "Início", mobileLabel: "Início", icon: LayoutDashboard },
   { href: "/questoes", label: "Questões", mobileLabel: "Questões", icon: Layers },
