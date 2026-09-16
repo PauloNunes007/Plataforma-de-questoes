@@ -6,17 +6,17 @@ import { Check, ListTodo, Plus, X } from "lucide-react";
 import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
 import { alternarTarefaAction, criarTarefaAction, excluirTarefaAction } from "@/lib/tarefas/actions";
 
-// O QUE VOCÊ MARCOU PRA HOJE — o recorte de hoje da mesma lista que a
-// AgendaCard edita no mês inteiro. Sem lógica derivada no servidor (CRUD
+// O QUE VOCÊ MARCOU PRA HOJE — o recorte de hoje da mesma lista que a tela
+// `/calendario` edita no mês inteiro. Sem lógica derivada no servidor (CRUD
 // simples), então atualiza o estado local direto depois do "ok" da action
 // em vez de refetch.
 //
-// A divisão de trabalho com a AgendaCard é de proximidade, não de dados: aqui
-// o aluno marca um afazer de hoje sem sair do topo da home; lá ele planeja a
-// semana, escolhe hora e duração e arrasta entre dias. Por isso este cartão
-// CRIA sempre tipo "tarefa" (rápido, sem horário) mas EXIBE também as sessões
-// agendadas do dia — senão o aluno marcaria um bloco na agenda e não o veria
-// na lista de hoje.
+// A divisão de trabalho com o calendário é de proximidade, não de dados: aqui
+// o aluno marca um afazer de hoje sem sair da home; lá ele planeja o mês,
+// escolhe hora e duração, define metas de questões e arrasta entre dias. Por
+// isso este cartão CRIA sempre tipo "tarefa" (rápido, sem horário) mas EXIBE
+// também as sessões e metas do dia — senão o aluno marcaria um bloco no
+// calendário e não o veria na lista de hoje.
 export function TarefasDoDiaCard({
   tarefasIniciais,
   hoje,
@@ -57,6 +57,7 @@ export function TarefasDoDiaCard({
           tipo: "tarefa",
           hora: null,
           duracaoMin: null,
+          metaQuestoes: null,
         },
       ]);
       setNome("");
@@ -145,7 +146,7 @@ export function TarefasDoDiaCard({
           </span>
           <p className="mb-1 text-[13px] font-medium">Nada marcado para hoje</p>
           <p className="mb-4 max-w-[220px] text-xs text-muted-foreground">
-            Anote um afazer rápido aqui, ou agende uma sessão com hora na Agenda logo abaixo.
+            Anote um afazer rápido aqui, ou abra o calendário pra agendar uma sessão com hora.
           </p>
           <button
             type="button"

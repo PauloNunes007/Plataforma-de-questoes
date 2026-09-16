@@ -7,10 +7,15 @@
 //   • "tarefa" — item de lista, sem horário obrigatório;
 //   • "sessao" — bloco de estudo com `hora` e `duracaoMin`, que a agenda
 //     desenha na ordem do relógio e soma pra dizer quanto tempo o dia tem
-//     reservado.
+//     reservado;
+//   • "meta" — alvo de `metaQuestoes` questões numa disciplina naquele dia
+//     (ver supabase_agenda_metas.sql). O PROGRESSO da meta não mora aqui: é
+//     recontado na leitura a partir de question_attempts -> missions, em
+//     lib/agenda/agenda-data.ts. Guardar um contador nesta linha criaria um
+//     segundo lugar pra mesma verdade — e um jeito óbvio de forjá-la.
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export type TipoItemAgenda = "tarefa" | "sessao";
+export type TipoItemAgenda = "tarefa" | "sessao" | "meta";
 
 export type TarefaRow = {
   id: string;
@@ -24,6 +29,8 @@ export type TarefaRow = {
   /** "HH:MM" ou null (tarefa sem horário) */
   hora: string | null;
   duracaoMin: number | null;
+  /** Quantas questões a meta do dia pede; null em tarefa/sessão. */
+  metaQuestoes: number | null;
 };
 
 type TarefaQueryRow = {
@@ -37,9 +44,11 @@ type TarefaQueryRow = {
   tipo: string | null;
   hora: string | null;
   duracao_min: number | null;
+  meta_questoes: number | null;
 };
 
-const COLUNAS = "id, nome, descricao, data, concluida, subject_id, subjects(nome), tipo, hora, duracao_min";
+const COLUNAS =
+  "id, nome, descricao, data, concluida, subject_id, subjects(nome), tipo, hora, duracao_min, meta_questoes";
 
 /** "19:00:00" (time do Postgres) → "19:00", que é o que o <input type="time"> quer. */
 export function normalizarHora(hora: string | null): string | null {
@@ -57,9 +66,10 @@ function paraRow(t: TarefaQueryRow): TarefaRow {
     concluida: t.concluida,
     subjectId: t.subject_id,
     subjectNome: t.subjects?.nome || null,
-    tipo: t.tipo === "sessao" ? "sessao" : "tarefa",
+    tipo: t.tipo === "sessao" || t.tipo === "meta" ? t.tipo : "tarefa",
     hora: normalizarHora(t.hora),
     duracaoMin: t.duracao_min ?? null,
+    metaQuestoes: t.meta_questoes ?? null,
   };
 }
 

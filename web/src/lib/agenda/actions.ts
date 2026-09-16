@@ -1,49 +1,22 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
-import type { CalDay } from "@/lib/questly/dashboard-data";
+import { carregarMesAgenda, type MesAgenda, type ProvaDia } from "./agenda-data";
 
-// Carga de UM mês da agenda, sob demanda.
+// Ações do calendário dedicado (`/calendario`).
 //
-// O dashboard já entrega o mês corrente dentro de carregarDadosDashboard — é o
-// mês que o aluno vê ao abrir a home, e ele não deve custar um round-trip
-// extra. Esta action existe só pra quando o aluno NAVEGA (seta pra frente/trás
-// ou salta pra outro mês): nesse caso as três coisas que pintam um dia
-// (estudou / prova / itens agendados) precisam ser relidas na janela nova.
+// A leitura de um mês vive em `agenda-data.ts` porque a página `/calendario`
+// renderiza o mês corrente no servidor (sem round-trip) e só a NAVEGAÇÃO entre
+// meses passa por aqui — as duas precisam da mesma regra de "quando um dia é
+// dia de prova".
 //
-// Deliberadamente NÃO reusa carregarDadosDashboard: aquilo gera missões do
-// dia, projeta nota, calcula liga — nada disso muda por olhar setembro, e
-// rodar o mission-engine a cada clique de seta seria caro e com efeito
-// colateral (missão gerada).
+// Marcar prova escreve em `bosses`, a mesma tabela que Configurações e a
+// trilha usam: um dia de prova não é um post-it do calendário, é o Boss da
+// disciplina (a projeção de nota, a contagem regressiva e o cerco leem dali).
+// Criar uma prova solta só pra pintar o quadradinho deixaria duas verdades
+// sobre a mesma prova.
 
-const MESES_PT = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
-];
-
-export type MesAgenda = {
-  ano: number;
-  mes: number;
-  monthLabel: string;
-  dowOffset: number;
-  days: CalDay[];
-  tarefas: Record<string, TarefaRow[]>;
-};
-
-function iso(ano: number, mes: number, dia: number): string {
-  return `${ano}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
-}
+export type { MesAgenda, ProvaDia };
 
 export async function carregarMesAgendaAction(ano: number, mes: number): Promise<MesAgenda | null> {
   const supabase = await createClient();
@@ -52,71 +25,85 @@ export async function carregarMesAgendaAction(ano: number, mes: number): Promise
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  // Teto de navegação: ±5 anos. Sem ele um ano digitado errado viraria uma
-  // query de intervalo gigantesco.
-  const agora = new Date();
-  if (!Number.isInteger(ano) || !Number.isInteger(mes) || mes < 0 || mes > 11) return null;
-  if (Math.abs(ano - agora.getFullYear()) > 5) return null;
+  return carregarMesAgenda(supabase, user, ano, mes);
+}
 
-  const totalDias = new Date(ano, mes + 1, 0).getDate();
-  const inicio = iso(ano, mes, 1);
-  const fim = iso(ano, mes, totalDias);
+/** `bosses` não tem `user_id`: o dono é o `subject`. Confere antes de escrever
+ *  em vez de confiar só na RLS — a action é chamável direto. */
+async function subjectDoAluno(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  subjectId: string,
+): Promise<{ id: string; nome: string } | null> {
+  const { data } = await supabase
+    .from("subjects")
+    .select("id, nome")
+    .eq("id", subjectId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  return (data as { id: string; nome: string } | null) ?? null;
+}
 
-  const [logsRes, bossesRes, tarefas] = await Promise.all([
-    supabase
-      .from("daily_logs")
-      .select("data, estudou")
-      .eq("user_id", user.id)
-      .gte("data", inicio)
-      .lte("data", fim),
-    // Provas do mês. Lidas pelo MESMO caminho que o dashboard usa (subjects
-    // com bosses aninhados, filtrando por user_id no subject): `bosses` não
-    // tem user_id próprio, e este é o acesso que a RLS já cobre.
-    supabase.from("subjects").select("nome, bosses(nome, data_prova)").eq("user_id", user.id),
-    carregarTarefasIntervalo(supabase, user, inicio, fim),
-  ]);
+export async function marcarProvaAction(input: {
+  subjectId: string;
+  nome: string;
+  data: string;
+}): Promise<{ prova: ProvaDia | null; error: string | null }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { prova: null, error: "Sessão expirada." };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.data)) return { prova: null, error: "Data inválida." };
 
-  const estudouPorData: Record<string, boolean> = {};
-  ((logsRes.data || []) as { data: string; estudou: boolean }[]).forEach((l) => {
-    estudouPorData[String(l.data).slice(0, 10)] = l.estudou;
-  });
+  const subject = await subjectDoAluno(supabase, user.id, input.subjectId);
+  if (!subject) return { prova: null, error: "Essa disciplina não é sua." };
 
-  const provasPorDia: Record<string, string> = {};
-  (
-    (bossesRes.data || []) as unknown as {
-      nome: string;
-      bosses: { nome: string; data_prova: string }[] | null;
-    }[]
-  ).forEach((s) => {
-    (s.bosses || []).forEach((b) => {
-      if (!b.data_prova) return;
-      const dataStr = String(b.data_prova).slice(0, 10);
-      if (dataStr < inicio || dataStr > fim) return;
-      provasPorDia[dataStr] = `${s.nome} — ${b.nome}`;
-    });
-  });
+  const nome = input.nome.trim().slice(0, 40) || "Prova";
+  const { data: criado, error } = await supabase
+    .from("bosses")
+    .insert({ subject_id: subject.id, nome, data_prova: input.data })
+    .select("id")
+    .single();
 
-  const hojeStr = iso(agora.getFullYear(), agora.getMonth(), agora.getDate());
-
-  const days: CalDay[] = [];
-  for (let dia = 1; dia <= totalDias; dia++) {
-    const dataStr = iso(ano, mes, dia);
-    let estado: CalDay["estado"] = "normal";
-    let title: string | undefined;
-    if (dataStr === hojeStr) estado = "hoje";
-    else if (provasPorDia[dataStr]) {
-      estado = "prova";
-      title = provasPorDia[dataStr];
-    } else if (estudouPorData[dataStr]) estado = "estudou";
-    days.push({ dia, data: dataStr, estado, title, temTarefa: Boolean(tarefas[dataStr]?.length) });
+  if (error || !criado) {
+    console.error("Erro ao marcar prova no calendário:", error);
+    return { prova: null, error: "Não foi possível marcar essa prova." };
   }
 
   return {
-    ano,
-    mes,
-    monthLabel: `${MESES_PT[mes]} ${ano}`,
-    dowOffset: new Date(ano, mes, 1).getDay(),
-    days,
-    tarefas,
+    prova: {
+      bossId: criado.id as string,
+      subjectId: subject.id,
+      subjectNome: subject.nome,
+      nome,
+      data: input.data,
+    },
+    error: null,
   };
+}
+
+export async function desmarcarProvaAction(bossId: string): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessão expirada." };
+
+  // `subjects!inner` + filtro no user_id: garante que o boss apagado pertence
+  // a uma disciplina do próprio aluno antes do delete.
+  const { data: dono } = await supabase
+    .from("bosses")
+    .select("id, subjects!inner(user_id)")
+    .eq("id", bossId)
+    .eq("subjects.user_id", user.id)
+    .maybeSingle();
+  if (!dono) return { error: "Prova não encontrada." };
+
+  const { error } = await supabase.from("bosses").delete().eq("id", bossId);
+  if (error) {
+    console.error("Erro ao desmarcar prova:", error);
+    return { error: "Não foi possível remover essa prova." };
+  }
+  return { error: null };
 }

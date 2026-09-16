@@ -24,6 +24,13 @@ function duracaoValida(min: number | null | undefined): number | null {
   return n > 0 && n <= 600 ? n : null;
 }
 
+/** Espelha o CHECK de `meta_questoes` (1..500) — ver supabase_agenda_metas.sql. */
+function metaValida(qtd: number | null | undefined): number | null {
+  if (qtd == null || !Number.isFinite(qtd)) return null;
+  const n = Math.round(qtd);
+  return n > 0 && n <= 500 ? n : null;
+}
+
 export type NovoItemAgenda = {
   nome: string;
   descricao: string | null;
@@ -32,6 +39,7 @@ export type NovoItemAgenda = {
   tipo?: TipoItemAgenda;
   hora?: string | null;
   duracaoMin?: number | null;
+  metaQuestoes?: number | null;
 };
 
 export async function criarTarefaAction(
@@ -43,11 +51,16 @@ export async function criarTarefaAction(
   } = await supabase.auth.getUser();
   if (!user || !input.nome.trim()) return { ok: false, id: null };
 
-  const tipo: TipoItemAgenda = input.tipo === "sessao" ? "sessao" : "tarefa";
+  const tipo: TipoItemAgenda =
+    input.tipo === "sessao" || input.tipo === "meta" ? input.tipo : "tarefa";
   const hora = horaValida(input.hora);
   // Duração só faz sentido num bloco de estudo — numa tarefa de lista ela não
   // seria mostrada em lugar nenhum e só sujaria a linha.
   const duracao = tipo === "sessao" ? duracaoValida(input.duracaoMin) : null;
+  const meta = tipo === "meta" ? metaValida(input.metaQuestoes) : null;
+  // Uma meta sem número não é meta — recusa antes do insert em vez de gravar
+  // uma linha que o calendário não saberia desenhar.
+  if (tipo === "meta" && (meta === null || !input.subjectId)) return { ok: false, id: null };
 
   const { data: criada, error } = await supabase
     .from("tarefas")
@@ -60,6 +73,7 @@ export async function criarTarefaAction(
       tipo,
       hora,
       duracao_min: duracao,
+      meta_questoes: meta,
     })
     .select("id")
     .single();
