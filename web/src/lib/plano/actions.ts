@@ -105,34 +105,58 @@ export async function criarAssinaturaAction(
   //   • recorrente → `/preapproval`: o MP cobra o cartão todo mês sozinho;
   //   • à vista    → `/checkout/preferences`: uma cobrança, aceita Pix.
   //
-  // Sem token, cai no fluxo manual — registra a intenção e o admin confirma
-  // em /admin/assinaturas.
+  // **Repasse de 2026-09-17 — parar de mentir quando o gateway recusa.** Antes,
+  // QUALQUER falha aqui caía no mesmo fallback manual, e o aluno via "pedido
+  // registrado, será confirmado manualmente" — uma promessa de que alguém vai
+  // cobrar dele por fora. Isso só é verdade quando não há gateway nenhum
+  // configurado. Quando o gateway existe e RECUSOU (o caso comum no
+  // preapproval, que é bem mais exigente que uma preferência), o honesto é
+  // dizer que não deu e deixar tentar de novo — senão o pedido fica pendurado
+  // esperando uma confirmação manual que ninguém pediu.
   if (mpConfigurado()) {
-    if (opcao.forma === "recorrente") {
-      const ass = await criarAssinaturaRecorrente({
-        assinaturaId: data.id,
-        opcao,
-        userEmail: user.email,
-      });
-      if ("url" in ass) {
-        // Guarda a referência no gateway pra conferência e auditoria. Falhar
-        // aqui não pode barrar o pagamento: a busca por `external_reference`
-        // continua achando a assinatura de qualquer jeito.
-        await createAdminClient()
-          .from("assinaturas")
-          .update({ gateway_id: ass.preapprovalId })
-          .eq("id", data.id);
-        return { checkoutUrl: ass.url };
+    const criado =
+      opcao.forma === "recorrente"
+        ? await criarAssinaturaRecorrente({
+            assinaturaId: data.id,
+            opcao,
+            userEmail: user.email,
+          })
+        : await criarPreferenciaCheckout({
+            assinaturaId: data.id,
+            opcao,
+            userEmail: user.email,
+          });
+
+    if ("url" in criado) {
+      // Guarda a referência da assinatura no gateway pra conferência e
+      // auditoria. Envolvido em try/catch porque `createAdminClient()` LANÇA
+      // sem SUPABASE_SERVICE_ROLE_KEY — e nesse ponto a assinatura já existe no
+      // Mercado Pago. Estourar aqui deixaria o aluno com uma assinatura aberta
+      // lá e uma tela de erro aqui, que é o pior desfecho possível. A
+      // conferência sabe achar a assinatura por `external_reference` mesmo sem
+      // esta coluna.
+      if ("preapprovalId" in criado) {
+        try {
+          await createAdminClient()
+            .from("assinaturas")
+            .update({ gateway_id: criado.preapprovalId })
+            .eq("id", data.id);
+        } catch (e) {
+          console.error("Assinatura criada no MP mas gateway_id não foi salvo:", e);
+        }
       }
-    } else {
-      const pref = await criarPreferenciaCheckout({
-        assinaturaId: data.id,
-        opcao,
-        userEmail: user.email,
-      });
-      if ("url" in pref) return { checkoutUrl: pref.url };
+      return { checkoutUrl: criado.url };
     }
-    // Falhou criar no gateway: mantém a pendente e cai no fallback manual.
+
+    // O gateway está configurado e disse não. Cancela a pendente que acabou de
+    // nascer (senão o índice parcial de "uma pendente por aluno" barra a
+    // próxima tentativa) e devolve o motivo real.
+    await supabase
+      .from("assinaturas")
+      .update({ status: "cancelada" })
+      .eq("id", data.id)
+      .eq("user_id", user.id);
+    return { error: criado.error };
   }
 
   return {

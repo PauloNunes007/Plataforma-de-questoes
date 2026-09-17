@@ -61,6 +61,24 @@ export async function criarAssinaturaRecorrente(params: {
   if (!params.userEmail) return { error: "Sua conta precisa de um e-mail pra assinar." };
 
   const base = urlDoApp();
+  // `back_url` é OBRIGATÓRIA na preapproval e precisa ser https pública — o MP
+  // recusa a criação inteira em http/localhost. A preferência avulsa não sofre
+  // disso (lá o guard de https é só pro auto_return/notification_url), então em
+  // desenvolvimento o plano à vista funciona e o recorrente não. Sem esta
+  // checagem o aluno/dono recebia um "não foi possível" genérico pra uma causa
+  // que é pura configuração.
+  if (!base.startsWith("https://")) {
+    console.error(
+      "Preapproval exige NEXT_PUBLIC_APP_URL em https público (recebido:",
+      base,
+      "). Em desenvolvimento use o plano à vista, ou um túnel https.",
+    );
+    return {
+      error:
+        "A assinatura recorrente exige o site publicado em https. Em desenvolvimento, use o plano semestral à vista.",
+    };
+  }
+
   const inicio = new Date(Date.now() + 5 * 60 * 1000);
   // Semestral: 6 cobranças, via end_date. Mensal: sem fim, até cancelar.
   const fim =
@@ -89,8 +107,9 @@ export async function criarAssinaturaRecorrente(params: {
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      console.error("Erro ao criar preapproval MP:", res.status, await res.text());
-      return { error: "Não foi possível iniciar a assinatura agora." };
+      const corpo = await res.text();
+      console.error("Erro ao criar preapproval MP:", res.status, corpo);
+      return { error: explicarRecusa(corpo) };
     }
     const data = (await res.json()) as {
       id?: string;
@@ -104,6 +123,30 @@ export async function criarAssinaturaRecorrente(params: {
     console.error("Falha de rede ao criar preapproval MP:", e);
     return { error: "Não foi possível iniciar a assinatura agora." };
   }
+}
+
+/**
+ * Traduz a recusa do MP em algo acionável. As três primeiras são as que
+ * derrubam um preapproval na prática, e as três são de CONFIGURAÇÃO — sem esta
+ * tradução viram todas o mesmo "não foi possível", que não diz a ninguém o que
+ * arrumar.
+ *
+ * O corpo cru fica no log; aqui só sai a versão curta pro aluno.
+ */
+function explicarRecusa(corpo: string): string {
+  const texto = corpo.toLowerCase();
+  if (texto.includes("same user") || texto.includes("mesmo usuário")) {
+    // Clássico ao testar com a própria conta: o MP proíbe alguém assinar de si
+    // mesmo. Some com uma conta de teste (comprador) diferente da do vendedor.
+    return "Esta conta é a mesma que recebe o pagamento — o Mercado Pago não permite assinar de si mesmo. Use outra conta pra testar.";
+  }
+  if (texto.includes("invalid") && texto.includes("back_url")) {
+    return "A URL de retorno configurada não é aceita pelo Mercado Pago.";
+  }
+  if (texto.includes("unauthorized") || texto.includes("invalid_token") || texto.includes("403")) {
+    return "As credenciais do Mercado Pago foram recusadas. Confira o MP_ACCESS_TOKEN.";
+  }
+  return "O Mercado Pago não aceitou abrir a assinatura agora. Tente de novo em instantes.";
 }
 
 export type PreapprovalMP = {

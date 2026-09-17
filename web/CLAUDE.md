@@ -820,6 +820,53 @@ O que mudou:
   verdade exigiria reter valor, que é decisão comercial, e esconder o botão seria
   pior.
 
+### Repasse de 2026-09-17 — o "pagamento indisponível" que não era
+
+Reportado logo depois: a tela mostrava *"O pagamento online está indisponível no
+momento. Seu pedido ficou salvo e será confirmado manualmente"*. Esse é o
+fallback manual de `criarAssinaturaAction`, e ele estava sendo usado pra duas
+situações **muito** diferentes:
+
+1. **não há gateway** (`MP_ACCESS_TOKEN` ausente — o caso do `.env.local`, que
+   não tem a variável). Aí a mensagem é verdade: o pedido fica pendente e o
+   admin confirma em `/admin/assinaturas`;
+2. **há gateway e ele RECUSOU.** Aí a mensagem é uma promessa falsa — ninguém
+   vai cobrar por fora —, o motivo real morria num `console.error` e o pedido
+   ficava pendurado como `pendente`, o que ainda por cima trava a próxima
+   tentativa (índice parcial "uma pendente por aluno").
+
+O caso 2 ficou muito mais provável com a preapproval, que é bem mais exigente
+que uma preferência. Três correções:
+
+- **a falha do gateway vira erro de verdade**, com o motivo, e a pendente que
+  acabou de nascer é cancelada pra não bloquear a retentativa. O fallback manual
+  agora só acontece quando não há gateway nenhum;
+- **`explicarRecusa`** traduz as três recusas que de fato derrubam um
+  preapproval, todas de configuração: assinar da própria conta de vendedor
+  ("cannot operate between same user" — o que acontece ao testar com o e-mail
+  do dono), `back_url` inválida e token recusado;
+- **`back_url` exige https público.** A preapproval é recusada inteira em
+  `http://localhost`, então em desenvolvimento o plano à vista funciona e o
+  recorrente não. Agora isso é dito na hora, em vez de virar um "não foi
+  possível" genérico.
+
+Dois defeitos meus corrigidos junto:
+
+- **`createAdminClient()` sem guarda** depois da assinatura já criada no MP.
+  Ele LANÇA sem `SUPABASE_SERVICE_ROLE_KEY` — o aluno ficaria com assinatura
+  aberta no gateway e tela de erro aqui. Agora é try/catch: `gateway_id` é
+  conveniência, a conferência acha por `external_reference`;
+- **o furo de receita entrando pela porta manual.** `ativarAssinatura`
+  (confirmação do admin) concedia `ciclo === "semestral" ? 6 : 1` meses, então
+  confirmar à mão um pedido *semestral recorrente* — cujo `valor_centavos` é
+  R$ 10, o de UMA parcela — dava seis meses por dez reais. Passou a usar a mesma
+  `mesesPorCobranca` do caminho automático.
+
+**Como saber em qual caso você está:** `/admin/assinaturas` logado como admin
+tem uma tarja laranja que diz exatamente qual variável falta (ver
+`PUBLICAR.md`). Sem tarja, o gateway está de pé e a recusa é do MP — e agora a
+tela diz qual.
+
 ⚠️ **Rode `supabase_assinatura_recorrente.sql` antes de publicar** — o app lê
 `assinaturas.gateway_id` e grava em `assinatura_pagamentos`. E **teste com
 credenciais reais do MP**: o caminho de preapproval nunca rodou contra o gateway.

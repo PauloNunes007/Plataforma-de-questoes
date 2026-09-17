@@ -18,9 +18,9 @@ import { adicionarMeses } from "./preapproval";
 //
 //   • semestral à vista (R$ 60 de uma vez) ....... 6 meses
 //   • qualquer recorrente (mensal ou semestral) .. 1 mês por cobrança
-//   • ativação manual do admin ................... o ciclo inteiro, como antes
-//     (é contingência: o admin está confirmando um pagamento que aconteceu
-//     por fora, e é ele quem sabe o que foi pago)
+//   • ativação manual do admin ................... a MESMA régua (ver o
+//     repasse de 2026-09-17 em `ativarAssinatura`: conceder o ciclo inteiro
+//     ali reabria o furo pela porta manual)
 //
 // A fidelidade do semestral recorrente continua sendo 6 meses a partir da
 // primeira cobrança — só que agora ela descreve um compromisso real de 6
@@ -166,9 +166,15 @@ export async function creditarCobranca(params: {
 
 /**
  * Ativação MANUAL pelo admin (contingência: gateway fora do ar, pagamento por
- * fora). Concede o ciclo inteiro e não passa por `assinatura_pagamentos` — não
- * há cobrança de gateway pra registrar, e quem responde pelo valor é o admin.
- * Continua idempotente por status, como antes.
+ * fora). Não passa por `assinatura_pagamentos` — não há cobrança de gateway pra
+ * registrar — e continua idempotente por status, como antes.
+ *
+ * **Repasse de 2026-09-17.** Aqui morava o MESMO furo de receita, entrando pela
+ * porta manual: concedia `ciclo === "semestral" ? 6 : 1` meses, então confirmar
+ * à mão um pedido "semestral recorrente" (cujo `valor_centavos` é R$ 10, o de
+ * UMA parcela) dava seis meses por dez reais. Agora vale a mesma régua do
+ * caminho automático: uma confirmação = o que UM pagamento daquele pedido
+ * compra. Pra conceder o semestre inteiro, o pedido certo é o à vista (R$ 60).
  */
 export async function ativarAssinatura(
   assinaturaId: string,
@@ -180,7 +186,7 @@ export async function ativarAssinatura(
   if (!ass) return { error: "Assinatura não encontrada." };
   if (ass.status === "ativa") return { ok: true };
 
-  const meses = ass.ciclo === "semestral" ? 6 : 1;
+  const meses = mesesPorCobranca(ass.ciclo, ass.forma);
   const res = await estenderPro(admin, ass, meses, true);
   if ("error" in res) return { error: res.error };
 
