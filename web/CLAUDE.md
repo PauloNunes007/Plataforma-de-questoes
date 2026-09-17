@@ -1181,14 +1181,19 @@ em TODA página (`position: fixed` dentro das margens do `@page`). O CSS mora em
 
 **O passo de preparo** (`PreparoImpressao`) existe por um defeito concreto: a
 lista de um tópico passa fácil de 100 questões e a tela antiga mandava TODAS
-pra impressora sem perguntar. Acima de `LIMITE_PERGUNTAR_QUANTIDADE` (25) a
-folha só é montada depois que o aluno responde **quantas questões**, **com ou
-sem gabarito**, **quanto espaço pra resolver** e se quer **cartão-resposta em
-branco** — com estimativa de páginas (`paginasEstimadas`, grosseira de
-propósito e assumida como "~N" na UI). Abaixo disso a pergunta seria burocracia
-e a folha abre direto; as mesmas opções ficam na barra do topo, então mudar de
-ideia não custa recomeçar. O recorte pega as N PRIMEIRAS (a ordem é o que faz a
-questão 7 do papel ser a 7 da tela), nunca uma amostra nova.
+pra impressora sem perguntar. **O padrão NÃO é a lista inteira**
+(`PADRAO_QUESTOES_FOLHA`, 10 — corrigido em 2026-09-17 a pedido do dono): com o
+espaço de resolução amplo, cada questão custa quase meia folha, e "todas" virava
+um arquivo de dezenas de páginas que ninguém imprime e que o navegador às vezes
+nem gera. O preparo aparece **exatamente quando há recorte** (`total >
+quantidade padrão`) — a regra é essa, não um limiar solto, porque nenhuma
+questão pode ficar de fora sem o aluno saber. Nele ele responde **quantas
+questões**, **com ou sem gabarito**, **quanto espaço pra resolver** e se quer
+**cartão-resposta em branco**, com estimativa de páginas (`paginasEstimadas`,
+grosseira de propósito e assumida como "~N" na UI). Numa lista que cabe inteira
+a folha abre direto; as opções ficam na barra do topo, então mudar de ideia não
+custa recomeçar. O recorte pega as N PRIMEIRAS (a ordem é o que faz a questão 7
+do papel ser a 7 da tela), nunca uma amostra nova.
 
 **Numa prova o recorte não existe** (`permitirRecorte={false}`): uma prova é o
 conjunto inteiro das suas questões — imprimir "as 20 primeiras de 30" faria a

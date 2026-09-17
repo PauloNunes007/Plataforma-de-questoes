@@ -18,7 +18,6 @@ import { CSS_IMPRESSAO } from "@/components/imprimir/estilos-impressao";
 import { FolhaProva } from "@/components/imprimir/folha-prova";
 import {
   ESPACAMENTOS,
-  LIMITE_PERGUNTAR_QUANTIDADE,
   limitarQuantidade,
   nomeDoArquivo,
   opcoesPadrao,
@@ -32,12 +31,13 @@ import {
 // A TELA DE EXPORTAR: um passo de preparo e, depois dele, a folha.
 //
 // O passo de preparo existe por um defeito concreto: a lista de um tópico
-// inteiro passa fácil de 100 questões, e antes disso a tela jogava TODAS numa
-// folha só — trinta e tantas páginas que ninguém imprime. Agora a tela
-// pergunta, antes de montar: quantas questões, com ou sem gabarito, quanto
-// espaço pra resolver. Nada aqui vai pro papel (`nao-imprimir`), e as mesmas
-// opções continuam na barra de cima depois da folha montada, pra ajustar sem
-// recomeçar.
+// inteiro passa fácil de 100 questões, e a tela jogava TODAS numa folha só —
+// trinta e tantas páginas que ninguém imprime, e que o navegador às vezes nem
+// consegue gerar. Hoje o padrão é um RECORTE (PADRAO_QUESTOES_FOLHA), e o
+// preparo aparece exatamente quando há recorte: quantas questões, com ou sem
+// gabarito, quanto espaço pra resolver. Nada aqui vai pro papel
+// (`nao-imprimir`), e as mesmas opções continuam na barra de cima depois da
+// folha montada, pra ajustar sem recomeçar.
 //
 // Numa prova (simulado/prova antiga) o recorte não faz sentido — a prova é a
 // prova —, então `permitirRecorte={false}` some com a pergunta de quantidade e
@@ -76,10 +76,12 @@ export function FolhaImpressao({
     return permitirRecorte ? base : { ...base, quantidade: total, gabarito: false, cartaoResposta: true };
   });
 
-  // A folha só é montada depois do preparo quando a lista é longa o bastante
-  // pra decisão importar. Numa lista curta, perguntar seria burocracia.
+  // O preparo aparece exatamente quando a folha ESTÁ SENDO CORTADA — o padrão
+  // não é mais a lista inteira (ver PADRAO_QUESTOES_FOLHA). A regra é essa e
+  // não um limiar solto: nenhuma questão pode ficar de fora sem o aluno saber,
+  // e numa lista que cabe inteira perguntar seria burocracia.
   const [preparando, setPreparando] = useState(
-    permitirRecorte && total > LIMITE_PERGUNTAR_QUANTIDADE,
+    () => permitirRecorte && total > opcoesPadrao(total, false).quantidade,
   );
   const [painelAberto, setPainelAberto] = useState(false);
 
@@ -259,9 +261,9 @@ function PreparoImpressao({
         <span className="kicker">Preparar impressão</span>
         <h1 className="mt-1 font-heading text-[20px] font-bold tracking-tight">{titulo}</h1>
         <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-          Essa lista tem <b className="tnum text-foreground">{total} questões</b> — impressa inteira,
-          passa de <b className="tnum text-foreground">{paginas} páginas</b>. Escolha o que entra no PDF
-          antes de gerar.
+          Essa lista tem <b className="tnum text-foreground">{total} questões</b>. Já deixamos{" "}
+          <b className="tnum text-foreground">{opcoes.quantidade}</b> marcadas — o bastante pra uma
+          sessão e pra um arquivo que cabe na impressora. Suba se quiser mais.
         </p>
 
         <div className="mt-5">

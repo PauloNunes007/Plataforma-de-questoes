@@ -42,12 +42,20 @@ export type OpcoesFolha = {
 };
 
 /**
- * Acima disso, a tela PERGUNTA a quantidade antes de montar a folha em vez de
- * assumir "todas". Uma lista de tópico inteiro passa fácil de 100 questões, e
- * mandar 35 páginas pra impressora sem avisar é o defeito que este passo
- * existe pra corrigir.
+ * Quantas questões entram no PDF quando ninguém escolheu nada.
+ *
+ * **Não é o tamanho da lista**, de propósito. O padrão anterior era "todas", e
+ * isso é o pior padrão possível aqui: a lista de um tópico passa fácil de 100
+ * questões, com o espaço de resolução amplo cada uma custa quase meia folha, e
+ * o resultado era um arquivo de dezenas de páginas que ninguém imprime (quando
+ * o navegador conseguia gerar — em documento muito longo com figura ele
+ * simplesmente falha).
+ *
+ * Dez questões é uma sessão de estudo de verdade e um arquivo que cabe na
+ * impressora. Quem quer mais sobe num toque; o caminho contrário — descobrir,
+ * depois de 40 páginas na fila, que dava pra cortar — não existe.
  */
-export const LIMITE_PERGUNTAR_QUANTIDADE = 25;
+export const PADRAO_QUESTOES_FOLHA = 10;
 
 /** Teto duro por arquivo: acima disso o PDF é grande demais pra ser útil. */
 export const MAX_QUESTOES_FOLHA = 120;
@@ -60,7 +68,7 @@ export const ESPACAMENTOS: { valor: Espacamento; rotulo: string; ajuda: string }
 
 export function opcoesPadrao(total: number, temResolucao: boolean): OpcoesFolha {
   return {
-    quantidade: Math.min(total, MAX_QUESTOES_FOLHA),
+    quantidade: Math.min(total, PADRAO_QUESTOES_FOLHA),
     // O gabarito entra por padrão: quem baixa uma lista pra treinar precisa
     // conferir depois, e desligar é um toque. Quem vai simular a prova
     // desliga — a opção existe justamente pra isso.
