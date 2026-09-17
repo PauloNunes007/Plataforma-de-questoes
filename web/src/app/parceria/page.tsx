@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  ArrowRight,
   BadgeCheck,
   Check,
   Megaphone,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
+import { ContatoParceriaButton } from "@/components/afiliados/contato-parceria-button";
 import {
   DIA_REPASSE,
   FAIXAS,
@@ -128,13 +128,10 @@ export default async function ParceriaPage() {
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-3">
-            <a
-              href="mailto:contato@expectrum.com.br?subject=Quero%20ser%20parceiro%20da%20Expectrum"
+            <ContatoParceriaButton
+              texto="Quero ser parceiro"
               className={buttonVariants({ size: "lg" }) + " h-12 px-6 text-[15px]"}
-            >
-              Quero ser parceiro
-              <ArrowRight />
-            </a>
+            />
             <span className="text-[12.5px] text-muted-foreground">
               Resposta em até 1 dia útil · sem exclusividade · sem meta mínima
             </span>
@@ -324,14 +321,11 @@ export default async function ParceriaPage() {
               Diz o nome do perfil, o @ e o curso/universidade do seu público. A gente cria o código,
               te manda o link e libera seu painel — dá pra começar no mesmo dia.
             </p>
-            <a
-              href="mailto:contato@expectrum.com.br?subject=Quero%20ser%20parceiro%20da%20Expectrum"
+            <ContatoParceriaButton
+              texto="Falar com a Expectrum"
               className={buttonVariants({ size: "lg" }) + " mt-6 h-12 px-7 text-[15px]"}
-            >
-              Falar com a Expectrum
-              <ArrowRight />
-            </a>
-            <p className="mt-3 text-[12px] text-muted-foreground">contato@expectrum.com.br</p>
+              centralizado
+            />
           </div>
         </section>
       </div>

@@ -9,6 +9,7 @@ import {
   type ResumoAssinatura,
 } from "@/lib/plano/actions";
 import { DIAS_ARREPENDIMENTO, reais } from "@/lib/plano/plano";
+import { EMAIL_CONTATO } from "@/lib/contato";
 
 // O MENU DE CANCELAMENTO — a porta de saída, no mesmo lugar onde fica a porta
 // de entrada.
@@ -147,8 +148,8 @@ export function GerenciarAssinatura({ resumo }: { resumo: ResumoAssinatura }) {
 
       <p className="mt-4 border-t border-border pt-3 text-[11.5px] leading-relaxed text-muted-foreground">
         Precisa de algo que não está aqui? Escreva pra{" "}
-        <a className="font-medium underline" href="mailto:contato@expectrum.com.br">
-          contato@expectrum.com.br
+        <a className="font-medium underline" href={`mailto:${EMAIL_CONTATO}`}>
+          {EMAIL_CONTATO}
         </a>
         .
       </p>
