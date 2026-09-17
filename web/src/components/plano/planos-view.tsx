@@ -35,6 +35,7 @@ import {
   type EstadoPagamento,
 } from "@/lib/plano/actions";
 import { ProEmblema, ProMark } from "@/components/plano/pro-ui";
+import { BemVindoPro } from "@/components/plano/bem-vindo-pro";
 
 type PlanosViewProps = {
   /** O que esta instalação consegue cobrar — resolvido no servidor. */
@@ -192,23 +193,51 @@ export function PlanosView(props: PlanosViewProps) {
     } else setErro(res.error);
   }
 
+  // "Acabou de virar Pro AGORA" tem duas origens, e as duas contam: o polling
+  // desta tela (`ativadoAgora`) e a conferência que o servidor já fez antes de
+  // renderizar, quando o aluno volta do checkout com o pagamento aprovado
+  // (`conferenciaInicial`). Sem a segunda, quem paga no cartão — aprovado na
+  // hora — cairia direto no cartão seco de "assinatura ativa" e nunca veria as
+  // boas-vindas; só quem paga por Pix, que passa pelo polling, veria.
+  const recemAtivado =
+    ativadoAgora || (props.voltouDoCheckout && props.conferenciaInicial?.estado === "ativo");
+
   const mostrandoEspera =
     !props.jaEhPro && !!pendente && (estado === "processando" || estado === "indisponivel");
   const mostrandoRecusa = !props.jaEhPro && estado === "recusado";
 
   return (
     <div className="flex flex-col gap-10">
-      <Cabecalho jaEhPro={props.jaEhPro} />
+      {!recemAtivado && <Cabecalho jaEhPro={props.jaEhPro} />}
 
-      {!mostrandoEspera && <CupomResgate onResgatado={() => router.refresh()} />}
+      {/* Logo depois do pagamento o campo de cupom vira ruído — e pior, uma
+          pergunta ("será que eu podia ter pago menos?"). */}
+      {!mostrandoEspera && !recemAtivado && <CupomResgate onResgatado={() => router.refresh()} />}
 
       {props.jaEhPro ? (
-        <StatusPro
-          ciclo={props.ciclo}
-          expiraEm={props.expiraEm}
-          fidelidadeAte={props.fidelidadeAte}
-          recemAtivado={ativadoAgora}
-        />
+        recemAtivado ? (
+          /* Acabou de pagar: a tela vira as BOAS-VINDAS, não o extrato. Ver
+             components/plano/bem-vindo-pro.tsx — este é o único momento em
+             que o aluno está totalmente disposto a aprender o que comprou. O
+             extrato (validade, fidelidade) continua logo abaixo. */
+          <>
+            <BemVindoPro ciclo={props.ciclo} expiraEm={props.expiraEm} />
+            <StatusPro
+              ciclo={props.ciclo}
+              expiraEm={props.expiraEm}
+              fidelidadeAte={props.fidelidadeAte}
+              recemAtivado={false}
+              compacto
+            />
+          </>
+        ) : (
+          <StatusPro
+            ciclo={props.ciclo}
+            expiraEm={props.expiraEm}
+            fidelidadeAte={props.fidelidadeAte}
+            recemAtivado={false}
+          />
+        )
       ) : mostrandoEspera && pendente ? (
         <PagamentoEmAnalise
           pendente={pendente}
@@ -251,7 +280,7 @@ export function PlanosView(props: PlanosViewProps) {
         </>
       )}
 
-      <Comparativo />
+      {!recemAtivado && <Comparativo />}
     </div>
   );
 }
@@ -611,26 +640,34 @@ function StatusPro({
   expiraEm,
   fidelidadeAte,
   recemAtivado,
+  compacto = false,
 }: {
   ciclo: string | null;
   expiraEm: string | null;
   fidelidadeAte: string | null;
   recemAtivado: boolean;
+  /** Logo depois do pagamento, este cartão é só o EXTRATO embaixo das
+   *  boas-vindas — sem ícone gigante nem título competindo com elas. */
+  compacto?: boolean;
 }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="surface-gold mx-auto w-full max-w-xl rounded-2xl p-7 text-center"
+        className={`surface-gold mx-auto w-full max-w-xl rounded-2xl text-center ${compacto ? "p-5" : "p-7"}`}
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
       >
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-questly-green/10 text-questly-green ring-1 ring-questly-green/25">
-          <BadgeCheck size={25} strokeWidth={2} />
-        </span>
-        <h2 className="mt-3.5 font-heading text-[19px] font-semibold tracking-tight">
-          {recemAtivado ? "Pagamento aprovado — Pro liberado" : "Assinatura ativa"}
-        </h2>
-        <p className="mt-1 text-[13px] text-muted-foreground">
+        {!compacto && (
+          <>
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-questly-green/10 text-questly-green ring-1 ring-questly-green/25">
+              <BadgeCheck size={25} strokeWidth={2} />
+            </span>
+            <h2 className="mt-3.5 font-heading text-[19px] font-semibold tracking-tight">
+              {recemAtivado ? "Pagamento aprovado — Pro liberado" : "Assinatura ativa"}
+            </h2>
+          </>
+        )}
+        <p className={`text-[13px] text-muted-foreground ${compacto ? "" : "mt-1"}`}>
           Plano {ciclo === "semestral" ? "Pro Semestral" : "Pro Mensal"}.
         </p>
 
@@ -661,12 +698,15 @@ function StatusPro({
 // Tabela Grátis × Pro montada a partir de RECURSOS_FREE — a MESMA fonte da
 // verdade que a landing usa, pra marketing e produto nunca discordarem.
 //
-// A coluna Pro é marcada em TODA linha de propósito, e isso não é licença
-// poética: RECURSOS_PRO é literalmente "tudo do plano grátis, sem limite" +
-// BENEFICIOS_PRO. Não dá pra casar as duas listas por texto (as frases do
-// benefício são mais longas que as do comparativo), e inventar um mapa aqui
-// criaria uma segunda fonte da verdade — exatamente o que o comentário de
-// lib/plano/plano.ts pede pra não fazer.
+// A coluna Pro marca ✓ em quase toda linha, e isso não é licença poética:
+// RECURSOS_PRO é literalmente "tudo do plano grátis, sem limite" +
+// BENEFICIOS_PRO.
+//
+// A exceção são as linhas com TETO NUMÉRICO (2026-09-17). Quando o grátis
+// passou a ter "30 questões por dia", o ✓ do lado do Pro passou a afirmar que
+// o Pro também tem esse teto — um comparativo confundindo a favor do plano
+// grátis. Essas linhas trazem `item.pro` ("Ilimitado", "Sem limite"), escrito
+// na MESMA fonte da verdade (lib/plano/plano.ts), e não num mapa daqui.
 function Comparativo() {
   return (
     <section className="surface overflow-hidden rounded-2xl">
@@ -697,7 +737,13 @@ function Comparativo() {
                   )}
                 </span>
                 <span className="flex w-9 justify-center">
-                  <Check size={15} strokeWidth={2.6} className="text-questly-gold" />
+                  {item.pro ? (
+                    <span className="text-center text-[10px] font-bold leading-tight text-questly-gold">
+                      {item.pro}
+                    </span>
+                  ) : (
+                    <Check size={15} strokeWidth={2.6} className="text-questly-gold" />
+                  )}
                 </span>
               </span>
             </li>

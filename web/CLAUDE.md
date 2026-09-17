@@ -1002,6 +1002,194 @@ de a lista crescer com base em recusa real, em vez de adivinhação.
 ⚠️ O código cru do MP nunca vai pra tela do aluno (não diz nada a ele); vai pro
 log do Vercel.
 
+## Vida acadêmica: faltas e notas (2026-09-17) — `/materias`, `lib/academico/`
+
+**Pedido do dono, e a primeira coisa que o Pro vende e o grátis não faz de
+jeito nenhum.** Até aqui o Pro era "o mesmo produto, sem limite" (simulado
+extra, autópsia, estatística). Isso é um upgrade, não uma razão pra pagar. As
+duas contas que de fato decidem o semestre de um universitário não tinham nada
+a ver com banco de questões, e ele fazia as duas no caderno — ou não fazia:
+
+1. **"quantas faltas eu ainda posso levar?"** — reprovar por frequência é o
+   jeito mais burro de perder um semestre, e quase ninguém tem o número na
+   cabeça;
+2. **"quanto eu preciso tirar na P3 pra passar?"** — a média ponderada com peso
+   diferente por avaliação é onde o aluno erra a conta.
+
+Arquitetura, em três camadas separadas de propósito:
+
+| Camada | Arquivo | Papel |
+|---|---|---|
+| Matemática | `lib/academico/academico.ts` | PURA, sem Supabase: `statusFrequencia`, `resumoNotas`, `sugerirFaltasMax` |
+| Leitura | `lib/academico/academico-data.ts` | 3 queries por `user_id` + `alertasDaVidaAcademica` + `carregarResumoRiscoAcademico` (o resumo da home) |
+| Escrita | `lib/academico/actions.ts` | Server Actions, **todas atrás de `exigirPro()`** |
+
+A separação é a mesma de `chance-aprovacao.ts` e existe por um motivo concreto:
+o veredito "você está reprovado por falta" é calculado em DOIS consumidores — a
+tela e o e-mail de relatório, que roda num cron sem browser nenhum. Duas
+implementações discordando sobre isso seria pior que não ter o recurso.
+
+**Modelagem** (`supabase_vida_academica.sql`): `subjects` ganha só os
+PARÂMETROS (`faltas_max`, `carga_horaria`, `aulas_por_semana`,
+`media_aprovacao`); o que aconteceu vira linha (`faltas`, `avaliacoes`). Não
+existe `subjects.faltas_usadas`: seria um segundo lugar pra mesma verdade
+(mesma regra da meta do calendário) e tiraria do aluno a única coisa que torna o
+contador realmente útil — saber QUANDO faltou, pra conferir com o diário do
+professor quando a chamada não bate. A soma sai na leitura.
+
+**O gate do Pro é de aplicação, não de RLS.** A RLS é dono-only e não conhece
+plano. Se dependesse do plano, no dia em que o Pro vencesse o banco ESCONDERIA o
+que o aluno digitou, e a tela diria "nenhuma falta" em vez de "renove pra
+editar". Perder um recurso é uma coisa; o produto mentir sobre o dado do aluno é
+outra. Na prática: leitura sempre liberada, escrita só com `exigirPro()`.
+
+**Nada aqui paga XP, acende ofensiva ou entra no ranking** — registrar uma falta
+não é estudo, e se pagasse seria a forma mais fácil de forjar ranking já
+inventada neste banco.
+
+Detalhes que parecem miudeza e não são: falta **justificada** fica registrada e
+não conta no limite (o aluno precisa ver as duas coisas); `quantidade` conta
+AULAS, não dias (faltar numa manhã de 2 tempos custa 2, que é como o diário do
+professor conta); `nota` é nullable de propósito — é a avaliação SEM nota que
+permite responder "quanto preciso tirar", que é a metade útil da pergunta; a
+sugestão de 25% (LDB art. 47 §3º) é oferecida, nunca imposta.
+
+A porta de entrada no celular **não** é a barra inferior (travada em 5 abas):
+é o `MateriasRiscoCard` na coluna da direita da home + o item no menu da conta.
+O cartão existe menos por navegação e mais porque um aviso de falta só vale se
+chegar ANTES da aula — uma tela que o aluno precisa lembrar de abrir não avisa
+nada.
+
+## O plano grátis apertou (2026-09-17) — `lib/plano/limites.ts`
+
+O grátis entregava o produto inteiro menos quatro detalhes; quem fazia 300
+questões por semana e quem pagava R$ 15 recebiam a mesma plataforma. A régua
+nova, com o ponto de checagem de cada limite (todos **no servidor**):
+
+| Limite | Valor | Onde é imposto |
+|---|---|---|
+| Questões por dia | 30 | `registrarRespostaAction` — conta ANTES de inserir |
+| Simulados por semana | 1 | `lib/simulados/actions.ts` (já existia) |
+| Favoritos | 15 | `lib/anotacoes/actions.ts` |
+| Anotações | 10 | `lib/anotacoes/actions.ts` |
+| Faltas/notas, PDF, relatório | — | `lib/academico/actions.ts`, `/imprimir`, cron |
+
+Três decisões do teto diário:
+
+- a recusa **não grava nada**. Uma tentativa gravada "fora do limite" ainda
+  mexeria em maestria/BKT, nos contadores globais da questão e no XP — o teto
+  vazaria por todos os efeitos colaterais, menos pelo número na tela;
+- o runner recebe `restanteHoje` do servidor e RECONCILIA depois de cada
+  resposta (`resultado.questoesHoje`): duas abas da mesma conta gastam do mesmo
+  teto, e o cliente não teria como saber disso sozinho;
+- ao bater o teto, o aluno **sempre pode encerrar a lista e ficar com o XP do
+  que fez** (`LimiteDiarioView`). Um limite que sequestra o progresso do dia não
+  converte — irrita, e deixa a lista pendurada em "em andamento" pra sempre.
+
+Favoritos/anotações: o gate só barra CRIAÇÃO. Desfavoritar, editar uma anotação
+que já existe e apagar passam sempre — quem chegou ao teto não pode ficar
+impedido de corrigir o que ele mesmo escreveu.
+
+`SIMULADO_FREE_LIMITE_SEMANA` continua nascendo em `lib/simulados/constantes.ts`
+e é só **re-exportado** por `limites.ts` — dois arquivos com o mesmo teto
+divergem no primeiro ajuste de preço. As frases de `RECURSOS_FREE` interpolam as
+constantes em vez de digitar os números: um "30" escrito na tela de venda vira
+mentira no dia em que o teto mudar.
+
+## Boas-vindas ao Pro (2026-09-17) — tela + e-mail
+
+Pedido do dono: *"quando a pessoa concluir o pagamento, quero que ela receba uma
+mensagem de boas-vindas e fale tudo que ela tem direito agora"*.
+
+Antes existia só o `StatusPro`: "Assinatura ativa" + data de validade. Correto e
+frio — e o problema é de produto, não de estética. O segundo seguinte ao
+pagamento é o único momento em que o aluno está 100% disposto a aprender o que
+acabou de comprar, e a tela gastava esse momento informando uma data. Quem não
+sabe o que ganhou não usa; quem não usa não renova.
+
+- **Tela** (`components/plano/bem-vindo-pro.tsx`): cada benefício é um LINK pra
+  onde ele é usado, não um item de lista — "clique aqui e configure suas faltas"
+  em vez de "você tem controle de faltas". Com ela ligada, o cabeçalho, o campo
+  de cupom e a tabela comparativa saem da tela (quem acabou de comprar não
+  precisa de comparativo, e o cupom vira a pergunta "será que eu podia ter pago
+  menos?"). O extrato continua logo abaixo, no `StatusPro` compacto.
+- **`recemAtivado` tem DUAS origens**, e faltava uma: o polling desta tela
+  (`ativadoAgora`) e a conferência que o servidor já fez na volta do checkout
+  (`conferenciaInicial.estado === "ativo"`). Sem a segunda, quem paga no cartão
+  — aprovado na hora — cairia direto no cartão seco de "assinatura ativa"; só
+  quem paga por Pix, que passa pelo polling, veria as boas-vindas.
+- **E-mail** (`lib/email/templates-pro.ts` + `lib/plano/boas-vindas.ts`): existe
+  porque metade fecha a aba no checkout e volta horas depois direto no
+  `/dashboard` — esses nunca veem a tela. Disparado de `estenderPro`, e a
+  idempotência é `profiles.plano_desde` lido ANTES do update que o preenche
+  (nulo = nunca foi Pro). **Sem tabela de controle de envio**: `plano_desde` já
+  é essa verdade. Todo o disparo é engolido (`try/catch`, erros só no log) —
+  provedor de e-mail fora do ar não pode transformar um pagamento aprovado em
+  erro, e um `throw` faria o webhook do MP reprocessar uma ativação que deu
+  certo. O resgate de cupom (`resgatarCupomAction`) manda o mesmo e-mail, sob a
+  mesma condição.
+
+## Exportar em PDF com marca d'água (2026-09-17) — `/imprimir/[missaoId]`
+
+**Não há biblioteca de PDF, de propósito.** A folha é HTML com `@media print`
+caprichado e o "PDF" é o próprio *Imprimir → Salvar como PDF* do navegador.
+Gerar no servidor custaria um runtime de Chromium (ou uma lib que não renderiza
+KaTeX) pra entregar arquivo pior — com fórmula no meio, isso não é economia, é
+regressão.
+
+**Marca d'água com o e-mail do aluno** (pedido do dono, e o que torna o recurso
+viável): um PDF do banco de questões é um arquivo que circula — grupo da turma,
+Drive do cursinho, Telegram. A marca não impede a cópia (nada impede), mas
+amarra cada cópia a uma conta: quem republica publica o próprio e-mail junto. É
+dissuasão por atribuição, como nos PDFs de editora acadêmica. **Duas camadas
+independentes**, porque uma sozinha é fácil demais de perder: a diagonal
+repetida (SVG `<pattern>`, que cobre qualquer altura sem saber quantas páginas o
+PDF terá e não perde nitidez no zoom) e o rodapé `position: fixed`, único jeito
+confiável de carimbar TODAS as folhas. O e-mail vem da sessão, lido no servidor
+— nunca do cliente: o ponto inteiro é o aluno não escolher o que sai carimbado.
+
+A ordem das questões segue `question_ids`, não a ordem que o Postgres devolveu:
+quem está com a lista aberta no app espera que a questão 7 do papel seja a 7 da
+tela. O gabarito sai no fim, em página nova, e pode ser desligado antes de
+imprimir — quem imprime pra simular a prova não quer a resposta na mão.
+
+⚠️ Esconder o cromo do app na impressão **não dá** pra fazer com
+`body > *:not(.folha)`: a folha nasce dentro do layout de `(protected)`, vários
+níveis abaixo do `body`. Cada peça carrega `print:hidden` na própria classe
+(`top-nav`, `foco-bar`, `mobile-bottom-nav`) e o que é da tela usa
+`.nao-imprimir`. Se aparecer cromo novo no layout, ele precisa da classe.
+
+## Relatório semanal por e-mail (2026-09-17) — `/api/cron/relatorio-semanal`
+
+Único e-mail RECORRENTE da plataforma, e o único transacional com link de
+descadastro no rodapé + `List-Unsubscribe` (recorrente sem saída vira spam, e a
+reputação do remetente é a mesma que entrega o código de cadastro). O
+descadastro daqui desliga só `profiles.relatorio_semanal`, não todo contato —
+quem não quer o resumo de segunda não pediu pra parar de receber o código de
+acesso da própria conta.
+
+- **Agendamento**: `vercel.json`, segundas 11:00 UTC (8h BRT — o agendador do
+  Vercel só fala UTC). Precisa de `CRON_SECRET`; **sem ele a rota responde 401
+  em vez de liberar** — uma rota que dispara e-mail pra base inteira, aberta na
+  internet, é um canhão apontado pra reputação do remetente. Falhar fechado é o
+  lado certo de falhar.
+- **Idempotência**: a linha em `relatorio_envios` é reivindicada como `enviando`
+  ANTES do envio, e o índice único `(user_id, semana)` é o que garante um e-mail
+  por aluno por semana (não um filtro em JS). Se a função morrer no meio, ela
+  SUB-envia em vez de duplicar.
+- **Semana fechada**, não "últimos 7 dias": a semana da liga já é a unidade de
+  tempo do produto, e um e-mail de segunda falando de terça a segunda
+  confundiria quem acabou de ver o ranking zerar.
+- **Semana vazia não vira e-mail** (`valeEnviar`): "você fez 0 questões" toda
+  segunda é a receita mais curta pra virar spam, e quem sumiu não volta por um
+  e-mail que o repreende. A exceção é ter alerta acadêmico — aí há o que dizer.
+- Ordem do conteúdo é a mensagem: (1) o que pode custar o semestre (faltas,
+  média), (2) o que você fez, (3) onde errou mais. Os tópicos fracos são
+  ordenados pela TAXA de erro, não pelo absoluto: 4 erros em 5 é um problema, 4
+  em 40 é ruído de volume.
+- Quando a base não couber em 60s, o passo seguinte é **paginar** por `offset`
+  na querystring — nunca aumentar o paralelismo (a Brevo limita por minuto).
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

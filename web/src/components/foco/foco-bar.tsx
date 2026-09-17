@@ -32,7 +32,7 @@ export function FocoBar() {
 
   return (
     <>
-      <div className={`sticky z-30 ${TOPO_STICKY}`}>
+      <div className={`sticky z-30 print:hidden ${TOPO_STICKY}`}>
         <AnimatePresence initial={false}>
           {ativo ? (
             recolhida ? (

@@ -6,6 +6,7 @@ import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { questlyEhMestre, questlyEmbaralhar } from "@/lib/questly/shared";
 import { QuestaoRunner } from "@/components/questao/questao-runner";
 import { ehPro } from "@/lib/plano/plano";
+import { restanteDoDia } from "@/lib/plano/limites";
 import { ehAdmin } from "@/lib/admin/auth";
 import type { Pergunta } from "@/lib/questao/types";
 import { PARAM_ORIGEM, origemSegura, rotuloOrigem } from "@/lib/questao/navegacao";
@@ -129,6 +130,18 @@ export default async function QuestaoPage({
     supabase.from("profiles").select("plano, plano_expira_em").eq("id", user.id).maybeSingle(),
   ]);
 
+  // Teto diário do plano grátis: o runner precisa saber QUANTAS ainda cabem
+  // antes de desenhar a primeira questão — senão o aluno responde cinco e só
+  // descobre o limite quando o servidor recusa. Pro recebe null (sem teto).
+  const inicioDoDia = new Date();
+  inicioDoDia.setHours(0, 0, 0, 0);
+  const { count: respondidasHoje } = await supabase
+    .from("question_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", inicioDoDia.toISOString());
+  const restanteHoje = restanteDoDia(perfilPlano, respondidasHoje ?? 0);
+
   const jaAcertadasAntesIds = (tentativasAnteriores || []).filter((a) => a.correta).map((a) => a.question_id);
   const jaTentadasAntesIds = (tentativasAnteriores || []).map((a) => a.question_id);
   const topicosMestreInicioIds = (progsIniciais || []).filter(questlyEhMestre).map((p) => p.topico_id);
@@ -177,6 +190,7 @@ export default async function QuestaoPage({
       favoritosIniciaisIds={favoritosIniciaisIds}
       notasIniciais={notasIniciais}
       ehPro={ehPro(perfilPlano)}
+      restanteHoje={restanteHoje}
       voltarHref={voltarHref}
       disciplinaNome={disciplinaNome}
       ehAdmin={ehAdmin(user.email)}

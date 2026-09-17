@@ -23,6 +23,7 @@ import {
   Lightbulb,
   Lock,
   PartyPopper,
+  Printer,
   Search,
   Trophy,
   X,
@@ -36,6 +37,8 @@ import { QuestaoComentarios } from "@/components/questao/questao-comentarios";
 import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 import { questlyDegrauCombo, questlyMultiplicadorCombo, questlyXpDaResposta } from "@/lib/questly/shared";
 import { questlyMarcoAtingido, type MarcoDiario } from "@/lib/questly/marcos";
+import { AVISO_RESTANTE, QUESTOES_DIA_FREE } from "@/lib/plano/limites";
+import { ProMark } from "@/components/plano/pro-ui";
 import { Insignia } from "@/components/insignias/insignia";
 import {
   aceitarDesafioAction,
@@ -104,6 +107,7 @@ export function QuestaoRunner({
   favoritosIniciaisIds,
   notasIniciais,
   ehPro,
+  restanteHoje,
   voltarHref,
   disciplinaNome,
   ehAdmin,
@@ -116,6 +120,8 @@ export function QuestaoRunner({
   favoritosIniciaisIds: string[];
   notasIniciais: Record<string, string>;
   ehPro: boolean;
+  /** Questões que ainda cabem hoje no plano grátis. null = Pro (sem teto). */
+  restanteHoje: number | null;
   /** Pra onde o "X" devolve o aluno (ver lib/questao/navegacao.ts). */
   voltarHref: string;
   disciplinaNome: string | null;
@@ -141,6 +147,17 @@ export function QuestaoRunner({
   const [marco, setMarco] = useState<{ marco: MarcoDiario; key: number } | null>(null);
   const [desafioAceitando, setDesafioAceitando] = useState(false);
   const [favoritos, setFavoritos] = useState<Set<string>>(new Set(favoritosIniciaisIds));
+  // Quanto sobrou do teto diário do plano grátis. Desce a cada resposta e é
+  // RECONCILIADO com o número do servidor depois de cada registro — outra aba
+  // aberta na mesma conta gasta do mesmo teto, e o cliente não teria como
+  // saber disso sozinho.
+  const [restante, setRestante] = useState<number | null>(restanteHoje);
+  // Aviso curto de "não deu" pras ações da biblioteca (favorito/anotação).
+  // Ganhou razão de existir com os tetos do plano grátis: bater no limite de
+  // favoritos deixou de ser um erro raro de banco e virou caminho COMUM — e
+  // até aqui a estrela só voltava sozinha, sem explicar nada, que é
+  // exatamente a sensação de "o app quebrou".
+  const [avisoBiblioteca, setAvisoBiblioteca] = useState<string | null>(null);
   const [notas, setNotas] = useState<Record<string, string>>(notasIniciais);
 
   const jaAcertadasAntes = useRef(new Set(jaAcertadasAntesIds));
@@ -189,6 +206,9 @@ export function QuestaoRunner({
 
   async function confirmarResposta() {
     if (estado.respondida || !estado.selecionada) return;
+    // Teto do dia estourado: nem tenta. A parede já está na tela (ver
+    // `bateuOTeto` no render), isto só impede o atalho de teclado.
+    if (restante !== null && restante <= 0) return;
 
     const correta = estado.selecionada === pergunta.gabarito;
     const inicio = tempoInicioPergunta.current.get(indiceAtual) ?? Date.now();
@@ -235,6 +255,28 @@ export function QuestaoRunner({
       tempoMedioAnterior: pergunta.tempo_medio_seg,
     });
 
+    // O servidor recusou: o teto estourou entre o carregamento da lista e
+    // agora (outra aba, ou a página ficou aberta desde ontem). Desfaz o que
+    // foi pintado otimisticamente e levanta a parede — gravar nada e mostrar
+    // "acertou!" seria a pior combinação possível.
+    if (resultado.bloqueado) {
+      atualizarEstado(indiceAtual, {
+        respondida: false,
+        correta: false,
+        xpConcedido: 0,
+        selecionada: estado.selecionada,
+      });
+      if (correta) setAcertos((a) => Math.max(0, a - 1));
+      else setErros((e) => Math.max(0, e - 1));
+      setXpGanho((x) => Math.max(0, x - xpPergunta));
+      setRestante(0);
+      return;
+    }
+
+    if (restanteHoje !== null) {
+      setRestante(Math.max(0, QUESTOES_DIA_FREE - (resultado.questoesHoje ?? 0)));
+    }
+
     atualizarEstado(indiceAtual, { attemptId: resultado.attemptId });
 
     // Marco do dia (10/15/25/...): a contagem vem do servidor, então conta
@@ -273,13 +315,22 @@ export function QuestaoRunner({
         else next.delete(id);
         return next;
       });
+      setAvisoBiblioteca(resultado.error);
     }
   }
 
   async function salvarNota(texto: string) {
     const id = pergunta.id;
+    const anterior = notas[id] ?? "";
     setNotas((prev) => ({ ...prev, [id]: texto }));
-    await salvarNotaAction(id, texto);
+    const resultado = await salvarNotaAction(id, texto);
+    // Sem isto, uma anotação recusada pelo teto do plano continuava na tela
+    // como se tivesse sido salva — e sumia no próximo carregamento. Mentir
+    // sobre ter guardado é pior que recusar.
+    if ("error" in resultado) {
+      setNotas((prev) => ({ ...prev, [id]: anterior }));
+      setAvisoBiblioteca(resultado.error);
+    }
   }
 
   function navegarPara(indice: number) {
@@ -353,6 +404,25 @@ export function QuestaoRunner({
     );
   }
 
+  // A parede do teto diário. Vem ANTES do render da questão porque a questão
+  // seguinte não pode nem aparecer: mostrar o enunciado e recusar a resposta
+  // seria gastar o conteúdo sem entregar o estudo.
+  //
+  // O aluno nunca fica preso: ele sempre pode ENCERRAR a lista e ficar com o
+  // XP do que já respondeu. Um limite que sequestra o progresso do dia não
+  // converte — irrita.
+  const bateuOTeto = restante !== null && restante <= 0 && !estado.respondida;
+  if (bateuOTeto) {
+    return (
+      <LimiteDiarioView
+        respondidasNestaLista={estados.filter((e) => e.respondida).length}
+        finalizando={finalizando}
+        onEncerrar={finalizarMissao}
+        voltarHref={voltarHref}
+      />
+    );
+  }
+
   const letras = Object.keys(pergunta.alternativas || {}).sort();
   const imagensAlternativas = pergunta.alternativas_imagens || {};
   const progressoPct = ((indiceAtual + 1) / perguntasState.length) * 100;
@@ -365,6 +435,7 @@ export function QuestaoRunner({
       <FlashOverlay flash={flash} />
       <XpFloatOverlay xpFloat={xpFloat} anchorRef={correctBtnRef} />
       <MarcoOverlay marco={marco} onFechar={() => setMarco(null)} />
+      <AvisoToast texto={avisoBiblioteca} onFechar={() => setAvisoBiblioteca(null)} />
 
       <div className="mb-6 flex items-center gap-3 sm:gap-4">
         <Link
@@ -375,6 +446,21 @@ export function QuestaoRunner({
         >
           <X size={18} strokeWidth={2} />
         </Link>
+        {/* Exportar esta lista em PDF (Pro). Fica AQUI porque é o único lugar
+            em que o aluno está olhando exatamente a lista que ele quer no
+            papel — e abre em outra aba pra não perder o que já respondeu. Quem
+            não é Pro também vê o botão: a página de destino explica o recurso
+            e vende (o gate real está no servidor, em /imprimir). */}
+        <a
+          href={`/imprimir/${missao.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Imprimir ou salvar esta lista em PDF"
+          aria-label="Imprimir ou salvar esta lista em PDF"
+          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:flex"
+        >
+          <Printer size={17} strokeWidth={1.9} />
+        </a>
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
           <motion.div
             className="h-full rounded-full"
@@ -400,6 +486,18 @@ export function QuestaoRunner({
               </motion.span>
             )}
           </AnimatePresence>
+          {/* Aviso do teto do plano grátis. Só aparece na reta final
+              (AVISO_RESTANTE) — um contador presente o tempo todo
+              transformaria cada questão numa cobrança. */}
+          {restante !== null && restante <= AVISO_RESTANTE && (
+            <Link
+              href="/pro"
+              title={`Plano grátis: ${QUESTOES_DIA_FREE} questões por dia`}
+              className="tnum inline-flex items-center gap-1 rounded-full border border-questly-gold/35 bg-questly-gold/10 px-2 py-0.5 text-[11px] font-semibold text-questly-gold sm:text-xs"
+            >
+              {restante} {restante === 1 ? "restante hoje" : "restantes hoje"}
+            </Link>
+          )}
           <div className="tnum flex items-center gap-1 text-xs font-semibold text-questly-gold-dark sm:text-[13px]">
             <Zap size={13} strokeWidth={2} />
             +{xpGanho} XP
@@ -1070,5 +1168,138 @@ function StatBox({ valor, label, cor }: { valor: string | number; label: string;
       <div className={`tnum font-heading text-lg font-semibold tracking-tight ${cor}`}>{valor}</div>
       <div className="mt-0.5 text-[10.5px] font-medium text-muted-foreground">{label}</div>
     </div>
+  );
+}
+
+/**
+ * A parede do teto diário do plano grátis.
+ *
+ * Três decisões que esta tela toma de propósito:
+ *
+ *  1. o aluno pode ENCERRAR a lista e levar o XP do que já respondeu. Um
+ *     limite que engole o progresso do dia não vende assinatura — cria
+ *     ressentimento, e a lista fica pendurada em "em andamento" pra sempre;
+ *  2. o número de questões que ele fez hoje aparece em destaque. O teto tem
+ *     que soar como "você estudou bastante", não como "você foi cortado";
+ *  3. não há botão de "continuar mesmo assim". O servidor recusaria (ver
+ *     registrarRespostaAction), e um botão que não funciona é pior que a
+ *     ausência dele.
+ */
+function LimiteDiarioView({
+  respondidasNestaLista,
+  finalizando,
+  onEncerrar,
+  voltarHref,
+}: {
+  respondidasNestaLista: number;
+  finalizando: boolean;
+  onEncerrar: () => void;
+  voltarHref: string;
+}) {
+  return (
+    <div className="casca-leitura flex min-h-screen flex-col items-center justify-center py-10">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="surface-gold w-full max-w-md rounded-2xl p-7 text-center"
+      >
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-questly-gold/15 text-questly-gold ring-1 ring-questly-gold/25">
+          <ProMark size={26} strokeWidth={2.2} />
+        </span>
+
+        <h2 className="mt-4 font-heading text-[20px] font-semibold tracking-tight">
+          Você fechou as {QUESTOES_DIA_FREE} questões de hoje
+        </h2>
+        <p className="mx-auto mt-2 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
+          Esse é o limite diário do plano grátis. Amanhã ele zera — ou você libera o banco inteiro agora,
+          sem teto, com o Expectrum Pro.
+        </p>
+
+        {respondidasNestaLista > 0 && (
+          <p className="tnum mt-3 text-[12.5px] font-medium text-questly-green-dark">
+            {respondidasNestaLista}{" "}
+            {respondidasNestaLista === 1 ? "questão respondida" : "questões respondidas"} nesta lista — o XP
+            é seu.
+          </p>
+        )}
+
+        <div className="mt-6 flex flex-col gap-2">
+          <Link
+            href="/pro"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#e8c257] to-[#b98712] text-[14px] font-semibold text-[#2a1d02] shadow-[var(--elev-sm)] transition-[filter,transform] hover:brightness-110 active:scale-[0.98]"
+          >
+            Estudar sem limite
+            <ArrowRight size={15} strokeWidth={2.2} />
+          </Link>
+
+          <button
+            type="button"
+            onClick={onEncerrar}
+            disabled={finalizando}
+            className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-card text-[13.5px] font-semibold transition-colors hover:bg-foreground/[0.05] disabled:opacity-60"
+          >
+            {finalizando ? "Encerrando..." : "Encerrar e ver meu resultado"}
+          </button>
+
+          <Link
+            href={voltarHref}
+            className="mt-1 text-[12.5px] font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+          >
+            {rotuloOrigem(voltarHref)}
+          </Link>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+/**
+ * Aviso curto e passageiro — hoje usado só pelos tetos do plano grátis
+ * (favoritos/anotações). Fica no topo da tela e some sozinho em 5s, com um X
+ * pra quem quiser fechar antes.
+ *
+ * Não é um `alert()` (trava a página e parece erro de sistema) nem um texto
+ * inline embaixo do botão (o aluno está olhando pro enunciado, não pra barra
+ * de ações). O link pro Pro faz parte da mensagem: a recusa é justamente um
+ * lugar onde o upgrade é a resposta, e não um castigo sem saída.
+ */
+function AvisoToast({ texto, onFechar }: { texto: string | null; onFechar: () => void }) {
+  useEffect(() => {
+    if (!texto) return;
+    const t = setTimeout(onFechar, 5000);
+    return () => clearTimeout(t);
+  }, [texto, onFechar]);
+
+  return (
+    <AnimatePresence>
+      {texto && (
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          className="fixed inset-x-0 top-4 z-50 mx-auto w-[min(92vw,420px)]"
+        >
+          <div className="surface-gold flex items-start gap-2.5 rounded-xl px-4 py-3 shadow-[var(--elev-md)]">
+            <span className="mt-[1px] shrink-0 text-questly-gold">
+              <Lock size={14} strokeWidth={2.1} />
+            </span>
+            <p className="min-w-0 flex-1 text-[12.5px] leading-relaxed">
+              {texto}{" "}
+              <Link href="/pro" className="font-semibold text-questly-gold underline-offset-2 hover:underline">
+                Ver o Pro
+              </Link>
+            </p>
+            <button
+              type="button"
+              onClick={onFechar}
+              aria-label="Fechar aviso"
+              className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <X size={14} strokeWidth={2} />
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

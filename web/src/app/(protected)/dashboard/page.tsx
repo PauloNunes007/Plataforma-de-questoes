@@ -6,6 +6,7 @@ import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
 import { carregarDesempenho } from "@/lib/dashboard/desempenho-data";
 import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
+import { carregarResumoRiscoAcademico } from "@/lib/academico/academico-data";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default async function DashboardPage() {
   // estava dentro de um Promise.all que só COMEÇAVA depois de
   // carregarDadosDashboard() inteiro.
   const perfil = await carregarPerfilDashboard(supabase, user.id);
-  const [dados, retomar, hero, atalhoSimulados, desempenho] = await Promise.all([
+  const [dados, retomar, hero, atalhoSimulados, desempenho, riscoAcademico] = await Promise.all([
     carregarDadosDashboard(supabase, user, perfil),
     carregarRetomar(supabase, user.id),
     carregarHeroDashboard(supabase, user, perfil),
@@ -34,6 +35,10 @@ export default async function DashboardPage() {
     // não é a inicial, mas a carga é leve (agregada por dia/tópico no
     // servidor) e assim trocar de visão é instantâneo, sem spinner.
     carregarDesempenho(supabase, user.id),
+    // Faltas e notas do semestre, resumidas numa linha. Entra no mesmo
+    // Promise.all porque o cartão da home precisa avisar ANTES da aula — uma
+    // tela que o aluno tem que lembrar de abrir não avisa nada.
+    carregarResumoRiscoAcademico(supabase, user.id),
   ]);
 
   return (
@@ -43,6 +48,7 @@ export default async function DashboardPage() {
       desempenho={desempenho}
       atalhoSimulados={atalhoSimulados}
       retomar={retomar}
+      riscoAcademico={riscoAcademico}
       userId={user.id}
     />
   );

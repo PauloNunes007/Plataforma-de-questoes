@@ -41,6 +41,12 @@
 // compartilhada entre a página /pro, o landing e as ações de servidor.
 
 import { APP_URL } from "@/lib/app-url";
+import {
+  ANOTACOES_FREE,
+  FAVORITOS_FREE,
+  QUESTOES_DIA_FREE,
+  SIMULADO_FREE_LIMITE_SEMANA,
+} from "@/lib/plano/limites";
 
 export type Plano = "free" | "pro";
 export type Ciclo = "mensal" | "semestral";
@@ -216,39 +222,81 @@ export function acharOpcao(id: string): OpcaoPlano | undefined {
 //
 // ⚠️ REGRA: cada item marcado como exclusivo do Pro tem que ter um gate REAL no
 // código. Hoje os gates são exatamente estes:
-//   • simulados ...... SIMULADO_FREE_LIMITE_SEMANA (lib/simulados/actions.ts, servidor)
-//   • autópsia ....... components/questao/questao-runner.tsx
-//   • estatísticas ... components/dashboard/semana-view.tsx
-//   • selo Pro ....... components/plano/pro-ui.tsx (ranking/menu)
+//   • questões/dia .... QUESTOES_DIA_FREE (lib/plano/limites.ts → registrarRespostaAction)
+//   • simulados ....... SIMULADO_FREE_LIMITE_SEMANA (lib/simulados/actions.ts, servidor)
+//   • favoritos ....... FAVORITOS_FREE (lib/anotacoes/actions.ts, servidor)
+//   • anotações ....... ANOTACOES_FREE (lib/anotacoes/actions.ts, servidor)
+//   • faltas e notas .. lib/academico/actions.ts (`exigirPro` em toda escrita)
+//   • relatório ....... app/api/cron/relatorio-semanal (só envia pra quem é Pro)
+//   • exportar PDF .... app/(protected)/imprimir/[missaoId] (checa no servidor)
+//   • autópsia ........ components/questao/questao-runner.tsx
+//   • estatísticas .... components/dashboard/semana-view.tsx
+//   • selo Pro ........ components/plano/pro-ui.tsx (ranking/menu)
 // Uma lista anterior anunciava "disciplinas ilimitadas", "grade semanal
 // automática", "repetição espaçada" e "prática livre ilimitada" como exclusivos
-// do Pro — nenhum deles é gated (o plano grátis já tem os quatro). Se quiser
-// que virem exclusivos, implemente o gate ANTES de voltar a anunciar.
+// do Pro — nenhum deles era gated. Se quiser que virem exclusivos, implemente o
+// gate ANTES de voltar a anunciar.
 //
 // **Repasse de 2026-09-16.** "Projeção da sua nota pro dia da prova" saiu das
 // duas listas: o motor que a calculava foi removido com o resto do
 // planejamento automático, e anunciar um recurso que não existe mais é pior
 // que não ter o recurso.
+//
+// **Repasse de 2026-09-17 — o grátis apertou e o Pro cresceu.** O plano grátis
+// entregava o produto inteiro menos quatro detalhes (ver lib/plano/limites.ts),
+// e o Pro precisava vender "o mesmo, sem limite". Agora ele vende duas coisas
+// que o grátis não faz de jeito nenhum — o controle de faltas e a calculadora
+// de notas —, que são as contas que decidem o semestre do aluno.
 
-export type ItemPlano = { texto: string; incluso: boolean };
+export type ItemPlano = {
+  texto: string;
+  incluso: boolean;
+  /**
+   * O que o PRO entrega nesta mesma linha, quando a resposta não é um simples
+   * "sim". Existe desde que o grátis ganhou tetos numéricos (2026-09-17): a
+   * tabela comparativa marcava ✓ na coluna Pro em TODA linha, e com a linha
+   * "30 questões por dia" isso passou a dizer, literalmente, que o Pro também
+   * tem teto de 30. Um comparativo que confunde a favor do plano grátis é o
+   * pior tipo de erro que uma tela de venda pode ter.
+   */
+  pro?: string;
+};
 
+// Os números vêm de limites.ts, nunca digitados na frase: um "30" escrito aqui
+// vira mentira no dia em que o teto mudar, e é a tela de VENDA que mente.
 export const RECURSOS_FREE: ItemPlano[] = [
-  { texto: "Banco de questões completo, com resolução", incluso: true },
+  { texto: `${QUESTOES_DIA_FREE} questões por dia, com resolução`, incluso: true, pro: "Ilimitado" },
   { texto: "Listas montadas por você: disciplina, assunto e tamanho", incluso: true },
-  { texto: "Disciplinas ilimitadas", incluso: true },
-  { texto: "Trilha da ementa com seu aproveitamento por assunto", incluso: true },
-  { texto: "Anotações e favoritos por questão", incluso: true },
+  { texto: "Disciplinas ilimitadas e trilha da ementa", incluso: true },
   { texto: "Streak, XP e ligas semanais", incluso: true },
-  { texto: "1 simulado cronometrado por semana", incluso: true },
-  { texto: "Simulados cronometrados ilimitados", incluso: false },
+  {
+    texto: `${SIMULADO_FREE_LIMITE_SEMANA} simulado cronometrado por semana`,
+    incluso: true,
+    pro: "Ilimitado",
+  },
+  {
+    texto: `${FAVORITOS_FREE} favoritos e ${ANOTACOES_FREE} anotações`,
+    incluso: true,
+    pro: "Sem limite",
+  },
+  { texto: "Controle de faltas por disciplina", incluso: false },
+  { texto: "Calculadora de notas: quanto falta pra passar", incluso: false },
+  { texto: "Exportar listas e simulados em PDF", incluso: false },
+  { texto: "Relatório semanal por e-mail", incluso: false },
   { texto: "Autópsia do erro", incluso: false },
   { texto: "Estatísticas avançadas de desempenho", incluso: false },
 ];
 
 export const BENEFICIOS_PRO: string[] = [
+  "Questões ilimitadas — sem teto diário",
+  "Controle de faltas: saiba exatamente quantas ainda cabem em cada disciplina",
+  "Calculadora de notas: quanto você precisa tirar na próxima pra passar",
   "Simulados cronometrados ilimitados",
+  "Exportar listas e simulados em PDF pra imprimir",
+  "Relatório semanal por e-mail: o que estudou, onde está fraco e o que está apertando",
   "Autópsia do erro: descubra por que errou e corrija o padrão",
   "Estatísticas avançadas: comparativo, percentil e recordes",
+  "Favoritos e anotações sem limite",
   "Selo Pro no seu card do ranking",
 ];
 

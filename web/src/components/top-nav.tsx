@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GraduationCap, LogOut, Settings, ShieldAlert, Timer } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { TOP_NAV_ITEMS } from "@/components/nav-items";
+import { MATERIAS_NAV, TOP_NAV_ITEMS } from "@/components/nav-items";
 import { ProBadge, ProCta, ProMark } from "@/components/plano/pro-ui";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
@@ -33,7 +33,7 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl print:hidden">
       {/* fio de acento no topo — dá o toque "premium" sem pesar */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-questly-green/40 to-transparent" />
       <div className="casca flex h-14 items-center gap-2">
@@ -210,6 +210,13 @@ function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavPro
               </div>
 
               <div className="mx-1 my-1 h-px bg-border" />
+              {/* No celular a barra inferior só tem 5 abas e "Minhas matérias"
+                  não cabe nelas (ver nav-items.ts) — este item é o caminho de
+                  entrada em telas estreitas. */}
+              <ItemMenu href={MATERIAS_NAV.href} onClick={() => setAberto(false)} cor="text-foreground">
+                <MATERIAS_NAV.icon size={15} strokeWidth={1.75} />
+                Minhas matérias
+              </ItemMenu>
               <ItemMenu href="/configuracoes" onClick={() => setAberto(false)} cor="text-foreground">
                 <Settings size={15} strokeWidth={1.75} />
                 Ajustes

@@ -27,6 +27,7 @@ import {
   recorrenteHabilitado,
 } from "@/lib/plano/preapproval";
 import { creditarCobranca } from "@/lib/plano/ativar";
+import { enviarBoasVindasPro } from "@/lib/plano/boas-vindas";
 
 export type AssinaturaPendente = {
   id: string;
@@ -543,6 +544,17 @@ export async function resgatarCupomAction(
     })
     .eq("id", user.id);
   if (errUpdate) return { error: errUpdate.message };
+
+  // Mesma regra do caminho pago (ver lib/plano/ativar.ts): a conta que NUNCA
+  // foi Pro recebe o e-mail com o inventário do que acabou de ganhar. Quem
+  // resgata um cupom de renovação já sabe o que tem.
+  if (!jaPro && !profile?.plano_desde) {
+    await enviarBoasVindasPro({
+      userId: user.id,
+      ciclo: "cupom",
+      expiraEm: novaExpira.toISOString(),
+    });
+  }
 
   await admin.from("cupom_resgates").insert({
     cupom_id: cupom.id,

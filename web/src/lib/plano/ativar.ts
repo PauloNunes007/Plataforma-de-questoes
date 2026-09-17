@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { adicionarMeses, cancelarAssinaturaRecorrente } from "./preapproval";
 import { MESES_SEMESTRE } from "./plano";
+import { enviarBoasVindasPro } from "./boas-vindas";
 
 // Ativação do Pro — a lógica compartilhada entre a confirmação manual do admin
 // (lib/admin/actions.ts), a conferência da tela /pro (lib/plano/actions.ts) e o
@@ -89,6 +90,11 @@ async function estenderPro(
         : adicionarMeses(agora, 6)
       : null;
 
+  // `plano_desde` vazio = esta conta NUNCA foi Pro. É a marca que decide o
+  // e-mail de boas-vindas, e ela é lida ANTES do update que a preenche —
+  // depois seria tarde, e toda renovação mandaria "bem-vindo" de novo.
+  const primeiraVezNaVida = !profile?.plano_desde;
+
   const { error } = await admin
     .from("profiles")
     .update({
@@ -100,6 +106,17 @@ async function estenderPro(
     })
     .eq("id", ass.user_id);
   if (error) return { error: error.message };
+
+  // Fora do caminho crítico de propósito: um provedor de e-mail fora do ar
+  // não pode fazer uma ativação PAGA falhar (`enviarBoasVindasPro` engole os
+  // próprios erros e só loga). O aluno já está Pro neste ponto.
+  if (primeiraVezNaVida) {
+    await enviarBoasVindasPro({
+      userId: ass.user_id,
+      ciclo: ass.ciclo,
+      expiraEm: expira.toISOString(),
+    });
+  }
 
   const { error: errAss } = await admin
     .from("assinaturas")

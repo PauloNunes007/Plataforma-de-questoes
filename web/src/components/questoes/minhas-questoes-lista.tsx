@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ImageIcon, Star, StickyNote } from "lucide-react";
+import Link from "next/link";
+import { ChevronDown, ImageIcon, Lock, Star, StickyNote } from "lucide-react";
 import { PreviewCard } from "@/components/importar/preview-card";
 import { QuestaoAcoes } from "@/components/questao/questao-acoes";
 import { MathText } from "@/components/questao/math-text";
@@ -30,6 +31,10 @@ export function MinhasQuestoesLista({
 }) {
   const [lista, setLista] = useState(itens);
   const [abertos, setAbertos] = useState<Set<string>>(new Set());
+  // Recusa do servidor (hoje: teto de favoritos/anotações do plano grátis).
+  // Antes destes tetos um erro aqui era raro o bastante pra morrer em
+  // silêncio; agora é caminho comum, e silêncio vira "o botão não funciona".
+  const [aviso, setAviso] = useState<string | null>(null);
 
   function toggleAberto(id: string) {
     setAbertos((prev) => {
@@ -41,8 +46,12 @@ export function MinhasQuestoesLista({
   }
 
   async function onToggleFavorito(id: string) {
+    setAviso(null);
     const resultado = await alternarFavoritoAction(id);
-    if ("error" in resultado) return;
+    if ("error" in resultado) {
+      setAviso(resultado.error);
+      return;
+    }
     if (criterioRemocao === "favorito" && !resultado.favoritado) {
       setLista((prev) => prev.filter((it) => it.questao.id !== id));
       return;
@@ -51,7 +60,12 @@ export function MinhasQuestoesLista({
   }
 
   async function onSalvarNota(id: string, texto: string) {
-    await salvarNotaAction(id, texto);
+    setAviso(null);
+    const resultado = await salvarNotaAction(id, texto);
+    if ("error" in resultado) {
+      setAviso(resultado.error);
+      return;
+    }
     if (criterioRemocao === "nota" && !texto.trim()) {
       setLista((prev) => prev.filter((it) => it.questao.id !== id));
       return;
@@ -91,6 +105,20 @@ export function MinhasQuestoesLista({
   const emColunas = grupos.length > 1;
 
   return (
+    <>
+      {aviso && (
+        <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-questly-gold/35 bg-questly-gold/[0.08] px-4 py-3">
+          <span className="mt-[1px] shrink-0 text-questly-gold">
+            <Lock size={14} strokeWidth={2.1} />
+          </span>
+          <p className="min-w-0 flex-1 text-[12.5px] leading-relaxed">
+            {aviso}{" "}
+            <Link href="/pro" className="font-semibold text-questly-gold underline-offset-2 hover:underline">
+              Ver o Pro
+            </Link>
+          </p>
+        </div>
+      )}
     <div
       className={
         emColunas
@@ -179,5 +207,6 @@ export function MinhasQuestoesLista({
         </div>
       ))}
     </div>
+    </>
   );
 }

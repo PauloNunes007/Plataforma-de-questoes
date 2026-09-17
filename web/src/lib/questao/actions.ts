@@ -12,12 +12,33 @@ import {
 import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
 import { atualizarStreakEDailyLog, atualizarXpELiga } from "@/lib/questly/economia";
 import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
+import { restanteDoDia } from "@/lib/plano/limites";
 
 // Portado de js/questao.js — mesmo fluxo (registrar tentativa, atualizar
 // progresso do tópico, recalibrar tempo médio, finalizar missão: XP/liga,
 // streak, recap, métricas da disciplina, maestria, desafio de
 // recuperação), só que como Server Actions em vez de chamadas diretas do
 // browser ao Supabase.
+
+/**
+ * Quantas questões o aluno já respondeu HOJE.
+ *
+ * O fuso do servidor é fixado em America/Sao_Paulo (next.config.ts), então a
+ * meia-noite daqui é a mesma do aluno. Head-count: conta sem trazer linha.
+ */
+async function respondidasHoje(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<number> {
+  const inicioDoDia = new Date();
+  inicioDoDia.setHours(0, 0, 0, 0);
+  const { count } = await supabase
+    .from("question_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .gte("created_at", inicioDoDia.toISOString());
+  return count ?? 0;
+}
 
 export async function registrarRespostaAction(input: {
   questionId: string;
@@ -32,7 +53,36 @@ export async function registrarRespostaAction(input: {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { attemptId: null, novoTempoMedio: null, correta: false, questoesHoje: 0 };
+  if (!user)
+    return { attemptId: null, novoTempoMedio: null, correta: false, questoesHoje: 0, bloqueado: false };
+
+  // TETO DIÁRIO DO PLANO GRÁTIS (lib/plano/limites.ts).
+  //
+  // A checagem é AQUI porque este é o único ponto por onde uma resposta vira
+  // dado: a tela também segura o aluno (mostra o aviso e para de avançar), mas
+  // a tela é um pedido educado — esta Server Action é chamável direto do
+  // console do browser com a chave anon pública.
+  //
+  // Conta ANTES de inserir e recusa sem gravar nada: uma tentativa gravada
+  // "por fora do limite" ainda mexeria em maestria/BKT, nos contadores globais
+  // da questão e no XP — o teto vazaria por todos os efeitos colaterais,
+  // menos pelo número na tela.
+  const jaHoje = await respondidasHoje(supabase, user.id);
+  const { data: perfilPlano } = await supabase
+    .from("profiles")
+    .select("plano, plano_expira_em")
+    .eq("id", user.id)
+    .maybeSingle();
+  const restante = restanteDoDia(perfilPlano, jaHoje);
+  if (restante !== null && restante <= 0) {
+    return {
+      attemptId: null,
+      novoTempoMedio: null,
+      correta: false,
+      questoesHoje: jaHoje,
+      bloqueado: true,
+    };
+  }
 
   // Corretude é decidida NO SERVIDOR comparando a resposta marcada com o
   // gabarito no banco — nunca confiar no `input.correta` do cliente (o
@@ -132,18 +182,18 @@ export async function registrarRespostaAction(input: {
   }
 
   // Questões respondidas HOJE, pra UI celebrar os marcos do dia (10, 15,
-  // 25...). O fuso do servidor é fixado em America/Sao_Paulo
-  // (next.config.ts), então a meia-noite local aqui é a mesma que a do
-  // aluno. Head-count: conta sem trazer linha nenhuma.
-  const inicioDoDia = new Date();
-  inicioDoDia.setHours(0, 0, 0, 0);
-  const { count: questoesHoje } = await supabase
-    .from("question_attempts")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .gte("created_at", inicioDoDia.toISOString());
+  // 25...) e pra descontar o teto do plano grátis. Reconta em vez de usar
+  // `jaHoje + 1`: entre a checagem e aqui o aluno pode ter respondido em outra
+  // aba, e o número que a tela usa pra travar precisa ser o do banco.
+  const questoesHoje = await respondidasHoje(supabase, user.id);
 
-  return { attemptId: attempt?.id ?? null, novoTempoMedio, correta, questoesHoje: questoesHoje ?? 0 };
+  return {
+    attemptId: attempt?.id ?? null,
+    novoTempoMedio,
+    correta,
+    questoesHoje,
+    bloqueado: false,
+  };
 }
 
 export async function classificarMotivoErroAction(attemptId: string, motivo: string) {

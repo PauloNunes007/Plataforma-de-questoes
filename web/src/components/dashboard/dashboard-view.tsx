@@ -8,6 +8,7 @@ import type { HeroDados } from "@/lib/dashboard/hero-data";
 import type { DesempenhoDados } from "@/lib/dashboard/desempenho-data";
 import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
 import type { RetomarInfo } from "@/lib/retomar/retomar-data";
+import type { ResumoRiscoAcademico } from "@/lib/academico/academico-data";
 import { ehEstudo } from "@/lib/tarefas/tarefas-data";
 import { QUESTLY_LIGA_INFO, QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
 import { buscarCardUsuarioAction, type CardUsuario } from "@/lib/ranking/actions";
@@ -21,6 +22,7 @@ import { QuestoesFeitasCard } from "./questoes-feitas-card";
 import { TarefasDoDiaCard } from "./tarefas-do-dia-card";
 import { MapaProgressoCard } from "./mapa-progresso-card";
 import { SimuladosCard } from "./simulados-card";
+import { MateriasRiscoCard } from "./materias-risco-card";
 import { DesempenhoView } from "./desempenho-view";
 import { ConquistasView } from "./conquistas-view";
 
@@ -66,6 +68,7 @@ export function DashboardView({
   desempenho,
   atalhoSimulados,
   retomar,
+  riscoAcademico,
   userId,
 }: {
   dados: DashboardData;
@@ -73,6 +76,7 @@ export function DashboardView({
   desempenho: DesempenhoDados;
   atalhoSimulados: AtalhoSimulados;
   retomar: RetomarInfo;
+  riscoAcademico: ResumoRiscoAcademico;
   userId: string;
 }) {
   const [visao, setVisao] = useState<VisaoHome>("global");
@@ -180,6 +184,7 @@ export function DashboardView({
                   hoje={hojeStr}
                   proximaProva={dados.proximaProva}
                 />
+                <MateriasRiscoCard resumo={riscoAcademico} ehPro={dados.ehPro} />
                 <TarefasDoDiaCard
                   tarefasIniciais={dados.tarefasHoje}
                   hoje={hojeStr}

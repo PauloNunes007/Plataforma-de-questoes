@@ -26,6 +26,15 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    e-mail para a base (`/admin/emails`, passo 5). Cria o registro de quem já
    recebeu cada campanha e a preferência de descadastro do aluno.
 
+4. **`supabase_vida_academica.sql`** ⚠️ **OBRIGATÓRIA antes de subir o código
+   novo.** Cria as tabelas `faltas` e `avaliacoes` (o controle de faltas e a
+   calculadora de notas, `/materias`), os parâmetros do semestre em `subjects`
+   e o controle de envio do relatório semanal. Sem ela nada explode — as
+   consultas falham e o app trata como "nenhum dado" —, mas `/materias` aparece
+   **vazia** (nenhuma disciplina, mesmo pra quem tem várias cadastradas) e o
+   relatório semanal nunca sai. Ou seja: o recurso que o Pro acabou de passar a
+   vender não existe até isto rodar.
+
 > Depois de rodar a #2, o ganho de XP, a virada de semana da liga e a ativação
 > do Pro passam a depender da **service_role key** no servidor (próximo passo).
 > Sem ela, essas ações falham silenciosamente.
@@ -54,10 +63,22 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    | `EMAIL_REMETENTE_NOME` | nome que aparece como remetente, ex. `Expectrum` | não |
    | `SEND_EMAIL_HOOK_SECRET` | Supabase → Authentication → Hooks (passo 4) | **SIM** |
    | `EMAIL_DESCADASTRO_SECRET` | qualquer frase longa e secreta; assina o link de descadastro da campanha | não — sem ela, deriva da `SUPABASE_SERVICE_ROLE_KEY` |
+   | `CRON_SECRET` | qualquer frase longa e secreta; protege o relatório semanal | **SIM** — sem ela o relatório NÃO é enviado |
 
    > ⚠️ Se um dia você **trocar** a `SUPABASE_SERVICE_ROLE_KEY` sem ter
    > `EMAIL_DESCADASTRO_SECRET` definida, os links de descadastro já enviados
    > param de funcionar (a assinatura deriva dela). Definir a variável evita isso.
+
+   > **`CRON_SECRET` e o relatório semanal (Pro).** `web/vercel.json` agenda
+   > `/api/cron/relatorio-semanal` toda segunda às **11:00 UTC = 8h de
+   > Brasília** (o agendador do Vercel só fala UTC). O Vercel chama a rota com
+   > `Authorization: Bearer $CRON_SECRET`; **sem a variável, a rota responde
+   > 401 e ninguém recebe nada** — de propósito: uma rota que dispara e-mail
+   > pra base inteira, aberta na internet, é um canhão apontado pra reputação
+   > do nosso remetente. Pra testar à mão, abra
+   > `https://SEU_DOMINIO/api/cron/relatorio-semanal?secret=SEU_CRON_SECRET` —
+   > o envio é idempotente por semana (índice único em `relatorio_envios`),
+   > então chamar duas vezes não manda dois e-mails.
 
    > Se o domínio próprio (passo 2b) ainda não estiver configurado, use
    > provisoriamente a URL `https://...vercel.app` que o Vercel dá após o

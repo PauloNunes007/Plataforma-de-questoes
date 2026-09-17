@@ -657,8 +657,12 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
                     Pra sempre
                   </span>
                 </div>
+                {/* A frase anterior ("o método completo, sem prazo de
+                    validade") deixou de ser verdade quando o grátis ganhou
+                    teto diário — ver lib/plano/limites.ts. A venda honesta é
+                    mais fácil de sustentar do que a correção depois. */}
                 <p className="mt-1 text-sm text-muted-foreground">
-                  O método completo, sem prazo de validade.
+                  Pra estudar todo dia, com um teto por dia.
                 </p>
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="tnum text-4xl font-semibold tracking-tight">R$ 0</span>

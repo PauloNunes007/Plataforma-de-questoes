@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Crown, GraduationCap, LogOut, ShieldAlert } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { NAV_ITEMS } from "@/components/nav-items";
+import { MATERIAS_NAV, NAV_ITEMS } from "@/components/nav-items";
 import { ProBadge } from "@/components/plano/pro-ui";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
@@ -57,6 +57,33 @@ export function Sidebar({ nome, username, curso, fotoUrl, isAdmin, ehPro }: Side
             </Link>
           );
         })}
+
+        {/* "Minhas matérias" entra na MESMA lista visual, mas fora de
+            NAV_ITEMS — aquela constante é compartilhada com a barra inferior
+            do mobile, que é travada em 5 abas (ver nav-items.ts). */}
+        <Link
+          href={MATERIAS_NAV.href}
+          aria-current={pathname.startsWith(MATERIAS_NAV.href) ? "page" : undefined}
+          className={`group relative flex h-9 items-center gap-3 rounded-lg px-2.5 text-[13.5px] font-medium transition-colors duration-150 ${
+            pathname.startsWith(MATERIAS_NAV.href)
+              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+              : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+          }`}
+        >
+          {pathname.startsWith(MATERIAS_NAV.href) && (
+            <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-questly-green" />
+          )}
+          <MATERIAS_NAV.icon
+            size={18}
+            strokeWidth={pathname.startsWith(MATERIAS_NAV.href) ? 2 : 1.75}
+            className={
+              pathname.startsWith(MATERIAS_NAV.href)
+                ? "text-questly-green"
+                : "text-muted-foreground/80 group-hover:text-sidebar-foreground"
+            }
+          />
+          {MATERIAS_NAV.label}
+        </Link>
       </nav>
 
       {/* Modo Aprovação (vestibular): feature de conta única — só a conta
