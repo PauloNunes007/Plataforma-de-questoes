@@ -450,16 +450,20 @@ export function QuestaoRunner({
             em que o aluno está olhando exatamente a lista que ele quer no
             papel — e abre em outra aba pra não perder o que já respondeu. Quem
             não é Pro também vê o botão: a página de destino explica o recurso
-            e vende (o gate real está no servidor, em /imprimir). */}
+            e vende (o gate real está no servidor, em /imprimir).
+            Desde 2026-09-17 ele tem RÓTULO e aparece também no celular: como
+            ícone mudo escondido em `sm:` era invisível justamente pra quem
+            estava com a lista aberta querendo imprimi-la. */}
         <a
           href={`/imprimir/${missao.id}`}
           target="_blank"
           rel="noopener noreferrer"
           title="Imprimir ou salvar esta lista em PDF"
-          aria-label="Imprimir ou salvar esta lista em PDF"
-          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:flex"
+          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-semibold text-muted-foreground transition-colors hover:border-questly-green/45 hover:text-foreground"
         >
-          <Printer size={17} strokeWidth={1.9} />
+          <Printer size={15} strokeWidth={2} />
+          <span className="hidden sm:inline">Imprimir</span>
+          <span className="sm:hidden">PDF</span>
         </a>
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
           <motion.div

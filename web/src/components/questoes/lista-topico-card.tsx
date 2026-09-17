@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { FileText, Play, RotateCcw, ScrollText } from "lucide-react";
+import { FileText, Play, Printer, RotateCcw, ScrollText } from "lucide-react";
 import type { TopicoPratica } from "@/lib/disciplinas/disciplinas-data";
 import { iniciarPraticaLivreAction } from "@/lib/disciplinas/actions";
 import { hrefQuestao } from "@/lib/questao/navegacao";
@@ -104,26 +105,44 @@ export function ListaTopicoCard({
 
         {erro && <p className="mt-2 text-[11px] font-medium text-questly-red-dark">Não deu pra começar. Tente de novo.</p>}
 
-        <button
-          type="button"
-          onClick={comecar}
-          disabled={carregando}
-          className="mt-3.5 inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-questly-green px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:text-[#0c1512]"
-        >
-          {carregando ? (
-            "Preparando..."
-          ) : jaTentou ? (
-            <>
-              <RotateCcw size={14} strokeWidth={2.25} />
-              Retomar lista
-            </>
-          ) : (
-            <>
-              <Play size={14} strokeWidth={2.25} />
-              Começar
-            </>
-          )}
-        </button>
+        {/* Começar + imprimir, lado a lado. O PDF fica AQUI, e não só dentro
+            da lista aberta, porque quem monta o material do fim de semana
+            quer o papel ANTES de responder qualquer coisa — a rota
+            /imprimir/topico existe exatamente pra não precisar criar uma
+            missão que ele não vai usar. */}
+        <div className="mt-3.5 flex items-stretch gap-2">
+          <button
+            type="button"
+            onClick={comecar}
+            disabled={carregando}
+            className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-questly-green px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:text-[#0c1512]"
+          >
+            {carregando ? (
+              "Preparando..."
+            ) : jaTentou ? (
+              <>
+                <RotateCcw size={14} strokeWidth={2.25} />
+                Retomar lista
+              </>
+            ) : (
+              <>
+                <Play size={14} strokeWidth={2.25} />
+                Começar
+              </>
+            )}
+          </button>
+          <Link
+            href={`/imprimir/topico/${topico.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Imprimir esta lista em PDF"
+            aria-label={`Imprimir a lista de ${topico.nome} em PDF`}
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-[12.5px] font-semibold text-muted-foreground transition-colors hover:border-questly-green/45 hover:text-foreground"
+          >
+            <Printer size={15} strokeWidth={2} />
+            PDF
+          </Link>
+        </div>
       </div>
     </motion.div>
   );

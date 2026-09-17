@@ -1129,7 +1129,7 @@ sabe o que ganhou não usa; quem não usa não renova.
   certo. O resgate de cupom (`resgatarCupomAction`) manda o mesmo e-mail, sob a
   mesma condição.
 
-## Exportar em PDF com marca d'água (2026-09-17) — `/imprimir/[missaoId]`
+## Exportar em PDF com marca d'água (2026-09-17) — `/imprimir/*`
 
 **Não há biblioteca de PDF, de propósito.** A folha é HTML com `@media print`
 caprichado e o "PDF" é o próprio *Imprimir → Salvar como PDF* do navegador.
@@ -1158,6 +1158,75 @@ imprimir — quem imprime pra simular a prova não quer a resposta na mão.
 níveis abaixo do `body`. Cada peça carrega `print:hidden` na própria classe
 (`top-nav`, `foco-bar`, `mobile-bottom-nav`) e o que é da tela usa
 `.nao-imprimir`. Se aparecer cromo novo no layout, ele precisa da classe.
+
+### Repasse de 2026-09-17 (tarde): folha em molde de prova, preparo e híbrido
+
+**Três portas, uma folha.** `/imprimir/[missaoId]` (a lista aberta),
+`/imprimir/topico/[topicoId]` (a lista de um tópico, SEM precisar começá-la — é
+o que deixa o Banco de Questões oferecer PDF pra quem ainda não respondeu nada)
+e `/imprimir/simulado/[id]` (a prova do simulado híbrido). As três montam o
+mesmo `FolhaImpressao` → `FolhaProva`, e o gate do Pro é o mesmo `PortaPro`
+checado no SERVIDOR em cada `page.tsx`. Os segmentos estáticos `simulado`/
+`topico` convivem com o irmão dinâmico `[missaoId]` porque o Next resolve
+estático antes de dinâmico.
+
+**A folha virou prova, não página impressa.** Corpo serifado, cabeçalho com
+linhas de Nome/Matrícula/Turma/Data/Nota pra preencher à mão, bloco de
+instruções, "QUESTÃO n" numerada, alternativas `(a) (b) (c)` lado a lado quando
+são curtas (`alternativasEmLinha` — qualquer imagem ou LaTeX de bloco desliga o
+modo em linha: economizar papel não vale uma alternativa ilegível), espaço
+pautado pra desenvolver embaixo de cada questão, e cabeçalho + rodapé correndo
+em TODA página (`position: fixed` dentro das margens do `@page`). O CSS mora em
+`components/imprimir/estilos-impressao.ts`.
+
+**O passo de preparo** (`PreparoImpressao`) existe por um defeito concreto: a
+lista de um tópico passa fácil de 100 questões e a tela antiga mandava TODAS
+pra impressora sem perguntar. Acima de `LIMITE_PERGUNTAR_QUANTIDADE` (25) a
+folha só é montada depois que o aluno responde **quantas questões**, **com ou
+sem gabarito**, **quanto espaço pra resolver** e se quer **cartão-resposta em
+branco** — com estimativa de páginas (`paginasEstimadas`, grosseira de
+propósito e assumida como "~N" na UI). Abaixo disso a pergunta seria burocracia
+e a folha abre direto; as mesmas opções ficam na barra do topo, então mudar de
+ideia não custa recomeçar. O recorte pega as N PRIMEIRAS (a ordem é o que faz a
+questão 7 do papel ser a 7 da tela), nunca uma amostra nova.
+
+**Numa prova o recorte não existe** (`permitirRecorte={false}`): uma prova é o
+conjunto inteiro das suas questões — imprimir "as 20 primeiras de 30" faria a
+nota do papel não bater com a do cartão-resposta. Lá o gabarito nasce
+DESLIGADO e o cartão-resposta em branco nasce LIGADO, que é o oposto do padrão
+de uma lista de treino.
+
+### Simulado híbrido: papel + cartão-resposta digital
+
+O aluno escolhe no montador (`Onde você vai resolver`) entre resolver **na
+tela** ou **imprimir e resolver no papel**; a segunda opção manda pra
+`/simulados/[id]?modo=cartao`. O `SimuladoRunner` passou a ter dois modos, com
+seletor sempre visível no topo — trocar no meio é legítimo (começou no papel,
+terminou na tela) e não perde marcação.
+
+- **Não custou coluna no banco.** O modo é de EXIBIÇÃO: mesma linha em
+  `simulados_aluno`, mesmo autosave, mesma correção no servidor, mesmo
+  relatório com autópsia de erros. Guardar isso no banco seria gravar qual tela
+  o aluno estava olhando.
+- **O cartão digital não mostra enunciado nem alternativa**, de propósito: se o
+  texto estivesse na tela, ele leria dali e a impressão teria sido teatro. As
+  bolhas são as letras de CADA questão, não um A–E fixo.
+- **Sem cronômetro por questão no modo cartão.** Não existe "questão visível"
+  quando a prova está no papel; atribuir o tempo à linha do topo inventaria um
+  dado que ninguém mediu. `tempos` fica vazio e `resumirTempo` já devolve
+  `temDados: false` (é best-effort por contrato).
+- **`reiniciarRelogioSimuladoAction`**: ir até a impressora não é tempo de
+  prova. Enquanto NENHUMA resposta foi marcada, o aluno zera o relógio num
+  clique; o servidor exige as três condições (dono, `em_andamento`, zero
+  respostas) e depois da primeira marcação o botão some — aí a prova começou.
+  Sem respostas, reiniciar equivale a abandonar e montar outro com as mesmas
+  questões, então não abre nada que já não fosse possível.
+
+**Visibilidade do botão** (era o pedido mais simples e o mais ignorado): o
+ícone mudo escondido atrás de `sm:` na tela de questões virou botão com rótulo,
+visível também no celular; cada card de lista do Banco de Questões ganhou um
+`PDF` ao lado de "Começar"; e a tela do simulado tem "Imprimir prova" fixo no
+topo.
 
 ## Relatório semanal por e-mail (2026-09-17) — `/api/cron/relatorio-semanal`
 

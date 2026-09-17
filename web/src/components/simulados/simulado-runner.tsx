@@ -1,13 +1,30 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlarmClock, ArrowLeft, ArrowRight, CheckCircle2, Flag, Loader2, X } from "lucide-react";
+import {
+  AlarmClock,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Flag,
+  Loader2,
+  MonitorSmartphone,
+  RotateCcw,
+  Printer,
+  ScrollText,
+  X,
+} from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
 import { FiguraQuestao, figurasDaPergunta, usePrefetchFiguras } from "@/components/questao/figura-questao";
 import type { SimuladoCompleto } from "@/lib/simulados/simulados-data";
-import { finalizarSimuladoAction, salvarRespostasAction } from "@/lib/simulados/actions";
+import {
+  finalizarSimuladoAction,
+  reiniciarRelogioSimuladoAction,
+  salvarRespostasAction,
+} from "@/lib/simulados/actions";
 
 function fmtRelogio(seg: number): string {
   const s = Math.max(0, Math.floor(seg));
@@ -19,9 +36,32 @@ function fmtRelogio(seg: number): string {
   return h > 0 ? `${h}:${mm}:${sss}` : `${mm}:${sss}`;
 }
 
-export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
+/**
+ * Os dois jeitos de fazer o mesmo simulado.
+ *
+ *  · `tela`   — uma questão por vez, como sempre foi;
+ *  · `cartao` — SIMULADO HÍBRIDO: o aluno imprimiu a prova (layout de prova da
+ *               universidade, ver /imprimir/simulado/[id]), resolve no papel e
+ *               usa o app só como cartão-resposta.
+ *
+ * O modo é de EXIBIÇÃO, não de dados: é o mesmo `simulados_aluno`, o mesmo
+ * autosave, a mesma correção no servidor e o mesmo relatório com autópsia de
+ * erros no fim — por isso não custou coluna nova no banco. Trocar de modo no
+ * meio da prova é legítimo (começou no papel, terminou na tela) e não perde
+ * nada do que já foi marcado.
+ */
+export type ModoSimulado = "tela" | "cartao";
+
+export function SimuladoRunner({
+  simulado,
+  modoInicial = "tela",
+}: {
+  simulado: SimuladoCompleto;
+  modoInicial?: ModoSimulado;
+}) {
   const router = useRouter();
   const perguntas = simulado.perguntas;
+  const [modo, setModo] = useState<ModoSimulado>(modoInicial);
 
   const deadlineMs = useMemo(
     () => new Date(simulado.iniciado_em).getTime() + simulado.duracao_min * 60_000,
@@ -85,7 +125,11 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
   // Cronometragem da questão visível: (re)abre a contagem a cada troca de
   // questão e fecha ao sair. `visibilitychange` pausa quando a aba some.
   useEffect(() => {
-    const atual = perguntas[indice];
+    // No cartão-resposta não há "questão visível": o aluno está no papel, e
+    // atribuir o tempo todo à linha que estiver no topo da tela inventaria um
+    // dado que ninguém mediu. O mapa fica vazio e os gráficos de ritmo já
+    // sabem lidar com isso (`tempos` é best-effort por contrato).
+    const atual = modo === "tela" ? perguntas[indice] : null;
     if (!atual || finalizouRef.current) return;
     abrirCronometro(atual.id);
 
@@ -99,7 +143,7 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
       fecharCronometro();
     };
     // abrirCronometro/fecharCronometro só mexem em refs — nada mais a declarar
-  }, [indice, perguntas]);
+  }, [indice, perguntas, modo]);
 
   // Relógio: 1 tick/s. Ao zerar, auto-finaliza com o que estiver marcado.
   useEffect(() => {
@@ -132,7 +176,9 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
 
   // Prefetch das figuras da questão atual + das duas seguintes (numa prova
   // cronometrada, esperar imagem custa tempo de prova — ver figura-questao).
-  usePrefetchFiguras(perguntas.slice(indice, indice + 3).flatMap((p) => figurasDaPergunta(p)));
+  usePrefetchFiguras(
+    modo === "tela" ? perguntas.slice(indice, indice + 3).flatMap((p) => figurasDaPergunta(p)) : [],
+  );
 
   const pergunta = perguntas[indice];
   const letras = pergunta ? Object.keys(pergunta.alternativas || {}).sort() : [];
@@ -170,137 +216,184 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
             style={{ width: `${(respondidas / perguntas.length) * 100}%` }}
           />
         </div>
+
+        {/* Onde a prova está sendo resolvida. Fica no topo, sempre visível:
+            imprimir era o recurso que ninguém achava porque morava atrás de um
+            ícone pequeno. Aqui é uma escolha de duas, com nome. */}
+        <div className="mt-2.5 flex items-center gap-1.5">
+          <div className="flex rounded-lg bg-muted p-0.5" role="group" aria-label="Como você vai resolver">
+            {([
+              { v: "tela" as const, rotulo: "Na tela", icone: <MonitorSmartphone size={13} /> },
+              { v: "cartao" as const, rotulo: "No papel", icone: <ScrollText size={13} /> },
+            ]).map((o) => (
+              <button
+                key={o.v}
+                type="button"
+                onClick={() => setModo(o.v)}
+                aria-pressed={modo === o.v}
+                className={`inline-flex min-h-8 items-center gap-1.5 rounded-[6px] px-2.5 text-[12px] font-bold transition-colors ${
+                  modo === o.v
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {o.icone}
+                {o.rotulo}
+              </button>
+            ))}
+          </div>
+          <Link
+            href={`/imprimir/simulado/${simulado.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-border px-2.5 text-[12px] font-bold text-muted-foreground transition-colors hover:border-questly-green/45 hover:text-foreground"
+          >
+            <Printer size={13} strokeWidth={2.1} />
+            Imprimir prova
+          </Link>
+        </div>
       </div>
 
-      {/* Navegador de questões */}
-      <div className="mb-5 flex flex-wrap gap-1.5">
-        {perguntas.map((p, i) => {
-          const feita = Boolean(respostas[p.id]);
-          const atual = i === indice;
-          return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setIndice(i)}
-              aria-label={`Ir pra questão ${i + 1}`}
-              aria-current={atual}
-              className={`tnum flex h-8 w-8 items-center justify-center rounded-lg border text-[12px] font-bold transition-colors ${
-                atual
-                  ? "border-questly-green bg-questly-green text-white dark:text-[#0c1512]"
-                  : feita
-                    ? "border-questly-green/40 bg-questly-green-light text-questly-green-dark"
-                    : "border-border bg-card text-muted-foreground hover:border-questly-green/40"
-              }`}
-            >
-              {i + 1}
-            </button>
-          );
-        })}
-      </div>
+      {modo === "cartao" ? (
+        <CartaoResposta
+          simuladoId={simulado.id}
+          perguntas={perguntas}
+          respostas={respostas}
+          onMarcar={marcar}
+        />
+      ) : (
+        <>
+        {/* Navegador de questões */}
+        <div className="mb-5 flex flex-wrap gap-1.5">
+          {perguntas.map((p, i) => {
+            const feita = Boolean(respostas[p.id]);
+            const atual = i === indice;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setIndice(i)}
+                aria-label={`Ir pra questão ${i + 1}`}
+                aria-current={atual}
+                className={`tnum flex h-8 w-8 items-center justify-center rounded-lg border text-[12px] font-bold transition-colors ${
+                  atual
+                    ? "border-questly-green bg-questly-green text-white dark:text-[#0c1512]"
+                    : feita
+                      ? "border-questly-green/40 bg-questly-green-light text-questly-green-dark"
+                      : "border-border bg-card text-muted-foreground hover:border-questly-green/40"
+                }`}
+              >
+                {i + 1}
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Card da questão */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={pergunta.id}
-          initial={{ opacity: 0, x: 12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -12 }}
-          transition={{ duration: 0.2 }}
-          className="surface p-5 sm:p-7"
-        >
-          <div className="mb-1.5 flex items-center gap-2">
-            <span className="tnum text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-              Questão {indice + 1} de {perguntas.length}
-            </span>
-            {pergunta.instituicao && (
-              <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground">
-                {pergunta.instituicao}
-                {pergunta.ano ? ` ${pergunta.ano}` : ""}
+        {/* Card da questão */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pergunta.id}
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.2 }}
+            className="surface p-5 sm:p-7"
+          >
+            <div className="mb-1.5 flex items-center gap-2">
+              <span className="tnum text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                Questão {indice + 1} de {perguntas.length}
               </span>
+              {pergunta.instituicao && (
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground">
+                  {pergunta.instituicao}
+                  {pergunta.ano ? ` ${pergunta.ano}` : ""}
+                </span>
+              )}
+            </div>
+
+            <div className="mb-6 text-[17px] font-medium leading-relaxed tracking-tight sm:text-[18px]">
+              <MathText text={pergunta.enunciado} />
+            </div>
+
+            {pergunta.imagem_url && (
+              <FiguraQuestao
+                src={pergunta.imagem_url}
+                alt="Imagem da questão"
+                className="mb-6 h-[260px] rounded-xl border border-border p-3 sm:h-[360px]"
+              />
             )}
-          </div>
 
-          <div className="mb-6 text-[17px] font-medium leading-relaxed tracking-tight sm:text-[18px]">
-            <MathText text={pergunta.enunciado} />
-          </div>
-
-          {pergunta.imagem_url && (
-            <FiguraQuestao
-              src={pergunta.imagem_url}
-              alt="Imagem da questão"
-              className="mb-6 h-[260px] rounded-xl border border-border p-3 sm:h-[360px]"
-            />
-          )}
-
-          <div className="flex flex-col gap-3">
-            {letras.map((letra) => {
-              const texto = pergunta.alternativas?.[letra] ?? "";
-              const imgAlt = imagensAlternativas[letra];
-              const selecionada = respostas[pergunta.id] === letra;
-              return (
-                <div
-                  key={letra}
-                  onClick={() => marcar(pergunta.id, letra)}
-                  className={`relative flex min-h-[64px] cursor-pointer items-center gap-3.5 rounded-xl border px-4 py-4 transition-colors ${
-                    selecionada
-                      ? "border-questly-green/60 bg-questly-green-light/60"
-                      : "border-border bg-card hover:border-questly-green/50"
-                  }`}
-                >
-                  <span
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-[14px] font-semibold transition-colors ${
+            <div className="flex flex-col gap-3">
+              {letras.map((letra) => {
+                const texto = pergunta.alternativas?.[letra] ?? "";
+                const imgAlt = imagensAlternativas[letra];
+                const selecionada = respostas[pergunta.id] === letra;
+                return (
+                  <div
+                    key={letra}
+                    onClick={() => marcar(pergunta.id, letra)}
+                    className={`relative flex min-h-[64px] cursor-pointer items-center gap-3.5 rounded-xl border px-4 py-4 transition-colors ${
                       selecionada
-                        ? "border-transparent bg-questly-green text-white dark:text-[#0c1512]"
-                        : "border-border bg-muted text-muted-foreground"
+                        ? "border-questly-green/60 bg-questly-green-light/60"
+                        : "border-border bg-card hover:border-questly-green/50"
                     }`}
                   >
-                    {letra.toUpperCase()}
-                  </span>
-                  <span className="min-w-0 flex-1 text-[15px] font-normal leading-relaxed sm:text-[16px]">
-                    {imgAlt && (
-                      <FiguraQuestao
-                        src={imgAlt}
-                        alt={`Imagem da alternativa ${letra.toUpperCase()}`}
-                        className="mb-2 h-[140px] w-full rounded-lg border border-border p-2"
-                      />
-                    )}
-                    <MathText text={texto} />
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-[14px] font-semibold transition-colors ${
+                        selecionada
+                          ? "border-transparent bg-questly-green text-white dark:text-[#0c1512]"
+                          : "border-border bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {letra.toUpperCase()}
+                    </span>
+                    <span className="min-w-0 flex-1 text-[15px] font-normal leading-relaxed sm:text-[16px]">
+                      {imgAlt && (
+                        <FiguraQuestao
+                          src={imgAlt}
+                          alt={`Imagem da alternativa ${letra.toUpperCase()}`}
+                          className="mb-2 h-[140px] w-full rounded-lg border border-border p-2"
+                        />
+                      )}
+                      <MathText text={texto} />
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
 
-          {/* Navegação prev/next */}
-          <div className="mt-6 flex items-center justify-between gap-3">
-            <button
-              type="button"
-              disabled={indice === 0}
-              onClick={() => setIndice((i) => Math.max(0, i - 1))}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-questly-green/40 disabled:pointer-events-none disabled:opacity-40"
-            >
-              <ArrowLeft size={15} /> Anterior
-            </button>
-            {indice < perguntas.length - 1 ? (
+            {/* Navegação prev/next */}
+            <div className="mt-6 flex items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => setIndice((i) => Math.min(perguntas.length - 1, i + 1))}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+                disabled={indice === 0}
+                onClick={() => setIndice((i) => Math.max(0, i - 1))}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-questly-green/40 disabled:pointer-events-none disabled:opacity-40"
               >
-                Próxima <ArrowRight size={15} />
+                <ArrowLeft size={15} /> Anterior
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setConfirmar(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
-              >
-                <Flag size={15} /> Finalizar
-              </button>
-            )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+              {indice < perguntas.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={() => setIndice((i) => Math.min(perguntas.length - 1, i + 1))}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+                >
+                  Próxima <ArrowRight size={15} />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmar(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+                >
+                  <Flag size={15} /> Finalizar
+                </button>
+              )}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+        </>
+      )}
 
       {/* Botão finalizar sempre acessível (rodapé) */}
       <div className="mt-5 text-center">
@@ -367,6 +460,129 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Cartão-resposta digital (simulado híbrido)
+// ---------------------------------------------------------------------------
+
+/**
+ * A prova está no papel; aqui só se marca.
+ *
+ * Deliberadamente NÃO mostra enunciado nem alternativa: se o texto estivesse
+ * na tela, o aluno leria daqui e a impressão teria sido teatro. O que a tela
+ * oferece é o que o papel não tem — relógio, autosave, correção na hora e a
+ * mesma autópsia de erros do simulado feito na tela.
+ *
+ * As bolhas são as letras de CADA questão (não um A–E fixo): uma prova com
+ * questão de 4 alternativas não pode oferecer uma (e) que não existe.
+ */
+function CartaoResposta({
+  simuladoId,
+  perguntas,
+  respostas,
+  onMarcar,
+}: {
+  simuladoId: string;
+  perguntas: SimuladoCompleto["perguntas"];
+  respostas: Record<string, string>;
+  onMarcar: (questionId: string, letra: string) => void;
+}) {
+  const router = useRouter();
+  const [zerando, iniciarZerar] = useTransition();
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="surface flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:p-5">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-questly-green-light text-questly-green-dark">
+          <ScrollText size={18} strokeWidth={2} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-bold">Você está resolvendo no papel</p>
+          <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+            Imprima a prova, resolva com o relógio correndo e marque aqui. A correção, o ranking e a
+            análise de erros saem iguais aos do simulado feito na tela.
+          </p>
+        </div>
+        <Link
+          href={`/imprimir/simulado/${simuladoId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-questly-green px-4 text-[13.5px] font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+        >
+          <Printer size={16} strokeWidth={2.1} />
+          Abrir PDF da prova
+        </Link>
+      </div>
+
+      {/* Ir até a impressora não é tempo de prova. Enquanto nada foi marcado,
+          o relógio pode ser zerado (o servidor só aceita nessa condição —
+          ver reiniciarRelogioSimuladoAction); depois da primeira marcação o
+          botão some, porque aí a prova começou. */}
+      {Object.keys(respostas).length === 0 && (
+        <button
+          type="button"
+          disabled={zerando}
+          onClick={() =>
+            iniciarZerar(async () => {
+              const r = await reiniciarRelogioSimuladoAction(simuladoId);
+              if (r.ok) router.refresh();
+            })
+          }
+          className="inline-flex min-h-10 items-center justify-center gap-2 self-start rounded-xl border border-border px-3.5 text-[12.5px] font-bold text-muted-foreground transition-colors hover:border-questly-green/45 hover:text-foreground disabled:opacity-50"
+        >
+          {zerando ? <Loader2 size={14} className="animate-spin" /> : <RotateCcw size={14} strokeWidth={2.1} />}
+          Já imprimi — começar a contar o tempo agora
+        </button>
+      )}
+
+      <div className="surface grid grid-cols-1 gap-x-6 gap-y-1 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-3">
+        {perguntas.map((p, i) => {
+          const letras = Object.keys(p.alternativas || {}).sort();
+          const marcada = respostas[p.id];
+          return (
+            <div
+              key={p.id}
+              className="flex items-center gap-2.5 border-b border-border/60 py-2 last:border-b-0 sm:border-b-0"
+            >
+              <span
+                className={`tnum w-[22px] shrink-0 text-right text-[12.5px] font-bold ${
+                  marcada ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                {i + 1}
+              </span>
+              <div className="flex gap-1.5">
+                {letras.map((l) => {
+                  const ativa = marcada === l;
+                  return (
+                    <button
+                      key={l}
+                      type="button"
+                      onClick={() => onMarcar(p.id, l)}
+                      aria-pressed={ativa}
+                      aria-label={`Questão ${i + 1}, alternativa ${l.toUpperCase()}`}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full border text-[12px] font-bold transition-colors ${
+                        ativa
+                          ? "border-questly-green bg-questly-green text-white dark:text-[#0c1512]"
+                          : "border-border bg-card text-muted-foreground hover:border-questly-green/50"
+                      }`}
+                    >
+                      {l.toUpperCase()}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="text-center text-[11.5px] text-muted-foreground">
+        Tocar de novo na letra marcada desmarca a questão. Tudo é salvo sozinho — dá pra fechar e voltar.
+      </p>
     </div>
   );
 }

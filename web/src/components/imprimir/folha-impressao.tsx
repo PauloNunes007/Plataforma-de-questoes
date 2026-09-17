@@ -1,264 +1,199 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Eye, EyeOff, Printer } from "lucide-react";
-import { MathText } from "@/components/questao/math-text";
+import {
+  ArrowLeft,
+  Check,
+  FileText,
+  Layers,
+  ListChecks,
+  Printer,
+  Ruler,
+  Settings2,
+  SquarePen,
+} from "lucide-react";
 import type { Pergunta } from "@/lib/questao/types";
+import { CSS_IMPRESSAO } from "@/components/imprimir/estilos-impressao";
+import { FolhaProva } from "@/components/imprimir/folha-prova";
+import {
+  ESPACAMENTOS,
+  LIMITE_PERGUNTAR_QUANTIDADE,
+  limitarQuantidade,
+  opcoesPadrao,
+  paginasEstimadas,
+  sugestoesDeQuantidade,
+  type Espacamento,
+  type OpcoesFolha,
+} from "@/lib/imprimir/opcoes";
 
-// A FOLHA: a lista de questões em formato de prova impressa.
+// A TELA DE EXPORTAR: um passo de preparo e, depois dele, a folha.
 //
-// Decisões de impressão que parecem detalhe e não são:
+// O passo de preparo existe por um defeito concreto: a lista de um tópico
+// inteiro passa fácil de 100 questões, e antes disso a tela jogava TODAS numa
+// folha só — trinta e tantas páginas que ninguém imprime. Agora a tela
+// pergunta, antes de montar: quantas questões, com ou sem gabarito, quanto
+// espaço pra resolver. Nada aqui vai pro papel (`nao-imprimir`), e as mesmas
+// opções continuam na barra de cima depois da folha montada, pra ajustar sem
+// recomeçar.
 //
-//  · a folha é sempre CLARA, mesmo com o app em tema escuro. Papel não tem
-//    tema, e um fundo escuro imprimiria como um borrão de toner (ou, com
-//    "imprimir fundos" desligado, texto branco em página branca);
-//  · as questões não quebram no meio (`break-inside: avoid`), porque
-//    enunciado numa página e alternativas na outra é uma prova inutilizável;
-//  · o gabarito sai no FIM, numa página nova, e pode ser desligado antes de
-//    imprimir — quem imprime pra simular a prova não quer a resposta na mão;
-//  · as figuras usam <img> nativo (não next/image): o otimizador serve
-//    formatos e tamanhos pensados pra tela, e na hora da impressão o que vale
-//    é a URL original, que o browser já tem em cache.
-//
-// MARCA D'ÁGUA: duas camadas independentes, porque uma sozinha é fácil demais
-// de perder. A diagonal repetida atravessa o conteúdo (quem recortar o rodapé
-// leva o resto junto) e o rodapé fixo se repete em TODA página impressa
-// (`position: fixed` dentro de @media print é o único jeito confiável de
-// carimbar todas as folhas sem saber quantas são).
-
-const CSS_IMPRESSAO = `
-  .folha { color: #111827; background: #ffffff; }
-
-  @media print {
-    /* O que é do app (header, barra de foco, barra inferior, botões) some: o
-       que vai pro papel é a folha, e só.
-       ATENCAO: nao da pra fazer isso com "body > *:not(.folha-raiz)" — a folha
-       nasce DENTRO do layout de (protected), varios niveis abaixo do body,
-       entao aquele seletor nao pegaria nada. Cada peca de cromo leva a classe
-       print:hidden (ver top-nav, foco-bar, mobile-bottom-nav) e o que e desta
-       tela usa .nao-imprimir. */
-    .nao-imprimir { display: none !important; }
-
-    @page {
-      size: A4;
-      margin: 16mm 14mm 20mm 14mm;
-    }
-
-    html, body, .folha-raiz, .folha {
-      background: #ffffff !important;
-      color: #111827 !important;
-    }
-
-    .questao-bloco {
-      break-inside: avoid;
-      page-break-inside: avoid;
-    }
-
-    .quebra-pagina { break-before: page; page-break-before: always; }
-
-    /* O rodapé com o e-mail em toda folha. -webkit-print-color-adjust mantém
-       a cor quando o navegador tenta "economizar tinta" achatando cinzas. */
-    .rodape-marca {
-      position: fixed;
-      bottom: 4mm;
-      left: 0;
-      right: 0;
-      display: block !important;
-      font-size: 7.5pt;
-      color: #6b7280 !important;
-      text-align: center;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    /* Na tela a marca acompanha a folha (absolute); no papel ela vira fixed,
-       que é o que a repete em TODAS as páginas do PDF. */
-    .marca-diagonal {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    .folha-conteudo { position: relative; z-index: 1; }
-  }
-`;
+// Numa prova (simulado/prova antiga) o recorte não faz sentido — a prova é a
+// prova —, então `permitirRecorte={false}` some com a pergunta de quantidade e
+// trava a folha no total.
 
 export function FolhaImpressao({
   titulo,
+  disciplina = null,
+  linhaContexto = null,
+  instrucoes,
   questoes,
   emailAluno,
   nomeAluno,
-  missaoId,
+  voltarHref,
+  voltarRotulo = "Voltar",
+  permitirRecorte = true,
 }: {
   titulo: string;
+  disciplina?: string | null;
+  linhaContexto?: string | null;
+  instrucoes?: string[];
   questoes: Pergunta[];
   emailAluno: string;
   nomeAluno: string | null;
-  missaoId: string;
+  voltarHref: string;
+  voltarRotulo?: string;
+  permitirRecorte?: boolean;
 }) {
-  const [comGabarito, setComGabarito] = useState(false);
+  const total = questoes.length;
+  const temResolucao = useMemo(() => questoes.some((q) => q.resolucao), [questoes]);
 
-  const hoje = new Date().toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
+  const [opcoes, setOpcoes] = useState<OpcoesFolha>(() => {
+    const base = opcoesPadrao(total, temResolucao);
+    // Prova impressa: sem recorte, e o gabarito começa DESLIGADO — quem vai
+    // cronometrar uma prova não quer a resposta na mesa.
+    return permitirRecorte ? base : { ...base, quantidade: total, gabarito: false, cartaoResposta: true };
   });
+
+  // A folha só é montada depois do preparo quando a lista é longa o bastante
+  // pra decisão importar. Numa lista curta, perguntar seria burocracia.
+  const [preparando, setPreparando] = useState(
+    permitirRecorte && total > LIMITE_PERGUNTAR_QUANTIDADE,
+  );
+  const [painelAberto, setPainelAberto] = useState(false);
+
+  const selecionadas = useMemo(
+    () => questoes.slice(0, opcoes.quantidade),
+    [questoes, opcoes.quantidade],
+  );
+  const paginas = useMemo(() => paginasEstimadas(questoes, opcoes), [questoes, opcoes]);
+
+  const instrucoesFinais =
+    instrucoes ??
+    [
+      "Resolva sem consultar material — o valor da lista está em tentar antes de olhar a resposta.",
+      "Marque uma única alternativa por questão.",
+      opcoes.gabarito
+        ? "O gabarito está na última folha: só confira depois de terminar."
+        : "O gabarito não foi impresso: confira suas respostas no Expectrum.",
+    ];
+
+  function mudar<K extends keyof OpcoesFolha>(chave: K, valor: OpcoesFolha[K]) {
+    setOpcoes((o) => ({ ...o, [chave]: valor }));
+  }
 
   return (
     <div className="folha-raiz">
       <style dangerouslySetInnerHTML={{ __html: CSS_IMPRESSAO }} />
 
-      {/* Barra de controle — não vai pro papel. */}
-      <div className="nao-imprimir sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
-        <div className="casca-leitura flex flex-wrap items-center gap-2 py-3">
-          <Link
-            href={`/questao?missao=${missaoId}`}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft size={15} strokeWidth={2} />
-            Voltar pra lista
-          </Link>
+      {preparando ? (
+        <PreparoImpressao
+          titulo={titulo}
+          total={total}
+          paginas={paginas}
+          opcoes={opcoes}
+          temResolucao={temResolucao}
+          voltarHref={voltarHref}
+          voltarRotulo={voltarRotulo}
+          onMudar={mudar}
+          onPronto={() => setPreparando(false)}
+        />
+      ) : (
+        <>
+          {/* Barra de controle — não vai pro papel. */}
+          <div className="nao-imprimir sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
+            <div className="casca-leitura flex flex-wrap items-center gap-2 py-3">
+              <Link
+                href={voltarHref}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ArrowLeft size={15} strokeWidth={2} />
+                {voltarRotulo}
+              </Link>
 
-          <button
-            type="button"
-            onClick={() => setComGabarito((v) => !v)}
-            className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-[12.5px] font-semibold transition-colors hover:bg-foreground/[0.05]"
-          >
-            {comGabarito ? <EyeOff size={14} strokeWidth={2} /> : <Eye size={14} strokeWidth={2} />}
-            {comGabarito ? "Sem gabarito" : "Com gabarito"}
-          </button>
+              <button
+                type="button"
+                onClick={() => setPainelAberto((v) => !v)}
+                aria-expanded={painelAberto}
+                className={`ml-auto inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-[12.5px] font-semibold transition-colors ${
+                  painelAberto
+                    ? "border-questly-green bg-questly-green-light text-questly-green-dark"
+                    : "border-border hover:bg-foreground/[0.05]"
+                }`}
+              >
+                <Settings2 size={14} strokeWidth={2} />
+                Opções
+              </button>
 
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-questly-green px-3.5 text-[12.5px] font-semibold text-white transition-[filter] hover:brightness-105 dark:text-[#0c1512]"
-          >
-            <Printer size={14} strokeWidth={2.1} />
-            Imprimir / salvar PDF
-          </button>
-        </div>
-        <p className="casca-leitura pb-2.5 text-[11.5px] leading-relaxed text-muted-foreground">
-          No diálogo de impressão, escolha <b>&quot;Salvar como PDF&quot;</b> como destino. O arquivo sai
-          marcado com o seu e-mail ({emailAluno}) em todas as páginas.
-        </p>
-      </div>
-
-      <div className="folha relative mx-auto w-full max-w-[820px] px-6 py-8 sm:px-10">
-        <MarcaDiagonal email={emailAluno} />
-
-        <div className="folha-conteudo">
-          <header className="mb-6 border-b-2 border-[#111827] pb-3">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0a855c]">
-                  Expectrum
-                </p>
-                <h1 className="mt-0.5 text-[20px] font-bold leading-tight tracking-tight">{titulo}</h1>
-              </div>
-              <p className="shrink-0 text-right text-[10.5px] leading-snug text-[#5b6472]">
-                {questoes.length} {questoes.length === 1 ? "questão" : "questões"}
-                <br />
-                {hoje}
-              </p>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-questly-green px-3.5 text-[12.5px] font-semibold text-white transition-[filter] hover:brightness-105 dark:text-[#0c1512]"
+              >
+                <Printer size={14} strokeWidth={2.1} />
+                Imprimir / salvar PDF
+              </button>
             </div>
-            <p className="mt-2 text-[10.5px] text-[#5b6472]">
-              {nomeAluno ? `${nomeAluno} — ` : ""}
-              {emailAluno}
-            </p>
-          </header>
 
-          <ol className="flex flex-col gap-7">
-            {questoes.map((q, i) => (
-              <li key={q.id} className="questao-bloco">
-                <div className="flex items-start gap-2.5">
-                  <span className="mt-[1px] flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-[#111827] text-[11px] font-bold text-white">
-                    {i + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    {(q.instituicao || q.ano) && (
-                      <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#5b6472]">
-                        {[q.instituicao, q.ano].filter(Boolean).join(" · ")}
-                      </p>
-                    )}
-                    <div className="text-[13px] leading-relaxed">
-                      <MathText text={q.enunciado} />
-                    </div>
-
-                    {q.imagem_url && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={q.imagem_url}
-                        alt=""
-                        className="mt-2.5 max-h-[280px] w-auto max-w-full object-contain"
-                      />
-                    )}
-
-                    <ul className="mt-2.5 flex flex-col gap-1.5">
-                      {Object.keys(q.alternativas || {})
-                        .sort()
-                        .map((letra) => (
-                          <li key={letra} className="flex items-start gap-2 text-[12.5px] leading-snug">
-                            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border border-[#111827] text-[10px] font-bold">
-                              {letra}
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <MathText text={q.alternativas?.[letra] ?? ""} />
-                              {q.alternativas_imagens?.[letra] && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={q.alternativas_imagens[letra]}
-                                  alt=""
-                                  className="mt-1 max-h-[140px] w-auto max-w-full object-contain"
-                                />
-                              )}
-                            </span>
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
-
-          {comGabarito && (
-            <section className="quebra-pagina mt-10 pt-6">
-              <h2 className="mb-3 border-b-2 border-[#111827] pb-1.5 text-[16px] font-bold tracking-tight">
-                Gabarito
-              </h2>
-              <div className="flex flex-wrap gap-x-5 gap-y-1.5">
-                {questoes.map((q, i) => (
-                  <span key={q.id} className="tnum text-[12.5px]">
-                    <b>{i + 1}.</b> {q.gabarito}
-                  </span>
-                ))}
+            {painelAberto ? (
+              <div className="casca-leitura pb-4">
+                <OpcoesImpressao
+                  total={total}
+                  paginas={paginas}
+                  opcoes={opcoes}
+                  temResolucao={temResolucao}
+                  permitirRecorte={permitirRecorte}
+                  onMudar={mudar}
+                />
               </div>
+            ) : (
+              <p className="casca-leitura pb-2.5 text-[11.5px] leading-relaxed text-muted-foreground">
+                {selecionadas.length} de {total} {total === 1 ? "questão" : "questões"} · ~{paginas}{" "}
+                {paginas === 1 ? "página" : "páginas"} ·{" "}
+                {opcoes.gabarito ? "com gabarito no fim" : "sem gabarito"}. No diálogo de impressão,
+                escolha <b>&quot;Salvar como PDF&quot;</b> como destino — o arquivo sai marcado com o seu
+                e-mail ({emailAluno}).
+              </p>
+            )}
+          </div>
 
-              {questoes.some((q) => q.resolucao) && (
-                <div className="mt-6 flex flex-col gap-4">
-                  <h3 className="text-[13.5px] font-bold">Resoluções</h3>
-                  {questoes.map((q, i) =>
-                    q.resolucao ? (
-                      <div key={q.id} className="questao-bloco text-[12px] leading-relaxed">
-                        <b>{i + 1}.</b> <MathText text={q.resolucao} />
-                      </div>
-                    ) : null,
-                  )}
-                </div>
-              )}
-            </section>
-          )}
+          <FolhaProva
+            titulo={titulo}
+            disciplina={disciplina}
+            linhaContexto={linhaContexto}
+            instrucoes={instrucoesFinais}
+            questoes={selecionadas}
+            opcoes={opcoes}
+            emailAluno={emailAluno}
+            nomeAluno={nomeAluno}
+          />
+        </>
+      )}
 
-          <p className="mt-10 border-t border-[#e2e6e4] pt-3 text-center text-[9.5px] text-[#5b6472]">
-            Gerado por Expectrum para {emailAluno} · uso pessoal
-          </p>
-        </div>
+      {/* Cabeçalho e rodapé carimbados em toda página impressa (escondidos na tela). */}
+      <div className="cabecalho-corrente hidden">
+        <span>Expectrum · {disciplina ? `${disciplina} — ` : ""}{titulo}</span>
+        <span>{nomeAluno ?? emailAluno}</span>
       </div>
-
-      {/* Rodapé carimbado em toda página impressa (fica escondido na tela). */}
       <div className="rodape-marca hidden">
         Expectrum · cópia pessoal de {emailAluno} · a redistribuição identifica esta conta
       </div>
@@ -266,40 +201,231 @@ export function FolhaImpressao({
   );
 }
 
-/**
- * A marca d'água diagonal repetida.
- *
- * É um SVG com `<pattern>` em vez de texto repetido no DOM: um padrão vetorial
- * cobre qualquer altura de página sem o app precisar saber quantas páginas o
- * PDF terá, e o texto continua nítido em qualquer zoom (o leitor de PDF não
- * reamostra vetor).
- *
- * Opacidade baixa o bastante pra não atrapalhar a leitura da questão e alta o
- * bastante pra sobreviver a uma fotocópia — é o mesmo compromisso dos PDFs de
- * editora acadêmica.
- */
-function MarcaDiagonal({ email }: { email: string }) {
+// ---------------------------------------------------------------------------
+// Passo de preparo (lista longa)
+// ---------------------------------------------------------------------------
+
+function PreparoImpressao({
+  titulo,
+  total,
+  paginas,
+  opcoes,
+  temResolucao,
+  voltarHref,
+  voltarRotulo,
+  onMudar,
+  onPronto,
+}: {
+  titulo: string;
+  total: number;
+  paginas: number;
+  opcoes: OpcoesFolha;
+  temResolucao: boolean;
+  voltarHref: string;
+  voltarRotulo: string;
+  onMudar: <K extends keyof OpcoesFolha>(chave: K, valor: OpcoesFolha[K]) => void;
+  onPronto: () => void;
+}) {
   return (
-    <div className="marca-diagonal pointer-events-none absolute inset-0 select-none overflow-hidden">
-      <svg width="100%" height="100%" aria-hidden>
-        <defs>
-          <pattern
-            id="marca-expectrum"
-            width="320"
-            height="200"
-            patternUnits="userSpaceOnUse"
-            patternTransform="rotate(-30)"
-          >
-            <text x="0" y="40" fill="#111827" fillOpacity="0.07" fontSize="13" fontFamily="sans-serif">
-              {email}
-            </text>
-            <text x="160" y="140" fill="#111827" fillOpacity="0.07" fontSize="13" fontFamily="sans-serif">
-              {email}
-            </text>
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#marca-expectrum)" />
-      </svg>
+    <div className="casca-leitura py-6">
+      <Link
+        href={voltarHref}
+        className="mb-4 inline-flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft size={15} strokeWidth={2} />
+        {voltarRotulo}
+      </Link>
+
+      <div className="surface p-5 sm:p-7">
+        <span className="kicker">Preparar impressão</span>
+        <h1 className="mt-1 font-heading text-[20px] font-bold tracking-tight">{titulo}</h1>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+          Essa lista tem <b className="tnum text-foreground">{total} questões</b> — impressa inteira,
+          passa de <b className="tnum text-foreground">{paginas} páginas</b>. Escolha o que entra no PDF
+          antes de gerar.
+        </p>
+
+        <div className="mt-5">
+          <OpcoesImpressao
+            total={total}
+            paginas={paginas}
+            opcoes={opcoes}
+            temResolucao={temResolucao}
+            permitirRecorte
+            onMudar={onMudar}
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={onPronto}
+          className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-questly-green px-5 text-[15px] font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.99] dark:text-[#0c1512]"
+        >
+          <FileText size={17} strokeWidth={2.1} />
+          Gerar folha · {opcoes.quantidade} {opcoes.quantidade === 1 ? "questão" : "questões"}
+        </button>
+        <p className="mt-2 text-center text-[11.5px] text-muted-foreground">
+          Dá pra mudar tudo isso depois, sem recomeçar.
+        </p>
+      </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Opções (usadas no preparo e na barra)
+// ---------------------------------------------------------------------------
+
+function OpcoesImpressao({
+  total,
+  paginas,
+  opcoes,
+  temResolucao,
+  permitirRecorte,
+  onMudar,
+}: {
+  total: number;
+  paginas: number;
+  opcoes: OpcoesFolha;
+  temResolucao: boolean;
+  permitirRecorte: boolean;
+  onMudar: <K extends keyof OpcoesFolha>(chave: K, valor: OpcoesFolha[K]) => void;
+}) {
+  const sugestoes = useMemo(() => sugestoesDeQuantidade(total), [total]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      {permitirRecorte && total > 1 && (
+        <Campo icone={<ListChecks size={13} />} rotulo="Quantas questões">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {sugestoes.map((n) => (
+              <Chip
+                key={n}
+                ativo={opcoes.quantidade === n}
+                onClick={() => onMudar("quantidade", n)}
+              >
+                {n === total ? `Todas (${n})` : n}
+              </Chip>
+            ))}
+            <label className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground">
+              <span className="sr-only">Quantidade personalizada</span>
+              <input
+                type="number"
+                min={1}
+                max={total}
+                value={opcoes.quantidade}
+                onChange={(e) => onMudar("quantidade", limitarQuantidade(Number(e.target.value), total))}
+                className="tnum h-9 w-[72px] rounded-lg border border-border bg-card px-2 text-[12.5px] font-semibold"
+              />
+            </label>
+          </div>
+          <p className="mt-1.5 text-[11.5px] text-muted-foreground">
+            As {opcoes.quantidade} primeiras da lista · ~{paginas} {paginas === 1 ? "página" : "páginas"}{" "}
+            no A4.
+          </p>
+        </Campo>
+      )}
+
+      <Campo icone={<Check size={13} />} rotulo="Respostas">
+        <div className="flex flex-wrap gap-1.5">
+          <Chip ativo={opcoes.gabarito} onClick={() => onMudar("gabarito", true)}>
+            Gabarito no fim
+          </Chip>
+          <Chip ativo={!opcoes.gabarito} onClick={() => onMudar("gabarito", false)}>
+            Sem gabarito
+          </Chip>
+          {temResolucao && opcoes.gabarito && (
+            <Chip ativo={opcoes.resolucoes} onClick={() => onMudar("resolucoes", !opcoes.resolucoes)}>
+              {opcoes.resolucoes ? "Com resoluções" : "Só as letras"}
+            </Chip>
+          )}
+        </div>
+        <p className="mt-1.5 text-[11.5px] text-muted-foreground">
+          {opcoes.gabarito
+            ? "Sai numa folha separada, no fim — dá pra destacar e deixar de lado enquanto resolve."
+            : "A folha vai sem respostas. Confira depois no app, com a análise de erros."}
+        </p>
+      </Campo>
+
+      <Campo icone={<Ruler size={13} />} rotulo="Espaço pra resolver">
+        <div className="flex flex-wrap gap-1.5">
+          {ESPACAMENTOS.map((e) => (
+            <Chip
+              key={e.valor}
+              ativo={opcoes.espacamento === e.valor}
+              onClick={() => onMudar("espacamento", e.valor as Espacamento)}
+            >
+              {e.rotulo}
+            </Chip>
+          ))}
+        </div>
+        <p className="mt-1.5 text-[11.5px] text-muted-foreground">
+          {ESPACAMENTOS.find((e) => e.valor === opcoes.espacamento)?.ajuda}
+        </p>
+      </Campo>
+
+      <Campo icone={<Layers size={13} />} rotulo="Folhas extras">
+        <div className="flex flex-wrap gap-1.5">
+          <Chip
+            ativo={opcoes.cartaoResposta}
+            onClick={() => onMudar("cartaoResposta", !opcoes.cartaoResposta)}
+          >
+            <SquarePen size={12} className="mr-1.5" />
+            Cartão-resposta
+          </Chip>
+          <Chip
+            ativo={opcoes.identificacao}
+            onClick={() => onMudar("identificacao", !opcoes.identificacao)}
+          >
+            Cabeçalho de identificação
+          </Chip>
+        </div>
+      </Campo>
+    </div>
+  );
+}
+
+function Campo({
+  icone,
+  rotulo,
+  children,
+}: {
+  icone: React.ReactNode;
+  rotulo: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <span className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+        {icone}
+        {rotulo}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+function Chip({
+  ativo,
+  onClick,
+  children,
+}: {
+  ativo: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={ativo}
+      className={`tnum inline-flex min-h-9 items-center rounded-lg border px-3 text-[12.5px] font-bold transition-colors ${
+        ativo
+          ? "border-questly-green bg-questly-green-light text-questly-green-dark"
+          : "border-border bg-card text-muted-foreground hover:border-questly-green/45 hover:text-foreground"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

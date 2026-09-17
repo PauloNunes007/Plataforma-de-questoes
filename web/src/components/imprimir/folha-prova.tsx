@@ -1,0 +1,332 @@
+"use client";
+
+import { MathText } from "@/components/questao/math-text";
+import type { Pergunta } from "@/lib/questao/types";
+import { ALTURA_RESOLUCAO_MM } from "@/components/imprimir/estilos-impressao";
+import { alternativasEmLinha, type OpcoesFolha } from "@/lib/imprimir/opcoes";
+
+// A FOLHA — o que de fato vai pro papel.
+//
+// O molde é o da prova impressa da universidade, não o do app: cabeçalho com
+// identificação pra preencher à mão, bloco de instruções, questões numeradas
+// com espaço pra desenvolver, cartão-resposta e gabarito em páginas próprias.
+// Quem imprime isso vai colocar ao lado de uma prova da UFF; se parecer um
+// site impresso, o recurso não cumpriu o que prometeu.
+//
+// As figuras usam <img> nativo (não next/image): o otimizador serve formatos e
+// tamanhos pensados pra tela, e na hora da impressão o que vale é a URL
+// original, que o browser já tem em cache.
+
+export function FolhaProva({
+  titulo,
+  disciplina,
+  linhaContexto,
+  instrucoes,
+  questoes,
+  opcoes,
+  emailAluno,
+  nomeAluno,
+}: {
+  titulo: string;
+  disciplina: string | null;
+  linhaContexto: string | null;
+  instrucoes: string[];
+  questoes: Pergunta[];
+  opcoes: OpcoesFolha;
+  emailAluno: string;
+  nomeAluno: string | null;
+}) {
+  const hoje = new Date().toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+  const alturaResolucao = ALTURA_RESOLUCAO_MM[opcoes.espacamento];
+
+  return (
+    <div className="folha relative mx-auto w-full max-w-[820px] px-6 py-9 sm:px-12">
+      <MarcaDiagonal email={emailAluno} />
+
+      <div className="folha-conteudo">
+        {/* -------------------------------------------------- cabeçalho */}
+        <header className="sem-quebra mb-6">
+          <div className="flex items-end justify-between gap-4 border-b-[1.5px] border-[#111827] pb-2.5">
+            <div className="min-w-0">
+              <p className="sans text-[9.5px] font-bold uppercase tracking-[0.22em] text-[#0a855c]">
+                Expectrum
+              </p>
+              <h1 className="mt-1 text-[19px] font-bold leading-tight tracking-tight">{titulo}</h1>
+              {disciplina && (
+                <p className="sans mt-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5b6472]">
+                  {disciplina}
+                </p>
+              )}
+            </div>
+            <p className="sans shrink-0 text-right text-[10px] leading-snug text-[#5b6472]">
+              {questoes.length} {questoes.length === 1 ? "questão" : "questões"}
+              <br />
+              {hoje}
+            </p>
+          </div>
+
+          {linhaContexto && (
+            <p className="sans mt-2 text-[10.5px] font-medium text-[#5b6472]">{linhaContexto}</p>
+          )}
+
+          {/* Linhas pra preencher à mão. São `border-bottom` sobre um espaço em
+              branco, não underscores repetidos: underscore quebra em lugar
+              errado quando o nome do aluno é longo. */}
+          {opcoes.identificacao && (
+            <div className="sans mt-3 flex flex-col gap-2.5 text-[10.5px] text-[#5b6472]">
+              <div className="flex items-end gap-2">
+                <span className="shrink-0 font-semibold">Nome:</span>
+                <span className="tinta-exata h-[13px] flex-1 border-b border-[#9aa3ad]" />
+                <span className="shrink-0 font-semibold">Matrícula:</span>
+                <span className="tinta-exata h-[13px] w-[110px] border-b border-[#9aa3ad]" />
+              </div>
+              <div className="flex items-end gap-2">
+                <span className="shrink-0 font-semibold">Turma:</span>
+                <span className="tinta-exata h-[13px] w-[90px] border-b border-[#9aa3ad]" />
+                <span className="shrink-0 font-semibold">Data:</span>
+                <span className="tinta-exata h-[13px] flex-1 border-b border-[#9aa3ad]" />
+                <span className="shrink-0 font-semibold">Nota:</span>
+                <span className="tinta-exata h-[13px] w-[70px] border-b border-[#9aa3ad]" />
+              </div>
+            </div>
+          )}
+
+          {instrucoes.length > 0 && (
+            <div className="tinta-exata sans mt-3.5 rounded-[3px] border border-[#d4d9dd] bg-[#f7f8f9] px-3 py-2">
+              <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#5b6472]">
+                Instruções
+              </p>
+              <ul className="mt-1 flex flex-col gap-0.5">
+                {instrucoes.map((t, i) => (
+                  <li key={i} className="flex gap-1.5 text-[10px] leading-snug text-[#3f4852]">
+                    <span className="shrink-0 font-semibold">{i + 1}.</span>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </header>
+
+        {/* -------------------------------------------------- questões */}
+        <ol className="flex flex-col">
+          {questoes.map((q, i) => (
+            <li
+              key={q.id}
+              className="questao-bloco border-t border-[#e8ebed] pt-4 first:border-t-0 first:pt-0"
+              style={{ paddingBottom: opcoes.espacamento === "compacto" ? "18px" : "14px" }}
+            >
+              <div className="mb-1.5 flex items-baseline gap-2">
+                <span className="sans text-[11.5px] font-bold uppercase tracking-[0.1em]">
+                  Questão {i + 1}
+                </span>
+                {(q.instituicao || q.ano || q.dificuldade) && (
+                  <span className="sans text-[9.5px] font-medium uppercase tracking-wide text-[#8b949e]">
+                    {[q.instituicao, q.ano, rotuloDificuldade(q.dificuldade)]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </span>
+                )}
+              </div>
+
+              <div className="text-[12.5px] leading-[1.6]">
+                <MathText text={q.enunciado} />
+              </div>
+
+              {q.imagem_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={q.imagem_url}
+                  alt=""
+                  className="mt-2.5 max-h-[250px] w-auto max-w-full object-contain"
+                />
+              )}
+
+              <Alternativas q={q} />
+
+              {alturaResolucao > 0 && (
+                <div
+                  className="espaco-resolucao mt-3"
+                  style={{ height: `${alturaResolucao}mm` }}
+                  aria-hidden
+                />
+              )}
+            </li>
+          ))}
+        </ol>
+
+        {/* -------------------------------------------------- cartão-resposta */}
+        {opcoes.cartaoResposta && <CartaoRespostaImpresso questoes={questoes} />}
+
+        {/* -------------------------------------------------- gabarito */}
+        {opcoes.gabarito && (
+          <section className="quebra-pagina pt-2">
+            <h2 className="mb-3 border-b-[1.5px] border-[#111827] pb-1.5 text-[16px] font-bold tracking-tight">
+              Gabarito
+            </h2>
+            {/* Grade tabular (não uma linha corrida): conferir 40 respostas
+                numa lista separada por ponto é onde o aluno perde a conta. */}
+            <div className="tinta-exata grid grid-cols-[repeat(auto-fill,minmax(58px,1fr))] gap-px border border-[#d4d9dd] bg-[#d4d9dd]">
+              {questoes.map((q, i) => (
+                <div key={q.id} className="flex items-center justify-between gap-1 bg-white px-2 py-1.5">
+                  <span className="sans tnum text-[10px] font-semibold text-[#5b6472]">{i + 1}</span>
+                  <span className="sans text-[12.5px] font-bold">{(q.gabarito || "").toUpperCase()}</span>
+                </div>
+              ))}
+            </div>
+
+            {opcoes.resolucoes && questoes.some((q) => q.resolucao) && (
+              <div className="mt-7 flex flex-col gap-4">
+                <h3 className="text-[13.5px] font-bold">Resoluções</h3>
+                {questoes.map((q, i) =>
+                  q.resolucao ? (
+                    <div key={q.id} className="questao-bloco text-[11.5px] leading-[1.6]">
+                      <b className="sans">Questão {i + 1}.</b> <MathText text={q.resolucao} />
+                    </div>
+                  ) : null,
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
+        <p className="sans mt-9 border-t border-[#e2e6e4] pt-3 text-center text-[9px] text-[#8b949e]">
+          Gerado por Expectrum para {nomeAluno ? `${nomeAluno} · ` : ""}
+          {emailAluno} · uso pessoal
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** Alternativas: em linha quando são curtas (como na prova), empilhadas quando não. */
+function Alternativas({ q }: { q: Pergunta }) {
+  const letras = Object.keys(q.alternativas || {}).sort();
+  if (letras.length === 0) return null;
+  const emLinha = alternativasEmLinha(q);
+
+  return (
+    <ul
+      className={
+        emLinha
+          ? "mt-2 flex flex-wrap gap-x-6 gap-y-1.5"
+          : "mt-2.5 flex flex-col gap-1.5"
+      }
+    >
+      {letras.map((letra) => (
+        <li key={letra} className="flex items-start gap-1.5 text-[12px] leading-snug">
+          <span className="sans shrink-0 font-bold">({letra.toLowerCase()})</span>
+          <span className="min-w-0 flex-1">
+            <MathText text={q.alternativas?.[letra] ?? ""} />
+            {q.alternativas_imagens?.[letra] && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={q.alternativas_imagens[letra]}
+                alt=""
+                className="mt-1 max-h-[130px] w-auto max-w-full object-contain"
+              />
+            )}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Cartão-resposta em branco, em página própria.
+ *
+ * As bolhas são círculos vazados com a letra dentro — não bolhas cegas: uma
+ * folha de leitura ótica de verdade depende de um scanner que ninguém aqui
+ * tem, e sem a letra impressa o aluno perde a referência ao transcrever.
+ */
+function CartaoRespostaImpresso({ questoes }: { questoes: Pergunta[] }) {
+  return (
+    <section className="quebra-pagina pt-2">
+      <h2 className="mb-1 border-b-[1.5px] border-[#111827] pb-1.5 text-[16px] font-bold tracking-tight">
+        Cartão-resposta
+      </h2>
+      <p className="sans mb-4 text-[10px] text-[#5b6472]">
+        Preencha a alternativa escolhida. Depois transcreva as marcações no Expectrum pra receber a
+        correção e a análise de erros.
+      </p>
+      <div className="grid grid-cols-2 gap-x-8 gap-y-1 sm:grid-cols-3">
+        {questoes.map((q, i) => (
+          <div key={q.id} className="sem-quebra flex items-center gap-2 py-[2px]">
+            <span className="sans tnum w-[18px] shrink-0 text-right text-[10.5px] font-semibold text-[#5b6472]">
+              {i + 1}
+            </span>
+            <span className="flex gap-1.5">
+              {/* As letras de CADA questão: uma com 4 alternativas não pode
+                  oferecer uma (e) que não existe na prova. */}
+              {letrasDaQuestao(q).map((l) => (
+                <span
+                  key={l}
+                  className="tinta-exata flex h-[15px] w-[15px] items-center justify-center rounded-full border border-[#9aa3ad] text-[8px] font-semibold text-[#9aa3ad]"
+                >
+                  {l.toUpperCase()}
+                </span>
+              ))}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * A marca d'água diagonal repetida.
+ *
+ * É um SVG com `<pattern>` em vez de texto repetido no DOM: um padrão vetorial
+ * cobre qualquer altura de página sem o app precisar saber quantas páginas o
+ * PDF terá, e o texto continua nítido em qualquer zoom (o leitor de PDF não
+ * reamostra vetor).
+ *
+ * Opacidade baixa o bastante pra não atrapalhar a leitura da questão e alta o
+ * bastante pra sobreviver a uma fotocópia — é o mesmo compromisso dos PDFs de
+ * editora acadêmica.
+ */
+export function MarcaDiagonal({ email }: { email: string }) {
+  return (
+    <div className="marca-diagonal pointer-events-none absolute inset-0 select-none overflow-hidden">
+      <svg width="100%" height="100%" aria-hidden>
+        <defs>
+          <pattern
+            id="marca-expectrum"
+            width="320"
+            height="200"
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(-30)"
+          >
+            <text x="0" y="40" fill="#111827" fillOpacity="0.07" fontSize="13" fontFamily="sans-serif">
+              {email}
+            </text>
+            <text x="160" y="140" fill="#111827" fillOpacity="0.07" fontSize="13" fontFamily="sans-serif">
+              {email}
+            </text>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#marca-expectrum)" />
+      </svg>
+    </div>
+  );
+}
+
+/** Letras da questão; cinco por padrão quando a questão veio sem alternativas. */
+function letrasDaQuestao(q: Pergunta): string[] {
+  const letras = Object.keys(q.alternativas || {}).map((l) => l.toLowerCase()).sort();
+  return letras.length > 0 ? letras : ["a", "b", "c", "d", "e"];
+}
+
+function rotuloDificuldade(d: string | null): string | null {
+  if (!d) return null;
+  if (d === "facil") return "fácil";
+  if (d === "medio") return "médio";
+  if (d === "dificil") return "difícil";
+  return d;
+}

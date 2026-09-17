@@ -35,7 +35,9 @@ import {
   Layers,
   Library,
   Loader2,
+  MonitorSmartphone,
   PlayCircle,
+  Printer,
   SlidersHorizontal,
   Sparkles,
   TrendingDown,
@@ -83,6 +85,10 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
   const [difsSel, setDifsSel] = useState<Set<ChaveDificuldade>>(new Set());
   const [anosSel, setAnosSel] = useState<Set<number>>(new Set());
   const [focarFracos, setFocarFracos] = useState(false);
+  // Onde a prova vai ser resolvida. É só o modo INICIAL da tela do simulado
+  // (`?modo=cartao`) — nada disso vira coluna no banco, e o aluno troca depois
+  // se mudar de ideia. Ver SimuladoRunner.
+  const [noPapel, setNoPapel] = useState(false);
   const [avancadoAberto, setAvancadoAberto] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -167,6 +173,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
     setDifsSel(new Set());
     setAnosSel(new Set());
     setFocarFracos(false);
+    setNoPapel(false);
     setAvancadoAberto(false);
     escolherQuantidade(SIMULADO_QTD_PADRAO);
     setDuracao(null);
@@ -224,7 +231,7 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
       estrategia: focarFracos ? "fracos" : "aleatoria",
       ordem: "aleatoria",
     });
-    if (r.ok) router.push(`/simulados/${r.id}`);
+    if (r.ok) router.push(`/simulados/${r.id}${noPapel ? "?modo=cartao" : ""}`);
     else {
       setErro(ERROS[r.erro] ?? ERROS.invalido);
       setEnviando(false);
@@ -625,6 +632,58 @@ export function MontadorSimulado({ opcoes }: { opcoes: OpcoesSimulado }) {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Onde resolver — a escolha do simulado híbrido, feita ANTES de começar
+          (depois de iniciar, o relógio já está correndo e ir atrás da
+          impressora custa prova). Impressão é do Pro; o gate real está no
+          servidor, em /imprimir/simulado/[id], e quem não é Pro vê a oferta
+          lá em vez de um botão que não faz nada aqui. */}
+      <div>
+        <span className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <Printer size={13} />
+          Onde você vai resolver
+        </span>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {[
+            {
+              v: false,
+              icone: <MonitorSmartphone size={15} />,
+              titulo: "Na tela",
+              ajuda: "Uma questão por vez, com o relógio correndo.",
+            },
+            {
+              v: true,
+              icone: <Printer size={15} />,
+              titulo: "Imprimir e resolver no papel",
+              ajuda: "PDF no layout da prova; o app vira o cartão-resposta.",
+            },
+          ].map((o) => (
+            <button
+              key={String(o.v)}
+              type="button"
+              onClick={() => setNoPapel(o.v)}
+              aria-pressed={noPapel === o.v}
+              className={`flex min-h-[64px] items-start gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                noPapel === o.v
+                  ? "border-questly-green bg-questly-green-light/60"
+                  : "border-border hover:border-questly-green/45"
+              }`}
+            >
+              <span
+                className={`mt-0.5 shrink-0 ${
+                  noPapel === o.v ? "text-questly-green-dark" : "text-muted-foreground"
+                }`}
+              >
+                {o.icone}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[13px] font-bold">{o.titulo}</span>
+                <span className="block text-[11.5px] leading-snug text-muted-foreground">{o.ajuda}</span>
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {erro && (

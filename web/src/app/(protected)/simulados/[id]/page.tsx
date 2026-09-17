@@ -33,8 +33,18 @@ function EstadoVazio({ mensagem }: { mensagem: string }) {
   );
 }
 
-export default async function SimuladoPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function SimuladoPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ modo?: string }>;
+}) {
   const { id } = await params;
+  // `?modo=cartao` é o que o montador manda quando o aluno escolheu imprimir a
+  // prova. É só o estado INICIAL da tela — o seletor continua lá e trocar de
+  // modo no meio não perde nada (ver SimuladoRunner).
+  const { modo } = await searchParams;
   const supabase = await createClient();
   const user = await usuarioDaSessao(supabase);
   if (!user) return null;
@@ -81,5 +91,5 @@ export default async function SimuladoPage({ params }: { params: Promise<{ id: s
   if (simulado.status === "abandonado") {
     return <EstadoVazio mensagem="Esse simulado foi abandonado. Monte um novo pra praticar." />;
   }
-  return <SimuladoRunner simulado={simulado} />;
+  return <SimuladoRunner simulado={simulado} modoInicial={modo === "cartao" ? "cartao" : "tela"} />;
 }

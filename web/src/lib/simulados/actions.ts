@@ -513,6 +513,44 @@ export async function salvarRespostasAction(
   }
 }
 
+/**
+ * Zera o relógio de um simulado que ainda não começou de verdade.
+ *
+ * Existe por causa do SIMULADO HÍBRIDO: quem escolhe imprimir cai na tela com
+ * o cronômetro já correndo e gasta os primeiros minutos indo até a impressora.
+ * Cobrar esse tempo da prova é cobrar pelo que não foi prova.
+ *
+ * As três condições são o que impede isso de virar tempo infinito: o simulado
+ * é do próprio aluno, está `em_andamento` e **ainda não tem nenhuma resposta
+ * marcada**. Depois da primeira marcação a prova começou e o relógio é o que
+ * é. Sem respostas, reiniciar equivale a abandonar e montar outro com as
+ * mesmas questões — só que sem perder o que já foi impresso.
+ */
+export async function reiniciarRelogioSimuladoAction(id: string): Promise<{ ok: boolean }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false };
+
+  const { data: atual } = await supabase
+    .from("simulados_aluno")
+    .select("id, respostas, status")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!atual || atual.status !== "em_andamento") return { ok: false };
+  if (Object.keys((atual.respostas as Record<string, string>) || {}).length > 0) return { ok: false };
+
+  const { error } = await supabase
+    .from("simulados_aluno")
+    .update({ iniciado_em: new Date().toISOString() })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .eq("status", "em_andamento");
+  return { ok: !error };
+}
+
 /** 42703 = undefined_column no Postgres (migração de analytics não rodada). */
 function ehColunaAusente(erro: { code?: string; message?: string } | null): boolean {
   return erro?.code === "42703" || Boolean(erro?.message?.includes("tempos"));

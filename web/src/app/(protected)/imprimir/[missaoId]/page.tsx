@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Lock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ehPro } from "@/lib/plano/plano";
 import type { Pergunta } from "@/lib/questao/types";
 import { FolhaImpressao } from "@/components/imprimir/folha-impressao";
+import { PortaPro } from "@/components/imprimir/porta-pro";
 
 export const metadata: Metadata = {
   title: "Imprimir lista",
@@ -47,30 +46,7 @@ export default async function ImprimirPage({
   // Gate no SERVIDOR: sem isso, a página seria o caminho mais curto pra um
   // aluno grátis baixar o banco inteiro em PDF — pior que o teto diário que
   // acabamos de instalar, porque sai do app de vez.
-  if (!ehPro(perfil)) {
-    return (
-      <div className="casca-leitura flex min-h-[70vh] flex-col items-center justify-center gap-4 text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-questly-gold/12 text-questly-gold">
-          <Lock size={20} strokeWidth={2} />
-        </span>
-        <div>
-          <h1 className="font-heading text-[19px] font-semibold tracking-tight">
-            Exportar em PDF é do Pro
-          </h1>
-          <p className="mx-auto mt-1.5 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-            Com o Expectrum Pro você baixa qualquer lista ou simulado pra imprimir e resolver no papel — do
-            jeito que a prova vai ser.
-          </p>
-        </div>
-        <Link
-          href="/pro"
-          className="inline-flex h-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#e8c257] to-[#b98712] px-5 text-[14px] font-semibold text-[#2a1d02] transition-[filter] hover:brightness-110"
-        >
-          Conhecer o Pro
-        </Link>
-      </div>
-    );
-  }
+  if (!ehPro(perfil)) return <PortaPro contexto="lista" />;
 
   const { data: missao } = await supabase
     .from("missions")
@@ -117,14 +93,16 @@ export default async function ImprimirPage({
 
   return (
     <FolhaImpressao
-      titulo={disciplinaNome ? `Lista — ${disciplinaNome}` : "Lista de questões"}
+      titulo="Lista de exercícios"
+      disciplina={disciplinaNome}
       questoes={questoes}
       // A marca d'água é o e-mail da SESSÃO, lido no servidor. Nunca um valor
       // vindo do cliente: o ponto inteiro é que o aluno não escolha o que sai
       // carimbado no arquivo que ele vai distribuir.
       emailAluno={user.email ?? "conta sem e-mail"}
       nomeAluno={perfil?.nome ?? null}
-      missaoId={missao.id}
+      voltarHref={`/questao?missao=${missao.id}`}
+      voltarRotulo="Voltar pra lista"
     />
   );
 }
