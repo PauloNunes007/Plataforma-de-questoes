@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { APP_URL } from "@/lib/app-url";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 
@@ -18,11 +19,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
 });
-
-// URL pública do app — base pras URLs absolutas de canonical/OpenGraph. Sem
-// isso o Next avisa no build e os previews de link (WhatsApp/Instagram, por
-// onde a divulgação começa) saem sem título/imagem.
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://expectrum.com.br";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),

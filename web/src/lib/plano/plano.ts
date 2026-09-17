@@ -9,6 +9,8 @@
 // aqui são a fonte da verdade compartilhada entre a página /pro, o landing e as
 // ações de servidor.
 
+import { APP_URL } from "@/lib/app-url";
+
 export type Plano = "free" | "pro";
 export type Ciclo = "mensal" | "semestral";
 export type Forma = "recorrente" | "a_vista";
@@ -167,7 +169,6 @@ export function normalizarCodigoCupom(bruto: string): string {
 // perceber, e o convite morreria na mão do testador. No browser a origem real
 // é a fonte mais confiável que existe.
 export function linkConvite(codigo: string, base?: string): string {
-  const raiz = (base?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://expectrum.com.br")
-    .replace(/\/+$/, "");
+  const raiz = (base?.trim() || APP_URL).replace(/\/+$/, "");
   return `${raiz}/convite/${normalizarCodigoCupom(codigo)}`;
 }

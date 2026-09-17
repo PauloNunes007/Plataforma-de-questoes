@@ -59,11 +59,11 @@ export function MarcaOg({ size = 56, raio }: { size?: number; raio?: number }) {
 }
 
 /** Lockup completo: símbolo + nome, como aparece no topo dos cartões. */
-export function LockupOg({ size = 56 }: { size?: number }) {
+export function LockupOg({ size = 56, nome = 30 }: { size?: number; nome?: number }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
       <MarcaOg size={size} />
-      <div style={{ display: "flex", fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>
+      <div style={{ display: "flex", fontSize: nome, fontWeight: 600, letterSpacing: -0.5 }}>
         Expectrum
       </div>
     </div>
@@ -71,32 +71,50 @@ export function LockupOg({ size = 56 }: { size?: number }) {
 }
 
 /**
- * O espectro em escala de cartaz, sangrando pela borda inferior direita: é o
- * que faz o preview ser reconhecível como Expectrum antes de qualquer palavra
- * ser lida. Fica atrás do texto (posição absoluta), com opacidade baixa o
- * bastante pra não disputar contrato com o título.
+ * O espectro como faixa rente à borda de baixo — um equalizador da largura
+ * inteira do cartão.
+ *
+ * Nasceu de uma versão anterior que empilhava quatro barras gigantes no canto
+ * inferior DIREITO. Ficava bonita no cartão inteiro e péssima no WhatsApp: lá
+ * o preview às vezes vira um quadradinho recortado do CENTRO da imagem, e o
+ * centro não tinha nem marca nem frase legível — só o meio de uma palavra. A
+ * faixa é simétrica e mora fora da área de texto, então qualquer recorte
+ * (quadrado, 1.91:1, 4:1) continua mostrando o motivo da marca sem comer
+ * conteúdo.
  */
-export function EspectroFundo({ cor = "18, 185, 129" }: { cor?: string }) {
-  const alturas = [176, 268, 392, 540];
+export function FaixaEspectro({ cor = "18, 185, 129" }: { cor?: string }) {
+  // A curva SOBE da esquerda pra direita, e sobe acelerando — é a mesma curva
+  // das quatro barras do símbolo, esticada na largura do cartão. Uma primeira
+  // versão usava uma onda senoidal: ficava simétrica e discreta, mas lia como
+  // equalizador de áudio, que não é a promessa da marca.
+  const TOTAL = 30;
+  const barras = Array.from({ length: TOTAL }, (_, i) => {
+    const t = i / (TOTAL - 1);
+    const subida = Math.pow(t, 1.7);
+    return { altura: Math.round(16 + subida * 96), opacidade: 0.05 + subida * 0.14 };
+  });
+
   return (
     <div
       style={{
         position: "absolute",
-        right: 64,
-        bottom: -96,
+        left: 0,
+        right: 0,
+        bottom: 0,
         display: "flex",
         alignItems: "flex-end",
-        gap: 26,
+        paddingLeft: 20,
+        gap: 20,
       }}
     >
-      {alturas.map((altura, i) => (
+      {barras.map((barra, i) => (
         <div
-          key={altura}
+          key={i}
           style={{
-            width: 54,
-            height: altura,
-            borderRadius: 27,
-            background: `linear-gradient(180deg, rgba(${cor}, ${0.1 + i * 0.055}) 0%, rgba(${cor}, 0.02) 100%)`,
+            width: 20,
+            height: barra.altura,
+            borderRadius: "10px 10px 0 0",
+            backgroundColor: `rgba(${cor}, ${barra.opacidade})`,
           }}
         />
       ))}

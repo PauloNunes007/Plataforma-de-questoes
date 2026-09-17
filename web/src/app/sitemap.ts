@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://expectrum.com.br";
+import { APP_URL } from "@/lib/app-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
