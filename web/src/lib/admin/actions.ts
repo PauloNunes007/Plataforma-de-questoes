@@ -3,7 +3,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
 import { ativarAssinatura } from "@/lib/plano/ativar";
-import { buscarPagamentosPorReferencia, mpConfigurado } from "@/lib/plano/mercadopago";
+import {
+  buscarPagamentosPorReferencia,
+  metodosPagamentoMP,
+  mpConfigurado,
+} from "@/lib/plano/mercadopago";
+import { recorrenteHabilitado } from "@/lib/plano/preapproval";
+import type { MetodosPagamento } from "@/lib/plano/plano";
 import type { ItemImportado, Letra, QuestionPayload } from "@/lib/importar/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -343,18 +349,34 @@ export async function conferirAssinaturaAdminAction(
 // como "todo mundo reclamando que pagou e não liberou". Não devolve segredo
 // nenhum, só se cada peça está presente.
 export async function diagnosticoPagamentoAction(): Promise<
-  { tokenMP: boolean; segredoWebhook: boolean; urlApp: string | null; webhookUrl: string | null } | { error: string }
+  | {
+      tokenMP: boolean;
+      segredoWebhook: boolean;
+      urlApp: string | null;
+      webhookUrl: string | null;
+      /** Meios aceitos pela conta do MP. null = não deu pra consultar. */
+      metodos: MetodosPagamento | null;
+      recorrente: boolean;
+    }
+  | { error: string }
 > {
   const { supabase, error } = await requireAdmin();
   if (!supabase) return { error: error! };
 
   const url = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/+$/, "") || null;
   const https = !!url && url.startsWith("https://");
+  // Pergunta pro MP quais meios a conta aceita. É o que responde, sem abrir um
+  // checkout de teste, a pergunta "por que não aparece Pix?" — se vier
+  // `pix: false`, falta cadastrar a chave Pix no painel do Mercado Pago, e a
+  // tela de planos já para de prometer Pix sozinha (lib/plano/plano.ts).
+  const metodos = await metodosPagamentoMP();
   return {
     tokenMP: !!process.env.MP_ACCESS_TOKEN?.trim(),
     segredoWebhook: !!process.env.MP_WEBHOOK_SECRET?.trim(),
     urlApp: url,
     webhookUrl: https ? `${url}/api/mercadopago/webhook` : null,
+    metodos,
+    recorrente: recorrenteHabilitado(),
   };
 }
 

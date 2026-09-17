@@ -225,6 +225,23 @@ const STATUS_EM_ANDAMENTO = new Set([
   "authorized",
 ]);
 
+// Traduz o `status_detail` do MP numa frase acionável pro aluno.
+//
+// **Repasse de 2026-09-17.** A lista tinha 8 casos e caía num "O pagamento não
+// foi concluído" genérico pra todo o resto — que é justamente o que impede
+// alguém de descobrir o que houve. O dono levou erro pagando com cartão de
+// débito e a tela não soube dizer nada.
+//
+// Dois cuidados que valem pra quem for mexer aqui:
+//
+//   • **débito no Checkout Pro** costuma voltar como `cc_rejected_other_reason`
+//     (recusa do emissor, sem detalhe) ou `cc_rejected_card_type_not_allowed`
+//     quando a conta vendedora não tem débito habilitado. Nenhum dos dois é bug
+//     nosso, mas os dois exigem frases diferentes — "tente outro cartão" e "esse
+//     tipo de cartão não serve aqui" mandam o aluno pra lados opostos;
+//   • o código cru NUNCA vai pra tela (não diz nada a um aluno), mas vai pro
+//     log. Um `status_detail` desconhecido aparecendo no Vercel é o único jeito
+//     de esta lista continuar crescendo com base em recusa real.
 function motivoRecusa(statusDetail: string | null): string {
   switch (statusDetail) {
     case "cc_rejected_insufficient_amount":
@@ -233,17 +250,41 @@ function motivoRecusa(statusDetail: string | null): string {
       return "Código de segurança incorreto.";
     case "cc_rejected_bad_filled_date":
       return "Data de validade incorreta.";
+    case "cc_rejected_bad_filled_card_number":
+      return "O número do cartão saiu errado.";
     case "cc_rejected_bad_filled_other":
       return "Algum dado do cartão saiu errado.";
     case "cc_rejected_call_for_authorize":
-      return "O banco pediu que você autorize a compra antes.";
+      return "O banco pediu que você autorize a compra antes. Ligue pra ele e tente de novo.";
     case "cc_rejected_high_risk":
       return "O emissor recusou a compra por segurança.";
+    case "cc_rejected_blacklist":
+      return "O Mercado Pago recusou a compra por segurança.";
     case "cc_rejected_max_attempts":
-      return "Muitas tentativas com esse cartão.";
+      return "Muitas tentativas com esse cartão. Espere um pouco ou use outro.";
+    case "cc_rejected_card_disabled":
+      return "Esse cartão está bloqueado pra compras online. Fale com o banco ou use outro.";
+    case "cc_rejected_card_type_not_allowed":
+      return "Esse tipo de cartão não é aceito nesta cobrança. Tente um cartão de crédito.";
+    case "cc_rejected_invalid_installments":
+      return "Esse cartão não aceita o número de parcelas escolhido.";
+    case "cc_rejected_duplicated_payment":
+      return "Já existe um pagamento igual recém-feito — confira antes de tentar outra vez.";
+    case "cc_rejected_card_error":
+    case "cc_rejected_other_reason":
+      return "O banco recusou sem detalhar o motivo. Costuma resolver com outro cartão.";
+    case "cc_amount_rate_limit_exceeded":
+      return "O valor passa do limite permitido pra esse meio de pagamento.";
+    case "rejected_insufficient_data":
+      return "Faltou algum dado do pagador (o CPF, normalmente).";
     case "expired":
       return "O prazo do pagamento expirou.";
     default:
+      // Sem isto, um código novo do MP vira silêncio: a tela diz o genérico e
+      // não sobra rastro de qual era.
+      if (statusDetail) {
+        console.error("status_detail do MP sem tradução (adicione em motivoRecusa):", statusDetail);
+      }
       return "O pagamento não foi concluído.";
   }
 }

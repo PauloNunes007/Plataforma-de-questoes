@@ -968,6 +968,40 @@ semestral à vista. Os preços da landing passaram a ser **importados** de
 `lib/plano/plano.ts` em vez de digitados — marketing e caixa não podem discordar
 de preço.
 
+### Os meios de pagamento param de ser promessa (2026-09-17, quarta rodada)
+
+O dono foi pagar e **não havia Pix no checkout** — a tela prometia em três
+lugares ("Pix, boleto ou cartão parcelado"). Não era bug de integração: Pix só
+aparece no Checkout Pro quando a conta que recebe **tem chave Pix cadastrada**,
+configuração do painel do MP que a preferência não alcança. Mesmo erro do "sem
+juros": afirmar algo que não controlamos.
+
+A diferença é que este dá pra **conferir**. `metodosPagamentoMP()`
+(`lib/plano/mercadopago.ts`) lê `GET /v1/payment_methods` com o nosso token —
+que devolve os meios ativos *daquela conta* — e a `/pro` monta a frase a partir
+disso (`meiosAceitosTexto`, `lib/plano/plano.ts`). Três consequências:
+
+- o cartão de preço, a linha de confiança e o aviso de recusa ("tente outro
+  cartão **ou por Pix**") citam só o que existe;
+- se a consulta falhar, a frase encolhe pra "cartão de crédito" — **errar pra
+  menos é o lado certo de errar** quando se trata de prometer;
+- cache de processo de 10 min, senão seria uma chamada de rede por render.
+
+`/admin/assinaturas` ganhou a linha correspondente na tarja: *"Sua conta não
+tem Pix ativo — cadastre uma chave Pix no painel"*. Antes, descobrir isso
+exigia tentar uma compra real.
+
+Junto: `motivoRecusa` (`lib/plano/actions.ts`) tinha 8 códigos e caía num "O
+pagamento não foi concluído" genérico pro resto — o dono levou erro com cartão
+de **débito** e a tela não soube dizer nada. Agora são 17, com os dois casos de
+débito separados (`cc_rejected_other_reason` = recusa do emissor, tente outro
+cartão; `cc_rejected_card_type_not_allowed` = a conta vendedora não aceita
+débito), e **todo `status_detail` desconhecido vai pro log** — é o único jeito
+de a lista crescer com base em recusa real, em vez de adivinhação.
+
+⚠️ O código cru do MP nunca vai pra tela do aluno (não diz nada a ele); vai pro
+log do Vercel.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

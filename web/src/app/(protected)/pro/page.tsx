@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { buscarMinhaAssinaturaPendenteAction, conferirPagamentoAction } from "@/lib/plano/actions";
 import { ehPro, opcoesVisiveis } from "@/lib/plano/plano";
+import { metodosPagamentoMP } from "@/lib/plano/mercadopago";
 import { recorrenteHabilitado } from "@/lib/plano/preapproval";
 import { PlanosView } from "@/components/plano/planos-view";
 
@@ -49,13 +50,16 @@ export default async function ProPage({
 
   const conferencia = voltouDoCheckout ? await conferirPagamentoAction(paymentId) : null;
 
-  const [{ data: profile }, pendente] = await Promise.all([
+  const [{ data: profile }, pendente, metodos] = await Promise.all([
     supabase
       .from("profiles")
       .select("plano, plano_ciclo, plano_desde, plano_expira_em, plano_fidelidade_ate")
       .eq("id", user.id)
       .maybeSingle(),
     buscarMinhaAssinaturaPendenteAction(),
+    // Os meios que a conta vendedora aceita HOJE. A tela só promete Pix/boleto
+    // se eles existirem no checkout — ver `MetodosPagamento` em lib/plano/plano.ts.
+    metodosPagamentoMP(),
   ]);
 
   const jaEhPro = ehPro(profile);
@@ -68,6 +72,7 @@ export default async function ProPage({
         // que garante que "assinar" seja sempre um redirect limpo pro Mercado
         // Pago, sem aviso nenhum no meio do caixa.
         opcoes={opcoesVisiveis(recorrenteHabilitado())}
+        metodos={metodos}
         jaEhPro={jaEhPro}
         ciclo={profile?.plano_ciclo ?? null}
         expiraEm={jaEhPro ? (profile?.plano_expira_em ?? null) : null}

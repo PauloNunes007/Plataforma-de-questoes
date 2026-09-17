@@ -81,6 +81,44 @@ export const DESCONTO_SEMESTRAL_PCT = Math.round(
   (1 - PRECO_SEMESTRAL_MENSAL_CENTAVOS / PRECO_MENSAL_CENTAVOS) * 100,
 );
 
+/* --------------------------------------------------- meios de pagamento */
+
+// Quais meios a CONTA VENDEDORA aceita hoje, lidos da API do Mercado Pago
+// (`metodosPagamentoMP` em ./mercadopago.ts) e não escritos à mão.
+//
+// **Repasse de 2026-09-17 (segunda rodada do dia).** A tela dizia "Pix, boleto
+// ou cartão parcelado" em três lugares, e o dono foi pagar: o checkout não
+// tinha Pix. Não era bug de integração — Pix só aparece no Checkout Pro quando
+// a conta que recebe tem chave Pix cadastrada, e isso é configuração do painel
+// do MP, fora do alcance da preferência que mandamos.
+//
+// Anunciar um meio de pagamento que o gateway não vai oferecer é o mesmo erro
+// que prometer "sem juros" (ver PARCELAS_SEMESTRAL): uma promessa sobre algo
+// que não controlamos. A diferença é que esta dá pra CONFERIR — a API devolve
+// os meios ativos da conta —, então a tela passou a derivar a frase em vez de
+// afirmar. Se a consulta falhar, a frase encolhe pro que é sempre verdade
+// (cartão de crédito): errar pra menos é o lado certo de errar aqui.
+export type MetodosPagamento = {
+  pix: boolean;
+  boleto: boolean;
+  credito: boolean;
+  debito: boolean;
+};
+
+/** "Pix, cartão ou boleto" — a partir do que a conta realmente aceita. */
+export function meiosAceitosTexto(m: MetodosPagamento | null): string {
+  const meios: string[] = [];
+  if (m?.pix) meios.push("Pix");
+  if (m?.credito) meios.push("cartão de crédito");
+  if (m?.debito) meios.push("débito");
+  if (m?.boleto) meios.push("boleto");
+  // Sem resposta do MP (token ausente, API fora): o mínimo que é sempre
+  // verdade numa preferência de Checkout Pro.
+  if (!meios.length) return "cartão de crédito";
+  if (meios.length === 1) return meios[0];
+  return `${meios.slice(0, -1).join(", ")} ou ${meios[meios.length - 1]}`;
+}
+
 // Shape mínimo do profile que o gating lê — casa com as colunas da migração.
 export type PlanoDoProfile = {
   plano?: string | null;

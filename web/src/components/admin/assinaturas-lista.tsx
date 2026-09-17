@@ -10,7 +10,7 @@ import {
   type AssinaturaAdmin,
 } from "@/lib/admin/actions";
 import { AdminTabs } from "@/components/admin/admin-tabs";
-import { reais } from "@/lib/plano/plano";
+import { reais, type MetodosPagamento } from "@/lib/plano/plano";
 import { ProMark } from "@/components/plano/pro-ui";
 
 export type DiagnosticoPagamento = {
@@ -18,12 +18,22 @@ export type DiagnosticoPagamento = {
   segredoWebhook: boolean;
   urlApp: string | null;
   webhookUrl: string | null;
+  /** Meios aceitos pela conta do MP. null = não deu pra consultar. */
+  metodos: MetodosPagamento | null;
+  recorrente: boolean;
 };
 
+// Rótulo do pedido. Lê `forma` além de `ciclo` porque as linhas antigas
+// (vendidas antes de 2026-09-17, quando o semestral era 6 cobranças de R$ 10)
+// convivem no banco com as novas — chamar as duas de "Semestral" esconderia
+// que uma cobrou R$ 60 de uma vez e a outra cobra por mês.
 function rotuloPlano(a: AssinaturaAdmin): string {
-  if (a.ciclo === "mensal") return "Mensal · recorrente";
-  if (a.forma === "a_vista") return "Semestral · à vista (6 meses)";
-  return "Semestral · R$/mês (fidelidade 6 meses)";
+  if (a.ciclo === "mensal") {
+    return a.forma === "recorrente" ? "Mensal · renovação automática" : "Mensal · 1 mês";
+  }
+  return a.forma === "a_vista"
+    ? "Semestral · 6 meses numa cobrança"
+    : "Semestral · 6 cobranças mensais (legado)";
 }
 
 const STATUS_COR: Record<string, string> = {
@@ -230,9 +240,6 @@ export function AssinaturasLista({
 function DiagnosticoCard({ diagnostico }: { diagnostico: DiagnosticoPagamento | null }) {
   if (!diagnostico) return null;
 
-  const tudoCerto = diagnostico.tokenMP && !!diagnostico.webhookUrl;
-  if (tudoCerto && diagnostico.segredoWebhook) return null;
-
   const problemas: string[] = [];
   if (!diagnostico.tokenMP) {
     problemas.push(
@@ -251,6 +258,21 @@ function DiagnosticoCard({ diagnostico }: { diagnostico: DiagnosticoPagamento | 
       "MP_WEBHOOK_SECRET não está configurado — a liberação continua funcionando (o status vem da API do MP), mas sem a validação de origem das notificações.",
     );
   }
+  // Meios de pagamento da CONTA, não do código. Responde sem abrir um checkout
+  // de teste a pergunta "por que não aparece Pix?" — que custou uma tentativa
+  // de compra real pra ser descoberta.
+  if (diagnostico.metodos && !diagnostico.metodos.pix) {
+    problemas.push(
+      "Sua conta do Mercado Pago não tem Pix ativo — cadastre uma chave Pix no painel do MP pra ele aparecer no checkout. A tela de planos já parou de prometer Pix sozinha, então nada está sendo anunciado a mais.",
+    );
+  }
+  if (diagnostico.metodos && !diagnostico.metodos.boleto) {
+    problemas.push(
+      "Boleto não está ativo na sua conta do Mercado Pago. Não é obrigatório — só não é oferecido nem anunciado.",
+    );
+  }
+
+  if (!problemas.length) return null;
 
   return (
     <div className="mb-5 flex items-start gap-3 rounded-xl border border-questly-orange/30 bg-questly-orange-light/60 px-4 py-3.5">

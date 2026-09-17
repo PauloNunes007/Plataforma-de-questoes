@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 import {
   DESCONTO_SEMESTRAL_PCT,
+  meiosAceitosTexto,
   PRECO_MENSAL_CENTAVOS,
   RECURSOS_FREE,
   reais,
+  type MetodosPagamento,
   type OpcaoPlano,
 } from "@/lib/plano/plano";
 import {
@@ -37,6 +39,8 @@ import { ProEmblema, ProMark } from "@/components/plano/pro-ui";
 type PlanosViewProps = {
   /** O que esta instalação consegue cobrar — resolvido no servidor. */
   opcoes: OpcaoPlano[];
+  /** Meios que a conta do MP aceita hoje. null = não deu pra confirmar. */
+  metodos: MetodosPagamento | null;
   jaEhPro: boolean;
   ciclo: string | null;
   expiraEm: string | null;
@@ -45,6 +49,12 @@ type PlanosViewProps = {
   voltouDoCheckout: boolean;
   conferenciaInicial: ConferenciaPagamento | null;
 };
+
+// A frase de meios nasce em minúscula ("Pix, cartão de crédito ou boleto") pra
+// caber no meio de uma sentença; a linha de confiança a usa como rótulo.
+function capitalizar(texto: string): string {
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
 
 function formatarData(iso: string | null): string {
   if (!iso) return "—";
@@ -211,10 +221,15 @@ export function PlanosView(props: PlanosViewProps) {
         />
       ) : (
         <>
+          {/* "ou por Pix" só entra se a conta aceitar Pix: mandar um aluno
+              cujo cartão acabou de ser recusado tentar um meio que não existe
+              no checkout é a pior hora possível pra uma promessa vazia. */}
           {mostrandoRecusa && (
             <Aviso
               titulo="O pagamento não foi aprovado"
-              texto={`${detalhe ?? "O Mercado Pago recusou a cobrança."} Nada foi cobrado — dá pra tentar de novo, com outro cartão ou por Pix.`}
+              texto={`${detalhe ?? "O Mercado Pago recusou a cobrança."} Nada foi cobrado — dá pra tentar de novo${
+                props.metodos?.pix ? ", com outro cartão ou por Pix" : " com outro cartão"
+              }.`}
             />
           )}
           {erro && <Aviso titulo="Não deu pra continuar" texto={erro} />}
@@ -224,6 +239,7 @@ export function PlanosView(props: PlanosViewProps) {
               <PlanoCard
                 key={opcao.id}
                 opcao={opcao}
+                metodos={props.metodos}
                 enviando={enviando === opcao.id}
                 bloqueado={enviando !== null}
                 onAssinar={() => assinar(opcao)}
@@ -231,7 +247,7 @@ export function PlanosView(props: PlanosViewProps) {
             ))}
           </div>
 
-          <LinhaConfianca />
+          <LinhaConfianca metodos={props.metodos} />
         </>
       )}
 
@@ -268,11 +284,13 @@ function Cabecalho({ jaEhPro }: { jaEhPro: boolean }) {
 
 function PlanoCard({
   opcao,
+  metodos,
   enviando,
   bloqueado,
   onAssinar,
 }: {
   opcao: OpcaoPlano;
+  metodos: MetodosPagamento | null;
   enviando: boolean;
   bloqueado: boolean;
   onAssinar: () => void;
@@ -287,14 +305,19 @@ function PlanoCard({
 
   // Como a cobrança acontece de verdade. Vale a linha porque as opções são
   // materialmente diferentes no gateway, e o aluno só descobria isso depois de
-  // pagar. Sobre "sem juros": não prometemos — quem decide é a configuração da
-  // conta vendedora no MP, não a nossa preferência (ver lib/plano/plano.ts).
+  // pagar.
+  //
+  // Os MEIOS saem de `metodos`, lido da conta do MP — não de uma frase fixa.
+  // A versão fixa dizia "Pix" numa conta sem chave Pix cadastrada, e o aluno
+  // só descobria no checkout. Mesma regra do "sem juros": não se promete o que
+  // não se controla (ver lib/plano/plano.ts).
+  const meios = meiosAceitosTexto(metodos);
   const comoCobra =
     opcao.forma === "recorrente"
       ? "Cobrado no cartão de crédito todo mês, até você cancelar."
       : opcao.parcelasMax > 1
-        ? `Uma cobrança de ${reais(opcao.precoCentavos)} — Pix, boleto ou em até ${opcao.parcelasMax}× no cartão.`
-        : `Uma cobrança de ${reais(opcao.precoCentavos)} — Pix, cartão ou boleto.`;
+        ? `Uma cobrança de ${reais(opcao.precoCentavos)} — ${meios}, ou em até ${opcao.parcelasMax}× no cartão.`
+        : `Uma cobrança de ${reais(opcao.precoCentavos)} — ${meios}.`;
 
   return (
     <div
@@ -380,9 +403,9 @@ function PlanoCard({
   );
 }
 
-function LinhaConfianca() {
+function LinhaConfianca({ metodos }: { metodos: MetodosPagamento | null }) {
   const itens = [
-    { icone: CreditCard, texto: "Pix, boleto ou cartão parcelado" },
+    { icone: CreditCard, texto: capitalizar(meiosAceitosTexto(metodos)) },
     { icone: Lock, texto: "Checkout do Mercado Pago — não guardamos seu cartão" },
     { icone: ShieldCheck, texto: "Liberação automática assim que o pagamento aprovar" },
   ];

@@ -9,7 +9,7 @@
 // porta de TODA venda (ver o repasse no topo de ./plano.ts) — o semestral
 // entrega o "R$ 10/mês" por parcelamento em vez de assinatura, e o recorrente
 // de verdade (`./preapproval.ts`) só volta à tela com `MP_RECORRENTE=1`.
-import type { OpcaoPlano } from "./plano";
+import type { MetodosPagamento, OpcaoPlano } from "./plano";
 
 const MP_API = "https://api.mercadopago.com";
 
@@ -26,6 +26,55 @@ export function mpConfigurado(): boolean {
 
 function urlDoApp(): string {
   return (process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000").replace(/\/+$/, "");
+}
+
+// Meios de pagamento que ESTA conta vendedora aceita. É o que permite a /pro
+// dizer "Pix" só quando Pix existe de verdade no checkout — ver o repasse em
+// ./plano.ts (`MetodosPagamento`).
+//
+// Cache de processo com TTL: a resposta muda quando o dono mexe no painel do
+// MP (cadastra uma chave Pix, por exemplo), o que é raro, e sem cache isto
+// viraria uma chamada de rede em CADA render da /pro. 10 minutos é curto o
+// bastante pra uma mudança no painel aparecer sozinha e longo o bastante pra
+// não pesar.
+const METODOS_CACHE_MS = 10 * 60 * 1000;
+let metodosCache: { valor: MetodosPagamento; expira: number } | null = null;
+
+export async function metodosPagamentoMP(): Promise<MetodosPagamento | null> {
+  const token = tokenMP();
+  if (!token) return null;
+  if (metodosCache && metodosCache.expira > Date.now()) return metodosCache.valor;
+
+  try {
+    const res = await fetch(`${MP_API}/v1/payment_methods`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      console.error("Erro ao listar meios de pagamento do MP:", res.status, await res.text());
+      return null;
+    }
+    const data = (await res.json()) as Array<{
+      id?: string;
+      payment_type_id?: string;
+      status?: string;
+    }>;
+    const ativos = (Array.isArray(data) ? data : []).filter((m) => m.status === "active");
+    const temTipo = (tipo: string) => ativos.some((m) => m.payment_type_id === tipo);
+    const valor: MetodosPagamento = {
+      // Pix é um `bank_transfer` específico — checar o tipo pegaria também
+      // outras transferências, que não são o que a tela promete.
+      pix: ativos.some((m) => m.id === "pix"),
+      boleto: temTipo("ticket"),
+      credito: temTipo("credit_card"),
+      debito: temTipo("debit_card"),
+    };
+    metodosCache = { valor, expira: Date.now() + METODOS_CACHE_MS };
+    return valor;
+  } catch (e) {
+    console.error("Falha de rede ao listar meios de pagamento do MP:", e);
+    return null;
+  }
 }
 
 // Cria uma preferência de Checkout Pro e devolve o link pro qual redirecionar o
