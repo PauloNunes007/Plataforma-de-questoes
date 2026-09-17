@@ -1292,6 +1292,29 @@ Achados a partir de um PDF real exportado pelo dono:
   rodapés"** no diálogo do Chrome — é o que tira a data e a URL do site de cima
   da folha, e não há CSS que faça isso pelo app.
 
+### Terceira rodada (2026-09-17): "Falha ao carregar documento PDF"
+
+- **A troca de `document.title` saiu do clique de imprimir.** A tentativa
+  anterior trocava o título dentro de `imprimir()`, logo antes de
+  `window.print()`. Deu errado duas vezes: mexer no documento no instante em
+  que o Chrome monta a pré-visualização é caminho conhecido pra "Falha ao
+  carregar documento PDF", e quem imprime por **Ctrl+P** nunca passava pela
+  função — o arquivo saía sem nome de qualquer jeito. Agora o título é trocado
+  num efeito de **montagem** (e devolvido no unmount): o documento fica parado
+  durante a impressão e os dois caminhos ganham o nome certo.
+- **Marca d'água sem SVG.** Saiu o `<pattern>` com `patternTransform` dentro de
+  um `position: fixed` repintado em todas as páginas — elegante e exatamente o
+  tipo de coisa que faz o gerador de PDF desistir. São **6 `<span>` rotacionados
+  por página**, posicionados em porcentagem: primitivo, continua vetorial (o
+  Chrome escreve a matriz do texto) e custa seis desenhos por folha.
+- **Figuras menores ainda**: `.figura-enunciado` 46mm, `.figura-alternativa`
+  20mm, e as classes de tela (`max-h-[190px]`/`max-h-[78px]`) agora batem com o
+  papel — antes a tela mostrava o dobro do que ia sair impresso.
+- **Aviso de arquivo longo** (`PAGINAS_DEMAIS`, 40): com o espaço amplo como
+  padrão, 25 questões já passam de 25 páginas, e a pré-visualização do Chrome
+  falha em documentos muito longos com muitas figuras. É aviso, não bloqueio —
+  mas sem ele o aluno conclui que o site quebrou.
+
 ### Hub dos Simulados reorganizado (2026-09-17)
 
 Era uma pilha vertical única em que a prova em andamento, as duas portas de

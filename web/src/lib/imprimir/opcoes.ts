@@ -16,6 +16,15 @@ export type Espacamento = "compacto" | "normal" | "amplo";
  *  economizar papel desce pra `normal` ou `compacto` nas Opções. */
 export const ALTURA_RESOLUCAO_MM = { compacto: 0, normal: 32, amplo: 68 } as const;
 
+/**
+ * Acima disso a tela AVISA que o arquivo é longo.
+ *
+ * Não é frescura de tamanho: a pré-visualização do Chrome falha
+ * ("Falha ao carregar documento PDF") em documentos muito longos com muitas
+ * figuras, e o aluno leva a culpa achando que o site quebrou. Com o espaço de
+ * resolução amplo como padrão, 25 questões já passam de 25 páginas.
+ */
+export const PAGINAS_DEMAIS = 40;
 
 export type OpcoesFolha = {
   /** Quantas questões entram no PDF (as N primeiras, na ordem da lista). */
@@ -105,11 +114,11 @@ export function paginasEstimadas(questoes: Pergunta[], opcoes: OpcoesFolha): num
     const linhasEnunciado = Math.ceil((q.enunciado?.length || 0) / 95);
     const alternativas = Object.keys(q.alternativas || {}).length;
     mm += 10 + linhasEnunciado * 5.5 + alternativas * 6.5 + extraEspaco;
-    if (q.imagem_url) mm += 58;
+    if (q.imagem_url) mm += 50;
     // Figuras de alternativa saem em DUAS colunas (ver Alternativas em
     // folha-prova.tsx): cinco figuras são três linhas, não cinco.
     const figurasAlt = Object.keys(q.alternativas_imagens || {}).length;
-    if (figurasAlt > 0) mm += Math.ceil(figurasAlt / 2) * 30;
+    if (figurasAlt > 0) mm += Math.ceil(figurasAlt / 2) * 24;
   }
 
   let paginas = Math.max(1, Math.ceil(mm / alturaUtilMm));
@@ -143,8 +152,8 @@ export function alternativasEmLinha(q: Pergunta): boolean {
  * O Chrome sugere o nome do arquivo a partir do `document.title` — e o título
  * da rota ("Imprimir lista do tópico · Expectrum") não diz NADA sobre o que o
  * aluno acabou de baixar: seis listas na pasta de Downloads com o mesmo nome
- * genérico. A tela troca o título só durante a impressão (ver `imprimir()` em
- * folha-impressao.tsx) e devolve o original no `afterprint`.
+ * genérico. A troca acontece AO ABRIR a tela (efeito de montagem em
+ * folha-impressao.tsx), nunca no clique de imprimir — ver o comentário lá.
  *
  * Sem "/" e sem ":" — em Windows e macOS eles não podem entrar num nome de
  * arquivo, e o navegador os substitui por algo pior do que não tê-los.

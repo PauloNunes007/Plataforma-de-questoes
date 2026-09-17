@@ -144,7 +144,7 @@ export function FolhaProva({
                   <img
                     src={q.imagem_url}
                     alt=""
-                    className="figura-enunciado mt-2.5 max-h-[250px] w-auto max-w-full object-contain"
+                    className="figura-enunciado mt-2.5 max-h-[190px] w-auto max-w-full object-contain"
                   />
                 )}
 
@@ -241,7 +241,7 @@ function Alternativas({ q }: { q: Pergunta }) {
               <img
                 src={imagens[letra]}
                 alt=""
-                className="figura-alternativa mt-1 max-h-[120px] w-auto max-w-full object-contain"
+                className="figura-alternativa mt-1 max-h-[78px] w-auto max-w-full object-contain"
               />
             )}
           </li>
@@ -310,46 +310,55 @@ function CartaoRespostaImpresso({ questoes }: { questoes: Pergunta[] }) {
 /**
  * A marca d'água diagonal repetida.
  *
- * É um SVG com `<pattern>` em vez de texto repetido no DOM: um padrão vetorial
- * cobre qualquer altura de página sem o app precisar saber quantas páginas o
- * PDF terá, e o texto continua nítido em qualquer zoom (o leitor de PDF não
- * reamostra vetor).
+ * SEIS carimbos por página, posicionados em porcentagem — não um `<pattern>`
+ * SVG. A versão em SVG era elegante e frágil: um padrão vetorial com
+ * `patternTransform` dentro de um elemento `position: fixed`, repintado em
+ * todas as páginas, é exatamente o tipo de coisa que faz o Chrome desistir com
+ * "Falha ao carregar documento PDF" na hora de salvar. Texto rotacionado é
+ * primitivo, continua vetorial no PDF (o Chrome escreve a matriz do texto, não
+ * um bitmap) e custa seis desenhos por folha.
  *
  * A cor é um cinza-claro SÓLIDO, não preto com `fill-opacity`. A diferença é
  * invisível na tela e decisiva no arquivo: uma camada semitransparente cobrindo
  * a página inteira obriga o gerador de PDF a achatar tudo que está embaixo num
- * BITMAP — era isso que fazia o texto sair borrado e o arquivo engordar
- * ("a qualidade cai bastante"). Sem alfa, o texto continua vetorial e nítido em
- * qualquer zoom.
+ * BITMAP — era isso que fazia o texto sair borrado e o arquivo engordar.
  *
  * Claro o bastante pra não atrapalhar a leitura da questão e escuro o bastante
  * pra sobreviver a uma fotocópia — é o mesmo compromisso dos PDFs de editora
- * acadêmica.
+ * acadêmica. A atribuição não depende de todas sobreviverem: basta UMA.
  */
+const POSICOES_MARCA = [
+  { top: "9%", left: "5%" },
+  { top: "24%", left: "52%" },
+  { top: "43%", left: "16%" },
+  { top: "58%", left: "58%" },
+  { top: "77%", left: "7%" },
+  { top: "90%", left: "48%" },
+];
+
 export function MarcaDiagonal({ email }: { email: string }) {
   return (
-    <div className="marca-diagonal pointer-events-none absolute inset-0 select-none overflow-hidden">
-      <svg width="100%" height="100%" aria-hidden>
-        <defs>
-          {/* Densidade reduzida em 2026-09-17 a pedido do dono: eram duas
-              marcas por ladrilho de 320x200, agora uma por 470x310 — cerca de
-              4x menos carimbo na página. A atribuição continua de pé (basta
-              UMA sobreviver a um recorte), mas a folha deixou de parecer
-              rajada por trás da conta que o aluno vai escrever. */}
-          <pattern
-            id="marca-expectrum"
-            width="470"
-            height="310"
-            patternUnits="userSpaceOnUse"
-            patternTransform="rotate(-30)"
-          >
-            <text x="0" y="60" fill="#dfe3e8" fontSize="13" fontFamily="sans-serif">
-              {email}
-            </text>
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#marca-expectrum)" />
-      </svg>
+    <div
+      className="marca-diagonal pointer-events-none absolute inset-0 select-none overflow-hidden"
+      aria-hidden
+    >
+      {POSICOES_MARCA.map((pos, i) => (
+        <span
+          key={i}
+          className="sans absolute whitespace-nowrap"
+          style={{
+            top: pos.top,
+            left: pos.left,
+            transform: "rotate(-30deg)",
+            transformOrigin: "left center",
+            color: "#dfe3e8",
+            fontSize: "12px",
+            letterSpacing: "0.04em",
+          }}
+        >
+          {email}
+        </span>
+      ))}
     </div>
   );
 }

@@ -120,8 +120,8 @@ export const CSS_IMPRESSAO = `
        pra folha seguinte e ficava meia página em branco atrás dele. Com o teto
        em mm, a questão inteira cabe e o espaço de resolução continua servindo
        pra alguma coisa. */
-    .figura-enunciado { max-height: 55mm !important; }
-    .figura-alternativa { max-height: 26mm !important; }
+    .figura-enunciado { max-height: 46mm !important; }
+    .figura-alternativa { max-height: 20mm !important; }
 
     .quebra-pagina { break-before: page; page-break-before: always; }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -22,6 +22,7 @@ import {
   limitarQuantidade,
   nomeDoArquivo,
   opcoesPadrao,
+  PAGINAS_DEMAIS,
   paginasEstimadas,
   sugestoesDeQuantidade,
   type Espacamento,
@@ -102,19 +103,23 @@ export function FolhaImpressao({
     setOpcoes((o) => ({ ...o, [chave]: valor }));
   }
 
-  // O nome do arquivo salvo sai do `document.title`, e o título da rota não
-  // diz o que o aluno baixou. Trocamos só durante a impressão e devolvemos no
-  // `afterprint` — trocar em definitivo mudaria a aba enquanto ele lê a folha.
-  function imprimir() {
+  // O nome do arquivo salvo sai do `document.title` — e o título da rota
+  // ("Imprimir lista do tópico · Expectrum") não diz o que o aluno baixou.
+  //
+  // O título é trocado AO ABRIR a tela, não no clique de imprimir. A primeira
+  // versão trocava dentro de `imprimir()`, logo antes de `window.print()`, e
+  // isso deu errado duas vezes: mexer no documento no instante em que o Chrome
+  // monta a pré-visualização é receita de "Falha ao carregar documento PDF", e
+  // quem imprime por Ctrl+P nunca passava pela função — o arquivo saía sem
+  // nome mesmo. Trocando na montagem, o documento fica PARADO durante a
+  // impressão e os dois caminhos ganham o nome certo.
+  useEffect(() => {
     const anterior = document.title;
     document.title = nomeDoArquivo(disciplina, titulo);
-    const restaurar = () => {
+    return () => {
       document.title = anterior;
-      window.removeEventListener("afterprint", restaurar);
     };
-    window.addEventListener("afterprint", restaurar);
-    window.print();
-  }
+  }, [disciplina, titulo]);
 
   return (
     <div className="folha-raiz">
@@ -161,7 +166,7 @@ export function FolhaImpressao({
 
               <button
                 type="button"
-                onClick={imprimir}
+                onClick={() => window.print()}
                 className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-questly-green px-3.5 text-[12.5px] font-semibold text-white transition-[filter] hover:brightness-105 dark:text-[#0c1512]"
               >
                 <Printer size={14} strokeWidth={2.1} />
@@ -337,6 +342,15 @@ function OpcoesImpressao({
             As {opcoes.quantidade} primeiras da lista · ~{paginas} {paginas === 1 ? "página" : "páginas"}{" "}
             no A4.
           </p>
+          {/* Aviso, não bloqueio: a pré-visualização do Chrome falha em
+              documentos muito longos com muitas figuras, e sem isto o aluno
+              conclui que o site quebrou. */}
+          {paginas > PAGINAS_DEMAIS && (
+            <p className="mt-1.5 text-[11.5px] font-medium text-questly-orange-dark">
+              Arquivo longo. Alguns navegadores falham ao gerar PDFs desse tamanho — se der erro, baixe
+              em duas partes ou escolha menos espaço pra resolver.
+            </p>
+          )}
         </Campo>
       )}
 
