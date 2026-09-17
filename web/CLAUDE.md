@@ -1391,6 +1391,63 @@ preto sobre branco é nenhum.
   Chrome desistir, é sobre a memória do celular do aluno — montar o arquivo
   passou a ser trabalho do aparelho dele.
 
+### Quinta rodada (2026-09-17): entrega no celular, marca no branco, dois moldes
+
+Três relatos do dono, três coisas sem relação entre si.
+
+**1. "No celular ele fica montando o pdf e depois nada acontece."** `pdf.save()`
+é um `<a download>` clicado por script, e ele roda DEPOIS de segundos de
+`await` — fora do gesto que o aluno fez. Navegador de celular engole esse
+clique: sem exceção, sem aviso, sem arquivo. Não dá pra detectar a falha; dá pra
+não depender dela. `baixarFolhaEmPdf` passou a **devolver o blob** em vez de
+salvar, e quem entrega é a tela (`entregarPdf` + `ArquivoProntoCartao`): tenta o
+download automático onde ele funciona (desktop, Android) e, **em qualquer
+caso**, mostra um cartão com um `<a download>` de verdade pro aluno tocar — um
+toque é gesto legítimo em todo navegador. No iOS o automático nem é tentado
+(navegar pra uma `blob:` tira o aluno da página) e o cartão oferece também
+`navigator.share`, que é por onde o PDF vai parar no app Arquivos. O cartão
+traz o nome e o tamanho do arquivo, porque "pronto" sem prova de que existe é a
+mesma angústia com outra roupa. Bônus da mesma rodada: `poucaMemoria()` derruba
+a escala de render pra 1.8 quando `deviceMemory <= 4` — meio PDF não vale mais
+nitidez que um PDF inteiro.
+
+**2. "A marca d'água muitas vezes fica em cima do texto, isso tá feio."** Estava
+mesmo: eram seis carimbos em posições fixas por PORCENTAGEM da página, e posição
+fixa não tem como saber que ali embaixo tem uma equação. Mas o gerador **sabe** —
+foi ele quem pôs cada imagem na folha. Agora ele guarda as faixas ocupadas de
+cada página (`ocupado`) e `faixasLivres` devolve os vãos em branco; a marca vai
+pro maior vão (numa lista com espaço pra resolver, exatamente o espaço da
+conta), no máximo dois por página. Sem vão que sirva — folha de gabarito, prova
+compacta —, ela vai deitada pra margem lateral, onde nunca houve texto. O cinza
+também clareou (232,236,240): marca que mora no branco pode ser discreta sem
+deixar de ser legível. A atribuição não afrouxou — o rodapé com o e-mail
+continua em toda página, e basta UMA marca sobreviver a um recorte.
+
+**3. "Tá feio, a letra tá fraquinha e meio pequena, deixa premium — e o simulado
+podia copiar o estilo das provas de Física da UFF."** `FolhaProva` ganhou
+`variante`:
+
+- **`"prova"`** (usada por `/imprimir/simulado/[id]`) é o molde da prova
+  impressa: cabeçalho CENTRADO, filete duplo, `QUESTÃO 01` com a linha correndo
+  até a margem. Quem já fez uma P1 reconhece a forma antes de ler — e é isso que
+  faz a simulação valer. **A identidade é Expectrum**: o nome da universidade
+  aparece como FONTE das questões (que é o que ela é), nunca como quem assina a
+  folha.
+- **`"lista"`** (o padrão, usada pelas outras duas portas) é editorial:
+  cabeçalho à esquerda com barra verde, título maior, número da questão num
+  quadrado. Deliberadamente DIFERENTE — uma lista de exercícios não é uma prova,
+  e vestir as duas iguais tira o peso das duas.
+
+A tipografia subiu junto: corpo de **12,5px → 15px** (≈8,5pt → ≈10,2pt no A4 —
+antes era corpo de nota de rodapé), preto de `#111827` → `#0b1016`, e os cinzas
+de metadado saíram do quase-invisível. ⚠️ Isso muda quantas questões cabem por
+página: `paginasEstimadas` em `lib/imprimir/opcoes.ts` foi recalibrado junto
+(80 caracteres por linha, 6,4mm por linha) e precisa acompanhar qualquer mexida
+futura na tipografia da folha.
+
+Medido nas duas variantes (10 questões, espaço amplo, figura em 1/3, cartão +
+gabarito + resoluções): 7 páginas, ~1,0 MB, ~3,5 s cada.
+
 ### Hub dos Simulados reorganizado (2026-09-17)
 
 Era uma pilha vertical única em que a prova em andamento, as duas portas de

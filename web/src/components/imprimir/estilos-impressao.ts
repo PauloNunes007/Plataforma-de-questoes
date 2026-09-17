@@ -24,7 +24,7 @@
 
 export const CSS_IMPRESSAO = `
   .folha {
-    color: #111827;
+    color: #0b1016;
     background: #ffffff;
     font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
       "Times New Roman", serif;
@@ -39,7 +39,7 @@ export const CSS_IMPRESSAO = `
      tem diagrama, vetor, sistema de eixos —, e a pauta atrapalhava mais do que
      guiava. Só um filete no topo separando do enunciado. */
   .espaco-resolucao {
-    border-top: 1px dashed #dfe3e6;
+    border-top: 1px dashed #d7dde2;
   }
 
   /* KaTeX na folha.
@@ -75,7 +75,7 @@ export const CSS_IMPRESSAO = `
 
     html, body, .folha-raiz, .folha {
       background: #ffffff !important;
-      color: #111827 !important;
+      color: #0b1016 !important;
     }
 
     /* PAGINAÇÃO. O casco do app é flex (ver (protected)/layout.tsx, que já

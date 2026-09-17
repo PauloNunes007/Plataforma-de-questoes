@@ -114,16 +114,21 @@ export function limitarQuantidade(n: number, total: number): number {
  * serve pra decidir entre 20 e 120 questões, não pra prever o arquivo. A conta
  * é em "altura equivalente": uma questão média ocupa ~55mm de coluna útil,
  * cada figura soma, e o espaço de resolução escolhido soma direto.
+ *
+ * Os números de linha/altura acompanham a TIPOGRAFIA da folha: subiram em
+ * 2026-09-17 junto com o corpo (12,5px → 15px), porque letra maior cabe menos
+ * por linha e cada questão passou a ocupar mais folha. Se mexer em
+ * folha-prova.tsx, volte aqui.
  */
 export function paginasEstimadas(questoes: Pergunta[], opcoes: OpcoesFolha): number {
   const alturaUtilMm = 245; // A4 (297) menos margens e cabeçalho/rodapé correntes
   const extraEspaco = ALTURA_RESOLUCAO_MM[opcoes.espacamento];
 
-  let mm = opcoes.identificacao ? 42 : 24; // cabeçalho da primeira página
+  let mm = opcoes.identificacao ? 50 : 30; // cabeçalho da primeira página
   for (const q of questoes.slice(0, opcoes.quantidade)) {
-    const linhasEnunciado = Math.ceil((q.enunciado?.length || 0) / 95);
+    const linhasEnunciado = Math.ceil((q.enunciado?.length || 0) / 80);
     const alternativas = Object.keys(q.alternativas || {}).length;
-    mm += 10 + linhasEnunciado * 5.5 + alternativas * 6.5 + extraEspaco;
+    mm += 12 + linhasEnunciado * 6.4 + alternativas * 7.4 + extraEspaco;
     if (q.imagem_url) mm += 50;
     // Figuras de alternativa saem em DUAS colunas (ver Alternativas em
     // folha-prova.tsx): cinco figuras são três linhas, não cinco.

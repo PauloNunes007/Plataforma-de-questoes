@@ -79,6 +79,10 @@ export default async function ImprimirSimuladoPage({
       voltarHref={`/simulados/${simulado.id}`}
       voltarRotulo="Voltar pro simulado"
       permitirRecorte={false}
+      // Molde de prova: cabeçalho centrado, filete duplo, "QUESTÃO 01".
+      // A folha de um simulado precisa parecer a prova que ela simula — ver
+      // `VarianteFolha` em components/imprimir/folha-prova.tsx.
+      variante="prova"
     />
   );
 }

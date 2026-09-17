@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Check,
   Download,
+  FileCheck2,
   FileText,
   Layers,
   ListChecks,
@@ -15,10 +16,12 @@ import {
   Ruler,
   Settings2,
   SquarePen,
+  Share2,
+  X,
 } from "lucide-react";
 import type { Pergunta } from "@/lib/questao/types";
 import { CSS_IMPRESSAO } from "@/components/imprimir/estilos-impressao";
-import { FolhaProva } from "@/components/imprimir/folha-prova";
+import { FolhaProva, type VarianteFolha } from "@/components/imprimir/folha-prova";
 import {
   ESPACAMENTOS,
   limitarQuantidade,
@@ -67,6 +70,7 @@ export function FolhaImpressao({
   voltarHref,
   voltarRotulo = "Voltar",
   permitirRecorte = true,
+  variante = "lista",
 }: {
   titulo: string;
   disciplina?: string | null;
@@ -78,6 +82,8 @@ export function FolhaImpressao({
   voltarHref: string;
   voltarRotulo?: string;
   permitirRecorte?: boolean;
+  /** O molde da folha — ver folha-prova.tsx. */
+  variante?: VarianteFolha;
 }) {
   const total = questoes.length;
   const temResolucao = useMemo(() => questoes.some((q) => q.resolucao), [questoes]);
@@ -136,20 +142,33 @@ export function FolhaImpressao({
   const folhaRef = useRef<HTMLDivElement | null>(null);
   const [progresso, setProgresso] = useState<ProgressoPdf | null>(null);
   const [erroPdf, setErroPdf] = useState<string | null>(null);
+  const [pronto, setPronto] = useState<ArquivoPronto | null>(null);
+
+  // A URL do blob segura o arquivo na memória até alguém soltar.
+  useEffect(() => {
+    return () => {
+      if (pronto) URL.revokeObjectURL(pronto.url);
+    };
+  }, [pronto]);
 
   async function baixarPdf() {
     const folha = folhaRef.current;
     if (!folha || progresso) return;
     setErroPdf(null);
+    if (pronto) {
+      URL.revokeObjectURL(pronto.url);
+      setPronto(null);
+    }
     setProgresso({ feitos: 0, total: selecionadas.length + 2 });
     try {
       const { baixarFolhaEmPdf } = await import("@/lib/imprimir/gerar-pdf");
-      await baixarFolhaEmPdf({
+      const { blob, nome } = await baixarFolhaEmPdf({
         folha,
         nomeArquivo: arquivo,
         email: emailAluno,
         onProgresso: setProgresso,
       });
+      setPronto(entregarPdf(blob, nome));
     } catch (e) {
       console.error("[imprimir] falha ao gerar o PDF", e);
       setErroPdf(
@@ -264,6 +283,7 @@ export function FolhaImpressao({
 
           <FolhaProva
             folhaRef={folhaRef}
+            variante={variante}
             titulo={titulo}
             disciplina={disciplina}
             linhaContexto={linhaContexto}
@@ -277,12 +297,166 @@ export function FolhaImpressao({
       )}
 
       {progresso && <ProgressoPdfOverlay progresso={progresso} />}
+      {pronto && (
+        <ArquivoProntoCartao
+          pronto={pronto}
+          onFechar={() => {
+            URL.revokeObjectURL(pronto.url);
+            setPronto(null);
+          }}
+        />
+      )}
 
       {/* Rodapé carimbado em toda página impressa (escondido na tela). Não há
           cabeçalho corrente — ver estilos-impressao.ts: `fixed` + `top` cai
           por cima da primeira linha de cada página no Chrome. */}
       <div className="rodape-marca hidden">
         Expectrum · cópia pessoal de {emailAluno} · a redistribuição identifica esta conta
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Entregar o arquivo
+// ---------------------------------------------------------------------------
+
+type ArquivoPronto = { url: string; nome: string; blob: Blob; automatico: boolean };
+
+/**
+ * iPhone/iPad, inclusive o iPad que se apresenta como Mac.
+ *
+ * Existe porque o iOS é o caso em que o download automático não só falha como
+ * ATRAPALHA: navegar pra uma `blob:` tira o aluno da página, e ele volta pra
+ * uma tela que parece ter perdido o trabalho. Lá o arquivo só é oferecido.
+ */
+function ehIOS(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+}
+
+/**
+ * Põe o arquivo na mão do aluno.
+ *
+ * O SINTOMA que isto conserta: "no celular ele fica montando o pdf e depois
+ * nada acontece". A causa é que `pdf.save()` (um `<a download>` clicado por
+ * script) roda DEPOIS de segundos de `await` — fora do gesto que o aluno fez —,
+ * e navegador de celular engole esse clique sem erro nenhum: sem exceção, sem
+ * aviso, sem arquivo. Não há como detectar a falha; dá pra não depender dela.
+ *
+ * Então: tenta o download automático onde ele funciona (desktop, Android), e em
+ * QUALQUER caso devolve o arquivo pro cartão de "pronto", que traz um botão de
+ * verdade. Um toque do aluno é um gesto legítimo em todo navegador — é o único
+ * caminho que não tem como sumir em silêncio.
+ */
+function entregarPdf(blob: Blob, nome: string): ArquivoPronto {
+  const url = URL.createObjectURL(blob);
+  const automatico = !ehIOS();
+  if (automatico) {
+    try {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nome;
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch {
+      // segue pro cartão, que é o caminho garantido
+    }
+  }
+  return { url, nome, blob, automatico };
+}
+
+/**
+ * O cartão que aparece com o arquivo pronto.
+ *
+ * Não é um "toast" de confirmação: no celular ele É a entrega. Por isso o botão
+ * principal é um `<a download>` de verdade (tocado pelo aluno, nunca clicado
+ * por script) e, onde o sistema oferece, um "Salvar / compartilhar" que abre a
+ * folha nativa — no iPhone é por ali que o PDF vai parar no app Arquivos.
+ */
+function ArquivoProntoCartao({
+  pronto,
+  onFechar,
+}: {
+  pronto: ArquivoPronto;
+  onFechar: () => void;
+}) {
+  // Derivado, não estado: o cartão só existe depois da geração, já no cliente,
+  // e a resposta não muda enquanto ele estiver na tela.
+  const podeCompartilhar = useMemo(() => {
+    try {
+      const arquivo = new File([pronto.blob], pronto.nome, { type: "application/pdf" });
+      return !!navigator.canShare?.({ files: [arquivo] });
+    } catch {
+      return false;
+    }
+  }, [pronto]);
+
+  async function compartilhar() {
+    try {
+      const arquivo = new File([pronto.blob], pronto.nome, { type: "application/pdf" });
+      await navigator.share({ files: [arquivo], title: pronto.nome });
+    } catch {
+      // cancelar a folha de compartilhamento não é erro
+    }
+  }
+
+  const mb = pronto.blob.size / (1024 * 1024);
+
+  return (
+    <div className="nao-imprimir fixed inset-x-0 bottom-0 z-50 p-3 sm:p-5">
+      <div className="surface mx-auto w-full max-w-[520px] p-4 shadow-lg">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-questly-green-light text-questly-green-dark">
+            <FileCheck2 size={18} strokeWidth={2.1} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[13.5px] font-bold leading-tight">PDF pronto</p>
+            <p className="mt-0.5 truncate text-[11.5px] text-muted-foreground">
+              {pronto.nome} · {mb < 0.1 ? "<0,1" : mb.toFixed(1).replace(".", ",")} MB
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onFechar}
+            aria-label="Fechar"
+            className="-mr-1 -mt-1 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+          >
+            <X size={16} strokeWidth={2} />
+          </button>
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <a
+            href={pronto.url}
+            download={pronto.nome}
+            target="_blank"
+            rel="noopener"
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-questly-green px-4 text-[14px] font-bold text-white transition-[filter] hover:brightness-105 dark:text-[#0c1512]"
+          >
+            <Download size={16} strokeWidth={2.1} />
+            {pronto.automatico ? "Baixar de novo" : "Salvar o PDF"}
+          </a>
+          {podeCompartilhar && (
+            <button
+              type="button"
+              onClick={compartilhar}
+              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border px-4 text-[13.5px] font-semibold transition-colors hover:bg-foreground/[0.05]"
+            >
+              <Share2 size={15} strokeWidth={2} />
+              Compartilhar
+            </button>
+          )}
+        </div>
+
+        {!pronto.automatico && (
+          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+            No iPhone, toque em <b>Salvar o PDF</b> e escolha &quot;Salvar em Arquivos&quot;.
+          </p>
+        )}
       </div>
     </div>
   );
