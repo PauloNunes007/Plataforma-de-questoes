@@ -39,9 +39,18 @@ export async function lerPaginado<T>(
   /** Recebe o offset e devolve a query já filtrada — SEM .range() e SEM
    *  .limit(); esta função cuida das duas coisas. */
   construir: () => Consultavel<T>,
-  opcoes?: { ordenarPor?: string; tamanhoPagina?: number; maxPaginas?: number },
+  opcoes?: {
+    ordenarPor?: string;
+    tamanhoPagina?: number;
+    maxPaginas?: number;
+    /** Lê do mais novo pro mais velho. Use quando `maxPaginas` for um TETO de
+     *  recorte e não um limite de segurança: aí a janela que você quer é a do
+     *  fim da tabela, não a do começo (o histórico recente do aluno, p.ex.). */
+    descendente?: boolean;
+  },
 ): Promise<T[]> {
   const ordenarPor = opcoes?.ordenarPor ?? "id";
+  const ascending = !opcoes?.descendente;
   const tamanho = Math.min(opcoes?.tamanhoPagina ?? PAGINA_POSTGREST, PAGINA_POSTGREST);
   // Teto de segurança: uma query sem filtro num banco muito grande não pode
   // virar um loop que segura o request pra sempre.
@@ -51,7 +60,7 @@ export async function lerPaginado<T>(
   for (let pagina = 0; pagina < maxPaginas; pagina++) {
     const inicio = pagina * tamanho;
     const { data, error } = await construir()
-      .order(ordenarPor, { ascending: true })
+      .order(ordenarPor, { ascending })
       .range(inicio, inicio + tamanho - 1);
 
     if (error) {

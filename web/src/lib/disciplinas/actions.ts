@@ -2,7 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { questlyXpDaQuestao } from "@/lib/questly/shared";
-import { criarListaDeQuestoes, minutosEstimados } from "@/lib/questly/criar-lista";
+import {
+  criarListaDeQuestoes,
+  minutosEstimados,
+  type QuestaoParaLista,
+} from "@/lib/questly/criar-lista";
+import { lerPaginado } from "@/lib/supabase/paginado";
 import { carregarTopicosPratica, type TopicoPratica } from "./disciplinas-data";
 import { separarFiltroDificuldade } from "./filtros";
 
@@ -49,13 +54,18 @@ export async function calcularPreviaPraticaAction(
 
   const supabase = await createClient();
   const filtro = separarFiltroDificuldade(dificuldades);
-  let query = supabase.from("questions").select("id, dificuldade, tempo_medio_seg").in("topic_id", topicIds);
-  if (filtro.niveis.length > 0) query = query.in("dificuldade", filtro.niveis);
-  // Aprofundamento só entra quando o aluno pede: é o único lugar do app em
-  // que ele encontra essas questões. Ver supabase_questao_desafio.sql.
-  if (!filtro.incluirDesafio) query = query.eq("desafio", false);
-  const { data } = await query;
-  const pool = data || [];
+  // Paginado pelo mesmo motivo de lib/questly/criar-lista.ts: o PostgREST corta
+  // em 1000 linhas e o corte é mudo. A prévia e o sorteio TÊM que enxergar o
+  // mesmo conjunto — uma prévia que diz "1000 questões" pra um pool de 1400
+  // mente duas vezes: no total e na mistura por dificuldade.
+  const pool = await lerPaginado<QuestaoParaLista>(() => {
+    let query = supabase.from("questions").select("id, dificuldade, tempo_medio_seg").in("topic_id", topicIds);
+    if (filtro.niveis.length > 0) query = query.in("dificuldade", filtro.niveis);
+    // Aprofundamento só entra quando o aluno pede: é o único lugar do app em
+    // que ele encontra essas questões. Ver supabase_questao_desafio.sql.
+    if (!filtro.incluirDesafio) query = query.eq("desafio", false);
+    return query;
+  });
   const total = pool.length;
   if (total === 0) return vazia;
 

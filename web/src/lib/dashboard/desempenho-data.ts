@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { LOTE_IN } from "@/lib/supabase/paginado";
+import { LOTE_IN, PAGINA_POSTGREST, lerPaginado } from "@/lib/supabase/paginado";
 
 // Dados da aba "Desempenho" da home: acertabilidade por área (radar),
 // evolução dia a dia e os tópicos que o aluno mais erra.
@@ -45,7 +45,18 @@ export const DESEMPENHO_VAZIO: DesempenhoDados = {
 
 // Teto do histórico lido. Acima disso o recorte mais recente já descreve o
 // aluno melhor do que a cauda antiga — e o aviso de truncado aparece na UI.
+//
+// Este número só virou verdade em 2026-09-17. Antes, o `.limit(8001)` abaixo
+// era uma FICÇÃO: o PostgREST corta toda resposta em 1000 linhas e um `.limit`
+// maior só consegue abaixar esse teto, nunca levantá-lo (ver
+// lib/supabase/paginado.ts). Na prática, quem passasse de 1000 tentativas via
+// a aba Desempenho descrever só as 1000 mais recentes — e, pior, `truncado`
+// nunca ficava true, então a UI apresentava o recorte como se fosse o
+// histórico inteiro. Agora as páginas são lidas de verdade até este teto.
 const LIMITE_TENTATIVAS = 8000;
+// Páginas de 1000 (o máximo do PostgREST) + 1 linha de sobra pra detectar o
+// truncamento — o mesmo "+1" de antes, agora aplicado ao número de páginas.
+const PAGINAS_TENTATIVAS = Math.ceil((LIMITE_TENTATIVAS + 1) / PAGINA_POSTGREST);
 // LOTE_IN vem de lib/supabase/paginado.ts: o valor local era 400, acima do
 // teto real de URL do gateway (~330 uuids) — cada lote falhava e o mapa de
 // tópico/matéria da aba Desempenho saía vazio em conta com histórico grande.
@@ -56,14 +67,10 @@ export async function carregarDesempenho(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<DesempenhoDados> {
-  const { data: tentativasRaw } = await supabase
-    .from("question_attempts")
-    .select("question_id, correta, created_at")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(LIMITE_TENTATIVAS + 1);
-
-  const tentativas = (tentativasRaw as Tentativa[] | null) ?? [];
+  const tentativas = await lerPaginado<Tentativa>(
+    () => supabase.from("question_attempts").select("question_id, correta, created_at").eq("user_id", userId),
+    { ordenarPor: "created_at", descendente: true, maxPaginas: PAGINAS_TENTATIVAS },
+  );
   if (tentativas.length === 0) return DESEMPENHO_VAZIO;
 
   const truncado = tentativas.length > LIMITE_TENTATIVAS;

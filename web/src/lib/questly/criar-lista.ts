@@ -17,6 +17,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { questlyEmbaralhar, questlyHojeISO, questlyXpDaQuestao } from "@/lib/questly/shared";
 import { separarFiltroDificuldade } from "@/lib/disciplinas/filtros";
+import { lerPaginado } from "@/lib/supabase/paginado";
 
 // Tempo por questão: `tempo_medio_seg` é uma média móvel alimentada pelas
 // respostas reais (ver CLAUDE.md) e no começo da vida de uma questão ela pode
@@ -79,18 +80,26 @@ export async function criarListaDeQuestoes(
   if (input.topicIds.length === 0) return { missaoId: null, total: 0 };
 
   const filtro = separarFiltroDificuldade(input.dificuldades);
-  let query = supabase
-    .from("questions")
-    .select("id, tempo_medio_seg, dificuldade")
-    .in("topic_id", input.topicIds);
-  if (filtro.niveis.length > 0) query = query.in("dificuldade", filtro.niveis);
-  // Aprofundamento só entra quando o aluno pede: é o único lugar do app em
-  // que ele encontra essas questões. Ver supabase_questao_desafio.sql.
-  if (!filtro.incluirDesafio) query = query.eq("desafio", false);
-  const { data: candidatas } = await query;
-  if (!candidatas || candidatas.length === 0) return { missaoId: null, total: 0 };
+  // Paginado, não `await query` direto: o teto do PostgREST é 1000 linhas e um
+  // `.limit()` maior só consegue ABAIXÁ-LO (ver lib/supabase/paginado.ts). Uma
+  // disciplina que passe de 1000 questões teria a cauda do conjunto cortada em
+  // silêncio — as questões além da linha 1000 nunca seriam sorteadas, e
+  // "todas" pararia em 1000 sem ninguém avisar. Mesma correção que o sorteio
+  // do simulado já tinha (lib/simulados/actions.ts).
+  const candidatas = await lerPaginado<QuestaoParaLista>(() => {
+    let query = supabase
+      .from("questions")
+      .select("id, tempo_medio_seg, dificuldade")
+      .in("topic_id", input.topicIds);
+    if (filtro.niveis.length > 0) query = query.in("dificuldade", filtro.niveis);
+    // Aprofundamento só entra quando o aluno pede: é o único lugar do app em
+    // que ele encontra essas questões. Ver supabase_questao_desafio.sql.
+    if (!filtro.incluirDesafio) query = query.eq("desafio", false);
+    return query;
+  });
+  if (candidatas.length === 0) return { missaoId: null, total: 0 };
 
-  const embaralhadas = questlyEmbaralhar(candidatas as QuestaoParaLista[]);
+  const embaralhadas = questlyEmbaralhar(candidatas);
   const qtdQuestoes =
     input.quantidade === "todas"
       ? embaralhadas.length
