@@ -5,10 +5,10 @@
 // aparece pro pagante. A confirmação chega pelo webhook.
 //
 // Este arquivo cuida do pagamento AVULSO (`/checkout/preferences`): uma
-// cobrança, aceita Pix. A assinatura recorrente — em que o MP cobra o cartão
-// todo mês sozinho — é outro produto do gateway e mora em `./preapproval.ts`.
-// Até 2026-09-16 os planos recorrentes também saíam por aqui, e o "R$ 10/mês
-// por 6 meses" era cobrado uma única vez de R$ 10.
+// cobrança, aceita Pix, boleto e cartão parcelado. Desde 2026-09-17 ele é a
+// porta de TODA venda (ver o repasse no topo de ./plano.ts) — o semestral
+// entrega o "R$ 10/mês" por parcelamento em vez de assinatura, e o recorrente
+// de verdade (`./preapproval.ts`) só volta à tela com `MP_RECORRENTE=1`.
 import type { OpcaoPlano } from "./plano";
 
 const MP_API = "https://api.mercadopago.com";
@@ -41,12 +41,14 @@ export async function criarPreferenciaCheckout(params: {
   const base = urlDoApp();
   const ehHttps = base.startsWith("https://");
 
+  const meses = params.opcao.mesesCreditados;
+
   const body: Record<string, unknown> = {
     items: [
       {
         id: params.opcao.id,
         title: `Expectrum ${params.opcao.titulo}`,
-        description: params.opcao.observacao,
+        description: `${meses} ${meses === 1 ? "mês" : "meses"} de acesso Pro`,
         quantity: 1,
         currency_id: "BRL",
         unit_price: params.opcao.precoCentavos / 100,
@@ -59,7 +61,18 @@ export async function criarPreferenciaCheckout(params: {
       pending: `${base}/pro?status=pendente`,
       failure: `${base}/pro?status=falha`,
     },
-    statement_descriptor: "QUESTLY",
+    // Teto de parcelas no cartão. É por aqui que o semestral entrega o
+    // "R$ 10/mês" que o cartão de preço anuncia, sem depender do preapproval:
+    // o valor cheio é autorizado no cartão de uma vez e o aluno paga em até
+    // 6×. `installments` só LIMITA o número de parcelas — não torna o
+    // parcelamento sem juros, que é configuração da conta vendedora no painel
+    // do MP (por isso a UI não promete "sem juros").
+    //
+    // Não mandamos `default_installments`: pré-selecionar 6× faria o aluno ver
+    // um total com juros já escolhido por nós, se a conta não tiver campanha
+    // sem juros ligada. Quem escolhe a parcela é ele, na tela do MP.
+    payment_methods: { installments: params.opcao.parcelasMax },
+    statement_descriptor: "EXPECTRUM",
     // auto_return e notification_url só são aceitos com URL https pública: em
     // localhost o MP rejeita a preferência inteira (e o aluno veria "não foi
     // possível iniciar o pagamento" em vez do checkout). Em dev o webhook não

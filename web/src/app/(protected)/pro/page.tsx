@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { buscarMinhaAssinaturaPendenteAction, conferirPagamentoAction } from "@/lib/plano/actions";
-import { ehPro } from "@/lib/plano/plano";
+import { ehPro, opcoesVisiveis } from "@/lib/plano/plano";
+import { recorrenteHabilitado } from "@/lib/plano/preapproval";
 import { PlanosView } from "@/components/plano/planos-view";
 
 export const metadata: Metadata = {
@@ -62,6 +63,11 @@ export default async function ProPage({
   return (
     <div className="casca-media py-6 lg:py-8">
       <PlanosView
+        // Quais opções esta instalação consegue cobrar de verdade é decidido
+        // AQUI, no servidor, antes de desenhar o cartão — e não no clique. É o
+        // que garante que "assinar" seja sempre um redirect limpo pro Mercado
+        // Pago, sem aviso nenhum no meio do caixa.
+        opcoes={opcoesVisiveis(recorrenteHabilitado())}
         jaEhPro={jaEhPro}
         ciclo={profile?.plano_ciclo ?? null}
         expiraEm={jaEhPro ? (profile?.plano_expira_em ?? null) : null}

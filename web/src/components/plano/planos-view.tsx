@@ -17,7 +17,8 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import {
-  OPCOES_PLANO,
+  DESCONTO_SEMESTRAL_PCT,
+  PRECO_MENSAL_CENTAVOS,
   RECURSOS_FREE,
   reais,
   type OpcaoPlano,
@@ -34,6 +35,8 @@ import {
 import { ProEmblema, ProMark } from "@/components/plano/pro-ui";
 
 type PlanosViewProps = {
+  /** O que esta instalação consegue cobrar — resolvido no servidor. */
+  opcoes: OpcaoPlano[];
   jaEhPro: boolean;
   ciclo: string | null;
   expiraEm: string | null;
@@ -63,11 +66,6 @@ export function PlanosView(props: PlanosViewProps) {
   const [pendente, setPendente] = useState<AssinaturaPendente | null>(props.pendenteInicial);
   const [enviando, setEnviando] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
-  // Checkout que o servidor devolveu MARCADO como degradado: o Mercado Pago
-  // recusou abrir a assinatura e a compra virou avulsa de um mês. Guardamos a
-  // URL em vez de redirecionar direto — o aluno escolheu "assinar" e precisa
-  // saber que não vai haver renovação antes de pagar.
-  const [semRenovacao, setSemRenovacao] = useState<{ url: string; opcao: OpcaoPlano } | null>(null);
   const [ativadoAgora, setAtivadoAgora] = useState(false);
   const [conferindo, setConferindo] = useState(false);
   const [cansou, setCansou] = useState(false);
@@ -140,9 +138,11 @@ export function PlanosView(props: PlanosViewProps) {
     };
   }, [props.jaEhPro, estado, cansou, router]);
 
+  // Um clique, um redirect. Nada entre o botão e o Mercado Pago: o que esta
+  // instalação consegue cobrar já foi decidido no servidor (ver `opcoes`),
+  // então não há surpresa a avisar aqui no meio.
   async function assinar(opcao: OpcaoPlano) {
     setErro(null);
-    setSemRenovacao(null);
     setEnviando(opcao.id);
     const res = await criarAssinaturaAction(opcao.id);
     if ("error" in res) {
@@ -153,13 +153,6 @@ export function PlanosView(props: PlanosViewProps) {
     // Gateway configurado: redireciona pro checkout do Mercado Pago (mantém o
     // "enviando" ligado durante o redirect pra não piscar o botão).
     if ("checkoutUrl" in res) {
-      if (res.semRenovacao) {
-        // Não redireciona ainda: pede o segundo clique, agora com o aluno
-        // sabendo o que está comprando de verdade.
-        setEnviando(null);
-        setSemRenovacao({ url: res.checkoutUrl, opcao });
-        return;
-      }
       window.location.assign(res.checkoutUrl);
       return;
     }
@@ -226,50 +219,8 @@ export function PlanosView(props: PlanosViewProps) {
           )}
           {erro && <Aviso titulo="Não deu pra continuar" texto={erro} />}
 
-          {/* Assinatura recusada pelo gateway, compra degradada pra avulsa.
-              Segundo clique OBRIGATÓRIO: o aluno clicou em "assinar" e o que
-              está disponível é outra coisa — um mês, sem renovação. Mandar
-              direto pro checkout seria cobrar por um produto que ele não
-              escolheu. */}
-          {semRenovacao && (
-            <div className="mx-auto flex w-full max-w-xl flex-col gap-3 rounded-xl border border-questly-orange/30 bg-questly-orange/[0.07] px-4 py-3.5 text-left">
-              <div className="flex items-start gap-3">
-                <span className="mt-0.5 text-questly-orange-dark">
-                  <TriangleAlert size={16} strokeWidth={2} />
-                </span>
-                <div>
-                  <p className="text-[13.5px] font-semibold">
-                    A renovação automática está indisponível agora
-                  </p>
-                  <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-                    Você pode pagar {reais(semRenovacao.opcao.precoCentavos)} e liberar{" "}
-                    <b>1 mês de Pro</b>, sem cobrança recorrente — quando acabar, é só renovar.
-                    Se prefere garantir o semestre de uma vez, o{" "}
-                    <b>Pro Semestral à vista</b> continua disponível.
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 pl-7">
-                <button
-                  type="button"
-                  onClick={() => window.location.assign(semRenovacao.url)}
-                  className="inline-flex h-9 cursor-pointer items-center rounded-lg bg-foreground px-3.5 text-[12.5px] font-semibold text-background transition-opacity hover:opacity-90"
-                >
-                  Pagar {reais(semRenovacao.opcao.precoCentavos)} por 1 mês
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSemRenovacao(null)}
-                  className="inline-flex h-9 cursor-pointer items-center rounded-lg border border-border px-3.5 text-[12.5px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Voltar
-                </button>
-              </div>
-            </div>
-          )}
-
-          <div className="grid gap-5 lg:grid-cols-3">
-            {OPCOES_PLANO.map((opcao) => (
+          <div className="mx-auto grid w-full max-w-3xl gap-5 sm:grid-cols-2">
+            {props.opcoes.map((opcao) => (
               <PlanoCard
                 key={opcao.id}
                 opcao={opcao}
@@ -304,7 +255,10 @@ function Cabecalho({ jaEhPro }: { jaEhPro: boolean }) {
       <p className="mx-auto mt-3 max-w-xl text-[14px] leading-relaxed text-muted-foreground">
         {jaEhPro
           ? "Todos os recursos avançados estão liberados nesta conta."
-          : "O plano grátis já te faz passar numa matéria. O Pro te mostra a nota que você vai tirar, por que você errou e o caminho mais curto pra subir — em todas elas."}
+          : // Nada de "mostra a nota que você vai tirar": o motor de projeção
+            // foi removido em 2026-09-16, e a regra do lib/plano/plano.ts vale
+            // pra headline também — só se anuncia o que tem gate de verdade.
+            "O plano grátis já te faz passar numa matéria. O Pro tira o limite de simulados, te mostra por que você errou e abre as estatísticas que dizem onde você está — em todas elas."}
       </p>
     </header>
   );
@@ -324,12 +278,23 @@ function PlanoCard({
   onAssinar: () => void;
 }) {
   const destaque = opcao.destaque === "Mais popular";
-  const totalSemestre =
-    opcao.ciclo === "semestral"
-      ? opcao.forma === "recorrente"
-        ? opcao.precoCentavos * 6
-        : opcao.precoCentavos
-      : opcao.precoCentavos * 6;
+  const meses = opcao.mesesCreditados;
+  // Ancoragem: no semestral, o preço grande é o equivalente mensal e o mensal
+  // cheio aparece riscado ao lado. A economia é derivada dos dois preços —
+  // nenhum número de desconto é digitado na tela.
+  const ancorado = opcao.precoMensalEquivalente < PRECO_MENSAL_CENTAVOS;
+  const economiaCentavos = PRECO_MENSAL_CENTAVOS * meses - opcao.precoCentavos;
+
+  // Como a cobrança acontece de verdade. Vale a linha porque as opções são
+  // materialmente diferentes no gateway, e o aluno só descobria isso depois de
+  // pagar. Sobre "sem juros": não prometemos — quem decide é a configuração da
+  // conta vendedora no MP, não a nossa preferência (ver lib/plano/plano.ts).
+  const comoCobra =
+    opcao.forma === "recorrente"
+      ? "Cobrado no cartão de crédito todo mês, até você cancelar."
+      : opcao.parcelasMax > 1
+        ? `Uma cobrança de ${reais(opcao.precoCentavos)} — Pix, boleto ou em até ${opcao.parcelasMax}× no cartão.`
+        : `Uma cobrança de ${reais(opcao.precoCentavos)} — Pix, cartão ou boleto.`;
 
   return (
     <div
@@ -350,35 +315,40 @@ function PlanoCard({
         </span>
       )}
 
-      <h3 className="font-heading text-[15px] font-semibold tracking-tight">{opcao.titulo}</h3>
+      <div className="flex items-center gap-2">
+        <h3 className="font-heading text-[15px] font-semibold tracking-tight">{opcao.titulo}</h3>
+        {ancorado && (
+          <span className="tnum rounded-md bg-questly-green/12 px-1.5 py-[2px] text-[10px] font-bold tracking-tight text-questly-green-dark">
+            −{DESCONTO_SEMESTRAL_PCT}%
+          </span>
+        )}
+      </div>
 
       <div className="mt-4 flex items-end gap-1.5">
         <span className="pb-1.5 text-[15px] font-medium text-muted-foreground">R$</span>
         <span className="tnum font-heading text-[42px] font-semibold leading-none tracking-tight">
-          {(opcao.precoCentavos / 100).toLocaleString("pt-BR", {
-            minimumFractionDigits: opcao.precoCentavos % 100 === 0 ? 0 : 2,
+          {(opcao.precoMensalEquivalente / 100).toLocaleString("pt-BR", {
+            minimumFractionDigits: opcao.precoMensalEquivalente % 100 === 0 ? 0 : 2,
           })}
         </span>
         <span className="pb-1.5 text-[13px] text-muted-foreground">{opcao.cobrancaLabel}</span>
+        {ancorado && (
+          <span className="tnum pb-[7px] text-[13px] text-muted-foreground/60 line-through">
+            {reais(PRECO_MENSAL_CENTAVOS)}
+          </span>
+        )}
       </div>
 
-      <p className="tnum mt-1.5 text-[12px] text-muted-foreground">
-        {reais(totalSemestre)} no semestre
+      <p className="tnum mt-1.5 text-[12px] font-medium">
+        {reais(opcao.precoCentavos)} · {meses} {meses === 1 ? "mês" : "meses"} de Pro
+        {economiaCentavos > 0 && (
+          <span className="text-questly-green-dark"> · economia de {reais(economiaCentavos)}</span>
+        )}
       </p>
 
-      {/* Como a cobrança acontece de verdade. Vale a linha extra porque as três
-          opções são materialmente diferentes no gateway e o aluno só descobria
-          isso depois de pagar: recorrente é preapproval (cartão, cobrado todo
-          mês pelo Mercado Pago), à vista é uma cobrança só e aceita Pix. */}
-      <p className="mt-1 text-[11.5px] leading-snug text-muted-foreground/85">
-        {opcao.forma === "recorrente"
-          ? opcao.ciclo === "semestral"
-            ? `6 cobranças mensais de ${reais(opcao.precoCentavos)} no cartão de crédito.`
-            : `Cobrado no cartão de crédito todo mês, até você cancelar.`
-          : "Uma cobrança só — cartão, Pix ou boleto."}
-      </p>
+      <p className="mt-1 text-[11.5px] leading-snug text-muted-foreground/85">{comoCobra}</p>
 
-      <p className="mt-4 min-h-[2.75rem] border-t border-border pt-3.5 text-[12.5px] leading-relaxed text-muted-foreground">
+      <p className="mt-4 min-h-[3.25rem] border-t border-border pt-3.5 text-[12.5px] leading-relaxed text-muted-foreground">
         {opcao.observacao}
       </p>
 
@@ -399,7 +369,9 @@ function PlanoCard({
           </>
         ) : (
           <>
-            Assinar
+            {/* "Assinar" só quando assinatura é o que acontece de verdade —
+                no avulso o botão promete o que ele entrega: acesso liberado. */}
+            {opcao.forma === "recorrente" ? "Assinar" : "Liberar o Pro"}
             <ArrowRight size={15} strokeWidth={2.2} />
           </>
         )}
@@ -410,7 +382,7 @@ function PlanoCard({
 
 function LinhaConfianca() {
   const itens = [
-    { icone: CreditCard, texto: "Cartão de crédito ou Pix" },
+    { icone: CreditCard, texto: "Pix, boleto ou cartão parcelado" },
     { icone: Lock, texto: "Checkout do Mercado Pago — não guardamos seu cartão" },
     { icone: ShieldCheck, texto: "Liberação automática assim que o pagamento aprovar" },
   ];

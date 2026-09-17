@@ -913,6 +913,61 @@ tela diz qual.
 `assinaturas.gateway_id` e grava em `assinatura_pagamentos`. E **teste com
 credenciais reais do MP**: o caminho de preapproval nunca rodou contra o gateway.
 
+### Parcelar é o recorrente honesto (2026-09-17, terceira rodada) — **supera as duas seções acima**
+
+Relato do dono: o checkout parou de redirecionar e ficou **travado numa tarja
+laranja** de "renovação automática indisponível" com um botão de R$ 15. Era o
+degrau 2 da rodada anterior funcionando exatamente como escrito — e sendo, na
+prática, um caixa que não vende. A honestidade daquele aviso estava certa; **a
+hora dele estava errada**. Descobrir no clique que o produto é outro obriga a
+interromper a compra; a correção é não deixar essa discrepância existir.
+
+Duas mudanças, uma de produto e uma de código, e a de produto é a que resolve:
+
+**1. A grade virou duas opções, e as duas são Checkout Pro.** Os três cartões
+eram, na verdade, dois: *semestral recorrente* (6× R$ 10) e *semestral à vista*
+(R$ 60) custavam **o mesmo total pelo mesmo período**. A diferença entre eles
+não era o produto, era a forma de pagar — pergunta que o checkout do MP já faz
+sozinho. Hoje são:
+
+| | preço grande | cobrança | credita |
+|---|---|---|---|
+| **Pro Mensal** | R$ 15/mês | uma, Pix/cartão/boleto | 1 mês |
+| **Pro Semestral** | R$ 10/mês (−33%) | uma de R$ 60, **em até 6× no cartão** ou Pix | 6 meses |
+
+O semestral entrega o "R$ 10/mês" por **parcelamento**
+(`payment_methods.installments`, `PARCELAS_SEMESTRAL`) em vez de assinatura. O
+furo de receita fecha por construção — não existe pagar uma parcela e levar o
+semestre, porque o valor cheio já foi autorizado no cartão — e Pix passa a valer
+em todos os planos (o preapproval não aceita Pix). A "fidelidade" some como
+conceito: pagar adiantado **é** o compromisso, e era a única versão dele que o
+código conseguia impor.
+
+⚠️ **Não escreva "sem juros" em lugar nenhum da UI.** `installments` só limita o
+NÚMERO de parcelas; quem decide se é sem juros é a configuração da conta
+vendedora no painel do MP. Por isso a tela diz "em até 6× no cartão", ponto, e
+`default_installments` não é enviado (pré-selecionar 6× mostraria um total com
+juros escolhido por nós).
+
+**2. A recorrência vira flag, resolvida ANTES do clique.**
+`recorrenteHabilitado()` (`lib/plano/preapproval.ts`) exige `MP_RECORRENTE=1` e
+`NEXT_PUBLIC_APP_URL` https; **desligado por padrão**. A `/pro` chama
+`opcoesVisiveis(recorrenteHabilitado())` no servidor e desenha o cartão certo
+desde o primeiro render — então o clique é **sempre** um redirect limpo, e o
+degrau de degradação (`semRenovacao`, a tarja laranja, o segundo clique) foi
+**removido**: não há mais discrepância a avisar. `criarAssinaturaAction`
+recusa um id recorrente com o flag desligado (o id vem do cliente). Quando a
+conta do MP tiver Assinaturas aprovado, é uma variável de ambiente pra religar
+— `MENSAL_RECORRENTE`, o preapproval, o webhook de
+`subscription_authorized_payment` e `cancelarRenovacaoAction` continuam todos de
+pé e inalterados, inclusive pra quem já assinou pelo caminho antigo.
+
+Nada de migração: `assinaturas.ciclo`/`forma` já aceitam `('mensal','semestral')`
+× `('recorrente','a_vista')`, e `mesesPorCobranca` já creditava 6 meses pro
+semestral à vista. Os preços da landing passaram a ser **importados** de
+`lib/plano/plano.ts` em vez de digitados — marketing e caixa não podem discordar
+de preço.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

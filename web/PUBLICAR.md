@@ -47,6 +47,7 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → API → **service_role (secret)** | **SIM** |
    | `MP_ACCESS_TOKEN` | Mercado Pago (passo 3) | **SIM** |
    | `MP_WEBHOOK_SECRET` | Mercado Pago (passo 3) | **SIM** |
+   | `MP_RECORRENTE` | opcional, `1` liga a venda por assinatura (ver abaixo) | não |
    | `NEXT_PUBLIC_APP_URL` | a URL pública final, `https://expectrum.com.br` (sem `/` no fim) | não |
    | `BREVO_API_KEY` | Brevo (passo 4) | **SIM** |
    | `EMAIL_REMETENTE` | o endereço verificado na Brevo (passo 4) | não |
@@ -161,6 +162,27 @@ Por isso o passo 3 do webhook acima **não pode travar uma venda** se sair errad
 
 > Enquanto quiser testar sem cobrar de verdade, use as **credenciais de teste**
 > do Mercado Pago em vez das de produção (cartões de teste na doc deles).
+
+### `MP_RECORRENTE` — assinatura de verdade (opcional, desligada)
+
+Por padrão **os dois planos são cobrança única** pelo Checkout Pro: o mensal
+cobra R$ 15 por um mês, e o semestral cobra R$ 60 pelos 6 meses, parcelável em
+até 6× no cartão (ou Pix/boleto). Isso vende em qualquer conta do Mercado Pago e
+o clique em "Liberar o Pro" é sempre um redirect direto pro checkout.
+
+A renovação automática (`/preapproval`) é outro produto do MP e **exige mais**:
+Assinaturas habilitado na sua conta, `NEXT_PUBLIC_APP_URL` em https público, e
+um pagador **diferente** da conta vendedora (testar com o seu próprio e-mail dá
+`cannot operate between same user`). Quando as três condições estiverem de pé:
+
+1. defina `MP_RECORRENTE=1` no Vercel e redeploy;
+2. o cartão "Pro Mensal" passa a dizer *"Renova sozinho todo mês no cartão"* e o
+   botão volta a ser "Assinar";
+3. teste com uma conta compradora diferente da vendedora.
+
+Se algo estiver faltando, **deixe desligada** — a venda por cobrança única
+continua funcionando normalmente, e o motivo exato de qualquer recusa do
+preapproval fica no log do Vercel.
 
 ---
 

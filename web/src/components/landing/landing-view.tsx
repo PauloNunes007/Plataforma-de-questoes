@@ -50,7 +50,17 @@ import { Logo } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
 import { CAMPANHA } from "@/lib/landing/campanha";
 import { arredondarPraBaixo, type StatsBanco } from "@/lib/landing/stats";
-import { RECURSOS_FREE, RECURSOS_PRO, type ItemPlano } from "@/lib/plano/plano";
+import {
+  MESES_SEMESTRE,
+  PARCELAS_SEMESTRAL,
+  PRECO_MENSAL_CENTAVOS,
+  PRECO_SEMESTRAL_CENTAVOS,
+  PRECO_SEMESTRAL_MENSAL_CENTAVOS,
+  RECURSOS_FREE,
+  RECURSOS_PRO,
+  reais,
+  type ItemPlano,
+} from "@/lib/plano/plano";
 import { FitaCampanha, SecaoCampanha, SeloCampanhaHero } from "./campanha-uff";
 import { SimuladosShowcase } from "./simulados-showcase";
 import { Faq } from "./faq";
@@ -679,16 +689,22 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
                 <p className="mt-1 text-sm text-muted-foreground">
                   O motor completo, sem freios, pro semestre inteiro.
                 </p>
+                {/* Os números vêm de lib/plano/plano.ts, a mesma fonte que a
+                    /pro cobra — marketing e caixa não podem discordar de preço. */}
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="text-lg font-medium text-muted-foreground">R$</span>
-                  <span className="tnum text-4xl font-semibold tracking-tight">15</span>
+                  <span className="tnum text-4xl font-semibold tracking-tight">
+                    {PRECO_MENSAL_CENTAVOS / 100}
+                  </span>
                   <span className="text-sm text-muted-foreground">/mês</span>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Menos de R$ 0,50 por dia pra não repetir uma matéria.
                 </p>
-                <p className="mt-1 text-xs font-medium text-questly-green">
-                  ou R$ 10/mês no semestral — R$ 60 pelos 6 meses.
+                <p className="tnum mt-1 text-xs font-medium text-questly-green">
+                  ou {reais(PRECO_SEMESTRAL_MENSAL_CENTAVOS)}/mês no semestral —{" "}
+                  {reais(PRECO_SEMESTRAL_CENTAVOS)} pelos {MESES_SEMESTRE} meses, parcelável em até{" "}
+                  {PARCELAS_SEMESTRAL}× no cartão.
                 </p>
                 <BtnLink href="/login" className="mt-5 h-11">
                   Quero o Pro
@@ -700,7 +716,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
                   ))}
                 </ul>
                 <p className="mt-6 text-xs text-muted-foreground">
-                  Sem fidelidade no mensal. Cancele quando quiser, direto nas configurações.
+                  Sem fidelidade e sem cobrança automática: você paga só o período que escolher.
                 </p>
               </div>
             </Revelar>

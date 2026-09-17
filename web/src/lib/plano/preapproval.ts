@@ -33,6 +33,28 @@ function urlDoApp(): string {
   return (process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000").replace(/\/+$/, "");
 }
 
+/**
+ * A venda recorrente está ligada nesta instalação?
+ *
+ * **Desligado por padrão, e de propósito.** O preapproval só funciona com
+ * Assinaturas aprovado na conta do Mercado Pago, e a recusa dele só aparecia
+ * no CLIQUE — tarde demais, com o aluno já a caminho do checkout. Resultado:
+ * a tela tinha que parar a compra num aviso ("renovação automática
+ * indisponível") e pedir um segundo clique por um produto diferente. Perder
+ * venda no caixa é pior que não anunciar renovação automática.
+ *
+ * Com o flag, a pergunta é respondida ANTES de a página renderizar: a /pro
+ * desenha o cartão certo desde o início e o clique é sempre um redirect
+ * limpo. Pra religar: `MP_RECORRENTE=1` no ambiente, com o site publicado em
+ * https (o MP recusa `back_url` que não seja https pública) e Assinaturas
+ * habilitado na conta. Confira com uma conta compradora DIFERENTE da
+ * vendedora — o MP proíbe assinar de si mesmo.
+ */
+export function recorrenteHabilitado(): boolean {
+  if (process.env.MP_RECORRENTE?.trim() !== "1") return false;
+  return urlDoApp().startsWith("https://");
+}
+
 /** Soma meses sem estourar o fim do mês (31/01 + 1 mês = 28/02, não 03/03). */
 export function adicionarMeses(base: Date, meses: number): Date {
   const d = new Date(base);

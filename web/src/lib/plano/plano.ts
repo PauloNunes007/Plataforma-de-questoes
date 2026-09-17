@@ -3,17 +3,38 @@
 // supabase_plano_pro.sql); os writes ficam em lib/plano/actions.ts (aluno) e
 // lib/admin/actions.ts (ativação manual pelo admin).
 //
-// Pagamento pelo Mercado Pago, e a FORMA decide por qual porta:
+// **Repasse de 2026-09-17 — a grade virou DUAS opções, e as duas são
+// Checkout Pro.**
 //
-//   • `forma: "a_vista"`    → Checkout Pro, uma cobrança (cartão/Pix/boleto),
-//                             lib/plano/mercadopago.ts;
-//   • `forma: "recorrente"` → preapproval, o MP cobra o CARTÃO todo mês,
-//                             lib/plano/preapproval.ts.
+// O que havia antes: três cartões — mensal recorrente (R$ 15/mês), semestral
+// recorrente (6× R$ 10 "com fidelidade") e semestral à vista (R$ 60). Dois
+// problemas, um comercial e um técnico, e no fundo eram o mesmo problema:
 //
-// Isso importa pra quem for mexer em `precoCentavos`: no recorrente ele é o
-// valor de CADA cobrança mensal, não o total. Até 2026-09-16 os dois casos
-// saíam pela primeira porta, e o "semestral, R$ 10/mês" era cobrado uma única
-// vez de R$ 10 — o aluno levava o semestre pelo preço de um mês.
+//   1. Os dois semestrais custavam **o mesmo total pelo mesmo período**
+//      (R$ 60 por 6 meses). A diferença entre eles não era o produto, era a
+//      forma de pagar — pergunta que o próprio checkout do Mercado Pago já
+//      faz. Um cartão inteiro da tela era gasto numa escolha que não é do
+//      aluno, e a "fidelidade" descrevia um compromisso que o código admitia
+//      não conseguir impor.
+//   2. As opções recorrentes saíam por `/preapproval`, endpoint bem mais
+//      exigente que o checkout comum: exige Assinaturas habilitado na conta,
+//      recusa `back_url` que não seja https pública e recusa quando pagador e
+//      vendedor são a mesma conta. Toda recusa derrubava a venda no meio, e a
+//      tela precisava interromper o caixa com um aviso pra não vender
+//      assinatura e entregar compra avulsa.
+//
+// A grade de hoje resolve os dois de uma vez, porque **parcelar é o recorrente
+// honesto**: o semestral cobra os R$ 60 numa preferência normal, parcelável em
+// até 6× no cartão (ou Pix/boleto à vista), e credita os 6 meses. O aluno vê
+// "R$ 10/mês" com a mesma ancoragem de antes, o furo de receita fecha por
+// construção (não existe pagar uma parcela e levar o semestre — quem parcela
+// já teve o valor cheio autorizado no cartão), e o clique vira sempre um
+// redirect limpo pro Mercado Pago.
+//
+// `MENSAL_RECORRENTE` continua aqui, vivo, atrás de `recorrenteHabilitado()`
+// (lib/plano/preapproval.ts, desligado por padrão): quando a conta do MP
+// tiver Assinaturas aprovado, é uma variável de ambiente pra voltar a vender
+// renovação automática — sem ressuscitar código morto.
 //
 // Sem MP_ACCESS_TOKEN configurado, cai no fluxo manual (o admin confirma em
 // /admin/assinaturas). Preços e ciclos aqui são a fonte da verdade
@@ -26,11 +47,20 @@ export type Ciclo = "mensal" | "semestral";
 export type Forma = "recorrente" | "a_vista";
 
 // centavos, pra bater com assinaturas.valor_centavos (inteiro)
-export const PRECO_MENSAL_CENTAVOS = 1500; // R$ 15/mês
-export const PRECO_SEMESTRAL_MENSAL_CENTAVOS = 1000; // R$ 10/mês (fidelidade 6 meses)
-export const PRECO_SEMESTRAL_AVISTA_CENTAVOS = 6000; // R$ 60 à vista (6 meses)
+export const PRECO_MENSAL_CENTAVOS = 1500; // R$ 15 por 1 mês
+export const PRECO_SEMESTRAL_CENTAVOS = 6000; // R$ 60 pelos 6 meses
 
 export const MESES_SEMESTRE = 6;
+
+// Teto de parcelas no cartão pro semestral. É o que faz o "R$ 10/mês" do
+// cartão de preço ser verdade na fatura, sem preapproval nenhum no meio.
+//
+// O que NÃO prometemos em lugar nenhum da UI: "sem juros". Quem decide se o
+// parcelamento é sem juros é a configuração da conta vendedora no painel do
+// Mercado Pago, não este campo — a API só limita o NÚMERO de parcelas. No dia
+// em que as campanhas sem juros estiverem ligadas lá, aí sim a frase pode
+// entrar na tela.
+export const PARCELAS_SEMESTRAL = 6;
 
 export function reais(centavos: number): string {
   return (centavos / 100).toLocaleString("pt-BR", {
@@ -39,6 +69,17 @@ export function reais(centavos: number): string {
     minimumFractionDigits: centavos % 100 === 0 ? 0 : 2,
   });
 }
+
+// Preço-âncora do semestral: o "por mês" que o cartão mostra grande.
+export const PRECO_SEMESTRAL_MENSAL_CENTAVOS = Math.round(
+  PRECO_SEMESTRAL_CENTAVOS / MESES_SEMESTRE,
+); // R$ 10/mês
+
+// Desconto do semestral sobre o mensal — derivado, nunca digitado à mão: um
+// "-33%" escrito na tela vira mentira no dia em que alguém mexer num preço.
+export const DESCONTO_SEMESTRAL_PCT = Math.round(
+  (1 - PRECO_SEMESTRAL_MENSAL_CENTAVOS / PRECO_MENSAL_CENTAVOS) * 100,
+);
 
 // Shape mínimo do profile que o gating lê — casa com as colunas da migração.
 export type PlanoDoProfile = {
@@ -60,51 +101,76 @@ export type OpcaoPlano = {
   ciclo: Ciclo;
   forma: Forma;
   titulo: string;
-  precoCentavos: number; // o que é cobrado nessa cobrança
-  precoMensalEquivalente: number; // pra mostrar "R$ X/mês"
-  cobrancaLabel: string; // "por mês" | "à vista (6 meses)"
-  destaque: string | null; // selo ("Mais popular", "Melhor preço"…)
-  observacao: string; // linha fina explicando fidelidade/economia
+  precoCentavos: number; // o que é cobrado NESTA cobrança
+  precoMensalEquivalente: number; // o "R$ X/mês" grande do cartão
+  mesesCreditados: number; // quanto tempo de Pro UMA cobrança dessa opção compra
+  parcelasMax: number; // teto de parcelas no cartão (1 = à vista)
+  cobrancaLabel: string; // "por mês"
+  destaque: string | null; // selo ("Mais popular"…)
+  observacao: string; // linha fina explicando o que o aluno leva
 };
 
-export const OPCOES_PLANO: OpcaoPlano[] = [
-  {
-    id: "mensal",
-    ciclo: "mensal",
-    forma: "recorrente",
-    titulo: "Pro Mensal",
-    precoCentavos: PRECO_MENSAL_CENTAVOS,
-    precoMensalEquivalente: PRECO_MENSAL_CENTAVOS,
-    cobrancaLabel: "por mês",
-    destaque: null,
-    observacao: "Sem fidelidade. Cancele quando quiser — o mês já pago continua seu.",
-  },
-  {
-    id: "semestral-recorrente",
-    ciclo: "semestral",
-    forma: "recorrente",
-    titulo: "Pro Semestral",
-    precoCentavos: PRECO_SEMESTRAL_MENSAL_CENTAVOS,
-    precoMensalEquivalente: PRECO_SEMESTRAL_MENSAL_CENTAVOS,
-    cobrancaLabel: "por mês",
-    destaque: "Mais popular",
-    observacao: "R$ 10/mês por 6 meses — economia de 33% sobre o mensal.",
-  },
-  {
-    id: "semestral-avista",
-    ciclo: "semestral",
-    forma: "a_vista",
-    titulo: "Pro Semestral à vista",
-    precoCentavos: PRECO_SEMESTRAL_AVISTA_CENTAVOS,
-    precoMensalEquivalente: Math.round(PRECO_SEMESTRAL_AVISTA_CENTAVOS / MESES_SEMESTRE),
-    cobrancaLabel: "à vista (6 meses)",
-    destaque: "Melhor preço",
-    observacao: "R$ 60 de uma vez pelos 6 meses — sai R$ 10/mês, sem mensalidade. Aceita Pix.",
-  },
-];
+const MENSAL_AVULSO: OpcaoPlano = {
+  id: "mensal",
+  ciclo: "mensal",
+  forma: "a_vista",
+  titulo: "Pro Mensal",
+  precoCentavos: PRECO_MENSAL_CENTAVOS,
+  precoMensalEquivalente: PRECO_MENSAL_CENTAVOS,
+  mesesCreditados: 1,
+  parcelasMax: 1,
+  cobrancaLabel: "por mês",
+  destaque: null,
+  observacao:
+    "Um mês de Pro, sem fidelidade e sem cobrança automática. Volte aqui e renove quando quiser.",
+};
+
+// Variante do mensal que cobra sozinha todo mês (preapproval). Só chega à tela
+// quando `recorrenteHabilitado()` está ligado — ver o repasse no topo.
+const MENSAL_RECORRENTE: OpcaoPlano = {
+  ...MENSAL_AVULSO,
+  id: "mensal-recorrente",
+  forma: "recorrente",
+  observacao:
+    "Renova sozinho todo mês no cartão. Cancele quando quiser — o mês já pago continua seu.",
+};
+
+const SEMESTRAL: OpcaoPlano = {
+  id: "semestral",
+  ciclo: "semestral",
+  forma: "a_vista",
+  titulo: "Pro Semestral",
+  precoCentavos: PRECO_SEMESTRAL_CENTAVOS,
+  precoMensalEquivalente: PRECO_SEMESTRAL_MENSAL_CENTAVOS,
+  mesesCreditados: MESES_SEMESTRE,
+  parcelasMax: PARCELAS_SEMESTRAL,
+  cobrancaLabel: "por mês",
+  destaque: "Mais popular",
+  observacao:
+    "O semestre inteiro liberado de uma vez — dura mais que a próxima prova, a recuperação e a final.",
+};
+
+// Tudo que o servidor sabe cobrar. A tela mostra um subconjunto
+// (`opcoesVisiveis`); esta lista existe pra `acharOpcao` resolver qualquer id
+// que já tenha sido oferecido algum dia.
+const TODAS_OPCOES: OpcaoPlano[] = [MENSAL_AVULSO, MENSAL_RECORRENTE, SEMESTRAL];
+
+/**
+ * As opções que vão pra tela. Duas, sempre — a decisão do aluno é "um mês ou o
+ * semestre", nunca "qual forma de pagamento", que é pergunta do checkout.
+ *
+ * `recorrenteAtivo` troca o mensal avulso pelo mensal com renovação
+ * automática. Quem decide é o SERVIDOR (`recorrenteHabilitado()`), antes de a
+ * página renderizar: assim a tela nunca oferece uma assinatura que o gateway
+ * vai recusar no clique — que era exatamente a avaria que fazia o caixa parar
+ * num aviso no meio do caminho.
+ */
+export function opcoesVisiveis(recorrenteAtivo = false): OpcaoPlano[] {
+  return recorrenteAtivo ? [MENSAL_RECORRENTE, SEMESTRAL] : [MENSAL_AVULSO, SEMESTRAL];
+}
 
 export function acharOpcao(id: string): OpcaoPlano | undefined {
-  return OPCOES_PLANO.find((o) => o.id === id);
+  return TODAS_OPCOES.find((o) => o.id === id);
 }
 
 // Comparativo de planos — FONTE DA VERDADE única, lida pela /pro e pela landing

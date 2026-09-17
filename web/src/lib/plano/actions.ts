@@ -24,6 +24,7 @@ import {
   buscarPreapprovalMP,
   cancelarAssinaturaRecorrente,
   criarAssinaturaRecorrente,
+  recorrenteHabilitado,
 } from "@/lib/plano/preapproval";
 import { creditarCobranca } from "@/lib/plano/ativar";
 
@@ -64,13 +65,15 @@ export async function buscarMinhaAssinaturaPendenteAction(): Promise<AssinaturaP
 
 export async function criarAssinaturaAction(
   opcaoId: string,
-): Promise<
-  | { checkoutUrl: string; semRenovacao?: boolean }
-  | { assinatura: AssinaturaPendente }
-  | { error: string }
-> {
+): Promise<{ checkoutUrl: string } | { assinatura: AssinaturaPendente } | { error: string }> {
   const opcao = acharOpcao(opcaoId);
   if (!opcao) return { error: "Plano inválido." };
+  // O id vem do cliente. Se a recorrência está desligada nesta instalação, a
+  // tela nem oferece o plano recorrente — mas aceitar o id aqui abriria
+  // justamente a porta que o flag existe pra manter fechada.
+  if (opcao.forma === "recorrente" && !recorrenteHabilitado()) {
+    return { error: "Plano indisponível." };
+  }
 
   const supabase = await createClient();
   const {
@@ -104,47 +107,30 @@ export async function criarAssinaturaAction(
   // Com gateway configurado, manda pro Mercado Pago. QUAL produto do MP
   // depende da forma de cobrança:
   //
-  //   • recorrente → `/preapproval`: o MP cobra o cartão todo mês sozinho;
-  //   • à vista    → `/checkout/preferences`: uma cobrança, aceita Pix.
+  //   • à vista    → `/checkout/preferences`: uma cobrança, aceita Pix, boleto
+  //     e cartão parcelado. É o caminho de TODA venda hoje;
+  //   • recorrente → `/preapproval`: o MP cobra o cartão todo mês sozinho. Só
+  //     chega aqui com `MP_RECORRENTE=1` (ver `recorrenteHabilitado`).
   //
-  // **Repasse de 2026-09-17 — a venda não pode depender do preapproval.**
-  // Trocar o recorrente de `preferences` pra `preapproval` fechou o furo de
-  // receita, mas amarrou a venda a um endpoint MUITO mais exigente: ele exige
-  // Assinaturas habilitado na conta do MP, recusa quando o pagador é a própria
-  // conta vendedora ("cannot operate between same user") e recusa back_url que
-  // não seja https pública. Qualquer um desses derrubava a compra inteira — e
-  // o mensal e o semestral, que antes vendiam, pararam de vender.
+  // **Repasse de 2026-09-17 — o caixa não interrompe mais.**
   //
-  // A regra agora tem dois degraus:
+  // Antes, todo plano recorrente tentava o preapproval e, na recusa, caía
+  // sozinho pro checkout avulso de um mês. Como a compra passava a ser outra
+  // coisa (um mês sem renovação em vez de uma assinatura), a tela tinha que
+  // parar tudo e pedir um segundo clique — e o que o aluno via era um caixa
+  // travado num aviso laranja.
   //
-  //   1. tenta a assinatura de verdade (cobra todo mês, é o que queremos);
-  //   2. se o MP recusar, NÃO perde a venda: cai pro checkout avulso que
-  //      sempre funcionou, cobrando UM período (`precoCentavos` já é o preço
-  //      de um mês nas duas opções recorrentes) e creditando UM mês.
-  //
-  // O degrau 2 não reabre o furo — quem paga R$ 10 leva um mês, não seis —,
-  // mas entrega menos do que o cartão prometeu (não há renovação automática).
-  // Por isso ele volta marcado (`semRenovacao`) e a tela AVISA antes de
-  // mandar pro checkout. Degradar calado seria vender uma assinatura e
-  // entregar uma compra avulsa.
+  // O degrau de degradação SAIU, e não porque a honestidade deixou de
+  // importar: ela passou a ser garantida mais cedo. A tela só oferece o que
+  // esta instalação consegue cobrar (`opcoesVisiveis(recorrenteHabilitado())`,
+  // resolvido no servidor antes de renderizar), então não há discrepância a
+  // avisar no meio do caminho. Se o gateway recusar mesmo assim, o certo é
+  // dizer o motivo e deixar o aluno tentar de novo — nunca trocar o produto
+  // por baixo dele.
   if (mpConfigurado()) {
-    let semRenovacao = false;
-    let criado = await (opcao.forma === "recorrente"
+    const criado = await (opcao.forma === "recorrente"
       ? criarAssinaturaRecorrente({ assinaturaId: data.id, opcao, userEmail: user.email })
       : criarPreferenciaCheckout({ assinaturaId: data.id, opcao, userEmail: user.email }));
-
-    if ("error" in criado && opcao.forma === "recorrente") {
-      console.error(
-        "Preapproval recusado, caindo pro checkout avulso de 1 período. Motivo:",
-        criado.error,
-      );
-      semRenovacao = true;
-      criado = await criarPreferenciaCheckout({
-        assinaturaId: data.id,
-        opcao,
-        userEmail: user.email,
-      });
-    }
 
     if ("url" in criado) {
       // Guarda a referência da assinatura no gateway pra conferência e
@@ -164,14 +150,14 @@ export async function criarAssinaturaAction(
           console.error("Assinatura criada no MP mas gateway_id não foi salvo:", e);
         }
       }
-      return semRenovacao ? { checkoutUrl: criado.url, semRenovacao } : { checkoutUrl: criado.url };
+      return { checkoutUrl: criado.url };
     }
 
-    // Nem a assinatura nem o avulso saíram: o gateway está de pé e disse não
-    // duas vezes. Cancela a pendente que acabou de nascer (senão o índice
-    // parcial de "uma pendente por aluno" barra a próxima tentativa) e devolve
-    // o motivo real, em vez do "confirmaremos manualmente" — que é uma
-    // promessa de que alguém vai cobrar por fora, e ninguém vai.
+    // O gateway está de pé e disse não. Cancela a pendente que acabou de
+    // nascer (senão o índice parcial de "uma pendente por aluno" barra a
+    // próxima tentativa) e devolve o motivo real, em vez do "confirmaremos
+    // manualmente" — que é uma promessa de que alguém vai cobrar por fora, e
+    // ninguém vai.
     await supabase
       .from("assinaturas")
       .update({ status: "cancelada" })
