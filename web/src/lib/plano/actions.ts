@@ -545,14 +545,18 @@ export async function resgatarCupomAction(
     .eq("id", user.id);
   if (errUpdate) return { error: errUpdate.message };
 
-  // Mesma regra do caminho pago (ver lib/plano/ativar.ts): a conta que NUNCA
-  // foi Pro recebe o e-mail com o inventário do que acabou de ganhar. Quem
-  // resgata um cupom de renovação já sabe o que tem.
-  if (!jaPro && !profile?.plano_desde) {
+  // Mesma regra do caminho pago (ver lib/plano/ativar.ts): quem NÃO estava Pro
+  // e passou a estar recebe o e-mail com o inventário do que acabou de ganhar
+  // — inclusive o aluno que já tinha sido Pro, deixou vencer e voltou por um
+  // cupom. Somar dias em cima de um Pro que já está valendo não manda nada:
+  // esse aluno não virou Pro, ele continuou.
+  if (!jaPro) {
     await enviarBoasVindasPro({
       userId: user.id,
       ciclo: "cupom",
       expiraEm: novaExpira.toISOString(),
+      origem: "cupom",
+      retorno: Boolean(profile?.plano_desde),
     });
   }
 

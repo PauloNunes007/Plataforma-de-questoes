@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { adicionarMeses, cancelarAssinaturaRecorrente } from "./preapproval";
-import { MESES_SEMESTRE } from "./plano";
+import { MESES_SEMESTRE, ehPro } from "./plano";
 import { enviarBoasVindasPro } from "./boas-vindas";
 
 // Ativação do Pro — a lógica compartilhada entre a confirmação manual do admin
@@ -64,7 +64,7 @@ async function estenderPro(
 
   const { data: profile, error: errLeitura } = await admin
     .from("profiles")
-    .select("plano_desde, plano_expira_em, plano_fidelidade_ate")
+    .select("plano, plano_desde, plano_expira_em, plano_fidelidade_ate")
     .eq("id", ass.user_id)
     .maybeSingle();
   if (errLeitura) return { error: errLeitura.message };
@@ -90,10 +90,12 @@ async function estenderPro(
         : adicionarMeses(agora, 6)
       : null;
 
-  // `plano_desde` vazio = esta conta NUNCA foi Pro. É a marca que decide o
-  // e-mail de boas-vindas, e ela é lida ANTES do update que a preenche —
-  // depois seria tarde, e toda renovação mandaria "bem-vindo" de novo.
-  const primeiraVezNaVida = !profile?.plano_desde;
+  // Quem decide o e-mail de boas-vindas: esta conta estava Pro AGORA, antes
+  // desta cobrança? Lido antes do update, porque depois dele a resposta é
+  // sempre "sim". Renovação de plano ativo → calado; conta nova ou aluno que
+  // deixou vencer e voltou → e-mail (ver lib/plano/boas-vindas.ts).
+  const eraPro = ehPro(profile);
+  const jaFoiProAntes = Boolean(profile?.plano_desde);
 
   const { error } = await admin
     .from("profiles")
@@ -110,11 +112,13 @@ async function estenderPro(
   // Fora do caminho crítico de propósito: um provedor de e-mail fora do ar
   // não pode fazer uma ativação PAGA falhar (`enviarBoasVindasPro` engole os
   // próprios erros e só loga). O aluno já está Pro neste ponto.
-  if (primeiraVezNaVida) {
+  if (!eraPro) {
     await enviarBoasVindasPro({
       userId: ass.user_id,
       ciclo: ass.ciclo,
       expiraEm: expira.toISOString(),
+      origem: "pago",
+      retorno: jaFoiProAntes,
     });
   }
 

@@ -1203,14 +1203,32 @@ sabe o que ganhou não usa; quem não usa não renova.
   quem paga por Pix, que passa pelo polling, veria as boas-vindas.
 - **E-mail** (`lib/email/templates-pro.ts` + `lib/plano/boas-vindas.ts`): existe
   porque metade fecha a aba no checkout e volta horas depois direto no
-  `/dashboard` — esses nunca veem a tela. Disparado de `estenderPro`, e a
-  idempotência é `profiles.plano_desde` lido ANTES do update que o preenche
-  (nulo = nunca foi Pro). **Sem tabela de controle de envio**: `plano_desde` já
-  é essa verdade. Todo o disparo é engolido (`try/catch`, erros só no log) —
-  provedor de e-mail fora do ar não pode transformar um pagamento aprovado em
-  erro, e um `throw` faria o webhook do MP reprocessar uma ativação que deu
-  certo. O resgate de cupom (`resgatarCupomAction`) manda o mesmo e-mail, sob a
-  mesma condição.
+  `/dashboard` — esses nunca veem a tela. Disparado de `estenderPro` (caminho
+  pago: webhook, polling da `/pro` e ativação manual do admin passam todos por
+  lá) e de `resgatarCupomAction` (cupom). **Sem tabela de controle de envio**:
+  o estado do plano lido ANTES da escrita já é essa verdade. Todo o disparo é
+  engolido (`try/catch`, erros só no log) — provedor de e-mail fora do ar não
+  pode transformar um pagamento aprovado em erro, e um `throw` faria o webhook
+  do MP reprocessar uma ativação que deu certo.
+
+  **Repasse do mesmo dia — duas correções, pedido do dono: "manda boas-vindas e
+  agradece SEMPRE que alguém virar Pro, independente se for por cupom".**
+
+  1. *Quando sai.* A régua era `profiles.plano_desde` nulo — uma vez na vida da
+     conta. Isso calava justamente o segundo caso mais importante: o aluno que
+     foi Pro, deixou vencer e VOLTOU (pagando ou por cupom), porque
+     `plano_desde` nunca mais é nulo. Agora a régua é a **transição**: `ehPro`
+     lido antes do update, e-mail sempre que uma conta que não estava Pro passa
+     a estar. Renovar um plano **ainda ativo** continua calado — renovar não é
+     virar Pro, e é o que impede a recorrente mensal de mandar boas-vindas todo
+     mês. `plano_desde` não sumiu: virou o `retorno` do template, que separa
+     "bem-vindo" de "seu Pro está de volta".
+  2. *O que diz.* O texto era escrito só pro caminho pago — abria com
+     "Pagamento confirmado" e assinava "porque assinou o Expectrum Pro",
+     **inclusive pra quem entrou por cupom e não pagou nada**, e não agradecia
+     em lugar nenhum. O template recebe `origem: "pago" | "cupom"` e agradece
+     de acordo (assunto, abertura e rodapé mudam; a lista de benefícios é a
+     mesma nos quatro casos, porque ela é o motivo do e-mail existir).
 
 ## Exportar em PDF com marca d'água (2026-09-17) — `/imprimir/*`
 
