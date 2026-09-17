@@ -4,6 +4,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import { ClipboardPaste, ImagePlus, Loader2, Trash2, Upload } from "lucide-react";
 import { comprimirImagem } from "@/lib/importar/comprimir-imagem";
 import { salvarErroAction, uploadImagemErroAction } from "@/lib/aprovacao/actions";
+import { Select } from "@/components/ui/select";
 import {
   BANCAS,
   DISCIPLINAS_APROVACAO,
@@ -200,17 +201,23 @@ export function ErroForm({
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="block">
+        {/* `div`, não `label`: o Select do design system é um botão, e
+            `<button>` não é rotulável — um `<label>` em volta dele não rotula
+            nada e ainda engana quem lê o HTML. O nome acessível vem do
+            `aria-label` do próprio Select. */}
+        <div className="block">
           <Rotulo>Disciplina *</Rotulo>
-          <select value={disciplina} onChange={(e) => setDisciplina(e.target.value)} className={CAMPO}>
-            <option value="">Selecionar…</option>
-            {DISCIPLINAS_APROVACAO.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-        </label>
+          <Select
+            value={disciplina}
+            onValueChange={setDisciplina}
+            opcoes={[
+              { value: "", label: "Selecionar…" },
+              ...DISCIPLINAS_APROVACAO.map((d) => ({ value: d, label: d })),
+            ]}
+            aria-label="Disciplina"
+            placeholder="Selecionar…"
+          />
+        </div>
         <label className="block">
           <Rotulo>Tema</Rotulo>
           <input
@@ -229,17 +236,16 @@ export function ErroForm({
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <label className="block">
+        <div className="block">
           <Rotulo>Banca</Rotulo>
-          <select value={banca} onChange={(e) => setBanca(e.target.value)} className={CAMPO}>
-            <option value="">—</option>
-            {BANCAS.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
-        </label>
+          <Select
+            value={banca}
+            onValueChange={setBanca}
+            opcoes={[{ value: "", label: "—" }, ...BANCAS.map((b) => ({ value: b, label: b }))]}
+            aria-label="Banca"
+            placeholder="—"
+          />
+        </div>
         <label className="block">
           <Rotulo>Ano</Rotulo>
           <input
@@ -250,17 +256,16 @@ export function ErroForm({
             className={CAMPO}
           />
         </label>
-        <label className="block">
+        <div className="block">
           <Rotulo>Fase</Rotulo>
-          <select value={provaFase} onChange={(e) => setProvaFase(e.target.value)} className={CAMPO}>
-            <option value="">—</option>
-            {FASES.map((f) => (
-              <option key={f} value={f}>
-                {f}
-              </option>
-            ))}
-          </select>
-        </label>
+          <Select
+            value={provaFase}
+            onValueChange={setProvaFase}
+            opcoes={[{ value: "", label: "—" }, ...FASES.map((f) => ({ value: f, label: f }))]}
+            aria-label="Fase da prova"
+            placeholder="—"
+          />
+        </div>
         <label className="block">
           <Rotulo>Questão nº</Rotulo>
           <input value={questaoNum} onChange={(e) => setQuestaoNum(e.target.value)} placeholder="Q17" className={CAMPO} />

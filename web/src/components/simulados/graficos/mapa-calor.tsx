@@ -55,7 +55,7 @@ export function MapaCalor({ simulados }: { simulados: SimuladoAnalisado[] }) {
 
   return (
     <div ref={ref} className="relative">
-      <div className="overflow-x-auto">
+      <div className="rolagem-x">
         <table className="w-full min-w-[420px] border-separate border-spacing-[2px]">
           <caption className="sr-only">
             Aproveitamento por disciplina em cada um dos últimos {colunas.length} simulados

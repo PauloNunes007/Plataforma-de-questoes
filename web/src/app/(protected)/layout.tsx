@@ -6,6 +6,7 @@ import { ehPro } from "@/lib/plano/plano";
 import { carregarFocoHojeSeg } from "@/lib/foco/foco-data";
 import { FocoProvider } from "@/components/foco/foco-provider";
 import { FocoBar } from "@/components/foco/foco-bar";
+import { NavPendenteProvider } from "@/components/nav-link";
 import { TopNav } from "@/components/top-nav";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { BotaoErroRapido } from "@/components/aprovacao/botao-erro-rapido";
@@ -49,37 +50,41 @@ export default async function ProtectedLayout({
 
   return (
     <FocoProvider focoHojeSegInicial={focoHojeSeg} userId={user.id}>
-      {/* `print:block` + `print:min-h-0` não são cosméticos: o Chrome pagina
-          MAL dentro de um container flex — a folha de impressão
-          (components/imprimir) saía cortada numa página só ou com páginas em
-          branco no meio. Em @media print o casco do app vira fluxo de bloco
-          normal, que é o que o algoritmo de quebra de página sabe fatiar. */}
-      <div className="flex min-h-screen flex-col print:block print:min-h-0">
-        {/* Header horizontal + barra de Foco logo abaixo (redesign 2026-09). */}
-        <TopNav
-          nome={nome}
-          username={profile?.username ?? null}
-          curso={profile?.curso ?? null}
-          fotoUrl={profile?.foto_url ?? null}
-          isAdmin={isAdmin}
-          ehPro={pro}
-        />
-        <FocoBar />
+      {/* Guarda o href que o aluno acabou de tocar pra que a aba acenda ANTES
+          do payload chegar (ver components/nav-link.tsx). */}
+      <NavPendenteProvider>
+        {/* `print:block` + `print:min-h-0` não são cosméticos: o Chrome pagina
+            MAL dentro de um container flex — a folha de impressão
+            (components/imprimir) saía cortada numa página só ou com páginas em
+            branco no meio. Em @media print o casco do app vira fluxo de bloco
+            normal, que é o que o algoritmo de quebra de página sabe fatiar. */}
+        <div className="flex min-h-screen flex-col print:block print:min-h-0">
+          {/* Header horizontal + barra de Foco logo abaixo (redesign 2026-09). */}
+          <TopNav
+            nome={nome}
+            username={profile?.username ?? null}
+            curso={profile?.curso ?? null}
+            fotoUrl={profile?.foto_url ?? null}
+            isAdmin={isAdmin}
+            ehPro={pro}
+          />
+          <FocoBar />
 
-        {/* pb-16 abre espaço pra MobileBottomNav (fixed) não tampar o fim da
-            página em telas < lg. */}
-        <main className="min-w-0 flex-1 pb-16 lg:pb-0 print:block print:pb-0">{children}</main>
+          {/* pb-16 abre espaço pra MobileBottomNav (fixed) não tampar o fim da
+              página em telas < lg. */}
+          <main className="min-w-0 flex-1 pb-16 lg:pb-0 print:block print:pb-0">{children}</main>
 
-        {/* Modo Aprovação (feature de conta única): registrar um erro de
-            qualquer página do app — só a conta admin vê. */}
-        {isAdmin && <BotaoErroRapido />}
+          {/* Modo Aprovação (feature de conta única): registrar um erro de
+              qualquer página do app — só a conta admin vê. */}
+          {isAdmin && <BotaoErroRapido />}
 
-        {/* Convite de testador (/convite/[codigo]) guardou um cupom no cookie:
-            aqui é o primeiro ponto do fluxo em que o profile já existe e o Pro
-            pode ser ligado sozinho. Sem cookie, não renderiza nada. */}
-        <ConviteAutoResgate />
-        <MobileBottomNav />
-      </div>
+          {/* Convite de testador (/convite/[codigo]) guardou um cupom no cookie:
+              aqui é o primeiro ponto do fluxo em que o profile já existe e o Pro
+              pode ser ligado sozinho. Sem cookie, não renderiza nada. */}
+          <ConviteAutoResgate />
+          <MobileBottomNav />
+        </div>
+      </NavPendenteProvider>
     </FocoProvider>
   );
 }

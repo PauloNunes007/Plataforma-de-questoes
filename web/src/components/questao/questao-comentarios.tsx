@@ -453,7 +453,7 @@ export function QuestaoComentarios({ questionId, ehAdmin }: { questionId: string
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-5 py-4">
+            <div className="rolagem-limpa flex-1 overflow-y-auto px-5 py-4">
               {carregando && comentarios.length === 0 && (
                 <p className="py-8 text-center text-xs text-muted-foreground">Carregando discussão...</p>
               )}

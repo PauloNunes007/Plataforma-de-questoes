@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { GraduationCap, LogOut, Settings, ShieldAlert, Timer } from "lucide-react";
 import { Logo } from "@/components/logo";
@@ -12,6 +11,7 @@ import { ProBadge, ProCta, ProMark } from "@/components/plano/pro-ui";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { signOutAction } from "@/lib/auth/actions";
+import { NavLink, NavProgresso, useAbaAtiva } from "@/components/nav-link";
 import { useFoco } from "@/components/foco/foco-provider";
 import { FocoHojeChip } from "@/components/foco/foco-bar";
 
@@ -30,8 +30,6 @@ type TopNavProps = {
 // tema, botão de Foco (timer), Pro e menu de conta. No mobile os links somem
 // (a MobileBottomNav cobre), sobrando marca + Foco + conta.
 export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavProps) {
-  const pathname = usePathname();
-
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl print:hidden">
       {/* fio de acento no topo — dá o toque "premium" sem pesar */}
@@ -50,39 +48,9 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
             some — entre 768 e 1023px (iPad portrait) as duas apareciam juntas
             e o header espremia logo+6 links+cluster numa faixa estreita. */}
         <nav className="ml-3 hidden min-w-0 flex-1 items-center gap-0.5 lg:ml-4 lg:flex lg:gap-1">
-          {TOP_NAV_ITEMS.map((item) => {
-            const active =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={`group relative flex h-9 items-center gap-2 rounded-full px-3 text-[13.5px] font-semibold transition-colors ${
-                  active
-                    ? "text-white"
-                    : "text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
-                }`}
-              >
-                {active && (
-                  <motion.span
-                    layoutId="topnav-active"
-                    className="absolute inset-0 rounded-full bg-gradient-to-br from-questly-green to-questly-blue shadow-[0_2px_12px_-2px_var(--questly-green)]"
-                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-2">
-                  <Icon
-                    size={17}
-                    strokeWidth={active ? 2.3 : 1.85}
-                    className={active ? "text-white" : "transition-transform group-hover:scale-110"}
-                  />
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
+          {TOP_NAV_ITEMS.map((item) => (
+            <AbaTopo key={item.href} item={item} />
+          ))}
         </nav>
 
         {/* Cluster à direita */}
@@ -108,6 +76,41 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
         </div>
       </div>
     </header>
+  );
+}
+
+// Uma aba do header. O ativo vem de `useAbaAtiva` (que já considera o toque
+// ainda em voo), e não de `usePathname` cru — é o que faz a pílula deslizar no
+// clique em vez de esperar o servidor.
+function AbaTopo({ item }: { item: (typeof TOP_NAV_ITEMS)[number] }) {
+  const active = useAbaAtiva(item.href);
+  const Icon = item.icon;
+
+  return (
+    <NavLink
+      href={item.href}
+      aria-current={active ? "page" : undefined}
+      className={`group relative flex h-9 items-center gap-2 rounded-full px-3 text-[13.5px] font-semibold transition-colors ${
+        active ? "text-white" : "text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
+      }`}
+    >
+      {active && (
+        <motion.span
+          layoutId="topnav-active"
+          className="absolute inset-0 rounded-full bg-gradient-to-br from-questly-green to-questly-blue shadow-[0_2px_12px_-2px_var(--questly-green)]"
+          transition={{ type: "spring", stiffness: 400, damping: 32 }}
+        />
+      )}
+      <span className="relative z-10 flex items-center gap-2">
+        <Icon
+          size={17}
+          strokeWidth={active ? 2.3 : 1.85}
+          className={active ? "text-white" : "transition-transform group-hover:scale-110"}
+        />
+        {item.label}
+      </span>
+      <NavProgresso className="text-white" />
+    </NavLink>
   );
 }
 

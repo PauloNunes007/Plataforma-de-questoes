@@ -67,7 +67,7 @@ export function DesempenhoView({
       <div
         role="tablist"
         aria-label="Período da análise"
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+        className="rolagem-x -mx-4 flex gap-2 px-4 sm:mx-0 sm:px-0"
       >
         {PERIODOS.map((p) => {
           const ativo = p.id === periodo;

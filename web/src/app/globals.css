@@ -341,7 +341,25 @@
   }
   html {
     @apply font-sans;
-    scrollbar-gutter: stable;
+    /* Só no desktop: a calha reservada evita o "pulo" de 15px quando uma
+       página passa a ter barra. No celular a barra é sobreposta e some
+       sozinha — reservar calha lá é margem morta de graça. */
+    @media (pointer: fine) {
+      scrollbar-gutter: stable;
+    }
+  }
+  /* A PÁGINA não rola de lado. Nunca. `clip` (e não `hidden`) de propósito:
+     `hidden` transforma o body num container de rolagem e quebra o
+     `position: sticky` do header e das barras de filtro; `clip` corta o
+     transbordo sem criar container nenhum.
+     Isso fecha a queixa de "vários scrolls horizontais no celular": um
+     cartão, um gráfico ou uma fórmula larga passa a rolar DENTRO da própria
+     caixa (que é onde o gesto faz sentido), em vez de arrastar a tela
+     inteira 8px pro lado e desalinhar tudo. */
+  @media screen {
+    body {
+      overflow-x: clip;
+    }
   }
   h1,
   h2,
@@ -358,10 +376,19 @@
     outline: 2px solid color-mix(in oklab, var(--ring) 70%, transparent);
     outline-offset: 2px;
   }
-  /* Scrollbar discreta, coerente com o tema */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in oklab, var(--foreground) 18%, transparent) transparent;
+  /* Scrollbar discreta, coerente com o tema — SÓ onde existe ponteiro fino.
+     No toque isto era um tiro no pé: declarar `scrollbar-width`/
+     `scrollbar-color` faz o Chrome do Android trocar a barra SOBREPOSTA (que
+     aparece durante o gesto e some) por uma barra CLÁSSICA, sempre desenhada,
+     que ainda ocupa espaço do conteúdo. Era isso que enchia os cartões de
+     filetes cinza no celular. Envolvendo na media query, o toque volta a usar
+     a barra nativa que some sozinha, e o mouse continua com a barra fina do
+     tema. */
+  @media (pointer: fine) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in oklab, var(--foreground) 18%, transparent) transparent;
+    }
   }
 }
 
@@ -369,6 +396,63 @@
   /* Números que não "dançam" em contadores/estatísticas */
   .tnum {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* -----------------------------------------------------------------
+     ROLAGEM DENTRO DE CARTÃO (2026-09-17)
+
+     Trilhos que rolam de lado dentro de um cartão — fileira de chips,
+     tabela larga, gráfico, fórmula comprida — são GESTO, não controle: o
+     aluno arrasta ou usa a roda, ninguém mira aquela barra de 6px. E
+     desenhá-la ali dentro estraga o cartão: vira um filete cinza colado na
+     borda arredondada, e no celular apareciam vários deles na mesma tela.
+
+     `.rolagem-limpa` apaga a barra e mantém o resto:
+       • `overscroll-behavior: contain` — o gesto PARA no fim do trilho em
+         vez de continuar arrastando a página atrás dele (é isso que faz o
+         celular parecer ter "scroll dentro de scroll");
+       • `touch-action: pan-x` nos trilhos horizontais mantém o scroll
+         vertical da página funcionando por cima deles;
+       • rolagem por teclado/roda seguem iguais, e o conteúdo continua
+         alcançável — a barra é que sai.
+     ----------------------------------------------------------------- */
+  .rolagem-limpa {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior: contain;
+  }
+  .rolagem-limpa::-webkit-scrollbar {
+    display: none;
+  }
+  /* Variante horizontal: além de esconder a barra, sinaliza que há mais
+     conteúdo com um esmaecido na borda direita — a dica que a barra dava,
+     sem o traço cinza. */
+  .rolagem-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    scroll-behavior: smooth;
+  }
+  .rolagem-x::-webkit-scrollbar {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rolagem-x {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* Fio de progresso da aba em navegação (components/nav-link.tsx) */
+  @keyframes nav-fio {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(400%);
+    }
   }
   /* Kicker padrão do design system: rótulo pequeno em small-caps */
   .kicker {

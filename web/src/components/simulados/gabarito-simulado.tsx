@@ -317,7 +317,7 @@ function LeitorGabarito({
           </div>
 
           {/* Folha de respostas: visão de conjunto E navegador. */}
-          <div className="mt-2.5 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+          <div className="rolagem-x -mx-1 mt-2.5 flex gap-1.5 px-1 pb-1">
             {visiveis.map((p, i) => {
               const a = porId.get(p.id);
               if (!a) return null;
@@ -342,7 +342,7 @@ function LeitorGabarito({
       </header>
 
       {/* ---------------------------------------------------------- corpo */}
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="rolagem-limpa min-h-0 flex-1 overflow-y-auto">
         <div className="casca-leitura py-5">
           {!pergunta || !item ? (
             <p className="rounded-xl bg-muted/50 px-4 py-8 text-center text-[13px] text-muted-foreground">

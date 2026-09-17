@@ -32,6 +32,7 @@ import { comprimirImagem } from "@/lib/importar/comprimir-imagem";
 import { ImgPicker } from "@/components/importar/img-picker";
 import { TikzPicker } from "@/components/importar/tikz-picker";
 import { PreviewCard } from "@/components/importar/preview-card";
+import { Select } from "@/components/ui/select";
 import {
   PdfRecortador,
   normalizarNomeArquivo,
@@ -54,8 +55,14 @@ const BTN_PRIMARIO =
   "inline-flex items-center justify-center gap-2 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:text-[#0c1512]";
 const BTN_SECUNDARIO =
   "inline-flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50";
+const OPCOES_DIFICULDADE = [
+  { value: "facil", label: "Fácil" },
+  { value: "medio", label: "Médio" },
+  { value: "dificil", label: "Difícil" },
+];
+
 const INPUT =
-  "rounded-lg border border-input bg-background px-2.5 py-2 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20";
+  "min-h-[34px] rounded-lg border border-input bg-background px-2.5 py-2 text-xs outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20";
 
 type ReportInfo = {
   totalArquivo: number;
@@ -582,31 +589,29 @@ export function Importador({
               </div>
 
               <div className="mb-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                <select
+                <Select
                   value={itemAtual.materiaId || ""}
-                  onChange={(e) => atualizarItem({ materiaId: e.target.value || null, topicoId: null })}
-                  className={`${INPUT} font-medium`}
-                >
-                  <option value="">Matéria...</option>
-                  {materias.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.nome}
-                    </option>
-                  ))}
-                </select>
-                <select
+                  onValueChange={(v) => atualizarItem({ materiaId: v || null, topicoId: null })}
+                  opcoes={[
+                    { value: "", label: "Matéria..." },
+                    ...materias.map((m) => ({ value: m.id, label: m.nome })),
+                  ]}
+                  aria-label="Matéria"
+                  placeholder="Matéria..."
+                  tamanho="sm"
+                />
+                <Select
                   value={itemAtual.topicoId || ""}
+                  onValueChange={(v) => atualizarItem({ topicoId: v || null })}
                   disabled={!itemAtual.materiaId}
-                  onChange={(e) => atualizarItem({ topicoId: e.target.value || null })}
-                  className={`${INPUT} font-medium disabled:opacity-50`}
-                >
-                  <option value="">{itemAtual.materiaId ? "Tópico..." : "Selecione a matéria antes"}</option>
-                  {topicosMateria.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.nome}
-                    </option>
-                  ))}
-                </select>
+                  opcoes={[
+                    { value: "", label: "Tópico..." },
+                    ...topicosMateria.map((t) => ({ value: t.id, label: t.nome })),
+                  ]}
+                  aria-label="Tópico"
+                  placeholder={itemAtual.materiaId ? "Tópico..." : "Selecione a matéria antes"}
+                  tamanho="sm"
+                />
               </div>
 
               <div className="mb-3">
@@ -619,15 +624,13 @@ export function Importador({
               </div>
 
               <div className="mb-4 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-                <select
+                <Select
                   value={itemAtual.dificuldade}
-                  onChange={(e) => atualizarItem({ dificuldade: e.target.value, dificuldadeInvalida: false })}
-                  className={`${INPUT} font-medium`}
-                >
-                  <option value="facil">Fácil</option>
-                  <option value="medio">Médio</option>
-                  <option value="dificil">Difícil</option>
-                </select>
+                  onValueChange={(v) => atualizarItem({ dificuldade: v, dificuldadeInvalida: false })}
+                  opcoes={OPCOES_DIFICULDADE}
+                  aria-label="Dificuldade"
+                  tamanho="sm"
+                />
                 <input
                   value={itemAtual.instituicao || ""}
                   onChange={(e) => atualizarItem({ instituicao: e.target.value.trim() || null })}
@@ -865,18 +868,17 @@ export function Importador({
             <FileJson size={14} strokeWidth={1.75} /> Escolher arquivo .json
           </button>
           <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={aoEscolherArquivo} />
-          <select
+          <Select
             value={materiaLotePadrao}
-            onChange={(e) => setMateriaLotePadrao(e.target.value)}
-            className={`${INPUT} font-medium`}
-          >
-            <option value="">Matéria padrão do lote — nenhuma</option>
-            {materias.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.nome}
-              </option>
-            ))}
-          </select>
+            onValueChange={setMateriaLotePadrao}
+            opcoes={[
+              { value: "", label: "Matéria padrão do lote — nenhuma" },
+              ...materias.map((m) => ({ value: m.id, label: m.nome })),
+            ]}
+            aria-label="Matéria padrão do lote"
+            placeholder="Matéria padrão do lote — nenhuma"
+            tamanho="sm"
+          />
         </div>
         <div className="mb-3 rounded-xl border border-dashed border-border bg-muted/40 p-3">
           <div className="mb-1.5 flex flex-wrap items-center gap-2.5">

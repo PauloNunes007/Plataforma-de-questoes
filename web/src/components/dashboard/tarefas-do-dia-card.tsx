@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ListTodo, Plus, X } from "lucide-react";
 import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
+import { Select } from "@/components/ui/select";
+import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 import { alternarTarefaAction, criarTarefaAction, excluirTarefaAction } from "@/lib/tarefas/actions";
 
 // O QUE VOCÊ MARCOU PRA HOJE — o recorte de hoje da mesma lista que a tela
@@ -37,6 +39,15 @@ export function TarefasDoDiaCard({
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [subjectId, setSubjectId] = useState("");
+  // Mesmas opções (e mesmo ponto colorido) do painel do calendário: a
+  // disciplina tem UMA cor em qualquer tela do app.
+  const opcoesDisciplina = useMemo(
+    () => [
+      { value: "", label: "Sem disciplina" },
+      ...subjects.map((s) => ({ value: s.id, label: s.nome, cor: corDaDisciplina(s.nome).de })),
+    ],
+    [subjects],
+  );
   const [salvando, setSalvando] = useState(false);
 
   async function adicionar() {
@@ -113,20 +124,16 @@ export function TarefasDoDiaCard({
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 placeholder="Nome da tarefa"
-                className="w-full rounded-lg border border-input bg-background px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
+                className="min-h-[34px] w-full rounded-lg border border-input bg-background px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
               />
-              <select
+              <Select
                 value={subjectId}
-                onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full rounded-lg border border-input bg-background px-2.5 py-1.5 text-[13px] outline-none focus:border-questly-green"
-              >
-                <option value="">Sem disciplina</option>
-                {subjects.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.nome}
-                  </option>
-                ))}
-              </select>
+                onValueChange={setSubjectId}
+                opcoes={opcoesDisciplina}
+                aria-label="Disciplina"
+                placeholder="Sem disciplina"
+                tamanho="sm"
+              />
               <textarea
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}

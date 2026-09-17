@@ -385,7 +385,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
         </div>
 
         {/* nav do mobile: rolagem horizontal em vez de esconder tudo */}
-        <nav className="flex gap-1 overflow-x-auto border-t border-border/50 px-4 py-2 md:hidden [scrollbar-width:none]">
+        <nav className="rolagem-x flex gap-1 border-t border-border/50 px-4 py-2 md:hidden">
           {NAV.map((n) => (
             <a
               key={n.href}

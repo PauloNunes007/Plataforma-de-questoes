@@ -51,7 +51,10 @@ export function MathText({ text, className }: { text: string | null | undefined;
         return seg.display ? (
           // equação longa/matriz não deve forçar a página inteira a rolar
           // de lado num celular — ela rola sozinha dentro dessa div.
-          <div key={i} className="max-w-full overflow-x-auto" dangerouslySetInnerHTML={{ __html: html }} />
+          // `rolagem-x` em vez de `overflow-x-auto`: o gesto para aqui em vez
+          // de arrastar a questão atrás, e a barra não fica desenhada por
+          // baixo de toda fórmula em bloco (eram várias por enunciado).
+          <div key={i} className="rolagem-x max-w-full" dangerouslySetInnerHTML={{ __html: html }} />
         ) : (
           <span key={i} dangerouslySetInnerHTML={{ __html: html }} />
         );

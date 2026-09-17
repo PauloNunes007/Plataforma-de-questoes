@@ -594,6 +594,115 @@ cai sozinho no `getUser()` se um dia a chave voltar a ser simétrica. **Não
 trocar de volta por "getUser é o recomendado"** — o recomendado é não confiar no
 cookie sem verificar, e `getClaims` verifica.
 
+## Trocar de aba não pode parecer lento (2026-09-17)
+
+A queixa foi "a plataforma está meio lerda ao mudar de abas". A seção acima já
+tinha matado a cascata de queries — o que sobrava era **o cliente**, em duas
+frentes que se somavam.
+
+**1. O Next não guardava nada.** Toda rota protegida é dinâmica (lê a sessão), e
+o padrão de `staleTimes.dynamic` é **0**: sair do Início pro Ranking e voltar
+cinco segundos depois refazia o round-trip inteiro e mostrava o esqueleto de
+novo. `next.config.ts` passou a declarar `experimental.staleTimes =
+{ dynamic: 30, static: 180 }`. Trinta segundos é o vaivém que conta como a mesma
+sessão de uso. **Isso não deixa dado velho na tela:** toda escrita do app passa
+por `router.refresh()` ou `revalidatePath`, e os dois invalidam este cache — o
+que ele segura é só ida-e-volta sem escrita no meio. Junto veio
+`experimental.dynamicOnHover`, que faz o prefetch do hover trazer o conteúdo
+dinâmico e não só o `loading.tsx`; no celular, sem hover, ele não gera pedido
+nenhum a mais (lá quem já cobria era o prefetch no `touchstart` do `<Link>`).
+
+**2. Nada acontecia entre o toque e a resposta.** A aba antiga continuava acesa,
+o aluno concluía que o toque não pegou e tocava de novo — o que **cancela e
+recomeça** a navegação. `components/nav-link.tsx` resolve: `NavLink` marca o
+href tocado num contexto, `useAbaAtiva` devolve o ativo já considerando esse
+palpite (a pílula do header desliza no clique, não na resposta) e `NavProgresso`
+usa `useLinkStatus` pra desenhar um fio enquanto o payload não chega.
+
+O palpite **nunca sobrevive à verdade**: ele é guardado junto com o caminho em
+que foi feito e só vale enquanto `usePathname()` continuar sendo aquele — a
+comparação falha sozinha no render quando a rota muda, sem `useEffect` (o
+`react-hooks/set-state-in-effect` reprova a versão com efeito, e com razão: era
+um render em cascata a cada navegação). O temporizador de 8s cobre o outro fim,
+a navegação cancelada ou que falhou, em que o caminho **não** muda e a aba
+ficaria acesa mentindo.
+
+**3. O esqueleto era o da home em todas as telas.** `(protected)/loading.tsx`
+desenhava a grade de duas colunas com trilho lateral — ir pro Ranking mostrava
+por um instante um layout que aquela tela não tem, e a página "pulava" ao
+chegar. Aquele arquivo virou `dashboard/loading.tsx` (a home merece silhueta
+própria: é a rota mais cara e a mais visitada) e o do grupo passou a desenhar só
+o que toda tela tem — título, linha de apoio, cartões empilhados.
+
+## Rolagem: uma por tela, nunca dentro do cartão (2026-09-17)
+
+Do mesmo repasse: *"no cartão está aparecendo uma opção de scroll; no celular
+então tem várias, horizontal e vertical"*. Eram quatro causas distintas.
+
+**A barra de toque estava sendo forçada a existir.** `globals.css` declarava
+`scrollbar-width: thin` + `scrollbar-color` em `*`. No Chrome do Android isso
+troca a barra **sobreposta** (aparece no gesto, some sozinha, não ocupa espaço)
+por uma barra **clássica**, sempre desenhada e tirando largura do conteúdo — era
+o filete cinza dentro dos cartões. As duas declarações agora vivem dentro de
+`@media (pointer: fine)`: mouse continua com a barra fina do tema, toque volta ao
+comportamento nativo. Pelo mesmo motivo, `scrollbar-gutter: stable` também ficou
+só no ponteiro fino (no celular era calha morta).
+
+**A página rolava de lado.** `body` ganhou `overflow-x: clip` (dentro de
+`@media screen`, pra não cortar a folha de impressão). É `clip` e **não**
+`hidden` de propósito: `hidden` transformaria o body num contêiner de rolagem e
+quebraria o `position: sticky` do header e das barras de filtro. Agora o que é
+largo rola dentro da própria caixa, que é onde o gesto faz sentido.
+
+**Os trilhos internos pediam barra.** Duas utilidades novas: `.rolagem-x`
+(fileira de chips, tabela larga, gráfico, fórmula em bloco — esconde a barra e
+prende o gesto com `overscroll-behavior-x: contain`, pra ele parar no fim do
+trilho em vez de arrastar a página atrás) e `.rolagem-limpa` (folhas, modais e
+listas com teto de altura). Aplicadas em todo trilho horizontal do app e em toda
+folha que rola por cima de outra coisa. **Regra:** rolagem dentro de cartão é
+gesto, não controle — ninguém mira uma barra de 6px colada numa borda
+arredondada.
+
+**Dois casos eram bug, não estilo.** (a) Nos gráficos de linha/ritmo/evolução, o
+balão de dica mora acima do ponto e estava **dentro** do contêiner que rola:
+transbordava, e o cartão ganhava uma barra vertical fantasma. A dica saiu pra um
+contêiner externo que não rola — a posição continua certa porque `useDica` mede
+a partir dele. (b) A carta TCG do ranking tinha `overflow-y: auto`, e o que
+transbordava não era conteúdo: são os dois borrões decorativos postos de
+propósito fora da caixa (`-top-16`, `-bottom-14`) pra vazarem pelas quinas. Virou
+`overflow-hidden`, que é o que sempre se quis ali; a rede de segurança pra tela
+baixa passou a ser o fundo do modal, com `items-start` + `my-auto` no cartão (com
+`items-center`, um cartão mais alto que a tela tem o topo cortado e
+inalcançável).
+
+## Um seletor só no app inteiro (`components/ui/select.tsx`)
+
+Havia 20 `<select>` nativos espalhados por importador, admin, Modo Aprovação e o
+card de tarefas da home. O nativo é o único controle que o CSS do app não
+alcança: a **lista aberta** é desenhada pelo sistema operacional — caixa branca
+quadrada, fonte do sistema, sem raio, sem sombra, sem noção do tema escuro. No
+meio de uma tela da casa, lê como pedaço de outro programa.
+
+Todos passaram a usar o `<Select>` que já existia no painel do calendário (Base
+UI + pintura da casa; teclado, leitor de tela e foco visível vêm do primitivo).
+O componente ganhou três coisas nesse repasse:
+
+- `tamanho` (`sm` | `md`) — a **mesma** pintura em duas alturas. `md` (38px) é o
+  campo de formulário; `sm` (34px) é a barra de filtros. Não existe "select de
+  filtro" com outra borda ou outro raio. As alturas são mínimos em pixel, não
+  padding: é o que faz um Select e um `<input>` na mesma linha terminarem no
+  mesmo pixel, já que a altura por padding depende da entrelinha herdada (os
+  `INPUT` vizinhos em admin/importar ganharam o mesmo mínimo);
+- `detalhe` — segunda informação discreta no item ("Unicamp · máx. 72");
+- o ponto colorido agora só aparece quando **alguma** opção tem `cor`. Antes,
+  uma lista sem disciplina (dificuldade, banca, fase) ganhava uma coluna de
+  círculos vazios só pra alinhar o texto.
+
+Onde o Select substituiu um `<select>` que estava dentro de um `<label>`, o
+`<label>` virou `<div>`: o Select é um `<button>`, `<button>` não é rotulável, e
+um label sem controle rotulável não rotula nada — o nome acessível vem do
+`aria-label` do próprio Select.
+
 ## Voltar pra onde veio (`lib/questao/navegacao.ts`)
 
 `/questao` é alcançada por seis caminhos (home, trilha, listas de questões,

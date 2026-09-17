@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CalendarClock, Loader2, Plus, Timer, Trash2, TrendingUp } from "lucide-react";
 import { ModalPainel } from "@/components/ui/modal-painel";
+import { Select } from "@/components/ui/select";
 import { excluirSimuladoAction, salvarSimuladoAction } from "@/lib/aprovacao/actions";
 import {
   DISCIPLINAS_SIMULADO,
@@ -258,7 +259,7 @@ function GraficoEvolucao({ simulados }: { simulados: Simulado[] }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="rolagem-x">
         <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[480px]" role="img" aria-label="Evolução de acertos por disciplina">
           {/* linhas de grade horizontais */}
           {[0, 0.25, 0.5, 0.75, 1].map((f) => {
@@ -394,13 +395,22 @@ function SimuladoForm({
           <span className="mb-1 block text-[12px] font-semibold text-muted-foreground">Data</span>
           <input type="date" value={data} onChange={(e) => setData(e.target.value)} className={CAMPO} />
         </label>
-        <label className="block">
+        {/* `div`, não `label`: o Select do design system é um botão, e
+            `<button>` não é rotulável — um `<label>` em volta dele não rotula
+            nada e ainda engana quem lê o HTML. O nome acessível vem do
+            `aria-label` do próprio Select. */}
+        <div className="block">
           <span className="mb-1 block text-[12px] font-semibold text-muted-foreground">Banca</span>
-          <select value={banca} onChange={(e) => setBanca(e.target.value)} className={CAMPO}>
-            <option value="Unicamp">Unicamp (máx. 72)</option>
-            <option value="Fuvest">Fuvest (máx. 80)</option>
-          </select>
-        </label>
+          <Select
+            value={banca}
+            onValueChange={setBanca}
+            opcoes={[
+              { value: "Unicamp", label: "Unicamp", detalhe: "máx. 72" },
+              { value: "Fuvest", label: "Fuvest", detalhe: "máx. 80" },
+            ]}
+            aria-label="Banca"
+          />
+        </div>
         <label className="col-span-2 block sm:col-span-1">
           <span className="mb-1 block text-[12px] font-semibold text-muted-foreground">Prova de referência</span>
           <input

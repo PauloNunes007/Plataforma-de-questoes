@@ -141,7 +141,7 @@ function TabelaMetricas({ m }: { m: MetricasModelo }) {
     ["AUC (maior = melhor)", m.auc?.toFixed(3) ?? "—", m.baselineAuc?.toFixed(3) ?? "—"],
   ];
   return (
-    <div className="tnum mt-3 overflow-x-auto">
+    <div className="tnum rolagem-x mt-3">
       <table className="w-full max-w-[560px] text-[12px]">
         <thead>
           <tr className="text-left text-muted-foreground">

@@ -194,7 +194,7 @@ export function MathKeyboard({
       )}
 
       <div className="overflow-hidden rounded-xl border border-border bg-card">
-        <div className="flex gap-0.5 overflow-x-auto border-b border-border bg-muted/40 p-1">
+        <div className="rolagem-x flex gap-0.5 border-b border-border bg-muted/40 p-1">
           {ABAS.map((a) => (
             <button
               key={a.id}

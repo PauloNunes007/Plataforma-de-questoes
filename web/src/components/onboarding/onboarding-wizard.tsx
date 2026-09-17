@@ -584,7 +584,7 @@ function StepContent({
               Nenhuma disciplina selecionada ainda — volte no passo anterior.
             </p>
           ) : (
-            <div className="flex max-h-[340px] flex-col gap-4 overflow-y-auto pr-1">
+            <div className="rolagem-limpa flex max-h-[340px] flex-col gap-4 overflow-y-auto pr-1">
               {state.disciplinas.map((nome) => (
                 <DisciplinaCard
                   key={nome}

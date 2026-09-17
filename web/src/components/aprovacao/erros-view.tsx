@@ -13,6 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { ModalPainel } from "@/components/ui/modal-painel";
+import { Select } from "@/components/ui/select";
 import { ErroForm } from "./erro-form";
 import {
   arquivarErroAction,
@@ -40,8 +41,11 @@ const COR_TIPO: Record<string, string> = {
   tempo: "bg-questly-purple/10 text-questly-purple",
 };
 
+// Sobrou pro input de texto do filtro: os três seletores ao lado dele usam
+// o <Select> do design system (ui/select.tsx), que traz a própria pintura.
+// A altura casa com a do Select `md` (38px) pra fileira não ficar serrilhada.
 const CAMPO_FILTRO =
-  "h-9 rounded-lg border border-input bg-background px-2.5 text-[13px] outline-none transition-colors focus:border-questly-green/60";
+  "min-h-[38px] rounded-xl border border-input bg-background px-3 text-[13px] outline-none transition-colors focus:border-questly-green/60";
 
 type Aba = "refazer" | "todos" | "arquivados";
 
@@ -136,30 +140,36 @@ export function ErrosView({ errosIniciais, hoje }: { errosIniciais: Erro[]; hoje
 
       {/* Filtros (valem nas três abas) */}
       <div className="flex flex-wrap items-center gap-2">
-        <select value={fDisciplina} onChange={(e) => setFDisciplina(e.target.value)} className={CAMPO_FILTRO}>
-          <option value="">Disciplina: todas</option>
-          {DISCIPLINAS_APROVACAO.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </select>
-        <select value={fTipo} onChange={(e) => setFTipo(e.target.value)} className={CAMPO_FILTRO}>
-          <option value="">Tipo: todos</option>
-          {TIPOS_ERRO.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.rotulo}
-            </option>
-          ))}
-        </select>
-        <select value={fBanca} onChange={(e) => setFBanca(e.target.value)} className={CAMPO_FILTRO}>
-          <option value="">Banca: todas</option>
-          {BANCAS.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </select>
+        <Select
+          value={fDisciplina}
+          onValueChange={setFDisciplina}
+          opcoes={[
+            { value: "", label: "Disciplina: todas" },
+            ...DISCIPLINAS_APROVACAO.map((d) => ({ value: d, label: d })),
+          ]}
+          aria-label="Disciplina"
+          placeholder="Disciplina: todas"
+          className="w-44"
+        />
+        <Select
+          value={fTipo}
+          onValueChange={setFTipo}
+          opcoes={[
+            { value: "", label: "Tipo: todos" },
+            ...TIPOS_ERRO.map((t) => ({ value: t.id, label: t.rotulo })),
+          ]}
+          aria-label="Tipo de erro"
+          placeholder="Tipo: todos"
+          className="w-40"
+        />
+        <Select
+          value={fBanca}
+          onValueChange={setFBanca}
+          opcoes={[{ value: "", label: "Banca: todas" }, ...BANCAS.map((b) => ({ value: b, label: b }))]}
+          aria-label="Banca"
+          placeholder="Banca: todas"
+          className="w-36"
+        />
         <input
           value={fTema}
           onChange={(e) => setFTema(e.target.value)}

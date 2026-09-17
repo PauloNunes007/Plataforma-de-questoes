@@ -58,129 +58,136 @@ export function LinhaEvolucao({ pontos }: { pontos: PontoEvolucao[] }) {
 
   return (
     <div>
-      <div ref={ref} className="relative w-full overflow-x-auto">
-        <svg
-          viewBox={`0 0 ${W} ${H}`}
-          className="h-auto w-full min-w-[440px]"
-          role="img"
-          aria-label={`Evolução da nota em ${pontos.length} simulados. Última nota ${ultimo.nota.toFixed(1)} de 10.`}
-        >
-          <defs>
-            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-questly-green)" stopOpacity="0.26" />
-              <stop offset="100%" stopColor="var(--color-questly-green)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-
-          {/* grade: hairline sólido, um tom acima da superfície */}
-          {[0, 5, 10].map((n) => (
-            <g key={n}>
-              <line
-                x1={PAD_X}
-                y1={y(n)}
-                x2={W - PAD_X}
-                y2={y(n)}
-                stroke="currentColor"
-                strokeOpacity="0.12"
-                strokeWidth="1"
-              />
-              <text x={PAD_X - 9} y={y(n) + 3.5} textAnchor="end" className="fill-muted-foreground text-[10px]">
-                {n}
-              </text>
-            </g>
-          ))}
-
-          {/* média histórica — referência, não série */}
-          <line
-            x1={PAD_X}
-            y1={y(media)}
-            x2={W - PAD_X}
-            y2={y(media)}
-            stroke="currentColor"
-            strokeOpacity="0.35"
-            strokeWidth="1"
-          />
-          <text
-            x={W - PAD_X}
-            y={y(media) - 5}
-            textAnchor="end"
-            className="fill-muted-foreground text-[9.5px] font-semibold"
+      <div ref={ref} className="relative w-full">
+        <div className="rolagem-x">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            className="h-auto w-full min-w-[440px]"
+            role="img"
+            aria-label={`Evolução da nota em ${pontos.length} simulados. Última nota ${ultimo.nota.toFixed(1)} de 10.`}
           >
-            média {media.toFixed(1)}
-          </text>
+            <defs>
+              <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--color-questly-green)" stopOpacity="0.26" />
+                <stop offset="100%" stopColor="var(--color-questly-green)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
 
-          <path d={area} fill={`url(#${gradId})`} />
-          <path
-            d={linha}
-            fill="none"
-            stroke="var(--color-questly-green)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {pontos.map((p, i) => {
-            const ativo = dica?.titulo === `${p.rotulo} · nota ${p.nota.toFixed(1)}`;
-            return (
-              <g key={`${p.id ?? i}`}>
-                <circle
-                  cx={x(i)}
-                  cy={y(p.nota)}
-                  r={ativo ? 5.5 : 4}
-                  fill="var(--color-questly-green)"
-                  stroke="var(--card)"
-                  strokeWidth="2"
-                >
-                  <title>{`${p.rotulo}: nota ${p.nota.toFixed(1)}`}</title>
-                </circle>
-                {/* alvo de toque largo: banda de altura cheia, nunca a mira de 8px */}
-                <rect
-                  x={x(i) - larguraBanda / 2}
-                  y={PAD_TOPO}
-                  width={larguraBanda}
-                  height={innerH}
-                  fill="transparent"
-                  className={p.id ? "cursor-pointer" : "cursor-default"}
-                  onPointerMove={(e) =>
-                    mostrar(e, {
-                      titulo: `${p.rotulo} · nota ${p.nota.toFixed(1)}`,
-                      linhas: [
-                        ...(p.acertos != null && p.total != null ? [`${p.acertos} de ${p.total} acertos`] : []),
-                        ...(p.id ? ["Toque para abrir o resultado"] : []),
-                      ],
-                    })
-                  }
-                  onPointerLeave={esconder}
-                  onClick={() => p.id && router.push(`/simulados/${p.id}`)}
+            {/* grade: hairline sólido, um tom acima da superfície */}
+            {[0, 5, 10].map((n) => (
+              <g key={n}>
+                <line
+                  x1={PAD_X}
+                  y1={y(n)}
+                  x2={W - PAD_X}
+                  y2={y(n)}
+                  stroke="currentColor"
+                  strokeOpacity="0.12"
+                  strokeWidth="1"
                 />
+                <text x={PAD_X - 9} y={y(n) + 3.5} textAnchor="end" className="fill-muted-foreground text-[10px]">
+                  {n}
+                </text>
               </g>
-            );
-          })}
+            ))}
 
-          {/* rótulo direto só no último ponto */}
-          <text
-            x={x(pontos.length - 1)}
-            y={y(ultimo.nota) - 12}
-            textAnchor="end"
-            className="fill-foreground text-[12px] font-bold"
-          >
-            {ultimo.nota.toFixed(1)}
-          </text>
+            {/* média histórica — referência, não série */}
+            <line
+              x1={PAD_X}
+              y1={y(media)}
+              x2={W - PAD_X}
+              y2={y(media)}
+              stroke="currentColor"
+              strokeOpacity="0.35"
+              strokeWidth="1"
+            />
+            <text
+              x={W - PAD_X}
+              y={y(media) - 5}
+              textAnchor="end"
+              className="fill-muted-foreground text-[9.5px] font-semibold"
+            >
+              média {media.toFixed(1)}
+            </text>
 
-          {pontos.map((p, i) =>
-            i % passoRotulo === 0 || i === pontos.length - 1 ? (
-              <text
-                key={`r-${p.id ?? i}`}
-                x={x(i)}
-                y={H - 10}
-                textAnchor={i === 0 ? "start" : i === pontos.length - 1 ? "end" : "middle"}
-                className="fill-muted-foreground text-[9.5px]"
-              >
-                {p.rotulo}
-              </text>
-            ) : null,
-          )}
-        </svg>
+            <path d={area} fill={`url(#${gradId})`} />
+            <path
+              d={linha}
+              fill="none"
+              stroke="var(--color-questly-green)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            {pontos.map((p, i) => {
+              const ativo = dica?.titulo === `${p.rotulo} · nota ${p.nota.toFixed(1)}`;
+              return (
+                <g key={`${p.id ?? i}`}>
+                  <circle
+                    cx={x(i)}
+                    cy={y(p.nota)}
+                    r={ativo ? 5.5 : 4}
+                    fill="var(--color-questly-green)"
+                    stroke="var(--card)"
+                    strokeWidth="2"
+                  >
+                    <title>{`${p.rotulo}: nota ${p.nota.toFixed(1)}`}</title>
+                  </circle>
+                  {/* alvo de toque largo: banda de altura cheia, nunca a mira de 8px */}
+                  <rect
+                    x={x(i) - larguraBanda / 2}
+                    y={PAD_TOPO}
+                    width={larguraBanda}
+                    height={innerH}
+                    fill="transparent"
+                    className={p.id ? "cursor-pointer" : "cursor-default"}
+                    onPointerMove={(e) =>
+                      mostrar(e, {
+                        titulo: `${p.rotulo} · nota ${p.nota.toFixed(1)}`,
+                        linhas: [
+                          ...(p.acertos != null && p.total != null ? [`${p.acertos} de ${p.total} acertos`] : []),
+                          ...(p.id ? ["Toque para abrir o resultado"] : []),
+                        ],
+                      })
+                    }
+                    onPointerLeave={esconder}
+                    onClick={() => p.id && router.push(`/simulados/${p.id}`)}
+                  />
+                </g>
+              );
+            })}
+
+            {/* rótulo direto só no último ponto */}
+            <text
+              x={x(pontos.length - 1)}
+              y={y(ultimo.nota) - 12}
+              textAnchor="end"
+              className="fill-foreground text-[12px] font-bold"
+            >
+              {ultimo.nota.toFixed(1)}
+            </text>
+
+            {pontos.map((p, i) =>
+              i % passoRotulo === 0 || i === pontos.length - 1 ? (
+                <text
+                  key={`r-${p.id ?? i}`}
+                  x={x(i)}
+                  y={H - 10}
+                  textAnchor={i === 0 ? "start" : i === pontos.length - 1 ? "end" : "middle"}
+                  className="fill-muted-foreground text-[9.5px]"
+                >
+                  {p.rotulo}
+                </text>
+              ) : null,
+            )}
+          </svg>
+        </div>
+          {/* A dica mora FORA do trilho que rola: dentro dele, o balão (que
+              sobe acima do gráfico) transbordava e o cartão ganhava uma barra
+              de rolagem VERTICAL fantasma — o filete que aparecia no cartão.
+              A posição continua certa porque `useDica` mede a partir deste
+              contêiner, que não rola. */}
         <CamadaDica dica={dica} />
       </div>
 

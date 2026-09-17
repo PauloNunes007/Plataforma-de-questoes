@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Crop, Loader2, Minus, Plus, X } from "lucide-react";
 import type { PDFDocumentProxy, PageViewport } from "pdfjs-dist";
 import { LETRAS_ALTERNATIVA, type Letra } from "@/lib/importar/types";
+import { Select } from "@/components/ui/select";
 
 // Alvo do recorte: a figura do enunciado ou a de uma alternativa.
 export type AlvoRecorte = { tipo: "enunciado" } | { tipo: "alt"; letra: Letra };
@@ -358,21 +359,22 @@ export function PdfRecortador({
             <h3 className="text-sm font-semibold tracking-tight">Recortar figura do PDF</h3>
             <div className="ml-auto flex items-center gap-2">
               <label className="text-[11px] font-medium text-muted-foreground">Usar em:</label>
-              <select
+              <Select
                 value={alvo.tipo === "enunciado" ? "enunciado" : `alt:${alvo.letra}`}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setAlvo(v === "enunciado" ? { tipo: "enunciado" } : { tipo: "alt", letra: v.slice(4) as Letra });
-                }}
-                className="rounded-lg border border-input bg-background px-2 py-1 text-xs font-medium outline-none focus:border-questly-green"
-              >
-                <option value="enunciado">Enunciado</option>
-                {LETRAS_ALTERNATIVA.map((l) => (
-                  <option key={l} value={`alt:${l}`}>
-                    Alternativa {l.toUpperCase()}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(v) =>
+                  setAlvo(v === "enunciado" ? { tipo: "enunciado" } : { tipo: "alt", letra: v.slice(4) as Letra })
+                }
+                opcoes={[
+                  { value: "enunciado", label: "Enunciado" },
+                  ...LETRAS_ALTERNATIVA.map((l) => ({
+                    value: `alt:${l}`,
+                    label: `Alternativa ${l.toUpperCase()}`,
+                  })),
+                ]}
+                aria-label="Onde colar o recorte"
+                tamanho="sm"
+                className="w-[168px]"
+              />
               <button
                 type="button"
                 onClick={onFechar}
@@ -387,20 +389,17 @@ export function PdfRecortador({
           {/* Barra de controles */}
           <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
             {arquivos.length > 1 || idxAchado === -1 ? (
-              <select
-                value={indiceArquivo}
-                onChange={(e) => {
-                  setIndiceArquivo(Number(e.target.value));
+              <Select
+                value={String(indiceArquivo)}
+                onValueChange={(v) => {
+                  setIndiceArquivo(Number(v));
                   setPagina(1);
                 }}
-                className="max-w-[220px] truncate rounded-lg border border-input bg-background px-2 py-1 text-xs font-medium outline-none focus:border-questly-green"
-              >
-                {arquivos.map((a, i) => (
-                  <option key={a.nome} value={i}>
-                    {a.nome}
-                  </option>
-                ))}
-              </select>
+                opcoes={arquivos.map((a, i) => ({ value: String(i), label: a.nome }))}
+                aria-label="Arquivo aberto"
+                tamanho="sm"
+                className="max-w-[220px]"
+              />
             ) : (
               <span className="max-w-[220px] truncate text-xs font-medium text-muted-foreground">{arquivoAtual?.nome}</span>
             )}

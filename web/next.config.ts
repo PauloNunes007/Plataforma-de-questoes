@@ -20,6 +20,28 @@ const nextConfig: NextConfig = {
   // trava com opacidade 0 antes das animações do Framer Motion rodarem —
   // só em `next dev`, não afeta o build de produção.
   allowedDevOrigins: ["192.168.1.123"],
+
+  experimental: {
+    // NAVEGAÇÃO ENTRE ABAS (2026-09-17). O que deixava a troca de aba
+    // "lerda" não era o servidor: era o Next não guardar NADA do que já
+    // tinha buscado. Por padrão, `staleTimes.dynamic` é 0 — toda página
+    // protegida é dinâmica (lê a sessão), então voltar pro Início 5s depois
+    // refazia o round-trip inteiro e o aluno olhava pro esqueleto de novo.
+    //
+    // 30s é o intervalo em que ir e voltar entre abas é a MESMA sessão de
+    // uso ("dei uma olhada no ranking e voltei"). Passou disso, busca de
+    // novo. Toda escrita do app chama `router.refresh()`/`revalidatePath`,
+    // que invalidam este cache — ou seja, responder questão, marcar tarefa
+    // ou fechar simulado continuam refletindo na hora; o que o cache segura
+    // é só o vaivém sem escrita nenhuma no meio.
+    staleTimes: { dynamic: 30, static: 180 },
+
+    // Prefetch do conteúdo dinâmico no hover (não só do loading.tsx). No
+    // desktop, os ~200ms entre passar o mouse e clicar já bastam pro payload
+    // chegar, e a troca vira instantânea. No celular não existe hover, então
+    // isso não gera requisição nenhuma a mais lá.
+    dynamicOnHover: true,
+  },
 };
 
 export default nextConfig;

@@ -55,13 +55,20 @@ export function EvolucaoAcerto({ dias }: { dias: PontoDia[] }) {
         </p>
       ) : (
         <>
-          <div ref={ref} className="relative -mx-1 overflow-x-auto px-1">
-            <Grafico
-              dias={dias}
-              semMovimento={Boolean(semMovimento)}
-              onEntrar={mostrar}
-              onSair={esconder}
-            />
+          <div ref={ref} className="relative">
+            <div className="rolagem-x -mx-1 px-1">
+              <Grafico
+                dias={dias}
+                semMovimento={Boolean(semMovimento)}
+                onEntrar={mostrar}
+                onSair={esconder}
+              />
+            </div>
+          {/* A dica mora FORA do trilho que rola: dentro dele, o balão (que
+              sobe acima do gráfico) transbordava e o cartão ganhava uma barra
+              de rolagem VERTICAL fantasma — o filete que aparecia no cartão.
+              A posição continua certa porque `useDica` mede a partir deste
+              contêiner, que não rola. */}
             <CamadaDica dica={dica} />
           </div>
 

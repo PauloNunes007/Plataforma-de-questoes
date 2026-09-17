@@ -6,12 +6,20 @@ import { ChevronLeft, ChevronRight, ImageIcon, Pencil, Search, ShieldCheck, Tras
 import { buscarQuestoesAdminAction, excluirQuestaoAdminAction, type QuestaoAdminResumo } from "@/lib/admin/actions";
 import { AdminTabs } from "@/components/admin/admin-tabs";
 import { MathText } from "@/components/questao/math-text";
+import { Select } from "@/components/ui/select";
 import type { Materia, Topico } from "@/lib/importar/types";
 
 const PAGE_SIZE = 20;
 
+const DIFICULDADES = [
+  { value: "", label: "Dificuldade: todas" },
+  { value: "facil", label: "Fácil" },
+  { value: "medio", label: "Médio" },
+  { value: "dificil", label: "Difícil" },
+];
+
 const INPUT =
-  "rounded-lg border border-input bg-background px-3 py-2 text-[13px] outline-none transition-colors focus:border-questly-purple focus:ring-4 focus:ring-questly-purple/10";
+  "min-h-[38px] rounded-xl border border-input bg-background px-3 py-2 text-[13px] outline-none transition-colors focus:border-questly-purple focus:ring-4 focus:ring-questly-purple/10";
 
 const CHIP_DIFICULDADE: Record<string, string> = {
   facil: "bg-questly-green-light text-questly-green-dark",
@@ -128,40 +136,36 @@ export function QuestoesLista({
             />
           </div>
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 lg:flex">
-            <select
+            <Select
               value={materiaId}
-              onChange={(e) => atualizarFiltros({ materiaId: e.target.value, topicoId: "" })}
-              className={`${INPUT} font-medium`}
-            >
-              <option value="">Todas as matérias</option>
-              {materias.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.nome}
-                </option>
-              ))}
-            </select>
-            <select
+              onValueChange={(v) => atualizarFiltros({ materiaId: v, topicoId: "" })}
+              opcoes={[
+                { value: "", label: "Todas as matérias" },
+                ...materias.map((m) => ({ value: m.id, label: m.nome })),
+              ]}
+              aria-label="Matéria"
+              placeholder="Todas as matérias"
+              className="lg:w-52"
+            />
+            <Select
               value={topicoId}
-              onChange={(e) => atualizarFiltros({ topicoId: e.target.value })}
-              className={`${INPUT} font-medium`}
-            >
-              <option value="">Todos os tópicos</option>
-              {topicosMateria.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.nome}
-                </option>
-              ))}
-            </select>
-            <select
+              onValueChange={(v) => atualizarFiltros({ topicoId: v })}
+              opcoes={[
+                { value: "", label: "Todos os tópicos" },
+                ...topicosMateria.map((t) => ({ value: t.id, label: t.nome })),
+              ]}
+              aria-label="Tópico"
+              placeholder="Todos os tópicos"
+              className="lg:w-52"
+            />
+            <Select
               value={dificuldade}
-              onChange={(e) => atualizarFiltros({ dificuldade: e.target.value })}
-              className={`${INPUT} font-medium`}
-            >
-              <option value="">Dificuldade</option>
-              <option value="facil">Fácil</option>
-              <option value="medio">Médio</option>
-              <option value="dificil">Difícil</option>
-            </select>
+              onValueChange={(v) => atualizarFiltros({ dificuldade: v })}
+              opcoes={DIFICULDADES}
+              aria-label="Dificuldade"
+              placeholder="Dificuldade: todas"
+              className="lg:w-44"
+            />
           </div>
         </div>
       </div>

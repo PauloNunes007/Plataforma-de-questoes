@@ -132,7 +132,7 @@ export function TabelaEspelho({
 }) {
   if (!aberta) return null;
   return (
-    <div className="mt-4 overflow-x-auto">
+    <div className="rolagem-x mt-4">
       <table className="w-full min-w-[320px] border-collapse text-[12.5px]">
         <thead>
           <tr className="border-b border-border">

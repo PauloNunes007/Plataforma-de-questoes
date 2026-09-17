@@ -15,7 +15,7 @@ const TABS: { href: string; label: string; icon: LucideIcon }[] = [
 export function AprovacaoTabs({ revisoesPendentes }: { revisoesPendentes?: number }) {
   const pathname = usePathname();
   return (
-    <div className="inline-flex max-w-full gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1 shadow-sm">
+    <div className="rolagem-x inline-flex max-w-full gap-1 rounded-xl border border-border bg-card p-1 shadow-sm">
       {TABS.map((tab) => {
         const ativo = tab.href === "/aprovacao" ? pathname === "/aprovacao" : pathname.startsWith(tab.href);
         const Icon = tab.icon;

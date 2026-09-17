@@ -1,29 +1,24 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Fallback de Suspense pra qualquer rota protegida. As páginas fazem o fetch
-// inicial no servidor (dashboard chega a montar missões), então sem isso o
-// clique numa aba deixa o app aparentemente travado até a resposta chegar.
-// O TopNav já está pintado pelo layout — aqui só o miolo.
+// Esqueleto PADRÃO das rotas protegidas: o que TODA tela do app tem em comum
+// — título, linha de apoio e um corpo de cartões empilhados.
+//
+// Antes este arquivo desenhava a silhueta da home (grade de duas colunas com
+// trilho lateral) pra todas as rotas, e aí trocar pro Ranking ou pra Trilha
+// mostrava por um instante um layout que aquela tela não tem: a página
+// "pulava" ao chegar. Uma silhueta neutra promete menos e cumpre sempre.
+// Quem tem forma própria e tráfego pra justificar ganha o seu (ver
+// `dashboard/loading.tsx`).
 export default function Loading() {
   return (
-    <div className="casca py-6">
+    <div className="casca py-6 lg:py-8">
       <Skeleton className="h-7 w-52" />
       <Skeleton className="mt-2 h-4 w-72" />
 
-      <div className="mt-7 grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
-        <div className="space-y-4">
-          <Skeleton className="h-40 w-full rounded-2xl" />
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Skeleton className="h-28 rounded-2xl" />
-            <Skeleton className="h-28 rounded-2xl" />
-            <Skeleton className="h-28 rounded-2xl" />
-          </div>
-          <Skeleton className="h-56 w-full rounded-2xl" />
-        </div>
-        <div className="hidden space-y-4 xl:block">
-          <Skeleton className="h-64 w-full rounded-2xl" />
-          <Skeleton className="h-40 w-full rounded-2xl" />
-        </div>
+      <div className="mt-7 space-y-4">
+        <Skeleton className="h-36 w-full rounded-2xl" />
+        <Skeleton className="h-36 w-full rounded-2xl" />
+        <Skeleton className="hidden h-36 w-full rounded-2xl sm:block" />
       </div>
     </div>
   );

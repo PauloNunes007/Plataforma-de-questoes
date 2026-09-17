@@ -81,83 +81,90 @@ export function RitmoProva({
 
   return (
     <div>
-      <div ref={ref} className="relative w-full overflow-x-auto">
-        <svg
-          viewBox={`0 0 ${W} ${H}`}
-          className="h-auto w-full"
-          style={{ minWidth: Math.min(W, 560) }}
-          role="img"
-          aria-label={`Tempo gasto em cada uma das ${questoes.length} questões, na ordem da prova.`}
-        >
-          {/* eixo do tempo: base + a referência de ritmo */}
-          <line x1={PAD_ESQ} y1={base} x2={W - 4} y2={base} stroke="currentColor" strokeOpacity="0.16" strokeWidth="1" />
-          <line
-            x1={PAD_ESQ}
-            y1={yRef}
-            x2={W - 4}
-            y2={yRef}
-            stroke="currentColor"
-            strokeOpacity="0.32"
-            strokeWidth="1"
-          />
-          <text x={PAD_ESQ - 6} y={yRef + 3.5} textAnchor="end" className="fill-muted-foreground text-[9.5px]">
-            {Math.round(ritmoDisponivel / 60) >= 1
-              ? `${Math.round(ritmoDisponivel / 60)}min`
-              : `${Math.round(ritmoDisponivel)}s`}
-          </text>
-          <text x={PAD_ESQ - 6} y={base + 3.5} textAnchor="end" className="fill-muted-foreground text-[9.5px]">
-            0
-          </text>
+      <div ref={ref} className="relative w-full">
+        <div className="rolagem-x">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            className="h-auto w-full"
+            style={{ minWidth: Math.min(W, 560) }}
+            role="img"
+            aria-label={`Tempo gasto em cada uma das ${questoes.length} questões, na ordem da prova.`}
+          >
+            {/* eixo do tempo: base + a referência de ritmo */}
+            <line x1={PAD_ESQ} y1={base} x2={W - 4} y2={base} stroke="currentColor" strokeOpacity="0.16" strokeWidth="1" />
+            <line
+              x1={PAD_ESQ}
+              y1={yRef}
+              x2={W - 4}
+              y2={yRef}
+              stroke="currentColor"
+              strokeOpacity="0.32"
+              strokeWidth="1"
+            />
+            <text x={PAD_ESQ - 6} y={yRef + 3.5} textAnchor="end" className="fill-muted-foreground text-[9.5px]">
+              {Math.round(ritmoDisponivel / 60) >= 1
+                ? `${Math.round(ritmoDisponivel / 60)}min`
+                : `${Math.round(ritmoDisponivel)}s`}
+            </text>
+            <text x={PAD_ESQ - 6} y={base + 3.5} textAnchor="end" className="fill-muted-foreground text-[9.5px]">
+              0
+            </text>
 
-          {questoes.map((q, i) => {
-            const x = PAD_ESQ + i * passo + (passo - largura) / 2;
-            const seg = q.tempoSeg || 0;
-            const h = seg > 0 ? Math.max(2, alturaDe(seg)) : 0;
-            const tom = TOM_POR_STATUS[q.status];
-            return (
-              <g key={q.id}>
-                {h > 0 && (
-                  <path d={barraTopo(x, base - h, largura, h, base)} fill={COR_STATUS[tom]} opacity={q.status === "branco" ? 0.45 : 1}>
-                    <title>{`Questão ${q.numero} — ${ROTULO_STATUS[q.status]} em ${fmtSegundosPreciso(seg)}`}</title>
-                  </path>
-                )}
-                {/* alvo de toque de altura cheia */}
-                <rect
-                  x={PAD_ESQ + i * passo}
-                  y={PAD_TOPO}
-                  width={passo}
-                  height={innerH}
-                  fill="transparent"
-                  onPointerMove={(e) =>
-                    mostrar(e, {
-                      titulo: `Questão ${q.numero} · ${ROTULO_STATUS[q.status]}`,
-                      linhas: [
-                        seg > 0 ? `Tempo: ${fmtSegundosPreciso(seg)}` : "Sem tempo registrado",
-                        q.topico,
-                      ],
-                    })
-                  }
-                  onPointerLeave={esconder}
-                />
-              </g>
-            );
-          })}
+            {questoes.map((q, i) => {
+              const x = PAD_ESQ + i * passo + (passo - largura) / 2;
+              const seg = q.tempoSeg || 0;
+              const h = seg > 0 ? Math.max(2, alturaDe(seg)) : 0;
+              const tom = TOM_POR_STATUS[q.status];
+              return (
+                <g key={q.id}>
+                  {h > 0 && (
+                    <path d={barraTopo(x, base - h, largura, h, base)} fill={COR_STATUS[tom]} opacity={q.status === "branco" ? 0.45 : 1}>
+                      <title>{`Questão ${q.numero} — ${ROTULO_STATUS[q.status]} em ${fmtSegundosPreciso(seg)}`}</title>
+                    </path>
+                  )}
+                  {/* alvo de toque de altura cheia */}
+                  <rect
+                    x={PAD_ESQ + i * passo}
+                    y={PAD_TOPO}
+                    width={passo}
+                    height={innerH}
+                    fill="transparent"
+                    onPointerMove={(e) =>
+                      mostrar(e, {
+                        titulo: `Questão ${q.numero} · ${ROTULO_STATUS[q.status]}`,
+                        linhas: [
+                          seg > 0 ? `Tempo: ${fmtSegundosPreciso(seg)}` : "Sem tempo registrado",
+                          q.topico,
+                        ],
+                      })
+                    }
+                    onPointerLeave={esconder}
+                  />
+                </g>
+              );
+            })}
 
-          {/* números do eixo X, esparsos pra não colidir */}
-          {questoes.map((q, i) =>
-            i === 0 || i === questoes.length - 1 || (i + 1) % 5 === 0 ? (
-              <text
-                key={`n-${q.id}`}
-                x={PAD_ESQ + i * passo + passo / 2}
-                y={H - 8}
-                textAnchor="middle"
-                className="fill-muted-foreground text-[9px]"
-              >
-                {q.numero}
-              </text>
-            ) : null,
-          )}
-        </svg>
+            {/* números do eixo X, esparsos pra não colidir */}
+            {questoes.map((q, i) =>
+              i === 0 || i === questoes.length - 1 || (i + 1) % 5 === 0 ? (
+                <text
+                  key={`n-${q.id}`}
+                  x={PAD_ESQ + i * passo + passo / 2}
+                  y={H - 8}
+                  textAnchor="middle"
+                  className="fill-muted-foreground text-[9px]"
+                >
+                  {q.numero}
+                </text>
+              ) : null,
+            )}
+          </svg>
+        </div>
+          {/* A dica mora FORA do trilho que rola: dentro dele, o balão (que
+              sobe acima do gráfico) transbordava e o cartão ganhava uma barra
+              de rolagem VERTICAL fantasma — o filete que aparecia no cartão.
+              A posição continua certa porque `useDica` mede a partir deste
+              contêiner, que não rola. */}
         <CamadaDica dica={dica} />
       </div>
 

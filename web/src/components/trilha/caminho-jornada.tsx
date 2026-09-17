@@ -289,7 +289,7 @@ export function CaminhoJornada({ caminho, onAtualizar }: Props) {
               onClick={() => setSheetAberto(false)}
             />
             <motion.div
-              className="absolute inset-x-0 bottom-0 max-h-[82dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-background px-3 pt-2 shadow-[0_-12px_40px_rgba(0,0,0,0.25)]"
+              className="rolagem-limpa absolute inset-x-0 bottom-0 max-h-[82dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-background px-3 pt-2 shadow-[0_-12px_40px_rgba(0,0,0,0.25)]"
               style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
               initial={{ y: "100%" }}
               animate={{ y: 0 }}

@@ -67,7 +67,7 @@ export function ModalPainel({
                 <X size={16} strokeWidth={2} />
               </button>
             </div>
-            <div className="overflow-y-auto p-5">{children}</div>
+            <div className="rolagem-limpa overflow-y-auto p-5">{children}</div>
           </motion.div>
         </div>
       )}

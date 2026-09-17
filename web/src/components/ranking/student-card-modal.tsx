@@ -46,7 +46,12 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
     <AnimatePresence>
       {aberto && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-5 pt-16 backdrop-blur-md sm:items-center sm:pt-5"
+          // `items-start` + `my-auto` no cartão (e não `items-center`): com
+          // `items-center`, um cartão mais alto que a tela tem o TOPO cortado
+          // e inalcançável — é o bug clássico de centralizar por flex dentro
+          // de um contêiner que rola. Com margem automática ele centraliza
+          // quando sobra espaço e volta a rolar por inteiro quando não sobra.
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain bg-black/60 p-5 pt-16 backdrop-blur-md sm:pt-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -122,7 +127,7 @@ function CartaTcg({ card }: { card: CardUsuario }) {
       ref={ref}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={`relative w-full max-w-[370px] rounded-[20px] bg-gradient-to-br p-[10px] shadow-2xl shadow-black/50 ${
+      className={`relative w-full max-w-[370px] rounded-[20px] bg-gradient-to-br p-[10px] shadow-2xl shadow-black/50 sm:my-auto ${
         pro ? PRO_FRAME : LIGA_FRAME[card.liga]
       }`}
       initial={{ opacity: 0, scale: 0.82, rotateX: -14, y: 24 }}
@@ -131,11 +136,17 @@ function CartaTcg({ card }: { card: CardUsuario }) {
       transition={{ type: "spring", stiffness: 280, damping: 22 }}
       style={{ rotateX: springX, rotateY: springY, transformStyle: "preserve-3d" }}
     >
-      {/* teto de altura + rolagem interna — rede de segurança pra telas bem
-          baixas; o "X" de verdade mora fixo na viewport (StudentCardModal),
-          então mesmo se isso rolar o fechar nunca some. */}
+      {/* `overflow-hidden`, não `overflow-y-auto` (2026-09-17). A carta tinha
+          uma BARRA DE ROLAGEM por dentro, e não era o conteúdo: os dois
+          borrões decorativos abaixo ficam de propósito fora da caixa
+          (`-top-16`, `-bottom-14`) pra vazarem pelas quinas. Com rolagem
+          vertical ligada eles viravam conteúdo rolável e a carta ganhava um
+          filete cinza permanente. Clipando, eles voltam a ser o que sempre
+          foram — brilho recortado pela borda arredondada.
+          A rede de segurança pra tela baixa não se perde: quem rola é o fundo
+          do modal, e o "X" mora fixo na viewport (StudentCardModal). */}
       <div
-        className={`relative max-h-[calc(100dvh-7rem)] overflow-y-auto overflow-x-hidden rounded-[12px] bg-gradient-to-b p-3.5 max-sm:p-2.5 ${LIGA_CARD_BG[card.liga]}`}
+        className={`relative overflow-hidden rounded-[12px] bg-gradient-to-b p-3.5 max-sm:p-2.5 ${LIGA_CARD_BG[card.liga]}`}
       >
         {/* foil prismático do assinante — por cima do holo da liga */}
         {pro && <ProFoil />}

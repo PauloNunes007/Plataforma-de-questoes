@@ -900,7 +900,7 @@ function SeletorAssuntos({
         </button>
       </div>
 
-      <ul className="max-h-[186px] overflow-y-auto p-1">
+      <ul className="rolagem-limpa max-h-[186px] overflow-y-auto p-1">
         {topicos.map((t) => {
           const marcado = selecionados.includes(t.id);
           return (
