@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { adicionarMeses } from "./preapproval";
+import { adicionarMeses, cancelarAssinaturaRecorrente } from "./preapproval";
+import { MESES_SEMESTRE } from "./plano";
 
 // Ativação do Pro — a lógica compartilhada entre a confirmação manual do admin
 // (lib/admin/actions.ts), a conferência da tela /pro (lib/plano/actions.ts) e o
@@ -43,6 +44,8 @@ type AssinaturaMin = {
   ciclo: string;
   forma: string;
   status: string;
+  /** id da preapproval no MP. null = não existe assinatura no gateway. */
+  gateway_id: string | null;
 };
 
 /**
@@ -71,8 +74,16 @@ async function estenderPro(
 
   // A fidelidade nasce na PRIMEIRA cobrança e não se mexe depois — ela marca o
   // compromisso assumido, não a validade corrente.
+  //
+  // `gateway_id` na condição (2026-09-17): fidelidade só faz sentido quando
+  // existe uma assinatura DE VERDADE no MP cobrando todo mês. Quando o
+  // preapproval foi recusado e a compra caiu pro checkout avulso de um mês
+  // (ver `criarAssinaturaAction`), não há seis cobranças a honrar — carimbar
+  // "fiel até daqui a 6 meses" seria registrar um compromisso que ninguém
+  // assumiu, e ele aparece na tela do aluno.
+  const temAssinaturaNoGateway = Boolean(ass.gateway_id);
   const fidelidade =
-    ass.ciclo === "semestral" && ass.forma === "recorrente"
+    ass.ciclo === "semestral" && ass.forma === "recorrente" && temAssinaturaNoGateway
       ? profile?.plano_fidelidade_ate
         ? new Date(profile.plano_fidelidade_ate)
         : adicionarMeses(agora, 6)
@@ -110,7 +121,7 @@ async function lerAssinatura(
 ): Promise<AssinaturaMin | null> {
   const { data } = await admin
     .from("assinaturas")
-    .select("id, user_id, ciclo, forma, status")
+    .select("id, user_id, ciclo, forma, status, gateway_id")
     .eq("id", assinaturaId)
     .maybeSingle();
   return (data as AssinaturaMin | null) ?? null;
@@ -153,6 +164,30 @@ export async function creditarCobranca(params: {
   // Primeira cobrança = a que sai de 'pendente'. Só ela carimba `ativada_em`.
   const res = await estenderPro(admin, ass, meses, ass.status === "pendente");
   if ("error" in res) return { error: res.error };
+
+  // Cinto e suspensório do semestral: o `end_date` mandado ao MP deveria parar
+  // a cobrança na 6ª, mas essa é uma promessa do gateway sobre um campo que
+  // ele valida sozinho. Contar as cobranças creditadas é uma verdade NOSSA, e
+  // o custo de ela falhar é cobrar o aluno um 7º mês que ele não contratou —
+  // caro demais pra depender de um campo só. Ao fechar o semestre, cancelamos
+  // a assinatura no MP.
+  if (ass.ciclo === "semestral" && ass.forma === "recorrente" && ass.gateway_id) {
+    const { count } = await admin
+      .from("assinatura_pagamentos")
+      .select("id", { count: "exact", head: true })
+      .eq("assinatura_id", ass.id);
+    if ((count ?? 0) >= MESES_SEMESTRE) {
+      const parou = await cancelarAssinaturaRecorrente(ass.gateway_id);
+      console.log(
+        parou
+          ? `Semestral completo (${count} cobranças) — assinatura encerrada no MP: ${ass.id}`
+          : `Semestral completo mas o MP não aceitou encerrar: ${ass.id}`,
+      );
+      if (parou) {
+        await admin.from("assinaturas").update({ status: "expirada" }).eq("id", ass.id);
+      }
+    }
+  }
 
   if (params.observacao) {
     await admin

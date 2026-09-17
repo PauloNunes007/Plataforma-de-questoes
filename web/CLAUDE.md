@@ -862,6 +862,48 @@ Dois defeitos meus corrigidos junto:
   R$ 10, o de UMA parcela — dava seis meses por dez reais. Passou a usar a mesma
   `mesesPorCobranca` do caminho automático.
 
+### A venda não pode depender do preapproval (2026-09-17, segunda rodada)
+
+Relato do dono: *"até ontem tinha o gateway do Mercado Pago e tudo funcionava"*.
+Estava certo — e o diagnóstico da rodada anterior estava incompleto. Trocar o
+recorrente de `preferences` pra `preapproval` fechou o furo de receita, mas
+**amarrou a venda a um endpoint muito mais exigente**, e com isso o mensal e o
+semestral, que vendiam, pararam de vender.
+
+O que o `/preapproval` exige e a preferência não (confirmado na referência do
+MP): Assinaturas habilitado na conta, pagador **diferente** da conta vendedora
+(testar com o e-mail do dono dá "cannot operate between same user") e `back_url`
+https pública. O corpo que mandamos está de acordo com a doc — `status: "pending"`
+sem `card_token_id` é o fluxo hospedado correto, e devolve `init_point` — então a
+recusa é de conta/credencial, não de formato. **O motivo exato está no log do
+Vercel**, que agora imprime o corpo cru da resposta do MP.
+
+A correção estrutural é não deixar a venda pendurada nisso. `criarAssinaturaAction`
+passou a ter dois degraus:
+
+1. tenta a assinatura de verdade (cobra todo mês — é o que queremos);
+2. se o MP recusar, cai pro **checkout avulso que sempre funcionou**, cobrando
+   UM período (`precoCentavos` já é o preço de um mês nas duas opções
+   recorrentes) e creditando UM mês.
+
+O degrau 2 **não reabre o furo** — quem paga R$ 10 leva um mês, não seis — mas
+entrega menos do que o cartão prometeu. Por isso ele volta marcado
+(`semRenovacao: true`) e a tela **exige um segundo clique**, explicando que não
+haverá renovação e apontando o semestral à vista como alternativa. Degradar
+calado seria vender assinatura e entregar compra avulsa.
+
+Dois ajustes que vêm junto:
+
+- **fidelidade só com assinatura real.** `estenderPro` só carimba
+  `plano_fidelidade_ate` quando a linha tem `gateway_id` — sem preapproval não
+  há seis cobranças a honrar, e registrar o compromisso seria mentir numa tela
+  que o aluno lê;
+- **o teto de 6 cobranças é contado por nós.** O `end_date` mandado ao MP
+  deveria parar na 6ª, mas é uma promessa do gateway sobre um campo que ele
+  valida sozinho; o custo de falhar é cobrar um 7º mês não contratado. Ao
+  creditar a 6ª cobrança, `creditarCobranca` conta `assinatura_pagamentos` e
+  **cancela a assinatura no MP**.
+
 **Como saber em qual caso você está:** `/admin/assinaturas` logado como admin
 tem uma tarja laranja que diz exatamente qual variável falta (ver
 `PUBLICAR.md`). Sem tarja, o gateway está de pé e a recusa é do MP — e agora a

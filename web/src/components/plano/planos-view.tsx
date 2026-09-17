@@ -63,6 +63,11 @@ export function PlanosView(props: PlanosViewProps) {
   const [pendente, setPendente] = useState<AssinaturaPendente | null>(props.pendenteInicial);
   const [enviando, setEnviando] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // Checkout que o servidor devolveu MARCADO como degradado: o Mercado Pago
+  // recusou abrir a assinatura e a compra virou avulsa de um mês. Guardamos a
+  // URL em vez de redirecionar direto — o aluno escolheu "assinar" e precisa
+  // saber que não vai haver renovação antes de pagar.
+  const [semRenovacao, setSemRenovacao] = useState<{ url: string; opcao: OpcaoPlano } | null>(null);
   const [ativadoAgora, setAtivadoAgora] = useState(false);
   const [conferindo, setConferindo] = useState(false);
   const [cansou, setCansou] = useState(false);
@@ -137,6 +142,7 @@ export function PlanosView(props: PlanosViewProps) {
 
   async function assinar(opcao: OpcaoPlano) {
     setErro(null);
+    setSemRenovacao(null);
     setEnviando(opcao.id);
     const res = await criarAssinaturaAction(opcao.id);
     if ("error" in res) {
@@ -147,6 +153,13 @@ export function PlanosView(props: PlanosViewProps) {
     // Gateway configurado: redireciona pro checkout do Mercado Pago (mantém o
     // "enviando" ligado durante o redirect pra não piscar o botão).
     if ("checkoutUrl" in res) {
+      if (res.semRenovacao) {
+        // Não redireciona ainda: pede o segundo clique, agora com o aluno
+        // sabendo o que está comprando de verdade.
+        setEnviando(null);
+        setSemRenovacao({ url: res.checkoutUrl, opcao });
+        return;
+      }
       window.location.assign(res.checkoutUrl);
       return;
     }
@@ -212,6 +225,48 @@ export function PlanosView(props: PlanosViewProps) {
             />
           )}
           {erro && <Aviso titulo="Não deu pra continuar" texto={erro} />}
+
+          {/* Assinatura recusada pelo gateway, compra degradada pra avulsa.
+              Segundo clique OBRIGATÓRIO: o aluno clicou em "assinar" e o que
+              está disponível é outra coisa — um mês, sem renovação. Mandar
+              direto pro checkout seria cobrar por um produto que ele não
+              escolheu. */}
+          {semRenovacao && (
+            <div className="mx-auto flex w-full max-w-xl flex-col gap-3 rounded-xl border border-questly-orange/30 bg-questly-orange/[0.07] px-4 py-3.5 text-left">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 text-questly-orange-dark">
+                  <TriangleAlert size={16} strokeWidth={2} />
+                </span>
+                <div>
+                  <p className="text-[13.5px] font-semibold">
+                    A renovação automática está indisponível agora
+                  </p>
+                  <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+                    Você pode pagar {reais(semRenovacao.opcao.precoCentavos)} e liberar{" "}
+                    <b>1 mês de Pro</b>, sem cobrança recorrente — quando acabar, é só renovar.
+                    Se prefere garantir o semestre de uma vez, o{" "}
+                    <b>Pro Semestral à vista</b> continua disponível.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 pl-7">
+                <button
+                  type="button"
+                  onClick={() => window.location.assign(semRenovacao.url)}
+                  className="inline-flex h-9 cursor-pointer items-center rounded-lg bg-foreground px-3.5 text-[12.5px] font-semibold text-background transition-opacity hover:opacity-90"
+                >
+                  Pagar {reais(semRenovacao.opcao.precoCentavos)} por 1 mês
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSemRenovacao(null)}
+                  className="inline-flex h-9 cursor-pointer items-center rounded-lg border border-border px-3.5 text-[12.5px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Voltar
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="grid gap-5 lg:grid-cols-3">
             {OPCOES_PLANO.map((opcao) => (

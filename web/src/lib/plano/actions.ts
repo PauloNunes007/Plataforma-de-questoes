@@ -64,7 +64,11 @@ export async function buscarMinhaAssinaturaPendenteAction(): Promise<AssinaturaP
 
 export async function criarAssinaturaAction(
   opcaoId: string,
-): Promise<{ checkoutUrl: string } | { assinatura: AssinaturaPendente } | { error: string }> {
+): Promise<
+  | { checkoutUrl: string; semRenovacao?: boolean }
+  | { assinatura: AssinaturaPendente }
+  | { error: string }
+> {
   const opcao = acharOpcao(opcaoId);
   if (!opcao) return { error: "Plano inválido." };
 
@@ -98,34 +102,49 @@ export async function criarAssinaturaAction(
   if (error) return { error: error.message };
 
   // Com gateway configurado, manda pro Mercado Pago. QUAL produto do MP
-  // depende da forma de cobrança — e é aqui que estava o buraco consertado em
-  // 2026-09-16: tudo saía por `preferences` (uma cobrança só), inclusive o
-  // plano vendido como "R$ 10 por mês durante 6 meses".
+  // depende da forma de cobrança:
   //
   //   • recorrente → `/preapproval`: o MP cobra o cartão todo mês sozinho;
   //   • à vista    → `/checkout/preferences`: uma cobrança, aceita Pix.
   //
-  // **Repasse de 2026-09-17 — parar de mentir quando o gateway recusa.** Antes,
-  // QUALQUER falha aqui caía no mesmo fallback manual, e o aluno via "pedido
-  // registrado, será confirmado manualmente" — uma promessa de que alguém vai
-  // cobrar dele por fora. Isso só é verdade quando não há gateway nenhum
-  // configurado. Quando o gateway existe e RECUSOU (o caso comum no
-  // preapproval, que é bem mais exigente que uma preferência), o honesto é
-  // dizer que não deu e deixar tentar de novo — senão o pedido fica pendurado
-  // esperando uma confirmação manual que ninguém pediu.
+  // **Repasse de 2026-09-17 — a venda não pode depender do preapproval.**
+  // Trocar o recorrente de `preferences` pra `preapproval` fechou o furo de
+  // receita, mas amarrou a venda a um endpoint MUITO mais exigente: ele exige
+  // Assinaturas habilitado na conta do MP, recusa quando o pagador é a própria
+  // conta vendedora ("cannot operate between same user") e recusa back_url que
+  // não seja https pública. Qualquer um desses derrubava a compra inteira — e
+  // o mensal e o semestral, que antes vendiam, pararam de vender.
+  //
+  // A regra agora tem dois degraus:
+  //
+  //   1. tenta a assinatura de verdade (cobra todo mês, é o que queremos);
+  //   2. se o MP recusar, NÃO perde a venda: cai pro checkout avulso que
+  //      sempre funcionou, cobrando UM período (`precoCentavos` já é o preço
+  //      de um mês nas duas opções recorrentes) e creditando UM mês.
+  //
+  // O degrau 2 não reabre o furo — quem paga R$ 10 leva um mês, não seis —,
+  // mas entrega menos do que o cartão prometeu (não há renovação automática).
+  // Por isso ele volta marcado (`semRenovacao`) e a tela AVISA antes de
+  // mandar pro checkout. Degradar calado seria vender uma assinatura e
+  // entregar uma compra avulsa.
   if (mpConfigurado()) {
-    const criado =
-      opcao.forma === "recorrente"
-        ? await criarAssinaturaRecorrente({
-            assinaturaId: data.id,
-            opcao,
-            userEmail: user.email,
-          })
-        : await criarPreferenciaCheckout({
-            assinaturaId: data.id,
-            opcao,
-            userEmail: user.email,
-          });
+    let semRenovacao = false;
+    let criado = await (opcao.forma === "recorrente"
+      ? criarAssinaturaRecorrente({ assinaturaId: data.id, opcao, userEmail: user.email })
+      : criarPreferenciaCheckout({ assinaturaId: data.id, opcao, userEmail: user.email }));
+
+    if ("error" in criado && opcao.forma === "recorrente") {
+      console.error(
+        "Preapproval recusado, caindo pro checkout avulso de 1 período. Motivo:",
+        criado.error,
+      );
+      semRenovacao = true;
+      criado = await criarPreferenciaCheckout({
+        assinaturaId: data.id,
+        opcao,
+        userEmail: user.email,
+      });
+    }
 
     if ("url" in criado) {
       // Guarda a referência da assinatura no gateway pra conferência e
@@ -145,12 +164,14 @@ export async function criarAssinaturaAction(
           console.error("Assinatura criada no MP mas gateway_id não foi salvo:", e);
         }
       }
-      return { checkoutUrl: criado.url };
+      return semRenovacao ? { checkoutUrl: criado.url, semRenovacao } : { checkoutUrl: criado.url };
     }
 
-    // O gateway está configurado e disse não. Cancela a pendente que acabou de
-    // nascer (senão o índice parcial de "uma pendente por aluno" barra a
-    // próxima tentativa) e devolve o motivo real.
+    // Nem a assinatura nem o avulso saíram: o gateway está de pé e disse não
+    // duas vezes. Cancela a pendente que acabou de nascer (senão o índice
+    // parcial de "uma pendente por aluno" barra a próxima tentativa) e devolve
+    // o motivo real, em vez do "confirmaremos manualmente" — que é uma
+    // promessa de que alguém vai cobrar por fora, e ninguém vai.
     await supabase
       .from("assinaturas")
       .update({ status: "cancelada" })
