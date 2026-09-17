@@ -1131,11 +1131,13 @@ sabe o que ganhou não usa; quem não usa não renova.
 
 ## Exportar em PDF com marca d'água (2026-09-17) — `/imprimir/*`
 
-**Não há biblioteca de PDF, de propósito.** A folha é HTML com `@media print`
-caprichado e o "PDF" é o próprio *Imprimir → Salvar como PDF* do navegador.
-Gerar no servidor custaria um runtime de Chromium (ou uma lib que não renderiza
-KaTeX) pra entregar arquivo pior — com fórmula no meio, isso não é economia, é
-regressão.
+**O app monta o PDF, no navegador do aluno** (`lib/imprimir/gerar-pdf.ts`,
+`jspdf` + `html2canvas-pro`, ambos carregados sob demanda no clique). Não foi
+sempre assim, e a história importa — ver "Quarta rodada" no fim desta seção: por
+três rodadas o "PDF" foi o *Imprimir → Salvar como PDF* do navegador, e o que
+derrubou essa escolha não foi o CSS, foi o pipeline de pré-visualização do
+Chrome. Gerar no SERVIDOR continua descartado (custaria um runtime de Chromium
+por download, ou uma lib que não renderiza KaTeX).
 
 **Marca d'água com o e-mail do aluno** (pedido do dono, e o que torna o recurso
 viável): um PDF do banco de questões é um arquivo que circula — grupo da turma,
@@ -1143,10 +1145,11 @@ Drive do cursinho, Telegram. A marca não impede a cópia (nada impede), mas
 amarra cada cópia a uma conta: quem republica publica o próprio e-mail junto. É
 dissuasão por atribuição, como nos PDFs de editora acadêmica. **Duas camadas
 independentes**, porque uma sozinha é fácil demais de perder: a diagonal
-repetida (SVG `<pattern>`, que cobre qualquer altura sem saber quantas páginas o
-PDF terá e não perde nitidez no zoom) e o rodapé `position: fixed`, único jeito
-confiável de carimbar TODAS as folhas. O e-mail vem da sessão, lido no servidor
-— nunca do cliente: o ponto inteiro é o aluno não escolher o que sai carimbado.
+repetida (6 carimbos por página) e o rodapé. As duas são desenhadas em VETOR
+numa passada final por todas as páginas do PDF (`carimbarPaginas`) — depois do
+conteúdo, porque as fatias são JPEG opaco e cobririam a marca se ela viesse
+antes. O e-mail vem da sessão, lido no servidor — nunca do cliente: o ponto
+inteiro é o aluno não escolher o que sai carimbado.
 
 A ordem das questões segue `question_ids`, não a ordem que o Postgres devolveu:
 quem está com a lista aberta no app espera que a questão 7 do papel seja a 7 da
@@ -1319,6 +1322,74 @@ Achados a partir de um PDF real exportado pelo dono:
   padrão, 25 questões já passam de 25 páginas, e a pré-visualização do Chrome
   falha em documentos muito longos com muitas figuras. É aviso, não bloqueio —
   mas sem ele o aluno conclui que o site quebrou.
+
+### Quarta rodada (2026-09-17): o app passou a ESCREVER o PDF
+
+As três rodadas acima foram tentativas de consertar o diálogo de impressão do
+navegador. A quarta parou de tentar. O relato do dono foi: *"ta dando um erro ao
+salvar o pdf, acho que ele ta entendendo como se fosse imprimir em vez de só
+baixar. Ele nao vem com nome, a pessoa que precisa digitar, e ao abrir o pdf da
+um erro"* — e, logo depois, *"inclusive no celular ao clicar em baixar o pdf
+nada acontece"*.
+
+São quatro sintomas com **uma causa**: `window.print()` não é um download. Ele
+entrega o arquivo a um pipeline que não é nosso — que escolhe o nome (ou não
+escolhe), que decide se a pré-visualização monta, e que **no celular pode
+simplesmente não existir** (`window.print()` é opcional em navegador móvel; em
+vários ele não faz nada, sem erro e sem aviso). Nenhuma quantidade de `@media
+print` conserta isso, e as três rodadas anteriores são a prova.
+
+Agora o arquivo é montado em `lib/imprimir/gerar-pdf.ts` e sai por
+`pdf.save(nome)` — download comum, de um arquivo **já válido antes de o
+navegador encostar nele**. Os quatro sintomas morrem juntos.
+
+**Como o arquivo é montado.** Não é "fotografar a página num canvas gigante e
+fatiar" — é isso que corta questão no meio da folha. Cada elemento marcado com
+`data-pdf="bloco"` em `folha-prova.tsx` (o cabeçalho, o miolo de cada questão, o
+cartão-resposta, o gabarito, cada resolução) vira uma imagem própria, e a
+paginação é feita no gerador: bloco que não cabe no resto da página desce
+inteiro; só bloco maior que a página inteira é fatiado, porque aí não há escolha.
+**Duas regras ao mexer na folha:** um `data-pdf` nunca pode ficar dentro de
+outro (o gerador varre em ordem de documento e desenharia duas vezes), e o que é
+espaço em branco não vira bloco — `data-pdf-espaco="68"` diz quantos milímetros
+reservar, e o gerador desenha isso em vetor (deixando quebrar entre páginas, que
+o miolo não pode). O filete separador é desenhado **depois** de decidir a
+página: a primeira versão desenhava antes e sobrava um traço pendurado no pé da
+folha quando a questão não cabia.
+
+**Números medidos** (folha de 10 questões com espaço amplo, figura em 1/3 delas,
+cartão + gabarito + resoluções — 8 páginas A4): ~2 s pra montar, 2,2 MB. A
+escala de render (2,25 → ~240 dpi na coluna A4) e a qualidade do JPEG (0,85)
+saíram de uma varredura: 0.92 → 4,2 MB, 0.85 → 3,3, 0.80 → 3,0, 0.72 → 1,9. O
+arquivo é baixado no 4G da faculdade, e acima de ~0,85 o ganho visível em texto
+preto sobre branco é nenhum.
+
+**Detalhes que parecem acessórios e não são:**
+
+- **Largura de render fixa em 760px** (`fixarLarguraDeRender`). Sem isso o PDF
+  sairia com a diagramação do CELULAR (fonte enorme, alternativas empilhadas) só
+  porque o aluno apertou o botão no telefone. 760px sobre 182mm de coluna útil é
+  também o que faz as alturas de figura da TELA (`max-h-[190px]`,
+  `max-h-[78px]`) caírem nos ~46mm/~19mm que o papel comporta — a
+  pré-visualização passou a ser honesta. A folha fica alguns segundos com essa
+  largura, e é por isso que existe a cortina de progresso: sem ela o aluno vê a
+  página "pular" e conclui que quebrou.
+- **Figuras são embutidas como `data:` antes de fotografar** (`inlinarImagens`).
+  Elas vêm do Storage do Supabase, outro domínio; desenhar imagem de outro
+  domínio num canvas o CONTAMINA e `toDataURL` lança. Se o fetch falhar, a URL
+  original fica e o `useCORS` ainda pode dar conta — degradação, não quebra.
+- **KaTeX sobrevive** (verificado renderizando o PDF de volta com pdf.js):
+  integral, fração e delimitadores saem nítidos, porque o clone do html2canvas é
+  same-origin e as fontes do KaTeX vêm do próprio `/_next/static`.
+- **`@media print` e a classe `.nao-imprimir` continuam valendo.** Imprimir
+  direto virou botão SECUNDÁRIO (pra quem tem impressora ligada agora), e a
+  troca de `document.title` na montagem continua, só que servindo apenas ao
+  Ctrl+P — no botão principal o nome do arquivo é nosso.
+- **`nomeDoArquivo` agora leva a data.** Quem imprime lista imprime várias, e
+  dois downloads com o mesmo nome viram "(1)".
+- **`PAGINAS_DEMAIS` (40) mudou de significado**: o aviso não é mais sobre o
+  Chrome desistir, é sobre a memória do celular do aluno — montar o arquivo
+  passou a ser trabalho do aparelho dele.
 
 ### Hub dos Simulados reorganizado (2026-09-17)
 

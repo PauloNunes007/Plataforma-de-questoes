@@ -19,10 +19,12 @@ export const ALTURA_RESOLUCAO_MM = { compacto: 0, normal: 32, amplo: 68 } as con
 /**
  * Acima disso a tela AVISA que o arquivo é longo.
  *
- * Não é frescura de tamanho: a pré-visualização do Chrome falha
- * ("Falha ao carregar documento PDF") em documentos muito longos com muitas
- * figuras, e o aluno leva a culpa achando que o site quebrou. Com o espaço de
- * resolução amplo como padrão, 25 questões já passam de 25 páginas.
+ * Não é frescura de tamanho: o PDF é montado NO APARELHO do aluno (ver
+ * lib/imprimir/gerar-pdf.ts), uma imagem por bloco da folha — num celular
+ * antigo, uma folha de 40+ páginas demora e pode faltar memória. É aviso, não
+ * bloqueio, e existe pra que o aluno saiba esperar em vez de concluir que o
+ * site travou. Com o espaço de resolução amplo como padrão, 25 questões já
+ * passam de 25 páginas.
  */
 export const PAGINAS_DEMAIS = 40;
 
@@ -155,13 +157,18 @@ export function alternativasEmLinha(q: Pergunta): boolean {
 }
 
 /**
- * O nome que o PDF vai ter ao ser salvo.
+ * O nome do arquivo baixado.
  *
- * O Chrome sugere o nome do arquivo a partir do `document.title` — e o título
- * da rota ("Imprimir lista do tópico · Expectrum") não diz NADA sobre o que o
- * aluno acabou de baixar: seis listas na pasta de Downloads com o mesmo nome
- * genérico. A troca acontece AO ABRIR a tela (efeito de montagem em
- * folha-impressao.tsx), nunca no clique de imprimir — ver o comentário lá.
+ * Agora ele é DE VERDADE o nome do arquivo: o PDF é montado pelo app e salvo
+ * com este nome (`pdf.save`), não sugerido ao diálogo de impressão pelo
+ * `document.title`. Aquele caminho dependia do navegador e da versão, e quando
+ * a pré-visualização falhava o arquivo saía sem nome nenhum — o aluno tinha que
+ * digitar.
+ *
+ * Leva a DATA no fim porque quem imprime lista imprime várias: "Cálculo II -
+ * Derivadas - 2026-09-17" e "… - 2026-09-24" se distinguem na pasta de
+ * Downloads; dois arquivos com o mesmo nome viram "(1)" e ninguém sabe qual é
+ * qual.
  *
  * Sem "/" e sem ":" — em Windows e macOS eles não podem entrar num nome de
  * arquivo, e o navegador os substitui por algo pior do que não tê-los.
@@ -169,11 +176,16 @@ export function alternativasEmLinha(q: Pergunta): boolean {
 export function nomeDoArquivo(disciplina: string | null, titulo: string): string {
   const partes = [disciplina, titulo].filter(Boolean) as string[];
   const bruto = partes.length > 0 ? partes.join(" - ") : "Lista de exercicios";
-  return (
-    bruto
-      .replace(/[\\/:*?"<>|·]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 90) + " - Expectrum"
-  );
+  const limpo = bruto
+    .replace(/[\\/:*?"<>|·]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 80);
+  const hoje = new Date();
+  const data = [
+    hoje.getFullYear(),
+    String(hoje.getMonth() + 1).padStart(2, "0"),
+    String(hoje.getDate()).padStart(2, "0"),
+  ].join("-");
+  return `${limpo} - Expectrum ${data}`;
 }

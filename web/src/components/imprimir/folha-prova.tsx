@@ -15,6 +15,17 @@ import { ALTURA_RESOLUCAO_MM, alternativasEmLinha, type OpcoesFolha } from "@/li
 // As figuras usam <img> nativo (não next/image): o otimizador serve formatos e
 // tamanhos pensados pra tela, e na hora da impressão o que vale é a URL
 // original, que o browser já tem em cache.
+//
+// `data-pdf` — A MARCAÇÃO QUE O GERADOR DE PDF LÊ (lib/imprimir/gerar-pdf.ts).
+// Cada elemento com `data-pdf="bloco"` vira uma imagem própria no arquivo, e é
+// isso que permite paginar sem cortar questão no meio. Duas regras ao mexer
+// aqui:
+//
+//  · um `data-pdf` NUNCA pode estar dentro de outro — o gerador varre a folha
+//    em ordem de documento e desenharia o mesmo conteúdo duas vezes;
+//  · o que é ESPAÇO EM BRANCO não vira bloco: `data-pdf-espaco="68"` diz ao
+//    gerador quantos milímetros reservar depois do bloco, e ele desenha isso em
+//    vetor (e deixa quebrar entre páginas, que o miolo não pode).
 
 export function FolhaProva({
   titulo,
@@ -25,6 +36,7 @@ export function FolhaProva({
   opcoes,
   emailAluno,
   nomeAluno,
+  folhaRef,
 }: {
   titulo: string;
   disciplina: string | null;
@@ -34,6 +46,7 @@ export function FolhaProva({
   opcoes: OpcoesFolha;
   emailAluno: string;
   nomeAluno: string | null;
+  folhaRef?: React.Ref<HTMLDivElement>;
 }) {
   const hoje = new Date().toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -43,12 +56,15 @@ export function FolhaProva({
   const alturaResolucao = ALTURA_RESOLUCAO_MM[opcoes.espacamento];
 
   return (
-    <div className="folha relative mx-auto w-full max-w-[820px] px-6 py-9 sm:px-12">
+    <div
+      ref={folhaRef}
+      className="folha relative mx-auto w-full max-w-[820px] px-6 py-9 sm:px-12"
+    >
       <MarcaDiagonal email={emailAluno} />
 
       <div className="folha-conteudo">
         {/* -------------------------------------------------- cabeçalho */}
-        <header className="sem-quebra mb-6">
+        <header className="sem-quebra mb-6" data-pdf="bloco">
           <div className="flex items-end justify-between gap-4 border-b-[1.5px] border-[#111827] pb-2.5">
             <div className="min-w-0">
               <p className="sans text-[9.5px] font-bold uppercase tracking-[0.22em] text-[#0a855c]">
@@ -121,7 +137,12 @@ export function FolhaProva({
             >
               {/* O miolo é o que não pode partir entre páginas; o espaço de
                   resolução, logo abaixo, pode — ver estilos-impressao.ts. */}
-              <div className="questao-miolo">
+              <div
+                className="questao-miolo"
+                data-pdf="bloco"
+                data-pdf-espaco={alturaResolucao || undefined}
+                data-pdf-separador={i > 0 ? "1" : undefined}
+              >
                 <div className="mb-1.5 flex items-baseline gap-2">
                   <span className="sans text-[11.5px] font-bold uppercase tracking-[0.1em]">
                     Questão {i + 1}
@@ -168,26 +189,37 @@ export function FolhaProva({
         {/* -------------------------------------------------- gabarito */}
         {opcoes.gabarito && (
           <section className="quebra-pagina pt-2">
-            <h2 className="mb-3 border-b-[1.5px] border-[#111827] pb-1.5 text-[16px] font-bold tracking-tight">
-              Gabarito
-            </h2>
-            {/* Grade tabular (não uma linha corrida): conferir 40 respostas
-                numa lista separada por ponto é onde o aluno perde a conta. */}
-            <div className="grade-impressao tinta-exata grid grid-cols-[repeat(auto-fill,minmax(58px,1fr))] gap-px border border-[#d4d9dd] bg-[#d4d9dd]">
-              {questoes.map((q, i) => (
-                <div key={q.id} className="linha-impressao flex items-center justify-between gap-1 bg-white px-2 py-1.5">
-                  <span className="sans tnum text-[10px] font-semibold text-[#5b6472]">{i + 1}</span>
-                  <span className="sans text-[12.5px] font-bold">{(q.gabarito || "").toUpperCase()}</span>
-                </div>
-              ))}
+            {/* O título e a grade são UM bloco no PDF; cada resolução é outro.
+                Se a seção inteira fosse um bloco só, uma página de resoluções
+                seria fatiada no meio de uma linha de texto. */}
+            <div data-pdf="bloco" data-pdf-pagina="nova">
+              <h2 className="mb-3 border-b-[1.5px] border-[#111827] pb-1.5 text-[16px] font-bold tracking-tight">
+                Gabarito
+              </h2>
+              {/* Grade tabular (não uma linha corrida): conferir 40 respostas
+                  numa lista separada por ponto é onde o aluno perde a conta. */}
+              <div className="grade-impressao tinta-exata grid grid-cols-[repeat(auto-fill,minmax(58px,1fr))] gap-px border border-[#d4d9dd] bg-[#d4d9dd]">
+                {questoes.map((q, i) => (
+                  <div key={q.id} className="linha-impressao flex items-center justify-between gap-1 bg-white px-2 py-1.5">
+                    <span className="sans tnum text-[10px] font-semibold text-[#5b6472]">{i + 1}</span>
+                    <span className="sans text-[12.5px] font-bold">{(q.gabarito || "").toUpperCase()}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {opcoes.resolucoes && questoes.some((q) => q.resolucao) && (
               <div className="mt-7 flex flex-col gap-4">
-                <h3 className="text-[13.5px] font-bold">Resoluções</h3>
+                <h3 className="text-[13.5px] font-bold" data-pdf="bloco">
+                  Resoluções
+                </h3>
                 {questoes.map((q, i) =>
                   q.resolucao ? (
-                    <div key={q.id} className="questao-bloco text-[11.5px] leading-[1.6]">
+                    <div
+                      key={q.id}
+                      className="questao-bloco text-[11.5px] leading-[1.6]"
+                      data-pdf="bloco"
+                    >
                       <b className="sans">Questão {i + 1}.</b> <MathText text={q.resolucao} />
                     </div>
                   ) : null,
@@ -274,7 +306,7 @@ function Alternativas({ q }: { q: Pergunta }) {
  */
 function CartaoRespostaImpresso({ questoes }: { questoes: Pergunta[] }) {
   return (
-    <section className="quebra-pagina pt-2">
+    <section className="quebra-pagina pt-2" data-pdf="bloco" data-pdf-pagina="nova">
       <h2 className="mb-1 border-b-[1.5px] border-[#111827] pb-1.5 text-[16px] font-bold tracking-tight">
         Cartão-resposta
       </h2>

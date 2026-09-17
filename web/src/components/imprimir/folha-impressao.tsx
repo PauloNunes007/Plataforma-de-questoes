@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
+  AlertTriangle,
   ArrowLeft,
   Check,
+  Download,
   FileText,
   Layers,
   ListChecks,
+  Loader2,
   Printer,
   Ruler,
   Settings2,
@@ -27,8 +30,18 @@ import {
   type Espacamento,
   type OpcoesFolha,
 } from "@/lib/imprimir/opcoes";
+import type { ProgressoPdf } from "@/lib/imprimir/tipos-pdf";
 
 // A TELA DE EXPORTAR: um passo de preparo e, depois dele, a folha.
+//
+// O BOTÃO PRINCIPAL BAIXA UM PDF — não abre o diálogo de impressão. A diferença
+// não é de rótulo: até aqui o "PDF" era o *Imprimir → Salvar como PDF* do
+// navegador, e isso trazia três defeitos que não eram do nosso CSS (arquivo sem
+// nome, "Falha ao carregar documento PDF" em folha longa, e nada acontecendo no
+// CELULAR, onde `window.print()` é opcional e várias vezes não faz nada). Hoje
+// o arquivo é montado aqui, em `lib/imprimir/gerar-pdf.ts`, e sai por um
+// download comum. Imprimir continua existindo como botão secundário, pra quem
+// tem impressora ligada e quer pular o arquivo.
 //
 // O passo de preparo existe por um defeito concreto: a lista de um tópico
 // inteiro passa fácil de 100 questões, e a tela jogava TODAS numa folha só —
@@ -105,26 +118,50 @@ export function FolhaImpressao({
     setOpcoes((o) => ({ ...o, [chave]: valor }));
   }
 
-  // O nome do arquivo salvo sai do `document.title` — e o título da rota
-  // ("Imprimir lista do tópico · Expectrum") não diz o que o aluno baixou.
-  //
-  // O título é trocado AO ABRIR a tela, não no clique de imprimir. A primeira
-  // versão trocava dentro de `imprimir()`, logo antes de `window.print()`, e
-  // isso deu errado duas vezes: mexer no documento no instante em que o Chrome
-  // monta a pré-visualização é receita de "Falha ao carregar documento PDF", e
-  // quem imprime por Ctrl+P nunca passava pela função — o arquivo saía sem
-  // nome mesmo. Trocando na montagem, o documento fica PARADO durante a
-  // impressão e os dois caminhos ganham o nome certo.
+  // O caminho Ctrl+P continua existindo, e o nome do arquivo dele sai do
+  // `document.title`. Trocado na MONTAGEM (e devolvido no unmount), nunca no
+  // clique: mexer no documento no instante em que o navegador monta a
+  // pré-visualização é caminho conhecido pra "Falha ao carregar documento PDF".
+  // Pro botão "Baixar PDF" isso é irrelevante — lá o nome é nosso.
+  const arquivo = nomeDoArquivo(disciplina, titulo);
   useEffect(() => {
     const anterior = document.title;
-    document.title = nomeDoArquivo(disciplina, titulo);
+    document.title = arquivo;
     return () => {
       document.title = anterior;
     };
-  }, [disciplina, titulo]);
+  }, [arquivo]);
+
+  // ------------------------------------------------------------- baixar PDF
+  const folhaRef = useRef<HTMLDivElement | null>(null);
+  const [progresso, setProgresso] = useState<ProgressoPdf | null>(null);
+  const [erroPdf, setErroPdf] = useState<string | null>(null);
+
+  async function baixarPdf() {
+    const folha = folhaRef.current;
+    if (!folha || progresso) return;
+    setErroPdf(null);
+    setProgresso({ feitos: 0, total: selecionadas.length + 2 });
+    try {
+      const { baixarFolhaEmPdf } = await import("@/lib/imprimir/gerar-pdf");
+      await baixarFolhaEmPdf({
+        folha,
+        nomeArquivo: arquivo,
+        email: emailAluno,
+        onProgresso: setProgresso,
+      });
+    } catch (e) {
+      console.error("[imprimir] falha ao gerar o PDF", e);
+      setErroPdf(
+        "Não consegui montar o arquivo. Tente de novo com menos questões ou com menos espaço pra resolver.",
+      );
+    } finally {
+      setProgresso(null);
+    }
+  }
 
   return (
-    <div className="folha-raiz">
+    <div className={`folha-raiz${progresso ? " overflow-hidden" : ""}`}>
       <style dangerouslySetInnerHTML={{ __html: CSS_IMPRESSAO }} />
 
       {preparando ? (
@@ -166,15 +203,43 @@ export function FolhaImpressao({
                 Opções
               </button>
 
+              {/* Imprimir direto é o caminho SECUNDÁRIO: serve pra quem tem a
+                  impressora ligada agora. No celular ele costuma não fazer
+                  nada (`window.print()` é opcional em navegador móvel) — por
+                  isso o botão principal é o que baixa o arquivo. */}
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-questly-green px-3.5 text-[12.5px] font-semibold text-white transition-[filter] hover:brightness-105 dark:text-[#0c1512]"
+                title="Enviar direto pra impressora"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-[12.5px] font-semibold text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
               >
-                <Printer size={14} strokeWidth={2.1} />
-                Imprimir / salvar PDF
+                <Printer size={14} strokeWidth={2} />
+                <span className="hidden sm:inline">Imprimir</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={baixarPdf}
+                disabled={!!progresso}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-questly-green px-3.5 text-[12.5px] font-semibold text-white transition-[filter] hover:brightness-105 disabled:opacity-60 dark:text-[#0c1512]"
+              >
+                {progresso ? (
+                  <Loader2 size={14} strokeWidth={2.1} className="animate-spin" />
+                ) : (
+                  <Download size={14} strokeWidth={2.1} />
+                )}
+                {progresso ? "Montando…" : "Baixar PDF"}
               </button>
             </div>
+
+            {erroPdf && (
+              <div className="casca-leitura pb-3">
+                <p className="flex items-start gap-1.5 rounded-lg border border-questly-orange/40 bg-questly-orange-light px-3 py-2 text-[12px] leading-relaxed text-questly-orange-dark">
+                  <AlertTriangle size={14} strokeWidth={2.1} className="mt-[1px] shrink-0" />
+                  {erroPdf}
+                </p>
+              </div>
+            )}
 
             {painelAberto ? (
               <div className="casca-leitura pb-4">
@@ -191,15 +256,14 @@ export function FolhaImpressao({
               <p className="casca-leitura pb-2.5 text-[11.5px] leading-relaxed text-muted-foreground">
                 {selecionadas.length} de {total} {total === 1 ? "questão" : "questões"} · ~{paginas}{" "}
                 {paginas === 1 ? "página" : "páginas"} ·{" "}
-                {opcoes.gabarito ? "com gabarito no fim" : "sem gabarito"}. No diálogo, escolha{" "}
-                <b>&quot;Salvar como PDF&quot;</b> e desmarque{" "}
-                <b>&quot;Cabeçalhos e rodapés&quot;</b> — é o que tira a data e o endereço do site de
-                cima da folha. O arquivo sai marcado com o seu e-mail ({emailAluno}).
+                {opcoes.gabarito ? "com gabarito no fim" : "sem gabarito"}. O arquivo é montado aqui
+                e baixado pronto, em A4 — sai marcado com o seu e-mail ({emailAluno}).
               </p>
             )}
           </div>
 
           <FolhaProva
+            folhaRef={folhaRef}
             titulo={titulo}
             disciplina={disciplina}
             linhaContexto={linhaContexto}
@@ -212,11 +276,46 @@ export function FolhaImpressao({
         </>
       )}
 
+      {progresso && <ProgressoPdfOverlay progresso={progresso} />}
+
       {/* Rodapé carimbado em toda página impressa (escondido na tela). Não há
           cabeçalho corrente — ver estilos-impressao.ts: `fixed` + `top` cai
           por cima da primeira linha de cada página no Chrome. */}
       <div className="rodape-marca hidden">
         Expectrum · cópia pessoal de {emailAluno} · a redistribuição identifica esta conta
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Enquanto o arquivo é montado
+// ---------------------------------------------------------------------------
+
+/**
+ * Tela cheia, de propósito.
+ *
+ * Montar o PDF mexe na largura da folha por alguns segundos (ver
+ * `fixarLarguraDeRender` em lib/imprimir/gerar-pdf.ts, que a trava em 760px pra
+ * o arquivo não sair com a diagramação do celular). Sem uma cortina por cima, o
+ * aluno veria a página inteira "pular" e concluiria que quebrou.
+ */
+function ProgressoPdfOverlay({ progresso }: { progresso: ProgressoPdf }) {
+  const pct = progresso.total > 0 ? Math.round((progresso.feitos / progresso.total) * 100) : 0;
+  return (
+    <div className="nao-imprimir fixed inset-0 z-50 flex items-center justify-center bg-background/92 backdrop-blur-sm">
+      <div className="surface w-[min(340px,88vw)] p-6 text-center">
+        <Loader2 size={26} strokeWidth={2} className="mx-auto animate-spin text-questly-green" />
+        <p className="mt-3 text-[14px] font-bold">Montando o PDF…</p>
+        <p className="mt-1 text-[12px] text-muted-foreground">
+          Desenhando a folha em A4. Não feche a página.
+        </p>
+        <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-foreground/10">
+          <div
+            className="h-full rounded-full bg-questly-green transition-[width] duration-200"
+            style={{ width: `${Math.max(4, Math.min(100, pct))}%` }}
+          />
+        </div>
       </div>
     </div>
   );
@@ -344,13 +443,13 @@ function OpcoesImpressao({
             As {opcoes.quantidade} primeiras da lista · ~{paginas} {paginas === 1 ? "página" : "páginas"}{" "}
             no A4.
           </p>
-          {/* Aviso, não bloqueio: a pré-visualização do Chrome falha em
-              documentos muito longos com muitas figuras, e sem isto o aluno
-              conclui que o site quebrou. */}
+          {/* Aviso, não bloqueio: montar o arquivo é trabalho do aparelho, e num
+              celular antigo uma folha de 40+ páginas demora (ou falta memória).
+              Sem isto o aluno conclui que o site travou. */}
           {paginas > PAGINAS_DEMAIS && (
             <p className="mt-1.5 text-[11.5px] font-medium text-questly-orange-dark">
-              Arquivo longo. Alguns navegadores falham ao gerar PDFs desse tamanho — se der erro, baixe
-              em duas partes ou escolha menos espaço pra resolver.
+              Arquivo longo. Montar isso pode levar um minuto — e num celular antigo pode faltar
+              memória. Se travar, baixe em duas partes ou escolha menos espaço pra resolver.
             </p>
           )}
         </Campo>
