@@ -6,7 +6,7 @@ import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { buttonVariants } from "@/components/ui/button";
 import { acharParceiroDaConta, carregarPainelParceiro } from "@/lib/afiliados/painel";
 import { PainelParceiroView } from "@/components/afiliados/painel-parceiro";
-import { DIAS_BONUS_PADRAO, FAIXAS, JANELA_MESES_PADRAO } from "@/lib/afiliados/afiliados";
+import { FAIXAS, JANELA_MESES_PADRAO } from "@/lib/afiliados/afiliados";
 
 export const metadata: Metadata = { title: "Parceria" };
 
@@ -36,8 +36,7 @@ export default async function ParceiroPage() {
           <p className="mt-2.5 text-[14.5px] leading-relaxed text-muted-foreground">
             O programa de parceiros paga de {FAIXAS[0].percentual}% a{" "}
             {FAIXAS[FAIXAS.length - 1].percentual}% de tudo que os alunos indicados por você pagarem,
-            pelos primeiros {JANELA_MESES_PADRAO} meses de conta — e quem entra pelo seu link ganha{" "}
-            {DIAS_BONUS_PADRAO} dias de Pro.
+            pelos primeiros {JANELA_MESES_PADRAO} meses de conta.
           </p>
           <Link
             href="/parceria"

@@ -26,7 +26,7 @@ import {
   DIAS_COOKIE_REF,
   montarValorCookie,
 } from "@/lib/afiliados/afiliados";
-import { BENEFICIOS_PRO } from "@/lib/plano/plano";
+import { BENEFICIOS_PRO, RECURSOS_FREE } from "@/lib/plano/plano";
 import { arredondarPraBaixo, type StatsBanco } from "@/lib/landing/stats";
 
 function guardarRef(codigo: string) {
@@ -111,6 +111,12 @@ export function ParceiroView({
   );
 }
 
+// A vitrine que o link abre. O caso comum é `diasBonus === 0` — o padrão do
+// programa não dá nada de graça pro público (ver lib/afiliados/afiliados.ts):
+// o link só carimba a indicação, e quem clica cria conta normal, no mesmo
+// plano grátis que qualquer visitante tem. `diasBonus > 0` é a exceção — um
+// acordo pontual negociado com ESTE parceiro — e é só nesse caso que faz
+// sentido prometer Pro liberado na hora.
 function Convite({
   nome,
   instagram,
@@ -126,6 +132,11 @@ function Convite({
   jaEhPro: boolean;
   stats: StatsBanco;
 }) {
+  const comBonus = diasBonus > 0;
+  const beneficios = comBonus
+    ? BENEFICIOS_PRO
+    : RECURSOS_FREE.filter((r) => r.incluso).map((r) => r.texto);
+
   return (
     <div className="surface rounded-3xl px-6 py-7 sm:px-8 sm:py-9">
       <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-questly-gold/15 px-2.5 py-1 text-[11px] font-bold tracking-wide text-questly-gold uppercase">
@@ -133,16 +144,31 @@ function Convite({
         Indicação de {instagram ? `@${instagram}` : nome}
       </span>
 
-      <h1 className="mt-4 font-heading text-[26px] leading-tight font-semibold tracking-tight text-balance sm:text-[30px]">
-        <span className="tnum">{diasBonus}</span> dias de Expectrum Pro, liberados na hora.
-      </h1>
+      {comBonus ? (
+        <h1 className="mt-4 font-heading text-[26px] leading-tight font-semibold tracking-tight text-balance sm:text-[30px]">
+          <span className="tnum">{diasBonus}</span> dias de Expectrum Pro, liberados na hora.
+        </h1>
+      ) : (
+        <h1 className="mt-4 font-heading text-[26px] leading-tight font-semibold tracking-tight text-balance sm:text-[30px]">
+          Questões de provas antigas, simulados e sua trilha de estudo.
+        </h1>
+      )}
       <p className="mt-2.5 text-[14.5px] leading-relaxed text-pretty text-muted-foreground">
-        Você chegou pelo link de {instagram ? `@${instagram}` : nome}. Crie sua conta e o Pro entra
-        no ar na hora — sem cartão, sem cobrança no fim dos {diasBonus} dias.
+        {comBonus ? (
+          <>
+            Você chegou pelo link de {instagram ? `@${instagram}` : nome}. Crie sua conta e o Pro
+            entra no ar na hora — sem cartão, sem cobrança no fim dos {diasBonus} dias.
+          </>
+        ) : (
+          <>
+            Você chegou pelo link de {instagram ? `@${instagram}` : nome}. Crie sua conta grátis —
+            sem cartão, sem pegadinha.
+          </>
+        )}
       </p>
 
       <ul className="mt-6 flex flex-col gap-2.5">
-        {BENEFICIOS_PRO.map((b) => (
+        {beneficios.map((b) => (
           <li key={b} className="flex items-start gap-2.5 text-[13.5px] leading-snug">
             <span className="mt-px flex size-[18px] shrink-0 items-center justify-center rounded-full bg-questly-green/15 text-questly-green-dark dark:text-questly-green">
               <Check className="size-3" strokeWidth={3} />
@@ -152,7 +178,7 @@ function Convite({
         ))}
       </ul>
 
-      {jaEhPro ? (
+      {comBonus && jaEhPro ? (
         <p className="mt-6 rounded-xl border border-border bg-muted/40 px-4 py-3 text-[13px] leading-relaxed text-muted-foreground">
           Sua conta já está no Pro — este link libera o bônus apenas para contas novas.
         </p>
@@ -168,16 +194,19 @@ function Convite({
 
       {!logado ? (
         <p className="mt-3 text-center text-[12px] text-muted-foreground">
-          O bônus fica guardado neste navegador — o Pro é liberado sozinho assim que a conta estiver
-          pronta.
+          {comBonus
+            ? "O bônus fica guardado neste navegador — o Pro é liberado sozinho assim que a conta estiver pronta."
+            : "A indicação fica guardada neste navegador até a conta estar pronta."}
         </p>
       ) : null}
 
       <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border/60 pt-4 text-[12px] text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <Clock className="size-3.5" strokeWidth={2} />
-          {diasBonus} dias a partir do cadastro
-        </span>
+        {comBonus ? (
+          <span className="flex items-center gap-1.5">
+            <Clock className="size-3.5" strokeWidth={2} />
+            {diasBonus} dias a partir do cadastro
+          </span>
+        ) : null}
         {stats.aoVivo ? (
           <span className="flex items-center gap-1.5">
             <BadgeCheck className="size-3.5" strokeWidth={2} />

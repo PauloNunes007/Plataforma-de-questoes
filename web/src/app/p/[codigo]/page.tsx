@@ -31,14 +31,22 @@ export async function generateMetadata({
   const { codigo } = await params;
   const parceiro = await consultarParceiroAction(codigo);
 
+  // O título muda quando ESTE parceiro específico tem um bônus negociado
+  // (`diasBonus > 0`, exceção — ver lib/afiliados/afiliados.ts). O caso comum
+  // é sem bônus nenhum: o link só carrega a indicação, então o preview fala
+  // do produto, não de um presente que não existe.
   const titulo =
     parceiro.estado === "valido"
-      ? `${parceiro.diasBonus} dias de Expectrum Pro — indicação de ${parceiro.nome}`
+      ? parceiro.diasBonus > 0
+        ? `${parceiro.diasBonus} dias de Expectrum Pro — indicação de ${parceiro.nome}`
+        : `Expectrum — indicação de ${parceiro.nome}`
       : "Expectrum — questões de provas antigas e simulados";
 
   const descricao =
     parceiro.estado === "valido"
-      ? `Crie sua conta pelo link e o Pro entra no ar na hora, por ${parceiro.diasBonus} dias: simulados cronometrados com questões de provas anteriores, listas por assunto e controle de faltas e notas.`
+      ? parceiro.diasBonus > 0
+        ? `Crie sua conta pelo link e o Pro entra no ar na hora, por ${parceiro.diasBonus} dias: simulados cronometrados com questões de provas anteriores, listas por assunto e controle de faltas e notas.`
+        : "Questões de provas antigas com resolução, simulados cronometrados e a ementa da sua disciplina num mapa — crie sua conta grátis pelo link."
       : "Banco de questões de provas antigas com resolução, simulados cronometrados e a ementa da sua disciplina num mapa.";
 
   return {

@@ -121,8 +121,9 @@ export function PainelParceiroView({ painel }: { painel: PainelParceiro }) {
           </Button>
         </div>
         <p className="mt-2.5 text-[12.5px] leading-relaxed text-muted-foreground">
-          Quem cria conta por ele ganha {parceiro.diasBonus} dias de Pro na hora, e toda compra
-          dessa pessoa nos próximos {parceiro.janelaMeses} meses paga comissão pra você.
+          {parceiro.diasBonus > 0
+            ? `Quem cria conta por ele ganha ${parceiro.diasBonus} dias de Pro na hora, e toda compra dessa pessoa nos próximos ${parceiro.janelaMeses} meses paga comissão pra você.`
+            : `Quem cria conta por ele fica marcado como sua indicação, e toda compra dessa pessoa nos próximos ${parceiro.janelaMeses} meses paga comissão pra você.`}
         </p>
       </section>
 

@@ -1951,12 +1951,17 @@ plataforma não cumpre.
 
 **O desenho, e as três decisões que o carregam:**
 
-1. **O público do parceiro ganha DIAS de Pro, não desconto** (`afiliados.dias_bonus`,
-   15 por padrão). Um dia de Pro custa ~zero de margem e vale R$ 15 aos olhos de
-   quem recebe; R$ 12 de desconto custam R$ 12 de caixa. Efeito colateral que
-   importa mais que a economia: o checkout do Mercado Pago (`lib/plano/mercadopago.ts`)
-   **não sabe que este programa existe** — nenhum preço muda, nenhuma preferência
-   ganha caso especial, e o caminho do dinheiro segue com uma variável a menos.
+1. **Sem oferta especial pro público, por padrão** (`afiliados.dias_bonus`,
+   default 0). O link não é cupom nem desconto: quem clica cria conta normal,
+   no plano grátis que qualquer visitante tem — o que o link faz é carimbar de
+   quem foi a indicação. Dar dias de Pro de graça pra todo clique custaria caro
+   em escala e treinaria o público a nunca pagar preço cheio; `dias_bonus`
+   continua existindo no schema pra um acordo pontual negociado com UM
+   parceiro específico (o admin decide caso a caso em `/admin/afiliados`), nunca
+   como regra do programa. Efeito colateral que importa mais que a economia: o
+   checkout do Mercado Pago (`lib/plano/mercadopago.ts`) **não sabe que este
+   programa existe** — nenhum preço muda, nenhuma preferência ganha caso
+   especial, e o caminho do dinheiro segue com uma variável a menos.
 2. **Faixa por volume, retroativa ao mês** (`FAIXAS`: 25% → 30% aos 10, 35% aos
    25, 40% aos 50). Pro parceiro transforma "divulgar" em meta, e o painel diz
    quantas vendas faltam pra faixa seguinte. Pra plataforma, 40% só é pago sobre

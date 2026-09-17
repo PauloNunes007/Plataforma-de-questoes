@@ -11,7 +11,7 @@ import { FaixaEspectro, LockupOg } from "@/components/og/marca-og";
 // número exato, e vivo, está na própria página.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Expectrum Pro liberado por indicação";
+export const alt = "Uma indicação pra estudar com a Expectrum";
 
 export default function LinkParceiroOpengraphImage() {
   return new ImageResponse(
@@ -76,7 +76,7 @@ export default function LinkParceiroOpengraphImage() {
             textAlign: "center",
           }}
         >
-          Expectrum Pro liberado pelo link de quem te indicou.
+          Uma indicação de quem já estuda com a Expectrum.
         </div>
 
         <div

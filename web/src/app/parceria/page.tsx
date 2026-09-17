@@ -4,16 +4,15 @@ import {
   ArrowRight,
   BadgeCheck,
   Check,
-  Gift,
   Megaphone,
   Link2,
   TrendingUp,
+  Users,
   Wallet,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
 import {
-  DIAS_BONUS_PADRAO,
   DIA_REPASSE,
   FAIXAS,
   JANELA_MESES_PADRAO,
@@ -44,7 +43,7 @@ import { carregarStatsBanco, arredondarPraBaixo } from "@/lib/landing/stats";
 export const revalidate = 3600;
 
 const TITULO = "Programa de parceiros da Expectrum — ganhe até 40% por indicação";
-const DESCRICAO = `Indique a Expectrum pro seu público: seus seguidores ganham ${DIAS_BONUS_PADRAO} dias de Pro e você recebe de ${FAIXAS[0].percentual}% a ${FAIXAS[FAIXAS.length - 1].percentual}% de tudo que eles pagarem, por ${JANELA_MESES_PADRAO} meses.`;
+const DESCRICAO = `Indique a Expectrum pro seu público: você recebe de ${FAIXAS[0].percentual}% a ${FAIXAS[FAIXAS.length - 1].percentual}% de tudo que eles pagarem, por ${JANELA_MESES_PADRAO} meses, sem precisar oferecer desconto nem bônus.`;
 
 export const metadata: Metadata = {
   title: { absolute: TITULO },
@@ -63,10 +62,10 @@ const PASSOS: { icone: typeof Link2; titulo: string; texto: string }[] = [
       "expectrum.com.br/p/SEUCODIGO. Vai na bio, no story, na descrição do vídeo — onde seu público já está.",
   },
   {
-    icone: Gift,
-    titulo: `Quem clica ganha ${DIAS_BONUS_PADRAO} dias de Pro`,
+    icone: Users,
+    titulo: "Seu público cria conta normal, no plano grátis",
     texto:
-      "Na hora, sem cartão e sem pegadinha. Você não está pedindo um favor ao seu público: está dando um presente que custa caro pra ele conseguir de outro jeito.",
+      "Sem cupom, sem pegadinha, sem nada que pareça propaganda. Você está recomendando uma ferramenta de verdade — o link só guarda que a indicação foi sua.",
   },
   {
     icone: TrendingUp,
@@ -123,9 +122,9 @@ export default async function ParceriaPage() {
             A Expectrum é uma plataforma de estudos pra universitário:{" "}
             {stats.aoVivo ? `${arredondarPraBaixo(stats.total)} questões ` : "questões "}
             de provas antigas catalogadas por assunto, com resolução, simulados cronometrados e o
-            controle de faltas e notas do semestre. Você indica pelo seu link, seu seguidor ganha{" "}
-            {DIAS_BONUS_PADRAO} dias de Pro, e toda compra dele nos próximos {JANELA_MESES_PADRAO}{" "}
-            meses paga comissão pra você.
+            controle de faltas e notas do semestre. Você indica pelo seu link, seu seguidor cria
+            conta normal — e toda compra dele nos próximos {JANELA_MESES_PADRAO} meses paga
+            comissão pra você.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -259,23 +258,23 @@ export default async function ParceriaPage() {
           </div>
         </section>
 
-        {/* ------------------------------------- por que o público aceita */}
+        {/* ------------------------------------- por que isso não queima sua audiência */}
         <section className="mt-12">
           <div className="surface rounded-3xl px-6 py-7 sm:px-8">
             <h2 className="font-heading text-[22px] leading-tight font-semibold tracking-tight">
-              Por que seu público aceita
+              Isso não é um link de venda
             </h2>
             <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
-              Ninguém quer queimar a audiência com link de venda. Por isso o que o seu link entrega
-              não é um desconto — é <strong>{DIAS_BONUS_PADRAO} dias de Pro completo, de graça</strong>.
-              Seu seguidor não precisa gastar nada pra sentir que valeu a pena ter clicado, e o
-              plano grátis continua existindo depois.
+              Não tem cupom, não tem desconto e não tem nada especial pra oferecer no story — só um
+              produto real, com plano grátis de verdade, que você recomenda porque acha bom. O
+              link não pede nada da sua audiência: quem clica cria conta normal, na mesma hora que
+              criaria sem o link.
             </p>
             <ul className="mt-4 flex flex-col gap-2.5">
               {[
-                "Sem pedir cartão de crédito em nenhum momento do bônus",
-                "Sem cobrança automática quando o bônus acabar",
-                "O plano grátis segue funcionando: banco de questões, trilha da ementa e um simulado por semana",
+                "Sem cupom, sem pegadinha, sem pressa artificial",
+                "O plano grátis é completo de verdade: banco de questões, trilha da ementa e um simulado por semana",
+                "Se a pessoa nunca assinar, tudo bem — ela continua usando de graça e você não deve nada a ninguém",
                 "Você não precisa produzir nada: o link já vem com página, texto e preview prontos",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-2.5 text-[13.5px] leading-snug">

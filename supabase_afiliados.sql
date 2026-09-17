@@ -4,23 +4,24 @@
 --
 -- PROGRAMA DE PARCEIROS — a plataforma paga uma porcentagem das vendas que
 -- vierem do link de um parceiro (um perfil do Instagram, um centro academico,
--- um monitor). E o mesmo desenho do convite (supabase_cupons_pro.sql), com
--- duas diferencas que mudam tudo:
+-- um monitor). Diferente do convite (supabase_cupons_pro.sql), que da Pro de
+-- graca e acaba ali: aqui o link NAO da nada de graca pro publico por padrao
+-- (`afiliados.dias_bonus` default 0) — o publico so cria conta normal, no
+-- plano gratis que ja existe. O que o link faz e CARIMBAR de quem foi a
+-- indicacao, e e esse carimbo que vira dinheiro pro parceiro quando aquele
+-- aluno assinar o Pro (por uma janela de meses, `afiliados.janela_meses`).
 --
---   1. o convite da Pro de graca e acaba ali; o link de parceiro da Pro de
---      graca E continua valendo dinheiro pro parceiro quando aquele aluno
---      paga, por uma janela de meses (`afiliados.janela_meses`);
---   2. o cupom e anonimo (qualquer um resgata o codigo); a indicacao e
---      NOMINAL — uma conta pertence a no maximo um parceiro, pra sempre
---      (indice unico em `afiliado_indicacoes.user_id`).
+-- A indicacao e NOMINAL — uma conta pertence a no maximo um parceiro, pra
+-- sempre (indice unico em `afiliado_indicacoes.user_id`). `dias_bonus` continua
+-- existindo pra permitir um acordo pontual com ALGUM parceiro especifico (o
+-- admin decide caso a caso em /admin/afiliados) — mas isso e excecao, nao a
+-- regra do programa.
 --
 -- O que este arquivo NAO faz, de proposito:
 --
---   • nao mexe em preco. O que o publico do parceiro ganha sao DIAS de Pro
---     (`afiliados.dias_bonus`), nao desconto. Dia de Pro custa ~zero de
---     margem e vale R$ 15 aos olhos de quem recebe; R$ 12 de desconto custam
---     R$ 12 de caixa. O checkout do Mercado Pago (lib/plano/mercadopago.ts)
---     continua sem saber que este programa existe;
+--   • nao mexe em preco nem cria desconto pro publico. O checkout do Mercado
+--     Pago (lib/plano/mercadopago.ts) continua sem saber que este programa
+--     existe — nenhuma preferencia, nenhum valor muda por causa dele;
 --   • nao cria contador denormalizado de "quanto o parceiro ja ganhou". O
 --     saldo e a soma das comissoes, lida na hora — mesma regra da meta do
 --     calendario (supabase_agenda_metas.sql) e das faltas
@@ -47,7 +48,10 @@ create table if not exists afiliados (
   -- Quantos dias de Pro o PUBLICO dele ganha ao criar conta pelo link. E a
   -- oferta que faz o seguidor tocar no link — e o que o parceiro tem pra
   -- anunciar sem prometer desconto que a gente nao da.
-  dias_bonus int not null default 15 check (dias_bonus >= 0 and dias_bonus <= 180),
+  -- Default 0: por padrao o link NAO da nada de graca pro publico, so
+  -- carimba a indicacao. Um valor > 0 e excecao negociada com este parceiro
+  -- especifico, decidida pelo admin em /admin/afiliados.
+  dias_bonus int not null default 0 check (dias_bonus >= 0 and dias_bonus <= 180),
   -- Percentual fechado com ESTE parceiro. null = vale a tabela por faixa de
   -- volume (web/src/lib/afiliados/afiliados.ts). Existe pra negociacao
   -- individual caber sem virar excecao no codigo.

@@ -317,7 +317,10 @@ function LinhaParceiro({
         <div className="mt-4 border-t border-border pt-4">
           <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-[12.5px] text-muted-foreground">
             <span>
-              bônus <strong className="text-foreground">{a.diasBonus} dias</strong>
+              bônus{" "}
+              <strong className="text-foreground">
+                {a.diasBonus > 0 ? `${a.diasBonus} dias (exceção negociada)` : "nenhum (padrão)"}
+              </strong>
             </span>
             <span>
               janela <strong className="text-foreground">{a.janelaMeses} meses</strong>
@@ -489,7 +492,12 @@ function FormNovoParceiro({
           onChange={setEmail}
           placeholder="perfil@email.com"
         />
-        <Campo rotulo="Dias de Pro pro público" valor={diasBonus} onChange={setDiasBonus} />
+        <Campo
+          rotulo="Bônus em dias (0 = padrão, sem bônus)"
+          valor={diasBonus}
+          onChange={setDiasBonus}
+          placeholder="0"
+        />
         <Campo
           rotulo={`% fixo (vazio = faixas ${FAIXAS[0].percentual}–${FAIXAS[FAIXAS.length - 1].percentual}%)`}
           valor={percentualFixo}

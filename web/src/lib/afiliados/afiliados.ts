@@ -12,7 +12,9 @@
 //
 // O que o parceiro ganha .... % do que ENTRA (líquido do gateway), em toda
 //                             compra do aluno que ele trouxe, por 12 meses.
-// O que o público dele ganha  dias de Pro grátis — não desconto.
+// O que o público dele ganha  nada de especial, por padrão — cria conta
+//                             normal, no plano grátis que já existe. O link
+//                             só CARIMBA de quem foi a indicação.
 // O que a plataforma protege  paga só sobre dinheiro que ficou (o estorno
 //                             cancela a comissão), só sobre conta NOVA, e a
 //                             taxa alta só existe em volume que só existe
@@ -20,12 +22,15 @@
 //
 // Três decisões carregam o programa:
 //
-// 1. **Bônus em DIAS, não em desconto.** Um dia de Pro custa ~zero de margem
-//    (a conta do Supabase não muda) e vale R$ 15 aos olhos de quem recebe.
-//    R$ 12 de desconto custam R$ 12 de caixa. Então o seguidor do parceiro
-//    ganha um mês inteiro de Pro, o parceiro tem uma oferta grande pra
-//    anunciar, e o preço da plataforma nunca é corroído — quem vende com
-//    desconto uma vez vende com desconto pra sempre.
+// 1. **Sem oferta especial pro público, por padrão.** O plano grátis da
+//    plataforma já é um produto completo — banco de questões, trilha da
+//    ementa, um simulado por semana. Dar dias de Pro de graça pra QUALQUER
+//    um que clicar custaria caro em escala (todo link vira uma promoção) e
+//    treinaria o público a nunca pagar preço cheio. `afiliados.dias_bonus`
+//    continua existindo no schema — serve pra um acordo pontual e negociado
+//    com um parceiro específico (o admin decide caso a caso), nunca como
+//    regra do programa. O valor pro parceiro está inteiro na comissão, não
+//    em precisar convencer o público com um brinde.
 //
 // 2. **Faixa por volume, retroativa ao mês.** A comissão começa em 25% e
 //    sobe até 40%. Pro parceiro é o que transforma "divulgar" em meta: ele
@@ -121,7 +126,7 @@ export function ganhoPorVenda(brutoCentavos: number, percentual: number): number
 /* ----------------------------------------------------------- padrões */
 
 /** Dias de Pro que o público do parceiro ganha ao criar conta pelo link. */
-export const DIAS_BONUS_PADRAO = 15;
+export const DIAS_BONUS_PADRAO = 0;
 
 /** Por quantos meses as compras do aluno indicado ainda pagam comissão. */
 export const JANELA_MESES_PADRAO = 12;
@@ -290,6 +295,11 @@ export function rotuloCompetencia(competencia: string): string {
  * antes de entrar seja diferente da que ele lê depois.
  */
 export const REGRAS_PROGRAMA: { titulo: string; texto: string }[] = [
+  {
+    titulo: "O que seu público ganha ao clicar",
+    texto:
+      "Nada de especial, por padrão: a pessoa cria conta normal, no plano grátis que qualquer visitante tem. O link não é um cupom de desconto — o que ele faz é registrar que a indicação foi sua, e é esse registro que vira comissão pra você quando ela decidir assinar o Pro, quando quiser.",
+  },
   {
     titulo: "Quem conta como sua indicação",
     texto:

@@ -37,11 +37,7 @@ import { Logo } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
 import { resgatarCupomAction, type EstadoConvite } from "@/lib/plano/actions";
 import { COOKIE_CONVITE } from "@/lib/plano/plano";
-import {
-  DIAS_BONUS_PADRAO,
-  FAIXAS,
-  JANELA_MESES_PADRAO,
-} from "@/lib/afiliados/afiliados";
+import { FAIXAS, JANELA_MESES_PADRAO } from "@/lib/afiliados/afiliados";
 import { arredondarPraBaixo, type StatsBanco } from "@/lib/landing/stats";
 
 // 7 dias: o convite de avaliação sobrevive a "vou ver isso com calma no fim de
@@ -269,13 +265,12 @@ export function ConviteAfiliadoView({
                 <Handshake className="size-3.5" strokeWidth={2.4} />E se você topar
               </span>
               <h2 className="mt-4 font-heading text-[22px] leading-tight font-semibold tracking-tight text-balance">
-                Seu público ganha {DIAS_BONUS_PADRAO} dias de Pro. Você ganha de{" "}
-                {FAIXAS[0].percentual}% a {FAIXAS[FAIXAS.length - 1].percentual}% de tudo que eles
-                pagarem.
+                Você ganha de {FAIXAS[0].percentual}% a {FAIXAS[FAIXAS.length - 1].percentual}% de
+                tudo que seu público pagar.
               </h2>
               <ul className="mt-5 flex flex-col gap-2.5">
                 {[
-                  `Um link só seu — quem cria conta por ele ganha ${DIAS_BONUS_PADRAO} dias de Pro na hora, sem cartão`,
+                  "Um link só seu — sem cupom, sem desconto, só a indicação registrada em seu nome",
                   `Comissão em toda compra daquele aluno pelos primeiros ${JANELA_MESES_PADRAO} meses, incluindo renovações`,
                   `A faixa sobe com o volume do mês e vale pro mês inteiro, inclusive pras vendas que já entraram`,
                   "Pix todo mês, com um painel seu mostrando clique, conta criada e venda por venda",
