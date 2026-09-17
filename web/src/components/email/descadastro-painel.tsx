@@ -43,13 +43,13 @@ export function DescadastroPainel({
         <h1 className="font-heading text-[19px] font-semibold tracking-tight">Link inválido ou expirado</h1>
         <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
           Não conseguimos identificar sua conta por este link. Você pode ajustar isso entrando na
-          Questly, em Configurações.
+          Expectrum, em Configurações.
         </p>
         <Link
           href="/login"
           className="mt-5 inline-flex items-center justify-center rounded-xl bg-questly-green px-4 py-2.5 text-[13.5px] font-semibold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98]"
         >
-          Entrar na Questly
+          Entrar na Expectrum
         </Link>
       </div>
     );
@@ -73,7 +73,7 @@ export function DescadastroPainel({
 
       <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
         {reativado
-          ? "Vamos te avisar quando algo importante mudar na Questly."
+          ? "Vamos te avisar quando algo importante mudar na Expectrum."
           : "Removemos seu e-mail dos avisos sobre o produto. E-mails de conta — confirmação de cadastro e recuperação de senha — continuam chegando normalmente, porque são resposta a algo que você pediu."}
       </p>
 
@@ -97,7 +97,7 @@ export function DescadastroPainel({
 
       <div className="mt-6 border-t border-border pt-4">
         <Link href="/" className="text-[12.5px] font-medium text-muted-foreground hover:text-foreground">
-          Ir para a Questly
+          Ir para a Expectrum
         </Link>
       </div>
     </div>

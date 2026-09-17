@@ -34,8 +34,8 @@ export async function generateMetadata({
   // cupom no banco, não de texto digitado à mão. Sem cupom válido, o card do
   // link não promete nada.
   const titulo = dias
-    ? `Você foi convidado pra testar a Questly — ${dias} dias de Pro`
-    : "Convite pra testar a Questly";
+    ? `Você foi convidado pra testar a Expectrum — ${dias} dias de Pro`
+    : "Convite pra testar a Expectrum";
   const descricao = dias
     ? `Crie sua conta e o Pro é liberado na hora, por ${dias} dias: simulados cronometrados ilimitados, projeção da sua nota pro dia da prova e autópsia do erro.`
     : "Plataforma de estudos com questões de provas anteriores, simulados cronometrados e plano de estudos por dia.";

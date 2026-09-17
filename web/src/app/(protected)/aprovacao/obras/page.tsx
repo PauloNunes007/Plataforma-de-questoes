@@ -6,7 +6,7 @@ import { carregarObras, dataLocalISO } from "@/lib/aprovacao/dados";
 import { AprovacaoTabs } from "@/components/aprovacao/aprovacao-tabs";
 import { ObrasView } from "@/components/aprovacao/obras-view";
 
-export const metadata = { title: "Obras literárias — Questly" };
+export const metadata = { title: "Obras literárias — Expectrum" };
 
 export default async function ObrasPage() {
   const supabase = await createClient();

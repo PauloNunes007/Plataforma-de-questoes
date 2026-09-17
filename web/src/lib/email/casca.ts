@@ -1,4 +1,4 @@
-// A CASCA visual dos e-mails da Questly — o molde do e-mail de código de
+// A CASCA visual dos e-mails da Expectrum — o molde do e-mail de código de
 // cadastro, extraído pra que campanha e transacional nunca divirjam.
 //
 // Antes isto morava inteiro dentro de templates-auth.ts. Saiu pra cá quando
@@ -126,7 +126,7 @@ export function blocoDestaques(itens: { titulo: string; texto: string }[]): stri
  *
  * `preheader` é o trecho que Gmail/Apple Mail mostram na lista, ao lado do
  * assunto, antes de abrir. Sem ele o cliente inventa um — normalmente pegando
- * "Questly" e o começo do título, o que desperdiça a única linha de venda que
+ * "Expectrum" e o começo do título, o que desperdiça a única linha de venda que
  * existe na caixa de entrada.
  *
  * `corpo` e `rodape` entram CRUS: são montados pelos blocos acima, que já
@@ -153,7 +153,7 @@ export function montarCasca(o: {
     <td align="center" style="padding:28px 12px 40px 12px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560" style="width:100%;max-width:560px;">
         <tr>
-          <td align="center" style="padding:0 0 18px 0;font-family:${FONTE};font-size:19px;font-weight:800;letter-spacing:-.01em;color:${VERDE_ESCURO};">Questly</td>
+          <td align="center" style="padding:0 0 18px 0;font-family:${FONTE};font-size:19px;font-weight:800;letter-spacing:-.01em;color:${VERDE_ESCURO};">Expectrum</td>
         </tr>
         <tr>
           <td style="background-color:#ffffff;border:1px solid ${HAIRLINE};border-radius:20px;">

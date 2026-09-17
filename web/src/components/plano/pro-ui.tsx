@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Lock } from "lucide-react";
 
-// Identidade visual do Questly Pro.
+// Identidade visual do Expectrum Pro.
 //
 // Antes daqui existia uma COROA (lucide `Crown`) sobre gradiente dourado
 // saturado, com anel branco — vocabulário de jogo free-to-play ("vire rei!"),
@@ -108,7 +108,7 @@ export function ProBadge({
   const sm = size === "sm";
   return (
     <span
-      title="Assinante Questly Pro"
+      title="Assinante Expectrum Pro"
       className={`inline-flex items-center rounded-md border border-questly-gold/35 bg-questly-gold/10 font-semibold uppercase text-questly-gold ${
         sm ? "gap-0.5 px-1.5 py-[1.5px] text-[8.5px] tracking-[0.12em]" : "gap-1 px-2 py-[3px] text-[9.5px] tracking-[0.14em]"
       } ${className}`}
@@ -134,8 +134,8 @@ export function ProCta({
   return (
     <Link
       href="/pro"
-      aria-label={ehPro ? "Questly Pro" : "Assinar o Questly Pro"}
-      title={ehPro ? "Questly Pro" : "Assinar o Questly Pro"}
+      aria-label={ehPro ? "Expectrum Pro" : "Assinar o Expectrum Pro"}
+      title={ehPro ? "Expectrum Pro" : "Assinar o Expectrum Pro"}
       className={`group inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-questly-gold/30 bg-questly-gold/[0.07] font-semibold text-questly-gold transition-colors hover:border-questly-gold/55 hover:bg-questly-gold/15 active:scale-[0.97] ${
         compacto ? "px-2.5 text-[11.5px]" : "px-3 text-[12px]"
       } ${className}`}

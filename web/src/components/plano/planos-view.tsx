@@ -241,7 +241,7 @@ function Cabecalho({ jaEhPro }: { jaEhPro: boolean }) {
     <header className="flex flex-col items-center text-center">
       <ProEmblema size={44} />
       <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-questly-gold">
-        Questly Pro
+        Expectrum Pro
       </p>
       <h1 className="mt-2 max-w-2xl font-heading text-[27px] font-semibold leading-tight tracking-tight sm:text-[34px]">
         {jaEhPro ? "Sua assinatura está ativa" : "O motor completo, sem freios"}
@@ -587,7 +587,7 @@ function StatusPro({
 
         <p className="mt-5 flex items-center justify-center gap-1.5 text-[11.5px] text-muted-foreground">
           <ShieldCheck size={13} />
-          Obrigado por apoiar a Questly.
+          Obrigado por apoiar a Expectrum.
         </p>
       </motion.div>
     </AnimatePresence>

@@ -1,10 +1,15 @@
 import { cn } from "@/lib/utils";
 
-// Marca da Questly. O símbolo é um SVG desenhado (não mais a letra "Q" numa
-// caixa com gradiente): um anel de progresso aberto — a "quest" em andamento —
-// com a cauda do Q formada por um traço ascendente. Funciona em 16px (favicon)
-// e em 512px, em claro e escuro, porque usa currentColor no traço e o
-// gradiente só no aro.
+// Marca da Expectrum. O símbolo é um SVG desenhado: um anel de progresso
+// aberto com um núcleo no centro — um mostrador, a leitura de onde o aluno
+// está. Funciona em 16px (favicon) e em 512px, em claro e escuro.
+//
+// A cauda diagonal que existia aqui foi REMOVIDA no rebranding de 2026-09-16:
+// ela era o traço do "Q" de Questly e, ao lado da palavra "Expectrum", o
+// símbolo lia literalmente como a letra errada. Sem ela o aro fecha como
+// mostrador e não sugere letra nenhuma. O resto do símbolo (squircle,
+// gradiente da marca, espessura do traço, núcleo) ficou intocado de propósito
+// — o pedido foi ajustar o que destoava do nome, não redesenhar a marca.
 
 export function LogoMark({
   className,
@@ -19,7 +24,7 @@ export function LogoMark({
       width={size}
       height={size}
       role="img"
-      aria-label="Questly"
+      aria-label="Expectrum"
       className={cn("shrink-0", className)}
     >
       <defs>
@@ -37,14 +42,6 @@ export function LogoMark({
         strokeWidth="2.6"
         strokeLinecap="round"
         opacity="0.95"
-      />
-      {/* cauda ascendente — o traço do Q virando seta de progresso */}
-      <path
-        d="M19.2 19.4 24.6 24.8"
-        fill="none"
-        stroke="white"
-        strokeWidth="2.6"
-        strokeLinecap="round"
       />
       {/* núcleo: o ponto onde o aluno está na trilha */}
       <circle cx="16" cy="16" r="3.1" fill="white" opacity="0.95" />
@@ -70,7 +67,7 @@ export function Logo({
       )}
     >
       <LogoMark size={size} />
-      {!compacto && <span>Questly</span>}
+      {!compacto && <span>Expectrum</span>}
     </div>
   );
 }

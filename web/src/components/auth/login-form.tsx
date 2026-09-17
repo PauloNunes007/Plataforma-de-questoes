@@ -302,7 +302,7 @@ export function LoginForm({ stats }: { stats: StatsBanco }) {
           <p className="text-sm font-semibold text-white/90">
             {CAMPANHA.ativa
               ? `Diga que você é da ${CAMPANHA.instituicao} e o acervo da sua universidade abre na hora.`
-              : "Sua campanha é montada em cima da sua meta de nota."}
+              : "Diga qual é a sua universidade e a gente mostra na hora o que já tem do acervo dela."}
           </p>
         </div>
         <div className="relative flex flex-col gap-4">

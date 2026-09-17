@@ -346,12 +346,12 @@ function CartaTcg({ card }: { card: CardUsuario }) {
 
         {/* rodapé de carta impressa: ilustrador · raridade · numeração */}
         <div className="relative z-10 mt-3 flex items-center justify-between text-[8.5px] italic text-white/55 max-sm:mt-2">
-          <span>Ilust. Questly</span>
+          <span>Ilust. Expectrum</span>
           <span className="tnum not-italic">
             {pro ? "✦" : raridade.simbolo} {numeroCarta}/100 ·{" "}
             {pro ? `${raridade.nome} · Edição Pro` : raridade.nome}
           </span>
-          <span>© Questly {new Date().getFullYear()}</span>
+          <span>© Expectrum {new Date().getFullYear()}</span>
         </div>
       </div>
     </motion.div>

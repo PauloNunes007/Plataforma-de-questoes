@@ -1,6 +1,6 @@
 "use client";
 
-// Select do Questly — substitui o `<select>` nativo onde a lista aparece na
+// Select do Expectrum — substitui o `<select>` nativo onde a lista aparece na
 // frente do aluno.
 //
 // POR QUE NÃO O NATIVO: o `<select>` é o único controle da tela que o CSS do

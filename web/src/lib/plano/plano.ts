@@ -167,7 +167,7 @@ export function normalizarCodigoCupom(bruto: string): string {
 // perceber, e o convite morreria na mão do testador. No browser a origem real
 // é a fonte mais confiável que existe.
 export function linkConvite(codigo: string, base?: string): string {
-  const raiz = (base?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://questly.com.br")
+  const raiz = (base?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://expectrum.com.br")
     .replace(/\/+$/, "");
   return `${raiz}/convite/${normalizarCodigoCupom(codigo)}`;
 }

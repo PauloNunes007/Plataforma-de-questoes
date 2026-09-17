@@ -216,7 +216,7 @@ function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavPro
               </ItemMenu>
               <ItemMenu href="/pro" onClick={() => setAberto(false)} cor="text-questly-gold">
                 <ProMark size={15} strokeWidth={1.9} />
-                {ehPro ? "Questly Pro" : "Seja Pro"}
+                {ehPro ? "Expectrum Pro" : "Seja Pro"}
               </ItemMenu>
 
               {isAdmin && (

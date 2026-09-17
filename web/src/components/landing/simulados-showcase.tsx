@@ -89,7 +89,7 @@ export function SimuladosShowcase({ stats }: { stats: StatsBanco }) {
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="surface rounded-3xl p-7 sm:p-8">
             <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
-              Um banco de questões que dá gosto de estudar
+              Um banco catalogado questão por questão
             </h3>
             <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-muted-foreground text-pretty">
               São {arredondarPraBaixo(stats.total)} questões catalogadas por disciplina, tópico e

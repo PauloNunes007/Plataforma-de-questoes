@@ -6,7 +6,7 @@ import { carregarEscada, carregarSimulados, dataLocalISO } from "@/lib/aprovacao
 import { AprovacaoTabs } from "@/components/aprovacao/aprovacao-tabs";
 import { SimuladosView } from "@/components/aprovacao/simulados-view";
 
-export const metadata = { title: "Simulados — Questly" };
+export const metadata = { title: "Simulados — Expectrum" };
 
 export default async function SimuladosPage() {
   const supabase = await createClient();

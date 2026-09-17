@@ -42,7 +42,7 @@ function env(nome: string): string | undefined {
 export function remetenteConfigurado(): { email: string; nome: string } | null {
   const email = env("EMAIL_REMETENTE");
   if (!email) return null;
-  return { email, nome: env("EMAIL_REMETENTE_NOME") ?? "Questly" };
+  return { email, nome: env("EMAIL_REMETENTE_NOME") ?? "Expectrum" };
 }
 
 export async function enviarEmail(msg: MensagemEmail): Promise<ResultadoEnvio> {

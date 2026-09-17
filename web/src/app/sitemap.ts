@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://questly.com.br";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://expectrum.com.br";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

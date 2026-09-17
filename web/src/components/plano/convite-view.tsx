@@ -170,7 +170,7 @@ function ConviteValido({
       </Selo>
 
       <h1 className="mt-4 font-heading text-[26px] leading-tight font-semibold tracking-tight text-balance sm:text-[30px]">
-        <span className="tnum">{diasPro}</span> dias de Questly Pro, por nossa conta.
+        <span className="tnum">{diasPro}</span> dias de Expectrum Pro, por nossa conta.
       </h1>
       <p className="mt-2.5 text-[14.5px] leading-relaxed text-muted-foreground text-pretty">
         Você está entre os primeiros a testar a plataforma. Crie sua conta e o Pro entra no ar na
@@ -310,7 +310,7 @@ function ConviteIndisponivel({
         {texto}
       </p>
       <p className="mt-4 text-[13.5px] leading-relaxed text-muted-foreground">
-        A Questly continua de portas abertas: o plano grátis tem o banco de questões, a trilha da ementa,
+        A Expectrum continua de portas abertas: o plano grátis tem o banco de questões, a trilha da ementa,
         banco de questões com resolução e um simulado cronometrado por semana.
       </p>
       <Link

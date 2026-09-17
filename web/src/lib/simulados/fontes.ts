@@ -37,7 +37,7 @@ export type FonteSimulado = {
 /**
  * `questions.instituicao` nem sempre guarda uma universidade: além de null,
  * parte das questões feitas pela equipe foi importada com o rótulo de autoria
- * própria ("Questly"). As duas coisas são a MESMA fonte pro aluno — ele não
+ * própria ("Expectrum"). As duas coisas são a MESMA fonte pro aluno — ele não
  * distingue "sem origem" de "origem: a gente" — então caem as duas no autoral.
  * (Códigos de disciplina, tipo "MAT-111", continuam sendo fonte própria: são
  * lista de professor, não questão nossa.)

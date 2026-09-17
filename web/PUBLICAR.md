@@ -1,4 +1,4 @@
- # Publicar a Questly (Vercel + Supabase + Mercado Pago)
+ # Publicar a Expectrum (Vercel + Supabase + Mercado Pago)
 
 Guia passo a passo pra colocar o app no ar de graça e mandar pros amigos.
 Ordem importa: **1) banco → 2) deploy → 3) pagamento → 4) email**.
@@ -47,10 +47,10 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → API → **service_role (secret)** | **SIM** |
    | `MP_ACCESS_TOKEN` | Mercado Pago (passo 3) | **SIM** |
    | `MP_WEBHOOK_SECRET` | Mercado Pago (passo 3) | **SIM** |
-   | `NEXT_PUBLIC_APP_URL` | a URL do próprio deploy, ex. `https://questly.vercel.app` (sem `/` no fim) | não |
+   | `NEXT_PUBLIC_APP_URL` | a URL pública final, `https://expectrum.com.br` (sem `/` no fim) | não |
    | `BREVO_API_KEY` | Brevo (passo 4) | **SIM** |
    | `EMAIL_REMETENTE` | o endereço verificado na Brevo (passo 4) | não |
-   | `EMAIL_REMETENTE_NOME` | nome que aparece como remetente, ex. `Questly` | não |
+   | `EMAIL_REMETENTE_NOME` | nome que aparece como remetente, ex. `Expectrum` | não |
    | `SEND_EMAIL_HOOK_SECRET` | Supabase → Authentication → Hooks (passo 4) | **SIM** |
    | `EMAIL_DESCADASTRO_SECRET` | qualquer frase longa e secreta; assina o link de descadastro da campanha | não — sem ela, deriva da `SUPABASE_SERVICE_ROLE_KEY` |
 
@@ -58,11 +58,37 @@ pode rodar de novo sem medo). Só precisa rodar as que você ainda não rodou:
    > `EMAIL_DESCADASTRO_SECRET` definida, os links de descadastro já enviados
    > param de funcionar (a assinatura deriva dela). Definir a variável evita isso.
 
-   > `NEXT_PUBLIC_APP_URL` você só sabe depois do primeiro deploy. Faça o deploy,
-   > copie a URL que o Vercel deu, coloque na variável e **faça um redeploy**.
+   > Se o domínio próprio (passo 2b) ainda não estiver configurado, use
+   > provisoriamente a URL `https://...vercel.app` que o Vercel dá após o
+   > primeiro deploy e troque para `https://expectrum.com.br` depois — sempre
+   > seguido de um **redeploy**, porque `NEXT_PUBLIC_APP_URL` é embutida no
+   > build (metadados, OpenGraph, `back_urls` do checkout).
 
-5. Clique **Deploy**. Pronto — a URL `https://...vercel.app` é o que você manda
-   pros amigos.
+5. Clique **Deploy**. Pronto — por enquanto a URL `https://...vercel.app`
+   funciona; o passo 2b troca isso pelo domínio de verdade.
+
+### 2b) Domínio próprio (expectrum.com.br)
+
+Você comprou o domínio num registrador (Registro.br, GoDaddy, etc.) — agora é
+apontar ele pro deploy que acabou de subir:
+
+1. No projeto, na Vercel: **Settings → Domains → Add**. Digite
+   `expectrum.com.br` (e, se quiser, `www.expectrum.com.br` também — a Vercel
+   redireciona um pro outro automaticamente).
+2. A Vercel mostra os registros DNS que faltam. Pra um domínio `.com.br`
+   registrado fora da Vercel, normalmente é um destes dois (ela diz qual usar):
+   - **Registro A** apontando o domínio raiz (`@`) pro IP `76.76.21.21`, ou
+   - **Registro CNAME** apontando `www` para `cname.vercel-dns.com`.
+3. Entre no painel do seu registrador (ex. **registro.br** → "Editar zona DNS")
+   e cadastre exatamente o registro que a Vercel pediu. Propagação de DNS pode
+   levar de minutos a algumas horas.
+4. Volte em **Settings → Domains** na Vercel: quando o registro propagar, o
+   domínio muda de "Invalid Configuration" para **Valid** e o HTTPS
+   (Let's Encrypt) é emitido sozinho — não precisa comprar certificado.
+5. Atualize `NEXT_PUBLIC_APP_URL=https://expectrum.com.br` nas **Environment
+   Variables** do projeto (Settings → Environment Variables) e faça um
+   **redeploy** — sem isso os metadados/OpenGraph/checkout continuam
+   referenciando a URL antiga do `.vercel.app`.
 
 > ⚠️ **`SUPABASE_SERVICE_ROLE_KEY` também é usada no BUILD.** A landing (`/`) é
 > pré-renderizada com as contagens reais do banco (`lib/landing/stats.ts`) — a
@@ -147,7 +173,7 @@ e a conta nunca é confirmada.
 
 A solução aqui **não é trocar o SMTP do Supabase**: é tirar o envio da mão dele.
 Com o **Send Email Hook** ligado, o Supabase para de mandar email e chama a nossa
-rota `/api/auth/email-hook`, que entrega pela Brevo com o template da Questly
+rota `/api/auth/email-hook`, que entrega pela Brevo com o template da Expectrum
 (código de 6 dígitos + botão). O token continua sendo do Supabase — nós somos só
 o carteiro. Custo: **R$ 0,00** (Brevo grátis = 300 emails/dia, sem cartão).
 
@@ -171,10 +197,19 @@ o carteiro. Custo: **R$ 0,00** (Brevo grátis = 300 emails/dia, sem cartão).
 >
 > Nenhum ajuste de assunto, conteúdo ou template resolve (o nosso já é o
 > formato mais seguro possível: tabela, sem imagem, com versão texto). A única
-> correção real é domínio próprio (`.com.br` ~R$40/ano no registro.br),
-> autenticado na Brevo com 3 registros DNS; depois muda só o `EMAIL_REMETENTE`
-> — **nenhum código muda**. Enquanto isso não existe, conte com o aviso "olhe
-> a caixa de spam" que já está na tela de verificação.
+> correção real é domínio próprio, autenticado na Brevo com 3 registros DNS;
+> depois muda só o `EMAIL_REMETENTE` — **nenhum código muda**. Enquanto isso
+> não existe, conte com o aviso "olhe a caixa de spam" que já está na tela de
+> verificação.
+>
+> ✅ **Agora que existe `expectrum.com.br`**, vale fazer essa autenticação:
+> Brevo → **Senders, Domains & Dedicated IPs → Domains → Add a domain** →
+> `expectrum.com.br` → ela mostra 3 registros DNS (geralmente DKIM + SPF +
+> um de verificação) pra cadastrar no mesmo painel do registrador do passo 2b.
+> Depois disso, troque `EMAIL_REMETENTE` pra um endereço `@expectrum.com.br`
+> (ex. `contato@expectrum.com.br` — não precisa existir de verdade como caixa
+> de entrada, só precisa não bounçar; a Brevo só cobra a autenticação do
+> domínio, não a criação de caixas).
 
 ### 4.2) Ligar o hook no Supabase
 

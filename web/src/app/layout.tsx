@@ -22,28 +22,28 @@ const geistMono = Geist_Mono({
 // URL pública do app — base pras URLs absolutas de canonical/OpenGraph. Sem
 // isso o Next avisa no build e os previews de link (WhatsApp/Instagram, por
 // onde a divulgação começa) saem sem título/imagem.
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://questly.com.br";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://expectrum.com.br";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "Questly — Estude o que importa",
+    default: "Expectrum — Estude o que importa",
     // Cada página define o próprio título; o sufixo mantém a marca visível na
-    // aba e no histórico sem cada page.tsx repetir "— Questly".
-    template: "%s · Questly",
+    // aba e no histórico sem cada page.tsx repetir "— Expectrum".
+    template: "%s · Expectrum",
   },
   description:
     "Plano de estudos diário, simulados cronometrados e questões de provas antigas pra universitário passar em todas as matérias do semestre.",
-  applicationName: "Questly",
-  authors: [{ name: "Questly" }],
+  applicationName: "Expectrum",
+  authors: [{ name: "Expectrum" }],
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    siteName: "Questly",
+    siteName: "Expectrum",
     locale: "pt_BR",
   },
   twitter: { card: "summary_large_image" },
-  appleWebApp: { capable: true, title: "Questly", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Expectrum", statusBarStyle: "default" },
   formatDetection: { telephone: false },
 };
 

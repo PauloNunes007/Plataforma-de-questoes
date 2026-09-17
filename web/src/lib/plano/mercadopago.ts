@@ -39,7 +39,7 @@ export async function criarPreferenciaCheckout(params: {
     items: [
       {
         id: params.opcao.id,
-        title: `Questly ${params.opcao.titulo}`,
+        title: `Expectrum ${params.opcao.titulo}`,
         description: params.opcao.observacao,
         quantity: 1,
         currency_id: "BRL",

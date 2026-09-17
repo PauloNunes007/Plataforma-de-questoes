@@ -11,7 +11,7 @@ import { ImageResponse } from "next/og";
 // vivo) aparece na própria página, lido do cupom.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Convite pra testar a Questly";
+export const alt = "Convite pra testar a Expectrum";
 
 export default function ConviteOpengraphImage() {
   return new ImageResponse(
@@ -43,9 +43,9 @@ export default function ConviteOpengraphImage() {
               fontWeight: 700,
             }}
           >
-            Q
+            E
           </div>
-          <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>Questly</div>
+          <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>Expectrum</div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -74,7 +74,7 @@ export default function ConviteOpengraphImage() {
               maxWidth: 960,
             }}
           >
-            Você foi convidado pra testar a Questly.
+            Você foi convidado pra testar a Expectrum.
           </div>
           <div
             style={{

@@ -119,7 +119,7 @@ export async function listarInstituicoesComQuestoes(): Promise<InstituicaoAgrega
 
 // Nem todo valor de `questions.instituicao` é uma universidade: o campo também
 // recebeu código de disciplina ("MAT-111") e o rótulo de autoria própria
-// ("Questly"). Sugerir esses como universidade confundiria o aluno.
+// ("Expectrum"). Sugerir esses como universidade confundiria o aluno.
 function ehInstituicaoSugerivel(nome: string): boolean {
   const n = nome.trim().toLowerCase();
   if (n.includes("questly")) return false;

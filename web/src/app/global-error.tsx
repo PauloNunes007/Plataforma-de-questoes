@@ -28,7 +28,7 @@ export default function GlobalError({
         }}
       >
         <div style={{ maxWidth: 420 }}>
-          <div style={{ fontSize: 20, fontWeight: 600, marginBottom: 8 }}>Questly</div>
+          <div style={{ fontSize: 20, fontWeight: 600, marginBottom: 8 }}>Expectrum</div>
           <h1 style={{ fontSize: 22, fontWeight: 600, margin: "0 0 10px" }}>
             A página não conseguiu carregar
           </h1>

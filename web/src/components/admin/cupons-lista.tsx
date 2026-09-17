@@ -339,7 +339,7 @@ function CompartilharConvite({ cupom }: { cupom: CupomAdmin }) {
   );
   const url = linkConvite(cupom.codigo, base);
   const mensagem =
-    `Tô abrindo a Questly pra um grupo pequeno de testadores e separei um acesso pra você: ` +
+    `Tô abrindo a Expectrum pra um grupo pequeno de testadores e separei um acesso pra você: ` +
     `${cupom.diasPro} dias do plano Pro, sem cartão e sem cobrança depois.
 
 ` +

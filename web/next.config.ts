@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-// A Questly só tem alunos no Brasil (fuso não é configurável em nenhum
+// A Expectrum só tem alunos no Brasil (fuso não é configurável em nenhum
 // lugar da UI), mas o servidor (Vercel) roda em UTC por padrão. Toda
 // lógica de "hoje"/hora do dia (saudação, missão do dia, streak, virada
 // de semana da liga) usa `new Date()` local do servidor — sem isso, esses

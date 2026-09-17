@@ -45,11 +45,11 @@ export type ConteudoCampanha = {
  * corresponde a uma tela que existe e está no ar.
  */
 export const CAMPANHA_PADRAO: ConteudoCampanha = {
-  assunto: "A Questly mudou muito — dá uma olhada antes do lançamento",
+  assunto: "A Expectrum mudou muito — dá uma olhada antes do lançamento",
   preheader: "Estamos a poucos dias do lançamento oficial e quase tudo por aí está diferente.",
   titulo: "Faz tempo que você não aparece",
   intro:
-    "Estamos a poucos dias do lançamento oficial da Questly — e, desde a última vez que você entrou, quase tudo por aqui mudou. Vale a pena dar uma olhada.",
+    "Estamos a poucos dias do lançamento oficial da Expectrum — e, desde a última vez que você entrou, quase tudo por aqui mudou. Vale a pena dar uma olhada.",
   destaques: [
     {
       titulo: "Simulados com provas da sua universidade",
@@ -92,7 +92,7 @@ export function montarEmailCampanha(opcoes: {
     : c.titulo;
 
   const rodape =
-    `Voc&ecirc; recebeu este e-mail porque criou uma conta na Questly.<br />` +
+    `Voc&ecirc; recebeu este e-mail porque criou uma conta na Expectrum.<br />` +
     `<a href="${escapar(linkDescadastro)}" target="_blank" style="color:${VERDE};text-decoration:underline;">N&atilde;o quero mais receber novidades</a>`;
 
   const html = montarCasca({
@@ -117,7 +117,7 @@ export function montarEmailCampanha(opcoes: {
     ...(c.fecho ? ["", c.fecho] : []),
     "",
     "—",
-    "Você recebeu este e-mail porque criou uma conta na Questly.",
+    "Você recebeu este e-mail porque criou uma conta na Expectrum.",
     `Para não receber mais novidades: ${linkDescadastro}`,
   ].join("\n");
 

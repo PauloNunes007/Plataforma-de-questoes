@@ -160,7 +160,7 @@ export function VerificarEmailForm({
           </p>
           <p className="mt-1 text-[13px] leading-relaxed font-semibold text-questly-orange-dark/85">
             O código quase sempre cai em <strong>Spam</strong> ou{" "}
-            <strong>Lixo eletrônico</strong>. Procure por <strong>Questly</strong> e marque como{" "}
+            <strong>Lixo eletrônico</strong>. Procure por <strong>Expectrum</strong> e marque como{" "}
             <strong>&ldquo;Não é spam&rdquo;</strong> — assim os próximos chegam direto.
           </p>
         </div>

@@ -40,7 +40,7 @@ export function ProFoil() {
 export function ProSelo({ className = "" }: { className?: string }) {
   return (
     <span
-      title="Assinante Questly Pro"
+      title="Assinante Expectrum Pro"
       className={`inline-flex shrink-0 items-center gap-1 rounded-md bg-gradient-to-br from-[#fbe6a4] via-[#d9a52a] to-[#a6760c] px-2 py-[3px] text-[9px] font-bold uppercase tracking-[0.14em] text-[#2a1d02] shadow-sm ring-1 ring-white/40 ${className}`}
     >
       <ProMark size={9} strokeWidth={2.6} />
@@ -53,8 +53,8 @@ export function ProSelo({ className = "" }: { className?: string }) {
 export function ProMarcaLinha({ className = "" }: { className?: string }) {
   return (
     <span
-      title="Assinante Questly Pro"
-      aria-label="Assinante Questly Pro"
+      title="Assinante Expectrum Pro"
+      aria-label="Assinante Expectrum Pro"
       className={`inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] bg-gradient-to-br from-[#fbe6a4] via-[#d9a52a] to-[#a6760c] text-[#2a1d02] shadow-sm ${className}`}
     >
       <ProMark size={9} strokeWidth={2.7} />

@@ -10,8 +10,8 @@ import { CAMPANHA } from "@/lib/landing/campanha";
 
 const PERGUNTAS: { p: string; r: string }[] = [
   {
-    p: `Sou da ${CAMPANHA.instituicao}. As questões são das provas da minha universidade mesmo?`,
-    r: `São. Cada questão guarda de qual instituição e de que ano ela veio, digitada do original — enunciado, alternativas e as figuras recortadas da própria prova. Ao dizer que você é da ${CAMPANHA.instituicao} no cadastro, a gente confirma na hora quantas questões temos da sua universidade e libera o montador de simulados com elas.`,
+    p: "As questões são de provas antigas de verdade?",
+    r: `São. Cada questão guarda de qual instituição e de que ano ela veio, digitada do original — enunciado, alternativas e as figuras recortadas da própria prova, não redesenhadas. O acervo de provas anteriores da ${CAMPANHA.instituicao} é o maior hoje, e no cadastro a gente confirma na hora quantas questões temos da sua universidade antes de liberar o montador de simulados com elas.`,
   },
   {
     p: "E se a minha universidade não estiver no banco?",
@@ -19,19 +19,19 @@ const PERGUNTAS: { p: string; r: string }[] = [
   },
   {
     p: "Quanto tempo por dia eu preciso?",
-    r: "O que você tiver. Você monta a lista do tamanho que couber — 5 questões no corredor entre aulas ou 40 num sábado. A Questly não tem cota diária nem cobra presença: o que ela guarda é o que você já fez, pra você enxergar onde está.",
+    r: "O que você tiver. Você monta a lista do tamanho que couber — 5 questões no corredor entre aulas ou 40 num sábado. A Expectrum não tem cota diária nem cobra presença: o que ela guarda é o que você já fez, pra você enxergar onde está.",
   },
   {
     p: "Preciso pagar pra usar?",
     r: "Não. O plano grátis tem o banco de questões inteiro com resolução, listas sem limite, disciplinas ilimitadas, a trilha da ementa, anotações, streak, ligas e um simulado cronometrado por semana. O Pro tira o limite de simulados e abre a autópsia do erro e as estatísticas avançadas, por R$ 15/mês ou R$ 10/mês no semestral.",
   },
   {
-    p: "A Questly monta um cronograma pra mim?",
-    r: "Não, e isso é decisão de produto, não falta. A gente já tentou: o motor empilhava quatro matérias diferentes no mesmo dia e virava uma lista que ninguém executa. Quem sabe o que caiu na aula de ontem e o que a prova de sexta cobra é você. A Questly te dá as questões, o mapa da ementa com o seu aproveitamento e o simulado — a ordem é sua. Se quiser planejar, o calendário é seu: sessão, meta de questões, tarefa e a data da prova, tudo marcado por você.",
+    p: "A Expectrum monta um cronograma pra mim?",
+    r: "Não, e isso é decisão de produto, não falta. A gente já tentou: o motor empilhava quatro matérias diferentes no mesmo dia e virava uma lista que ninguém executa. Quem sabe o que caiu na aula de ontem e o que a prova de sexta cobra é você. A Expectrum te dá as questões, o mapa da ementa com o seu aproveitamento e o simulado — a ordem é sua. Se quiser planejar, o calendário é seu: sessão, meta de questões, tarefa e a data da prova, tudo marcado por você.",
   },
   {
     p: "Isso substitui a aula e o livro?",
-    r: "Não, e não quer. A Questly é onde você pratica, revisa na hora certa e descobre o que ainda não sabe. Teoria você vê com seu professor e seu livro — aqui é o treino que transforma teoria em nota.",
+    r: "Não, e não quer. A Expectrum é onde você pratica, revisa na hora certa e descobre o que ainda não sabe. Teoria você vê com seu professor e seu livro — aqui é o treino que transforma teoria em nota.",
   },
 ];
 

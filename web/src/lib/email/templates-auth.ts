@@ -41,30 +41,30 @@ function conteudoPara(tipo: TipoAcaoEmail, nome: string): Conteudo {
   switch (tipo) {
     case "recovery":
       return {
-        assunto: "Redefinir sua senha da Questly",
+        assunto: "Redefinir sua senha da Expectrum",
         titulo: "Vamos redefinir sua senha",
         intro: `${ola}recebemos um pedido para trocar a senha da sua conta. Use o código abaixo ou clique no botão.`,
         rotuloBotao: "Criar uma senha nova",
       };
     case "magiclink":
       return {
-        assunto: "Seu acesso à Questly",
-        titulo: "Entrar na Questly",
+        assunto: "Seu acesso à Expectrum",
+        titulo: "Entrar na Expectrum",
         intro: `${ola}use o código abaixo ou clique no botão para entrar sem senha.`,
         rotuloBotao: "Entrar agora",
       };
     case "invite":
       return {
-        assunto: "Você foi convidado para a Questly",
+        assunto: "Você foi convidado para a Expectrum",
         titulo: "Seu convite chegou",
-        intro: `${ola}alguém te convidou para estudar na Questly. Aceite o convite para criar sua conta.`,
+        intro: `${ola}alguém te convidou para estudar na Expectrum. Aceite o convite para criar sua conta.`,
         rotuloBotao: "Aceitar convite",
       };
     case "email_change":
     case "email_change_current":
     case "email_change_new":
       return {
-        assunto: "Confirme seu novo email na Questly",
+        assunto: "Confirme seu novo email na Expectrum",
         titulo: "Confirme a troca de email",
         intro: `${ola}para concluir a troca do email da sua conta, confirme com o código abaixo ou pelo botão.`,
         rotuloBotao: "Confirmar novo email",
@@ -72,9 +72,9 @@ function conteudoPara(tipo: TipoAcaoEmail, nome: string): Conteudo {
     case "signup":
     default:
       return {
-        assunto: "Seu código para confirmar a conta na Questly",
+        assunto: "Seu código para confirmar a conta na Expectrum",
         titulo: "Falta um passo para começar",
-        intro: `${ola}bem-vindo(a) à Questly. Digite o código abaixo na tela de confirmação — ou clique no botão, se você abriu este email no mesmo aparelho.`,
+        intro: `${ola}bem-vindo(a) à Expectrum. Digite o código abaixo na tela de confirmação — ou clique no botão, se você abriu este email no mesmo aparelho.`,
         rotuloBotao: "Confirmar meu email",
       };
   }
@@ -132,7 +132,7 @@ export function montarEmailAuth(opcoes: {
     "",
     "Se você não pediu este email, pode ignorar — nada acontece sem alguém usar o código.",
     "",
-    "Questly",
+    "Expectrum",
   ].join("\n");
 
   return { assunto: c.assunto, html, texto };

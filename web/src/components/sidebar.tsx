@@ -91,7 +91,7 @@ export function Sidebar({ nome, username, curso, fotoUrl, isAdmin, ehPro }: Side
           }`}
         >
           <Crown size={18} strokeWidth={proAtivo ? 2 : 1.75} />
-          {ehPro ? "Questly Pro" : "Seja Pro"}
+          {ehPro ? "Expectrum Pro" : "Seja Pro"}
           {ehPro && <ProBadge size="sm" className="ml-auto" />}
         </Link>
       </div>

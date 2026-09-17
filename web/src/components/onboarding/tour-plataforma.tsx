@@ -125,7 +125,7 @@ export function TourPlataforma({ identidade, onFinalizar }: TourProps) {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed inset-0 z-[100] flex min-h-dvh flex-col overflow-hidden bg-[#080d1a] text-white"
       role="dialog"
-      aria-label="Tour pela plataforma Questly"
+      aria-label="Tour pela plataforma Expectrum"
     >
       <Cenario ouro={ehOuro} rm={!!rm} corCurso={identidade && cursoReconhecido(identidade) ? identidade.corA : null} />
 
@@ -155,7 +155,7 @@ export function TourPlataforma({ identidade, onFinalizar }: TourProps) {
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#2dd4a0] to-[#0b7a56] shadow-[0_0_28px_rgba(45,212,160,0.4)] ring-1 ring-inset ring-white/25">
             <Swords size={15} strokeWidth={2.4} />
           </span>
-          <span className="font-heading text-sm font-semibold tracking-tight text-white/90">Questly</span>
+          <span className="font-heading text-sm font-semibold tracking-tight text-white/90">Expectrum</span>
         </div>
         <button
           type="button"
@@ -457,7 +457,7 @@ function CenaAbertura({ identidade, rm }: { identidade: CursoIdentidade | null; 
         </motion.div>
       )}
 
-      <Legenda kicker="Boas-vindas à Questly" titulo="Você acabou de sair do modo difícil." delay={0.7}>
+      <Legenda kicker="Boas-vindas à Expectrum" titulo="Você acabou de sair do modo difícil." delay={0.7}>
         Sua campanha está montada. Em meio minuto, você vai entender como cada dia de estudo te deixa
         visivelmente mais perto da aprovação.
       </Legenda>
@@ -854,7 +854,7 @@ function CenaCiencia({ rm }: { rm: boolean }) {
               <stop offset="100%" stopColor="#2dd4a0" stopOpacity="0" />
             </linearGradient>
           </defs>
-          {/* área sob a curva "com Questly" */}
+          {/* área sob a curva "com Expectrum" */}
           <motion.path
             d="M 20 22 C 55 52, 80 68, 105 76 L 105 30 C 150 58, 180 68, 205 74 L 205 34 C 260 56, 300 62, 330 66 L 330 38 C 350 44, 362 46, 370 48 L 370 112 L 20 112 Z"
             fill="url(#tour-area-memoria)"
@@ -908,7 +908,7 @@ function CenaCiencia({ rm }: { rm: boolean }) {
             sem revisar
           </text>
           <text x="374" y="42" textAnchor="end" fill="#2dd4a0" fontSize="9" fontWeight="700">
-            com a Questly
+            com a Expectrum
           </text>
         </svg>
 
@@ -928,8 +928,8 @@ function CenaCiencia({ rm }: { rm: boolean }) {
         </div>
       </Vidro>
 
-      <Legenda kicker="Ciência da memória" titulo="Você esquece. A Questly lembra.">
-        Sem revisão, boa parte do que você estuda some da memória em poucos dias. A Questly calcula o
+      <Legenda kicker="Ciência da memória" titulo="Você esquece. A Expectrum lembra.">
+        Sem revisão, boa parte do que você estuda some da memória em poucos dias. A Expectrum calcula o
         momento exato em que cada tópico ia escapar — e te chama de volta antes.
       </Legenda>
     </>

@@ -7,7 +7,7 @@ import { etapasPendentes } from "@/lib/aprovacao/tipos";
 import { AprovacaoTabs } from "@/components/aprovacao/aprovacao-tabs";
 import { ErrosView } from "@/components/aprovacao/erros-view";
 
-export const metadata = { title: "Caderno de Erros — Questly" };
+export const metadata = { title: "Caderno de Erros — Expectrum" };
 
 export default async function ErrosPage() {
   const supabase = await createClient();

@@ -1,6 +1,6 @@
 "use client";
 
-// Mascote da Questly — a capivara de terno da landing (public/mascote.png),
+// Mascote da Expectrum — a capivara de terno da landing (public/mascote.png),
 // redesenhada em SVG de CORPO INTEIRO fiel à arte original: mesma paleta
 // caramelo, sobrancelhas, olhos castanhos com íris, focinho enorme com
 // narinas, sorriso com dentinhos, e o terno verde com lapelas + camisa

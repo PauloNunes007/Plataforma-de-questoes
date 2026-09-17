@@ -8,7 +8,7 @@ import { CAMPANHA } from "@/lib/landing/campanha";
 // Sem prazo no texto: o card é colado em grupo e reencaminhado meses depois.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Questly — simulados e questões de provas antigas";
+export const alt = "Expectrum — simulados e questões de provas antigas";
 
 export default function OpengraphImage() {
   const titulo = CAMPANHA.ativa
@@ -48,9 +48,9 @@ export default function OpengraphImage() {
               fontWeight: 700,
             }}
           >
-            Q
+            E
           </div>
-          <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>Questly</div>
+          <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>Expectrum</div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -93,7 +93,7 @@ export default function OpengraphImage() {
             Comece grátis
           </div>
           <div style={{ display: "flex", fontSize: 22, color: "#8fbfae" }}>
-            questly · sem cartão de crédito
+            expectrum · sem cartão de crédito
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { carregarDadosHoje } from "@/lib/aprovacao/dados";
 import { AprovacaoTabs } from "@/components/aprovacao/aprovacao-tabs";
 import { HojeView } from "@/components/aprovacao/hoje-view";
 
-export const metadata = { title: "Modo Aprovação — Questly" };
+export const metadata = { title: "Modo Aprovação — Expectrum" };
 
 export default async function AprovacaoPage() {
   const supabase = await createClient();

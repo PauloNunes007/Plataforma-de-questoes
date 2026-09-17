@@ -1,7 +1,18 @@
 // Recorte de campanha da landing pública. Fica num só lugar, editável sem
-// mexer no JSX: quando o foco na UFF acabar, troque o objeto (ou ponha
-// `ativa: false`) e a landing volta ao discurso geral sozinha — a fita do
-// topo, a seção dedicada e o selo do hero são todos gated por `CAMPANHA.ativa`.
+// mexer no JSX: a fita do topo, a seção dedicada, o selo do hero e o painel do
+// /login são todos gated por `CAMPANHA.ativa`.
+//
+// DESLIGADA desde 2026-09-16, a pedido do dono: a landing dedicava uma fita,
+// um selo no hero e uma seção inteira ao "aluno da UFF", e isso lia como
+// propaganda de cursinho, não como produto. O discurso agora é o geral — uma
+// plataforma de questões de provas antigas pra universitário de exatas — e a
+// UFF aparece pelo que ela é, um FATO do acervo: a contagem "N de provas da
+// UFF" na faixa de números, uma linha no FAQ e o reconhecimento da
+// universidade no cadastro. Nada de headline dedicada.
+//
+// O objeto continua aqui inteiro de propósito. `instituicao`/`materias` ainda
+// alimentam `lib/landing/stats.ts` (é de onde sai aquela contagem), e voltar a
+// ligar uma campanha — pra esta ou pra outra universidade — é trocar `ativa`.
 //
 // Regra de honestidade: nada aqui inventa número. As contagens que aparecem na
 // página vêm do banco em tempo real (lib/landing/stats.ts); este arquivo só
@@ -9,8 +20,7 @@
 //
 // Regra de atemporalidade (2026-09-06): NADA aqui pode citar prazo — "prova
 // deste mês", "chegando", "faltam N dias". O acervo não expira e o dono não
-// quer voltar pra reescrever a landing toda vez que o calendário vira. O
-// argumento é o acervo em si: questões de Física da UFF, catalogadas.
+// quer voltar pra reescrever a landing toda vez que o calendário vira.
 
 export type Campanha = {
   ativa: boolean;
@@ -31,7 +41,7 @@ export type Campanha = {
 };
 
 export const CAMPANHA: Campanha = {
-  ativa: true,
+  ativa: false,
   instituicao: "UFF",
   instituicaoLonga: "Universidade Federal Fluminense",
   materias: ["Física I", "Física II"],

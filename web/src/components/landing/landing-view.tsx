@@ -1,6 +1,6 @@
 "use client";
 
-// Landing page pública da Questly (rota "/"). Estilo "fintech premium":
+// Landing page pública da Expectrum (rota "/"). Estilo "fintech premium":
 // superfícies de vidro, ritmo generoso, números tabulares, ícones Lucide
 // (sem emoji estrutural). Mantém a paleta de marca do app. Dinâmica/
 // responsiva ao usuário: cards com tilt 3D no ponteiro, mascote flutuante
@@ -8,9 +8,12 @@
 // prefers-reduced-motion.
 //
 // Os números que aparecem aqui vêm do banco de verdade (page.tsx →
-// carregarStatsBanco) — a landing nunca inventa contagem. O recorte de
-// campanha (lançamento pra UFF) mora em lib/landing/campanha.ts e desenha em
-// components/landing/campanha-uff.tsx.
+// carregarStatsBanco) — a landing nunca inventa contagem.
+//
+// A campanha dedicada à UFF (fita no topo, selo no hero, seção própria) está
+// DESLIGADA desde 2026-09-16: lia como propaganda de cursinho. A UFF continua
+// na página, mas só como fato do acervo — a contagem "N de provas da UFF" na
+// faixa de números abaixo. Pra religar, ver lib/landing/campanha.ts.
 import Link from "next/link";
 import Image from "next/image";
 import { type ComponentType, type ReactNode, useMemo } from "react";
@@ -160,7 +163,6 @@ function TiltCard({
 /* ------------------------------------------------------------- conteúdo */
 
 const NAV = [
-  { label: CAMPANHA.instituicao, href: `#${CAMPANHA.ancora}`, destaque: true },
   { label: "Simulados", href: "#simulados" },
   { label: "Método", href: "#metodo" },
   { label: "Recursos", href: "#recursos" },
@@ -231,13 +233,13 @@ const RECURSOS: {
     icon: Trophy,
     cor: "text-questly-gold",
     titulo: "Constância que vira disputa",
-    desc: "Do bronze ao diamante, com promoção e rebaixamento toda semana. Estudar sozinho, no silêncio, nunca mais.",
+    desc: "Ligas semanais do bronze ao diamante, com promoção e rebaixamento. A régua é o que você produziu na semana, não quanto tempo ficou com a aba aberta.",
   },
   {
     icon: Flame,
     cor: "text-questly-orange",
-    titulo: "Vício do bom",
-    desc: "Cada questão vale XP pela dificuldade. Manter o fogo do streak aceso vira hábito — e hábito é o que passa de ano.",
+    titulo: "O hábito, em números",
+    desc: "Cada questão vale XP pela dificuldade e cada dia de estudo mantém a ofensiva acesa. Você vê a série crescer — e é ela que sustenta o semestre.",
   },
   {
     icon: Layers,
@@ -298,7 +300,7 @@ const PASSOS: { n: string; titulo: string; desc: string }[] = [
   {
     n: "05",
     titulo: "O ranking mantém o ritmo",
-    desc: "XP por dificuldade, ofensiva diária e ligas semanais do bronze ao diamante. Estudar sozinho, no silêncio, nunca mais.",
+    desc: "XP por dificuldade, ofensiva diária e ligas semanais do bronze ao diamante — uma régua a mais pra semana em que a disciplina falha sozinha.",
   },
 ];
 
@@ -329,14 +331,14 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
       legenda: "digitadas do original, tópico a tópico",
     },
     {
-      valor: "1",
-      sufixo: "plano por dia",
-      legenda: "montado pelo motor, não por você às 23h59",
+      valor: "100%",
+      sufixo: "com resolução",
+      legenda: "nenhuma questão entra no banco só com o gabarito",
     },
     {
       valor: "0",
-      sufixo: "achismo",
-      legenda: "cada questão recalibra o que vem depois",
+      sufixo: "estimativa",
+      legenda: "todo número do seu painel é registro do que você respondeu",
     },
   ];
 
@@ -355,11 +357,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
               <a
                 key={n.href}
                 href={n.href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground ${
-                  n.destaque
-                    ? "text-questly-green-dark dark:text-questly-green"
-                    : "text-muted-foreground"
-                }`}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               >
                 {n.label}
               </a>
@@ -382,11 +380,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
             <a
               key={n.href}
               href={n.href}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-[13px] font-medium ${
-                n.destaque
-                  ? "bg-questly-green/12 text-questly-green-dark dark:text-questly-green"
-                  : "text-muted-foreground"
-              }`}
+              className="shrink-0 rounded-full px-3 py-1.5 text-[13px] font-medium text-muted-foreground"
             >
               {n.label}
             </a>
@@ -549,11 +543,11 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
         <div className="mx-auto max-w-6xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              Uma plataforma inteira torcendo pela sua aprovação
+              O que você precisa pra treinar de verdade
             </h2>
             <p className="mt-4 text-lg text-muted-foreground text-pretty">
-              Cada recurso existe por um motivo pedagógico. Aqui não tem gamificação decorativa —
-              tem coisa que faz você passar.
+              Cada recurso existe por um motivo pedagógico. Nada aqui é enfeite — e nada decide o
+              seu dia por você.
             </p>
           </Revelar>
 
@@ -593,7 +587,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
                 Não é achismo. É como o cérebro aprende de verdade.
               </h2>
               <p className="mt-4 text-lg text-muted-foreground text-pretty">
-                A Questly aplica quatro mecanismos que a ciência da aprendizagem já cansou de
+                A Expectrum aplica quatro mecanismos que a ciência da aprendizagem já cansou de
                 comprovar — os que fixam conteúdo pra valer, não só até você sair da sala. E somos
                 honestos: é uma heurística caprichada, não mágica.
               </p>
@@ -634,11 +628,12 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
         <div className="mx-auto max-w-5xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              Comece de graça. Destrave tudo por menos que um lanche.
+              Comece de graça. Assine quando fizer sentido.
             </h2>
             <p className="mt-4 text-lg text-muted-foreground text-pretty">
-              O plano grátis já monta seu semestre inteiro e te dá um simulado por semana. O Pro é
-              pra quem quer simular sem limite e enxergar a nota antes da prova.
+              O plano grátis tem o banco de questões inteiro com resolução, a trilha da ementa e um
+              simulado cronometrado por semana. O Pro tira o limite de simulados e abre as
+              estatísticas avançadas.
             </p>
           </Revelar>
 
@@ -678,7 +673,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
                   Escolha de quem quer passar
                 </span>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold tracking-tight">Questly Pro</h3>
+                  <h3 className="text-lg font-semibold tracking-tight">Expectrum Pro</h3>
                   <TrendingUp className="size-5 text-questly-green" />
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -726,14 +721,14 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
             />
             <div className="relative flex flex-col items-center">
               <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-                Chega de estudar no escuro.
+                Pare de estudar no escuro.
               </h2>
               <p className="mt-4 max-w-xl text-lg text-muted-foreground text-pretty">
-                Cadastre suas provas e deixe a Questly montar o plano. Sua primeira missão está te
-                esperando do outro lado.
+                Crie a conta, escolha a primeira disciplina e veja exatamente onde você está na
+                ementa. Leva menos de um minuto e não pede cartão.
               </p>
               <BtnLink href="/login" size="lg" className="mt-8 h-12 px-7 text-[15px]">
-                Começar agora — é grátis
+                Criar conta grátis
                 <ArrowRight />
               </BtnLink>
             </div>
@@ -793,7 +788,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
             </div>
           </div>
           <p className="mt-10 border-t border-border/60 pt-6 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Questly · Estude o que importa.
+            © {new Date().getFullYear()} Expectrum · Estude o que importa.
           </p>
         </div>
       </footer>
@@ -826,9 +821,11 @@ function FeatureLinha({ texto, incluso }: ItemPlano) {
   );
 }
 
-/** Faixa dedicada ao mascote (capivara de terno) — no espírito da
- *  questly.com.br. Imagem real, com glow atrás, flutuação suave e leve
- *  parallax que segue o ponteiro. */
+/** Faixa dedicada ao mascote (capivara de terno). Imagem real, com glow atrás,
+ *  flutuação suave e leve parallax que segue o ponteiro. A capivara fica — é
+ *  identidade da marca —, mas a COPY ao lado dela é sóbria de propósito: o
+ *  texto antigo ("estude jogando", "do jeitinho capivara") empurrava a página
+ *  pro tom de cursinho gamificado que o produto não quer ter. */
 function MascoteBand() {
   const reduzir = useReducedMotion();
   const mx = useMotionValue(0);
@@ -860,15 +857,15 @@ function MascoteBand() {
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 md:grid-cols-2">
         <Revelar>
           <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-            Estude jogando.{" "}
+            Uma questão de cada vez.{" "}
             <span className="bg-gradient-to-br from-questly-green to-questly-green-deep bg-clip-text text-transparent">
-              Jogue estudando.
+              O resto fica registrado.
             </span>
           </h2>
           <p className="mt-4 max-w-md text-lg leading-relaxed text-muted-foreground text-pretty">
-            Enquanto você foca numa questão de cada vez, a Questly cuida do plano inteiro nos
-            bastidores. É pra isso que a capivara mais estudiosa do campus está aqui: pra você chegar
-            na prova tranquilo — do jeitinho capivara.
+            Você resolve; a plataforma guarda. Cada questão respondida vira cobertura da ementa,
+            acerto por assunto e histórico — de modo que o painel que você abre na véspera da prova
+            já está pronto quando você chega nele.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <BtnLink href="/login" className="h-11 px-6 text-[15px]">
@@ -902,7 +899,7 @@ function MascoteBand() {
               />
               <Image
                 src="/mascote.png"
-                alt="Mascote da Questly, uma capivara de terno verde"
+                alt="Mascote da Expectrum, uma capivara de terno verde"
                 fill
                 sizes="(max-width: 640px) 270px, 360px"
                 className="scale-[1.06] object-cover object-top"
@@ -931,7 +928,7 @@ function HeroPreview() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-questly-green to-questly-green-deep text-sm font-bold text-white dark:text-[#0c1512]">
-              Q
+              E
             </span>
             <div>
               <p className="text-sm leading-tight font-semibold">Física I · sua trilha</p>

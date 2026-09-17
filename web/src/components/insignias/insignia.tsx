@@ -1,4 +1,4 @@
-// Sistema de insígnias da Questly — os "brasões" da plataforma.
+// Sistema de insígnias da Expectrum — os "brasões" da plataforma.
 //
 // Por que existe: até 2026-09 a UI usava emoji cru (🔥 🎯 💎 🏆 …) pra
 // conquistas, ligas, nível e comemorações. Emoji é fonte do sistema

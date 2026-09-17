@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://questly.com.br";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://expectrum.com.br";
 
 // Só a landing e o login são públicos; tudo atrás de /(protected) exige sessão
 // e não deve ser rastreado (o proxy já redireciona, mas o Disallow evita que o
