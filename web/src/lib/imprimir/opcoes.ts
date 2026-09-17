@@ -8,6 +8,15 @@ import type { Pergunta } from "@/lib/questao/types";
 
 export type Espacamento = "compacto" | "normal" | "amplo";
 
+/** Altura do espaço de resolução por questão, em mm, por nível de espaçamento.
+ *
+ *  Calibrado em 2026-09-17 depois do dono reclamar que não sobrava espaço pra
+ *  fazer conta: `amplo` (o padrão) é ~1/4 de folha A4 por questão, que é o que
+ *  uma questão de Física com desenvolvimento pede de verdade. Quem quiser
+ *  economizar papel desce pra `normal` ou `compacto` nas Opções. */
+export const ALTURA_RESOLUCAO_MM = { compacto: 0, normal: 32, amplo: 68 } as const;
+
+
 export type OpcoesFolha = {
   /** Quantas questões entram no PDF (as N primeiras, na ordem da lista). */
   quantidade: number;
@@ -36,8 +45,8 @@ export const MAX_QUESTOES_FOLHA = 120;
 
 export const ESPACAMENTOS: { valor: Espacamento; rotulo: string; ajuda: string }[] = [
   { valor: "compacto", rotulo: "Compacto", ajuda: "Só o enunciado — economiza papel." },
-  { valor: "normal", rotulo: "Pra resolver", ajuda: "Algumas linhas embaixo de cada questão." },
-  { valor: "amplo", rotulo: "Desenvolvimento", ajuda: "Meia folha por questão, como na prova." },
+  { valor: "normal", rotulo: "Médio", ajuda: "Um terço de folha por questão pra fazer conta." },
+  { valor: "amplo", rotulo: "Pra fazer conta", ajuda: "Quase meia folha por questão — o padrão." },
 ];
 
 export function opcoesPadrao(total: number, temResolucao: boolean): OpcoesFolha {
@@ -50,7 +59,11 @@ export function opcoesPadrao(total: number, temResolucao: boolean): OpcoesFolha 
     resolucoes: temResolucao,
     cartaoResposta: false,
     identificacao: true,
-    espacamento: total > 40 ? "compacto" : "normal",
+    // SEMPRE o mais espaçoso, inclusive em lista longa. Quem imprime uma lista
+    // de Cálculo vai resolver NA folha: sair apertado é o defeito que custa o
+    // recurso inteiro, e quem quer economizar papel desce nas Opções — o
+    // caminho contrário (descobrir que dá pra aumentar) ninguém percorre.
+    espacamento: "amplo",
   };
 }
 
@@ -85,7 +98,7 @@ export function limitarQuantidade(n: number, total: number): number {
  */
 export function paginasEstimadas(questoes: Pergunta[], opcoes: OpcoesFolha): number {
   const alturaUtilMm = 245; // A4 (297) menos margens e cabeçalho/rodapé correntes
-  const extraEspaco = { compacto: 0, normal: 22, amplo: 45 }[opcoes.espacamento];
+  const extraEspaco = ALTURA_RESOLUCAO_MM[opcoes.espacamento];
 
   let mm = opcoes.identificacao ? 42 : 24; // cabeçalho da primeira página
   for (const q of questoes.slice(0, opcoes.quantidade)) {

@@ -49,7 +49,12 @@ export default async function ProtectedLayout({
 
   return (
     <FocoProvider focoHojeSegInicial={focoHojeSeg} userId={user.id}>
-      <div className="flex min-h-screen flex-col">
+      {/* `print:block` + `print:min-h-0` não são cosméticos: o Chrome pagina
+          MAL dentro de um container flex — a folha de impressão
+          (components/imprimir) saía cortada numa página só ou com páginas em
+          branco no meio. Em @media print o casco do app vira fluxo de bloco
+          normal, que é o que o algoritmo de quebra de página sabe fatiar. */}
+      <div className="flex min-h-screen flex-col print:block print:min-h-0">
         {/* Header horizontal + barra de Foco logo abaixo (redesign 2026-09). */}
         <TopNav
           nome={nome}
@@ -63,7 +68,7 @@ export default async function ProtectedLayout({
 
         {/* pb-16 abre espaço pra MobileBottomNav (fixed) não tampar o fim da
             página em telas < lg. */}
-        <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>
+        <main className="min-w-0 flex-1 pb-16 lg:pb-0 print:block print:pb-0">{children}</main>
 
         {/* Modo Aprovação (feature de conta única): registrar um erro de
             qualquer página do app — só a conta admin vê. */}

@@ -1228,6 +1228,53 @@ visível também no celular; cada card de lista do Banco de Questões ganhou um
 `PDF` ao lado de "Começar"; e a tela do simulado tem "Imprimir prova" fixo no
 topo.
 
+### Conserto do PDF "todo bugado" (2026-09-17, mesmo dia)
+
+Quatro causas independentes, todas silenciosas — o PDF saía errado sem nenhum
+erro no console:
+
+1. **Fragmentação dentro de flex.** O casco de `(protected)/layout.tsx` é
+   `flex min-h-screen flex-col` e o Chrome pagina MAL dentro de flex: saía
+   página cortada, conteúdo sumido, folha em branco no meio. O layout ganhou
+   `print:block print:min-h-0` e a folha inteira volta a ser fluxo de bloco em
+   `@media print` (`.folha-raiz, .folha, .folha-conteudo, .folha ol, li`).
+   **Se aparecer wrapper flex novo entre o `body` e a folha, ele precisa do
+   `print:block`** — é a regressão mais fácil de reintroduzir aqui.
+2. **`break-inside: avoid` no bloco inteiro da questão.** Com espaço de
+   resolução grande, o bloco não cabia na sobra da página e ia inteiro pra
+   próxima, deixando meia folha vazia. Agora só o **miolo** (enunciado +
+   alternativas) é indivisível; o espaço em branco pode partir, que é
+   inofensivo.
+3. **Fórmula de bloco cortada.** `MathText` embrulha display math num
+   `overflow-x-auto` — certo na tela (a matriz rola no celular), fatal no
+   papel: o que passa da largura some sem aviso. Na folha o overflow vira
+   `visible` e o display math encolhe pra 0.95em.
+4. **Marca d'água densa demais.** Eram 2 carimbos por ladrilho de 320×200;
+   agora 1 por 470×310 (~4x menos). A atribuição continua de pé — basta UMA
+   sobreviver a um recorte.
+
+No mesmo repasse, por pedido do dono: **`amplo` virou o padrão** de espaço de
+resolução (~68mm por questão, quase meia folha), inclusive em lista longa —
+quem imprime vai resolver NA folha, e o caminho "descobrir que dá pra aumentar"
+ninguém percorre; reduzir fica nas Opções. E **as pautas sumiram**: conta de
+Física tem diagrama, vetor e eixo, não anda em linha reta. `ALTURA_RESOLUCAO_MM`
+mora em `lib/imprimir/opcoes.ts` (lib não importa de components).
+
+### Hub dos Simulados reorganizado (2026-09-17)
+
+Era uma pilha vertical única em que a prova em andamento, as duas portas de
+entrada, a nota sobre a universidade, o aviso de plano, o resumo e TODAS as
+provas antigas tinham o mesmo peso e se sucediam sem separação. Agora são
+quatro blocos com título: **Retomar** (só se houver prova com relógio correndo,
+e várias viram linhas de uma lista, não N cartões), **Começar uma prova** (as
+duas portas — montador e provas antigas — lado a lado e com o MESMO peso, que é
+o que revela serem caminhos alternativos pra mesma coisa), **Como você vem
+indo** e **Suas provas**. O histórico mostra 6 e dobra o resto atrás de "ver as
+outras N": prova de dois meses atrás é consulta, não navegação, e não pode
+empurrar as ações pra fora da tela. A nota da universidade virou um `<details>`
+fechado, e o gate do plano grátis mudou de lugar pra junto das portas — ele é
+sobre PODER começar, não sobre o histórico.
+
 ## Relatório semanal por e-mail (2026-09-17) — `/api/cron/relatorio-semanal`
 
 Único e-mail RECORRENTE da plataforma, e o único transacional com link de

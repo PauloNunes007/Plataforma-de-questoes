@@ -2,8 +2,7 @@
 
 import { MathText } from "@/components/questao/math-text";
 import type { Pergunta } from "@/lib/questao/types";
-import { ALTURA_RESOLUCAO_MM } from "@/components/imprimir/estilos-impressao";
-import { alternativasEmLinha, type OpcoesFolha } from "@/lib/imprimir/opcoes";
+import { ALTURA_RESOLUCAO_MM, alternativasEmLinha, type OpcoesFolha } from "@/lib/imprimir/opcoes";
 
 // A FOLHA — o que de fato vai pro papel.
 //
@@ -120,33 +119,37 @@ export function FolhaProva({
               className="questao-bloco border-t border-[#e8ebed] pt-4 first:border-t-0 first:pt-0"
               style={{ paddingBottom: opcoes.espacamento === "compacto" ? "18px" : "14px" }}
             >
-              <div className="mb-1.5 flex items-baseline gap-2">
-                <span className="sans text-[11.5px] font-bold uppercase tracking-[0.1em]">
-                  Questão {i + 1}
-                </span>
-                {(q.instituicao || q.ano || q.dificuldade) && (
-                  <span className="sans text-[9.5px] font-medium uppercase tracking-wide text-[#8b949e]">
-                    {[q.instituicao, q.ano, rotuloDificuldade(q.dificuldade)]
-                      .filter(Boolean)
-                      .join(" · ")}
+              {/* O miolo é o que não pode partir entre páginas; o espaço de
+                  resolução, logo abaixo, pode — ver estilos-impressao.ts. */}
+              <div className="questao-miolo">
+                <div className="mb-1.5 flex items-baseline gap-2">
+                  <span className="sans text-[11.5px] font-bold uppercase tracking-[0.1em]">
+                    Questão {i + 1}
                   </span>
+                  {(q.instituicao || q.ano || q.dificuldade) && (
+                    <span className="sans text-[9.5px] font-medium uppercase tracking-wide text-[#8b949e]">
+                      {[q.instituicao, q.ano, rotuloDificuldade(q.dificuldade)]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-[12.5px] leading-[1.6]">
+                  <MathText text={q.enunciado} />
+                </div>
+
+                {q.imagem_url && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={q.imagem_url}
+                    alt=""
+                    className="mt-2.5 max-h-[250px] w-auto max-w-full object-contain"
+                  />
                 )}
+
+                <Alternativas q={q} />
               </div>
-
-              <div className="text-[12.5px] leading-[1.6]">
-                <MathText text={q.enunciado} />
-              </div>
-
-              {q.imagem_url && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={q.imagem_url}
-                  alt=""
-                  className="mt-2.5 max-h-[250px] w-auto max-w-full object-contain"
-                />
-              )}
-
-              <Alternativas q={q} />
 
               {alturaResolucao > 0 && (
                 <div
@@ -170,9 +173,9 @@ export function FolhaProva({
             </h2>
             {/* Grade tabular (não uma linha corrida): conferir 40 respostas
                 numa lista separada por ponto é onde o aluno perde a conta. */}
-            <div className="tinta-exata grid grid-cols-[repeat(auto-fill,minmax(58px,1fr))] gap-px border border-[#d4d9dd] bg-[#d4d9dd]">
+            <div className="grade-impressao tinta-exata grid grid-cols-[repeat(auto-fill,minmax(58px,1fr))] gap-px border border-[#d4d9dd] bg-[#d4d9dd]">
               {questoes.map((q, i) => (
-                <div key={q.id} className="flex items-center justify-between gap-1 bg-white px-2 py-1.5">
+                <div key={q.id} className="linha-impressao flex items-center justify-between gap-1 bg-white px-2 py-1.5">
                   <span className="sans tnum text-[10px] font-semibold text-[#5b6472]">{i + 1}</span>
                   <span className="sans text-[12.5px] font-bold">{(q.gabarito || "").toUpperCase()}</span>
                 </div>
@@ -254,9 +257,9 @@ function CartaoRespostaImpresso({ questoes }: { questoes: Pergunta[] }) {
         Preencha a alternativa escolhida. Depois transcreva as marcações no Expectrum pra receber a
         correção e a análise de erros.
       </p>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-1 sm:grid-cols-3">
+      <div className="grade-impressao grid grid-cols-2 gap-x-8 gap-y-1 sm:grid-cols-3">
         {questoes.map((q, i) => (
-          <div key={q.id} className="sem-quebra flex items-center gap-2 py-[2px]">
+          <div key={q.id} className="sem-quebra linha-impressao flex items-center gap-2 py-[2px]">
             <span className="sans tnum w-[18px] shrink-0 text-right text-[10.5px] font-semibold text-[#5b6472]">
               {i + 1}
             </span>
@@ -296,17 +299,19 @@ export function MarcaDiagonal({ email }: { email: string }) {
     <div className="marca-diagonal pointer-events-none absolute inset-0 select-none overflow-hidden">
       <svg width="100%" height="100%" aria-hidden>
         <defs>
+          {/* Densidade reduzida em 2026-09-17 a pedido do dono: eram duas
+              marcas por ladrilho de 320x200, agora uma por 470x310 — cerca de
+              4x menos carimbo na página. A atribuição continua de pé (basta
+              UMA sobreviver a um recorte), mas a folha deixou de parecer
+              rajada por trás da conta que o aluno vai escrever. */}
           <pattern
             id="marca-expectrum"
-            width="320"
-            height="200"
+            width="470"
+            height="310"
             patternUnits="userSpaceOnUse"
             patternTransform="rotate(-30)"
           >
-            <text x="0" y="40" fill="#111827" fillOpacity="0.07" fontSize="13" fontFamily="sans-serif">
-              {email}
-            </text>
-            <text x="160" y="140" fill="#111827" fillOpacity="0.07" fontSize="13" fontFamily="sans-serif">
+            <text x="0" y="60" fill="#111827" fillOpacity="0.065" fontSize="13" fontFamily="sans-serif">
               {email}
             </text>
           </pattern>
