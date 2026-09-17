@@ -4,7 +4,10 @@ import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ehPro } from "@/lib/plano/plano";
 import type { Pergunta } from "@/lib/questao/types";
 import { FolhaImpressao } from "@/components/imprimir/folha-impressao";
-import { PortaPro } from "@/components/imprimir/porta-pro";
+import { PortaCota, PortaPro } from "@/components/imprimir/porta-pro";
+import { cortarParaPdf, registrarExportacao } from "@/lib/imprimir/cota";
+import { avisoDaCota } from "@/lib/imprimir/aviso-cota";
+import { PDF_MES_PRO, PDF_SEMANA_PRO } from "@/lib/plano/limites";
 
 export const metadata: Metadata = {
   title: "Imprimir lista",
@@ -91,11 +94,37 @@ export default async function ImprimirPage({
   const sub = missao.subjects as { nome: string } | { nome: string }[] | null;
   const disciplinaNome = (Array.isArray(sub) ? sub[0]?.nome : sub?.nome) ?? null;
 
+  // Corte ANTES do registro: o que não é enviado não é exportado, então a
+  // telemetria da cota tem que contar a folha real, não a lista inteira.
+  const { folha, cortadas } = cortarParaPdf(questoes);
+
+  // A cota só é consumida aqui, no fim — depois de saber que existe mesmo uma
+  // folha pra montar. Cobrar antes gastaria uma exportação de quem caiu numa
+  // missão vazia ou inexistente.
+  const cota = await registrarExportacao({
+    userId: user.id,
+    tipo: "missao",
+    id: missao.id,
+    questoes: folha.length,
+  });
+
+  if (!cota.liberado) {
+    return (
+      <PortaCota
+        motivo={cota.motivo ?? "semana"}
+        renovaEm={cota.renovaEm}
+        tetoSemana={PDF_SEMANA_PRO}
+        tetoMes={PDF_MES_PRO}
+      />
+    );
+  }
+
   return (
     <FolhaImpressao
       titulo="Lista de exercícios"
       disciplina={disciplinaNome}
-      questoes={questoes}
+      questoes={folha}
+      avisoCota={avisoDaCota(cota, cortadas)}
       // A marca d'água é o e-mail da SESSÃO, lido no servidor. Nunca um valor
       // vindo do cliente: o ponto inteiro é que o aluno não escolha o que sai
       // carimbado no arquivo que ele vai distribuir.

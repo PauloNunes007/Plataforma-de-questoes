@@ -1595,6 +1595,116 @@ acesso da própria conta.
 - Quando a base não couber em 60s, o passo seguinte é **paginar** por `offset`
   na querystring — nunca aumentar o paralelismo (a Brevo limita por minuto).
 
+## Teto de exportação em PDF (2026-09-17) — `lib/imprimir/cota.ts`
+
+**O buraco.** Exportar em PDF é o único recurso do Pro que tira conteúdo de
+DENTRO do app: a folha impressa continua valendo depois que a assinatura vence.
+Com o banco em ~2.600 questões, o plano mensal a R$ 15 e o direito de
+arrependimento de 7 dias (que não é opcional — ver abaixo), o caminho ótimo pra
+quem quer o banco não era assinar: era assinar, baixar tudo num fim de semana e
+pedir o dinheiro de volta. A marca d'água com o e-mail do aluno dissuade a
+REDISTRIBUIÇÃO; ela não faz nada contra a extração.
+
+**O que passou a ser cobrado: documento diferente, não geração de arquivo.**
+Uma linha em `pdf_exportacoes` = um documento (`missao:<id>`, `simulado:<id>`,
+`topico:<id>`) numa semana (a segunda-feira local, mesma convenção de
+`questlySegundaDaSemana`). O índice único `(user_id, documento, semana)` é o
+teto de verdade — não um filtro em JS —, e a consequência escolhida é que
+**reimprimir não custa nada**: o aluno mexe no espaçamento e no gabarito da
+mesma lista quatro vezes antes de imprimir, enquanto extrair o banco exige
+abrir um documento NOVO por tópico. Os dois usos se separam sozinhos, sem
+precisar adivinhar intenção.
+
+Três tetos, em `lib/plano/limites.ts`:
+
+| constante | valor | o que segura |
+|---|---|---|
+| `PDF_SEMANA_PRO` | 12 | a semana de véspera de prova cabe; a rotina de extração não |
+| `PDF_MES_PRO` | 20 | **o que importa** — o abuso cabe todo dentro de um ciclo de cobrança |
+| `PDF_QUESTOES_MAX` | 60 | o servidor não ENVIA mais que isso; = `SIMULADO_QTD_MAX`, então nenhuma prova é cortada |
+
+`PDF_MES_PRO` é menor que 4 × o semanal de propósito: a folga semanal existe
+pra permitir a semana atípica, o teto mensal existe pra impedir que ela se
+repita quatro vezes.
+
+**Onde o gate roda, e por que não é no clique de baixar.** No RENDER da página
+(`app/(protected)/imprimir/*/page.tsx`), logo depois do gate de Pro. Parece
+tarde — o aluno pode fechar a aba sem gerar arquivo nenhum —, mas é o único
+ponto que o servidor controla: o PDF é montado NO APARELHO dele
+(`lib/imprimir/gerar-pdf.ts`) a partir das questões que a página já mandou. No
+instante do render o conteúdo já saiu; cobrar no clique seria cobrar por algo
+que o cliente pode simplesmente não fazer.
+
+⚠️ **Erro de infra LIBERA** (`registrarExportacao` → fail-open). Sem
+`SUPABASE_SERVICE_ROLE_KEY`, ou com o insert falhando, a exportação segue e o
+motivo vai pro log. Um bug de contabilidade não pode derrubar um recurso que o
+aluno pagou; errar pra esse lado custa uma exportação a mais, errar pro outro
+custa um Pro sem produto.
+
+⚠️ **`pdf_exportacoes` não tem policy de escrita** (`supabase_cota_pdf.sql`),
+mesma trilha de `assinatura_pagamentos` e `relatorio_envios`. Uma policy
+dono-only `for all` deixaria o aluno APAGAR as próprias linhas do console com a
+chave anon — ou seja, zerar o contador, que é o contrário de um teto. Ele lê as
+dele (a tela precisa dizer quantas restam) e nada mais.
+
+**A tela não esconde o teto.** `RECURSOS_FREE`/`BENEFICIOS_PRO` dizem "até 12
+por semana" em vez de ✓ — é o único item do comparativo cujo Pro não é
+"ilimitado". A razão do teto (o banco de questões é o produto) é fácil de
+aceitar antes da compra e impossível de aceitar depois dela. Durante a
+exportação, `avisoDaCota` (`lib/imprimir/aviso-cota.ts`) só fala quando há algo
+acionável: a lista foi cortada, a cota está acabando (`PDF_AVISO_RESTANTE`), ou
+é reimpressão e portanto de graça. O silêncio é o padrão — um aviso de limite
+permanente em cima da folha transformaria um teto que quase ninguém encosta num
+carimbo de vigilância.
+
+## Sair da assinatura (2026-09-17) — `/pro`, `components/plano/gerenciar-assinatura.tsx`
+
+Vender assinatura obriga a ter porta de saída, e a lei desenha **duas**, com
+consequências opostas. A tela mostra exatamente a que existe pro caso do aluno,
+e diz quando não existe nenhuma:
+
+1. **Arrependimento (CDC art. 49)** — 7 dias corridos do pagamento, para compra
+   feita fora do estabelecimento comercial (a internet é o caso clássico). Não
+   depende de motivo, de defeito nem da nossa concordância, e a devolução é do
+   valor **integral**. `cancelarComReembolsoAction` estorna no Mercado Pago
+   (`reembolsarPagamentoMP`, `POST /v1/payments/{id}/refunds`) E revoga o Pro na
+   mesma ação — não fazer as duas juntas seria dar o produto de graça a quem
+   pedir. `DIAS_ARREPENDIMENTO` mora em `lib/plano/plano.ts`, não em
+   `actions.ts`: um arquivo `"use server"` só pode exportar funções async.
+2. **Cancelar a renovação** — para a próxima cobrança, não devolve nada, o mês
+   pago continua sendo do aluno. Só existe com preapproval de verdade no
+   gateway (`MP_RECORRENTE=1`); com o caixa de hoje (tudo à vista), o cartão diz
+   que **não há cobrança automática** em vez de oferecer um botão que não faz
+   nada — a forma mais rápida de alguém achar que cancelou.
+
+A revogação tira **exatamente os meses que aquela cobrança comprou**
+(`adicionarMeses(expira, -meses_creditados)`), não zera a validade: quem tinha
+30 dias de cupom antes de pagar continua com eles.
+
+A ordem das operações do estorno é escolhida pelo pior desfecho de cada falha:
+para a renovação → estorna → só então revoga. Se a revogação falhar depois do
+estorno, sobra dinheiro devolvido e alguns dias de Pro — recuperável à mão. A
+ordem inversa produz o desfecho ruim de verdade: acesso cortado e dinheiro
+retido por uma falha de rede.
+
+**Por que na `/pro` e não num "fale conosco".** CDC art. 6º (e o Decreto
+11.034/2022, no que alcança): cancelar tem que ser pelo mesmo canal e com o
+mesmo esforço de contratar. Se assinar são dois cliques, cancelar não pode ser
+um chamado respondido em cinco dias úteis.
+
+### O bug que apareceu quando a ação ganhou tela
+
+`cancelarRenovacaoAction` já existia desde 2026-09-16 e **nenhuma tela a
+chamava**. Ao ligá-la, o defeito: o `update` ia pelo client do próprio aluno, e
+a policy de `supabase_seguranca_hardening.sql` só permite `'pendente' →
+'cancelada'` (`using (... and status = 'pendente')`). Numa assinatura **ativa** a
+RLS filtrava a linha — zero linhas afetadas, `error` null, nenhum sinal de nada.
+Cancelávamos no Mercado Pago e deixávamos a assinatura marcada como ativa aqui.
+
+Todo o caminho de saída passou a escrever via `service_role`. A policy continua
+certa como está: sair de uma assinatura ativa envolve falar com o gateway e
+mexer em `profiles.plano`, e isso nunca sai do browser.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

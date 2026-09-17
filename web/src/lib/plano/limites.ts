@@ -47,6 +47,56 @@ export const FAVORITOS_FREE = 15;
 /** Anotações de questão no grátis. Gate: lib/anotacoes/actions.ts. */
 export const ANOTACOES_FREE = 10;
 
+/* ------------------------------------------ o teto que o PRO também tem */
+
+// Exportar em PDF é o único recurso que tira conteúdo de DENTRO do app: a
+// folha impressa continua valendo depois que a assinatura vence. Por isso ele
+// é o único lugar onde o Pro — que em todo o resto é "sem limite" — carrega
+// um teto, e a tela diz isso com todas as letras em vez de esconder.
+//
+// A conta que o teto precisa vencer é esta: banco com ~2.600 questões, plano
+// mensal a R$ 15 e direito de arrependimento de 7 dias (CDC art. 49, que não
+// é opcional). Sem teto, o caminho ótimo pra quem quer o banco não é assinar
+// — é assinar, baixar tudo num fim de semana e pedir o dinheiro de volta.
+//
+// O que é cobrado é DOCUMENTO DIFERENTE, não geração de arquivo: reimprimir a
+// mesma lista na mesma semana não custa nada (ver supabase_cota_pdf.sql). Isso
+// separa os dois usos com precisão — o aluno ajusta espaçamento e gabarito da
+// mesma lista quatro vezes antes de imprimir, enquanto extrair o banco exige
+// abrir um documento novo por tópico.
+
+/** Documentos diferentes que um Pro exporta por semana.
+ *  Gate: lib/imprimir/cota.ts, chamado nas três rotas /imprimir/*. */
+export const PDF_SEMANA_PRO = 12;
+
+/**
+ * Documentos diferentes por mês (30 dias corridos).
+ *
+ * Menor que 4 × o semanal, e de propósito: o mês é o teto que importa, porque
+ * o abuso que isto existe pra conter cabe todo dentro de UM ciclo de cobrança.
+ * A folga semanal permite a semana de véspera de prova em que o aluno imprime
+ * tudo de uma vez; o teto mensal é o que impede que essa semana se repita
+ * quatro vezes seguidas.
+ */
+export const PDF_MES_PRO = 20;
+
+/**
+ * Questões que o servidor manda em UM arquivo.
+ *
+ * É o gate mais duro dos três, porque não depende de contagem nenhuma: a
+ * página simplesmente não envia mais que isto ao browser. Sem ele, os tetos
+ * acima contariam documentos enquanto uma lista de tópico com 200 questões
+ * saía inteira em cada um.
+ *
+ * 60 = SIMULADO_QTD_MAX, o maior simulado que o montador deixa criar — então
+ * nenhuma prova é cortada por este corte. Para uma lista de estudo o número é
+ * folgado: o padrão da folha é 10 questões (PADRAO_QUESTOES_FOLHA).
+ */
+export const PDF_QUESTOES_MAX = 60;
+
+/** A partir de quantas restantes a folha avisa que a cota está acabando. */
+export const PDF_AVISO_RESTANTE = 3;
+
 /**
  * Quanto falta do teto diário.
  *
@@ -69,11 +119,22 @@ export type LimitesDoPlano = {
   simuladosSemana: number | null;
   favoritos: number | null;
   anotacoes: number | null;
+  /** Exportação em PDF tem teto NOS DOIS planos — no grátis ela nem existe. */
+  pdfSemana: number;
+  pdfMes: number;
 };
 
 export function limitesDoPlano(perfil: PlanoDoProfile | null | undefined): LimitesDoPlano {
   if (ehPro(perfil)) {
-    return { pro: true, questoesDia: null, simuladosSemana: null, favoritos: null, anotacoes: null };
+    return {
+      pro: true,
+      questoesDia: null,
+      simuladosSemana: null,
+      favoritos: null,
+      anotacoes: null,
+      pdfSemana: PDF_SEMANA_PRO,
+      pdfMes: PDF_MES_PRO,
+    };
   }
   return {
     pro: false,
@@ -81,5 +142,8 @@ export function limitesDoPlano(perfil: PlanoDoProfile | null | undefined): Limit
     simuladosSemana: SIMULADO_FREE_LIMITE_SEMANA,
     favoritos: FAVORITOS_FREE,
     anotacoes: ANOTACOES_FREE,
+    // Zero, não "menos": exportar PDF é recurso de Pro, ponto.
+    pdfSemana: 0,
+    pdfMes: 0,
   };
 }

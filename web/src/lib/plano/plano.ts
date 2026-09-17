@@ -44,6 +44,7 @@ import { APP_URL } from "@/lib/app-url";
 import {
   ANOTACOES_FREE,
   FAVORITOS_FREE,
+  PDF_SEMANA_PRO,
   QUESTOES_DIA_FREE,
   SIMULADO_FREE_LIMITE_SEMANA,
 } from "@/lib/plano/limites";
@@ -57,6 +58,22 @@ export const PRECO_MENSAL_CENTAVOS = 1500; // R$ 15 por 1 mês
 export const PRECO_SEMESTRAL_CENTAVOS = 6000; // R$ 60 pelos 6 meses
 
 export const MESES_SEMESTRE = 6;
+
+/**
+ * Dias do direito de arrependimento — CDC art. 49.
+ *
+ * CORRIDOS, não úteis, contados do pagamento. Não é política nossa e não é
+ * negociável: toda compra feita fora do estabelecimento comercial (a internet
+ * é o caso clássico) pode ser desfeita nesse prazo, sem motivo, com devolução
+ * integral. Mora aqui, e não em lib/plano/actions.ts, porque um arquivo
+ * "use server" só pode exportar funções async — e porque a tela precisa do
+ * número pra escrever a frase.
+ *
+ * O que ele COBRA de nós, em troca: um teto de exportação de PDF
+ * (lib/plano/limites.ts). Sem ele, sete dias bastam pra levar o banco inteiro
+ * e pedir o dinheiro de volta.
+ */
+export const DIAS_ARREPENDIMENTO = 7;
 
 // Teto de parcelas no cartão pro semestral. É o que faz o "R$ 10/mês" do
 // cartão de preço ser verdade na fatura, sem preapproval nenhum no meio.
@@ -281,7 +298,16 @@ export const RECURSOS_FREE: ItemPlano[] = [
   },
   { texto: "Controle de faltas por disciplina", incluso: false },
   { texto: "Calculadora de notas: quanto falta pra passar", incluso: false },
-  { texto: "Exportar listas e simulados em PDF", incluso: false },
+  {
+    texto: "Exportar listas e simulados em PDF",
+    incluso: false,
+    // O único item da tabela cujo "Pro" NÃO é "ilimitado", e a tela diz o
+    // número em vez de escondê-lo atrás de um ✓. Um aluno que descobre o teto
+    // só ao esbarrar nele tem razão de se sentir enganado — e a razão do teto
+    // (o banco de questões é o produto) é fácil de aceitar quando vem antes
+    // da compra, e impossível de aceitar quando vem depois.
+    pro: `Até ${PDF_SEMANA_PRO}/semana`,
+  },
   { texto: "Relatório semanal por e-mail", incluso: false },
   { texto: "Autópsia do erro", incluso: false },
   { texto: "Estatísticas avançadas de desempenho", incluso: false },
@@ -292,7 +318,7 @@ export const BENEFICIOS_PRO: string[] = [
   "Controle de faltas: saiba exatamente quantas ainda cabem em cada disciplina",
   "Calculadora de notas: quanto você precisa tirar na próxima pra passar",
   "Simulados cronometrados ilimitados",
-  "Exportar listas e simulados em PDF pra imprimir",
+  `Exportar listas e simulados em PDF pra imprimir (até ${PDF_SEMANA_PRO} por semana)`,
   "Relatório semanal por e-mail: o que estudou, onde está fraco e o que está apertando",
   "Autópsia do erro: descubra por que errou e corrija o padrão",
   "Estatísticas avançadas: comparativo, percentil e recordes",

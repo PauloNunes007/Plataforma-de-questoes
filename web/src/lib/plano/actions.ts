@@ -13,14 +13,21 @@
 //      contingência (gateway fora do ar, pagamento por fora).
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { acharOpcao, ehPro, normalizarCodigoCupom } from "@/lib/plano/plano";
+import {
+  acharOpcao,
+  DIAS_ARREPENDIMENTO,
+  ehPro,
+  normalizarCodigoCupom,
+} from "@/lib/plano/plano";
 import {
   buscarPagamentoMP,
   buscarPagamentosPorReferencia,
   criarPreferenciaCheckout,
   mpConfigurado,
+  reembolsarPagamentoMP,
 } from "@/lib/plano/mercadopago";
 import {
+  adicionarMeses,
   buscarPreapprovalMP,
   cancelarAssinaturaRecorrente,
   criarAssinaturaRecorrente,
@@ -414,6 +421,225 @@ export async function conferirPagamentoAction(
   return { estado: "processando" };
 }
 
+/* ========================================================================
+ *                        SAIR DA ASSINATURA
+ * ========================================================================
+ *
+ * Vender assinatura obriga a ter porta de saída, e a lei brasileira desenha
+ * DUAS, com consequências opostas — a tela precisa oferecer a certa pro
+ * momento certo, senão o aluno clica na errada e reclama no cartão:
+ *
+ *  1. ARREPENDIMENTO — CDC art. 49: 7 dias corridos da contratação, para
+ *     compra feita fora do estabelecimento comercial (a internet é o caso
+ *     clássico). Não depende de motivo, de defeito nem da nossa concordância,
+ *     e a devolução é do valor INTEGRAL e imediata. Como volta tudo, o acesso
+ *     volta ao de quem não pagou: `cancelarComReembolsoAction` estorna no
+ *     Mercado Pago E revoga o Pro na mesma ação. Não fazer as duas coisas
+ *     juntas seria dar o produto de graça a quem pedir.
+ *
+ *  2. CANCELAR A RENOVAÇÃO — parar a PRÓXIMA cobrança. Só existe pra
+ *     assinatura recorrente de verdade (preapproval no MP), e não devolve
+ *     nada: o mês já pago continua sendo do aluno até o fim
+ *     (`cancelarRenovacaoAction`, abaixo).
+ *
+ * Fora dessas duas, não há terceira: no plano à vista, passados os 7 dias,
+ * não existe "cancelar" — existe "não renovar", que é não fazer nada. A tela
+ * diz isso com todas as letras em vez de mostrar um botão que não faz nada.
+ *
+ * O que NÃO fazemos: exigir e-mail, formulário ou ligação. O CDC art. 6º (e o
+ * Decreto 11.034/2022, no que alcança) pedem que cancelar seja pelo mesmo
+ * canal e com o mesmo esforço de contratar. Se assinar são dois cliques,
+ * cancelar não pode ser um chamado respondido em cinco dias úteis.
+ *
+ * TUDO AQUI ESCREVE VIA service_role. A RLS de
+ * supabase_seguranca_hardening.sql só deixa o dono fazer 'pendente' →
+ * 'cancelada'; uma assinatura ATIVA só muda por este caminho, e `profiles`
+ * (plano/expira) é protegida pelo trigger contra o cliente do próprio aluno.
+ */
+
+export type ResumoAssinatura = {
+  pro: boolean;
+  /** 'mensal' | 'semestral' | 'cupom' | null */
+  ciclo: string | null;
+  /** 'recorrente' | 'a_vista' | null — null = Pro sem cobrança (cupom/admin). */
+  forma: string | null;
+  expiraEm: string | null;
+  fidelidadeAte: string | null;
+  /** Existe uma preapproval ativa cobrando o cartão todo mês? */
+  renovacaoAutomatica: boolean;
+  /** Última cobrança creditada. null = nunca houve dinheiro (cupom/manual). */
+  ultimaCobranca: { em: string; valorCentavos: number | null } | null;
+  /** Janela do art. 49 ainda aberta sobre a última cobrança. */
+  arrependimento: { aberto: boolean; prazoAte: string | null };
+};
+
+export async function resumoAssinaturaAction(): Promise<ResumoAssinatura | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const [{ data: profile }, { data: ass }, { data: cobranca }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("plano, plano_ciclo, plano_expira_em, plano_fidelidade_ate")
+      .eq("id", user.id)
+      .maybeSingle(),
+    supabase
+      .from("assinaturas")
+      .select("id, ciclo, forma, status, gateway_id")
+      .eq("user_id", user.id)
+      .eq("status", "ativa")
+      .order("criada_em", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    // O dono lê as próprias cobranças (policy de select em
+    // assinatura_pagamentos) — não precisa de service_role pra montar a tela.
+    supabase
+      .from("assinatura_pagamentos")
+      .select("criada_em, valor_centavos")
+      .eq("user_id", user.id)
+      .order("criada_em", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const prazo = cobranca
+    ? new Date(new Date(cobranca.criada_em).getTime() + DIAS_ARREPENDIMENTO * 24 * 60 * 60 * 1000)
+    : null;
+
+  return {
+    pro: ehPro(profile),
+    ciclo: profile?.plano_ciclo ?? ass?.ciclo ?? null,
+    forma: ass?.forma ?? null,
+    expiraEm: profile?.plano_expira_em ?? null,
+    fidelidadeAte: profile?.plano_fidelidade_ate ?? null,
+    // Renovação automática existe quando há assinatura ATIVA no gateway. Uma
+    // compra à vista (todo o caixa de hoje) não tem — dizer que tem faria o
+    // aluno cancelar algo inexistente e achar que resolveu.
+    renovacaoAutomatica: Boolean(ass && ass.forma === "recorrente" && ass.gateway_id),
+    ultimaCobranca: cobranca
+      ? { em: cobranca.criada_em, valorCentavos: cobranca.valor_centavos ?? null }
+      : null,
+    arrependimento: {
+      aberto: Boolean(prazo && prazo.getTime() > Date.now()),
+      prazoAte: prazo ? prazo.toISOString() : null,
+    },
+  };
+}
+
+/**
+ * Arrependimento: estorna a última cobrança e revoga o que ela comprou.
+ *
+ * A ordem das operações é escolhida pelo pior desfecho de cada falha:
+ *
+ *   1. para a renovação no MP (se houver) — assim, se algo abaixo falhar, o
+ *      aluno pelo menos não é cobrado de novo;
+ *   2. ESTORNA;
+ *   3. só então revoga o Pro e marca a assinatura.
+ *
+ * Se (3) falhar depois de (2), o aluno fica com o dinheiro de volta e alguns
+ * dias de Pro sobrando — prejuízo pequeno e recuperável à mão. A ordem inversa
+ * produziria o desfecho ruim de verdade: acesso cortado e dinheiro retido por
+ * uma falha de rede.
+ */
+export async function cancelarComReembolsoAction(
+  motivo?: string,
+): Promise<{ ok: true; centavos: number | null } | { error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessão expirada." };
+
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return { error: "Não foi possível processar o estorno agora. Fale com o suporte." };
+  }
+
+  const { data: cobranca } = await admin
+    .from("assinatura_pagamentos")
+    .select("id, assinatura_id, gateway_payment_id, meses_creditados, criada_em")
+    .eq("user_id", user.id)
+    .order("criada_em", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!cobranca) {
+    return { error: "Não encontramos nenhuma cobrança nesta conta pra estornar." };
+  }
+
+  const limite =
+    new Date(cobranca.criada_em).getTime() + DIAS_ARREPENDIMENTO * 24 * 60 * 60 * 1000;
+  if (limite <= Date.now()) {
+    return {
+      error: `O prazo de arrependimento é de ${DIAS_ARREPENDIMENTO} dias e já passou pra essa cobrança. Seu acesso continua até o fim do período pago.`,
+    };
+  }
+
+  const { data: ass } = await admin
+    .from("assinaturas")
+    .select("id, gateway_id, forma, status")
+    .eq("id", cobranca.assinatura_id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (ass?.status === "reembolsada") return { ok: true, centavos: null };
+
+  // 1) parar a próxima cobrança antes de qualquer outra coisa
+  if (ass?.gateway_id && ass.forma === "recorrente") {
+    await cancelarAssinaturaRecorrente(ass.gateway_id);
+  }
+
+  // 2) o dinheiro
+  const estorno = await reembolsarPagamentoMP(cobranca.gateway_payment_id);
+  if ("error" in estorno) return { error: estorno.error };
+
+  // 3) o acesso. Tira exatamente os meses que ESTA cobrança comprou — não zera
+  // a validade: quem tinha 30 dias de cupom antes de pagar continua com eles,
+  // e estornar a compra não pode confiscar o que veio de outra porta.
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("plano_expira_em")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const atual = profile?.plano_expira_em ? new Date(profile.plano_expira_em) : null;
+  const revisada = atual ? adicionarMeses(atual, -(cobranca.meses_creditados || 1)) : null;
+  const aindaVale = revisada ? revisada.getTime() > Date.now() : false;
+
+  const agoraIso = new Date().toISOString();
+
+  const { error: errPerfil } = await admin
+    .from("profiles")
+    .update({
+      plano: aindaVale ? "pro" : "free",
+      plano_expira_em: aindaVale && revisada ? revisada.toISOString() : null,
+      plano_fidelidade_ate: null,
+      ...(aindaVale ? {} : { plano_ciclo: null }),
+    })
+    .eq("id", user.id);
+  if (errPerfil) console.error("Estorno feito mas o plano não foi revogado:", errPerfil);
+
+  if (ass) {
+    await admin
+      .from("assinaturas")
+      .update({
+        status: "reembolsada",
+        cancelada_em: agoraIso,
+        reembolsada_em: agoraIso,
+        reembolso_centavos: estorno.centavos,
+        motivo_cancelamento: motivo?.trim()?.slice(0, 500) || "Arrependimento (CDC art. 49)",
+      })
+      .eq("id", ass.id);
+  }
+
+  return { ok: true, centavos: estorno.centavos };
+}
+
 // --------------------------------------------------- cancelar a renovação
 // Parar de ser cobrado. Existe porque o plano recorrente é, agora, cobrança
 // DE VERDADE todo mês (ver lib/plano/preapproval.ts): vender uma assinatura
@@ -454,9 +680,35 @@ export async function cancelarRenovacaoAction(): Promise<
     return { error: "Não foi possível cancelar no Mercado Pago agora. Tente de novo." };
   }
 
-  const { error } = await supabase
+  // service_role, e não o cliente do aluno.
+  //
+  // **Bug encontrado em 2026-09-17, quando esta ação finalmente ganhou tela.**
+  // O update ia pelo client do próprio aluno, e a policy de
+  // supabase_seguranca_hardening.sql só permite 'pendente' → 'cancelada'
+  // (`using (... and status = 'pendente')`). Numa assinatura ATIVA a RLS
+  // filtrava a linha: zero linhas afetadas, `error` null, nenhum sinal de
+  // nada. Resultado: cancelávamos no Mercado Pago e deixávamos a assinatura
+  // marcada como ativa aqui — a tela diria "ativa" pra quem acabou de sair.
+  //
+  // A policy continua certa como está: sair de uma assinatura ativa envolve
+  // falar com o gateway, e isso nunca sai do browser.
+  let admin: ReturnType<typeof createAdminClient>;
+  try {
+    admin = createAdminClient();
+  } catch {
+    // Já cancelamos no MP neste ponto — a cobrança PAROU, que é o que o aluno
+    // pediu. O que fica desalinhado é só o nosso registro.
+    console.error("Renovação cancelada no MP mas sem service_role pra registrar.");
+    return { error: "A cobrança foi cancelada, mas não conseguimos atualizar seu cadastro. Fale com o suporte." };
+  }
+
+  const { error } = await admin
     .from("assinaturas")
-    .update({ status: "cancelada" })
+    .update({
+      status: "cancelada",
+      cancelada_em: new Date().toISOString(),
+      motivo_cancelamento: "Renovação cancelada pelo aluno",
+    })
     .eq("id", ass.id)
     .eq("user_id", user.id);
   if (error) return { error: error.message };

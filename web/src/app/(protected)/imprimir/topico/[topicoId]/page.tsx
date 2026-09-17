@@ -5,7 +5,10 @@ import { ehPro } from "@/lib/plano/plano";
 import { lerPaginado } from "@/lib/supabase/paginado";
 import type { Pergunta } from "@/lib/questao/types";
 import { FolhaImpressao } from "@/components/imprimir/folha-impressao";
-import { PortaPro } from "@/components/imprimir/porta-pro";
+import { PortaCota, PortaPro } from "@/components/imprimir/porta-pro";
+import { cortarParaPdf, registrarExportacao } from "@/lib/imprimir/cota";
+import { avisoDaCota } from "@/lib/imprimir/aviso-cota";
+import { PDF_MES_PRO, PDF_SEMANA_PRO } from "@/lib/plano/limites";
 
 export const metadata: Metadata = {
   title: "Imprimir lista do tópico",
@@ -71,11 +74,34 @@ export default async function ImprimirTopicoPage({
   const mat = topico.materias as { nome: string } | { nome: string }[] | null;
   const materiaNome = (Array.isArray(mat) ? mat[0]?.nome : mat?.nome) ?? null;
 
+  // Esta é a rota onde o corte pesa: a lista de um tópico passa fácil de 100
+  // questões, e sem ele uma única exportação levaria metade de uma disciplina.
+  const { folha, cortadas } = cortarParaPdf(questoes);
+
+  const cota = await registrarExportacao({
+    userId: user.id,
+    tipo: "topico",
+    id: topicoId,
+    questoes: folha.length,
+  });
+
+  if (!cota.liberado) {
+    return (
+      <PortaCota
+        motivo={cota.motivo ?? "semana"}
+        renovaEm={cota.renovaEm}
+        tetoSemana={PDF_SEMANA_PRO}
+        tetoMes={PDF_MES_PRO}
+      />
+    );
+  }
+
   return (
     <FolhaImpressao
       titulo={topico.nome ?? "Lista de exercícios"}
       disciplina={materiaNome}
-      questoes={questoes}
+      questoes={folha}
+      avisoCota={avisoDaCota(cota, cortadas)}
       emailAluno={user.email ?? "conta sem e-mail"}
       nomeAluno={perfil?.nome ?? null}
       voltarHref="/questoes"

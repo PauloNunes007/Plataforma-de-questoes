@@ -9,6 +9,7 @@ import {
   Download,
   FileCheck2,
   FileText,
+  Info,
   Layers,
   ListChecks,
   Loader2,
@@ -71,6 +72,7 @@ export function FolhaImpressao({
   voltarRotulo = "Voltar",
   permitirRecorte = true,
   variante = "lista",
+  avisoCota = null,
 }: {
   titulo: string;
   disciplina?: string | null;
@@ -84,6 +86,15 @@ export function FolhaImpressao({
   permitirRecorte?: boolean;
   /** O molde da folha — ver folha-prova.tsx. */
   variante?: VarianteFolha;
+  /**
+   * Uma linha sobre a COTA de exportação (lib/imprimir/cota.ts), quando há o
+   * que dizer: "restam 2 exportações nesta semana" ou "a lista tem 120
+   * questões e a folha leva as 60 primeiras".
+   *
+   * Vem pronta do servidor, que é quem conhece a contagem, e sai com
+   * `nao-imprimir` — é conversa com o aluno, não parte do documento.
+   */
+  avisoCota?: string | null;
 }) {
   const total = questoes.length;
   const temResolucao = useMemo(() => questoes.some((q) => q.resolucao), [questoes]);
@@ -182,6 +193,15 @@ export function FolhaImpressao({
   return (
     <div className={`folha-raiz${progresso ? " overflow-hidden" : ""}`}>
       <style dangerouslySetInnerHTML={{ __html: CSS_IMPRESSAO }} />
+
+      {avisoCota && (
+        <div className="nao-imprimir border-b border-questly-gold/25 bg-questly-gold/[0.07]">
+          <p className="casca-leitura flex items-start gap-2 py-2.5 text-[12px] leading-relaxed text-muted-foreground">
+            <Info size={14} strokeWidth={2} className="mt-0.5 shrink-0 text-questly-gold" />
+            <span>{avisoCota}</span>
+          </p>
+        </div>
+      )}
 
       {preparando ? (
         <PreparoImpressao

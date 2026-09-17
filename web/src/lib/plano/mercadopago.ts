@@ -247,3 +247,51 @@ export async function buscarPagamentosPorReferencia(
     return null;
   }
 }
+
+// ------------------------------------------------------------- reembolso
+// Devolver o dinheiro de UMA cobrança. É a metade que faltava pra vender
+// assinatura no Brasil: o direito de arrependimento (CDC art. 49, 7 dias
+// corridos para compra pela internet) não depende de motivo nem da nossa
+// concordância, e a devolução tem que ser do valor integral e imediata. Um
+// botão que "abre um chamado" não cumpre isso — este cumpre.
+//
+// `POST /v1/payments/{id}/refunds` com corpo vazio devolve o total. O parcial
+// existe na API (mandando `amount`) e deliberadamente não é usado: o
+// arrependimento é integral por lei, e o cancelamento de renovação não devolve
+// nada — não sobra caso pro meio-termo.
+//
+// A idempotência aqui é do lado do MP: um segundo refund do mesmo pagamento
+// volta 4xx, e quem chama (lib/plano/actions.ts) já marcou a assinatura como
+// 'reembolsada' antes de um segundo clique chegar.
+export async function reembolsarPagamentoMP(
+  paymentId: string,
+): Promise<{ ok: true; centavos: number | null } | { error: string }> {
+  const token = tokenMP();
+  if (!token) return { error: "Gateway de pagamento não configurado." };
+
+  try {
+    const res = await fetch(`${MP_API}/v1/payments/${paymentId}/refunds`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        // Exigido pelo MP em POST de refund; sem ele a chamada volta 400.
+        "X-Idempotency-Key": `refund-${paymentId}`,
+      },
+      body: "{}",
+      cache: "no-store",
+    });
+
+    const texto = await res.text();
+    if (!res.ok) {
+      console.error("Erro ao reembolsar pagamento no MP:", res.status, texto);
+      return { error: "O Mercado Pago não aceitou o estorno agora." };
+    }
+
+    const data = JSON.parse(texto || "{}") as { amount?: number; status?: string };
+    return { ok: true, centavos: typeof data.amount === "number" ? Math.round(data.amount * 100) : null };
+  } catch (e) {
+    console.error("Falha de rede ao reembolsar pagamento no MP:", e);
+    return { error: "Não foi possível falar com o Mercado Pago agora." };
+  }
+}
