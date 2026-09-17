@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { EspectroFundo, LockupOg } from "@/components/og/marca-og";
 
 // Card de preview do LINK DE CONVITE. Esse link nasce pra ser colado numa
 // conversa de WhatsApp, então o card é a primeira impressão — mais ainda que
@@ -9,6 +10,10 @@ import { ImageResponse } from "next/og";
 // Um card é gerado uma vez e reencaminhado depois — prometer "7 dias" numa
 // imagem que sobrevive ao cupom seria mentir com atraso. O número exato (e
 // vivo) aparece na própria página, lido do cupom.
+//
+// Mesma marca e mesma composição da landing; o que muda é o âmbar — o convite
+// é o único lugar onde a plataforma fala em tom de exceção, e a cor precisa
+// dizer isso antes do texto.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Convite pra testar a Expectrum";
@@ -18,6 +23,8 @@ export default function ConviteOpengraphImage() {
     (
       <div
         style={{
+          position: "relative",
+          overflow: "hidden",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -29,24 +36,21 @@ export default function ConviteOpengraphImage() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              background: "linear-gradient(135deg, #12b981, #085e43)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 30,
-              fontWeight: 700,
-            }}
-          >
-            E
-          </div>
-          <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>Expectrum</div>
-        </div>
+        <div
+          style={{
+            position: "absolute",
+            top: -220,
+            left: -160,
+            width: 760,
+            height: 760,
+            borderRadius: 760,
+            background:
+              "radial-gradient(circle, rgba(18, 185, 129, 0.18) 0%, rgba(18, 185, 129, 0) 70%)",
+          }}
+        />
+        <EspectroFundo cor="245, 196, 84" />
+
+        <LockupOg size={56} />
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
@@ -66,23 +70,23 @@ export default function ConviteOpengraphImage() {
           </div>
           <div
             style={{
-              marginTop: 26,
-              fontSize: 68,
+              marginTop: 24,
+              fontSize: 60,
               fontWeight: 700,
               lineHeight: 1.05,
               letterSpacing: -2,
-              maxWidth: 960,
+              maxWidth: 720,
             }}
           >
             Você foi convidado pra testar a Expectrum.
           </div>
           <div
             style={{
-              marginTop: 24,
-              fontSize: 30,
-              lineHeight: 1.35,
+              marginTop: 22,
+              fontSize: 28,
+              lineHeight: 1.4,
               color: "#a7f3d0",
-              maxWidth: 900,
+              maxWidth: 760,
             }}
           >
             Plano Pro liberado na hora: simulados cronometrados com questões de provas anteriores,

@@ -1,23 +1,54 @@
 import { cn } from "@/lib/utils";
 
-// Marca da Expectrum. O símbolo é um SVG desenhado: um anel de progresso
-// aberto com um núcleo no centro — um mostrador, a leitura de onde o aluno
-// está. Funciona em 16px (favicon) e em 512px, em claro e escuro.
+// Marca da Expectrum. O símbolo é o ESPECTRO: quatro barras que crescem em
+// altura e em opacidade, da mais apagada à cheia. Lê como escala, como
+// gráfico e como nível de domínio — e é literalmente o nome, sem precisar de
+// legenda. As alturas não crescem em linha reta (4.8 / 7.8 / 12 / 16.8): a
+// curva acelera, que é o que separa "gráfico de barras genérico" de uma
+// marca com intenção.
 //
-// A cauda diagonal que existia aqui foi REMOVIDA no rebranding de 2026-09-16:
-// ela era o traço do "Q" de Questly e, ao lado da palavra "Expectrum", o
-// símbolo lia literalmente como a letra errada. Sem ela o aro fecha como
-// mostrador e não sugere letra nenhuma. O resto do símbolo (squircle,
-// gradiente da marca, espessura do traço, núcleo) ficou intocado de propósito
-// — o pedido foi ajustar o que destoava do nome, não redesenhar a marca.
+// Por que essa e não o mostrador anterior (2026-09-16): o aro aberto vinha do
+// "Q" de Questly — tirar a cauda diagonal no rebranding resolveu a letra
+// errada mas deixou um anel que não dizia nada. As barras sobrevivem a 16px
+// (favicon), não sugerem letra nenhuma, e o mesmo desenho volta na interface
+// como medidor de domínio.
+//
+// Duas variantes, de propósito:
+// - "solida": squircle com gradiente e barras brancas. É a marca em caixa —
+//   favicon, avatar, cartão de link, qualquer lugar onde ela precisa se
+//   segurar sozinha sobre fundo que não controlamos.
+// - "aberta": só as barras, no gradiente da marca, sem caixa. Mais leve ao
+//   lado do wordmark — cabeçalho e landing.
+//
+// O gradiente usa as variáveis do tema (--questly-green / --questly-green-deep),
+// então ele troca sozinho no escuro, como já era antes.
+
+type Variante = "solida" | "aberta";
+
+/** As quatro barras do espectro, em coordenadas do viewBox 0 0 32 32. */
+const BARRAS = [
+  { x: 6.35, y: 19.6, altura: 4.8, opacidade: 0.5 },
+  { x: 11.65, y: 16.6, altura: 7.8, opacidade: 0.68 },
+  { x: 16.95, y: 12.4, altura: 12, opacidade: 0.84 },
+  { x: 22.25, y: 7.6, altura: 16.8, opacidade: 1 },
+] as const;
+
+// Na variante aberta as barras são coloridas (não brancas sobre verde), então
+// as mais apagadas precisam de um piso mais alto pra não sumirem no fundo.
+const OPACIDADE_ABERTA = [0.45, 0.62, 0.8, 1] as const;
 
 export function LogoMark({
   className,
   size = 28,
+  variante = "solida",
 }: {
   className?: string;
   size?: number;
+  variante?: Variante;
 }) {
+  const aberta = variante === "aberta";
+  const gradienteId = aberta ? "expectrum-mark-aberta" : "expectrum-mark-solida";
+
   return (
     <svg
       viewBox="0 0 32 32"
@@ -28,23 +59,26 @@ export function LogoMark({
       className={cn("shrink-0", className)}
     >
       <defs>
-        <linearGradient id="questly-mark-g" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={gradienteId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="var(--questly-green)" />
           <stop offset="100%" stopColor="var(--questly-green-deep)" />
         </linearGradient>
       </defs>
-      <rect x="0" y="0" width="32" height="32" rx="9" fill="url(#questly-mark-g)" />
-      {/* anel de progresso aberto: ~75% completo, abertura embaixo à direita */}
-      <path
-        d="M23.4 21.6a9 9 0 1 0-3.1 2.7"
-        fill="none"
-        stroke="white"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        opacity="0.95"
-      />
-      {/* núcleo: o ponto onde o aluno está na trilha */}
-      <circle cx="16" cy="16" r="3.1" fill="white" opacity="0.95" />
+      {!aberta && (
+        <rect x="0" y="0" width="32" height="32" rx="9" fill={`url(#${gradienteId})`} />
+      )}
+      {BARRAS.map((barra, i) => (
+        <rect
+          key={barra.x}
+          x={barra.x}
+          y={barra.y}
+          width="3.4"
+          height={barra.altura}
+          rx="1.7"
+          fill={aberta ? `url(#${gradienteId})` : "white"}
+          opacity={aberta ? OPACIDADE_ABERTA[i] : barra.opacidade}
+        />
+      ))}
     </svg>
   );
 }
@@ -53,11 +87,13 @@ export function Logo({
   className,
   size = 28,
   compacto = false,
+  variante = "solida",
 }: {
   className?: string;
   size?: number;
   /** só o símbolo, sem o wordmark (headers apertados, mobile) */
   compacto?: boolean;
+  variante?: Variante;
 }) {
   return (
     <div
@@ -66,7 +102,7 @@ export function Logo({
         className,
       )}
     >
-      <LogoMark size={size} />
+      <LogoMark size={size} variante={variante} />
       {!compacto && <span>Expectrum</span>}
     </div>
   );

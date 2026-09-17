@@ -1,11 +1,16 @@
 import { ImageResponse } from "next/og";
 import { CAMPANHA } from "@/lib/landing/campanha";
+import { EspectroFundo, LockupOg } from "@/components/og/marca-og";
 
 // Card de preview do link (WhatsApp/Instagram/Twitter) — a divulgação da
 // campanha começa por link colado em grupo de turma, então o preview É a
 // primeira impressão da marca. Gerado no build/edge, sem asset externo:
 // tudo aqui é forma e texto, nenhuma fonte ou imagem remota pra falhar.
 // Sem prazo no texto: o card é colado em grupo e reencaminhado meses depois.
+//
+// O espectro da marca aparece duas vezes de propósito: pequeno no lockup e
+// gigante sangrando pela borda. Num feed de WhatsApp o card é visto a 300px
+// de largura — a forma grande é o que sobrevive nesse tamanho, o nome não.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Expectrum — simulados e questões de provas antigas";
@@ -22,6 +27,8 @@ export default function OpengraphImage() {
     (
       <div
         style={{
+          position: "relative",
+          overflow: "hidden",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -33,25 +40,22 @@ export default function OpengraphImage() {
           fontFamily: "sans-serif",
         }}
       >
-        {/* marca */}
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              background: "linear-gradient(135deg, #12b981, #085e43)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 30,
-              fontWeight: 700,
-            }}
-          >
-            E
-          </div>
-          <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>Expectrum</div>
-        </div>
+        {/* halo frio no canto superior esquerdo: tira o chapado do gradiente */}
+        <div
+          style={{
+            position: "absolute",
+            top: -220,
+            left: -160,
+            width: 760,
+            height: 760,
+            borderRadius: 760,
+            background:
+              "radial-gradient(circle, rgba(18, 185, 129, 0.20) 0%, rgba(18, 185, 129, 0) 70%)",
+          }}
+        />
+        <EspectroFundo />
+
+        <LockupOg size={56} />
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
@@ -60,7 +64,7 @@ export default function OpengraphImage() {
               fontWeight: 700,
               lineHeight: 1.05,
               letterSpacing: -2,
-              maxWidth: 940,
+              maxWidth: 720,
             }}
           >
             {titulo}
@@ -71,7 +75,7 @@ export default function OpengraphImage() {
               fontSize: 30,
               lineHeight: 1.35,
               color: "#a7f3d0",
-              maxWidth: 900,
+              maxWidth: 760,
             }}
           >
             {subtitulo}
