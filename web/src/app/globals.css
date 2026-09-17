@@ -84,6 +84,12 @@
 }
 
 :root {
+  /* Largura horizontal do app (ver as cascas no fim do arquivo).
+     `--casca-max` é o teto do desktop; a calha cresce com a tela, mas
+     começa nos 16px de sempre no celular. */
+  --casca-max: 1760px;
+  --casca-calha: clamp(1rem, 0.35rem + 2vw, 3.25rem);
+
   /* Tema CLARO — repasse 2026-09 ("fintech premium, sem cansar a vista").
      Regra central: a TELA nunca é branca, o CARTÃO é. Antes o fundo era
      quase branco (0.988) e o card branco puro, então nada se separava e a
@@ -372,5 +378,53 @@
     --anel-acerto-fundo: #0cb050;
     --anel-erro-claro: #d24a72;
     --anel-erro-fundo: #b53259;
+  }
+}
+
+@layer utilities {
+  /* ---------------------------------------------------------------
+     Cascas de página — a largura horizontal do app no desktop.
+
+     Antes cada página escolhia o próprio número mágico (760, 820, 880,
+     900, 1040, 1128, 1280, 1400…), todos centralizados. Num monitor de
+     1080p ou maior isso deixava faixas vazias enormes nas laterais e a
+     plataforma parecia pequena e espremida ao mesmo tempo — conteúdo
+     apertado no meio, tela sobrando em volta.
+
+     Agora são TRÊS larguras, escolhidas pelo tipo de conteúdo, não por
+     página. Continuar com uma só não resolveria: uma tela de leitura a
+     1760px vira linha de 200 caracteres, que é pior do que a margem que
+     estamos matando.
+
+       .casca          telas densas (home, calendário, banco, trilha,
+                       admin, listas) — ocupa a tela toda até 1760px
+       .casca-media    listas e grades de cartões que ganham colunas mas
+                       não devem esticar pra sempre (ranking, simulados,
+                       anotações, planos)
+       .casca-leitura  texto corrido e formulários de uma coluna só
+                       (questão, prova em andamento, gabarito)
+
+     O teto existe pra ultrawide: sem ele, uma linha de tabela com 2400px
+     obriga o olho a atravessar a mesa pra ligar o nome ao número.
+
+     A calha (padding lateral) é fluida e MORA AQUI, não em `px-*` na
+     marcação: quem usa uma casca não repete `px-4 sm:px-6 lg:px-8`.
+     No celular ela dá os mesmos 16px de antes — a mudança é só desktop.
+     --------------------------------------------------------------- */
+  .casca,
+  .casca-media,
+  .casca-leitura {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--casca-calha);
+  }
+  .casca {
+    max-width: var(--casca-max);
+  }
+  .casca-media {
+    max-width: 1400px;
+  }
+  .casca-leitura {
+    max-width: 1180px;
   }
 }

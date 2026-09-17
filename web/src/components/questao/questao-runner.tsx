@@ -361,7 +361,7 @@ export function QuestaoRunner({
   const cor = corDaDisciplina(nomeDisc);
 
   return (
-    <div className="relative mx-auto flex min-h-screen max-w-[980px] flex-col px-4 py-4 sm:px-6 sm:py-6">
+    <div className="casca-leitura relative flex min-h-screen flex-col py-4 sm:py-6">
       <FlashOverlay flash={flash} />
       <XpFloatOverlay xpFloat={xpFloat} anchorRef={correctBtnRef} />
       <MarcoOverlay marco={marco} onFechar={() => setMarco(null)} />
@@ -476,17 +476,30 @@ export function QuestaoRunner({
           onSalvarNota={salvarNota}
         />
 
-        <div className="mb-7 text-[18px] font-medium leading-relaxed tracking-tight sm:text-[19px]">
-          <MathText text={pergunta.enunciado} />
-        </div>
+        {/* Com figura, ela vai AO LADO do enunciado a partir de xl: é o uso
+            natural da largura que a casca abriu, e enunciado e figura passam
+            a caber na mesma olhada (antes era rolar pra ver a imagem e rolar
+            de volta pra reler o texto). Sem figura, uma coluna só, como
+            sempre — e no celular também. */}
+        <div
+          className={
+            pergunta.imagem_url
+              ? "mb-7 grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,440px)]"
+              : "mb-7"
+          }
+        >
+          <div className="text-[18px] font-medium leading-relaxed tracking-tight sm:text-[19px]">
+            <MathText text={pergunta.enunciado} />
+          </div>
 
-        {pergunta.imagem_url && (
-          <FiguraQuestao
-            src={pergunta.imagem_url}
-            alt="Imagem da questão"
-            className="mb-7 h-[280px] rounded-xl border border-border p-3 sm:h-[380px]"
-          />
-        )}
+          {pergunta.imagem_url && (
+            <FiguraQuestao
+              src={pergunta.imagem_url}
+              alt="Imagem da questão"
+              className="h-[280px] rounded-xl border border-border p-3 sm:h-[380px]"
+            />
+          )}
+        </div>
 
         <div className="mb-7 flex flex-col gap-3">
           {letras.map((letra, i) => {

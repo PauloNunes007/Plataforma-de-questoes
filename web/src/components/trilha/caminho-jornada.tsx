@@ -205,7 +205,7 @@ export function CaminhoJornada({ caminho, onAtualizar }: Props) {
           Essa disciplina ainda não tem ementa cadastrada.
         </div>
       ) : (
-        <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_352px]">
+        <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_352px] 2xl:grid-cols-[minmax(0,1fr)_420px]">
           <div ref={areaRef} className="flex min-w-0 flex-col gap-3">
             <BarraJornada
               topicos={topicos}

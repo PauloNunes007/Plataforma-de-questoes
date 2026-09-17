@@ -30,7 +30,7 @@ export function RelatosLista({ relatosIniciais }: { relatosIniciais: RelatoAdmin
   }
 
   return (
-    <div className="mx-auto max-w-[1040px] px-4 py-7 sm:px-6 lg:py-9">
+    <div className="casca py-7 lg:py-9">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-questly-red-light text-questly-red-dark">

@@ -101,7 +101,7 @@ export function QuestaoEditor({
   const topicosMateria = topicos.filter((t) => t.materia_id === item.materiaId);
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6">
+    <div className="casca py-6">
       <div className="mb-5 flex items-center justify-between gap-3">
         <Link
           href="/admin/questoes"

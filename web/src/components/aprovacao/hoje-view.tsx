@@ -85,7 +85,7 @@ export function HojeView({ dados }: { dados: DadosHoje }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
         <div className="flex flex-col gap-5">
           <GradeDoDia dados={dados} />
           <TopicosDaSemana dados={dados} />

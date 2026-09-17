@@ -350,7 +350,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
 
       {/* ---------------------------------------------------------- header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-5">
           <Logo />
           <nav className="hidden items-center gap-0.5 md:flex">
             {NAV.map((n) => (
@@ -389,7 +389,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
       </header>
 
       {/* ------------------------------------------------------------ hero */}
-      <section className="relative mx-auto max-w-6xl px-5 pt-14 pb-20 sm:pt-20">
+      <section className="relative mx-auto max-w-7xl px-5 pt-14 pb-20 sm:pt-20">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <motion.span
@@ -493,7 +493,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
 
       {/* --------------------------------------------------------- método */}
       <section id="metodo" className="relative scroll-mt-16 border-t border-border/60 bg-muted/30 py-24">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               Como você estuda aqui
@@ -540,7 +540,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
 
       {/* -------------------------------------------------------- recursos */}
       <section id="recursos" className="relative scroll-mt-16 py-24">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               O que você precisa pra treinar de verdade
@@ -580,7 +580,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
 
       {/* --------------------------------------------------------- ciência */}
       <section id="ciencia" className="relative scroll-mt-16 border-y border-border/60 bg-muted/30 py-24">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
             <Revelar>
               <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
@@ -738,7 +738,7 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
 
       {/* --------------------------------------------------------- footer */}
       <footer className="border-t border-border/60 py-12">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-7xl px-5">
           <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
             <div className="max-w-xs">
               <Logo />
@@ -854,7 +854,7 @@ function MascoteBand() {
             }
       }
     >
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 md:grid-cols-2">
+      <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 md:grid-cols-2">
         <Revelar>
           <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
             Uma questão de cada vez.{" "}

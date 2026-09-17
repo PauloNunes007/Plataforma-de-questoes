@@ -60,7 +60,7 @@ export default async function ProPage({
   const jaEhPro = ehPro(profile);
 
   return (
-    <div className="mx-auto w-full max-w-[1080px] px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-media py-6 lg:py-8">
       <PlanosView
         jaEhPro={jaEhPro}
         ciclo={profile?.plano_ciclo ?? null}

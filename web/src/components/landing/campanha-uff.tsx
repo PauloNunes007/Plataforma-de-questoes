@@ -100,7 +100,7 @@ export function SecaoCampanha({ stats }: { stats: StatsBanco }) {
         className="pointer-events-none absolute -top-40 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-questly-green/15 blur-[120px]"
       />
 
-      <div className="relative mx-auto max-w-6xl px-5">
+      <div className="relative mx-auto max-w-7xl px-5">
         <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-questly-green px-3 py-1 text-xs font-semibold text-white dark:text-[#06140f]">

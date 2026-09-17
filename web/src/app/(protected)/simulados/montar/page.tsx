@@ -28,7 +28,7 @@ export default async function MontarSimuladoPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[760px] px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-leitura py-6 lg:py-8">
       <PageHeader
         titulo="Montar simulado"
         descricao="Escolha a disciplina, de onde saem as questões e os tópicos que caem."

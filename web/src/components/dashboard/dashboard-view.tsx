@@ -108,7 +108,7 @@ export function DashboardView({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div className="casca flex flex-col gap-4 py-6 lg:py-8">
       <PerfilBar
         nome={dados.profile?.nome || dados.greeting}
         fotoUrl={dados.profile?.foto_url ?? null}
@@ -139,7 +139,7 @@ export function DashboardView({
                primeiro a ação, depois o mapa; num telefone não existe "canto
                direito", e empurrar a ação pra baixo do calendário seria trocar
                um problema por outro. */
-            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start 2xl:grid-cols-[minmax(0,1fr)_400px]">
               <div className="order-1 flex min-w-0 flex-col gap-4 xl:col-start-1 xl:row-start-1">
                 <div className="mb-0.5 flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-heading text-[17px] font-semibold tracking-tight">Seu dia</h2>

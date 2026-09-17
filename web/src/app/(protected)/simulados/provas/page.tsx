@@ -20,7 +20,7 @@ export default async function ProvasAntigasPage() {
   ]);
 
   return (
-    <div className="mx-auto w-full max-w-[820px] px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-media py-6 lg:py-8">
       <PageHeader
         titulo="Provas antigas"
         descricao="As provas que caíram de verdade, na ordem original e com o relógio correndo."

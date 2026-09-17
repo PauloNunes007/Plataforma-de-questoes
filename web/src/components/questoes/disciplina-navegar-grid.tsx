@@ -47,8 +47,10 @@ function iconePorNome(nome: string): LucideIcon {
 }
 
 export function DisciplinaNavegarGrid({ disciplinas }: { disciplinas: DisciplinaPratica[] }) {
+  // Os cartões são quadrados (`aspect-square`): sem mais colunas numa casca
+  // larga, cada um viraria um bloco de 300px de altura.
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
       {disciplinas.map((d, i) => {
         const [corA, corB] = CORES[i % CORES.length];
         const Icone = iconePorNome(d.nome);

@@ -6,11 +6,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 // O TopNav já está pintado pelo layout — aqui só o miolo.
 export default function Loading() {
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-5">
+    <div className="casca py-6">
       <Skeleton className="h-7 w-52" />
       <Skeleton className="mt-2 h-4 w-72" />
 
-      <div className="mt-7 grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="mt-7 grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
         <div className="space-y-4">
           <Skeleton className="h-40 w-full rounded-2xl" />
           <div className="grid gap-4 sm:grid-cols-3">

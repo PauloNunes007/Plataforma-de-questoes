@@ -526,7 +526,7 @@ export function Importador({
     const topicosMateria = topicos.filter((t) => t.materia_id === itemAtual.materiaId);
 
     return (
-      <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-6">
+      <div className="casca py-6">
         <div className="mb-5 flex flex-col gap-2.5">
           <div className="flex items-center gap-4">
             <div className="tnum shrink-0 text-xs font-semibold text-muted-foreground">
@@ -822,7 +822,7 @@ export function Importador({
   }
 
   return (
-    <div className="mx-auto max-w-[760px] px-5 py-8 sm:px-6">
+    <div className="casca-media py-8">
       <h1 className="mb-1 text-2xl font-semibold tracking-tight">Importar questões</h1>
       <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
         Cole ou envie um JSON com uma lista de questões. O que estiver sem pendência (sem imagem, matéria/tópico

@@ -17,7 +17,7 @@ export default async function FavoritosPage() {
   const itens = await carregarFavoritos(supabase, user);
 
   return (
-    <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-media flex flex-col gap-6 py-6 lg:py-8">
       <PageHeader
         titulo="Questões favoritas"
         descricao="Organizadas por disciplina e tópico."

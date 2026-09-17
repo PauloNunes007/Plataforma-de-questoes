@@ -57,7 +57,7 @@ export function DesempenhoView({ dados, podeMontar }: { dados: DesempenhoGeral; 
 
   if (dados.totalSimulados === 0) {
     return (
-      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
+      <div className="casca-media flex flex-col gap-6 py-6 lg:py-8">
         <PageHeader
           titulo="Desempenho nos simulados"
           descricao="A leitura consolidada de tudo que você já simulou."
@@ -86,7 +86,7 @@ export function DesempenhoView({ dados, podeMontar }: { dados: DesempenhoGeral; 
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-media flex flex-col gap-5 py-6 lg:py-8">
       <PageHeader
         titulo="Desempenho nos simulados"
         descricao="A leitura consolidada de tudo que você já simulou — onde você está bem, onde o estudo rende mais e como isso mudou com o tempo."

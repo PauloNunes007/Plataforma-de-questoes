@@ -85,8 +85,19 @@ export function MinhasQuestoesLista({
     );
   }
 
+  // Uma coluna só de grupos deixava metade da tela vazia no desktop desde que
+  // as cascas alargaram; com 2+ grupos eles passam a dividir a largura (cada
+  // grupo é um cartão independente, então quebrar em colunas não parte nada).
+  const emColunas = grupos.length > 1;
+
   return (
-    <div className="flex flex-col gap-7">
+    <div
+      className={
+        emColunas
+          ? "flex flex-col gap-7 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6"
+          : "flex flex-col gap-7"
+      }
+    >
       {grupos.map((grupo) => (
         <div key={grupo.titulo ?? "todas"}>
           {grupo.titulo && (

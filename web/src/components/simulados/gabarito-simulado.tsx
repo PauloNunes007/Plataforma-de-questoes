@@ -274,7 +274,7 @@ function LeitorGabarito({
     >
       {/* ------------------------------------------------------ cabeçalho */}
       <header className="shrink-0 border-b border-border bg-card">
-        <div className="mx-auto flex w-full max-w-[860px] items-center gap-3 px-4 py-3">
+        <div className="casca-leitura flex items-center gap-3 py-3">
           <span className="flex items-center gap-2 text-[13px] font-bold">
             <BookOpen size={16} className="text-questly-green" />
             Gabarito
@@ -292,7 +292,7 @@ function LeitorGabarito({
           </button>
         </div>
 
-        <div className="mx-auto w-full max-w-[860px] px-4 pb-3">
+        <div className="casca-leitura pb-3">
           <div className="flex flex-wrap gap-1.5">
             {FILTROS.map((f) => {
               const n = contagem[f.chave];
@@ -343,7 +343,7 @@ function LeitorGabarito({
 
       {/* ---------------------------------------------------------- corpo */}
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-[860px] px-4 py-5">
+        <div className="casca-leitura py-5">
           {!pergunta || !item ? (
             <p className="rounded-xl bg-muted/50 px-4 py-8 text-center text-[13px] text-muted-foreground">
               Nenhuma questão neste filtro.
@@ -420,7 +420,7 @@ function LeitorGabarito({
 
       {/* ---------------------------------------------------------- rodapé */}
       <footer className="shrink-0 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
-        <div className="mx-auto flex w-full max-w-[860px] items-center gap-3 px-4 py-3">
+        <div className="casca-leitura flex items-center gap-3 py-3">
           <button
             type="button"
             onClick={() => onIndice(Math.max(indice - 1, 0))}

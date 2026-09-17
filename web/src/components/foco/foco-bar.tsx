@@ -70,7 +70,7 @@ function PainelSetup() {
       transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
       className="overflow-hidden border-b border-border bg-card/80 backdrop-blur-xl"
     >
-      <div className="mx-auto flex w-full max-w-[1340px] flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center">
+      <div className="casca flex flex-col gap-3 py-3 lg:flex-row lg:items-center">
         <input
           value={foco.objetivo}
           onChange={(e) => foco.setObjetivo(e.target.value)}
@@ -203,7 +203,7 @@ function CorpoBarra() {
           <div className="h-full bg-white/80 transition-[width] duration-1000 ease-linear" style={{ width: `${pct}%` }} />
         </div>
       )}
-      <div className="relative mx-auto flex w-full max-w-[1340px] items-center gap-3 px-4 py-2.5 sm:px-6">
+      <div className="casca relative flex items-center gap-3 py-2.5">
         <span className="relative flex h-2.5 w-2.5 shrink-0">
           {rodando && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80 opacity-75" />}
           <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${rodando ? "bg-white" : "bg-white/50"}`} />

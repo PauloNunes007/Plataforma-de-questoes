@@ -46,7 +46,7 @@ export function SimuladosShowcase({ stats }: { stats: StatsBanco }) {
 
   return (
     <section id="simulados" className="relative scroll-mt-16 py-24">
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-7xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
             Simule a prova antes da prova

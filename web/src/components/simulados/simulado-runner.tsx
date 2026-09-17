@@ -143,7 +143,7 @@ export function SimuladoRunner({ simulado }: { simulado: SimuladoCompleto }) {
   if (!pergunta) return null;
 
   return (
-    <div className="mx-auto w-full max-w-[820px] px-4 pb-28 pt-4 sm:px-6">
+    <div className="casca-leitura pb-28 pt-4">
       {/* Barra superior: título + relógio + progresso */}
       <div className="sticky top-0 z-20 -mx-4 mb-5 border-b border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <div className="flex items-center justify-between gap-3">

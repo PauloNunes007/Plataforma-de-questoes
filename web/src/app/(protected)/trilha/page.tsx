@@ -17,7 +17,7 @@ export default async function TrilhaPage() {
   const regioes = await carregarMapaTrilha(supabase, user);
 
   return (
-    <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca flex flex-col gap-6 py-6 lg:py-8">
       <header>
         <h1 className="font-heading text-[22px] font-semibold tracking-tight">Minha trilha</h1>
         <p className="mt-0.5 max-w-[640px] text-sm leading-relaxed text-muted-foreground">

@@ -20,7 +20,7 @@ export default async function ErrosPage() {
   const pendentes = erros.filter((e) => etapasPendentes(e, hoje).length > 0).length;
 
   return (
-    <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-5 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca flex flex-col gap-5 py-6 lg:py-8">
       <header className="flex flex-col gap-3">
         <div>
           <h1 className="font-heading text-[22px] font-semibold tracking-tight">Caderno de Erros</h1>

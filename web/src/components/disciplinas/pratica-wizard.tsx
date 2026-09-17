@@ -142,7 +142,7 @@ export function PraticaWizard({ disciplinas }: { disciplinas: DisciplinaPratica[
   const podeComecar = Boolean(materiaId) && topicos.length > 0 && (previa?.selecionadas ?? 0) > 0 && !carregandoPrevia;
 
   return (
-    <div className="grid grid-cols-1 items-start gap-6 pb-24 xl:grid-cols-[minmax(0,1fr)_340px] xl:pb-0">
+    <div className="grid grid-cols-1 items-start gap-6 pb-24 xl:grid-cols-[minmax(0,1fr)_340px] xl:pb-0 2xl:grid-cols-[minmax(0,1fr)_400px]">
       <div className="flex flex-col gap-6">
         <div className="surface p-5 sm:p-6">
           <PassoTitulo

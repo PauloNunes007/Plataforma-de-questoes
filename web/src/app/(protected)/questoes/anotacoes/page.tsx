@@ -17,7 +17,7 @@ export default async function AnotacoesPage() {
   const itens = await carregarQuestoesComNotas(supabase, user);
 
   return (
-    <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-media flex flex-col gap-6 py-6 lg:py-8">
       <PageHeader
         titulo="Minhas anotações"
         descricao="Questões em que você deixou alguma anotação."

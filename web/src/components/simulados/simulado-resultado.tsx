@@ -99,7 +99,7 @@ export function SimuladoResultado({
   const ehRecorde = contexto.melhorAnterior != null && nota > contexto.melhorAnterior;
 
   return (
-    <div className="mx-auto flex w-full max-w-[900px] flex-col gap-5 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-media flex flex-col gap-5 py-6 lg:py-8">
       <Link
         href="/simulados"
         className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"

@@ -36,7 +36,7 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
       {/* fio de acento no topo — dá o toque "premium" sem pesar */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-questly-green/40 to-transparent" />
-      <div className="mx-auto flex h-14 w-full max-w-[1400px] items-center gap-2 px-3 sm:px-5">
+      <div className="casca flex h-14 items-center gap-2">
         <Link
           href="/dashboard"
           aria-label="Início"

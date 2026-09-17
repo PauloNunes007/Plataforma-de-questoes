@@ -161,7 +161,7 @@ export function ConfiguracoesPanel({
   const [dias, setDias] = useState<string[]>(profile?.dias_disponiveis || []);
 
   return (
-    <div className="mx-auto flex max-w-[760px] flex-col gap-4 px-5 py-8 sm:px-6">
+    <div className="casca-media flex flex-col gap-4 py-8">
       <div className="mb-1">
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Configurações</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -169,13 +169,23 @@ export function ConfiguracoesPanel({
         </p>
       </div>
 
-      <ContaCard profile={profile} />
+      {/* Duas colunas a partir de xl: à esquerda quem você é e em que ritmo
+          estuda (dois cartões curtos), à direita a lista de disciplinas, que é
+          a única coisa aqui que cresce sem fim. Empilhado, a ordem no celular
+          continua exatamente a de antes. */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] xl:items-start xl:gap-6">
+        <div className="flex min-w-0 flex-col gap-4">
+          <ContaCard profile={profile} />
 
-      <SecaoKicker>Ritmo</SecaoKicker>
-      <RotinaCard dias={dias} onSalvar={setDias} />
+          <SecaoKicker>Ritmo</SecaoKicker>
+          <RotinaCard dias={dias} onSalvar={setDias} />
+        </div>
 
-      <SecaoKicker>Disciplinas</SecaoKicker>
-      <DisciplinasCard subjects={subjects} onSubjectsChange={setSubjects} />
+        <div className="flex min-w-0 flex-col gap-4">
+          <SecaoKicker>Disciplinas</SecaoKicker>
+          <DisciplinasCard subjects={subjects} onSubjectsChange={setSubjects} />
+        </div>
+      </div>
     </div>
   );
 }

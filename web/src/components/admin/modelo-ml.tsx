@@ -33,7 +33,7 @@ export function ModeloMl({ modelos, migracaoPendente }: { modelos: ModeloRow[]; 
   };
 
   return (
-    <div className="mx-auto max-w-[980px]">
+    <div className="mx-auto max-w-[1400px]">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-questly-purple/12 text-questly-purple">

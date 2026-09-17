@@ -331,7 +331,7 @@ export function CalendarioView({
   );
 
   return (
-    <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div className="casca flex flex-col gap-5 py-6 lg:py-8">
       <PageHeader
         titulo="Calendário"
         descricao="Toque num dia pra marcar um bloco de estudo, anotar uma tarefa ou registrar o dia da prova."
@@ -366,7 +366,7 @@ export function CalendarioView({
         />
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_330px]">
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_400px]">
         <section className="surface min-w-0 p-3 sm:p-5">
           <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-heading text-[19px] font-semibold tracking-tight sm:text-[21px]">

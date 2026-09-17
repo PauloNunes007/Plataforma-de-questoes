@@ -31,7 +31,7 @@ export default async function ListasDaDisciplinaPage({
 
   if (!disciplina) {
     return (
-      <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-4 px-4 py-6 sm:px-6 lg:py-8">
+      <div className="casca flex flex-col gap-4 py-6 lg:py-8">
         <p className="text-sm text-muted-foreground">Disciplina não encontrada.</p>
         <Link href="/questoes/listas" className="text-sm font-medium text-questly-green">
           Voltar pras disciplinas
@@ -41,7 +41,7 @@ export default async function ListasDaDisciplinaPage({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1128px] flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca flex flex-col gap-6 py-6 lg:py-8">
       <PageHeader
         titulo={disciplina.nome}
         descricao="Cada tópico é uma lista pronta — toque em Começar pra praticar todas as questões dele."
@@ -65,7 +65,7 @@ export default async function ListasDaDisciplinaPage({
           Essa disciplina ainda não tem questões cadastradas.
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {topicos.map((t, i) => (
             <ListaTopicoCard
               key={t.id}

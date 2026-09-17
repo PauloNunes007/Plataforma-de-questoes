@@ -142,7 +142,10 @@ export function ProvasOficiais({
         </div>
       )}
 
-      <ul className="flex flex-col gap-2">
+      {/* Duas colunas a partir de lg: cada prova é uma linha curta, e o
+         catálogo tem dezenas delas — numa coluna só a lista virava uma
+         rolagem longa com a metade direita da tela vazia. */}
+      <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-x-4">
         {provas.map((p, i) => {
           const feita = p.tentativas.find((t) => t.status === "concluido") ?? null;
           const aberta = p.tentativas.find((t) => t.status === "em_andamento") ?? null;

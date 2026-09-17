@@ -75,7 +75,7 @@ export function SimuladosLista({
   const anim = semMovimento ? {} : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 } };
 
   return (
-    <div className="mx-auto flex w-full max-w-[820px] flex-col gap-5 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="casca-media flex flex-col gap-5 py-6 lg:py-8">
       {/* -------------------------------------------------------------- topo */}
       <motion.header {...anim} className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
@@ -243,10 +243,13 @@ export function SimuladosLista({
       )}
 
       {/* ---------------------------------------------------------- histórico */}
-      <section className="flex flex-col gap-2">
-        {concluidos.length > 0 && <span className="kicker">Suas provas</span>}
+      {/* Duas colunas a partir de lg: cada prova é uma linha curta (nota,
+          título, data), e uma só coluna numa casca larga deixava metros de
+          vazio à direita de cada uma. */}
+      <section className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-x-4 lg:gap-y-2.5">
+        {concluidos.length > 0 && <span className="kicker lg:col-span-2">Suas provas</span>}
         {concluidos.length === 0 ? (
-          <div className="surface flex flex-col items-center gap-2.5 p-8 text-center">
+          <div className="surface flex flex-col items-center gap-2.5 p-8 text-center lg:col-span-2">
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-muted">
               <FileText size={19} className="text-muted-foreground" strokeWidth={1.75} />
             </span>
