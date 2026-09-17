@@ -707,6 +707,123 @@ Nenhuma migração nova foi escrita e nada foi dropado — trocar de ideia não 
 
 **Divergência deliberada do app legado:** `js/mission-engine.js` e `js/rotina-engine.js` na raiz continuam existindo e continuam com o motor antigo. O app legado não foi tocado e **não é pra ser sincronizado** com isto.
 
+## Repasse visual de 2026-09-16 — croma, largura e o convite de entrada
+
+Três pedidos do dono no mesmo repasse, todos de leitura da tela, mais o conserto
+de cobrança abaixo.
+
+### 1. "As cores estão ardendo meus olhos, está muito colorido"
+
+O app tinha **seis** cópias da mesma paleta de giz de cera (`#5b7cf0`,
+`#f0555a`, `#f0a23f`…): hex cru, igual nos dois temas, e no croma cheio. Elas
+pintam as superfícies mais largas que existem — os tiles de disciplina, a faixa
+de ação da home, o cabeçalho do card de questão. Numa tela que é quase toda
+cartão, isso soma uma parede de tinta.
+
+O conserto tem duas partes:
+
+- **uma rampa só.** `PALETA_CARTOES` (`lib/questly/paleta-cartoes.ts` →
+  `--cartao-N-*` em `globals.css`) já era a paleta madura, derivada em OKLCH com
+  luminosidade fixa e tema-ciente. Agora ela é a única: `mundo-ilhas.tsx`,
+  `disciplina-picker.tsx` e `lib/questao/disciplina-cor.ts` passaram a lê-la em
+  vez de carregar a própria. `disciplina-cor.ts` não pode mais fazer aritmética
+  de hex (a cor só existe na hora de pintar), então `gradienteProfundo`/
+  `profundo` viraram `color-mix(in oklab, <token> N%, black)`;
+- **menos croma na rampa.** Todo par teve o croma multiplicado por **0.62 em
+  OKLab com a luminosidade intacta**. Por isso nenhuma medida de contraste
+  mudou de faixa — contraste WCAG é função da luminância, e ela não se mexeu:
+  claro 5.81–6.27 com branco por cima, escuro 4.79–5.20, todas AA. O matiz
+  ficou, então a grade continua legível como oito cores distintas, em tom
+  terroso e não em giz de cera.
+
+Retonalizados pelo mesmo critério, fora da rampa: `lib/cursos/registro.ts`
+(brasão do curso — continua hex cru **de propósito**, há call sites que
+concatenam alfa no valor, `${corA}40`, o que `var()` não permite), a paisagem da
+trilha em `caminho-jornada.tsx` (grama, lago e flores eram desenho animado e são
+a superfície mais luminosa do app), o CTA "Próxima" do runner (era um esmeralda
+cru fora dos tokens da marca) e os halos neon do tour de onboarding.
+
+**O que NÃO foi tocado, de propósito:** os tokens semânticos `--questly-*`
+(verde/laranja/ouro/vermelho), que carregam texto e têm contraste medido; as
+cores dos metais da liga; e tudo que carrega informação na trilha (pegadas
+verdes, laranja da fronteira, traço de risco) — que ficou mais evidente agora
+que o fundo parou de competir.
+
+### 2. A trilha: largura do mapa e tamanho dos tiles
+
+- o mapa da jornada (o vale com a capivara) ganhou teto de **1180px** em
+  `trilha-view.tsx` — a grade de ilhas acima continua na casca inteira, porque
+  são cartões e mais colunas é melhor, mas o mapa é um DESENHO: esticado até
+  1300px a estrada vira um fio perdido num campo. Com o teto ele fica em ~720px
+  no 2xl, que é onde a serpente ainda lê como caminho;
+- o tile de disciplina era **quadrado** numa grade que parava em 4 colunas: seis
+  disciplinas viravam seis pôsteres de ~380px e o mapa nascia abaixo da dobra.
+  Virou `aspect-[5/4]` numa grade que vai até 6 colunas, com ícone, tipografia e
+  respiro reduzidos na mesma proporção.
+
+### 3. A primeira tela de quem acabou de chegar
+
+No estado vazio, o `AcaoCard` dizia "Monte uma lista" e jogava direto no Banco de
+Questões. É um começo pela ponta errada: quem entra pela primeira vez não sabe
+QUAL lista montar, e sem plano a próxima visita cai no mesmo vazio. O convite
+virou **"Monte a sua semana" → `/calendario`**, onde o aluno escreve o que vai
+fazer em cada dia; daí em diante a própria faixa passa a oferecer "Começar" no
+bloco do dia (o estado `plano` do item 30) e o ciclo se fecha sozinho. Montar uma
+lista avulsa continua a um clique, na pílula secundária — perdeu a dobra, não o
+caminho. O estado "já estudei hoje" segue apontando pro Banco: quem está em
+movimento não precisa de plano pra continuar.
+
+## Assinatura recorrente de verdade (2026-09-16) — `lib/plano/preapproval.ts`
+
+**Buraco de receita, achado em produção.** O plano "Pro Semestral, R$ 10 por mês
+com fidelidade de 6 meses" era vendido como recorrente e cobrado como avulso:
+`criarPreferenciaCheckout` montava uma preferência de Checkout Pro com
+`unit_price = opcao.precoCentavos / 100` — R$ 10, **uma vez** — e
+`ativarAssinatura` liberava os 6 meses inteiros na primeira aprovação. O aluno
+pagava um mês e levava o semestre; o compromisso existia só no texto do cartão.
+
+O Mercado Pago tem dois produtos, e o app usava um só:
+
+| | endpoint | cobrança | meios |
+|---|---|---|---|
+| `forma: "a_vista"` | `/checkout/preferences` | uma vez | cartão, **Pix**, boleto |
+| `forma: "recorrente"` | `/preapproval` | mensal, automática | **só cartão de crédito** |
+
+O que mudou:
+
+- **`lib/plano/preapproval.ts` (novo)** — cria a assinatura no MP. `end_date` é
+  o que transforma "cobra pra sempre" em "cobra 6 vezes" (calculado de
+  `MESES_SEMESTRE`, não de um número solto); no mensal não há `end_date`.
+  `start_date` fica 5 minutos à frente porque o MP recusa início no passado e a
+  diferença de relógio entre os servidores já bastou pra derrubar a criação.
+- **`ativar.ts` — uma cobrança compra o período que ela pagou.** À vista
+  semestral = 6 meses; qualquer recorrente = **1 mês por cobrança**; ativação
+  manual do admin = o ciclo inteiro (é contingência, e quem sabe o que foi pago
+  é ele). Renovar nunca encurta: estende a partir de `max(hoje, expira_atual)`.
+- **`creditarCobranca` é idempotente pelo ÍNDICE ÚNICO**
+  `assinatura_pagamentos.gateway_payment_id` (migração
+  `supabase_assinatura_recorrente.sql`), não por um filtro em JS — o webhook e o
+  polling da tela chegam pelos dois lados e creditariam o mesmo mês duas vezes.
+  A insert vem **antes** de mexer no profile: se duas chamadas correrem juntas, o
+  pior caso é um crédito a menos (recuperável na conferência seguinte) em vez de
+  um mês de graça.
+- **webhook** passou a entender `subscription_authorized_payment` (a cobrança
+  mensal — o id é o do `authorized_payment`, não o do pagamento) e
+  `subscription_preapproval` (só loga: a preapproval em si não carrega dinheiro).
+  Sem isso o aluno seria cobrado nos meses 2..6 e o Pro venceria no fim do mês 1.
+- **`conferirPagamentoAction`** consulta a preapproval antes do polling de
+  pagamento: numa assinatura o aluno autoriza primeiro e a 1ª cobrança demora
+  alguns minutos. Sem isso a tela diria "não concluído" logo depois da
+  autorização, e ele abriria uma segunda assinatura.
+- **`cancelarRenovacaoAction`** (nova) — para de cobrar sem tirar o Pro já pago.
+  A fidelidade do semestral é **informada, não imposta pelo código**: impor de
+  verdade exigiria reter valor, que é decisão comercial, e esconder o botão seria
+  pior.
+
+⚠️ **Rode `supabase_assinatura_recorrente.sql` antes de publicar** — o app lê
+`assinaturas.gateway_id` e grava em `assinatura_pagamentos`. E **teste com
+credenciais reais do MP**: o caminho de preapproval nunca rodou contra o gateway.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

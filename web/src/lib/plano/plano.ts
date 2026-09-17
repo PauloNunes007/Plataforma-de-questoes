@@ -3,11 +3,21 @@
 // supabase_plano_pro.sql); os writes ficam em lib/plano/actions.ts (aluno) e
 // lib/admin/actions.ts (ativação manual pelo admin).
 //
-// Pagamento pelo checkout do Mercado Pago (cartão/Pix, dados do recebedor
-// ocultos) — ver lib/plano/mercadopago.ts. Sem MP_ACCESS_TOKEN configurado,
-// cai no fluxo manual (o admin confirma em /admin/assinaturas). Preços e ciclos
-// aqui são a fonte da verdade compartilhada entre a página /pro, o landing e as
-// ações de servidor.
+// Pagamento pelo Mercado Pago, e a FORMA decide por qual porta:
+//
+//   • `forma: "a_vista"`    → Checkout Pro, uma cobrança (cartão/Pix/boleto),
+//                             lib/plano/mercadopago.ts;
+//   • `forma: "recorrente"` → preapproval, o MP cobra o CARTÃO todo mês,
+//                             lib/plano/preapproval.ts.
+//
+// Isso importa pra quem for mexer em `precoCentavos`: no recorrente ele é o
+// valor de CADA cobrança mensal, não o total. Até 2026-09-16 os dois casos
+// saíam pela primeira porta, e o "semestral, R$ 10/mês" era cobrado uma única
+// vez de R$ 10 — o aluno levava o semestre pelo preço de um mês.
+//
+// Sem MP_ACCESS_TOKEN configurado, cai no fluxo manual (o admin confirma em
+// /admin/assinaturas). Preços e ciclos aqui são a fonte da verdade
+// compartilhada entre a página /pro, o landing e as ações de servidor.
 
 import { APP_URL } from "@/lib/app-url";
 
@@ -67,7 +77,7 @@ export const OPCOES_PLANO: OpcaoPlano[] = [
     precoMensalEquivalente: PRECO_MENSAL_CENTAVOS,
     cobrancaLabel: "por mês",
     destaque: null,
-    observacao: "Sem fidelidade. Cancele quando quiser.",
+    observacao: "Sem fidelidade. Cancele quando quiser — o mês já pago continua seu.",
   },
   {
     id: "semestral-recorrente",
@@ -78,7 +88,7 @@ export const OPCOES_PLANO: OpcaoPlano[] = [
     precoMensalEquivalente: PRECO_SEMESTRAL_MENSAL_CENTAVOS,
     cobrancaLabel: "por mês",
     destaque: "Mais popular",
-    observacao: "R$ 10/mês com fidelidade de 6 meses — economia de 33% no semestre.",
+    observacao: "R$ 10/mês por 6 meses — economia de 33% sobre o mensal.",
   },
   {
     id: "semestral-avista",
@@ -89,7 +99,7 @@ export const OPCOES_PLANO: OpcaoPlano[] = [
     precoMensalEquivalente: Math.round(PRECO_SEMESTRAL_AVISTA_CENTAVOS / MESES_SEMESTRE),
     cobrancaLabel: "à vista (6 meses)",
     destaque: "Melhor preço",
-    observacao: "R$ 60 de uma vez pelos 6 meses — sai R$ 10/mês, sem mensalidade.",
+    observacao: "R$ 60 de uma vez pelos 6 meses — sai R$ 10/mês, sem mensalidade. Aceita Pix.",
   },
 ];
 

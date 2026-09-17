@@ -98,7 +98,17 @@ export function TrilhaView({ regioes }: TrilhaViewProps) {
         />
       )}
 
-      <div ref={caminhoRef} className={selecionada ? "scroll-mt-20 lg:scroll-mt-6" : "hidden"}>
+      {/* A jornada NÃO usa a largura toda da casca (1760px). A grade de ilhas
+          acima ganha com a tela inteira — são cartões, e mais colunas é melhor
+          —, mas o mapa é um DESENHO: esticado até 1300px a estrada vira um fio
+          perdido num campo, e o olho tem que atravessar a mesa pra ligar um
+          checkpoint ao painel do lado. Este teto (pedido do dono: "diminuir um
+          pouco a largura da parte da capivara") deixa o mapa em ~720px no 2xl,
+          que é a medida em que a serpente da estrada ainda lê como caminho. */}
+      <div
+        ref={caminhoRef}
+        className={selecionada ? "mx-auto w-full max-w-[1180px] scroll-mt-20 lg:scroll-mt-6" : "hidden"}
+      >
       <AnimatePresence mode="wait">
         {selecionada && (
           <motion.div

@@ -20,7 +20,12 @@ import {
   criarPreferenciaCheckout,
   mpConfigurado,
 } from "@/lib/plano/mercadopago";
-import { ativarAssinatura } from "@/lib/plano/ativar";
+import {
+  buscarPreapprovalMP,
+  cancelarAssinaturaRecorrente,
+  criarAssinaturaRecorrente,
+} from "@/lib/plano/preapproval";
+import { creditarCobranca } from "@/lib/plano/ativar";
 
 export type AssinaturaPendente = {
   id: string;
@@ -92,17 +97,42 @@ export async function criarAssinaturaAction(
 
   if (error) return { error: error.message };
 
-  // Com gateway configurado, manda pro checkout hospedado do Mercado Pago
-  // (cartão/Pix, sem expor dado nenhum seu). Sem token, cai no fluxo manual —
-  // registra a intenção e o admin confirma em /admin/assinaturas.
+  // Com gateway configurado, manda pro Mercado Pago. QUAL produto do MP
+  // depende da forma de cobrança — e é aqui que estava o buraco consertado em
+  // 2026-09-16: tudo saía por `preferences` (uma cobrança só), inclusive o
+  // plano vendido como "R$ 10 por mês durante 6 meses".
+  //
+  //   • recorrente → `/preapproval`: o MP cobra o cartão todo mês sozinho;
+  //   • à vista    → `/checkout/preferences`: uma cobrança, aceita Pix.
+  //
+  // Sem token, cai no fluxo manual — registra a intenção e o admin confirma
+  // em /admin/assinaturas.
   if (mpConfigurado()) {
-    const pref = await criarPreferenciaCheckout({
-      assinaturaId: data.id,
-      opcao,
-      userEmail: user.email,
-    });
-    if ("url" in pref) return { checkoutUrl: pref.url };
-    // Falhou criar a preferência: mantém a pendente e cai no fallback manual.
+    if (opcao.forma === "recorrente") {
+      const ass = await criarAssinaturaRecorrente({
+        assinaturaId: data.id,
+        opcao,
+        userEmail: user.email,
+      });
+      if ("url" in ass) {
+        // Guarda a referência no gateway pra conferência e auditoria. Falhar
+        // aqui não pode barrar o pagamento: a busca por `external_reference`
+        // continua achando a assinatura de qualquer jeito.
+        await createAdminClient()
+          .from("assinaturas")
+          .update({ gateway_id: ass.preapprovalId })
+          .eq("id", data.id);
+        return { checkoutUrl: ass.url };
+      }
+    } else {
+      const pref = await criarPreferenciaCheckout({
+        assinaturaId: data.id,
+        opcao,
+        userEmail: user.email,
+      });
+      if ("url" in pref) return { checkoutUrl: pref.url };
+    }
+    // Falhou criar no gateway: mantém a pendente e cai no fallback manual.
   }
 
   return {
@@ -229,9 +259,13 @@ export async function conferirPagamentoAction(
         .maybeSingle();
       if (minha) {
         if (pag.status === "approved") {
-          const res = await ativarAssinatura(minha.id, "Pago via Mercado Pago");
+          const res = await creditarCobranca({
+            assinaturaId: minha.id,
+            gatewayPaymentId: paymentId,
+            observacao: "Pago via Mercado Pago",
+          });
           if ("error" in res) {
-            console.error("Erro ao ativar assinatura na volta do checkout:", res.error);
+            console.error("Erro ao creditar cobrança na volta do checkout:", res.error);
             return { estado: "processando" };
           }
           return { estado: "ativo" };
@@ -254,13 +288,38 @@ export async function conferirPagamentoAction(
   const assinaturaId = pendentes?.[0]?.id;
   if (!assinaturaId) return { estado: "sem_pendencia" };
 
+  // 2a) Assinatura recorrente: o aluno AUTORIZA o cartão e a primeira cobrança
+  // pode levar alguns minutos pra existir. Perguntar só por pagamento faria a
+  // tela dizer "não concluído" logo depois de ele ter autorizado — e ele
+  // tentaria de novo, abrindo uma segunda assinatura. Enquanto a preapproval
+  // estiver 'pending'/'authorized' sem cobrança, o estado honesto é
+  // "processando".
+  const { data: dadosAss } = await supabase
+    .from("assinaturas")
+    .select("forma, gateway_id")
+    .eq("id", assinaturaId)
+    .maybeSingle();
+
+  if (dadosAss?.forma === "recorrente" && dadosAss.gateway_id) {
+    const pre = await buscarPreapprovalMP(dadosAss.gateway_id);
+    if (pre?.status === "cancelled") {
+      return { estado: "recusado", detalhe: "A assinatura foi cancelada no Mercado Pago." };
+    }
+    if (pre && pre.status !== "authorized") return { estado: "processando" };
+  }
+
   const pagamentos = await buscarPagamentosPorReferencia(assinaturaId);
   if (!pagamentos) return { estado: "processando" };
 
-  if (pagamentos.some((p) => p.status === "approved")) {
-    const res = await ativarAssinatura(assinaturaId, "Pago via Mercado Pago");
+  const aprovado = pagamentos.find((p) => p.status === "approved");
+  if (aprovado) {
+    const res = await creditarCobranca({
+      assinaturaId,
+      gatewayPaymentId: aprovado.id,
+      observacao: "Pago via Mercado Pago",
+    });
     if ("error" in res) {
-      console.error("Erro ao ativar assinatura no polling:", res.error);
+      console.error("Erro ao creditar cobrança no polling:", res.error);
       return { estado: "processando" };
     }
     return { estado: "ativo" };
@@ -280,6 +339,62 @@ export async function conferirPagamentoAction(
 
   // Nenhum pagamento ainda: o aluno abriu o checkout e não terminou.
   return { estado: "processando" };
+}
+
+// --------------------------------------------------- cancelar a renovação
+// Parar de ser cobrado. Existe porque o plano recorrente é, agora, cobrança
+// DE VERDADE todo mês (ver lib/plano/preapproval.ts): vender uma assinatura
+// sem um botão de sair dela é o tipo de coisa que vira reclamação no cartão.
+//
+// O que ela NÃO faz: tirar o Pro. O aluno pagou o mês corrente, então
+// `plano_expira_em` fica onde está e ele usa até o fim — só não há próxima
+// cobrança.
+//
+// A fidelidade do semestral é informada, não imposta pelo código: cancelar
+// durante os 6 meses é permitido aqui, e a cobrança já feita não volta. Impor
+// de verdade exigiria reter valor, que é decisão comercial (e jurídica), não
+// de implementação — e fingir que o botão não existe seria pior.
+export async function cancelarRenovacaoAction(): Promise<
+  { ok: true; proAte: string | null } | { error: string }
+> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessão expirada." };
+
+  const { data: ass } = await supabase
+    .from("assinaturas")
+    .select("id, gateway_id, forma")
+    .eq("user_id", user.id)
+    .eq("status", "ativa")
+    .eq("forma", "recorrente")
+    .order("criada_em", { ascending: false })
+    .maybeSingle();
+
+  if (!ass) return { error: "Você não tem uma assinatura com renovação automática." };
+
+  if (ass.gateway_id && !(await cancelarAssinaturaRecorrente(ass.gateway_id))) {
+    // Falhou no gateway: NÃO marcamos como cancelada aqui. Uma linha
+    // "cancelada" no nosso banco com o cartão ainda sendo cobrado no MP é o
+    // pior dos dois mundos — o aluno acharia que parou e continuaria pagando.
+    return { error: "Não foi possível cancelar no Mercado Pago agora. Tente de novo." };
+  }
+
+  const { error } = await supabase
+    .from("assinaturas")
+    .update({ status: "cancelada" })
+    .eq("id", ass.id)
+    .eq("user_id", user.id);
+  if (error) return { error: error.message };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("plano_expira_em")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  return { ok: true, proAte: profile?.plano_expira_em ?? null };
 }
 
 // ------------------------------------------------------------- cupom de Pro

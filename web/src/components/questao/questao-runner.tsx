@@ -624,8 +624,15 @@ export function QuestaoRunner({
           type="button"
           disabled={finalizando}
           onClick={handleProximo}
-          className="group relative inline-flex flex-1 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:shadow-xl hover:shadow-emerald-600/30 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 dark:text-[#04120c]"
-          style={{ background: "linear-gradient(135deg, #10b981, #059669 60%, #047857)" }}
+          /* O gradiente esmeralda cru (#10b981 → #047857) era o único verde do
+             app fora dos tokens da marca: mais claro, mais saturado e — no
+             botão que o aluno mais aperta — o brilho que mais cansava. Agora
+             ele é a própria marca, do tom padrão ao "deep". */
+          className="group relative inline-flex flex-1 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/15 transition-all hover:shadow-xl hover:shadow-black/20 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 dark:text-[#04120c]"
+          style={{
+            background:
+              "linear-gradient(135deg, var(--questly-green), var(--questly-green-dark) 60%, var(--questly-green-deep))",
+          }}
         >
           <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
           {finalizando

@@ -3,6 +3,12 @@
 // secreto. O aluno paga no checkout hospedado do Mercado Pago (cartão de
 // crédito, Pix, etc.); o dinheiro cai na sua conta MP e NENHUM dado seu
 // aparece pro pagante. A confirmação chega pelo webhook.
+//
+// Este arquivo cuida do pagamento AVULSO (`/checkout/preferences`): uma
+// cobrança, aceita Pix. A assinatura recorrente — em que o MP cobra o cartão
+// todo mês sozinho — é outro produto do gateway e mora em `./preapproval.ts`.
+// Até 2026-09-16 os planos recorrentes também saíam por aqui, e o "R$ 10/mês
+// por 6 meses" era cobrado uma única vez de R$ 10.
 import type { OpcaoPlano } from "./plano";
 
 const MP_API = "https://api.mercadopago.com";

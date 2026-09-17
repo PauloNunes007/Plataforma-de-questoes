@@ -16,21 +16,15 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { DisciplinaPratica } from "@/lib/disciplinas/disciplinas-data";
+import { corDoCartao } from "@/lib/questly/paleta-cartoes";
 
-// Mesmos tiles sólidos vibrantes do grid de "Listas de Questões"
+// Mesmos tiles do grid de "Listas de Questões"
 // (components/questoes/disciplina-navegar-grid.tsx) — pedido explícito do
-// usuário pra bater visualmente com aquela página (CORES/iconePorNome
-// duplicados de propósito, mesma convenção do resto do repo).
-const CORES: [string, string][] = [
-  ["#5b7cf0", "#3a52c4"], // azul
-  ["#f0555a", "#c93338"], // vermelho
-  ["#3fbf78", "#279357"], // verde
-  ["#9b6ff0", "#7443d6"], // roxo
-  ["#c07a3a", "#96591f"], // marrom
-  ["#f0a23f", "#d67c1a"], // laranja
-  ["#2fb6c9", "#1a8c9c"], // teal
-  ["#4a4f5c", "#2c2f38"], // grafite
-];
+// usuário pra bater visualmente com aquela página. A cor NÃO é mais um array
+// de hex duplicado aqui: desde 2026-09-16 os dois leem a mesma rampa
+// (PALETA_CARTOES → `--cartao-N-*`), que é tema-ciente e passou pelo corte de
+// croma do repasse "está muito colorido". Só `iconePorNome` segue duplicado,
+// pela convenção de helpers por arquivo do repo.
 
 const ICONES: [RegExp, LucideIcon][] = [
   [/matemátic|cálculo|algebr/i, Calculator],
@@ -61,7 +55,7 @@ export function DisciplinaPicker({
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {disciplinas.map((d, i) => {
         const ativa = d.materiaId === selecionada;
-        const [corA, corB] = CORES[i % CORES.length];
+        const [corA, corB] = corDoCartao(i);
         const Icone = iconePorNome(d.nome);
         return (
           <motion.button

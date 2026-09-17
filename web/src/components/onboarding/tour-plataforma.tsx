@@ -138,7 +138,7 @@ export function TourPlataforma({ identidade, onFinalizar }: TourProps) {
             ) : i === cap ? (
               <motion.div
                 key={`fill-${cap}`}
-                className="h-full rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.55)]"
+                className="h-full rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.25)]"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 style={{ originX: 0 }}
@@ -152,7 +152,7 @@ export function TourPlataforma({ identidade, onFinalizar }: TourProps) {
       {/* topo: marca + pular */}
       <div className="relative z-30 flex items-center justify-between px-5 pt-4 sm:px-8">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#2dd4a0] to-[#0b7a56] shadow-[0_0_28px_rgba(45,212,160,0.4)] ring-1 ring-inset ring-white/25">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#4fbd93] to-[#0b7a56] shadow-[0_0_8px_rgba(45,212,160,0.18)] ring-1 ring-inset ring-white/25">
             <Swords size={15} strokeWidth={2.4} />
           </span>
           <span className="font-heading text-sm font-semibold tracking-tight text-white/90">Expectrum</span>
@@ -271,7 +271,7 @@ function Cenario({ ouro, rm, corCurso }: { ouro: boolean; rm: boolean; corCurso:
         className="absolute inset-0 opacity-[0.05]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+            "linear-gradient(rgba(255,255,255,0.27) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.27) 1px, transparent 1px)",
           backgroundSize: "56px 56px",
           maskImage: "radial-gradient(ellipse 80% 60% at 50% 40%, black, transparent 78%)",
         }}
@@ -282,7 +282,7 @@ function Cenario({ ouro, rm, corCurso }: { ouro: boolean; rm: boolean; corCurso:
       <motion.div
         className="absolute -left-[18%] top-[-22%] h-[62vh] w-[62vh] rounded-full blur-[110px]"
         animate={{
-          backgroundColor: ouro ? "rgba(232,185,49,0.20)" : "rgba(14,159,110,0.22)",
+          backgroundColor: ouro ? "rgba(232,185,49,0.09)" : "rgba(14,159,110,0.1)",
           x: rm ? 0 : [0, 46, 0],
           y: rm ? 0 : [0, 28, 0],
         }}
@@ -295,7 +295,7 @@ function Cenario({ ouro, rm, corCurso }: { ouro: boolean; rm: boolean; corCurso:
       <motion.div
         className="absolute -right-[16%] bottom-[-24%] h-[58vh] w-[58vh] rounded-full blur-[120px]"
         animate={{
-          backgroundColor: ouro ? "rgba(201,147,10,0.16)" : corCurso ? `${corCurso}2e` : "rgba(139,92,246,0.18)",
+          backgroundColor: ouro ? "rgba(201,147,10,0.07)" : corCurso ? `${corCurso}2e` : "rgba(139,92,246,0.08)",
           x: rm ? 0 : [0, -40, 0],
           y: rm ? 0 : [0, -30, 0],
         }}
@@ -308,7 +308,7 @@ function Cenario({ ouro, rm, corCurso }: { ouro: boolean; rm: boolean; corCurso:
       {/* facho central atrás do palco — destaca a cena como um holofote */}
       <motion.div
         className="absolute left-1/2 top-[38%] h-[46vh] w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]"
-        animate={{ backgroundColor: ouro ? "rgba(232,185,49,0.07)" : "rgba(255,255,255,0.05)" }}
+        animate={{ backgroundColor: ouro ? "rgba(232,185,49,0.03)" : "rgba(255,255,255,0.02)" }}
         transition={{ duration: 1.2 }}
       />
 
@@ -325,7 +325,7 @@ function Cenario({ ouro, rm, corCurso }: { ouro: boolean; rm: boolean; corCurso:
         ))}
 
       {/* vinheta + grão de filme */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_90%_at_50%_35%,transparent_45%,rgba(3,6,14,0.8)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_90%_at_50%_35%,transparent_45%,rgba(3,6,14,0.36)_100%)]" />
       <div className="absolute inset-0 opacity-[0.035] mix-blend-overlay" style={{ backgroundImage: GRAO }} />
     </div>
   );
@@ -349,8 +349,8 @@ function Legenda({
   tom?: "verde" | "ouro";
   delay?: number;
 }) {
-  const cor = tom === "ouro" ? "text-[#e8b931]" : "text-[#2dd4a0]";
-  const traco = tom === "ouro" ? "to-[#e8b931]/70" : "to-[#2dd4a0]/70";
+  const cor = tom === "ouro" ? "text-[#e8b931]" : "text-[#4fbd93]";
+  const traco = tom === "ouro" ? "to-[#e8b931]/70" : "to-[#4fbd93]/70";
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -386,7 +386,7 @@ function Vidro({ rm, className = "", children }: { rm: boolean; className?: stri
     >
       <div className="absolute -inset-6 -z-10 rounded-[32px] bg-white/[0.05] blur-2xl" />
       <div
-        className={`rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.09] to-white/[0.035] shadow-[0_28px_70px_-28px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl ${className}`}
+        className={`rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.09] to-white/[0.035] shadow-[0_28px_70px_-28px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-xl ${className}`}
       >
         {children}
       </div>
@@ -433,7 +433,7 @@ function CenaAbertura({ identidade, rm }: { identidade: CursoIdentidade | null; 
       >
         {/* anel de energia atrás do mascote */}
         <motion.div
-          className="absolute inset-0 -z-10 rounded-full bg-[#2dd4a0]/25 blur-2xl"
+          className="absolute inset-0 -z-10 rounded-full bg-[#4fbd93]/25 blur-2xl"
           animate={rm ? undefined : { scale: [1, 1.25, 1], opacity: [0.5, 0.9, 0.5] }}
           transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -481,7 +481,7 @@ function CenaMissao({ rm }: { rm: boolean }) {
       <Vidro rm={rm} className="p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0e9f6e]/40 to-[#0e9f6e]/15 text-[#2dd4a0] ring-1 ring-inset ring-[#2dd4a0]/25">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0e9f6e]/40 to-[#0e9f6e]/15 text-[#4fbd93] ring-1 ring-inset ring-[#4fbd93]/25">
               <Target size={17} strokeWidth={2.2} />
             </span>
             <div>
@@ -489,7 +489,7 @@ function CenaMissao({ rm }: { rm: boolean }) {
               <p className="font-heading text-sm font-semibold">Cálculo II · 3 questões · 35 min</p>
             </div>
           </div>
-          <div className="rounded-full border border-[#e8b931]/25 bg-[#e8b931]/12 px-3 py-1.5 text-xs font-bold text-[#e8b931] shadow-[0_0_18px_-4px_rgba(232,185,49,0.45)]">
+          <div className="rounded-full border border-[#e8b931]/25 bg-[#e8b931]/12 px-3 py-1.5 text-xs font-bold text-[#e8b931] shadow-[0_0_8px_-4px_rgba(232,185,49,0.2)]">
             <Zap size={11} strokeWidth={2.6} className="mr-1 inline -translate-y-px fill-current" />
             <Contador ate={18} delay={1.1} dur={2.2} rm={rm} sufixo=" XP" />
           </div>
@@ -504,14 +504,14 @@ function CenaMissao({ rm }: { rm: boolean }) {
         <div className="mt-4 flex items-center gap-3">
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-[#0e9f6e] to-[#2dd4a0] shadow-[0_0_10px_rgba(45,212,160,0.6)]"
+              className="h-full rounded-full bg-gradient-to-r from-[#0e9f6e] to-[#4fbd93] shadow-[0_0_6px_rgba(45,212,160,0.27)]"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               style={{ originX: 0 }}
               transition={{ delay: rm ? 0 : 0.9, duration: rm ? 0 : 2.6, ease: "easeInOut" }}
             />
           </div>
-          <span className="text-[11px] font-bold text-[#2dd4a0]">
+          <span className="text-[11px] font-bold text-[#4fbd93]">
             <Contador ate={100} delay={0.9} dur={2.6} rm={rm} sufixo="%" />
           </span>
         </div>
@@ -533,8 +533,8 @@ function LinhaQuestao({ nome, xp, delay, rm }: { nome: string; xp: number; delay
       animate={{
         opacity: 1,
         x: 0,
-        borderColor: ["rgba(255,255,255,0.08)", "rgba(255,255,255,0.08)", "rgba(45,212,160,0.3)"],
-        backgroundColor: ["rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(14,159,110,0.09)"],
+        borderColor: ["rgba(255,255,255,0.04)", "rgba(255,255,255,0.04)", "rgba(45,212,160,0.14)"],
+        backgroundColor: ["rgba(255,255,255,0.02)", "rgba(255,255,255,0.02)", "rgba(14,159,110,0.04)"],
       }}
       transition={{
         opacity: { delay: rm ? 0 : delay - 0.5, duration: 0.4 },
@@ -551,7 +551,7 @@ function LinhaQuestao({ nome, xp, delay, rm }: { nome: string; xp: number; delay
           transition={{ delay: d, duration: 0.25, times: [0, 0.99, 1] }}
         />
         <motion.span
-          className="absolute inset-0 flex items-center justify-center rounded-md bg-[#0e9f6e] shadow-[0_0_12px_rgba(45,212,160,0.5)]"
+          className="absolute inset-0 flex items-center justify-center rounded-md bg-[#0e9f6e] shadow-[0_0_8px_rgba(45,212,160,0.23)]"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: d, type: "spring", stiffness: 420, damping: 16 }}
@@ -564,7 +564,7 @@ function LinhaQuestao({ nome, xp, delay, rm }: { nome: string; xp: number; delay
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: [0, 1, 1], y: [6, -2, -2] }}
         transition={{ delay: d + 0.1, duration: 0.6 }}
-        className="text-[11px] font-bold text-[#2dd4a0]"
+        className="text-[11px] font-bold text-[#4fbd93]"
       >
         +{xp} XP
       </motion.span>
@@ -602,17 +602,17 @@ function CenaJornada({ rm }: { rm: boolean }) {
           <path
             d="M 30 96 C 65 96, 75 44, 110 44 S 160 92, 195 92 S 245 40, 280 40 S 321 84, 356 84"
             fill="none"
-            stroke="rgba(255,255,255,0.12)"
+            stroke="rgba(255,255,255,0.05)"
             strokeWidth="6"
             strokeLinecap="round"
           />
           <motion.path
             d="M 30 96 C 65 96, 75 44, 110 44 S 160 92, 195 92 S 245 40, 280 40 S 321 84, 356 84"
             fill="none"
-            stroke="#2dd4a0"
+            stroke="#4fbd93"
             strokeWidth="6"
             strokeLinecap="round"
-            style={{ filter: "drop-shadow(0 0 6px rgba(45,212,160,0.55))" }}
+            style={{ filter: "drop-shadow(0 0 6px rgba(45,212,160,0.25))" }}
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
             transition={{ delay: rm ? 0 : 0.5, duration: rm ? 0 : 2.8, ease: "easeInOut" }}
@@ -648,7 +648,7 @@ function CenaJornada({ rm }: { rm: boolean }) {
                   cy={m.y}
                   r={ehBoss ? 17 : 12}
                   fill={ehBoss ? "#1c1408" : "#0d2b22"}
-                  stroke={ehBoss ? "#f5a623" : "#2dd4a0"}
+                  stroke={ehBoss ? "#f5a623" : "#4fbd93"}
                   strokeWidth="2.5"
                 />
                 {ehBoss ? <SwordsSvg x={m.x} y={m.y} /> : <CheckSvg x={m.x} y={m.y} />}
@@ -699,7 +699,7 @@ function CheckSvg({ x, y }: { x: number; y: number }) {
     <path
       d={`M ${x - 4.5} ${y} l 3 3.4 l 6 -6.8`}
       fill="none"
-      stroke="#2dd4a0"
+      stroke="#4fbd93"
       strokeWidth="2.6"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -722,7 +722,7 @@ function SwordsSvg({ x, y }: { x: number; y: number }) {
 
 const PODIO = [
   { nome: "Ana", xp: 410, altura: 84, cor: "#8f8fe8", lugar: 2, delay: 0.7 },
-  { nome: "Você", xp: 540, altura: 116, cor: "#2dd4a0", lugar: 1, delay: 1.0 },
+  { nome: "Você", xp: 540, altura: 116, cor: "#4fbd93", lugar: 1, delay: 1.0 },
   { nome: "Léo", xp: 335, altura: 62, cor: "#f5a623", lugar: 3, delay: 1.3 },
 ];
 
@@ -748,7 +748,7 @@ function CenaLiga({ rm }: { rm: boolean }) {
               transition={{ delay: rm ? 0 : 0.4 + i * 0.14, duration: 0.4 }}
               className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
                 i === 2
-                  ? "bg-[#e8b931]/20 text-[#e8b931] shadow-[0_0_18px_rgba(232,185,49,0.35)]"
+                  ? "bg-[#e8b931]/20 text-[#e8b931] shadow-[0_0_8px_rgba(232,185,49,0.16)]"
                   : "bg-white/8 text-white/60"
               }`}
             >
@@ -850,8 +850,8 @@ function CenaCiencia({ rm }: { rm: boolean }) {
         <svg viewBox="0 0 390 120" className="mt-2 w-full" aria-hidden>
           <defs>
             <linearGradient id="tour-area-memoria" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#2dd4a0" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#2dd4a0" stopOpacity="0" />
+              <stop offset="0%" stopColor="#4fbd93" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#4fbd93" stopOpacity="0" />
             </linearGradient>
           </defs>
           {/* área sob a curva "com Expectrum" */}
@@ -866,7 +866,7 @@ function CenaCiencia({ rm }: { rm: boolean }) {
           <motion.path
             d="M 20 22 C 90 88, 180 102, 370 108"
             fill="none"
-            stroke="rgba(244,113,113,0.45)"
+            stroke="rgba(244,113,113,0.2)"
             strokeWidth="2.5"
             strokeDasharray="5 6"
             initial={{ pathLength: 0 }}
@@ -877,10 +877,10 @@ function CenaCiencia({ rm }: { rm: boolean }) {
           <motion.path
             d="M 20 22 C 55 52, 80 68, 105 76 L 105 30 C 150 58, 180 68, 205 74 L 205 34 C 260 56, 300 62, 330 66 L 330 38 C 350 44, 362 46, 370 48"
             fill="none"
-            stroke="#2dd4a0"
+            stroke="#4fbd93"
             strokeWidth="3"
             strokeLinecap="round"
-            style={{ filter: "drop-shadow(0 0 5px rgba(45,212,160,0.5))" }}
+            style={{ filter: "drop-shadow(0 0 5px rgba(45,212,160,0.23))" }}
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
             transition={{ delay: rm ? 0 : 0.9, duration: rm ? 0 : 3.2, ease: "easeInOut" }}
@@ -893,21 +893,21 @@ function CenaCiencia({ rm }: { rm: boolean }) {
               transition={{ delay: rm ? 0 : 1.5 + i * 0.85, type: "spring", stiffness: 340, damping: 14 }}
               style={{ transformOrigin: `${x}px ${i === 0 ? 30 : i === 1 ? 34 : 38}px` }}
             >
-              <circle cx={x} cy={i === 0 ? 30 : i === 1 ? 34 : 38} r="9" fill="#0d2b22" stroke="#2dd4a0" strokeWidth="2" />
+              <circle cx={x} cy={i === 0 ? 30 : i === 1 ? 34 : 38} r="9" fill="#0d2b22" stroke="#4fbd93" strokeWidth="2" />
               <path
                 d={`M ${x - 3.4} ${(i === 0 ? 30 : i === 1 ? 34 : 38)} l 2.3 2.6 l 4.5 -5.2`}
                 fill="none"
-                stroke="#2dd4a0"
+                stroke="#4fbd93"
                 strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </motion.g>
           ))}
-          <text x="374" y="104" textAnchor="end" fill="rgba(244,113,113,0.7)" fontSize="9" fontWeight="600">
+          <text x="374" y="104" textAnchor="end" fill="rgba(244,113,113,0.32)" fontSize="9" fontWeight="600">
             sem revisar
           </text>
-          <text x="374" y="42" textAnchor="end" fill="#2dd4a0" fontSize="9" fontWeight="700">
+          <text x="374" y="42" textAnchor="end" fill="#4fbd93" fontSize="9" fontWeight="700">
             com a Expectrum
           </text>
         </svg>
@@ -921,7 +921,7 @@ function CenaCiencia({ rm }: { rm: boolean }) {
               transition={{ delay: rm ? 0 : 2.6 + i * 0.3, duration: 0.4, ease: "easeOut" }}
               className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[11px] font-semibold text-white/75"
             >
-              <c.icone size={12} strokeWidth={2.4} className="text-[#2dd4a0]" />
+              <c.icone size={12} strokeWidth={2.4} className="text-[#4fbd93]" />
               {c.rotulo}
             </motion.span>
           ))}
@@ -954,7 +954,7 @@ function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => voi
         initial={{ opacity: 0, scale: 0.6, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 240, damping: 16, delay: 0.15 }}
-        className="relative mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f2ca55] to-[#c9930a] shadow-[0_0_44px_rgba(232,185,49,0.45)] ring-1 ring-inset ring-white/40"
+        className="relative mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f2ca55] to-[#c9930a] shadow-[0_0_26px_rgba(232,185,49,0.2)] ring-1 ring-inset ring-white/40"
       >
         <ProMark size={26} strokeWidth={2.3} className="text-[#241a03]" />
         <motion.span
@@ -1028,7 +1028,7 @@ function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => voi
           type="button"
           whileTap={{ scale: 0.97 }}
           onClick={onVerPro}
-          className="relative flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-[#f2ca55] to-[#c9930a] px-6 font-heading text-[15px] font-semibold text-[#241a03] shadow-[0_8px_32px_-8px_rgba(232,185,49,0.6)] transition-[filter] hover:brightness-105"
+          className="relative flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-[#f2ca55] to-[#c9930a] px-6 font-heading text-[15px] font-semibold text-[#241a03] shadow-[0_8px_32px_-8px_rgba(232,185,49,0.27)] transition-[filter] hover:brightness-105"
         >
           {!rm && (
             <motion.span

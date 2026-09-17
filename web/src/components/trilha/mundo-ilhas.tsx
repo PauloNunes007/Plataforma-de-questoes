@@ -1,10 +1,21 @@
 "use client";
 
-// A entrada do mundo: um tile vibrante por disciplina, IGUAL ao grid de
-// /questoes/listas (pedido explícito do usuário) — gradiente radial
-// saturado, ícone da matéria, kicker uppercase — só que com a leitura da
-// jornada por cima: % do caminho, prova/boss, mestres e selo de risco.
-// Mantém o tilt 3D do card do ranking (useMotionValue+useSpring 220/18).
+// A entrada do mundo: um tile por disciplina, IGUAL ao grid de
+// /questoes/listas (pedido explícito do usuário) — gradiente radial, ícone da
+// matéria, kicker uppercase — só que com a leitura da jornada por cima: % do
+// caminho, mestres e selo de revisão. Mantém o tilt 3D do card do ranking
+// (useMotionValue+useSpring 220/18).
+//
+// **Repasse de 2026-09-16 (cor).** A cor saía de um array de hex cru copiado
+// daqui pra mais quatro arquivos, no croma cheio ("as cores estão ardendo meus
+// olhos"). Agora vem da rampa única dos cartões (PALETA_CARTOES →
+// `--cartao-N-*`), tema-ciente e já desaturada em globals.css.
+//
+// **Repasse de 2026-09-16 (tamanho).** O tile era um QUADRADO numa grade que
+// parava em 4 colunas: num monitor largo, seis disciplinas viravam seis
+// pôsteres de ~380px e o mapa inteiro nascia abaixo da dobra. Ele agora é
+// deitado (5/4) e a grade vai até 6 colunas — a mesma informação em pouco mais
+// da metade da altura, que é o que devolve a trilha pra primeira tela.
 import { useRef } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import {
@@ -24,6 +35,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { RegiaoMapa } from "@/lib/trilha/trilha-data";
+import { corDoCartao } from "@/lib/questly/paleta-cartoes";
 
 type Props = {
   regioes: RegiaoMapa[];
@@ -31,19 +43,9 @@ type Props = {
   onSelecionar: (subjectId: string) => void;
 };
 
-// mesma paleta e heurística de ícone do disciplina-navegar-grid.tsx —
-// duplicadas de propósito (convenção do repo: helpers por arquivo)
-const CORES: [string, string][] = [
-  ["#5b7cf0", "#3a52c4"], // azul
-  ["#f0555a", "#c93338"], // vermelho
-  ["#3fbf78", "#279357"], // verde
-  ["#9b6ff0", "#7443d6"], // roxo
-  ["#c07a3a", "#96591f"], // marrom
-  ["#f0a23f", "#d67c1a"], // laranja
-  ["#2fb6c9", "#1a8c9c"], // teal
-  ["#4a4f5c", "#2c2f38"], // grafite
-];
-
+// heurística de ícone duplicada do disciplina-navegar-grid.tsx — de
+// propósito (convenção do repo: helpers por arquivo). A COR não é mais
+// duplicada: vem de corDoCartao().
 const ICONES: [RegExp, LucideIcon][] = [
   [/matemátic|cálculo|algebr/i, Calculator],
   [/física/i, Atom],
@@ -62,15 +64,18 @@ function iconePorNome(nome: string): LucideIcon {
 
 export function MundoIlhas({ regioes, selecionada, onSelecionar }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4" style={{ perspective: 1000 }}>
+    <div
+      className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+      style={{ perspective: 1000 }}
+    >
       {regioes.map((r, i) => {
         const Icone = iconePorNome(r.nome);
         return (
           <Ilha
             key={r.subjectId}
             regiao={r}
-            icone={<Icone size={32} strokeWidth={1.6} className="mb-2.5 text-white/90" />}
-            cores={CORES[i % CORES.length]}
+            icone={<Icone size={22} strokeWidth={1.7} className="mb-1.5 text-white/90" />}
+            cores={corDoCartao(i)}
             indice={i}
             ativa={r.subjectId === selecionada}
             onSelecionar={() => onSelecionar(r.subjectId)}
@@ -91,7 +96,7 @@ function Ilha({
 }: {
   regiao: RegiaoMapa;
   icone: React.ReactNode;
-  cores: [string, string];
+  cores: readonly [string, string];
   indice: number;
   ativa: boolean;
   onSelecionar: () => void;
@@ -131,7 +136,7 @@ function Ilha({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.32, delay: indice * 0.04, ease: [0.22, 1, 0.36, 1] }}
       whileTap={{ scale: 0.97 }}
-      className="group relative flex aspect-square cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl p-3 text-center shadow-md shadow-black/10 transition-shadow duration-200 will-change-transform hover:shadow-lg"
+      className="group relative flex aspect-[5/4] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl p-2.5 text-center shadow-sm shadow-black/10 transition-shadow duration-200 will-change-transform hover:shadow-md"
       style={{
         background: `radial-gradient(circle at 50% 40%, ${corA}, ${corB})`,
         rotateX: reduzir ? 0 : springX,
@@ -141,13 +146,13 @@ function Ilha({
     >
       {/* moldura interna, mais forte quando selecionada */}
       <div
-        className={`pointer-events-none absolute inset-0 rounded-2xl ring-inset transition-[box-shadow] ${
-          ativa ? "ring-[3px] ring-white/70" : "ring-1 ring-white/10 group-hover:ring-white/25"
+        className={`pointer-events-none absolute inset-0 rounded-xl ring-inset transition-[box-shadow] ${
+          ativa ? "ring-2 ring-white/70" : "ring-1 ring-white/10 group-hover:ring-white/25"
         }`}
       />
 
       {/* selos no topo */}
-      <div className="absolute left-2 right-2 top-2 flex items-start justify-between" style={{ transform: "translateZ(18px)" }}>
+      <div className="absolute left-1.5 right-1.5 top-1.5 flex items-start justify-between" style={{ transform: "translateZ(18px)" }}>
         {r.completo ? (
           <span className="inline-flex items-center gap-1 rounded-full bg-white/25 px-2 py-0.5 text-[9.5px] font-bold text-white backdrop-blur-sm">
             <Check size={10} strokeWidth={3} />
@@ -174,15 +179,15 @@ function Ilha({
 
       <div style={{ transform: "translateZ(24px)" }} className="flex flex-col items-center">
         {icone}
-        <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-white/75">Jornada de</span>
-        <span className="mt-0.5 line-clamp-2 text-[13.5px] font-bold leading-tight text-white">{r.nome}</span>
+        <span className="text-[8.5px] font-bold uppercase tracking-[0.08em] text-white/70">Jornada de</span>
+        <span className="mt-0.5 line-clamp-2 text-[12px] font-bold leading-tight text-white">{r.nome}</span>
       </div>
 
       {/* rodapé: quanto da ementa foi percorrido + aproveitamento real */}
-      <div className="absolute inset-x-3 bottom-2.5" style={{ transform: "translateZ(18px)" }}>
+      <div className="absolute inset-x-2.5 bottom-2" style={{ transform: "translateZ(18px)" }}>
         {r.temEmenta ? (
           <>
-            <div className="h-1.5 overflow-hidden rounded-full bg-black/25">
+            <div className="h-1 overflow-hidden rounded-full bg-black/25">
               <motion.div
                 className="h-full rounded-full bg-white/90"
                 initial={reduzir ? false : { width: 0 }}
@@ -190,7 +195,7 @@ function Ilha({
                 transition={{ duration: 0.8, delay: indice * 0.04, ease: [0.22, 1, 0.36, 1] }}
               />
             </div>
-            <div className="mt-1.5 flex items-center justify-between text-[9.5px] font-semibold text-white/85">
+            <div className="mt-1 flex items-center justify-between text-[9px] font-semibold text-white/85">
               <span className="tnum">{pct}%</span>
               {r.precisaoMedia != null ? (
                 <span

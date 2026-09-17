@@ -263,59 +263,72 @@
    distância entre vizinhos na ordem abaixo, pra dois tiles lado a lado
    nunca lerem como a mesma cor.
 
+   **Repasse de 2026-09-16 — croma.** A queixa foi direta: "as cores
+   estão ardendo meus olhos, está muito colorido". Numa tela que é quase
+   toda cartão, oito gradientes no croma cheio somam uma parede de tinta.
+   Todo o par teve o CROMA multiplicado por 0.62 em OKLab com a
+   LUMINOSIDADE intacta — é por isso que nenhuma medida de contraste
+   abaixo mudou de faixa (o contraste WCAG é função da luminância, e ela
+   não se mexeu): claro 5.81–6.27 com branco por cima, escuro 4.79–5.20,
+   todas AA. O matiz também ficou, então a grade continua legível como
+   oito cores distintas — só que em tom terroso/empoeirado, não em giz de
+   cera. Os dois pôsteres do hub foram pelo mesmo fator.
+
    Regra pra mexer aqui: o ponto A carrega TEXTO BRANCO (o nome da
    disciplina no tile, o rótulo na faixa). Se clarear A, meça — abaixo
    de 4.5:1 o cartão reprova em WCAG AA. Escurecer é sempre seguro.
+   Subir croma NÃO muda o contraste, mas foi exatamente o que cansava a
+   vista: mexa com parcimônia.
 
    Os dois pôsteres do hub têm gradiente próprio (bem mais fundo, de
    accent a quase-tinta) e são IGUAIS nos dois temas: um pôster
    saturado sobre o canvas claro e sobre o quase-preto funciona do
    mesmo jeito, e duplicá-lo só criaria duas verdades pra manter. */
 :root {
-  --cartao-1-a: #465caf; /* índigo */
-  --cartao-1-b: #324490;
-  --cartao-2-a: #a04318; /* terracota */
-  --cartao-2-b: #7e2f08;
-  --cartao-3-a: #02717a; /* teal */
-  --cartao-3-b: #0d565d;
-  --cartao-4-a: #9d3c63; /* vinho */
-  --cartao-4-b: #7f254b;
-  --cartao-5-a: #087736; /* verde (família da marca) */
-  --cartao-5-b: #0a5b29;
-  --cartao-6-a: #754ba0; /* violeta */
-  --cartao-6-b: #5c3582;
-  --cartao-7-a: #845a00; /* âmbar */
-  --cartao-7-b: #64450b;
-  --cartao-8-a: #006a9e; /* aço */
-  --cartao-8-b: #0a5177;
+  --cartao-1-a: #516193; /* índigo */
+  --cartao-1-b: #3b4977;
+  --cartao-2-a: #8b533c; /* terracota */
+  --cartao-2-b: #6d3d2a;
+  --cartao-3-a: #3c6c71; /* teal */
+  --cartao-3-b: #2f5257;
+  --cartao-4-a: #8a4e63; /* vinho */
+  --cartao-4-b: #6e384b;
+  --cartao-5-a: #3d7049; /* verde (família da marca) */
+  --cartao-5-b: #2e5638;
+  --cartao-6-a: #6e568a; /* violeta */
+  --cartao-6-b: #56406e;
+  --cartao-7-a: #785e37; /* âmbar */
+  --cartao-7-b: #5b482b;
+  --cartao-8-a: #3b6988; /* aço */
+  --cartao-8-b: #2e5067;
 
   /* Pôsteres do hub — a porta quente (montar sua prática) e a fria
      (listas prontas), a mesma divisão de antes, só que em bronze e
      índigo de verdade no lugar do amarelo-doce e do azul genérico.
      Branco no topo: bronze 4.76, índigo 5.09; no pé, 13+. */
-  --cartao-banco-a: #ae5e18;
-  --cartao-banco-b: #4a2408;
-  --cartao-listas-a: #4c69c4;
-  --cartao-listas-b: #1c2e76;
+  --cartao-banco-a: #9a6946;
+  --cartao-banco-b: #41291b;
+  --cartao-listas-a: #596ea5;
+  --cartao-listas-b: #26345f;
 }
 
 .dark {
-  --cartao-1-a: #5068c4;
-  --cartao-1-b: #3b50a4;
-  --cartao-2-a: #b34d1f;
-  --cartao-2-b: #923709;
-  --cartao-3-a: #0f7f89;
-  --cartao-3-b: #17636b;
-  --cartao-4-a: #af4570;
-  --cartao-4-b: #902e58;
-  --cartao-5-a: #10863f;
-  --cartao-5-b: #116a31;
-  --cartao-6-a: #8456b3;
-  --cartao-6-b: #6a3f94;
-  --cartao-7-a: #93670c;
-  --cartao-7-b: #73510d;
-  --cartao-8-a: #0078b1;
-  --cartao-8-b: #0e5e8a;
+  --cartao-1-a: #5c6da5;
+  --cartao-1-b: #465588;
+  --cartao-2-a: #9c5e45;
+  --cartao-2-b: #7e4732;
+  --cartao-3-a: #467a80;
+  --cartao-3-b: #395f64;
+  --cartao-4-a: #9a5970;
+  --cartao-4-b: #7d4258;
+  --cartao-5-a: #477e54;
+  --cartao-5-b: #386442;
+  --cartao-6-a: #7c629a;
+  --cartao-6-b: #634b7e;
+  --cartao-7-a: #866c41;
+  --cartao-7-b: #695433;
+  --cartao-8-a: #437699;
+  --cartao-8-b: #365d77;
 }
 
 @layer base {

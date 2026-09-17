@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { buscarPagamentoMP } from "@/lib/plano/mercadopago";
-import { ativarAssinatura } from "@/lib/plano/ativar";
+import { buscarCobrancaAssinaturaMP, buscarPreapprovalMP } from "@/lib/plano/preapproval";
+import { creditarCobranca } from "@/lib/plano/ativar";
 
 // Webhook do Mercado Pago. Quando um pagamento é aprovado, o MP chama esta
 // rota; nós re-consultamos o pagamento na API do MP (âncora de confiança) e,
@@ -22,6 +23,20 @@ import { ativarAssinatura } from "@/lib/plano/ativar";
 // A tela /pro também confere o pagamento por conta própria (polling +
 // conferência na volta do checkout, lib/plano/actions.ts), então há dois
 // caminhos independentes até a mesma ativação idempotente.
+//
+// **Repasse de 2026-09-16 — assinatura.** Desde que os planos recorrentes
+// passaram a ser preapproval de verdade (lib/plano/preapproval.ts), o MP manda
+// DOIS tipos de notificação, e antes só o primeiro era entendido:
+//
+//   • `payment` ................... o pagamento avulso (semestral à vista);
+//   • `subscription_authorized_payment` ... a cobrança MENSAL da assinatura.
+//     O id aqui é o do `authorized_payment`, não o do pagamento — sem tratar
+//     este tópico, o aluno seria cobrado nos meses 2..6 e o Pro dele venceria
+//     no fim do mês 1.
+//
+// Ambos terminam em `creditarCobranca`, que é idempotente pelo índice único em
+// `assinatura_pagamentos.gateway_payment_id` — o reenvio do MP e o polling da
+// tela podem chegar juntos sem creditar o mesmo mês duas vezes.
 export const runtime = "nodejs";
 
 function validarAssinatura(req: Request, dataId: string, secret: string): boolean {
@@ -74,8 +89,11 @@ export async function POST(req: Request) {
       url.searchParams.get("id") ||
       "";
 
-    // Só nos interessa notificação de pagamento; merchant_order/etc. ignoramos.
-    if (!paymentId || (tipo && !tipo.includes("payment"))) {
+    // Só nos interessa pagamento (avulso) e cobrança de assinatura;
+    // merchant_order/etc. ignoramos.
+    const ehCobrancaAssinatura = tipo.includes("subscription_authorized_payment");
+    const ehPreapproval = tipo === "subscription_preapproval" || tipo === "preapproval";
+    if (!paymentId || (tipo && !tipo.includes("payment") && !ehPreapproval)) {
       return NextResponse.json({ ok: true });
     }
 
@@ -90,10 +108,42 @@ export async function POST(req: Request) {
       );
     }
 
+    // Notificação da preapproval em si (autorizada/pausada/cancelada) não
+    // carrega dinheiro nenhum — quem paga o mês é a cobrança. Só logamos.
+    if (ehPreapproval) {
+      const pre = await buscarPreapprovalMP(paymentId);
+      console.log("Webhook de assinatura MP:", paymentId, "status:", pre?.status ?? "?");
+      return NextResponse.json({ ok: true });
+    }
+
+    // A cobrança mensal da assinatura: o id é o do `authorized_payment`, e é
+    // ELE que vira a chave de idempotência (um por mês).
+    if (ehCobrancaAssinatura) {
+      const cobranca = await buscarCobrancaAssinaturaMP(paymentId);
+      if (cobranca?.status === "approved" && cobranca.preapprovalId) {
+        const pre = await buscarPreapprovalMP(cobranca.preapprovalId);
+        if (pre?.externalReference) {
+          const res = await creditarCobranca({
+            assinaturaId: pre.externalReference,
+            gatewayPaymentId: cobranca.id,
+            observacao: "Cobrança mensal via Mercado Pago",
+          });
+          if ("error" in res) console.error("Erro ao creditar cobrança da assinatura:", res.error);
+          else if (res.jaAplicada) console.log("Cobrança já creditada antes:", cobranca.id);
+          else console.log("Mês de Pro creditado. Assinatura:", pre.externalReference);
+        }
+      }
+      return NextResponse.json({ ok: true });
+    }
+
     const pagamento = await buscarPagamentoMP(paymentId);
     if (pagamento?.status === "approved" && pagamento.externalReference) {
-      const res = await ativarAssinatura(pagamento.externalReference, "Pago via Mercado Pago");
-      if ("error" in res) console.error("Erro ao ativar assinatura pelo webhook:", res.error);
+      const res = await creditarCobranca({
+        assinaturaId: pagamento.externalReference,
+        gatewayPaymentId: paymentId,
+        observacao: "Pago via Mercado Pago",
+      });
+      if ("error" in res) console.error("Erro ao creditar pagamento pelo webhook:", res.error);
       else console.log("Pro liberado pelo webhook do MP. Assinatura:", pagamento.externalReference);
     }
 

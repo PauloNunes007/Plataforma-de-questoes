@@ -47,32 +47,41 @@ const AMP_PCT = 26; // amplitude horizontal da serpente (% da largura)
 
 // paleta do cenário (dia ↔ noite) — CSS vars lidas pelo cenario-trilha e
 // pela estrada; definidas aqui via arbitrary properties do Tailwind pra
-// ficarem 100% tema-cientes sem tocar no globals.css
+// ficarem 100% tema-cientes sem tocar no globals.css.
+//
+// **Repasse de 2026-09-16.** O vale era desenho animado: grama #b1d99b, lago
+// #7cc4e8, flores rosa-chiclete. Numa tela que o aluno encara por uma hora,
+// isso é a superfície mais luminosa e mais saturada do app inteiro — a queixa
+// ("as cores estão ardendo meus olhos") começa aqui. A paisagem foi puxada pra
+// uma aquarela: mesmos matizes, croma baixo e uma faixa de luminância bem mais
+// estreita. O que carrega informação (pegadas verdes da marca, o laranja da
+// fronteira, o traço de risco) NÃO foi tocado — ficou ainda mais evidente
+// agora que o fundo parou de competir.
 const VARS_CENARIO = [
   // gramado
-  "[--cen-grama-1:#cfe9bd] dark:[--cen-grama-1:#1d3323]",
-  "[--cen-grama-2:#b1d99b] dark:[--cen-grama-2:#16281c]",
-  "[--cen-grama-tufo:#8fbf74] dark:[--cen-grama-tufo:#2f5138]",
+  "[--cen-grama-1:#dbe3d1] dark:[--cen-grama-1:#1f2a22]",
+  "[--cen-grama-2:#c7d3bb] dark:[--cen-grama-2:#1a231d]",
+  "[--cen-grama-tufo:#a3b394] dark:[--cen-grama-tufo:#36453a]",
   // estrada
-  "[--cen-estrada:#e8cfa0] dark:[--cen-estrada:#4a3d2a]",
-  "[--cen-estrada-borda:#cfae74] dark:[--cen-estrada-borda:#5c4c33]",
-  "[--cen-estrada-centro:rgba(255,255,255,0.55)] dark:[--cen-estrada-centro:rgba(255,255,255,0.14)]",
+  "[--cen-estrada:#e4d8c2] dark:[--cen-estrada:#403829]",
+  "[--cen-estrada-borda:#cbbb9e] dark:[--cen-estrada-borda:#504632]",
+  "[--cen-estrada-centro:rgba(255,255,255,0.5)] dark:[--cen-estrada-centro:rgba(255,255,255,0.12)]",
   // vegetação
-  "[--cen-copa-1:#57b16b] dark:[--cen-copa-1:#2b5e3d]",
-  "[--cen-copa-2:#3f9457] dark:[--cen-copa-2:#224b30]",
-  "[--cen-copa-brilho:#a9e3b4] dark:[--cen-copa-brilho:#4f8a5f]",
-  "[--cen-tronco:#8a5a30] dark:[--cen-tronco:#4e301f]",
+  "[--cen-copa-1:#7a9f7f] dark:[--cen-copa-1:#39543f]",
+  "[--cen-copa-2:#63886c] dark:[--cen-copa-2:#2e4533]",
+  "[--cen-copa-brilho:#a9c3a9] dark:[--cen-copa-brilho:#537059]",
+  "[--cen-tronco:#8a6f57] dark:[--cen-tronco:#4a3a2c]",
   // água
-  "[--cen-agua:#7cc4e8] dark:[--cen-agua:#1f4a63]",
-  "[--cen-agua-luz:#c8e9f8] dark:[--cen-agua-luz:#3c7295]",
-  "[--cen-agua-borda:#5aa8d0] dark:[--cen-agua-borda:#173a4e]",
+  "[--cen-agua:#a8c4d2] dark:[--cen-agua:#2b4351]",
+  "[--cen-agua-luz:#d3e2e9] dark:[--cen-agua-luz:#456273]",
+  "[--cen-agua-borda:#8dadbd] dark:[--cen-agua-borda:#22363f]",
   // pedra / flor / sombra
-  "[--cen-pedra:#b9bfc7] dark:[--cen-pedra:#3a4149]",
-  "[--cen-pedra-luz:#e3e7ec] dark:[--cen-pedra-luz:#59626c]",
-  "[--cen-flor-a:#ffffff] dark:[--cen-flor-a:#d6d2b8]",
-  "[--cen-flor-b:#f6c6d8] dark:[--cen-flor-b:#a8748c]",
-  "[--cen-flor-miolo:#f2b83b] dark:[--cen-flor-miolo:#caa034]",
-  "[--cen-sombra:rgba(0,0,0,0.10)] dark:[--cen-sombra:rgba(0,0,0,0.32)]",
+  "[--cen-pedra:#c0c2c0] dark:[--cen-pedra:#3d4142]",
+  "[--cen-pedra-luz:#e2e4e2] dark:[--cen-pedra-luz:#585d5e]",
+  "[--cen-flor-a:#f4f2ec] dark:[--cen-flor-a:#c9c5b5]",
+  "[--cen-flor-b:#e4c9cf] dark:[--cen-flor-b:#94757e]",
+  "[--cen-flor-miolo:#d8b872] dark:[--cen-flor-miolo:#a8904e]",
+  "[--cen-sombra:rgba(0,0,0,0.08)] dark:[--cen-sombra:rgba(0,0,0,0.30)]",
 ].join(" ");
 
 type Props = {

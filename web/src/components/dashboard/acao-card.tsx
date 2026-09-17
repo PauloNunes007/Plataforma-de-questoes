@@ -21,6 +21,16 @@
 // dizia "Nada aberto no momento" — o plano dele existia no calendário e a tela
 // principal fingia que não, mandando-o remontar tudo no Banco de Questões.
 //
+// **Repasse de 2026-09-16 (d) — a primeira tela de quem acabou de chegar.**
+// No estado vazio a faixa dizia "Monte uma lista" e jogava o aluno direto no
+// Banco de Questões. Era um começo pela ponta errada: quem entra pela primeira
+// vez não sabe QUAL lista montar, e sem um plano a próxima visita cai no mesmo
+// vazio. O convite virou "monte a sua semana" → /calendario, onde ele escreve
+// o que vai fazer em cada dia; a partir daí a própria faixa passa a oferecer
+// "Começar" no bloco do dia (o estado `plano` acima), e o ciclo se fecha
+// sozinho. Montar uma lista avulsa continua a um clique, na pílula secundária
+// — perdeu a dobra, não o caminho.
+//
 // **Repasse de 2026-09-16 (c) — quem ganha a faixa.** A primeira versão dava a
 // faixa pra QUALQUER lista aberta, e o resultado foi o oposto do pedido: uma
 // lista de dias atrás parada em 6% ocupava a dobra inteira enquanto "Revisar
@@ -108,7 +118,7 @@ export function AcaoCard({
         ? "No seu plano de hoje"
         : modo === "dia"
           ? "Seu dia até agora"
-          : "Comece por onde quiser";
+          : "Comece por aqui";
 
   // O nome que o aluno deu ao bloco sobrevive à execução — é ele que titula a
   // faixa enquanto a lista corre, com a disciplina descendo pra legenda.
@@ -119,7 +129,7 @@ export function AcaoCard({
         ? naFaixa!.nome
         : modo === "dia"
           ? "Bom trabalho hoje"
-          : "Nada aberto no momento";
+          : "Monte a sua semana";
 
   const plural = (n: number, um: string, varios: string) => (n === 1 ? um : varios);
   const legenda =
@@ -135,7 +145,7 @@ export function AcaoCard({
         ? detalheDoPlano(naFaixa!)
         : modo === "dia"
           ? `${metas.questoesRespondidas} ${plural(metas.questoesRespondidas, "questão", "questões")} · ${metas.xpHoje} XP · ${metas.listasConcluidas} ${plural(metas.listasConcluidas, "lista fechada", "listas fechadas")}`
-          : "Monte uma lista com a disciplina, o assunto e o tamanho que você quiser.";
+          : "Marque no calendário o que você vai estudar em cada dia. Depois é só clicar em Começar, aqui mesmo, que a lista sai pronta.";
 
   async function comecarPlano() {
     if (!plano || iniciando) return;
@@ -169,6 +179,7 @@ export function AcaoCard({
       onComecarPlano={comecarPlano}
       cor={corCta}
       origem={origem}
+      modo={modo}
     />
   );
 
@@ -257,6 +268,17 @@ export function AcaoCard({
           desabilitado={iniciando}
           rotulo={iniciando ? "Montando lista..." : `Começar ${plano.nome}`}
           detalhe={detalheDoPlano(plano)}
+        />
+      )}
+
+      {/* O caminho antigo continua aberto, um degrau abaixo: quem já sabe o que
+          quer estudar não precisa passar pelo calendário pra isso. */}
+      {modo === "vazio" && (
+        <Secundaria
+          icone={<Sparkles size={11} strokeWidth={2.4} />}
+          href="/questoes/banco"
+          rotulo="Montar uma lista agora"
+          detalhe="disciplina, assunto e tamanho"
         />
       )}
 
@@ -351,6 +373,7 @@ function Cta({
   onComecarPlano,
   cor,
   origem,
+  modo,
 }: {
   retomar: RetomarInfo;
   plano: TarefaRow | null;
@@ -358,6 +381,7 @@ function Cta({
   onComecarPlano: () => void;
   cor: string;
   origem: string;
+  modo: "plano" | "retomar" | "dia" | "vazio";
 }) {
   const base =
     "inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl px-5 text-[14px] font-bold transition-transform hover:scale-[1.02] active:scale-[0.98] sm:w-auto";
@@ -387,6 +411,18 @@ function Cta({
         <Play size={15} strokeWidth={2.6} fill="currentColor" />
         {iniciando ? "Montando lista..." : plano.missionId ? "Continuar lista" : "Começar"}
       </button>
+    );
+  }
+
+  // Tela vazia = conta nova (ou dia sem nada marcado): o convite é planejar a
+  // semana, não sortear questões no escuro. Quem JÁ estudou hoje (modo "dia")
+  // não precisa de plano pra continuar — pra esse, a porta certa é o banco.
+  if (modo === "vazio") {
+    return (
+      <Link href="/calendario" className={`${base} bg-white shadow-lg shadow-black/20`} style={{ color: cor }}>
+        <CalendarDays size={15} strokeWidth={2.4} />
+        Montar minha semana
+      </Link>
     );
   }
 

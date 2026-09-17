@@ -311,6 +311,18 @@ function PlanoCard({
         {reais(totalSemestre)} no semestre
       </p>
 
+      {/* Como a cobrança acontece de verdade. Vale a linha extra porque as três
+          opções são materialmente diferentes no gateway e o aluno só descobria
+          isso depois de pagar: recorrente é preapproval (cartão, cobrado todo
+          mês pelo Mercado Pago), à vista é uma cobrança só e aceita Pix. */}
+      <p className="mt-1 text-[11.5px] leading-snug text-muted-foreground/85">
+        {opcao.forma === "recorrente"
+          ? opcao.ciclo === "semestral"
+            ? `6 cobranças mensais de ${reais(opcao.precoCentavos)} no cartão de crédito.`
+            : `Cobrado no cartão de crédito todo mês, até você cancelar.`
+          : "Uma cobrança só — cartão, Pix ou boleto."}
+      </p>
+
       <p className="mt-4 min-h-[2.75rem] border-t border-border pt-3.5 text-[12.5px] leading-relaxed text-muted-foreground">
         {opcao.observacao}
       </p>

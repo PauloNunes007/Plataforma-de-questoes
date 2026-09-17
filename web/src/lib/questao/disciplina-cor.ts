@@ -1,18 +1,19 @@
-// Cor determinística por disciplina pro header do card de questão.
-// Mesma família de gradientes vibrantes do disciplina-navegar-grid, mas
-// escolhida por hash do nome da matéria (não pela posição numa lista), pra
-// que a mesma disciplina tenha sempre a mesma cor em qualquer missão.
+// Cor determinística por disciplina — o header do card de questão, a faixa de
+// ação da home, o ponto no calendário e o cartão de "continuar".
+//
+// **Repasse de 2026-09-16.** Este arquivo carregava a SEXTA cópia da paleta de
+// giz de cera (`#5b7cf0`, `#f0555a`, `#f0a23f`…): hex cru, igual nos dois
+// temas, e no croma cheio que o dono resumiu como "ardendo meus olhos". Agora
+// ele consome a MESMA rampa dos cartões de /questoes (PALETA_CARTOES →
+// `--cartao-N-*` em globals.css), que é derivada em OKLCH, tem luminosidade
+// fixa, troca sozinha no tema escuro e já passou pelo corte de croma.
+//
+// O que muda de forma prática: as variantes "profundas" não podem mais ser
+// calculadas com aritmética de hex, porque a cor só existe na hora de pintar.
+// Elas viram `color-mix(in oklab, <token> N%, black)` — mesma intenção
+// (escurecer até o branco por cima passar em AA), resolvida pelo browser.
 
-const PALETA: { de: string; para: string }[] = [
-  { de: "#5b7cf0", para: "#3a52c4" }, // azul
-  { de: "#f0555a", para: "#c93338" }, // vermelho
-  { de: "#3fbf78", para: "#279357" }, // verde
-  { de: "#9b6ff0", para: "#7443d6" }, // roxo
-  { de: "#c07a3a", para: "#96591f" }, // marrom
-  { de: "#f0a23f", para: "#d67c1a" }, // laranja
-  { de: "#2fb6c9", para: "#1a8c9c" }, // teal
-  { de: "#e5578f", para: "#c13570" }, // rosa
-];
+import { PALETA_CARTOES } from "@/lib/questly/paleta-cartoes";
 
 function hashNome(nome: string): number {
   let h = 0;
@@ -32,30 +33,23 @@ export type CorDisciplina = {
   profundo: string;
 };
 
-/**
- * Multiplica o hex em direção ao preto. Os tons claros da paleta (o laranja
- * #f0a23f, por exemplo) davam ~2,1:1 com texto branco — reprovando em WCAG AA
- * no painel de ação da home. Escurecendo por fator fixo a identidade da
- * disciplina continua reconhecível e o contraste passa em todos os oito tons.
- */
-function escurecer(hex: string, fator: number): string {
-  const n = parseInt(hex.slice(1), 16);
-  const r = Math.round(((n >> 16) & 255) * fator);
-  const g = Math.round(((n >> 8) & 255) * fator);
-  const b = Math.round((n & 255) * fator);
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+/** Mistura o token em direção ao preto, na mesma proporção que o antigo
+ *  `escurecer(hex, fator)` fazia à mão. `in oklab` é o que mantém o matiz no
+ *  caminho — em sRGB a mistura acinzenta o tom no meio. */
+function afundar(cor: string, pctDaCor: number): string {
+  return `color-mix(in oklab, ${cor} ${pctDaCor}%, black)`;
 }
 
 export function corDaDisciplina(nome: string | null | undefined): CorDisciplina {
   const chave = (nome || "").trim().toLowerCase();
-  const { de, para } = PALETA[hashNome(chave) % PALETA.length];
-  const deProfundo = escurecer(de, 0.6);
-  const paraProfundo = escurecer(para, 0.72);
+  const [de, para] = PALETA_CARTOES[hashNome(chave) % PALETA_CARTOES.length];
+  const deProfundo = afundar(de, 62);
+  const paraProfundo = afundar(para, 74);
   return {
     de,
     para,
     gradiente: `linear-gradient(135deg, ${de}, ${para})`,
     gradienteProfundo: `linear-gradient(135deg, ${deProfundo}, ${paraProfundo})`,
-    profundo: escurecer(para, 0.62),
+    profundo: afundar(para, 64),
   };
 }
