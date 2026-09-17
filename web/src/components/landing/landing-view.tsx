@@ -780,6 +780,16 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
                       {n.label}
                     </a>
                   ))}
+                  {/* O acervo público é a porta de entrada de quem chega pelo
+                      Google; daqui ele também é alcançável por quem chegou
+                      pela home — e o link interno é o que diz ao buscador que
+                      aquelas páginas fazem parte deste site. */}
+                  <Link
+                    href="/provas/fisica-uff"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Provas de Física da UFF
+                  </Link>
                 </div>
               </div>
               <div>

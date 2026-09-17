@@ -15,7 +15,12 @@ const PUBLIC_ROUTES = ["/", "/login", "/verificar-email", "/descadastrar"];
 // Quem clica ainda NÃO tem conta — é o ponto todo. Prefixo, não igualdade,
 // porque o código vai no caminho. O cupom em si continua protegido pelo
 // limite de usos e pelo índice único (cupom_id, user_id), não por sessão.
-const PREFIXOS_PUBLICOS = ["/convite/"];
+// /provas/* é o acervo público de provas antigas (catálogo + uma página por
+// prova). Existe pra ser encontrado no Google por quem procura a prova, não a
+// plataforma — mandar esse visitante pro /login mataria o motivo de existir.
+// O que fica atrás da sessão é a RESPOSTA: gabarito e resolução nem são lidos
+// do banco nessas páginas (ver lib/provas/catalogo.ts).
+const PREFIXOS_PUBLICOS = ["/convite/", "/provas/"];
 
 // Arquivos de metadado gerados pelo App Router (robots.txt, sitemap.xml,
 // ícones e o card de preview do link). São pedidos SEM sessão — por crawler do

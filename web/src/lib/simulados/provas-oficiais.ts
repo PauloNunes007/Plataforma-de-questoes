@@ -91,9 +91,19 @@ export function duracaoProvaOficial(questoes: number): number {
   );
 }
 
+type OrdenavelPorProva = Pick<ProvaOficial, "ano" | "semestre" | "prova" | "materiaNome">;
+
 /** Ordena o catálogo: mais recente primeiro, e dentro do período P1 → P2 → P3
- *  (a ordem cronológica do semestre, não a alfabética). */
-export function compararProvas(a: ProvaOficial, b: ProvaOficial): number {
+ *  (a ordem cronológica do semestre, não a alfabética).
+ *
+ *  Pede só os quatro campos que de fato ordena, e não uma `ProvaOficial`
+ *  inteira: o catálogo público (lib/provas/catalogo.ts) monta um objeto mais
+ *  magro e precisa da MESMA ordem — duplicar a regra ali seria a forma óbvia
+ *  de as duas listas discordarem. */
+export function compararProvas(
+  a: OrdenavelPorProva,
+  b: OrdenavelPorProva,
+): number {
   return (
     b.ano - a.ano ||
     b.semestre - a.semestre ||

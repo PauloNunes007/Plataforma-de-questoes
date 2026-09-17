@@ -1705,6 +1705,64 @@ Todo o caminho de saída passou a escrever via `service_role`. A policy continua
 certa como está: sair de uma assinatura ativa envolve falar com o gateway e
 mexer em `profiles.plano`, e isso nunca sai do browser.
 
+## Acervo público de provas antigas (2026-09-17) — `/provas/fisica-uff`, `lib/provas/`
+
+**Pedido do dono, e é canal de aquisição, não recurso.** O contexto: ele mandou
+acesso pra amigos, eles não distribuíram, e postar propaganda em grupo de
+estudante é constrangedor — *"estou com vergonha de ficar fazendo propaganda lá
+no meio do grupo"*. A saída é inverter o sentido: em vez de a plataforma se
+anunciar onde o aluno está, ela aparece quando ele **procura pela prova**. O
+acervo de provas da UFF já existia inteiro no banco (`supabase_provas_oficiais.sql`,
+31 provas / 461 questões) e só era alcançável depois do login — ou seja, o
+melhor ativo de marketing estava trancado atrás do cadastro.
+
+- **Duas rotas, e a segunda é onde mora o tráfego.** `/provas/fisica-uff` é o
+  catálogo (uma página, uma busca genérica); `/provas/fisica-uff/[prova]` são 31
+  páginas de cauda longa, cada uma respondendo a busca que um aluno de fato
+  digita ("p2 de física 2 uff 2024"). Slug legível (`fisica-2-2023-1-p1`), não o
+  `prova_codigo` cru — `slugDaProva`/`codigoDoSlug` em `lib/provas/catalogo.ts`
+  fazem a ida e a volta, e o código reconstruído ainda passa por
+  `lerCodigoProva` + casamento contra `vw_provas_oficiais` antes de virar filtro,
+  mesma disciplina dos itens 26/27.
+- **O corte entre grátis e pago é a RESPOSTA, não a prova.** A página pública
+  mostra quantas questões a prova tem, quais tópicos da ementa ela cobra, os
+  subtópicos e **uma questão por extenso** (enunciado com KaTeX, figura,
+  alternativas). Não mostra gabarito nem resolução — e não por filtro de UI:
+  `carregarProvaPublica` **não lê essas colunas do banco**, então não existe
+  caminho (props, payload RSC, view-source) que as entregue. O enunciado já
+  circula em PDF nos grupos da turma; o que a gente acrescenta é a resolução, o
+  relógio e a catalogação — e é isso que fica do outro lado do cadastro.
+  ⚠️ **Sem cupom em lugar nenhum** (decisão explícita: o objetivo é vender).
+- **`service_role` pela mesma razão de `lib/landing/stats.ts`**: `questions` e as
+  views liberam leitura só pra `authenticated`, e quem a página serve é o
+  visitante anônimo. Leitura agregada, sem dado de aluno, em `try/catch` — o
+  catálogo vazio degrada pra estado honesto em vez de derrubar a página.
+- **`dynamicParams = false` na rota dinâmica, e isso não é detalhe.** Com o
+  padrão (`true`), `notFound()` numa rota com `revalidate` devolve a página
+  "Prova não encontrada" com **status 200** — soft 404, justo na rota que só
+  existe pra ser indexada, e o Google passaria a listar uma página de erro por
+  slug inventado. Verificado nos dois modos: em dev todo slug dava 200; no build
+  de produção com o flag, slug inválido e prova fora do acervo dão 404 de
+  verdade. O preço é que prova importada depois do build só aparece no deploy
+  seguinte — aceitável porque importar prova já é manual e raro.
+- **Encanamento de descoberta**: `PREFIXOS_PUBLICOS` em `proxy.ts` ganhou
+  `/provas/` (sem isso o crawler leva 307 pro `/login` e o site fica fora do
+  índice — mesma armadilha que criou `ARQUIVOS_PUBLICOS` no item 18); o
+  `sitemap.ts` virou `async` e lista as 31 URLs (é o que faz o Google achá-las
+  sem depender de link externo); e o rodapé da landing aponta pro catálogo, que
+  é o link interno dizendo ao buscador que aquelas páginas são deste site.
+  `robots.ts` não mudou — `/provas` nunca esteve na lista de `Disallow`.
+- **Server Components, sem framer-motion**: quem chega vem do Google, e o que
+  importa é HTML pronto e leve, não animação. A landing `/` continua sendo a
+  página com movimento.
+- **`compararProvas` foi afrouxada** pra `Pick<ProvaOficial, "ano"|"semestre"|"prova"|"materiaNome">`
+  em vez de pedir a `ProvaOficial` inteira: o catálogo público monta um objeto
+  mais magro e precisa da MESMA ordem cronológica — duplicar a regra ali seria a
+  forma óbvia das duas listas discordarem.
+- **Conferência visual**: `next build` + `next start` + Chrome headless, em
+  claro, escuro e 390px, mais a verificação de que `gabarito`/`resolucao` não
+  aparecem no HTML servido e de que os status 200/404 batem.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).
