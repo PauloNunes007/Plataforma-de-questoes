@@ -9,7 +9,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 // entrada, sem sessão. Mandar quem pediu pra sair da lista pro /login lê como
 // "estão dificultando a saída" — e a alternativa que a pessoa tem na mão é o
 // botão de spam, que queima o remetente que entrega a confirmação de cadastro.
-const PUBLIC_ROUTES = ["/", "/login", "/verificar-email", "/descadastrar"];
+const PUBLIC_ROUTES = ["/", "/login", "/verificar-email", "/descadastrar", "/parceria"];
 
 // /convite/[codigo] é o link mandado pros primeiros testadores (WhatsApp).
 // Quem clica ainda NÃO tem conta — é o ponto todo. Prefixo, não igualdade,
@@ -20,7 +20,11 @@ const PUBLIC_ROUTES = ["/", "/login", "/verificar-email", "/descadastrar"];
 // plataforma — mandar esse visitante pro /login mataria o motivo de existir.
 // O que fica atrás da sessão é a RESPOSTA: gabarito e resolução nem são lidos
 // do banco nessas páginas (ver lib/provas/catalogo.ts).
-const PREFIXOS_PUBLICOS = ["/convite/", "/provas/"];
+// /p/[codigo] é o link do parceiro, colado numa bio ou num story do Instagram:
+// quem toca não tem conta, e é justamente essa conta que o link existe pra
+// criar. Prefixo com a barra final ("/p/"), que não colide com /pro, /provas
+// nem /parceiro.
+const PREFIXOS_PUBLICOS = ["/convite/", "/provas/", "/p/"];
 
 // Arquivos de metadado gerados pelo App Router (robots.txt, sitemap.xml,
 // ícones e o card de preview do link). São pedidos SEM sessão — por crawler do

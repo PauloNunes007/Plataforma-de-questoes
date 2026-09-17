@@ -2,13 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Brain, CreditCard, FileStack, Flag, Mail, Ticket, type LucideIcon } from "lucide-react";
+import {
+  Brain,
+  CreditCard,
+  FileStack,
+  Flag,
+  Handshake,
+  Mail,
+  Ticket,
+  type LucideIcon,
+} from "lucide-react";
 
 const TABS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin/questoes", label: "Questões", icon: FileStack },
   { href: "/admin/relatos", label: "Relatos", icon: Flag },
   { href: "/admin/assinaturas", label: "Assinaturas", icon: CreditCard },
   { href: "/admin/cupons", label: "Cupons", icon: Ticket },
+  { href: "/admin/afiliados", label: "Parceiros", icon: Handshake },
   { href: "/admin/emails", label: "E-mails", icon: Mail },
   { href: "/admin/ml", label: "Modelo", icon: Brain },
 ];

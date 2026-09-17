@@ -1940,6 +1940,107 @@ melhor ativo de marketing estava trancado atrás do cadastro.
   claro, escuro e 390px, mais a verificação de que `gabarito`/`resolucao` não
   aparecem no HTML servido e de que os status 200/404 batem.
 
+## Programa de parceiros (2026-09-17) — `/parceria`, `/p/[codigo]`, `/parceiro`, `/admin/afiliados`
+
+A plataforma passou a **pagar comissão a quem a divulga** (um perfil do
+Instagram, um centro acadêmico, um monitor). Schema em `supabase_afiliados.sql`;
+as regras comerciais, num arquivo puro só (`lib/afiliados/afiliados.ts`), porque
+as telas públicas SÃO a proposta — não há PDF assinado no meio, e um "30%"
+digitado à mão numa tela vira, no dia em que a tabela mudar, uma promessa que a
+plataforma não cumpre.
+
+**O desenho, e as três decisões que o carregam:**
+
+1. **O público do parceiro ganha DIAS de Pro, não desconto** (`afiliados.dias_bonus`,
+   15 por padrão). Um dia de Pro custa ~zero de margem e vale R$ 15 aos olhos de
+   quem recebe; R$ 12 de desconto custam R$ 12 de caixa. Efeito colateral que
+   importa mais que a economia: o checkout do Mercado Pago (`lib/plano/mercadopago.ts`)
+   **não sabe que este programa existe** — nenhum preço muda, nenhuma preferência
+   ganha caso especial, e o caminho do dinheiro segue com uma variável a menos.
+2. **Faixa por volume, retroativa ao mês** (`FAIXAS`: 25% → 30% aos 10, 35% aos
+   25, 40% aos 50). Pro parceiro transforma "divulgar" em meta, e o painel diz
+   quantas vendas faltam pra faixa seguinte. Pra plataforma, 40% só é pago sobre
+   um volume que, por definição, não existiria sem ele, e o piso de 25% protege
+   a margem no caso comum. `afiliados.percentual_fixo` existe pra negociação
+   individual caber sem virar exceção no código.
+3. **Janela de 12 meses** (`afiliados.janela_meses`). O parceiro recebe pela
+   primeira compra e por cada renovação daquele aluno no período; depois disso,
+   a renovação é retenção (trabalho da plataforma), não aquisição. Comissão
+   vitalícia seria transformar aquisição em renda sobre trabalho alheio.
+
+**O caminho, ponta a ponta:**
+
+- `/p/<CODIGO>` (rota pública, `PREFIXOS_PUBLICOS`) grava o cookie `questly_ref`
+  com o código **e o instante do clique**, e conta o clique (via
+  `registrarCliqueParceiroAction`, chamada do CLIENTE — é o que mantém fora da
+  conta o prefetch do Next e os robôs de preview de link).
+- `IndicacaoAuto` (no layout protegido, gêmeo de `ConviteAutoResgate`) carimba a
+  indicação na primeira tela logada — o primeiro instante em que a linha de
+  `profiles` existe e o bônus pode ser escrito nela. Quatro recusas, todas
+  caladas pro aluno: **conta criada antes do clique** (cliente que a plataforma
+  já tinha — é o vazamento clássico e mais caro de programa de afiliado),
+  conta já indicada, auto-indicação, parceiro inativo.
+- `creditarCobranca` (`lib/plano/ativar.ts`) chama `registrarComissaoIndicacao`
+  DEPOIS de ativar o Pro, e essa função **engole os próprios erros** — mesma
+  regra do e-mail de boas-vindas: nada pendurado no caminho do dinheiro pode
+  transformar um pagamento aprovado numa tela de erro. A idempotência é do
+  banco (índice único em `afiliado_comissoes.referencia` = a linha de
+  `assinatura_pagamentos`), nunca de um filtro em JS — webhook e polling chegam
+  na mesma venda pelos dois lados.
+- `cancelarComReembolsoAction` cancela a comissão da cobrança estornada. O bônus
+  de dias do aluno **fica**: ele não veio daquela compra, e confiscá-lo puniria
+  quem exerceu um direito legal.
+- A comissão nasce `pendente` e só vira `aprovada` depois do prazo de
+  arrependimento (`DIAS_LIBERACAO` = `DIAS_ARREPENDIMENTO`): enquanto o aluno
+  pode desfazer a compra, não há venda pra dividir. A promoção é **preguiçosa**
+  (`aprovarComissoesVencidas`, na abertura do painel e no fechamento), no mesmo
+  espírito do rollover da liga — não há cron, e não precisa haver.
+- **`percentual` e `valor_centavos` ficam NULOS até o fechamento do mês**, porque
+  a faixa depende do volume do mês inteiro. Até lá o painel mostra projeção
+  (`projetarPorCompetencia`); depois, o valor gravado manda e nenhuma projeção
+  passa por cima dele. Painel do parceiro, tela do admin e fechamento usam a
+  MESMA função — se discordassem, o admin pagaria um valor que o parceiro nunca
+  viu.
+- `fecharRepasseAdminAction` agrupa o aprovado num `afiliado_pagamentos`
+  (competência = o mês do repasse, então o índice único vira a regra "um repasse
+  por mês por parceiro"), aplica a faixa **por competência** (um lote pode somar
+  meses que não bateram o piso; a faixa de setembro não pode pagar julho) e
+  **recusa abaixo de `MINIMO_REPASSE_CENTAVOS`** — o saldo acumula, que é o que
+  a proposta promete, e o fechamento varre todas as competências não pagas
+  justamente pra que acumular funcione sem ninguém lembrar.
+
+**Privacidade, que aqui é decisão de arquitetura e não de tela:** o parceiro não
+tem policy de leitura em `afiliado_indicacoes` nem nada de `profiles` de quem
+indicou. Ele vê "38 contas vieram do seu link" e "uma venda de R$ 60 em 14/09" —
+nunca quem. O painel lê agregado via `service_role` (`lib/afiliados/painel.ts`),
+o que torna essa promessa verdadeira em vez de uma convenção de UI. Comissão não
+compra o cadastro de ninguém.
+
+**Escritas sempre por `service_role`**, mesmo onde a policy do admin bastaria:
+nenhuma tabela do programa tem policy de INSERT/UPDATE pro parceiro, e a chave
+Pix é salva por `salvarChavePixAction` depois de conferir a sessão — dar UPDATE
+ao dono da linha abriria `percentual_fixo`, `dias_bonus` e `ativo` pro console do
+navegador, e o parceiro se daria 90% em duas linhas de JS.
+
+**Telas:** `/parceria` (pública, é a proposta — tabela de faixas, simulação de um
+mês, as regras inteiras, CTA por e-mail), `/p/[codigo]` (a landing do link, com
+OG próprio porque é o que aparece no story), `/parceiro` (painel: link com botão
+de copiar primeiro, dinheiro liberado × liberando × recebido, faixa do mês e
+quantas vendas faltam pra próxima, últimas vendas anônimas, chave Pix) e
+`/admin/afiliados` (cadastro, quanto devo × quanto ele trouxe, fechar repasse,
+marcar Pix como pago).
+
+**`/convite/AFILIADO` — o passeio de 1 dia.** Recrutar parceiro é vender o
+produto pra quem não vai usá-lo: a pergunta dele não é "isso me ajuda a
+estudar?", é "eu indicaria isso sem passar vergonha?". O link dá **1 dia de Pro
+completo** (cupom comum na tabela `cupons`, semeado pela migração) numa tela
+escrita pra dono de perfil (`components/afiliados/convite-afiliado-view.tsx`),
+com PRODUTO primeiro e DINHEIRO depois — uma proposta que abre em "ganhe 40%" é
+indistinguível de um esquema de DM. Um dia, e não sete, porque ele vai circular
+entre perfis e não entre alunos. O `page.tsx` de `/convite/[codigo]` desvia pra
+essa tela (e pro metadata dela) quando o código é o de parceria; o motor de
+resgate é exatamente o mesmo.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { adicionarMeses, cancelarAssinaturaRecorrente } from "./preapproval";
 import { MESES_SEMESTRE, ehPro } from "./plano";
 import { enviarBoasVindasPro } from "./boas-vindas";
+import { refManual, refPagamento, registrarComissaoIndicacao } from "@/lib/afiliados/comissao";
 
 // Ativação do Pro — a lógica compartilhada entre a confirmação manual do admin
 // (lib/admin/actions.ts), a conferência da tela /pro (lib/plano/actions.ts) e o
@@ -45,6 +46,8 @@ type AssinaturaMin = {
   ciclo: string;
   forma: string;
   status: string;
+  /** o que ESTA cobrança custa — base da comissão do parceiro que indicou. */
+  valor_centavos: number | null;
   /** id da preapproval no MP. null = não existe assinatura no gateway. */
   gateway_id: string | null;
 };
@@ -142,7 +145,7 @@ async function lerAssinatura(
 ): Promise<AssinaturaMin | null> {
   const { data } = await admin
     .from("assinaturas")
-    .select("id, user_id, ciclo, forma, status, gateway_id")
+    .select("id, user_id, ciclo, forma, status, valor_centavos, gateway_id")
     .eq("id", assinaturaId)
     .maybeSingle();
   return (data as AssinaturaMin | null) ?? null;
@@ -169,12 +172,16 @@ export async function creditarCobranca(params: {
 
   const meses = mesesPorCobranca(ass.ciclo, ass.forma);
 
-  const { error: errLog } = await admin.from("assinatura_pagamentos").insert({
-    assinatura_id: ass.id,
-    user_id: ass.user_id,
-    gateway_payment_id: params.gatewayPaymentId,
-    meses_creditados: meses,
-  });
+  const { data: linhaPagamento, error: errLog } = await admin
+    .from("assinatura_pagamentos")
+    .insert({
+      assinatura_id: ass.id,
+      user_id: ass.user_id,
+      gateway_payment_id: params.gatewayPaymentId,
+      meses_creditados: meses,
+    })
+    .select("id")
+    .single();
   if (errLog) {
     // 23505 = violação de unicidade: esta cobrança já virou tempo de Pro. Não
     // é erro — é exatamente o que o índice existe pra dizer.
@@ -185,6 +192,19 @@ export async function creditarCobranca(params: {
   // Primeira cobrança = a que sai de 'pendente'. Só ela carimba `ativada_em`.
   const res = await estenderPro(admin, ass, meses, ass.status === "pendente");
   if ("error" in res) return { error: res.error };
+
+  // Comissão do parceiro que trouxe este aluno, se houver um. Fica DEPOIS da
+  // ativação e não é esperada com `await` por acaso — é, mas o ponto é outro:
+  // a função engole os próprios erros (lib/afiliados/comissao.ts), pelo mesmo
+  // motivo do e-mail de boas-vindas. O aluno já está Pro aqui, e nada
+  // pendurado nesta linha pode desfazer isso. A chave de idempotência é a
+  // linha de `assinatura_pagamentos` que acabou de nascer: uma cobrança, uma
+  // comissão, para sempre.
+  await registrarComissaoIndicacao({
+    userId: ass.user_id,
+    referencia: refPagamento(linhaPagamento.id),
+    valorBrutoCentavos: ass.valor_centavos ?? 0,
+  });
 
   // Cinto e suspensório do semestral: o `end_date` mandado ao MP deveria parar
   // a cobrança na 6ª, mas essa é uma promessa do gateway sobre um campo que
@@ -245,6 +265,17 @@ export async function ativarAssinatura(
   const meses = mesesPorCobranca(ass.ciclo, ass.forma);
   const res = await estenderPro(admin, ass, meses, true);
   if ("error" in res) return { error: res.error };
+
+  // Uma venda confirmada à mão continua sendo uma venda: se o aluno veio de um
+  // parceiro, a comissão é dele igual. A referência é a própria assinatura
+  // (não há cobrança de gateway a apontar), e como esta função só passa daqui
+  // quando o status NÃO era 'ativa', confirmar duas vezes não paga duas vezes
+  // — e o índice único em `referencia` é o backstop.
+  await registrarComissaoIndicacao({
+    userId: ass.user_id,
+    referencia: refManual(ass.id),
+    valorBrutoCentavos: ass.valor_centavos ?? 0,
+  });
 
   await admin
     .from("assinaturas")

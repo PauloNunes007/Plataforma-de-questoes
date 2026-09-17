@@ -11,6 +11,7 @@ import { TopNav } from "@/components/top-nav";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { BotaoErroRapido } from "@/components/aprovacao/botao-erro-rapido";
 import { ConviteAutoResgate } from "@/components/plano/convite-auto-resgate";
+import { IndicacaoAuto } from "@/components/afiliados/indicacao-auto";
 
 export default async function ProtectedLayout({
   children,
@@ -82,6 +83,12 @@ export default async function ProtectedLayout({
               aqui é o primeiro ponto do fluxo em que o profile já existe e o Pro
               pode ser ligado sozinho. Sem cookie, não renderiza nada. */}
           <ConviteAutoResgate />
+
+          {/* Link de parceiro (/p/[codigo]) guardou um código no cookie: mesmo
+              momento do convite (o profile já existe), outro programa — aqui
+              nasce a indicação que paga comissão. Sem cookie, não renderiza
+              nada. */}
+          <IndicacaoAuto />
           <MobileBottomNav />
         </div>
       </NavPendenteProvider>

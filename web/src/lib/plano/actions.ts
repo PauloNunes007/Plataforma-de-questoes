@@ -34,6 +34,7 @@ import {
   recorrenteHabilitado,
 } from "@/lib/plano/preapproval";
 import { creditarCobranca } from "@/lib/plano/ativar";
+import { cancelarComissaoPorReferencia, refPagamento } from "@/lib/afiliados/comissao";
 import { enviarBoasVindasPro } from "@/lib/plano/boas-vindas";
 
 export type AssinaturaPendente = {
@@ -623,6 +624,15 @@ export async function cancelarComReembolsoAction(
     })
     .eq("id", user.id);
   if (errPerfil) console.error("Estorno feito mas o plano não foi revogado:", errPerfil);
+
+  // A venda desfeita não pode continuar valendo comissão pro parceiro que
+  // indicou. Só isso: o bônus de dias de Pro que a conta ganhou no cadastro
+  // FICA — ele não veio desta compra, e confiscá-lo puniria o aluno por
+  // exercer um direito que a lei lhe dá.
+  await cancelarComissaoPorReferencia(
+    refPagamento(cobranca.id),
+    "Compra estornada (arrependimento, CDC art. 49)",
+  );
 
   if (ass) {
     await admin
