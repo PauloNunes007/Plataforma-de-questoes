@@ -269,3 +269,77 @@ export function tomSituacao(situacao: SituacaoNota): "verde" | "amarelo" | "verm
   if (situacao === "impossivel" || situacao === "reprovado") return "vermelho";
   return "neutro";
 }
+
+/* ------------------------------------------------- projeção da próxima */
+
+// "Quanto preciso tirar no que falta" é a média necessária no CONJUNTO das
+// avaliações pendentes — e é o número certo pra decidir se o semestre fecha.
+// Mas não é a pergunta de quem está estudando hoje: essa é "quanto preciso na
+// P2?", com nome, peso e escala próprios.
+//
+// Duas leituras honestas, e a tela mostra as duas porque uma sozinha engana:
+//
+//   `precisa`  — a nota NESSA avaliação supondo que as outras pendentes saiam
+//                na mesma nota. É a média necessária, só reescalada pra escala
+//                da avaliação (uma P2 que vale 100 pede "84", não "8,4").
+//   `seTirarMaximo` — a média que ainda seria exigida no resto se ele gabaritar
+//                esta. É o piso do que vem depois: mesmo com 10 na P2, se isto
+//                der 9,5, o semestre já está apertado e ele precisa saber ANTES
+//                de fazer a P2, não depois.
+
+export type ProjecaoProxima = {
+  nome: string;
+  peso: number;
+  notaMaxima: number;
+  /** Fatia do total que esta avaliação representa (0..1). */
+  fracaoDoTotal: number;
+  /** Nota necessária nela, NA ESCALA DELA. Pode passar de `notaMaxima`. */
+  precisa: number | null;
+  /** Quantas avaliações pendentes ficam depois desta. */
+  pendentesDepois: number;
+  /** Média (0..10) ainda necessária no resto se ele gabaritar esta. null se não há resto. */
+  seTirarMaximo: number | null;
+};
+
+/**
+ * A próxima avaliação sem nota e o que ela exige.
+ *
+ * Devolve `null` quando não há o que projetar: sem avaliações, sem pendentes,
+ * ou quando a aprovação já está garantida/perdida — nesses casos o cartão já
+ * mostra o fato, e uma nota-alvo ali seria ruído.
+ */
+export function projecaoProxima(
+  avaliacoes: (AvaliacaoCalc & { nome: string })[],
+  mediaAprovacaoBruta: number,
+): ProjecaoProxima | null {
+  const validas = avaliacoes.filter((a) => a.peso > 0);
+  const proxima = validas.find((a) => a.nota == null);
+  if (!proxima) return null;
+
+  const mediaAprovacao = Number.isFinite(mediaAprovacaoBruta) ? mediaAprovacaoBruta : 6;
+  const pesoTotal = validas.reduce((s, a) => s + a.peso, 0);
+  if (pesoTotal <= 0) return null;
+
+  const lancadas = validas.filter((a) => a.nota != null);
+  const pontosFeitos = lancadas.reduce((s, a) => s + normalizar(a.nota as number, a.notaMaxima) * a.peso, 0);
+  const pesoPendente = pesoTotal - lancadas.reduce((s, a) => s + a.peso, 0);
+  if (pesoPendente <= EPS) return null;
+
+  // Média uniforme necessária no que falta, reescalada pra escala da próxima.
+  const uniforme = (mediaAprovacao * pesoTotal - pontosFeitos) / pesoPendente;
+  const precisa = (uniforme / 10) * (proxima.notaMaxima || 10);
+
+  const pesoDepois = pesoPendente - proxima.peso;
+  const seTirarMaximo =
+    pesoDepois > EPS ? (mediaAprovacao * pesoTotal - pontosFeitos - 10 * proxima.peso) / pesoDepois : null;
+
+  return {
+    nome: proxima.nome,
+    peso: proxima.peso,
+    notaMaxima: proxima.notaMaxima || 10,
+    fracaoDoTotal: proxima.peso / pesoTotal,
+    precisa,
+    pendentesDepois: validas.filter((a) => a.nota == null).length - 1,
+    seTirarMaximo: seTirarMaximo != null ? Math.max(0, seTirarMaximo) : null,
+  };
+}

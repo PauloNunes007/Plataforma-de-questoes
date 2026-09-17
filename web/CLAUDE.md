@@ -1054,6 +1054,89 @@ professor conta); `nota` é nullable de propósito — é a avaliação SEM nota
 permite responder "quanto preciso tirar", que é a metade útil da pergunta; a
 sugestão de 25% (LDB art. 47 §3º) é oferecida, nunca imposta.
 
+### Redesenho da tela (2026-09-17, mesmo dia) — grade + painel
+
+A primeira versão empilhava, **por disciplina**, uma seção com o cartão de
+faltas e o de notas lado a lado, cada um com sua lista e seus formulários
+abrindo *inline*. Com seis matérias a tela tinha seis alturas de rolagem, e
+abrir "registrar falta" na terceira empurrava tudo o que estava abaixo. O dono
+resumiu como "a pessoa tem que ficar indo pra baixo".
+
+A estrutura agora é **faixa de resumo → grade de cartões → painel**:
+
+| Arquivo | Papel |
+|---|---|
+| `materias-view.tsx` | orquestra: faixa de resumo, avisos, grade, painel |
+| `materia-cartao.tsx` | o cartão compacto de 1 disciplina (+ `Pips`/`Barra`, reusados no painel) |
+| `materia-painel.tsx` | `ModalPainel` com 3 abas (Faltas / Notas / Ajustes) |
+| `faltas-card.tsx` | `FaltasPainel` — o conteúdo da aba Faltas |
+| `notas-card.tsx` | `NotasPainel` + `AssistenteEstrutura` |
+| `ajustes-painel.tsx` | parâmetros do semestre (saiu de dentro do cartão de faltas) |
+| `tons.ts` | paleta semântica compartilhada + `fmt` |
+
+Decisões que valem lembrar:
+
+- **A disciplina aberta é derivada do array, nunca copiada pro estado**
+  (`materias.find(m => m.subjectId === abertaId)`). É isso que faz o painel se
+  atualizar sozinho no `router.refresh()` de cada gravação, em vez de exibir a
+  cópia velha até ser fechado.
+- **A aba escolhida é guardada junto com o id da disciplina**
+  (`{id, aba}`), e a aba padrão (`abaInicial`) só vale enquanto o aluno não
+  tocou nas abas *daquela* matéria — senão o refresh de cada gravação o jogaria
+  de volta pra aba sugerida no meio do que estava fazendo. Sem `useEffect`:
+  derivar no render evita a cascata de renders (a regra
+  `react-hooks/set-state-in-effect` reprova a versão com efeito).
+- **`divide-x`/`divide-y` não funciona em grid de mais de uma linha** — pinta a
+  borda de todo item menos o primeiro, então o item que ABRE a segunda linha
+  ganha uma borda esquerda solta. A faixa de resumo usa `gap-px` sobre
+  `bg-border` (hairline imune ao layout). Foi um dos bugs de CSS relatados.
+- Os pips de falta viraram **grid de colunas iguais** em vez de
+  `flex-wrap` + `flex-1`: com quebra de linha o flex esticava os pips da última
+  fileira e 7 faltas pareciam uma escala diferente de 10. `maxPips` é menor no
+  cartão (12) que no painel (20), porque o cartão tem metade da largura.
+- Faltas **além** do teto mostram o excedente como número grande ("3 além do
+  limite"), não um `0` com "faltas restantes" — o texto antigo dizia a coisa
+  errada justamente no caso mais grave.
+
+### "Quantas provas e trabalhos?" — o assistente de estrutura
+
+Também pedido do dono. Cadastrar avaliação a avaliação era onde a tela perdia o
+aluno: ele abria um formulário com "peso" e "vale até", não sabia o que o
+professor combinou em cada campo e desistia — ficando sem a única conta que veio
+buscar. Disciplina **sem nenhuma avaliação** mostra, no lugar do formulário,
+duas perguntas que ele já sabe responder de cabeça (é assim que o critério é
+apresentado no primeiro dia de aula): quantas provas, quantos trabalhos, e o
+peso de cada grupo. `criarEstruturaAvaliacoesAction` cria P1…Pn + Trabalho 1…m
+de uma vez.
+
+A prévia embaixo mostra os nomes E **quanto cada coisa vale em porcentagem** —
+é ali que ele percebe que digitou o peso errado, antes de a média ficar torta
+por um semestre inteiro. A action recusa se a disciplina já tem avaliações, e a
+checagem é no servidor, não só na UI: chamá-la direto numa disciplina cadastrada
+duplicaria a grade e envenenaria a média sem erro nenhum.
+
+### O número grande virou a nota da PRÓXIMA (`projecaoProxima`)
+
+`resumoNotas().precisaTirar` responde "que média preciso no CONJUNTO do que
+falta" — certo pra saber se o semestre fecha, mas não é a pergunta de quem está
+estudando hoje: essa é "quanto preciso **na P2**". `projecaoProxima`
+(`lib/academico/academico.ts`, puro como o resto) devolve a primeira avaliação
+sem nota com:
+
+- `precisa` — a mesma média necessária, **reescalada pra escala da avaliação**:
+  uma P2 que vale 100 pontos pede "84", não "8,4". Era um erro de leitura
+  esperando pra acontecer.
+- `seTirarMaximo` — a média que ainda seria exigida no resto se ele gabaritar
+  esta. É o piso do que vem depois: mesmo com 10 na P2, se isso der 9,5 ele
+  precisa saber ANTES de fazer a P2, não depois.
+- `fracaoDoTotal`, `pendentesDepois` — pra tela poder dizer em que hipótese o
+  número vale ("supondo a mesma nota nas outras 2 que faltam").
+
+`carregarVidaAcademica` só chama a projeção quando ainda há corrida
+(`no_caminho`/`dificil`/`sem_notas`); aprovado, impossível e reprovado já têm o
+veredito, e uma nota-alvo ali seria ruído. A média no conjunto continua na tela,
+menor, logo abaixo — as duas leituras juntas, porque uma sozinha engana.
+
 A porta de entrada no celular **não** é a barra inferior (travada em 5 abas):
 é o `MateriasRiscoCard` na coluna da direita da home + o item no menu da conta.
 O cartão existe menos por navegação e mais porque um aviso de falta só vale se

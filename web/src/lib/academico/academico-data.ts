@@ -13,9 +13,11 @@
 // errar. O volume é de um semestre de um aluno, não de um banco de questões.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
+  projecaoProxima,
   resumoNotas,
   statusFrequencia,
   type AvaliacaoCalc,
+  type ProjecaoProxima,
   type ResumoNotas,
   type StatusFrequencia,
 } from "./academico";
@@ -50,6 +52,8 @@ export type MateriaAcademica = {
   avaliacoes: AvaliacaoRow[];
   frequencia: StatusFrequencia;
   notas: ResumoNotas;
+  /** A próxima avaliação sem nota e o que ela exige. null quando não há o que projetar. */
+  proxima: ProjecaoProxima | null;
 };
 
 type SubjectRow = {
@@ -129,11 +133,13 @@ export async function carregarVidaAcademica(
     const minhasFaltas = faltasPor.get(s.id) ?? [];
     const minhasAvaliacoes = avaliacoesPor.get(s.id) ?? [];
     const mediaAprovacao = num(s.media_aprovacao, 6);
-    const paraCalculo: AvaliacaoCalc[] = minhasAvaliacoes.map((a) => ({
+    const paraCalculo: (AvaliacaoCalc & { nome: string })[] = minhasAvaliacoes.map((a) => ({
+      nome: a.nome,
       peso: a.peso,
       nota: a.nota,
       notaMaxima: a.notaMaxima,
     }));
+    const notas = resumoNotas(paraCalculo, mediaAprovacao);
 
     return {
       subjectId: s.id,
@@ -145,7 +151,13 @@ export async function carregarVidaAcademica(
       faltas: minhasFaltas,
       avaliacoes: minhasAvaliacoes,
       frequencia: statusFrequencia({ faltas: minhasFaltas, max: s.faltas_max ?? null }),
-      notas: resumoNotas(paraCalculo, mediaAprovacao),
+      notas,
+      // Só projeta a próxima quando ainda há corrida: aprovado/impossível/
+      // reprovado já têm o veredito, e uma nota-alvo ali confundiria.
+      proxima:
+        notas.situacao === "no_caminho" || notas.situacao === "dificil" || notas.situacao === "sem_notas"
+          ? projecaoProxima(paraCalculo, mediaAprovacao)
+          : null,
     };
   });
 }

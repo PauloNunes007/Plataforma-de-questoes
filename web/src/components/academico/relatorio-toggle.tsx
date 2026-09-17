@@ -50,7 +50,7 @@ export function RelatorioToggle({ inicial }: { inicial: boolean }) {
         role="switch"
         aria-checked={ligado}
         onClick={alternar}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+        className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors ${
           ligado ? "bg-questly-green" : "bg-muted-foreground/30"
         }`}
       >

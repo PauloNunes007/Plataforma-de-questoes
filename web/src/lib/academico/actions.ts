@@ -242,3 +242,79 @@ export async function definirRelatorioSemanalAction(
   if (error) return { error: error.message };
   return { ok: true };
 }
+
+/* ---------------------------------------- assistente de estrutura */
+
+/**
+ * Cria de uma vez as avaliações do semestre: N provas + M trabalhos, cada
+ * grupo com seu peso.
+ *
+ * Existe porque cadastrar avaliação a avaliação é onde a tela perdia o aluno:
+ * ele abre, vê um formulário com "peso" e "vale até", não sabe o que o
+ * professor combinou em cada campo, e desiste — ficando sem a única conta que
+ * ele veio buscar. Perguntar "quantas provas? quantos trabalhos?" é a forma
+ * como ele já pensa no critério.
+ *
+ * Só funciona na disciplina AINDA SEM avaliações, e a checagem é aqui e não só
+ * na UI: chamar a action direto numa disciplina já cadastrada duplicaria a
+ * grade inteira e envenenaria a média sem erro nenhum.
+ */
+export async function criarEstruturaAvaliacoesAction(input: {
+  subjectId: string;
+  provas: number;
+  pesoProva: number;
+  trabalhos: number;
+  pesoTrabalho: number;
+  notaMaxima: number;
+}): Promise<{ criadas: number } | { error: string }> {
+  const s = await exigirPro();
+  if ("error" in s) return s;
+  if (!(await disciplinaDoAluno(s, input.subjectId))) return { error: "Essa disciplina não é sua." };
+
+  const provas = Math.max(0, Math.min(12, Math.round(input.provas) || 0));
+  const trabalhos = Math.max(0, Math.min(12, Math.round(input.trabalhos) || 0));
+  if (provas + trabalhos === 0) return { error: "Informe ao menos uma prova ou trabalho." };
+
+  const notaMaxima = Math.max(0.1, Math.min(1000, Number(input.notaMaxima) || 10));
+  const pesoProva = Math.max(0.1, Math.min(1000, Number(input.pesoProva) || 1));
+  const pesoTrabalho = Math.max(0.1, Math.min(1000, Number(input.pesoTrabalho) || 1));
+
+  const { count } = await s.supabase
+    .from("avaliacoes")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", s.userId)
+    .eq("subject_id", input.subjectId);
+  if ((count ?? 0) > 0) {
+    return { error: "Essa disciplina já tem avaliações. Edite ou apague as existentes." };
+  }
+
+  const linhas: Record<string, unknown>[] = [];
+  for (let i = 1; i <= provas; i++) {
+    linhas.push({
+      user_id: s.userId,
+      subject_id: input.subjectId,
+      nome: provas === 1 ? "Prova" : `P${i}`,
+      peso: pesoProva,
+      nota: null,
+      nota_maxima: notaMaxima,
+      data: null,
+      ordem: linhas.length,
+    });
+  }
+  for (let i = 1; i <= trabalhos; i++) {
+    linhas.push({
+      user_id: s.userId,
+      subject_id: input.subjectId,
+      nome: trabalhos === 1 ? "Trabalho" : `Trabalho ${i}`,
+      peso: pesoTrabalho,
+      nota: null,
+      nota_maxima: notaMaxima,
+      data: null,
+      ordem: linhas.length,
+    });
+  }
+
+  const { error } = await s.supabase.from("avaliacoes").insert(linhas);
+  if (error) return { error: error.message };
+  return { criadas: linhas.length };
+}
