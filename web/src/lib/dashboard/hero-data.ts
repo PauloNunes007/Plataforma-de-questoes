@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { calcularDistintivos, type Distintivo } from "@/lib/ranking/badges";
 import { QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
+import { questlyNivelDoXp } from "@/lib/questly/shared";
 import type { NomeInsignia, TomInsignia } from "@/components/insignias/insignia";
 
 // Dados extras pro HERO da home (redesign inspirado nos prints): posição no
@@ -64,7 +65,10 @@ export async function carregarHeroDashboard(
   const tot = ac + er;
 
   const distintivos = calcularDistintivos({
-    nivel: profile?.nivel || 1,
+    // Derivado do XP (questlyNivelDoXp), não lido de `profiles.nivel`: a
+    // coluna ficou parada em 1 até supabase_ranking_fiel.sql, o que travava
+    // os distintivos de nível 5/10/20 pra todo mundo.
+    nivel: questlyNivelDoXp(meuXp),
     streakAtual: profile?.streak_atual || 0,
     questoesTotal: tot,
     numDisciplinas: (subjects || []).length,

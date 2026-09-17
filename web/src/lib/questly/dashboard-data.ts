@@ -16,7 +16,7 @@ import {
   fmtDataCurta,
   saudacaoPorHorario,
 } from "./shared";
-import { questlyGarantirSemanaLiga, QUESTLY_LIGA_INFO, type EstadoLiga } from "./liga";
+import { questlyGarantirSemanaLiga, questlySegundaDaSemana, QUESTLY_LIGA_INFO, type EstadoLiga } from "./liga";
 import { ehPro } from "@/lib/plano/plano";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
@@ -238,9 +238,24 @@ export async function carregarDadosDashboard(
       (async () => {
         const estadoLiga = await questlyGarantirSemanaLiga(supabase, user, () => createAdminClient());
         const xpSemana = estadoLiga?.xp_semana || 0;
+        // `.eq("semana_inicio", ...)` nos DOIS counts: a virada de semana é
+        // preguiçosa (sem cron), então quem não abriu o app desde segunda
+        // ainda tem o xp_semana da semana PASSADA guardado na coluna. Sem o
+        // filtro, esses pontos velhos entravam na conta e o comparativo
+        // ("você está entre os X% da semana") media o aluno contra semanas
+        // que já acabaram. Mesmo filtro que o ranking semanal usa.
+        const semanaAtual = estadoLiga?.semana_inicio ?? questlySegundaDaSemana(new Date());
         const [{ count: totalAlunos }, { count: melhores }] = await Promise.all([
-          supabase.from("profiles").select("id", { count: "exact", head: true }).gt("xp_semana", 0),
-          supabase.from("profiles").select("id", { count: "exact", head: true }).gt("xp_semana", xpSemana),
+          supabase
+            .from("profiles")
+            .select("id", { count: "exact", head: true })
+            .eq("semana_inicio", semanaAtual)
+            .gt("xp_semana", 0),
+          supabase
+            .from("profiles")
+            .select("id", { count: "exact", head: true })
+            .eq("semana_inicio", semanaAtual)
+            .gt("xp_semana", xpSemana),
         ]);
         const total = totalAlunos || 0;
         const comparativo: ComparativoSemana =

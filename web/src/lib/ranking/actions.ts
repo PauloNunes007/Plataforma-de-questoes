@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { QUESTLY_LIGAS, QUESTLY_LIGA_INFO, questlySegundaDaSemana, type Liga } from "@/lib/questly/liga";
 import { calcularDistintivos, distintivosParaCard, IDS_DISTINTIVOS, MAX_DISTINTIVOS_CARD, type Distintivo } from "@/lib/ranking/badges";
 import { ehPro } from "@/lib/plano/plano";
+import { questlyNivelDoXp } from "@/lib/questly/shared";
 import {
   buscarGrupoLiga,
   carregarRankingGlobal,
@@ -84,10 +85,15 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
   const info = QUESTLY_LIGA_INFO[ligaAtual] || QUESTLY_LIGA_INFO.bronze;
 
   const questoesTotal = profile.questoes_total || 0;
+  // Nível é uma LEITURA do XP, nunca um contador à parte — ver
+  // questlyNivelDoXp / supabase_ranking_fiel.sql. `profiles.nivel` existe e
+  // é mantida em dia pela economia, mas quem manda na tela é o XP: assim o
+  // card não depende da migração ter rodado pra mostrar o número certo.
+  const nivel = questlyNivelDoXp(profile.xp_total);
   const acertosTotal = (perfilAcertos as { acertos_total?: number } | null)?.acertos_total ?? null;
 
   const distintivos = calcularDistintivos({
-    nivel: profile.nivel || 1,
+    nivel,
     streakAtual: profile.streak_atual || 0,
     questoesTotal: profile.questoes_total || 0,
     numDisciplinas: disciplinas.length,
@@ -104,7 +110,7 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
     ligaNome: info.nome,
     xpSemana: profile.xp_semana || 0,
     xpTotal: profile.xp_total || 0,
-    nivel: profile.nivel || 1,
+    nivel,
     streakAtual: profile.streak_atual || 0,
     questoesTotal: profile.questoes_total || 0,
     acertosTotal: acertosTotal ?? 0,
@@ -136,7 +142,7 @@ export async function buscarRankingLigaAction(liga: Liga): Promise<GrupoLiga> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { grupo: [], hint: "" };
+  if (!user) return { grupo: [], hint: "", totalNaLiga: 0, voce: null };
 
   const semanaInicio = questlySegundaDaSemana(new Date());
   return buscarGrupoLiga(supabase, liga, semanaInicio, user.id);
@@ -169,7 +175,7 @@ export async function salvarDistintivosCardAction(ids: string[]): Promise<{ ok: 
   const [{ data: profile }, { data: subjects }, { data: historico }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("nivel, streak_atual, questoes_total, liga")
+      .select("xp_total, streak_atual, questoes_total, liga")
       .eq("id", user.id)
       .single(),
     supabase.from("subjects").select("id").eq("user_id", user.id),
@@ -182,7 +188,7 @@ export async function salvarDistintivosCardAction(ids: string[]): Promise<{ ok: 
   const melhorIndice = (historico || []).reduce((max, h) => Math.max(max, indicePorLiga(h.liga)), indicePorLiga(ligaAtual));
 
   const distintivos = calcularDistintivos({
-    nivel: profile.nivel || 1,
+    nivel: questlyNivelDoXp(profile.xp_total),
     streakAtual: profile.streak_atual || 0,
     questoesTotal: profile.questoes_total || 0,
     numDisciplinas: (subjects || []).length,

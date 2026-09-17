@@ -64,6 +64,11 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
   const [ligaSelecionada, setLigaSelecionada] = useState<Liga>(dados.liga);
   const [grupoAtivo, setGrupoAtivo] = useState<RankingRow[]>(dados.grupo);
   const [hintAtivo, setHintAtivo] = useState(dados.hint);
+  const [totalNaLiga, setTotalNaLiga] = useState(dados.totalNaLiga);
+  // A linha do proprio aluno vem do SERVIDOR (ranking-data), nao de um
+  // findIndex no array: fora do Top 100 ele nao esta no array, e mesmo
+  // dentro dele a posicao correta e a por competicao, nao o indice.
+  const [voceNaLiga, setVoceNaLiga] = useState<RankingRow | null>(dados.voce);
   const [carregandoGrupo, setCarregandoGrupo] = useState(false);
 
   const buscarGlobal = useCallback(async (modo: ModoGlobal) => {
@@ -140,6 +145,8 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
       setLigaSelecionada(liga);
       setGrupoAtivo(dados.grupo);
       setHintAtivo(dados.hint);
+      setTotalNaLiga(dados.totalNaLiga);
+      setVoceNaLiga(dados.voce);
       return;
     }
     setLigaSelecionada(liga);
@@ -147,16 +154,21 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
     const resultado = await buscarRankingLigaAction(liga);
     setGrupoAtivo(resultado.grupo);
     setHintAtivo(resultado.hint);
+    setTotalNaLiga(resultado.totalNaLiga);
+    setVoceNaLiga(resultado.voce);
     setCarregandoGrupo(false);
   }
 
   const podio = grupoAtivo.length >= 3 ? grupoAtivo.slice(0, 3) : [];
   const resto = grupoAtivo.length >= 3 ? grupoAtivo.slice(3) : grupoAtivo;
 
+  // Fixa a linha "Você" sempre que ela existe e não está no pódio —
+  // inclusive quando o aluno caiu fora do Top 100 exibido, que é justamente
+  // quando ele mais precisa vê-la.
   const indiceVoce = grupoAtivo.findIndex((a) => a.ehVoce);
-  const posicaoVoce = indiceVoce >= 0 ? indiceVoce + 1 : 0;
-  // Só fixa a linha "Você" quando o aluno existe no grupo E não está no pódio.
-  const vocePinado = indiceVoce >= podio.length ? grupoAtivo[indiceVoce] : null;
+  const voceNoPodio = indiceVoce >= 0 && indiceVoce < podio.length;
+  const vocePinado = voceNaLiga && !voceNoPodio ? voceNaLiga : null;
+  const voceForaDaLista = !!voceNaLiga && indiceVoce === -1;
 
   const globalAtivo = aba === "geral" || aba === "semana" ? globais[aba] : null;
 
@@ -183,8 +195,8 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
             titulo={aba === "geral" ? "Ranking Geral" : "Ranking da Semana"}
             subtitulo={
               aba === "geral"
-                ? `Top 100 por XP total · ${globalAtivo.totalAlunos.toLocaleString("pt-BR")} alunos`
-                : `Considera a experiência acumulada de ${periodoSemanaAtual()}`
+                ? `Top 100 por XP total · ${globalAtivo.totalAlunos.toLocaleString("pt-BR")} alunos com XP`
+                : `Top 100 por XP de ${periodoSemanaAtual()} · ${globalAtivo.totalAlunos.toLocaleString("pt-BR")} alunos nessa semana`
             }
           />
           <RankingGlobalView
@@ -272,19 +284,19 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
               <div className="mb-8 grid grid-cols-3 items-end gap-3 px-1 sm:gap-5">
                 <PodiumSlot
                   aluno={podio[1]}
-                  posicao={2}
+                  slot={2}
                   liga={ligaSelecionada}
                   onClick={() => abrirCard(podio[1].id)}
                 />
                 <PodiumSlot
                   aluno={podio[0]}
-                  posicao={1}
+                  slot={1}
                   liga={ligaSelecionada}
                   onClick={() => abrirCard(podio[0].id)}
                 />
                 <PodiumSlot
                   aluno={podio[2]}
-                  posicao={3}
+                  slot={3}
                   liga={ligaSelecionada}
                   onClick={() => abrirCard(podio[2].id)}
                 />
@@ -296,7 +308,9 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
             {vocePinado && (
               <PinnedVoce
                 aluno={vocePinado}
-                posicao={posicaoVoce}
+                posicao={vocePinado.posicao}
+                foraDaLista={voceForaDaLista}
+                totalNaLiga={totalNaLiga}
                 onClick={() => abrirCard(vocePinado.id)}
               />
             )}
@@ -314,11 +328,11 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
               </div>
             ) : (
               <div className="flex flex-col gap-2.5">
-                {resto.map((aluno, i) => (
+                {resto.map((aluno) => (
                   <RankRow
                     key={aluno.id}
                     aluno={aluno}
-                    posicao={podio.length > 0 ? i + 4 : i + 1}
+                    posicao={aluno.posicao}
                     onClick={() => abrirCard(aluno.id)}
                   />
                 ))}
@@ -377,26 +391,31 @@ const PEDESTAL_ALTURA: Record<1 | 2 | 3, string> = {
   3: "h-[68px]",
 };
 
+// `slot` é a VAGA do pedestal (1 = centro dourado, 2 = esquerda, 3 =
+// direita), puro visual. O número exibido é `aluno.posicao`, a posição por
+// competição que o servidor calculou — dois empatados no topo mostram "1"
+// os dois, e é assim que a virada de semana vai tratá-los.
 function PodiumSlot({
   aluno,
-  posicao,
+  slot,
   liga,
   onClick,
 }: {
   aluno: RankingRow;
-  posicao: 1 | 2 | 3;
+  slot: 1 | 2 | 3;
   liga: Liga;
   onClick: () => void;
 }) {
-  const destaque = posicao === 1;
+  const destaque = slot === 1;
   const tamanhoAvatar = destaque ? 68 : 54;
-  const metal = POS_METAL[posicao - 1];
+  const metal = POS_METAL[slot - 1];
+  const posicao = aluno.posicao;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: posicao * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, delay: slot * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="flex flex-col items-center"
     >
       <button
@@ -452,7 +471,7 @@ function PodiumSlot({
 
       {/* Pilar do pódio */}
       <div
-        className={`relative mt-3 flex w-full items-start justify-center rounded-t-xl bg-gradient-to-b pt-3 shadow-[inset_0_2px_6px_rgba(255,255,255,0.35)] ${metal} ${PEDESTAL_ALTURA[posicao]}`}
+        className={`relative mt-3 flex w-full items-start justify-center rounded-t-xl bg-gradient-to-b pt-3 shadow-[inset_0_2px_6px_rgba(255,255,255,0.35)] ${metal} ${PEDESTAL_ALTURA[slot]}`}
       >
         <span className="tnum font-heading text-3xl font-bold text-black/45">{posicao}</span>
       </div>
@@ -463,13 +482,18 @@ function PodiumSlot({
 function PinnedVoce({
   aluno,
   posicao,
+  foraDaLista,
+  totalNaLiga,
   onClick,
 }: {
   aluno: RankingRow;
   posicao: number;
+  foraDaLista: boolean;
+  totalNaLiga: number;
   onClick: () => void;
 }) {
   return (
+    <>
     <motion.button
       type="button"
       onClick={onClick}
@@ -516,6 +540,13 @@ function PinnedVoce({
         )}
       </div>
     </motion.button>
+    {foraDaLista && (
+      <p className="mb-5 -mt-3 text-center text-[11.5px] text-muted-foreground">
+        Você está em {posicao.toLocaleString("pt-BR")}º de {totalNaLiga.toLocaleString("pt-BR")} na liga —
+        fora dos 100 exibidos aqui.
+      </p>
+    )}
+    </>
   );
 }
 

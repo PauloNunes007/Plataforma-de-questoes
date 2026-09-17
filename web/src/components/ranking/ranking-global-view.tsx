@@ -62,9 +62,9 @@ export function RankingGlobalView({
       {/* Pódio */}
       {podio.length > 0 && (
         <div className="mb-8 grid grid-cols-3 items-end gap-3 px-1 sm:gap-5">
-          <PodiumGlobal aluno={podio[1]} posicao={2} onClick={() => onAbrirCard(podio[1].id)} />
-          <PodiumGlobal aluno={podio[0]} posicao={1} onClick={() => onAbrirCard(podio[0].id)} />
-          <PodiumGlobal aluno={podio[2]} posicao={3} onClick={() => onAbrirCard(podio[2].id)} />
+          <PodiumGlobal aluno={podio[1]} slot={2} onClick={() => onAbrirCard(podio[1].id)} />
+          <PodiumGlobal aluno={podio[0]} slot={1} onClick={() => onAbrirCard(podio[0].id)} />
+          <PodiumGlobal aluno={podio[2]} slot={3} onClick={() => onAbrirCard(podio[2].id)} />
         </div>
       )}
 
@@ -91,7 +91,13 @@ export function RankingGlobalView({
 
       {/* Sua posição — sempre fixada no topo da lista (estilo print) */}
       {dados.voce && (
-        <PinnedVoce aluno={dados.voce} foraDoTop={dados.foraDoTop} onClick={() => onAbrirCard(dados.voce!.id)} />
+        <PinnedVoce
+          aluno={dados.voce}
+          foraDoTop={dados.foraDoTop}
+          semPontuacao={dados.semPontuacao}
+          totalAlunos={dados.totalAlunos}
+          onClick={() => onAbrirCard(dados.voce!.id)}
+        />
       )}
 
       {dados.linhas.length === 0 ? (
@@ -127,23 +133,28 @@ export function RankingGlobalView({
   );
 }
 
+// `slot` é a VAGA do pedestal (1 = centro alto e dourado, 2 = esquerda,
+// 3 = direita) — puro visual. O número que aparece é `aluno.posicao`, a
+// posição por competição vinda do servidor: com empate no topo, os três
+// pedestais podem legitimamente mostrar "1".
 function PodiumGlobal({
   aluno,
-  posicao,
+  slot,
   onClick,
 }: {
   aluno: RankingGlobalRow;
-  posicao: 1 | 2 | 3;
+  slot: 1 | 2 | 3;
   onClick: () => void;
 }) {
-  const destaque = posicao === 1;
-  const metal = POS_METAL[posicao - 1];
+  const destaque = slot === 1;
+  const metal = POS_METAL[slot - 1];
+  const posicao = aluno.posicao;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: posicao * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, delay: slot * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="flex flex-col items-center"
     >
       <button type="button" onClick={onClick} className="group flex cursor-pointer flex-col items-center gap-2">
@@ -194,7 +205,7 @@ function PodiumGlobal({
       </button>
 
       <div
-        className={`relative mt-3 flex w-full items-start justify-center rounded-t-xl bg-gradient-to-b pt-3 shadow-[inset_0_2px_6px_rgba(255,255,255,0.35)] ${metal} ${PEDESTAL_ALTURA[posicao]}`}
+        className={`relative mt-3 flex w-full items-start justify-center rounded-t-xl bg-gradient-to-b pt-3 shadow-[inset_0_2px_6px_rgba(255,255,255,0.35)] ${metal} ${PEDESTAL_ALTURA[slot]}`}
       >
         <span className="tnum font-heading text-3xl font-bold text-black/45">{posicao}</span>
       </div>
@@ -205,10 +216,14 @@ function PodiumGlobal({
 function PinnedVoce({
   aluno,
   foraDoTop,
+  semPontuacao,
+  totalAlunos,
   onClick,
 }: {
   aluno: RankingGlobalRow;
   foraDoTop: boolean;
+  semPontuacao: boolean;
+  totalAlunos: number;
   onClick: () => void;
 }) {
   return (
@@ -222,7 +237,12 @@ function PinnedVoce({
         className="flex w-full cursor-pointer items-center gap-3.5 rounded-2xl border-2 border-questly-red/50 bg-questly-red-light/40 px-4 py-4 text-left"
       >
         <div className="w-12 shrink-0 text-center">
-          <span className="tnum text-[17px] font-bold text-questly-red-dark">{aluno.posicao}º</span>
+          {/* Sem XP nesse recorte não existe posição. Mostrar "1º" (ou o
+              último lugar) seria inventar um número: o aluno não está mal
+              colocado, ele ainda não entrou na disputa. */}
+          <span className="tnum text-[17px] font-bold text-questly-red-dark">
+            {semPontuacao ? "—" : `${aluno.posicao}º`}
+          </span>
         </div>
         <RankAvatar
           nome={aluno.username || aluno.nome}
@@ -246,11 +266,16 @@ function PinnedVoce({
           <span className="ml-1 text-[10px] font-medium text-muted-foreground">XP</span>
         </div>
       </motion.button>
-      {foraDoTop && (
+      {semPontuacao ? (
         <p className="mt-2 text-center text-[11.5px] text-muted-foreground">
-          Sua posição está fora do Top 100 desta lista.
+          Responda questões pra entrar nesta lista.
         </p>
-      )}
+      ) : foraDoTop ? (
+        <p className="mt-2 text-center text-[11.5px] text-muted-foreground">
+          Você está em {aluno.posicao.toLocaleString("pt-BR")}º de {totalAlunos.toLocaleString("pt-BR")} — fora do
+          Top 100 exibido aqui.
+        </p>
+      ) : null}
     </div>
   );
 }

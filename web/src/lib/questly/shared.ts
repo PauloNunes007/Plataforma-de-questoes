@@ -134,6 +134,48 @@ export function questlyXpDaResposta(e: EntradaXpResposta): number {
   return Math.max(1, Math.round(xp * questlyMultiplicadorCombo(e.acertosSeguidos)));
 }
 
+// ---------------------------------------------------------------------------
+// NÍVEL — uma leitura do XP, nunca um contador à parte
+// ---------------------------------------------------------------------------
+// XP acumulado pra CHEGAR no nível n = QUESTLY_XP_PASSO_NIVEL * n * (n-1):
+//   N2=50  N3=150  N5=500  N10=2.250  N20=9.500  N30=21.750
+// A curva é quadrática de propósito: com nível linear (o que o seed de
+// teste fazia, xp/1750) o número na tela não diz nada que o XP já não
+// dissesse. Aqui cada nível custa mais que o anterior, então "nível 10"
+// é uma conquista e não uma divisão.
+//
+// ESTE CÁLCULO TEM GÊMEO NO BANCO: questly_nivel_do_xp
+// (supabase_ranking_fiel.sql), que mantém profiles.nivel em dia. As duas
+// pontas TÊM que dar o mesmo número — se mexer na constante aqui, mexa lá.
+export const QUESTLY_XP_PASSO_NIVEL = 25;
+
+export function questlyNivelDoXp(xpTotal: number | null | undefined): number {
+  const xp = Math.max(0, xpTotal || 0);
+  return Math.max(1, Math.floor((1 + Math.sqrt(1 + (4 * xp) / QUESTLY_XP_PASSO_NIVEL)) / 2));
+}
+
+/** XP acumulado necessário pra chegar no nível n (n >= 1). */
+export function questlyXpDoNivel(nivel: number): number {
+  const n = Math.max(1, Math.floor(nivel));
+  return QUESTLY_XP_PASSO_NIVEL * n * (n - 1);
+}
+
+/** Barra de progresso do nível: quanto já andou dentro do nível atual. */
+export function questlyProgressoNivel(xpTotal: number | null | undefined) {
+  const xp = Math.max(0, xpTotal || 0);
+  const nivel = questlyNivelDoXp(xp);
+  const piso = questlyXpDoNivel(nivel);
+  const teto = questlyXpDoNivel(nivel + 1);
+  const faixa = Math.max(1, teto - piso);
+  return {
+    nivel,
+    xpNoNivel: xp - piso,
+    xpDoNivel: faixa,
+    xpParaProximo: Math.max(0, teto - xp),
+    fracao: Math.min(1, Math.max(0, (xp - piso) / faixa)),
+  };
+}
+
 // Mastery learning: "Mestre" num tópico com taxa_acerto >= 90% e volume
 // mínimo de 20 questões respondidas.
 export const QUESTLY_MAESTRIA_TAXA = 0.9;

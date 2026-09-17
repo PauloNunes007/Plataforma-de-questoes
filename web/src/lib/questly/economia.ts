@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { questlyGarantirSemanaLiga } from "@/lib/questly/liga";
-import { addDias, questlyHojeISO, toISODate } from "@/lib/questly/shared";
+import { addDias, questlyHojeISO, questlyNivelDoXp, toISODate } from "@/lib/questly/shared";
 
 // Economia de gamificação — os writes de XP/liga/streak em `profiles`.
 // Extraído de lib/questao/actions.ts pra poder ser reutilizado por outros
@@ -13,6 +13,27 @@ import { addDias, questlyHojeISO, toISODate } from "@/lib/questly/shared";
 // o `supabase` recebido DEVE ser o cliente admin (createAdminClient), e o
 // caller DEVE ter validado a sessão/autorização antes.
 
+/**
+ * Paga o XP de uma lista fechada e realinha os contadores públicos do
+ * aluno (os que o ranking mostra).
+ *
+ * O trabalho de verdade acontece DENTRO do banco, em
+ * `questly_registrar_progresso` (supabase_ranking_fiel.sql), por dois
+ * motivos que o caminho antigo — SELECT, somar em JS, UPDATE — não tinha
+ * como resolver:
+ *
+ * 1. XP somado no UPDATE é atômico. Antes, duas listas fechadas ao mesmo
+ *    tempo liam o mesmo xp_total e a segunda sobrescrevia a primeira: o
+ *    aluno via o XP na tela de resultado e ele não chegava no ranking.
+ * 2. questoes_total/acertos_total/questoes_semana são RECOMPUTADOS de
+ *    question_attempts, não incrementados. Incrementar só no fechamento
+ *    perdia tudo que o aluno respondeu numa lista abandonada — e era por
+ *    isso que a home (que conta as tentativas direto) e o card do ranking
+ *    (que lia o contador) mostravam números diferentes pro mesmo aluno.
+ *
+ * `acertos`/`erros` continuam na assinatura porque o fallback abaixo
+ * precisa deles; no caminho normal quem conta é o banco.
+ */
 export async function atualizarXpELiga(
   supabase: SupabaseClient,
   userId: string,
@@ -20,8 +41,33 @@ export async function atualizarXpELiga(
   erros: number,
   xpGanho: number,
 ) {
+  // A virada de semana tem que vir ANTES: é ela que zera xp_semana e move
+  // semana_inicio. Somar em cima de um xp_semana da semana passada era
+  // creditar XP desta semana na liga da anterior.
   const estado = await questlyGarantirSemanaLiga(supabase, { id: userId });
 
+  const { error } = await supabase.rpc("questly_registrar_progresso", {
+    p_user_id: userId,
+    p_xp: xpGanho,
+    p_semana_inicio: estado?.semana_inicio ?? null,
+  });
+  if (!error) return;
+
+  // Banco sem supabase_ranking_fiel.sql ainda: cai no caminho antigo pra
+  // não perder o XP do aluno. Ele tem a corrida descrita acima — é um
+  // paliativo até a migração rodar, não uma alternativa.
+  console.error("questly_registrar_progresso indisponível, usando o caminho antigo:", error);
+  await atualizarXpELigaLegado(supabase, userId, acertos, erros, xpGanho, estado);
+}
+
+async function atualizarXpELigaLegado(
+  supabase: SupabaseClient,
+  userId: string,
+  acertos: number,
+  erros: number,
+  xpGanho: number,
+  estado: { xp_semana?: number; questoes_semana?: number } | null,
+) {
   const { data: profile } = await supabase
     .from("profiles")
     .select("xp_total, questoes_total")
@@ -45,6 +91,7 @@ export async function atualizarXpELiga(
     .from("profiles")
     .update({
       xp_total: novoXpTotal,
+      nivel: questlyNivelDoXp(novoXpTotal),
       xp_semana: novoXpSemana,
       questoes_semana: novasQuestoesSemana,
       questoes_total: novasQuestoesTotal,
@@ -61,6 +108,7 @@ export async function atualizarXpELiga(
       .from("profiles")
       .update({
         xp_total: novoXpTotal,
+        nivel: questlyNivelDoXp(novoXpTotal),
         xp_semana: novoXpSemana,
         questoes_semana: novasQuestoesSemana,
         questoes_total: novasQuestoesTotal,

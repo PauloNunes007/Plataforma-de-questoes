@@ -38,20 +38,50 @@ export function questlySegundaDaSemana(d: Date): string {
   );
 }
 
-export function questlyDestinoNaLiga(xps: number[], meuXp: number, indiceLiga: number): -1 | 0 | 1 {
-  const n = xps.length;
-  if (n < 2) return 0;
+/**
+ * A regra de promoção/rebaixamento, escrita sobre AGREGADOS em vez de
+ * sobre o array inteiro de XPs.
+ *
+ * Existe porque a tela de Divisão passou a mostrar só o Top 100 (uma liga
+ * com 1.500 alunos não cabe numa página, e o teto de 1.000 linhas do
+ * PostgREST truncava a lista em silêncio — ver supabase_escala_lancamento.sql).
+ * Sem esta versão, as zonas verde/vermelha seriam calculadas em cima das
+ * 100 linhas carregadas e diriam a coisa errada: com 1.500 na liga, "30%
+ * sobem" são 450 pessoas, não 30.
+ *
+ * `euEAbaixo` sai de `n - estritamenteAcima` porque a lista vem ordenada:
+ * todo mundo com XP maior que o meu está acima de mim, e o resto (eu
+ * incluído) está empatado ou abaixo.
+ */
+export function questlyDestinoPorAgregado(e: {
+  /** total de participantes da liga na semana */
+  n: number;
+  /** quantos pontuaram (xp_semana > 0) */
+  ativos: number;
+  /** quantos têm XP ESTRITAMENTE maior que o meu */
+  estritamenteAcima: number;
+  meuXp: number;
+  indiceLiga: number;
+}): -1 | 0 | 1 {
+  if (e.n < 2) return 0;
 
-  const ativos = xps.filter((x) => x > 0).length;
-  const cotaSubir = Math.min(ativos, Math.max(1, Math.round(n * QUESTLY_FRACAO_PROMOCAO)));
-  const cotaCair = n >= QUESTLY_MIN_GRUPO_REBAIXAMENTO ? Math.round(n * QUESTLY_FRACAO_REBAIXAMENTO) : 0;
+  const cotaSubir = Math.min(e.ativos, Math.max(1, Math.round(e.n * QUESTLY_FRACAO_PROMOCAO)));
+  const cotaCair = e.n >= QUESTLY_MIN_GRUPO_REBAIXAMENTO ? Math.round(e.n * QUESTLY_FRACAO_REBAIXAMENTO) : 0;
+  const euEAbaixo = e.n - e.estritamenteAcima;
 
-  const estritamenteAcima = xps.filter((x) => x > meuXp).length;
-  const euEAbaixo = xps.filter((x) => x <= meuXp).length;
-
-  if (meuXp > 0 && estritamenteAcima < cotaSubir && indiceLiga < QUESTLY_LIGAS.length - 1) return 1;
-  if (cotaCair > 0 && euEAbaixo <= cotaCair && indiceLiga > 0) return -1;
+  if (e.meuXp > 0 && e.estritamenteAcima < cotaSubir && e.indiceLiga < QUESTLY_LIGAS.length - 1) return 1;
+  if (cotaCair > 0 && euEAbaixo <= cotaCair && e.indiceLiga > 0) return -1;
   return 0;
+}
+
+export function questlyDestinoNaLiga(xps: number[], meuXp: number, indiceLiga: number): -1 | 0 | 1 {
+  return questlyDestinoPorAgregado({
+    n: xps.length,
+    ativos: xps.filter((x) => x > 0).length,
+    estritamenteAcima: xps.filter((x) => x > meuXp).length,
+    meuXp,
+    indiceLiga,
+  });
 }
 
 export type EstadoLiga = {

@@ -2046,6 +2046,108 @@ entre perfis e não entre alunos. O `page.tsx` de `/convite/[codigo]` desvia pra
 essa tela (e pro metadata dela) quando o código é o de parceria; o motor de
 resgate é exatamente o mesmo.
 
+## Ranking fiel (2026-09-17) — `lib/ranking/ranking-data.ts`, `lib/questly/economia.ts`
+
+Auditoria pedida pelo dono ("acredito que não está fiel o XP e tudo mais").
+Eram seis problemas distintos, e nenhum era de exibição: cinco estavam na
+**trilha que escreve** `profiles`, um na que lê. Migração:
+`supabase_ranking_fiel.sql` (deploy blocker).
+
+**1. O nível não existia.** `profiles.nivel` nunca foi escrito pelo app
+Next.js — nem na home, nem ao fechar uma lista, em lugar nenhum. A coluna é
+lida em três telas (hero da home, coluna "Nível" do ranking global, card
+público) e pelos distintivos `nivel-5/10/20`, e valia 1 em TODA conta real
+desde sempre. As únicas linhas com nível de verdade eram as 40 contas de
+teste de `supabase_seed_ranking_teste.sql`, que semeia
+`greatest(1, xp_total/1750)` — ou seja, o ranking mostrava aluno fictício no
+nível 12 ao lado de aluno real com 9.000 XP no nível 1, e os três distintivos
+de nível eram inalcançáveis.
+
+Agora o nível é **uma leitura do XP**, não um contador paralelo:
+`questlyNivelDoXp` (`lib/questly/shared.ts`) com curva quadrática — XP
+acumulado pra chegar no nível n = `25 * n * (n-1)` (N2=50, N5=500, N10=2.250,
+N20=9.500, N30=21.750). Quadrática de propósito: com nível linear (o que o
+seed fazia) o número não diz nada que o XP já não dissesse. A função tem
+**gêmeo exato no banco** (`questly_nivel_do_xp`), que mantém a coluna em dia
+pra quem precisa dela sem recalcular; mexeu na constante de um lado, mexa no
+outro. Toda tela deriva de `xp_total` em vez de ler a coluna, então o número
+fica certo mesmo num banco que ainda não rodou a migração.
+
+**2. XP se perdia em corrida.** `atualizarXpELiga` fazia
+`SELECT xp_total` → somar em JS → `UPDATE`. Duas listas fechadas ao mesmo
+tempo (duas abas, ou o cliente reenviando) liam o mesmo valor e a segunda
+sobrescrevia a primeira: o aluno via o XP na tela de resultado e ele não
+chegava no ranking. Mesmo bug que `questly_registrar_estatistica_questao`
+resolveu do lado de `questions`, mesma solução — a soma acontece dentro do
+UPDATE, na RPC `questly_registrar_progresso` (`security definer`, `grant` só
+pra `service_role`).
+
+**3. Os contadores de questão desandavam.**
+`questoes_total`/`acertos_total`/`questoes_semana` só eram incrementados ao
+FECHAR uma lista. Quem respondia 30 questões e saía sem finalizar tinha 30
+linhas em `question_attempts` e 0 no contador — e a home, que conta as
+tentativas direto, mostrava um número enquanto o card do ranking, que lia o
+contador, mostrava outro, **pro mesmo aluno**. `supabase_acertos_publicos.sql`
+já tinha percebido a deriva e corrigido com um backfill único; backfill
+conserta a foto, não a causa. Hoje os contadores de QUESTÃO são
+**recomputados de `question_attempts`** dentro da mesma RPC, então a deriva se
+conserta sozinha a cada fechamento. O XP segue incremental de propósito: ele
+depende de combo/maestria/anti-farm do instante da resposta e **não é
+reconstruível** a partir da linha de tentativa.
+
+**4. O ranking da semana mostrava XP da semana passada.** A virada de semana
+é preguiçosa (não há cron): `xp_semana` só zera quando o aluno abre o app
+depois da segunda. Quem não entrou ainda carrega o XP da semana ANTERIOR na
+coluna — e a aba "Semana" ordenava por ela sem conferir `semana_inicio`,
+colocando no pódio pontos que não são desta semana. Toda leitura semanal
+agora filtra `semana_inicio = segunda atual` (`xpDaSemanaVigente`), e o mesmo
+filtro entrou no comparativo semanal da home (`dashboard-data.ts`), que media
+o aluno contra semanas já encerradas.
+
+**5. A posição era calculada de dois jeitos diferentes.** A linha da lista era
+numerada pelo **índice do array** e a linha fixada de "Você" por uma
+**contagem no banco** (`quantos têm XP maior`) — duas réguas pro mesmo aluno,
+que discordavam em todo empate. Além disso `order by xp desc` sozinho deixa a
+ordem dos empatados a cargo do Postgres, e ela muda entre execuções: como a
+tela se atualiza sozinha a cada 3 min, dois alunos com o mesmo XP ficavam
+trocando de lugar sem nada ter acontecido. Agora todo `order` desempata por
+questões e por `id`, e a posição sai pronta do servidor por
+`numerarPorCompeticao` (empate divide a mesma posição: 1, 2, 2, 4) — a mesma
+convenção que `questlyDestinoNaLiga` usa pra decidir promoção, porque display
+e consequência têm que sair da mesma régua. Os índices de desempate estão na
+migração.
+
+**6. "N alunos" contava contas vazias.** As listas globais agora só
+consideram quem PONTUOU (`> 0`): uma conta recém-criada não é "o último
+colocado", ela ainda não entrou na disputa. Quem não pontuou vê "—" e
+"Responda questões pra entrar nesta lista" em vez de uma posição inventada.
+
+### Teto de 100 em TODAS as listas
+
+Pedido explícito, e também conserto: a **Divisão** vinha inteira, sem
+`.limit()` — e sem limite explícito o PostgREST corta em 1.000 linhas **sem
+avisar** (ver `supabase_escala_lancamento.sql`), então uma liga maior que isso
+ficava com um pedaço invisível. Hoje `LIMITE_TOP = 100` vale pras três abas.
+
+O detalhe que isso exigiu: **as zonas verde/vermelha não podem ser calculadas
+sobre as 100 linhas exibidas**. Com 1.500 alunos na liga, "30% sobem" são 450
+pessoas, não 30. `questlyDestinoNaLiga` foi refatorada em cima de
+`questlyDestinoPorAgregado` (`lib/questly/liga.ts`), que recebe `n`, `ativos`
+e `estritamenteAcima` em vez do array inteiro — a tela busca o Top 100 pra
+mostrar e dois `COUNT` pra decidir as zonas. `estritamenteAcima` sai de graça
+da posição por competição (quem divide a posição 7 tem 6 pessoas acima), e
+vale pro Top 100 inteiro porque ninguém com XP maior pode estar fora dele.
+Quem cai fora dos 100 continua vendo **a própria linha**, com a posição real
+na liga inteira, fixada no topo — é justamente quando ela mais importa.
+
+O pódio ganhou `slot` separado de `posicao`: `slot` é a vaga do pedestal
+(1 = centro dourado), `posicao` é o dado do servidor. Com empate no topo, os
+três pedestais mostram "1" — e é assim que a virada de semana vai tratá-los.
+
+**O que continua fora do ranking, de propósito:** simulado, agenda/calendário
+e vida acadêmica não pagam XP nem acendem ofensiva (ver as seções próprias) —
+nada disso mudou aqui.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).
