@@ -41,6 +41,9 @@ dev.pid
 .env*
 !.env.example
 
+# prévia dos e-mails do script de boas-vindas (contém endereço de aluno real)
+.previa-emails/
+
 # vercel
 .vercel
 
