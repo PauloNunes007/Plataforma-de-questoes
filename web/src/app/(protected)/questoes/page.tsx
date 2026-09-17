@@ -10,6 +10,11 @@ import { HubTiltCard } from "@/components/questoes/hub-tilt-card";
 // navegar disciplina → tópico como listas prontas (Listas). Cards com
 // tilt 3D (mesma física da carta TCG do ranking) — pedido explícito do
 // usuário de algo "dinâmico ao passar o mouse e legal no celular".
+//
+// A cor dos dois pôsteres sai de globals.css (`--cartao-banco-*` /
+// `--cartao-listas-*`), não de hex aqui: continua a mesma divisão porta
+// quente × porta fria, mas em bronze e índigo do design system, no lugar
+// do amarelo-doce e do azul genérico que não eram de lugar nenhum.
 export default function QuestoesPage() {
   return (
     <div className="casca flex flex-col gap-6 py-6 lg:py-8">
@@ -30,8 +35,8 @@ export default function QuestoesPage() {
             <HubTiltCard
               href="/questoes/banco"
               Icone={Layers}
-              corA="#f5b93d"
-              corB="#e0862a"
+              corA="var(--cartao-banco-a)"
+              corB="var(--cartao-banco-b)"
               titulo="Banco de"
               tituloDestaque="Questões"
               descricao="Monte sua própria prática: disciplina, tópicos, dificuldade e quantidade, do seu jeito."
@@ -39,8 +44,8 @@ export default function QuestoesPage() {
             <HubTiltCard
               href="/questoes/listas"
               Icone={ListChecks}
-              corA="#4f8ff5"
-              corB="#2f5fd9"
+              corA="var(--cartao-listas-a)"
+              corB="var(--cartao-listas-b)"
               titulo="Listas de"
               tituloDestaque="Questões"
               descricao="Escolha uma disciplina e pratique tópico por tópico, com listas já prontas."

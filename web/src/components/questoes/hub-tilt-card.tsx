@@ -9,6 +9,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { ArrowRight, type LucideIcon } from "lucide-react";
+import { VERNIZ_CARTAO } from "@/lib/questly/paleta-cartoes";
 
 export function HubTiltCard({
   href,
@@ -61,12 +62,13 @@ export function HubTiltCard({
       <Link href={href} className="block" style={{ transformStyle: "preserve-3d" }}>
         <motion.div
           style={{ rotateX: springX, rotateY: springY, transformStyle: "preserve-3d" }}
-          className="relative flex min-h-[320px] flex-col overflow-hidden rounded-[22px] p-6 shadow-xl shadow-black/10 sm:min-h-[480px] sm:p-8"
+          className="relative flex min-h-[320px] flex-col overflow-hidden rounded-[22px] p-6 shadow-xl sm:min-h-[480px] sm:p-8"
         >
           <div
             className="absolute inset-0"
-            style={{ background: `linear-gradient(150deg, ${corA}, ${corB})` }}
+            style={{ background: `${VERNIZ_CARTAO}, linear-gradient(150deg, ${corA}, ${corB})` }}
           />
+          <div className="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-inset ring-white/12" />
           {/* respingos decorativos — sem foto real, mantém o clima "colagem" sem inventar imagem de pessoa */}
           <div className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full bg-white/12 blur-md" />
           <div className="pointer-events-none absolute -bottom-16 -left-10 h-36 w-36 rounded-full bg-black/10 blur-md" />
@@ -88,7 +90,7 @@ export function HubTiltCard({
 
           {/* shimmer holográfico contínuo — o "legal no celular" que não depende de mouse */}
           <motion.div
-            className="pointer-events-none absolute inset-y-0 z-10 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+            className="pointer-events-none absolute inset-y-0 z-10 w-1/2 bg-gradient-to-r from-transparent via-white/16 to-transparent"
             initial={{ x: "-140%" }}
             animate={{ x: ["-140%", "260%"] }}
             transition={{ duration: 3.2, repeat: Infinity, repeatDelay: 2.2, ease: "easeInOut" }}
@@ -133,8 +135,11 @@ function Sparkle({ className, delay }: { className: string; delay: number }) {
       className={`pointer-events-none absolute text-white/70 ${className}`}
       animate={{ opacity: [0.3, 1, 0.3], scale: [0.85, 1.1, 0.85] }}
       transition={{ duration: 2.4, repeat: Infinity, delay, ease: "easeInOut" }}
+      aria-hidden
     >
-      ✦
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor">
+        <path d="M6 0c.35 2.9 2.7 5.3 6 6-3.3.7-5.65 3.1-6 6-.35-2.9-2.7-5.3-6-6 3.3-.7 5.65-3.1 6-6Z" />
+      </svg>
     </motion.span>
   );
 }

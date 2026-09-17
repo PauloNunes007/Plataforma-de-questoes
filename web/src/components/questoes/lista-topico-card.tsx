@@ -7,6 +7,7 @@ import { FileText, Play, RotateCcw, ScrollText } from "lucide-react";
 import type { TopicoPratica } from "@/lib/disciplinas/disciplinas-data";
 import { iniciarPraticaLivreAction } from "@/lib/disciplinas/actions";
 import { hrefQuestao } from "@/lib/questao/navegacao";
+import { corDoCartao, VERNIZ_CARTAO } from "@/lib/questly/paleta-cartoes";
 
 // Card vertical (grid horizontal de várias colunas) — pedido explícito do
 // usuário pra bater com o print de referência: faixa colorida no topo,
@@ -14,15 +15,9 @@ import { hrefQuestao } from "@/lib/questao/navegacao";
 // embaixo. "Começar" chama a MESMA Server Action da prática livre
 // (iniciarPraticaLivreAction), só escopada a um tópico e pedindo "todas"
 // as questões — a lista inteira do tópico vira a missão avulsa.
-const CORES: [string, string][] = [
-  ["#5b7cf0", "#3a52c4"],
-  ["#f0555a", "#c93338"],
-  ["#3fbf78", "#279357"],
-  ["#9b6ff0", "#7443d6"],
-  ["#c07a3a", "#96591f"],
-  ["#f0a23f", "#d67c1a"],
-  ["#2fb6c9", "#1a8c9c"],
-];
+//
+// A faixa usa a mesma rampa dos tiles de disciplina (paleta-cartoes.ts),
+// então navegar da grade pra cá não troca de vocabulário de cor.
 
 export function ListaTopicoCard({
   subjectId,
@@ -40,7 +35,7 @@ export function ListaTopicoCard({
   const origem = usePathname();
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(false);
-  const [corA, corB] = CORES[index % CORES.length];
+  const [corA, corB] = corDoCartao(index);
   const jaTentou = topico.numRespondidas > 0;
 
   async function comecar() {
@@ -68,19 +63,23 @@ export function ListaTopicoCard({
       className="surface flex flex-col overflow-hidden p-0"
     >
       <div
-        className="flex h-16 items-center px-4"
-        style={{ background: `linear-gradient(135deg, ${corA}, ${corB})` }}
+        className="relative flex h-16 items-center gap-2.5 px-4"
+        style={{ background: `${VERNIZ_CARTAO}, linear-gradient(135deg, ${corA}, ${corB})` }}
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20 text-white ring-1 ring-white/25">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/20 text-white ring-1 ring-white/25 backdrop-blur-sm">
           <ScrollText size={17} strokeWidth={1.9} />
+        </span>
+        {/* A disciplina mora aqui, em branco sobre a faixa: como rótulo
+            colorido sobre o card ela ficava em ~2.5:1 no tema escuro.
+            Branco cheio pelo mesmo motivo do tile — a /90 um texto de
+            10px reprova sobre a faixa mais clara da rampa. */}
+        <span className="line-clamp-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-white">
+          {disciplinaNome}
         </span>
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        <span className="text-[10.5px] font-bold uppercase tracking-wide" style={{ color: corA }}>
-          {disciplinaNome}
-        </span>
-        <h3 className="mt-0.5 line-clamp-2 text-[14.5px] font-semibold leading-snug tracking-tight">
+        <h3 className="line-clamp-2 text-[14.5px] font-semibold leading-snug tracking-tight">
           {topico.nome}
         </h3>
         <p className="mt-1 line-clamp-2 flex-1 text-xs leading-relaxed text-muted-foreground">
