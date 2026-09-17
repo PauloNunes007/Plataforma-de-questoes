@@ -17,10 +17,10 @@
 //    (`break-inside: avoid`), mas o espaço de resolução QUEBRA. Ver o bloco
 //    "PAGINAÇÃO" abaixo: proibir a quebra do bloco inteiro era o que produzia
 //    páginas quase vazias quando o espaço pra conta cresceu;
-//  · cabeçalho e rodapé correm em TODA página via `position: fixed` dentro de
-//    @media print — é o único jeito confiável de carimbar todas as folhas sem
-//    saber quantas são. Eles cabem dentro das margens do @page (por isso a
-//    margem de topo/base é maior que a lateral), então não cobrem texto.
+//  · o rodapé corre em TODA página via `position: fixed` dentro de @media
+//    print — é o único jeito confiável de carimbar todas as folhas sem saber
+//    quantas são. Cabeçalho corrente NÃO existe: o Chrome ancora o `fixed` na
+//    caixa de conteúdo, e `top` caía em cima da primeira linha de cada página.
 
 export const CSS_IMPRESSAO = `
   .folha {
@@ -113,6 +113,16 @@ export const CSS_IMPRESSAO = `
       max-width: 100% !important;
     }
 
+    /* Figuras em MILÍMETROS no papel, não em px.
+       Na tela um "max-h-[250px]" é uma altura razoável; no A4 ele é 1/4 da
+       folha, e uma questão com figura no enunciado MAIS cinco figuras de
+       alternativa não cabia numa página — o miolo indivisível era empurrado
+       pra folha seguinte e ficava meia página em branco atrás dele. Com o teto
+       em mm, a questão inteira cabe e o espaço de resolução continua servindo
+       pra alguma coisa. */
+    .figura-enunciado { max-height: 55mm !important; }
+    .figura-alternativa { max-height: 26mm !important; }
+
     .quebra-pagina { break-before: page; page-break-before: always; }
 
     /* Repetido dentro do print porque o utilitário do Tailwind pode vencer
@@ -121,31 +131,29 @@ export const CSS_IMPRESSAO = `
       overflow: visible !important;
     }
 
-    /* Cabeçalho e rodapé de TODA folha. -webkit-print-color-adjust mantém a
-       cor quando o navegador tenta "economizar tinta" achatando cinzas. */
-    .cabecalho-corrente,
+    /* Rodapé de TODA folha. -webkit-print-color-adjust mantém a cor quando o
+       navegador tenta "economizar tinta" achatando cinzas.
+
+       NÃO EXISTE cabeçalho corrente, e não é esquecimento: o Chrome posiciona
+       elemento "fixed" pela CAIXA DE CONTEÚDO da página, não pela folha —
+       "bottom" cai na sobra depois do texto e funciona, mas "top" cai EM CIMA
+       da primeira linha, e o resultado era o título da lista impresso por cima
+       do cabeçalho corrente, letra sobre letra. A identificação da cópia já
+       está no rodapé (que se repete) e no cabeçalho da primeira página. */
     .rodape-marca {
       position: fixed;
       left: 0;
       right: 0;
+      bottom: 4mm;
       display: flex !important;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      text-align: center;
       font-size: 7.5pt;
       color: #6b7280 !important;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
-    }
-    .cabecalho-corrente {
-      top: 4mm;
-      justify-content: space-between;
-      border-bottom: 0.4pt solid #d4d9dd;
-      padding-bottom: 1.5mm;
-    }
-    .rodape-marca {
-      bottom: 4mm;
-      justify-content: center;
-      text-align: center;
     }
 
     /* Na tela a marca acompanha a folha (absolute); no papel ela vira fixed,

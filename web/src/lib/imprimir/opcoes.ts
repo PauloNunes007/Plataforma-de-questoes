@@ -105,8 +105,11 @@ export function paginasEstimadas(questoes: Pergunta[], opcoes: OpcoesFolha): num
     const linhasEnunciado = Math.ceil((q.enunciado?.length || 0) / 95);
     const alternativas = Object.keys(q.alternativas || {}).length;
     mm += 10 + linhasEnunciado * 5.5 + alternativas * 6.5 + extraEspaco;
-    if (q.imagem_url) mm += 45;
-    mm += Object.keys(q.alternativas_imagens || {}).length * 28;
+    if (q.imagem_url) mm += 58;
+    // Figuras de alternativa saem em DUAS colunas (ver Alternativas em
+    // folha-prova.tsx): cinco figuras são três linhas, não cinco.
+    const figurasAlt = Object.keys(q.alternativas_imagens || {}).length;
+    if (figurasAlt > 0) mm += Math.ceil(figurasAlt / 2) * 30;
   }
 
   let paginas = Math.max(1, Math.ceil(mm / alturaUtilMm));
@@ -132,4 +135,28 @@ export function alternativasEmLinha(q: Pergunta): boolean {
     const s = (t ?? "").trim();
     return s.length > 0 && s.length <= 26 && !s.includes("$$") && !s.includes("\\frac");
   });
+}
+
+/**
+ * O nome que o PDF vai ter ao ser salvo.
+ *
+ * O Chrome sugere o nome do arquivo a partir do `document.title` — e o título
+ * da rota ("Imprimir lista do tópico · Expectrum") não diz NADA sobre o que o
+ * aluno acabou de baixar: seis listas na pasta de Downloads com o mesmo nome
+ * genérico. A tela troca o título só durante a impressão (ver `imprimir()` em
+ * folha-impressao.tsx) e devolve o original no `afterprint`.
+ *
+ * Sem "/" e sem ":" — em Windows e macOS eles não podem entrar num nome de
+ * arquivo, e o navegador os substitui por algo pior do que não tê-los.
+ */
+export function nomeDoArquivo(disciplina: string | null, titulo: string): string {
+  const partes = [disciplina, titulo].filter(Boolean) as string[];
+  const bruto = partes.length > 0 ? partes.join(" - ") : "Lista de exercicios";
+  return (
+    bruto
+      .replace(/[\\/:*?"<>|·]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 90) + " - Expectrum"
+  );
 }

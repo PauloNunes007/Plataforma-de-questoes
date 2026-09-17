@@ -144,7 +144,7 @@ export function FolhaProva({
                   <img
                     src={q.imagem_url}
                     alt=""
-                    className="mt-2.5 max-h-[250px] w-auto max-w-full object-contain"
+                    className="figura-enunciado mt-2.5 max-h-[250px] w-auto max-w-full object-contain"
                   />
                 )}
 
@@ -206,33 +206,58 @@ export function FolhaProva({
   );
 }
 
-/** Alternativas: em linha quando são curtas (como na prova), empilhadas quando não. */
+/**
+ * Alternativas. Três formas, nesta ordem de preferência:
+ *
+ *  · COM FIGURA  — grade de duas colunas, figura pequena e contida. Empilhadas
+ *    em coluna única, cinco figuras de alternativa somavam mais de uma folha
+ *    inteira: a questão não cabia na página, o `break-inside: avoid` do miolo
+ *    a jogava pra folha seguinte e sobrava meia página em branco atrás. O
+ *    tamanho impresso é travado em mm no CSS (.figura-alternativa), não em px,
+ *    porque o que importa aqui é quanto da FOLHA a figura ocupa;
+ *  · EM LINHA    — (a) 2 m/s (b) 4 m/s ... quando todas são curtas, como na
+ *    prova impressa de verdade;
+ *  · EMPILHADAS  — o resto.
+ */
 function Alternativas({ q }: { q: Pergunta }) {
   const letras = Object.keys(q.alternativas || {}).sort();
   if (letras.length === 0) return null;
-  const emLinha = alternativasEmLinha(q);
+  const imagens = q.alternativas_imagens || {};
+  const comFigura = Object.keys(imagens).length > 0;
 
+  if (comFigura) {
+    return (
+      <ul className="grade-impressao mt-2.5 grid grid-cols-2 gap-x-4 gap-y-2">
+        {letras.map((letra) => (
+          <li key={letra} className="sem-quebra text-[11.5px] leading-snug">
+            <span className="linha-impressao flex items-start gap-1.5">
+              <span className="sans shrink-0 font-bold">({letra.toLowerCase()})</span>
+              <span className="min-w-0 flex-1">
+                <MathText text={q.alternativas?.[letra] ?? ""} />
+              </span>
+            </span>
+            {imagens[letra] && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imagens[letra]}
+                alt=""
+                className="figura-alternativa mt-1 max-h-[120px] w-auto max-w-full object-contain"
+              />
+            )}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  const emLinha = alternativasEmLinha(q);
   return (
-    <ul
-      className={
-        emLinha
-          ? "mt-2 flex flex-wrap gap-x-6 gap-y-1.5"
-          : "mt-2.5 flex flex-col gap-1.5"
-      }
-    >
+    <ul className={emLinha ? "mt-2 flex flex-wrap gap-x-6 gap-y-1.5" : "mt-2.5 flex flex-col gap-1.5"}>
       {letras.map((letra) => (
         <li key={letra} className="flex items-start gap-1.5 text-[12px] leading-snug">
           <span className="sans shrink-0 font-bold">({letra.toLowerCase()})</span>
           <span className="min-w-0 flex-1">
             <MathText text={q.alternativas?.[letra] ?? ""} />
-            {q.alternativas_imagens?.[letra] && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={q.alternativas_imagens[letra]}
-                alt=""
-                className="mt-1 max-h-[130px] w-auto max-w-full object-contain"
-              />
-            )}
           </span>
         </li>
       ))}
@@ -290,9 +315,16 @@ function CartaoRespostaImpresso({ questoes }: { questoes: Pergunta[] }) {
  * PDF terá, e o texto continua nítido em qualquer zoom (o leitor de PDF não
  * reamostra vetor).
  *
- * Opacidade baixa o bastante pra não atrapalhar a leitura da questão e alta o
- * bastante pra sobreviver a uma fotocópia — é o mesmo compromisso dos PDFs de
- * editora acadêmica.
+ * A cor é um cinza-claro SÓLIDO, não preto com `fill-opacity`. A diferença é
+ * invisível na tela e decisiva no arquivo: uma camada semitransparente cobrindo
+ * a página inteira obriga o gerador de PDF a achatar tudo que está embaixo num
+ * BITMAP — era isso que fazia o texto sair borrado e o arquivo engordar
+ * ("a qualidade cai bastante"). Sem alfa, o texto continua vetorial e nítido em
+ * qualquer zoom.
+ *
+ * Claro o bastante pra não atrapalhar a leitura da questão e escuro o bastante
+ * pra sobreviver a uma fotocópia — é o mesmo compromisso dos PDFs de editora
+ * acadêmica.
  */
 export function MarcaDiagonal({ email }: { email: string }) {
   return (
@@ -311,7 +343,7 @@ export function MarcaDiagonal({ email }: { email: string }) {
             patternUnits="userSpaceOnUse"
             patternTransform="rotate(-30)"
           >
-            <text x="0" y="60" fill="#111827" fillOpacity="0.065" fontSize="13" fontFamily="sans-serif">
+            <text x="0" y="60" fill="#dfe3e8" fontSize="13" fontFamily="sans-serif">
               {email}
             </text>
           </pattern>

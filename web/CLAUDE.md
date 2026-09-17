@@ -1260,6 +1260,38 @@ ninguém percorre; reduzir fica nas Opções. E **as pautas sumiram**: conta de
 Física tem diagrama, vetor e eixo, não anda em linha reta. `ALTURA_RESOLUCAO_MM`
 mora em `lib/imprimir/opcoes.ts` (lib não importa de components).
 
+### Segunda rodada de conserto do PDF (2026-09-17)
+
+Achados a partir de um PDF real exportado pelo dono:
+
+- **Cabeçalho corrente REMOVIDO.** O Chrome ancora elemento `fixed` na caixa de
+  CONTEÚDO da página, não na folha: `bottom` cai na sobra depois do texto e
+  funciona, mas `top` cai **em cima da primeira linha** — o título da lista saía
+  impresso por cima do cabeçalho corrente, letra sobre letra ("as letras começam
+  a juntar"). Ficou só o rodapé, que se repete e já carrega a identificação.
+  **Não reintroduza um `position: fixed` com `top` aqui.**
+- **Marca d'água sem alfa.** Era `fill="#111827" fill-opacity="0.065"`. Uma
+  camada semitransparente cobrindo a página inteira obriga o gerador de PDF a
+  achatar tudo que está embaixo num **bitmap** — texto borrado e arquivo gordo
+  ("a qualidade cai bastante"). Agora é um cinza-claro **sólido** (`#dfe3e8`):
+  mesma aparência, texto continua vetorial.
+- **`BotaoErroRapido` não tinha `print:hidden`** e saía carimbado no meio da
+  folha. Toda peça de cromo flutuante precisa da classe — é a regressão mais
+  fácil de reintroduzir no app inteiro.
+- **Nome do arquivo.** O Chrome sugere o nome do PDF pelo `document.title`, e o
+  título da rota ("Imprimir lista do tópico · Expectrum") não diz o que foi
+  baixado. `imprimir()` troca o título por `nomeDoArquivo(disciplina, titulo)`
+  só durante a impressão e devolve o original no `afterprint`.
+- **Figuras em milímetros, não em pixels** (`.figura-enunciado` 55mm,
+  `.figura-alternativa` 26mm) e **alternativas com figura em duas colunas**.
+  Empilhadas em coluna única, cinco figuras somavam mais de uma folha: a
+  questão não cabia na página, o `break-inside: avoid` do miolo a empurrava pra
+  folha seguinte e sobrava meia página em branco atrás. No papel o que importa
+  é quanto da FOLHA a figura ocupa, não quantos px ela tem.
+- A dica da barra passou a pedir que o aluno **desmarque "Cabeçalhos e
+  rodapés"** no diálogo do Chrome — é o que tira a data e a URL do site de cima
+  da folha, e não há CSS que faça isso pelo app.
+
 ### Hub dos Simulados reorganizado (2026-09-17)
 
 Era uma pilha vertical única em que a prova em andamento, as duas portas de

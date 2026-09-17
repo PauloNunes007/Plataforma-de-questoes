@@ -20,6 +20,7 @@ import {
   ESPACAMENTOS,
   LIMITE_PERGUNTAR_QUANTIDADE,
   limitarQuantidade,
+  nomeDoArquivo,
   opcoesPadrao,
   paginasEstimadas,
   sugestoesDeQuantidade,
@@ -101,6 +102,20 @@ export function FolhaImpressao({
     setOpcoes((o) => ({ ...o, [chave]: valor }));
   }
 
+  // O nome do arquivo salvo sai do `document.title`, e o título da rota não
+  // diz o que o aluno baixou. Trocamos só durante a impressão e devolvemos no
+  // `afterprint` — trocar em definitivo mudaria a aba enquanto ele lê a folha.
+  function imprimir() {
+    const anterior = document.title;
+    document.title = nomeDoArquivo(disciplina, titulo);
+    const restaurar = () => {
+      document.title = anterior;
+      window.removeEventListener("afterprint", restaurar);
+    };
+    window.addEventListener("afterprint", restaurar);
+    window.print();
+  }
+
   return (
     <div className="folha-raiz">
       <style dangerouslySetInnerHTML={{ __html: CSS_IMPRESSAO }} />
@@ -146,7 +161,7 @@ export function FolhaImpressao({
 
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={imprimir}
                 className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-questly-green px-3.5 text-[12.5px] font-semibold text-white transition-[filter] hover:brightness-105 dark:text-[#0c1512]"
               >
                 <Printer size={14} strokeWidth={2.1} />
@@ -169,9 +184,10 @@ export function FolhaImpressao({
               <p className="casca-leitura pb-2.5 text-[11.5px] leading-relaxed text-muted-foreground">
                 {selecionadas.length} de {total} {total === 1 ? "questão" : "questões"} · ~{paginas}{" "}
                 {paginas === 1 ? "página" : "páginas"} ·{" "}
-                {opcoes.gabarito ? "com gabarito no fim" : "sem gabarito"}. No diálogo de impressão,
-                escolha <b>&quot;Salvar como PDF&quot;</b> como destino — o arquivo sai marcado com o seu
-                e-mail ({emailAluno}).
+                {opcoes.gabarito ? "com gabarito no fim" : "sem gabarito"}. No diálogo, escolha{" "}
+                <b>&quot;Salvar como PDF&quot;</b> e desmarque{" "}
+                <b>&quot;Cabeçalhos e rodapés&quot;</b> — é o que tira a data e o endereço do site de
+                cima da folha. O arquivo sai marcado com o seu e-mail ({emailAluno}).
               </p>
             )}
           </div>
@@ -189,11 +205,9 @@ export function FolhaImpressao({
         </>
       )}
 
-      {/* Cabeçalho e rodapé carimbados em toda página impressa (escondidos na tela). */}
-      <div className="cabecalho-corrente hidden">
-        <span>Expectrum · {disciplina ? `${disciplina} — ` : ""}{titulo}</span>
-        <span>{nomeAluno ?? emailAluno}</span>
-      </div>
+      {/* Rodapé carimbado em toda página impressa (escondido na tela). Não há
+          cabeçalho corrente — ver estilos-impressao.ts: `fixed` + `top` cai
+          por cima da primeira linha de cada página no Chrome. */}
       <div className="rodape-marca hidden">
         Expectrum · cópia pessoal de {emailAluno} · a redistribuição identifica esta conta
       </div>

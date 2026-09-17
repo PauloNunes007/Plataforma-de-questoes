@@ -25,7 +25,10 @@ export function BotaoErroRapido() {
         type="button"
         onClick={() => setAberto(true)}
         aria-label="Registrar erro rápido no Caderno de Erros"
-        className="fixed bottom-20 right-4 z-40 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-questly-orange px-4 text-sm font-semibold text-white shadow-lg shadow-questly-orange/25 transition-all hover:brightness-105 active:scale-95 lg:bottom-6 lg:right-6"
+        // print:hidden como toda peça de cromo flutuante do app — sem isso o
+        // botão sai carimbado no meio da folha exportada (ver
+        // components/imprimir/estilos-impressao.ts).
+        className="fixed bottom-20 right-4 z-40 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-questly-orange px-4 text-sm font-semibold text-white shadow-lg shadow-questly-orange/25 transition-all hover:brightness-105 active:scale-95 lg:bottom-6 lg:right-6 print:hidden"
       >
         <NotebookPen size={17} strokeWidth={2.1} />
         <span className="hidden sm:inline">Erro rápido</span>
@@ -48,7 +51,7 @@ export function BotaoErroRapido() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
-            className="fixed bottom-36 right-4 z-40 flex items-center gap-2 rounded-xl border border-questly-green/30 bg-card px-4 py-2.5 text-sm font-semibold text-questly-green shadow-lg lg:bottom-20 lg:right-6"
+            className="fixed bottom-36 right-4 z-40 flex items-center gap-2 rounded-xl border border-questly-green/30 bg-card px-4 py-2.5 text-sm font-semibold text-questly-green shadow-lg lg:bottom-20 lg:right-6 print:hidden"
           >
             <CheckCircle2 size={16} strokeWidth={2.25} />
             Erro salvo no caderno
