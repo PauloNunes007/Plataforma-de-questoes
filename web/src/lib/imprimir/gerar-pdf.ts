@@ -29,8 +29,11 @@ import type { ProgressoPdf } from "./tipos-pdf";
 //
 // O que NÃO é rasterizado: o espaço pra resolver (é branco — `data-pdf-espaco`
 // diz quantos milímetros reservar, e ele PODE partir entre páginas), os filetes
-// separadores, a marca d'água e o rodapé. Tudo isso sai em vetor, o que mantém
-// o arquivo pequeno e a marca nítida em qualquer zoom.
+// separadores e o rodapé. Tudo isso sai em vetor, o que mantém o arquivo
+// pequeno e o traço nítido em qualquer zoom.
+//
+// A MARCA D'ÁGUA, essa, sai nas DUAS naturezas de propósito — ver
+// `carimbarNoCanvas` e `carimbarPaginas` logo abaixo.
 
 const A4 = { largura: 210, altura: 297 };
 const MARGEM = { topo: 14, base: 16, esquerda: 14, direita: 14 };
@@ -66,7 +69,7 @@ const LARGURA_RENDER_PX = 760;
 const QUALIDADE_JPEG = 0.85;
 
 /**
- * Cinza da marca d'água.
+ * Cinza da marca d'água VETORIAL (a que mora no branco da folha).
  *
  * Mais claro que o da versão anterior (223,227,232). Ela deixou de disputar
  * espaço com o texto — mora no branco, agora — e uma marca que mora no branco
@@ -77,6 +80,34 @@ const COR_MARCA: [number, number, number] = [232, 236, 240];
 
 /** Vão mínimo pra caber a marca sem ficar espremida. */
 const VAO_MINIMO_MM = 34;
+
+/**
+ * Vão grande o bastante pra comportar DUAS marcas sem uma encostar na outra —
+ * é o caso do espaço pra resolver, que sozinho ocupa meia folha.
+ */
+const VAO_DUPLO_MM = 95;
+
+/**
+ * A MARCA QUE NÃO SAI: cinza do carimbo RASTERIZADO.
+ *
+ * Desenhado dentro do bitmap de cada bloco, com blend `darken` — o pixel final
+ * é o mais escuro entre o conteúdo e este cinza, então o texto preto continua
+ * preto (legibilidade intacta) e só o branco em volta ganha o tom. Não existe
+ * objeto de texto pra selecionar, nem camada pra apagar: quem quiser tirar a
+ * marca tem que repintar a página inteira à mão, pixel a pixel, e o que sobra
+ * não é mais a nossa folha.
+ *
+ * Um pouco mais escuro que o COR_MARCA vetorial (228,234,240 contra 232,236,
+ * 240) porque este convive com texto em volta e precisa se sustentar depois do
+ * JPEG; ainda assim é ~9% de cinza — a leitura não muda.
+ */
+const COR_MARCA_RASTER = "rgb(228, 234, 240)";
+
+/** Grade do carimbo rasterizado: passo, altura de letra e inclinação. */
+const RASTER_PASSO_X_MM = 62;
+const RASTER_PASSO_Y_MM = 26;
+const RASTER_ALTURA_MM = 2.5;
+const RASTER_ANGULO_GRAUS = -26;
 
 export async function baixarFolhaEmPdf({
   folha,
@@ -182,6 +213,11 @@ export async function baixarFolhaEmPdf({
         y += ALTURA_SEPARADOR_MM / 2;
       }
 
+      // Carimbo dentro do bitmap, AGORA — depois da decisão de página, porque é
+      // só aqui que `y` (a fase da grade) é definitiva, e antes do fatiamento,
+      // porque uma fatia já é o pixel final que entra no PDF.
+      carimbarNoCanvas(canvas, email, pxPorMm, y);
+
       let offsetPx = 0;
       while (offsetPx < canvas.height) {
         const disponivelMm = LIMITE_Y - y;
@@ -248,6 +284,17 @@ export async function baixarFolhaEmPdf({
 
     carimbarPaginas(pdf, email, ocupado);
 
+    // Metadados do arquivo: a camada mais fácil de apagar das três, e por isso
+    // a última da lista — mas é de graça, e é o que aparece em "Propriedades"
+    // de qualquer leitor sem ninguém precisar procurar.
+    pdf.setProperties({
+      title: nomeArquivo,
+      subject: `Cópia pessoal de ${email}`,
+      author: "Expectrum",
+      keywords: `expectrum, ${email}`,
+      creator: "Expectrum",
+    });
+
     // Devolve o arquivo em vez de salvá-lo. Quem entrega é a tela — ver
     // `entregarPdf` em folha-impressao.tsx: no celular, um `save()` disparado
     // depois de segundos de `await` já saiu do gesto do aluno, e o navegador
@@ -264,7 +311,79 @@ export async function baixarFolhaEmPdf({
 // ---------------------------------------------------------------------------
 
 /**
- * Marca d'água e rodapé, numa passada final por TODAS as páginas.
+ * Carimbo RASTERIZADO — a marca que sobrevive ao editor de PDF.
+ *
+ * Por que existe. A marca vetorial de `carimbarPaginas` é bonita e nítida, e
+ * some com dois cliques: num PDF, texto vetorial é um OBJETO, e qualquer editor
+ * (ou um `qpdf`/`mutool` de linha de comando) apaga objeto. Quem ia repassar o
+ * arquivo pro grupo da turma nunca precisou de mais que isso. Aqui a marca
+ * entra nos PIXELS do bloco, antes de ele virar JPEG: não há objeto pra
+ * selecionar, não há camada pra esconder, e o `-` do texto do enunciado e o `-`
+ * da marca são a mesma coisa pro arquivo.
+ *
+ * Por que não atrapalha ler. O blend é `darken`: o pixel final é o mais ESCURO
+ * entre o que já estava lá e o cinza da marca. Onde há texto preto, o preto
+ * ganha e nada muda; onde há branco, entra um cinza de ~9%. Fotocópia e leitura
+ * na tela seguem iguais — é o mesmo princípio do papel timbrado.
+ *
+ * `darken` (e `multiply`, a segunda opção) são universais em navegador atual;
+ * se nenhum dos dois pegar, a função DESISTE em vez de cair no `source-over`
+ * padrão, que pintaria tarjas cinzas opacas por cima do enunciado. Marca a
+ * menos é aceitável; folha ilegível não é.
+ */
+function carimbarNoCanvas(
+  canvas: HTMLCanvasElement,
+  email: string,
+  pxPorMm: number,
+  faseMm: number,
+) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  ctx.save();
+  try {
+    ctx.globalCompositeOperation = "darken";
+    if (ctx.globalCompositeOperation !== "darken") {
+      ctx.globalCompositeOperation = "multiply";
+      if (ctx.globalCompositeOperation !== "multiply") return;
+    }
+
+    ctx.fillStyle = COR_MARCA_RASTER;
+    // 1.34 ≈ corpo da fonte / altura de caixa-alta: a constante é declarada em
+    // milímetros de letra visível, não em "px de font-size".
+    ctx.font = `${RASTER_ALTURA_MM * pxPorMm * 1.34}px Helvetica, Arial, sans-serif`;
+    ctx.textBaseline = "middle";
+
+    const passoX = RASTER_PASSO_X_MM * pxPorMm;
+    const passoY = RASTER_PASSO_Y_MM * pxPorMm;
+    const radianos = (RASTER_ANGULO_GRAUS * Math.PI) / 180;
+
+    // A fase é a posição do bloco NA PÁGINA: sem ela, cada bloco recomeçaria a
+    // grade no próprio topo e a marca formaria degraus visíveis a cada questão.
+    const fase = faseMm * pxPorMm;
+    const primeira = Math.floor(fase / passoY);
+    const ultima = Math.ceil((fase + canvas.height) / passoY);
+
+    for (let linha = primeira; linha <= ultima; linha++) {
+      const y = linha * passoY - fase;
+      // Linhas ímpares deslocadas meio passo: grade em tijolo, que é mais
+      // difícil de "adivinhar e apagar" em bloco do que uma grade alinhada.
+      const deslocamento = (Math.abs(linha) % 2) * (passoX / 2);
+      for (let x = deslocamento - passoX; x < canvas.width + passoX; x += passoX) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(radianos);
+        ctx.fillText(email, 0, 0);
+        ctx.restore();
+      }
+    }
+  } finally {
+    ctx.restore();
+  }
+}
+
+/**
+ * Marca d'água VETORIAL e rodapé, numa passada final por TODAS as páginas.
  *
  * Depois do conteúdo, de propósito: as fatias são JPEG opaco e cobririam a
  * marca se ela viesse antes. Em vetor — e em cinza-claro SÓLIDO, não preto
@@ -275,13 +394,16 @@ export async function baixarFolhaEmPdf({
  * porcentagem da página, e o dono reclamou com razão: caía em cima do enunciado
  * e ficava feio. Posição fixa não tem como saber onde há texto — mas o gerador
  * sabe, porque foi ele quem colocou cada imagem na página (`ocupado`). Aqui a
- * marca é posta no MAIOR vão livre de cada folha, que numa lista com espaço pra
- * resolver é justamente o espaço em branco da conta. Sem vão que sirva (folha
- * de gabarito, prova compacta), ela vai pra margem lateral, deitada — onde
- * nunca houve texto.
+ * marca é posta nos MAIORES vãos livres de cada folha, que numa lista com
+ * espaço pra resolver é justamente o espaço em branco da conta.
  *
- * Isso não afrouxa a atribuição: o rodapé com o e-mail continua em toda página,
- * e basta UMA marca sobreviver a um recorte pra amarrar a cópia à conta.
+ * ESTA CAMADA É A BONITA, NÃO A QUE SEGURA. Ela é vetorial, e vetor num PDF é
+ * objeto: qualquer editor apaga. Quem segura é o carimbo rasterizado de
+ * `carimbarNoCanvas`, que está dentro dos pixels. As duas juntas dão as três
+ * coisas que se quer de uma marca — nítida onde dá (vetor no branco),
+ * impossível de remover onde importa (raster no conteúdo) e presente em toda
+ * página aconteça o que acontecer (margens laterais + rodapé). Basta UMA
+ * sobreviver a um recorte pra amarrar a cópia à conta.
  */
 function carimbarPaginas(
   pdf: import("jspdf").jsPDF,
@@ -295,18 +417,27 @@ function carimbarPaginas(
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(...COR_MARCA);
 
-    const vaos = faixasLivres(ocupado.get(p) ?? []);
-    if (vaos.length > 0) {
+    // 1) O branco da folha. Até três vãos por página (era um ou dois), e um vão
+    //    do tamanho do espaço pra resolver leva duas marcas — é justamente a
+    //    folha mais "limpa" que valeria a pena raspar e repassar adiante.
+    for (const vao of faixasLivres(ocupado.get(p) ?? []).slice(0, 3)) {
+      const altura = vao[1] - vao[0];
       pdf.setFontSize(10);
-      for (const vao of vaos.slice(0, 2)) {
-        const meio = (vao[0] + vao[1]) / 2;
-        pdf.text(email, MARGEM.esquerda + 14, meio + 14, { angle: 26 });
+      if (altura >= VAO_DUPLO_MM) {
+        pdf.text(email, MARGEM.esquerda + 10, vao[0] + altura * 0.3 + 12, { angle: 26 });
+        pdf.text(email, MARGEM.esquerda + 46, vao[0] + altura * 0.72 + 12, { angle: 26 });
+      } else {
+        pdf.text(email, MARGEM.esquerda + 14, (vao[0] + vao[1]) / 2 + 14, { angle: 26 });
       }
-    } else {
-      // Margem lateral, deitada: a faixa que o texto nunca ocupa.
-      pdf.setFontSize(8);
-      pdf.text(email, 6.5, A4.altura / 2 + 28, { angle: 90 });
     }
+
+    // 2) As DUAS margens laterais, deitadas, em TODA página — não mais só
+    //    quando não sobrou branco. É a faixa que o texto nunca ocupa, então
+    //    isso não custa legibilidade nenhuma, e é o que continua identificando
+    //    a cópia numa página cheia de ponta a ponta.
+    pdf.setFontSize(8);
+    pdf.text(email, 6.5, A4.altura / 2 + 28, { angle: 90 });
+    pdf.text(email, A4.largura - 4.5, A4.altura / 2 - 28, { angle: -90 });
 
     pdf.setFontSize(7);
     pdf.setTextColor(150, 157, 166);

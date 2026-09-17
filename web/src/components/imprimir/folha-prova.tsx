@@ -529,45 +529,43 @@ function CartaoRespostaImpresso({ questoes }: { questoes: Pergunta[] }) {
 /**
  * A marca d'água diagonal da TELA.
  *
- * Só da tela: no arquivo, quem carimba é o gerador (`carimbarPaginas` em
- * lib/imprimir/gerar-pdf.ts), e faz melhor — ele sabe onde há texto em cada
- * página e põe a marca no branco, em vez de atravessar o enunciado. Aqui ela
- * segue existindo pra pré-visualização ser honesta sobre o que vai sair.
+ * Só da tela: no arquivo, quem carimba é o gerador (lib/imprimir/gerar-pdf.ts),
+ * em duas camadas — a vetorial, que procura o branco de cada página, e o
+ * carimbo RASTERIZADO, desenhado dentro dos pixels de cada bloco com blend
+ * `darken` e por isso impossível de apagar num editor de PDF.
  *
- * A cor é um cinza-claro SÓLIDO, não preto com `fill-opacity`: uma camada
- * semitransparente cobrindo a página inteira obriga o gerador de PDF a achatar
- * tudo que está embaixo num BITMAP.
+ * Aqui a grade existe pra a pré-visualização ser honesta sobre o que vai sair:
+ * é a mesma grade em tijolo do carimbo rasterizado (passo de ~62mm × 26mm a
+ * -26°, linhas ímpares deslocadas meio passo), nas proporções da folha da tela.
+ *
+ * Um SVG repetido como `background-image` em vez de dezenas de `<span>`: é um
+ * nó só no DOM, não entra na captura do html2canvas (que fotografa os blocos
+ * `[data-pdf]`, não esta camada) e a cor é um cinza-claro SÓLIDO, nunca preto
+ * com `fill-opacity` — camada semitransparente cobrindo a página obriga o
+ * gerador de PDF a achatar tudo que está embaixo num BITMAP.
  */
-const POSICOES_MARCA = [
-  { top: "16%", left: "8%" },
-  { top: "47%", left: "46%" },
-  { top: "79%", left: "12%" },
-];
+const MARCA_TILE = { largura: 259, altura: 108 };
 
 export function MarcaDiagonal({ email }: { email: string }) {
+  const texto = email.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const meio = MARCA_TILE.largura / 2;
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${MARCA_TILE.largura}" height="${MARCA_TILE.altura}">` +
+    `<g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#e8ecf0" letter-spacing="0.5">` +
+    `<text x="4" y="34" transform="rotate(-26 4 34)">${texto}</text>` +
+    `<text x="${meio}" y="88" transform="rotate(-26 ${meio} 88)">${texto}</text>` +
+    `</g></svg>`;
+
   return (
     <div
       className="marca-diagonal pointer-events-none absolute inset-0 select-none overflow-hidden"
       aria-hidden
-    >
-      {POSICOES_MARCA.map((pos, i) => (
-        <span
-          key={i}
-          className="sans absolute whitespace-nowrap"
-          style={{
-            top: pos.top,
-            left: pos.left,
-            transform: "rotate(-26deg)",
-            transformOrigin: "left center",
-            color: "#e8ecf0",
-            fontSize: "13px",
-            letterSpacing: "0.04em",
-          }}
-        >
-          {email}
-        </span>
-      ))}
-    </div>
+      style={{
+        backgroundImage: `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: `${MARCA_TILE.largura}px ${MARCA_TILE.altura}px`,
+      }}
+    />
   );
 }
 

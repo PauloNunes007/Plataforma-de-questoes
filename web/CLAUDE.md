@@ -1658,6 +1658,46 @@ futura na tipografia da folha.
 Medido nas duas variantes (10 questões, espaço amplo, figura em 1/3, cartão +
 gabarito + resoluções): 7 páginas, ~1,0 MB, ~3,5 s cada.
 
+### Sexta rodada (2026-09-17): a marca que não sai
+
+Pedido do dono: *"mais marca d'água nos PDFs, de forma que não atrapalhe a
+leitura mas a pessoa não consiga remover ao compartilhar"*.
+
+O problema com o que existia não era a quantidade — era a **natureza**. Toda a
+marca era vetorial, e vetor num PDF é OBJETO: qualquer editor (ou um `qpdf` de
+linha de comando) seleciona e apaga. Quem ia repassar a folha pro grupo da turma
+nunca precisou de mais do que isso. Aumentar a densidade da mesma camada daria
+mais objetos pra apagar de uma vez só, não mais dificuldade.
+
+Agora são **três camadas com papéis diferentes**, e a do meio é a nova:
+
+1. **Raster, dentro dos pixels** (`carimbarNoCanvas`, o que segura). O carimbo é
+   desenhado no canvas de cada bloco ANTES de ele virar JPEG — grade em tijolo
+   de ~62mm × 26mm a -26°, o e-mail repetido. Não há objeto pra selecionar nem
+   camada pra esconder: o `-` do enunciado e o `-` da marca são a mesma coisa
+   pro arquivo, e tirar um significa repintar a página à mão.
+   **Por que não atrapalha ler**: o blend é `darken` — o pixel final é o mais
+   escuro entre o conteúdo e o cinza da marca, então texto preto continua preto
+   e só o branco em volta ganha ~9% de cinza. É o princípio do papel timbrado.
+   Se o navegador não tiver `darken` nem `multiply`, a função **desiste** em vez
+   de cair no `source-over` padrão, que pintaria tarjas opacas sobre o
+   enunciado: marca a menos é aceitável, folha ilegível não é.
+2. **Vetor no branco** (`carimbarPaginas`, a bonita). Continua procurando os
+   vãos livres via `ocupado`/`faixasLivres`, agora até TRÊS por página, e um vão
+   grande (≥ 95mm — o espaço pra resolver) leva duas marcas em vez de uma. É
+   apagável, e tudo bem: ela é o acabamento, não a tranca.
+3. **Margens laterais + rodapé, em toda página**. As duas margens agora levam o
+   e-mail deitado SEMPRE (antes só quando não sobrava branco nenhum) — faixa que
+   o texto nunca ocupa, custo zero de legibilidade, e é o que identifica a cópia
+   numa página cheia de ponta a ponta. Mais os metadados do arquivo
+   (`pdf.setProperties`), a camada mais fácil de apagar das quatro e por isso a
+   última da lista — mas é de graça.
+
+A `MarcaDiagonal` da TELA virou a mesma grade (um SVG repetido como
+`background-image`, um nó só no DOM) pra a pré-visualização continuar honesta
+sobre o que vai sair. Ela não entra na captura do html2canvas, que fotografa os
+`[data-pdf]` e não esta camada — não há risco de marca dobrada.
+
 ### Hub dos Simulados reorganizado (2026-09-17)
 
 Era uma pilha vertical única em que a prova em andamento, as duas portas de
@@ -1672,6 +1712,34 @@ outras N": prova de dois meses atrás é consulta, não navegação, e não pode
 empurrar as ações pra fora da tela. A nota da universidade virou um `<details>`
 fechado, e o gate do plano grátis mudou de lugar pra junto das portas — ele é
 sobre PODER começar, não sobre o histórico.
+
+## Só disciplina com questão (2026-09-17) — onboarding e Configurações
+
+O passo 5 do onboarding oferecia a união de três listas: as matérias do banco,
+uma lista curada por curso (`disciplinasNucleo` em `lib/cursos/registro.ts`) e
+um campo de texto livre. As duas últimas ofereciam **becos sem saída no primeiro
+minuto de uso**: o aluno de Engenharia Química marcava "Termodinâmica" porque a
+plataforma sugeriu, chegava no dashboard e não havia uma questão pra estudar.
+
+Agora o passo 5 mostra **só o que a view de contagem diz que existe**
+(`listarMateriasComQuestoes`). A lista curada por curso não sumiu — ela mudou de
+papel: passa por `filtrarComQuestoes` e o que sobra **reordena** os chips (as do
+curso do aluno primeiro), nunca os acrescenta. Quem manda no conteúdo é o banco;
+a grade curricular de referência só diz o que é relevante dentro dele. O
+casamento é por nome normalizado e o nome DEVOLVIDO é sempre o do banco — a
+lista curada escrever "Calculo I" não pode criar uma matéria nova e vazia ao
+lado da que existe (`salvarCampanhaAction` procura `materias` por nome).
+
+Em **Configurações** as sugestões passaram a vir da mesma fonte, com a contagem
+no chip. Mas o **campo de texto livre continua ali**, e só ali: faltas e notas
+de `/materias` (Pro) funcionam sem banco de questões, e tirá-lo impediria o
+aluno de acompanhar a disciplina que ele de fato cursa. O placeholder diz o que
+ele entrega — *"Outra disciplina (sem questões, só faltas e notas)"* — em vez de
+prometer prática que não existe.
+
+Nada foi apagado de conta nenhuma: quem já tinha uma disciplina sem questões
+continua com ela (a trilha já a mostra honestamente como "sem ementa"), e quem
+quiser tira pelo botão Remover.
 
 ## Relatório semanal por e-mail (2026-09-17) — `/api/cron/relatorio-semanal`
 

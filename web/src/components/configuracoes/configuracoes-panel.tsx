@@ -36,21 +36,18 @@ import {
   uploadFotoAction,
   type SubjectComBosses,
 } from "@/lib/configuracoes/actions";
+import type { MateriaComQuestoes } from "@/lib/disciplinas/disciplinas-data";
 
 const USERNAME_CARENCIA_DIAS = 15;
 
 const DIAS_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-const DISCIPLINAS_PADRAO = [
-  "Fundamentos de Cálculo e Geometria",
-  "Cálculo I",
-  "Cálculo II",
-  "Cálculo III",
-  "Álgebra Linear",
-  "Física I",
-  "Física II",
-  "Química Geral",
-  "Programação I",
-];
+
+// A lista fixa de sugestões saiu daqui em 2026-09-17: as sugestões agora vêm do
+// BANCO (`materiasComQuestoes`, a mesma view de contagem que alimenta o
+// onboarding), então nunca mais oferecem uma disciplina sem uma única questão.
+// O campo de texto livre continua — e só continua aqui, não no onboarding:
+// faltas e notas de /materias funcionam sem banco de questões, e tirá-lo
+// impediria o aluno de acompanhar a disciplina que ele de fato cursa.
 
 const CHIP_BASE =
   "cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors";
@@ -153,9 +150,12 @@ function SecaoKicker({ children }: { children: React.ReactNode }) {
 export function ConfiguracoesPanel({
   profile,
   subjectsIniciais,
+  materiasComQuestoes = [],
 }: {
   profile: ProfileMin | null;
   subjectsIniciais: SubjectComBosses[];
+  /** Matérias que já têm questões no banco — a origem das sugestões. */
+  materiasComQuestoes?: MateriaComQuestoes[];
 }) {
   const [subjects, setSubjects] = useState(subjectsIniciais);
   const [dias, setDias] = useState<string[]>(profile?.dias_disponiveis || []);
@@ -183,7 +183,11 @@ export function ConfiguracoesPanel({
 
         <div className="flex min-w-0 flex-col gap-4">
           <SecaoKicker>Disciplinas</SecaoKicker>
-          <DisciplinasCard subjects={subjects} onSubjectsChange={setSubjects} />
+          <DisciplinasCard
+            subjects={subjects}
+            onSubjectsChange={setSubjects}
+            materiasComQuestoes={materiasComQuestoes}
+          />
         </div>
       </div>
     </div>
@@ -648,9 +652,11 @@ function RotinaCard({ dias, onSalvar }: { dias: string[]; onSalvar: (dias: strin
 function DisciplinasCard({
   subjects,
   onSubjectsChange,
+  materiasComQuestoes,
 }: {
   subjects: SubjectComBosses[];
   onSubjectsChange: (subjects: SubjectComBosses[]) => void;
+  materiasComQuestoes: MateriaComQuestoes[];
 }) {
   const [novaDisc, setNovaDisc] = useState("");
   const [adicionando, setAdicionando] = useState(false);
@@ -690,7 +696,7 @@ function DisciplinasCard({
   }
 
   const jaTem = new Set(subjects.map((s) => s.nome.trim().toLowerCase()));
-  const sugestoes = DISCIPLINAS_PADRAO.filter((n) => !jaTem.has(n.toLowerCase()));
+  const sugestoes = materiasComQuestoes.filter((m) => !jaTem.has(m.nome.trim().toLowerCase()));
 
   return (
     <Card icon={BookOpen} title="Disciplinas & metas" sub="Clique numa nota pra atualizar a meta na hora.">
@@ -733,27 +739,39 @@ function DisciplinasCard({
       )}
 
       {sugestoes.length > 0 && (
-        <div className="mb-3 flex flex-wrap gap-2">
-          {sugestoes.map((nome) => (
-            <button
-              key={nome}
-              type="button"
-              disabled={adicionando}
-              onClick={() => adicionar(nome)}
-              className={`${CHIP_BASE} ${CHIP_INATIVO} disabled:opacity-50`}
-            >
-              <Plus size={13} strokeWidth={2} className="mr-1 inline-block align-[-2px]" />
-              {nome}
-            </button>
-          ))}
+        <div className="mb-3">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">
+            Disciplinas com questões prontas no banco — o número é quantas.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {sugestoes.map((m) => (
+              <button
+                key={m.nome}
+                type="button"
+                disabled={adicionando}
+                onClick={() => adicionar(m.nome)}
+                className={`${CHIP_BASE} ${CHIP_INATIVO} disabled:opacity-50`}
+              >
+                <Plus size={13} strokeWidth={2} className="mr-1 inline-block align-[-2px]" />
+                {m.nome}
+                <span className="tnum ml-1.5 rounded-full bg-questly-green-light px-1.5 text-[10.5px] font-bold text-questly-green-dark">
+                  {m.totalQuestoes}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
+      {/* Campo livre: a disciplina digitada aqui NÃO ganha questões (não temos
+          essa matéria no banco) — ela serve pra vida acadêmica, faltas e notas
+          em /materias. O placeholder diz isso, senão o aluno cadastra
+          "Termodinâmica" esperando prática e recebe uma disciplina muda. */}
       <div className="flex gap-2">
         <input
           value={novaDisc}
           onChange={(e) => setNovaDisc(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && adicionar(novaDisc)}
-          placeholder="Não achou? Digite o nome da disciplina"
+          placeholder="Outra disciplina (sem questões, só faltas e notas)"
           className="flex-1 rounded-xl border border-dashed border-border bg-card px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-questly-green focus:ring-2 focus:ring-questly-green/20"
         />
         <button

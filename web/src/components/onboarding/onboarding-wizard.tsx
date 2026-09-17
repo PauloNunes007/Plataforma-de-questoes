@@ -23,18 +23,14 @@ const TOTAL_STEPS = 9;
 const USERNAME_REGEX = /^[a-z0-9][a-z0-9_.]{2,19}$/;
 type UsernameStatus = "idle" | "verificando" | "disponivel" | "indisponivel" | "invalido";
 
-const DISCIPLINAS_SUGERIDAS = [
-  "Fundamentos de Cálculo e Geometria",
-  "Cálculo I",
-  "Cálculo II",
-  "Cálculo III",
-  "Álgebra Linear",
-  "Física I",
-  "Física II",
-  "Química Geral",
-  "Programação I",
-];
-
+// A lista fixa de disciplinas sugeridas MORREU aqui (2026-09-17). O passo 5
+// oferece só o que o banco de questões realmente tem (`materiasComQuestoes`,
+// que vem da view de contagem) — e nada mais: nem a lista curada por curso, nem
+// texto livre. Uma disciplina sem questão era um beco sem saída oferecido no
+// primeiro minuto de uso — o aluno marcava "Termodinâmica", chegava no
+// dashboard e não havia o que estudar. Quem cursa algo que ainda não cobrimos
+// adiciona depois em Configurações (lá o campo livre continua existindo, porque
+// faltas e notas de /materias funcionam sem banco de questões).
 const DIAS_SEMANA_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
 // Brasões em vez de emoji (ver components/insignias/insignia.tsx): o material
@@ -117,6 +113,37 @@ const EYEBROWS: Record<number, string> = {
   9: "Tudo pronto",
 };
 
+/**
+ * Interseção entre uma lista de nomes curada (as disciplinas-núcleo do curso) e
+ * o que o banco de questões tem de verdade, preservando a ordem da curada.
+ *
+ * Casamento por nome normalizado (caixa/acento/espaço), e o nome DEVOLVIDO é
+ * sempre o do banco — é ele que o `salvarCampanhaAction` procura em `materias`
+ * pra achar o `materia_id`. Devolver "Calculo I" porque foi assim que a lista
+ * curada escreveu criaria uma matéria nova, vazia, ao lado da que existe.
+ */
+function filtrarComQuestoes(nomes: string[], materias: MateriaComQuestoes[]): string[] {
+  const porChave = new Map(materias.map((m) => [chaveNome(m.nome), m.nome]));
+  const vistos = new Set<string>();
+  const saida: string[] = [];
+  for (const nome of nomes) {
+    const doBanco = porChave.get(chaveNome(nome));
+    if (!doBanco || vistos.has(doBanco)) continue;
+    vistos.add(doBanco);
+    saida.push(doBanco);
+  }
+  return saida;
+}
+
+function chaveNome(nome: string): string {
+  return nome
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function Chip({
   active,
   onClick,
@@ -191,6 +218,11 @@ export function OnboardingWizard({
   const identidade = resolverCurso(state.curso);
   const acento: CursoIdentidade | null = cursoReconhecido(identidade) ? identidade : null;
 
+  // As disciplinas-núcleo do curso passadas pelo filtro do banco: o registro de
+  // cursos descreve a GRADE ideal ("Aerodinâmica", "Saneamento"), o banco diz o
+  // que existe. Só o que sobrevive à interseção pode ser sugerido/marcado.
+  const nucleoDisponivel = filtrarComQuestoes(identidade.disciplinasNucleo, materiasComQuestoes);
+
   function adicionarDisciplinas(nomes: string[]) {
     setState((s) => {
       const set = new Set(s.disciplinas);
@@ -205,7 +237,7 @@ export function OnboardingWizard({
       // dele (se o aluno ainda não escolheu nenhuma) — o app já chega ao passo
       // de disciplinas com as certas marcadas.
       if (step === 1 && state.disciplinas.length === 0) {
-        adicionarDisciplinas(identidade.disciplinasNucleo);
+        adicionarDisciplinas(nucleoDisponivel);
       }
       irPara(step + 1);
       return;
@@ -325,6 +357,7 @@ export function OnboardingWizard({
                   toggleEm={toggleEm}
                   garantirDiscCfg={garantirDiscCfg}
                   identidade={identidade}
+                  nucleoDisponivel={nucleoDisponivel}
                   adicionarDisciplinas={adicionarDisciplinas}
                   materiasComQuestoes={materiasComQuestoes}
                   instituicoesComQuestoes={instituicoesComQuestoes}
@@ -359,6 +392,7 @@ function StepContent({
   toggleEm,
   garantirDiscCfg,
   identidade,
+  nucleoDisponivel,
   adicionarDisciplinas,
   materiasComQuestoes,
   instituicoesComQuestoes,
@@ -369,6 +403,8 @@ function StepContent({
   toggleEm: (lista: string[], valor: string) => string[];
   garantirDiscCfg: (nome: string) => DiscCfg;
   identidade: CursoIdentidade;
+  /** `identidade.disciplinasNucleo` ∩ banco de questões — ver `filtrarComQuestoes`. */
+  nucleoDisponivel: string[];
   adicionarDisciplinas: (nomes: string[]) => void;
   materiasComQuestoes: MateriaComQuestoes[];
   instituicoesComQuestoes: InstituicaoAgregada[];
@@ -503,14 +539,19 @@ function StepContent({
 
     case 5: {
       const reconhecido = cursoReconhecido(identidade);
-      const sugeridas = reconhecido ? identidade.disciplinasNucleo : DISCIPLINAS_SUGERIDAS;
-      // Mapa nome→contagem pra badge de "já tem questões" nos chips — como o
-      // app ainda não sabe o semestre do aluno, isso é mais confiável que só
-      // a lista curada por curso (que pode incluir disciplina sem conteúdo
-      // ainda, ou deixar de fora conteúdo real de outro período).
+      // Mapa nome→contagem pra badge de questões nos chips.
       const contagemPorNome = new Map(materiasComQuestoes.map((m) => [m.nome.toLowerCase(), m.totalQuestoes]));
       const nomesComQuestoes = materiasComQuestoes.map((m) => m.nome);
-      const todasAsOpcoes = Array.from(new Set([...nomesComQuestoes, ...sugeridas, ...state.disciplinas]));
+      // O QUE APARECE AQUI É SÓ O QUE TEM QUESTÃO. As disciplinas-núcleo do
+      // curso reordenam a lista (as do curso do aluno primeiro), nunca a
+      // acrescentam — quem manda no conteúdo é o banco, não a grade curricular
+      // de referência. `state.disciplinas` entra no fim só pra nada que o aluno
+      // já marcou (via callout da universidade) sumir debaixo dele.
+      const ordenadas = [
+        ...nucleoDisponivel,
+        ...nomesComQuestoes.filter((n) => !nucleoDisponivel.includes(n)),
+      ];
+      const todasAsOpcoes = Array.from(new Set([...ordenadas, ...state.disciplinas]));
       return (
         <div>
           <h2 className="mb-2 font-heading text-2xl font-semibold leading-snug">
@@ -523,12 +564,12 @@ function StepContent({
             <div className="mb-4 flex items-center gap-2 rounded-xl border border-questly-green/30 bg-questly-green-light px-3 py-2">
               <Sparkles size={15} strokeWidth={2} className="shrink-0 text-questly-green-dark" />
               <span className="min-w-0 flex-1 text-xs font-semibold text-questly-green-dark">
-                Ainda não sabemos seu semestre — as marcadas com o selo de questões já têm prática
-                pronta, pode escolher à vontade.
+                Só listamos disciplinas que já têm questões prontas — o número no chip é quantas.
+                Cursa outra? Dá pra adicionar depois, em Configurações.
               </span>
             </div>
           )}
-          {reconhecido && (
+          {reconhecido && nucleoDisponivel.length > 0 && (
             <div className="mb-4 flex items-center gap-2 rounded-xl border border-border px-3 py-2" style={{ background: `linear-gradient(100deg, ${identidade.corA}12, transparent 75%)` }}>
               <span
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white"
@@ -537,11 +578,11 @@ function StepContent({
                 <CursoIcone icone={identidade.icone} size={16} strokeWidth={2} />
               </span>
               <span className="min-w-0 flex-1 text-xs font-semibold text-muted-foreground">
-                Sugestões típicas de <b className="text-foreground">{identidade.nome}</b>
+                O que já temos de <b className="text-foreground">{identidade.nome}</b>
               </span>
               <button
                 type="button"
-                onClick={() => adicionarDisciplinas(identidade.disciplinasNucleo)}
+                onClick={() => adicionarDisciplinas(nucleoDisponivel)}
                 className="shrink-0 rounded-lg px-2.5 py-1 text-[11px] font-bold text-white transition-[filter] hover:brightness-105"
                 style={{ backgroundColor: identidade.corA }}
               >
@@ -549,23 +590,25 @@ function StepContent({
               </button>
             </div>
           )}
-          <div className="flex flex-wrap gap-2.5">
-            {todasAsOpcoes.map((nome) => (
-              <Chip
-                key={nome}
-                active={state.disciplinas.includes(nome)}
-                onClick={() => setState((s) => ({ ...s, disciplinas: toggleEm(s.disciplinas, nome) }))}
-                totalQuestoes={contagemPorNome.get(nome.toLowerCase())}
-              >
-                {nome}
-              </Chip>
-            ))}
-          </div>
-          <CustomDisciplinaInput
-            onAdd={(nome) =>
-              setState((s) => (s.disciplinas.includes(nome) ? s : { ...s, disciplinas: [...s.disciplinas, nome] }))
-            }
-          />
+          {todasAsOpcoes.length === 0 ? (
+            <p className="rounded-xl border-2 border-dashed border-border px-4 py-5 text-sm font-semibold text-muted-foreground">
+              Nenhuma disciplina disponível no momento. Você pode seguir sem marcar nada e
+              adicionar depois em Configurações.
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2.5">
+              {todasAsOpcoes.map((nome) => (
+                <Chip
+                  key={nome}
+                  active={state.disciplinas.includes(nome)}
+                  onClick={() => setState((s) => ({ ...s, disciplinas: toggleEm(s.disciplinas, nome) }))}
+                  totalQuestoes={contagemPorNome.get(nome.toLowerCase())}
+                >
+                  {nome}
+                </Chip>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
@@ -789,32 +832,6 @@ function UsernameField({
           {USERNAME_MENSAGEM[status].texto}
         </p>
       )}
-    </div>
-  );
-}
-
-function CustomDisciplinaInput({ onAdd }: { onAdd: (nome: string) => void }) {
-  const [valor, setValor] = useState("");
-  return (
-    <div className="mt-4 flex gap-2">
-      <input
-        value={valor}
-        onChange={(e) => setValor(e.target.value)}
-        placeholder="Não achou? Digite o nome da disciplina"
-        className="flex-1 rounded-xl border-2 border-dashed border-border px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-questly-blue"
-      />
-      <button
-        type="button"
-        onClick={() => {
-          const nome = valor.trim();
-          if (!nome) return;
-          onAdd(nome);
-          setValor("");
-        }}
-        className="rounded-xl bg-muted px-4 text-xs font-extrabold text-muted-foreground"
-      >
-        + Adicionar
-      </button>
     </div>
   );
 }
