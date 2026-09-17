@@ -151,7 +151,15 @@ export const QUESTLY_XP_PASSO_NIVEL = 25;
 
 export function questlyNivelDoXp(xpTotal: number | null | undefined): number {
   const xp = Math.max(0, xpTotal || 0);
-  return Math.max(1, Math.floor((1 + Math.sqrt(1 + (4 * xp) / QUESTLY_XP_PASSO_NIVEL)) / 2));
+  // O sqrt é só um CHUTE — corrigido logo abaixo por aritmética inteira
+  // contra o limiar exato. Um arredondamento pra baixo na fronteira de um
+  // nível daria o nível anterior justamente no momento em que o aluno
+  // acabou de subir. Mesma correção existe no gêmeo SQL; as duas pontas
+  // precisam concordar em TODO XP, não só na maioria deles.
+  const n = Math.max(1, Math.floor((1 + Math.sqrt(1 + (4 * xp) / QUESTLY_XP_PASSO_NIVEL)) / 2));
+  if (questlyXpDoNivel(n + 1) <= xp) return n + 1;
+  if (questlyXpDoNivel(n) > xp) return Math.max(1, n - 1);
+  return n;
 }
 
 /** XP acumulado necessário pra chegar no nível n (n >= 1). */
