@@ -80,6 +80,7 @@ export default async function ImprimirTopicoPage({
 
   const cota = await registrarExportacao({
     userId: user.id,
+    email: user.email,
     tipo: "topico",
     id: topicoId,
     questoes: folha.length,

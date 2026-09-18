@@ -64,6 +64,7 @@ export default async function ImprimirSimuladoPage({
   // exceção no teto.
   const cota = await registrarExportacao({
     userId: user.id,
+    email: user.email,
     tipo: "simulado",
     id: simulado.id,
     questoes: simulado.perguntas.length,

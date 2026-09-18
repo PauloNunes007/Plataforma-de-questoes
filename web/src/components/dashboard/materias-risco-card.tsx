@@ -4,12 +4,10 @@ import type { ResumoRiscoAcademico } from "@/lib/academico/academico-data";
 
 // O cartão de "Minhas matérias" na home.
 //
-// Existe por dois motivos, e o segundo é o mais importante:
-//
-//  1. no celular, /materias não cabe na barra inferior (5 abas fixas) — este
-//     cartão é a porta de entrada em tela estreita;
-//  2. um aviso de falta só vale se chegar ANTES da aula. Uma tela que o aluno
-//     precisa lembrar de abrir não avisa nada; a home ele abre sozinho.
+// Existe porque um aviso de falta só vale se chegar ANTES da aula. Uma tela
+// que o aluno precisa lembrar de abrir não avisa nada; a home ele abre
+// sozinho — mesmo com /materias também na barra inferior (nav-items.ts),
+// este cartão é o que traz o alerta até ele sem precisar tocar em nada.
 //
 // Server component: o dado já vem calculado do servidor e nada aqui é
 // interativo além do link.

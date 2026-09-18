@@ -103,6 +103,7 @@ export default async function ImprimirPage({
   // missão vazia ou inexistente.
   const cota = await registrarExportacao({
     userId: user.id,
+    email: user.email,
     tipo: "missao",
     id: missao.id,
     questoes: folha.length,

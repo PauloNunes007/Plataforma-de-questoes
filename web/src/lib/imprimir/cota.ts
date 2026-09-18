@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { PDF_MES_PRO, PDF_QUESTOES_MAX, PDF_SEMANA_PRO } from "@/lib/plano/limites";
+import { ehAdmin } from "@/lib/admin/auth";
 
 // A COTA DE EXPORTAÇÃO EM PDF — o único teto que vale também pro Pro.
 //
@@ -66,11 +67,17 @@ function proximaSegunda(hoje: Date): string {
  */
 export async function registrarExportacao(params: {
   userId: string;
+  /** E-mail da sessão — só pra liberar a cota da conta admin, nunca outro uso. */
+  email?: string | null;
   tipo: TipoDocumento;
   id: string;
   questoes: number;
 }): Promise<CotaPdf> {
   const hoje = new Date();
+
+  // Conta do dono: exportação sem teto. Ainda registra a linha (telemetria),
+  // só nunca deixa `usadasSemana`/`usadasMes` barrar o insert abaixo.
+  const semTeto = ehAdmin(params.email);
   const semana = questlySegundaDaSemana(hoje);
   const documento = chaveDocumento(params.tipo, params.id);
 
@@ -125,8 +132,10 @@ export async function registrarExportacao(params: {
   // que ele já tem aberto na outra aba.
   if (jaFeita) return resumo({ reimpressao: true });
 
-  if (usadasSemana >= PDF_SEMANA_PRO) return resumo({ liberado: false, motivo: "semana" });
-  if (usadasMes >= PDF_MES_PRO) return resumo({ liberado: false, motivo: "mes" });
+  if (!semTeto) {
+    if (usadasSemana >= PDF_SEMANA_PRO) return resumo({ liberado: false, motivo: "semana" });
+    if (usadasMes >= PDF_MES_PRO) return resumo({ liberado: false, motivo: "mes" });
+  }
 
   const { error } = await admin.from("pdf_exportacoes").insert({
     user_id: params.userId,

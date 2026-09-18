@@ -213,9 +213,9 @@ function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavPro
               </div>
 
               <div className="mx-1 my-1 h-px bg-border" />
-              {/* No celular a barra inferior só tem 5 abas e "Minhas matérias"
-                  não cabe nelas (ver nav-items.ts) — este item é o caminho de
-                  entrada em telas estreitas. */}
+              {/* "Minhas matérias" também está na barra inferior do mobile
+                  (ver nav-items.ts) — este item fica como atalho extra pra
+                  quem já está com o menu da conta aberto. */}
               <ItemMenu href={MATERIAS_NAV.href} onClick={() => setAberto(false)} cor="text-foreground">
                 <MATERIAS_NAV.icon size={15} strokeWidth={1.75} />
                 Minhas matérias
