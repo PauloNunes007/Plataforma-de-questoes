@@ -98,6 +98,13 @@ $fn$;
 -- novos: quem chama só confere o erro, e nomear colunas de `profiles` como
 -- parâmetros OUT faz o PL/pgSQL tratá-las como variáveis dentro do próprio
 -- UPDATE — ambiguidade gratuita numa função que não precisa devolver nada.
+--
+-- O drop antes do create existe porque uma execução anterior desta mesma
+-- migração (ou um rascunho manual no SQL Editor) pode ter deixado uma
+-- versão com outro tipo de retorno — `create or replace` não troca o tipo
+-- de retorno de uma função existente (42P13), só o corpo.
+drop function if exists questly_registrar_progresso(uuid, integer, date);
+
 create or replace function questly_registrar_progresso(
   p_user_id uuid,
   p_xp integer,
