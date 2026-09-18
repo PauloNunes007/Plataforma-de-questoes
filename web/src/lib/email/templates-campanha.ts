@@ -129,7 +129,7 @@ export const CAMPANHA_LANCAMENTO_PRO: ConteudoCampanha = {
   ],
   rotuloBotao: "Usar meu Pro agora",
   fecho:
-    "A semana acaba no domingo e a conta volta pro plano grátis sozinha — não cobramos nada e não pedimos cartão em lugar nenhum. Antes de o prazo acabar eu mando uma condição especial de lançamento pra quem quiser continuar no Pro. Se algo não funcionar, é só responder este e-mail — eu leio todos.",
+    "A semana acaba na sexta, 25/09, e a conta volta pro plano grátis sozinha — não cobramos nada e não pedimos cartão em lugar nenhum. Antes de o prazo acabar eu mando uma condição especial de lançamento pra quem quiser continuar no Pro. Se algo não funcionar, é só responder este e-mail — eu leio todos.",
 };
 
 export function montarEmailCampanha(opcoes: {
