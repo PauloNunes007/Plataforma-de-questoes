@@ -25,6 +25,7 @@ import {
   type MetodosPagamento,
   type OpcaoPlano,
 } from "@/lib/plano/plano";
+import { ehProDeLancamento, nomeDoPlano } from "@/lib/plano/lancamento";
 import {
   cancelarAssinaturaPendenteAction,
   conferirPagamentoAction,
@@ -59,7 +60,11 @@ function capitalizar(texto: string): string {
 
 function formatarData(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+  return new Date(iso).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 // Cadência do polling. As primeiras checagens são rápidas (Pix aprova em
@@ -74,13 +79,17 @@ const POLL_MAX_CHECAGENS = 45; // ≈ 4 minutos
 
 export function PlanosView(props: PlanosViewProps) {
   const router = useRouter();
-  const [pendente, setPendente] = useState<AssinaturaPendente | null>(props.pendenteInicial);
+  const [pendente, setPendente] = useState<AssinaturaPendente | null>(
+    props.pendenteInicial,
+  );
   const [enviando, setEnviando] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [ativadoAgora, setAtivadoAgora] = useState(false);
   const [conferindo, setConferindo] = useState(false);
   const [cansou, setCansou] = useState(false);
-  const [detalhe, setDetalhe] = useState<string | null>(props.conferenciaInicial?.detalhe ?? null);
+  const [detalhe, setDetalhe] = useState<string | null>(
+    props.conferenciaInicial?.detalhe ?? null,
+  );
   const [estado, setEstado] = useState<EstadoPagamento | null>(() => {
     if (props.jaEhPro) return "ativo";
     if (props.conferenciaInicial) return props.conferenciaInicial.estado;
@@ -122,7 +131,10 @@ export function PlanosView(props: PlanosViewProps) {
         setCansou(true);
         return;
       }
-      const espera = checagens.current < POLL_CHECAGENS_RAPIDAS ? POLL_RAPIDO_MS : POLL_LENTO_MS;
+      const espera =
+        checagens.current < POLL_CHECAGENS_RAPIDAS
+          ? POLL_RAPIDO_MS
+          : POLL_LENTO_MS;
       timer = setTimeout(async () => {
         checagens.current += 1;
         const novo = await conferirPagamentoAction();
@@ -200,10 +212,13 @@ export function PlanosView(props: PlanosViewProps) {
   // hora — cairia direto no cartão seco de "assinatura ativa" e nunca veria as
   // boas-vindas; só quem paga por Pix, que passa pelo polling, veria.
   const recemAtivado =
-    ativadoAgora || (props.voltouDoCheckout && props.conferenciaInicial?.estado === "ativo");
+    ativadoAgora ||
+    (props.voltouDoCheckout && props.conferenciaInicial?.estado === "ativo");
 
   const mostrandoEspera =
-    !props.jaEhPro && !!pendente && (estado === "processando" || estado === "indisponivel");
+    !props.jaEhPro &&
+    !!pendente &&
+    (estado === "processando" || estado === "indisponivel");
   const mostrandoRecusa = !props.jaEhPro && estado === "recusado";
 
   return (
@@ -212,11 +227,18 @@ export function PlanosView(props: PlanosViewProps) {
 
       {/* Logo depois do pagamento o campo de cupom vira ruído — e pior, uma
           pergunta ("será que eu podia ter pago menos?"). */}
-      {!mostrandoEspera && !recemAtivado && <CupomResgate onResgatado={() => router.refresh()} />}
+      {!mostrandoEspera && !recemAtivado && (
+        <CupomResgate onResgatado={() => router.refresh()} />
+      )}
 
       {props.jaEhPro ? (
-        recemAtivado ? (
-          /* Acabou de pagar: a tela vira as BOAS-VINDAS, não o extrato. Ver
+        recemAtivado || ehProDeLancamento({ plano_ciclo: props.ciclo }) ? (
+          /* Acabou de pagar — ou está na semana de lançamento: a tela vira as
+             BOAS-VINDAS, não o extrato. A semana entra aqui de propósito. Um
+             aluno que ganhou Pro sem pedir não sabe o que ganhou, e um cartão
+             com "válido até" não ensina: o que converte em sete dias é ele
+             ABRIR as telas que só o Pro tem, e esta é a única da /pro que
+             manda pra elas por link. Ver
              components/plano/bem-vindo-pro.tsx — este é o único momento em
              que o aluno está totalmente disposto a aprender o que comprou. O
              extrato (validade, fidelidade) continua logo abaixo. */
@@ -257,7 +279,9 @@ export function PlanosView(props: PlanosViewProps) {
             <Aviso
               titulo="O pagamento não foi aprovado"
               texto={`${detalhe ?? "O Mercado Pago recusou a cobrança."} Nada foi cobrado — dá pra tentar de novo${
-                props.metodos?.pix ? ", com outro cartão ou por Pix" : " com outro cartão"
+                props.metodos?.pix
+                  ? ", com outro cartão ou por Pix"
+                  : " com outro cartão"
               }.`}
             />
           )}
@@ -368,7 +392,9 @@ function PlanoCard({
       )}
 
       <div className="flex items-center gap-2">
-        <h3 className="font-heading text-[15px] font-semibold tracking-tight">{opcao.titulo}</h3>
+        <h3 className="font-heading text-[15px] font-semibold tracking-tight">
+          {opcao.titulo}
+        </h3>
         {ancorado && (
           <span className="tnum rounded-md bg-questly-green/12 px-1.5 py-[2px] text-[10px] font-bold tracking-tight text-questly-green-dark">
             −{DESCONTO_SEMESTRAL_PCT}%
@@ -377,13 +403,18 @@ function PlanoCard({
       </div>
 
       <div className="mt-4 flex items-end gap-1.5">
-        <span className="pb-1.5 text-[15px] font-medium text-muted-foreground">R$</span>
+        <span className="pb-1.5 text-[15px] font-medium text-muted-foreground">
+          R$
+        </span>
         <span className="tnum font-heading text-[42px] font-semibold leading-none tracking-tight">
           {(opcao.precoMensalEquivalente / 100).toLocaleString("pt-BR", {
-            minimumFractionDigits: opcao.precoMensalEquivalente % 100 === 0 ? 0 : 2,
+            minimumFractionDigits:
+              opcao.precoMensalEquivalente % 100 === 0 ? 0 : 2,
           })}
         </span>
-        <span className="pb-1.5 text-[13px] text-muted-foreground">{opcao.cobrancaLabel}</span>
+        <span className="pb-1.5 text-[13px] text-muted-foreground">
+          {opcao.cobrancaLabel}
+        </span>
         {ancorado && (
           <span className="tnum pb-[7px] text-[13px] text-muted-foreground/60 line-through">
             {reais(PRECO_MENSAL_CENTAVOS)}
@@ -392,13 +423,19 @@ function PlanoCard({
       </div>
 
       <p className="tnum mt-1.5 text-[12px] font-medium">
-        {reais(opcao.precoCentavos)} · {meses} {meses === 1 ? "mês" : "meses"} de Pro
+        {reais(opcao.precoCentavos)} · {meses} {meses === 1 ? "mês" : "meses"}{" "}
+        de Pro
         {economiaCentavos > 0 && (
-          <span className="text-questly-green-dark"> · economia de {reais(economiaCentavos)}</span>
+          <span className="text-questly-green-dark">
+            {" "}
+            · economia de {reais(economiaCentavos)}
+          </span>
         )}
       </p>
 
-      <p className="mt-1 text-[11.5px] leading-snug text-muted-foreground/85">{comoCobra}</p>
+      <p className="mt-1 text-[11.5px] leading-snug text-muted-foreground/85">
+        {comoCobra}
+      </p>
 
       <p className="mt-4 min-h-[3.25rem] border-t border-border pt-3.5 text-[12.5px] leading-relaxed text-muted-foreground">
         {opcao.observacao}
@@ -435,13 +472,22 @@ function PlanoCard({
 function LinhaConfianca({ metodos }: { metodos: MetodosPagamento | null }) {
   const itens = [
     { icone: CreditCard, texto: capitalizar(meiosAceitosTexto(metodos)) },
-    { icone: Lock, texto: "Checkout do Mercado Pago — não guardamos seu cartão" },
-    { icone: ShieldCheck, texto: "Liberação automática assim que o pagamento aprovar" },
+    {
+      icone: Lock,
+      texto: "Checkout do Mercado Pago — não guardamos seu cartão",
+    },
+    {
+      icone: ShieldCheck,
+      texto: "Liberação automática assim que o pagamento aprovar",
+    },
   ];
   return (
     <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
       {itens.map((i) => (
-        <li key={i.texto} className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+        <li
+          key={i.texto}
+          className="flex items-center gap-1.5 text-[12px] text-muted-foreground"
+        >
           <i.icone size={13} strokeWidth={1.9} className="text-questly-green" />
           {i.texto}
         </li>
@@ -515,7 +561,11 @@ function CupomResgate({ onResgatado }: { onResgatado: () => void }) {
           onClick={resgatar}
           className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-questly-gold/15 px-3 text-[12.5px] font-semibold text-questly-gold transition-colors hover:bg-questly-gold/25 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {enviando ? <Loader2 size={13} className="animate-spin" /> : "Aplicar"}
+          {enviando ? (
+            <Loader2 size={13} className="animate-spin" />
+          ) : (
+            "Aplicar"
+          )}
         </button>
       </div>
       {erro && <p className="text-[12px] text-questly-red-dark">{erro}</p>}
@@ -533,7 +583,9 @@ function Aviso({ titulo, texto }: { titulo: string; texto: string }) {
       </span>
       <div>
         <p className="text-[13.5px] font-semibold">{titulo}</p>
-        <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">{texto}</p>
+        <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+          {texto}
+        </p>
       </div>
     </div>
   );
@@ -558,8 +610,10 @@ function PagamentoEmAnalise({
   onCancelar: () => void;
   cancelando: boolean;
 }) {
-  const nomeCiclo = pendente.ciclo === "semestral" ? "Pro Semestral" : "Pro Mensal";
-  const porMes = pendente.forma === "recorrente" && pendente.ciclo === "semestral";
+  const nomeCiclo =
+    pendente.ciclo === "semestral" ? "Pro Semestral" : "Pro Mensal";
+  const porMes =
+    pendente.forma === "recorrente" && pendente.ciclo === "semestral";
 
   return (
     <motion.div
@@ -591,18 +645,20 @@ function PagamentoEmAnalise({
       <p className="mx-auto mt-3 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
         {manual ? (
           <>
-            O pagamento online está indisponível no momento. Seu pedido ficou salvo e será
-            confirmado manualmente — não pague duas vezes.
+            O pagamento online está indisponível no momento. Seu pedido ficou
+            salvo e será confirmado manualmente — não pague duas vezes.
           </>
         ) : cansou ? (
           <>
-            Se você acabou de pagar, o Mercado Pago pode levar mais alguns minutos. Pode fechar esta
-            página: <b>assim que ele aprovar, o Pro entra sozinho</b> na sua conta.
+            Se você acabou de pagar, o Mercado Pago pode levar mais alguns
+            minutos. Pode fechar esta página:{" "}
+            <b>assim que ele aprovar, o Pro entra sozinho</b> na sua conta.
           </>
         ) : (
           <>
-            Estamos checando com o Mercado Pago a cada poucos segundos. Assim que aprovar, o{" "}
-            <b>Pro é liberado na hora</b>, sem você fazer mais nada.
+            Estamos checando com o Mercado Pago a cada poucos segundos. Assim
+            que aprovar, o <b>Pro é liberado na hora</b>, sem você fazer mais
+            nada.
           </>
         )}
       </p>
@@ -614,7 +670,11 @@ function PagamentoEmAnalise({
           disabled={conferindo}
           className="mt-5 inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-border bg-foreground/[0.04] px-5 text-[13.5px] font-semibold transition-colors hover:bg-foreground/[0.08] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <RefreshCw size={14} strokeWidth={2.1} className={conferindo ? "animate-spin" : ""} />
+          <RefreshCw
+            size={14}
+            strokeWidth={2.1}
+            className={conferindo ? "animate-spin" : ""}
+          />
           {conferindo ? "Verificando…" : "Verificar agora"}
         </button>
       )}
@@ -663,12 +723,18 @@ function StatusPro({
               <BadgeCheck size={25} strokeWidth={2} />
             </span>
             <h2 className="mt-3.5 font-heading text-[19px] font-semibold tracking-tight">
-              {recemAtivado ? "Pagamento aprovado — Pro liberado" : "Assinatura ativa"}
+              {recemAtivado
+                ? "Pagamento aprovado — Pro liberado"
+                : ehProDeLancamento({ plano_ciclo: ciclo })
+                  ? "Semana Pro de lançamento"
+                  : "Assinatura ativa"}
             </h2>
           </>
         )}
-        <p className={`text-[13px] text-muted-foreground ${compacto ? "" : "mt-1"}`}>
-          Plano {ciclo === "semestral" ? "Pro Semestral" : "Pro Mensal"}.
+        <p
+          className={`text-[13px] text-muted-foreground ${compacto ? "" : "mt-1"}`}
+        >
+          Plano {nomeDoPlano(ciclo)}.
         </p>
 
         <dl className="mx-auto mt-5 grid max-w-xs gap-2 text-left text-[13px]">
@@ -679,14 +745,21 @@ function StatusPro({
           {fidelidadeAte && (
             <div className="flex items-center justify-between gap-4 border-t border-questly-gold/20 pt-2">
               <dt className="text-muted-foreground">Fidelidade até</dt>
-              <dd className="tnum font-semibold">{formatarData(fidelidadeAte)}</dd>
+              <dd className="tnum font-semibold">
+                {formatarData(fidelidadeAte)}
+              </dd>
             </div>
           )}
         </dl>
 
+        {/* O fecho segue o que a linha REALMENTE é. Agradecer o apoio de quem
+            ainda não pagou nada soa a cobrança disfarçada; e quem está na
+            semana de lançamento precisa ler, aqui também, que ela acaba. */}
         <p className="mt-5 flex items-center justify-center gap-1.5 text-[11.5px] text-muted-foreground">
           <ShieldCheck size={13} />
-          Obrigado por apoiar a Expectrum.
+          {ehProDeLancamento({ plano_ciclo: ciclo })
+            ? "Liberado no lançamento. Depois dessa data a conta volta ao grátis — sem cobrança automática."
+            : "Obrigado por apoiar a Expectrum."}
         </p>
       </motion.div>
     </AnimatePresence>
@@ -731,9 +804,17 @@ function Comparativo() {
               <span className="flex shrink-0 items-center gap-4">
                 <span className="flex w-9 justify-center">
                   {item.incluso ? (
-                    <Check size={15} strokeWidth={2.6} className="text-questly-green" />
+                    <Check
+                      size={15}
+                      strokeWidth={2.6}
+                      className="text-questly-green"
+                    />
                   ) : (
-                    <Minus size={15} strokeWidth={2.4} className="text-muted-foreground/45" />
+                    <Minus
+                      size={15}
+                      strokeWidth={2.4}
+                      className="text-muted-foreground/45"
+                    />
                   )}
                 </span>
                 <span className="flex w-9 justify-center">
@@ -742,7 +823,11 @@ function Comparativo() {
                       {item.pro}
                     </span>
                   ) : (
-                    <Check size={15} strokeWidth={2.6} className="text-questly-gold" />
+                    <Check
+                      size={15}
+                      strokeWidth={2.6}
+                      className="text-questly-gold"
+                    />
                   )}
                 </span>
               </span>

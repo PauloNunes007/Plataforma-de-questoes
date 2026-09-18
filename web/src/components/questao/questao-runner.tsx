@@ -31,14 +31,23 @@ import {
   Zap,
 } from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
-import { FiguraQuestao, figurasDaPergunta, usePrefetchFiguras } from "@/components/questao/figura-questao";
+import {
+  FiguraQuestao,
+  figurasDaPergunta,
+  usePrefetchFiguras,
+} from "@/components/questao/figura-questao";
 import { QuestaoAcoes } from "@/components/questao/questao-acoes";
 import { QuestaoComentarios } from "@/components/questao/questao-comentarios";
 import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
-import { questlyDegrauCombo, questlyMultiplicadorCombo, questlyXpDaResposta } from "@/lib/questly/shared";
+import {
+  questlyDegrauCombo,
+  questlyMultiplicadorCombo,
+  questlyXpDaResposta,
+} from "@/lib/questly/shared";
 import { questlyMarcoAtingido, type MarcoDiario } from "@/lib/questly/marcos";
 import { AVISO_RESTANTE, QUESTOES_DIA_FREE } from "@/lib/plano/limites";
 import { ProMark } from "@/components/plano/pro-ui";
+import { AvisoProLancamento } from "@/components/plano/aviso-pro-lancamento";
 import { Insignia } from "@/components/insignias/insignia";
 import {
   aceitarDesafioAction,
@@ -47,7 +56,10 @@ import {
   registrarRespostaAction,
   type FinalizarMissaoResultado,
 } from "@/lib/questao/actions";
-import { alternarFavoritoAction, salvarNotaAction } from "@/lib/anotacoes/actions";
+import {
+  alternarFavoritoAction,
+  salvarNotaAction,
+} from "@/lib/anotacoes/actions";
 import type { MissaoResumo, Pergunta } from "@/lib/questao/types";
 import { hrefQuestao, rotuloOrigem } from "@/lib/questao/navegacao";
 
@@ -73,15 +85,24 @@ const MOTIVOS_ERRO = [
 // Componente estático (não uma variável de componente dinâmica) por causa da
 // regra react-hooks/static-components do compilador do React 19 — ver
 // web/CLAUDE.md: nada de `const Icone = mapa(nome)` + `<Icone/>` no render.
-function IconeDisciplina({ nome, className }: { nome: string | null; className?: string }) {
+function IconeDisciplina({
+  nome,
+  className,
+}: {
+  nome: string | null;
+  className?: string;
+}) {
   const props = { size: 20, strokeWidth: 2, className };
   if (!nome) return <BookOpen {...props} />;
-  if (/matemátic|cálculo|calculo|algebr|geometri/i.test(nome)) return <Calculator {...props} />;
-  if (/física|fisica|eletromag|mecânic|mecanic/i.test(nome)) return <Atom {...props} />;
+  if (/matemátic|cálculo|calculo|algebr|geometri/i.test(nome))
+    return <Calculator {...props} />;
+  if (/física|fisica|eletromag|mecânic|mecanic/i.test(nome))
+    return <Atom {...props} />;
   if (/bio/i.test(nome)) return <Dna {...props} />;
   if (/quí?mic|quimic/i.test(nome)) return <FlaskConical {...props} />;
   if (/geografi/i.test(nome)) return <Globe {...props} />;
-  if (/históri|historia|human|filosofi|sociologi/i.test(nome)) return <Landmark {...props} />;
+  if (/históri|historia|human|filosofi|sociologi/i.test(nome))
+    return <Landmark {...props} />;
   return <BookOpen {...props} />;
 }
 
@@ -129,24 +150,39 @@ export function QuestaoRunner({
 }) {
   const router = useRouter();
   const [perguntasState, setPerguntasState] = useState(perguntas);
-  const [estados, setEstados] = useState<EstadoPergunta[]>(() => perguntas.map(estadoInicial));
+  const [estados, setEstados] = useState<EstadoPergunta[]>(() =>
+    perguntas.map(estadoInicial),
+  );
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [acertos, setAcertos] = useState(0);
   const [erros, setErros] = useState(0);
   const [xpGanho, setXpGanho] = useState(0);
   const [view, setView] = useState<"questao" | "resultado">("questao");
   const [finalizando, setFinalizando] = useState(false);
-  const [resultadoExtra, setResultadoExtra] = useState<FinalizarMissaoResultado | null>(null);
+  const [resultadoExtra, setResultadoExtra] =
+    useState<FinalizarMissaoResultado | null>(null);
   const [tempoGastoMinMissao, setTempoGastoMinMissao] = useState(0);
-  const [flash, setFlash] = useState<{ tipo: "ok" | "bad"; key: number } | null>(null);
-  const [xpFloat, setXpFloat] = useState<{ xp: number; key: number; tipo: "ok" | "bad" } | null>(null);
+  const [flash, setFlash] = useState<{
+    tipo: "ok" | "bad";
+    key: number;
+  } | null>(null);
+  const [xpFloat, setXpFloat] = useState<{
+    xp: number;
+    key: number;
+    tipo: "ok" | "bad";
+  } | null>(null);
   // Combo = acertos seguidos na sessão. Fica em state (e não só em ref)
   // porque a barra do topo mostra ele ao vivo.
   const [combo, setCombo] = useState(0);
   const [melhorCombo, setMelhorCombo] = useState(0);
-  const [marco, setMarco] = useState<{ marco: MarcoDiario; key: number } | null>(null);
+  const [marco, setMarco] = useState<{
+    marco: MarcoDiario;
+    key: number;
+  } | null>(null);
   const [desafioAceitando, setDesafioAceitando] = useState(false);
-  const [favoritos, setFavoritos] = useState<Set<string>>(new Set(favoritosIniciaisIds));
+  const [favoritos, setFavoritos] = useState<Set<string>>(
+    new Set(favoritosIniciaisIds),
+  );
   // Quanto sobrou do teto diário do plano grátis. Desce a cada resposta e é
   // RECONCILIADO com o número do servidor depois de cada registro — outra aba
   // aberta na mesma conta gasta do mesmo teto, e o cliente não teria como
@@ -181,14 +217,18 @@ export function QuestaoRunner({
   // Puxa as figuras das duas próximas questões enquanto o aluno responde esta —
   // é o que faz a imagem já estar pronta quando ele avança (ver figura-questao).
   usePrefetchFiguras(
-    perguntasState.slice(indiceAtual, indiceAtual + 3).flatMap((p) => figurasDaPergunta(p)),
+    perguntasState
+      .slice(indiceAtual, indiceAtual + 3)
+      .flatMap((p) => figurasDaPergunta(p)),
   );
 
   const pergunta = perguntasState[indiceAtual];
   const estado = estados[indiceAtual];
 
   function atualizarEstado(indice: number, patch: Partial<EstadoPergunta>) {
-    setEstados((prev) => prev.map((e, i) => (i === indice ? { ...e, ...patch } : e)));
+    setEstados((prev) =>
+      prev.map((e, i) => (i === indice ? { ...e, ...patch } : e)),
+    );
   }
 
   function selecionarAlternativa(letra: string) {
@@ -229,7 +269,9 @@ export function QuestaoRunner({
       correta,
       jaAcertouAntes: jaAcertadasAntes.current.has(pergunta.id),
       jaTentouAntes: jaTentadasAntes.current.has(pergunta.id),
-      topicoMestre: !!pergunta.topic_id && topicosMestreInicio.current.has(pergunta.topic_id),
+      topicoMestre:
+        !!pergunta.topic_id &&
+        topicosMestreInicio.current.has(pergunta.topic_id),
       acertosSeguidos,
     });
 
@@ -238,11 +280,20 @@ export function QuestaoRunner({
     setXpGanho((x) => x + xpPergunta);
     jaTentadasAntes.current.add(pergunta.id);
 
-    atualizarEstado(indiceAtual, { respondida: true, correta, xpConcedido: xpPergunta, combo: acertosSeguidos });
+    atualizarEstado(indiceAtual, {
+      respondida: true,
+      correta,
+      xpConcedido: xpPergunta,
+      combo: acertosSeguidos,
+    });
 
     setFlash({ tipo: correta ? "ok" : "bad", key: Date.now() });
     if (xpPergunta > 0) {
-      setXpFloat({ xp: xpPergunta, key: Date.now(), tipo: correta ? "ok" : "bad" });
+      setXpFloat({
+        xp: xpPergunta,
+        key: Date.now(),
+        tipo: correta ? "ok" : "bad",
+      });
     }
 
     const resultado = await registrarRespostaAction({
@@ -274,7 +325,9 @@ export function QuestaoRunner({
     }
 
     if (restanteHoje !== null) {
-      setRestante(Math.max(0, QUESTOES_DIA_FREE - (resultado.questoesHoje ?? 0)));
+      setRestante(
+        Math.max(0, QUESTOES_DIA_FREE - (resultado.questoesHoje ?? 0)),
+      );
     }
 
     atualizarEstado(indiceAtual, { attemptId: resultado.attemptId });
@@ -286,7 +339,11 @@ export function QuestaoRunner({
 
     if (resultado.novoTempoMedio != null) {
       setPerguntasState((prev) =>
-        prev.map((p, i) => (i === indiceAtual ? { ...p, tempo_medio_seg: resultado.novoTempoMedio! } : p)),
+        prev.map((p, i) =>
+          i === indiceAtual
+            ? { ...p, tempo_medio_seg: resultado.novoTempoMedio! }
+            : p,
+        ),
       );
     }
   }
@@ -348,7 +405,10 @@ export function QuestaoRunner({
 
   async function finalizarMissao() {
     setFinalizando(true);
-    const tempoMin = Math.max(1, Math.round((Date.now() - tempoInicioMissaoMs.current) / 60000));
+    const tempoMin = Math.max(
+      1,
+      Math.round((Date.now() - tempoInicioMissaoMs.current) / 60000),
+    );
     setTempoGastoMinMissao(tempoMin);
 
     const resultado = await finalizarMissaoAction({
@@ -435,7 +495,10 @@ export function QuestaoRunner({
       <FlashOverlay flash={flash} />
       <XpFloatOverlay xpFloat={xpFloat} anchorRef={correctBtnRef} />
       <MarcoOverlay marco={marco} onFechar={() => setMarco(null)} />
-      <AvisoToast texto={avisoBiblioteca} onFechar={() => setAvisoBiblioteca(null)} />
+      <AvisoToast
+        texto={avisoBiblioteca}
+        onFechar={() => setAvisoBiblioteca(null)}
+      />
 
       <div className="mb-6 flex items-center gap-3 sm:gap-4">
         <Link
@@ -486,7 +549,8 @@ export function QuestaoRunner({
                 className="tnum inline-flex items-center gap-1 rounded-full bg-questly-orange-light px-2 py-0.5 text-[11px] font-bold text-questly-orange-dark sm:text-xs"
               >
                 <Flame size={12} strokeWidth={2.4} />
-                {combo} seguidos · {questlyMultiplicadorCombo(combo).toString().replace(".", ",")}x
+                {combo} seguidos ·{" "}
+                {questlyMultiplicadorCombo(combo).toString().replace(".", ",")}x
               </motion.span>
             )}
           </AnimatePresence>
@@ -503,8 +567,7 @@ export function QuestaoRunner({
             </Link>
           )}
           <div className="tnum flex items-center gap-1 text-xs font-semibold text-questly-gold-dark sm:text-[13px]">
-            <Zap size={13} strokeWidth={2} />
-            +{xpGanho} XP
+            <Zap size={13} strokeWidth={2} />+{xpGanho} XP
           </div>
         </div>
       </div>
@@ -516,13 +579,18 @@ export function QuestaoRunner({
         >
           <div
             className="pointer-events-none absolute -right-6 -top-10 h-40 w-40 rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%)" }}
+            style={{
+              background:
+                "radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%)",
+            }}
           />
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-inset ring-white/25">
             <IconeDisciplina nome={nomeDisc} className="text-white" />
           </span>
           <div className="min-w-0">
-            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70">Disciplina</div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70">
+              Disciplina
+            </div>
             <div className="truncate text-[15px] font-bold leading-tight text-white sm:text-base">
               {nomeDisc || "Prática livre"}
             </div>
@@ -608,9 +676,13 @@ export function QuestaoRunner({
             const texto = pergunta.alternativas?.[letra] ?? "";
             const imgAlt = imagensAlternativas[letra];
             const riscada = estado.riscadas.has(letra);
-            const selecionada = estado.selecionada === letra && !estado.respondida;
+            const selecionada =
+              estado.selecionada === letra && !estado.respondida;
             const isCorreta = estado.respondida && letra === pergunta.gabarito;
-            const isErrada = estado.respondida && letra === estado.selecionada && letra !== pergunta.gabarito;
+            const isErrada =
+              estado.respondida &&
+              letra === estado.selecionada &&
+              letra !== pergunta.gabarito;
 
             return (
               <motion.div
@@ -623,9 +695,13 @@ export function QuestaoRunner({
                   x: isErrada ? [0, -8, 7, -5, 3, 0] : 0,
                 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                onClick={() => !estado.respondida && selecionarAlternativa(letra)}
+                onClick={() =>
+                  !estado.respondida && selecionarAlternativa(letra)
+                }
                 className={`relative flex min-h-[68px] cursor-pointer items-center gap-3.5 rounded-xl border px-4 py-4 pr-13 transition-colors ${
-                  estado.respondida ? "cursor-default" : "hover:border-questly-green/50"
+                  estado.respondida
+                    ? "cursor-default"
+                    : "hover:border-questly-green/50"
                 } ${
                   isCorreta
                     ? "border-questly-green/60 bg-questly-green-light"
@@ -665,7 +741,10 @@ export function QuestaoRunner({
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
                     style={{ transformOrigin: "left center" }}
-                    transition={{ duration: 0.28, ease: [0.16, 0.9, 0.3, 1.05] }}
+                    transition={{
+                      duration: 0.28,
+                      ease: [0.16, 0.9, 0.3, 1.05],
+                    }}
                   />
                 )}
                 {!estado.respondida && (
@@ -763,10 +842,16 @@ function FeedbackArea({
   ehAdmin: boolean;
 }) {
   const [mostrarResolucao, setMostrarResolucao] = useState(false);
-  const degrauAtingido = estado.correta ? questlyDegrauCombo(estado.combo) : null;
+  const degrauAtingido = estado.correta
+    ? questlyDegrauCombo(estado.combo)
+    : null;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+    >
       <div
         className={`mb-4 flex items-center gap-3 rounded-xl px-4 py-3.5 text-[14.5px] font-medium ${
           estado.correta
@@ -801,12 +886,21 @@ function FeedbackArea({
           estado do combo; no erro, o porquê de ainda ter vindo XP. */}
       {estado.correta && estado.combo >= 2 && (
         <p className="mb-4 -mt-1 flex items-center gap-1.5 px-1 text-[12.5px] text-muted-foreground">
-          <Flame size={13} strokeWidth={2.2} className="shrink-0 text-questly-orange" />
+          <Flame
+            size={13}
+            strokeWidth={2.2}
+            className="shrink-0 text-questly-orange"
+          />
           {degrauAtingido ? (
             <span>
-              <b className="font-semibold text-foreground">{degrauAtingido.rotulo}</b> — {estado.combo} acertos
-              seguidos. XP em {questlyMultiplicadorCombo(estado.combo).toString().replace(".", ",")}x enquanto a
-              sequência durar.
+              <b className="font-semibold text-foreground">
+                {degrauAtingido.rotulo}
+              </b>{" "}
+              — {estado.combo} acertos seguidos. XP em{" "}
+              {questlyMultiplicadorCombo(estado.combo)
+                .toString()
+                .replace(".", ",")}
+              x enquanto a sequência durar.
             </span>
           ) : (
             <span>
@@ -821,8 +915,12 @@ function FeedbackArea({
 
       {!estado.correta && estado.xpConcedido > 0 && (
         <p className="mb-4 -mt-1 px-1 text-[12.5px] text-muted-foreground">
-          Você levou <b className="font-semibold text-foreground">{estado.xpConcedido} XP</b> por ter encarado a
-          questão — errar tentando também constrói repertório. Acertar paga bem mais.
+          Você levou{" "}
+          <b className="font-semibold text-foreground">
+            {estado.xpConcedido} XP
+          </b>{" "}
+          por ter encarado a questão — errar tentando também constrói
+          repertório. Acertar paga bem mais.
         </p>
       )}
 
@@ -851,7 +949,11 @@ function FeedbackArea({
           >
             <div className="mb-4 rounded-xl bg-muted/60 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
               <b className="mb-1 flex items-center gap-1.5 font-semibold text-foreground">
-                <Lightbulb size={14} strokeWidth={2} className="text-questly-gold" />
+                <Lightbulb
+                  size={14}
+                  strokeWidth={2}
+                  className="text-questly-gold"
+                />
                 Resolução
               </b>
               <MathText text={pergunta.resolucao} />
@@ -867,8 +969,9 @@ function FeedbackArea({
         >
           <Lock size={13} strokeWidth={2} />
           <span>
-            <b className="font-semibold">Autópsia do erro</b> é do Pro: descubra por que errou (conceito,
-            cálculo, interpretação ou chute) e corrija o padrão.
+            <b className="font-semibold">Autópsia do erro</b> é do Pro: descubra
+            por que errou (conceito, cálculo, interpretação ou chute) e corrija
+            o padrão.
           </span>
         </Link>
       )}
@@ -877,7 +980,8 @@ function FeedbackArea({
         <div>
           <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <Brain size={13} strokeWidth={1.75} />
-            Por que você errou? Classificar ajuda a calibrar sua chance de aprovação.
+            Por que você errou? Classificar ajuda a calibrar sua chance de
+            aprovação.
           </p>
           <div className="flex flex-wrap gap-2">
             {MOTIVOS_ERRO.map((m) => {
@@ -907,7 +1011,11 @@ function FeedbackArea({
   );
 }
 
-function FlashOverlay({ flash }: { flash: { tipo: "ok" | "bad"; key: number } | null }) {
+function FlashOverlay({
+  flash,
+}: {
+  flash: { tipo: "ok" | "bad"; key: number } | null;
+}) {
   return (
     <AnimatePresence>
       {flash && (
@@ -967,9 +1075,18 @@ function MarcoOverlay({
               className="shrink-0"
               initial={{ rotate: -14, scale: 0.6 }}
               animate={{ rotate: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 320, damping: 14, delay: 0.08 }}
+              transition={{
+                type: "spring",
+                stiffness: 320,
+                damping: 14,
+                delay: 0.08,
+              }}
             >
-              <Insignia nome={marco.marco.insignia} tom={marco.marco.tom} size={44} />
+              <Insignia
+                nome={marco.marco.insignia}
+                tom={marco.marco.tom}
+                size={44}
+              />
             </motion.span>
             <span className="min-w-0">
               <span className="block text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
@@ -1001,7 +1118,9 @@ function XpFloatOverlay({
   useEffect(() => {
     if (!xpFloat) return;
     const rect = anchorRef.current?.getBoundingClientRect();
-    setPos(rect ? { left: rect.right - 60, top: rect.top } : { left: 0, top: 0 });
+    setPos(
+      rect ? { left: rect.right - 60, top: rect.top } : { left: 0, top: 0 },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [xpFloat]);
 
@@ -1012,15 +1131,22 @@ function XpFloatOverlay({
       <motion.div
         key={xpFloat.key}
         className={`tnum pointer-events-none fixed z-50 font-heading font-semibold ${
-          xpFloat.tipo === "ok" ? "text-lg text-questly-gold" : "text-[15px] text-muted-foreground"
+          xpFloat.tipo === "ok"
+            ? "text-lg text-questly-gold"
+            : "text-[15px] text-muted-foreground"
         }`}
         style={{
           left: pos.left,
           top: pos.top,
-          textShadow: xpFloat.tipo === "ok" ? "0 2px 10px rgba(201,147,10,0.35)" : "none",
+          textShadow:
+            xpFloat.tipo === "ok" ? "0 2px 10px rgba(201,147,10,0.35)" : "none",
         }}
         initial={{ opacity: 0, y: 0, scale: 0.6 }}
-        animate={{ opacity: [0, 1, 1, 0], y: xpFloat.tipo === "ok" ? -70 : -46, scale: 1 }}
+        animate={{
+          opacity: [0, 1, 1, 0],
+          y: xpFloat.tipo === "ok" ? -70 : -46,
+          scale: 1,
+        }}
         transition={{ duration: 1.1, ease: "easeOut" }}
       >
         +{xpFloat.xp} XP
@@ -1065,7 +1191,9 @@ function ResultView({
   if (recap) {
     Icone = recap.dominou ? CheckCircle2 : BookOpen;
     corIcone = recap.dominou ? "text-questly-green" : "text-questly-orange";
-    bgIcone = recap.dominou ? "bg-questly-green-light" : "bg-questly-orange-light";
+    bgIcone = recap.dominou
+      ? "bg-questly-green-light"
+      : "bg-questly-orange-light";
     titulo = recap.dominou ? "Recap aprovado!" : "Ainda vale revisar";
     subtitulo = recap.dominou
       ? "Você provou que domina esse tópico — ele saiu das suas missões. Pode focar no que falta."
@@ -1086,26 +1214,51 @@ function ResultView({
 
   return (
     <div className="mx-auto flex min-h-screen max-w-[560px] flex-col items-center justify-center px-4 py-10 sm:px-6">
+      {/* A semana Pro de lançamento. Fica na tela de RESULTADO e não na home
+          por escolha: aqui o aluno acabou de responder questões, então o aviso
+          chega como recompensa do que ele fez, e não como anúncio antes de
+          ele fazer qualquer coisa. Aparece uma vez (ver o componente). */}
+      <AvisoProLancamento lancamento={resultadoExtra?.lancamento ?? null} />
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
         className="surface w-full p-5 text-center sm:p-9"
       >
-        <span className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full ${bgIcone}`}>
+        <span
+          className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full ${bgIcone}`}
+        >
           <Icone size={26} strokeWidth={1.75} className={corIcone} />
         </span>
-        <h2 className="mb-1 font-heading text-xl font-semibold tracking-tight">{titulo}</h2>
-        <p className="mb-6 text-sm leading-relaxed text-muted-foreground">{subtitulo}</p>
+        <h2 className="mb-1 font-heading text-xl font-semibold tracking-tight">
+          {titulo}
+        </h2>
+        <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+          {subtitulo}
+        </p>
 
         <div className="mb-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <StatBox valor={acertos} label="acertos" cor="text-questly-green-dark" />
+          <StatBox
+            valor={acertos}
+            label="acertos"
+            cor="text-questly-green-dark"
+          />
           <StatBox valor={erros} label="erros" cor="text-questly-red-dark" />
-          <StatBox valor={xpGanho} label="XP ganho" cor="text-questly-gold-dark" />
-          <StatBox valor={`${tempoGastoMinMissao} min`} label="tempo gasto" cor="text-questly-blue-dark" />
+          <StatBox
+            valor={xpGanho}
+            label="XP ganho"
+            cor="text-questly-gold-dark"
+          />
+          <StatBox
+            valor={`${tempoGastoMinMissao} min`}
+            label="tempo gasto"
+            cor="text-questly-blue-dark"
+          />
         </div>
         {tempoPrevistoMin != null && (
-          <p className="tnum mb-1 mt-1 text-xs text-muted-foreground">previsto: ~{tempoPrevistoMin} min</p>
+          <p className="tnum mb-1 mt-1 text-xs text-muted-foreground">
+            previsto: ~{tempoPrevistoMin} min
+          </p>
         )}
 
         {melhorCombo >= 3 && (
@@ -1124,9 +1277,12 @@ function ResultView({
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Você atingiu 90%+ de acerto em{" "}
-              <b className="font-medium text-foreground">{resultadoExtra.novosMestresNomes.join(", ")}</b>. A
-              partir de agora, questões desse tópico pagam{" "}
-              <b className="font-medium text-foreground">XP em 1.5×</b> pra manter a coroa.
+              <b className="font-medium text-foreground">
+                {resultadoExtra.novosMestresNomes.join(", ")}
+              </b>
+              . A partir de agora, questões desse tópico pagam{" "}
+              <b className="font-medium text-foreground">XP em 1.5×</b> pra
+              manter a coroa.
             </p>
           </div>
         )}
@@ -1139,9 +1295,11 @@ function ResultView({
             </div>
             <p className="mb-3.5 text-sm leading-relaxed text-muted-foreground">
               Você não toca em{" "}
-              <b className="font-medium text-foreground">{resultadoExtra.desafio.topicoNome}</b> há{" "}
-              {resultadoExtra.desafio.diasSemTocar} dias. Resgatar da memória agora é o que fixa de verdade.
-              Topa 1 questão?
+              <b className="font-medium text-foreground">
+                {resultadoExtra.desafio.topicoNome}
+              </b>{" "}
+              há {resultadoExtra.desafio.diasSemTocar} dias. Resgatar da memória
+              agora é o que fixa de verdade. Topa 1 questão?
             </p>
             <button
               type="button"
@@ -1166,11 +1324,25 @@ function ResultView({
   );
 }
 
-function StatBox({ valor, label, cor }: { valor: string | number; label: string; cor: string }) {
+function StatBox({
+  valor,
+  label,
+  cor,
+}: {
+  valor: string | number;
+  label: string;
+  cor: string;
+}) {
   return (
     <div className="rounded-xl bg-muted/60 px-2 py-3.5">
-      <div className={`tnum font-heading text-lg font-semibold tracking-tight ${cor}`}>{valor}</div>
-      <div className="mt-0.5 text-[10.5px] font-medium text-muted-foreground">{label}</div>
+      <div
+        className={`tnum font-heading text-lg font-semibold tracking-tight ${cor}`}
+      >
+        {valor}
+      </div>
+      <div className="mt-0.5 text-[10.5px] font-medium text-muted-foreground">
+        {label}
+      </div>
     </div>
   );
 }
@@ -1215,15 +1387,17 @@ function LimiteDiarioView({
           Você fechou as {QUESTOES_DIA_FREE} questões de hoje
         </h2>
         <p className="mx-auto mt-2 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-          Esse é o limite diário do plano grátis. Amanhã ele zera — ou você libera o banco inteiro agora,
-          sem teto, com o Expectrum Pro.
+          Esse é o limite diário do plano grátis. Amanhã ele zera — ou você
+          libera o banco inteiro agora, sem teto, com o Expectrum Pro.
         </p>
 
         {respondidasNestaLista > 0 && (
           <p className="tnum mt-3 text-[12.5px] font-medium text-questly-green-dark">
             {respondidasNestaLista}{" "}
-            {respondidasNestaLista === 1 ? "questão respondida" : "questões respondidas"} nesta lista — o XP
-            é seu.
+            {respondidasNestaLista === 1
+              ? "questão respondida"
+              : "questões respondidas"}{" "}
+            nesta lista — o XP é seu.
           </p>
         )}
 
@@ -1267,7 +1441,13 @@ function LimiteDiarioView({
  * de ações). O link pro Pro faz parte da mensagem: a recusa é justamente um
  * lugar onde o upgrade é a resposta, e não um castigo sem saída.
  */
-function AvisoToast({ texto, onFechar }: { texto: string | null; onFechar: () => void }) {
+function AvisoToast({
+  texto,
+  onFechar,
+}: {
+  texto: string | null;
+  onFechar: () => void;
+}) {
   useEffect(() => {
     if (!texto) return;
     const t = setTimeout(onFechar, 5000);
@@ -1289,7 +1469,10 @@ function AvisoToast({ texto, onFechar }: { texto: string | null; onFechar: () =>
             </span>
             <p className="min-w-0 flex-1 text-[12.5px] leading-relaxed">
               {texto}{" "}
-              <Link href="/pro" className="font-semibold text-questly-gold underline-offset-2 hover:underline">
+              <Link
+                href="/pro"
+                className="font-semibold text-questly-gold underline-offset-2 hover:underline"
+              >
                 Ver o Pro
               </Link>
             </p>

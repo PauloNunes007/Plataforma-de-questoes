@@ -75,6 +75,63 @@ export const CAMPANHA_PADRAO: ConteudoCampanha = {
   fecho: "Se algo não funcionar ou faltar alguma coisa, é só responder este e-mail — eu leio todos.",
 };
 
+/**
+ * O disparo da SEMANA PRO DE LANÇAMENTO — avisa a base de que o Pro foi
+ * liberado na conta dela por 7 dias.
+ *
+ * Três regras moldaram este texto, e nenhuma é de estilo:
+ *
+ *  1. O assunto não pode parecer promoção de loja. "Liberamos o Pro na sua
+ *     conta" descreve um fato que já aconteceu no produto — quem abrir vai
+ *     encontrar exatamente isso. É o oposto de "OFERTA IMPERDÍVEL", que
+ *     promete algo que ainda depende de o aluno fazer alguma coisa.
+ *  2. A data de fim aparece no corpo E no fecho. Um e-mail que só diz "você
+ *     ganhou" cria a impressão de que a plataforma ficou grátis, e o oitavo
+ *     dia vira sensação de recurso retirado em vez de oferta.
+ *  3. Cada destaque é uma tela que existe, com gate real (mesma regra de
+ *     lib/plano/plano.ts). Prometer no e-mail o que o app não faz é o erro
+ *     mais caro possível: fica guardado na caixa de entrada da pessoa.
+ *
+ * Como todo conteúdo de campanha, isto é só o PONTO DE PARTIDA do formulário
+ * de /admin/emails — o que sai é o que estiver escrito lá na hora do disparo.
+ */
+export const CAMPANHA_LANCAMENTO_PRO: ConteudoCampanha = {
+  assunto: "Liberamos o Pro na sua conta por 7 dias",
+  preheader: "Sem cobrança e sem cartão: sua conta está Pro até o fim da semana.",
+  titulo: "sua conta virou Pro hoje",
+  intro:
+    "A Expectrum está sendo lançada esta semana e, em vez de mandar um convite pra você pagar pra testar, fizemos o contrário: liberamos o plano Pro na sua conta por 7 dias. Já está valendo — não precisa resgatar nada, digitar código nem cadastrar cartão. Abra o app e você vai ver um selo dourado com a marca Pro do lado do seu nome, no menu da conta e no seu card do ranking. É por ele que dá pra saber que está ativo.",
+  destaques: [
+    {
+      titulo: "Acabou o teto de 30 questões por dia",
+      texto:
+        "Responda quantas quiser, sem parede no meio da lista. Se a sua prova é essa semana, é agora que isso vale.",
+    },
+    {
+      titulo: "Simulados cronometrados ilimitados",
+      texto:
+        "Inclusive as provas antigas da sua universidade, reaplicadas na íntegra, corrigidas na hora e com revisão questão a questão.",
+    },
+    {
+      titulo: "Faltas e notas, as duas contas que decidem o semestre",
+      texto:
+        "Quantas faltas ainda cabem em cada disciplina e quanto você precisa tirar na próxima prova pra passar. Isso não existe no plano grátis.",
+    },
+    {
+      titulo: "Exportar lista e simulado em PDF",
+      texto: "Monte a lista que quiser e imprima pra estudar no papel, com gabarito separado.",
+    },
+    {
+      titulo: "Autópsia do erro e estatísticas avançadas",
+      texto:
+        "Em cada questão errada, por que você errou; e no seu painel, percentil, comparativo e recordes.",
+    },
+  ],
+  rotuloBotao: "Usar meu Pro agora",
+  fecho:
+    "A semana acaba no domingo e a conta volta pro plano grátis sozinha — não cobramos nada e não pedimos cartão em lugar nenhum. Antes de o prazo acabar eu mando uma condição especial de lançamento pra quem quiser continuar no Pro. Se algo não funcionar, é só responder este e-mail — eu leio todos.",
+};
+
 export function montarEmailCampanha(opcoes: {
   conteudo: ConteudoCampanha;
   nome: string;

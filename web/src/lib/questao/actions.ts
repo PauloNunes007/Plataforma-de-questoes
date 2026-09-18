@@ -16,8 +16,13 @@ import {
   atualizarXpELiga,
   sincronizarContadoresQuestao,
 } from "@/lib/questly/economia";
-import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
+import {
+  FREQUENCIA_JANELA_DIAS,
+  questlyCalcularMetricas,
+} from "@/lib/questly/chance-aprovacao";
 import { restanteDoDia } from "@/lib/plano/limites";
+import { ehPro } from "@/lib/plano/plano";
+import { ehProDeLancamento } from "@/lib/plano/lancamento";
 
 // Portado de js/questao.js — mesmo fluxo (registrar tentativa, atualizar
 // progresso do tópico, recalibrar tempo médio, finalizar missão: XP/liga,
@@ -59,7 +64,13 @@ export async function registrarRespostaAction(input: {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user)
-    return { attemptId: null, novoTempoMedio: null, correta: false, questoesHoje: 0, bloqueado: false };
+    return {
+      attemptId: null,
+      novoTempoMedio: null,
+      correta: false,
+      questoesHoje: 0,
+      bloqueado: false,
+    };
 
   // TETO DIÁRIO DO PLANO GRÁTIS (lib/plano/limites.ts).
   //
@@ -99,7 +110,9 @@ export async function registrarRespostaAction(input: {
     .select("gabarito")
     .eq("id", input.questionId)
     .maybeSingle();
-  const correta = questaoGabarito?.gabarito != null && input.respostaMarcada === questaoGabarito.gabarito;
+  const correta =
+    questaoGabarito?.gabarito != null &&
+    input.respostaMarcada === questaoGabarito.gabarito;
 
   const { data: attempt, error: attemptError } = await supabase
     .from("question_attempts")
@@ -119,7 +132,9 @@ export async function registrarRespostaAction(input: {
   if (input.topicId) {
     const { data: progresso } = await supabase
       .from("aluno_topico_progresso")
-      .select("taxa_acerto, num_questoes_respondidas, maestria, estabilidade, ultima_revisao")
+      .select(
+        "taxa_acerto, num_questoes_respondidas, maestria, estabilidade, ultima_revisao",
+      )
       .eq("user_id", user.id)
       .eq("topico_id", input.topicId)
       .maybeSingle();
@@ -143,19 +158,22 @@ export async function registrarRespostaAction(input: {
       agoraMs: Date.now(),
     });
 
-    const { error: upsertError } = await supabase.from("aluno_topico_progresso").upsert(
-      {
-        user_id: user.id,
-        topico_id: input.topicId,
-        taxa_acerto: novaTaxa,
-        num_questoes_respondidas: novoNum,
-        maestria,
-        estabilidade,
-        ultima_revisao: new Date().toISOString(),
-      },
-      { onConflict: "user_id,topico_id" },
-    );
-    if (upsertError) console.error("Erro ao atualizar progresso do tópico:", upsertError);
+    const { error: upsertError } = await supabase
+      .from("aluno_topico_progresso")
+      .upsert(
+        {
+          user_id: user.id,
+          topico_id: input.topicId,
+          taxa_acerto: novaTaxa,
+          num_questoes_respondidas: novoNum,
+          maestria,
+          estabilidade,
+          ultima_revisao: new Date().toISOString(),
+        },
+        { onConflict: "user_id,topico_id" },
+      );
+    if (upsertError)
+      console.error("Erro ao atualizar progresso do tópico:", upsertError);
   }
 
   const novoTempoMedio = input.tempoMedioAnterior
@@ -174,16 +192,22 @@ export async function registrarRespostaAction(input: {
   // o incremento é atômico, e aplica a mesma média móvel de sempre
   // (anterior*0.7 + novo*0.3).
   const admin = createAdminClient();
-  const { error: statsError } = await admin.rpc("questly_registrar_estatistica_questao", {
-    p_question_id: input.questionId,
-    p_correta: correta,
-    p_tempo_seg: input.tempoSeg,
-  });
+  const { error: statsError } = await admin.rpc(
+    "questly_registrar_estatistica_questao",
+    {
+      p_question_id: input.questionId,
+      p_correta: correta,
+      p_tempo_seg: input.tempoSeg,
+    },
+  );
   if (statsError) {
     // Banco ainda sem supabase_escala_lancamento.sql: a recalibração do tempo
     // médio, que já existia antes, não pode ser perdida junto.
     console.error("Erro ao registrar estatística da questão:", statsError);
-    await admin.from("questions").update({ tempo_medio_seg: novoTempoMedio }).eq("id", input.questionId);
+    await admin
+      .from("questions")
+      .update({ tempo_medio_seg: novoTempoMedio })
+      .eq("id", input.questionId);
   }
 
   // Questões respondidas HOJE, pra UI celebrar os marcos do dia (10, 15,
@@ -209,9 +233,15 @@ export async function registrarRespostaAction(input: {
   };
 }
 
-export async function classificarMotivoErroAction(attemptId: string, motivo: string) {
+export async function classificarMotivoErroAction(
+  attemptId: string,
+  motivo: string,
+) {
   const supabase = await createClient();
-  const { error } = await supabase.from("question_attempts").update({ motivo_erro: motivo }).eq("id", attemptId);
+  const { error } = await supabase
+    .from("question_attempts")
+    .update({ motivo_erro: motivo })
+    .eq("id", attemptId);
   if (error) console.error("Erro ao salvar motivo do erro:", error);
 }
 
@@ -235,6 +265,14 @@ export type FinalizarMissaoResultado = {
   novosMestresNomes: string[];
   desafio: DesafioRecuperacao | null;
   placar: { acertos: number; erros: number; xpGanho: number };
+  /**
+   * A conta está Pro por causa da semana de lançamento — e até quando.
+   *
+   * Quem decide é o SERVIDOR, não o cliente, pelo mesmo motivo de sempre: o
+   * estado do plano mora em colunas protegidas e o browser não tem voz sobre
+   * ele. A tela só recebe o veredito pronto e escolhe se já mostrou.
+   */
+  lancamento: { expiraEm: string | null } | null;
 };
 
 // Recomputa acertos/erros/XP da missão SÓ a partir de dados autoritativos do
@@ -264,15 +302,21 @@ async function recomputarPlacarMissao(
   const ordemResposta: string[] = [];
   const respostaPorQuestao = new Map<string, string>();
   for (const t of tentativas || []) {
-    if (!respostaPorQuestao.has(t.question_id)) ordemResposta.push(t.question_id);
+    if (!respostaPorQuestao.has(t.question_id))
+      ordemResposta.push(t.question_id);
     respostaPorQuestao.set(t.question_id, t.resposta_marcada);
   }
 
   // Só pontua as questões que a missão realmente contém (missions.question_ids
   // é fixado na criação). Missões antigas sem question_ids caem pras questões
   // efetivamente respondidas nesta missão.
-  const idsMissao = new Set(Array.isArray(missao.question_ids) ? missao.question_ids : []);
-  const idsParaAvaliar = idsMissao.size > 0 ? ordemResposta.filter((id) => idsMissao.has(id)) : ordemResposta;
+  const idsMissao = new Set(
+    Array.isArray(missao.question_ids) ? missao.question_ids : [],
+  );
+  const idsParaAvaliar =
+    idsMissao.size > 0
+      ? ordemResposta.filter((id) => idsMissao.has(id))
+      : ordemResposta;
   if (idsParaAvaliar.length === 0) return { acertos: 0, erros: 0, xpGanho: 0 };
 
   const { data: questoes } = await supabase
@@ -290,13 +334,21 @@ async function recomputarPlacarMissao(
     .eq("user_id", userId)
     .neq("mission_id", missao.id)
     .in("question_id", idsParaAvaliar);
-  const jaTentadasAntes = new Set((tentativasPrevias || []).map((a) => a.question_id));
-  const jaAcertadasAntes = new Set((tentativasPrevias || []).filter((a) => a.correta).map((a) => a.question_id));
+  const jaTentadasAntes = new Set(
+    (tentativasPrevias || []).map((a) => a.question_id),
+  );
+  const jaAcertadasAntes = new Set(
+    (tentativasPrevias || [])
+      .filter((a) => a.correta)
+      .map((a) => a.question_id),
+  );
 
   // Tópicos atualmente Mestres (bônus ×1.5). Reconstruir o estado exato "no
   // início da missão" não é necessário: o multiplicador é limitado (1.5×) e a
   // diferença não é explorável — o que importa é o teto vir de dado real.
-  const topicIds = Array.from(new Set((questoes || []).map((q) => q.topic_id).filter(Boolean))) as string[];
+  const topicIds = Array.from(
+    new Set((questoes || []).map((q) => q.topic_id).filter(Boolean)),
+  ) as string[];
   const mestres = new Set<string>();
   if (topicIds.length > 0) {
     const { data: progs } = await supabase
@@ -340,7 +392,13 @@ export async function finalizarMissaoAction(input: {
   tempoGastoMinMissao: number;
   topicosMestreInicioIds: string[];
 }): Promise<FinalizarMissaoResultado> {
-  const vazio = { recapResultado: null, novosMestresNomes: [], desafio: null, placar: { acertos: 0, erros: 0, xpGanho: 0 } };
+  const vazio = {
+    recapResultado: null,
+    novosMestresNomes: [],
+    desafio: null,
+    placar: { acertos: 0, erros: 0, xpGanho: 0 },
+    lancamento: null,
+  };
   const supabase = await createClient();
   const {
     data: { user },
@@ -352,7 +410,9 @@ export async function finalizarMissaoAction(input: {
   // um recap pra tópico arbitrário nem inflar o conjunto de questões pontuadas.
   const { data: missao } = await supabase
     .from("missions")
-    .select("id, subject_id, recap_topico_id, avulsa, concluida, question_ids, topic_ids")
+    .select(
+      "id, subject_id, recap_topico_id, avulsa, concluida, question_ids, topic_ids",
+    )
     .eq("id", input.missaoId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -382,21 +442,37 @@ export async function finalizarMissaoAction(input: {
   // admin; o resto (recap/métricas/missão) fica no cliente do usuário porque
   // são writes owner-scoped em tabelas não protegidas.
   const admin = createAdminClient();
-  await atualizarXpELiga(admin, user.id, placar.acertos, placar.erros, placar.xpGanho);
+  await atualizarXpELiga(
+    admin,
+    user.id,
+    placar.acertos,
+    placar.erros,
+    placar.xpGanho,
+  );
   await atualizarStreakEDailyLog(admin, user.id);
-  const recapResultado = await avaliarRecap(supabase, user.id, missao.recap_topico_id, placar.acertos, placar.erros);
+  const recapResultado = await avaliarRecap(
+    supabase,
+    user.id,
+    missao.recap_topico_id,
+    placar.acertos,
+    placar.erros,
+  );
   if (missao.subject_id) {
     await atualizarMetricasSubject(supabase, user.id, missao.subject_id);
   }
   await riscarBlocoPlanejado(supabase, user.id, missao.id as string);
-  const topicIdsDasPerguntas = (Array.isArray(missao.topic_ids) ? missao.topic_ids : []) as string[];
+  const topicIdsDasPerguntas = (
+    Array.isArray(missao.topic_ids) ? missao.topic_ids : []
+  ) as string[];
   const novosMestresNomes = await celebrarNovasMaestrias(
     supabase,
     user.id,
     topicIdsDasPerguntas,
     input.topicosMestreInicioIds,
   );
-  const desafio = missao.avulsa ? null : await prepararDesafioRecuperacao(supabase, user.id);
+  const desafio = missao.avulsa
+    ? null
+    : await prepararDesafioRecuperacao(supabase, user.id);
 
   // Fechar uma lista mexe em XP, ofensiva, liga, cobertura de tópico e no
   // bloco do calendário — ou seja, em tudo que estas quatro telas mostram. O
@@ -409,7 +485,38 @@ export async function finalizarMissaoAction(input: {
   revalidatePath("/ranking");
   revalidatePath("/calendario");
 
-  return { recapResultado, novosMestresNomes, desafio, placar };
+  return {
+    recapResultado,
+    novosMestresNomes,
+    desafio,
+    placar,
+    lancamento: await lerLancamento(admin, user.id),
+  };
+}
+
+/**
+ * A conta está na semana Pro de lançamento? Lida aqui, no fim da lista, por
+ * uma razão de produto: terminar uma lista é o momento em que o aluno acabou
+ * de USAR o produto, e é o único em que "você ganhou uma semana de Pro" chega
+ * junto com a prova de que o Pro serve pra alguma coisa. Um banner na home
+ * seria visto antes de qualquer questão respondida — e ignorado.
+ *
+ * Custa um `select` de duas colunas numa conexão que já existe (o `admin`
+ * acabou de gravar XP e ofensiva). Falhar aqui devolve `null`: no pior caso o
+ * aluno não vê o aviso, e nada do que ele acabou de fazer se perde.
+ */
+async function lerLancamento(
+  admin: ReturnType<typeof createAdminClient>,
+  userId: string,
+): Promise<{ expiraEm: string | null } | null> {
+  const { data, error } = await admin
+    .from("profiles")
+    .select("plano, plano_ciclo, plano_expira_em")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error || !data) return null;
+  if (!ehPro(data) || !ehProDeLancamento(data)) return null;
+  return { expiraEm: data.plano_expira_em ?? null };
 }
 
 /**
@@ -437,7 +544,8 @@ async function riscarBlocoPlanejado(
     .eq("user_id", userId)
     .eq("mission_id", missaoId)
     .eq("concluida", false);
-  if (error) console.error("Erro ao riscar o bloco de estudo da agenda:", error);
+  if (error)
+    console.error("Erro ao riscar o bloco de estudo da agenda:", error);
 }
 
 // atualizarXpELiga/atualizarStreakEDailyLog vivem em lib/questly/economia.ts
@@ -498,12 +606,29 @@ async function atualizarMetricasSubject(
           .select("topico_id, taxa_acerto, num_questoes_respondidas, status")
           .eq("user_id", userId)
           .in("topico_id", topicoIds)
-      : { data: [] as { topico_id: string; taxa_acerto: number; num_questoes_respondidas: number; status: string }[] };
+      : {
+          data: [] as {
+            topico_id: string;
+            taxa_acerto: number;
+            num_questoes_respondidas: number;
+            status: string;
+          }[],
+        };
 
-  const progressoPorTopico: Record<string, { taxa_acerto: number; num_questoes_respondidas: number; status: string }> = {};
+  const progressoPorTopico: Record<
+    string,
+    { taxa_acerto: number; num_questoes_respondidas: number; status: string }
+  > = {};
   (progressos || []).forEach((p) => (progressoPorTopico[p.topico_id] = p));
   const topicos = topicoIds
-    .map((id) => progressoPorTopico[id] || { taxa_acerto: 0, num_questoes_respondidas: 0, status: "pendente" })
+    .map(
+      (id) =>
+        progressoPorTopico[id] || {
+          taxa_acerto: 0,
+          num_questoes_respondidas: 0,
+          status: "pendente",
+        },
+    )
     .filter((t) => t.status !== "pulado");
 
   const { data: bosses } = await supabase
@@ -514,10 +639,15 @@ async function atualizarMetricasSubject(
   const hoje = new Date(new Date().toDateString());
   const futuros = (bosses || [])
     .filter((b) => new Date(b.data_prova) >= hoje)
-    .sort((a, b) => new Date(a.data_prova).getTime() - new Date(b.data_prova).getTime());
+    .sort(
+      (a, b) =>
+        new Date(a.data_prova).getTime() - new Date(b.data_prova).getTime(),
+    );
   const bossAlvo = futuros[0] || null;
   const diasRestantes = bossAlvo
-    ? Math.round((new Date(bossAlvo.data_prova).getTime() - hoje.getTime()) / 86400000)
+    ? Math.round(
+        (new Date(bossAlvo.data_prova).getTime() - hoje.getTime()) / 86400000,
+      )
     : null;
 
   const janelaInicio = new Date();
@@ -531,26 +661,34 @@ async function atualizarMetricasSubject(
 
   const errosPorMotivo: Record<string, number> = {};
   if (topicoIds.length > 0) {
-      // Filtra pelo tópico da questão via join (`questions!inner`), em vez de
-      // baixar os ids de TODAS as questões da matéria e mandá-los de volta num
-      // `.in()`. Aquele caminho já falhava de verdade: Cálculo I tem 663
-      // questões, o que dava ~24 KB de querystring — bem acima do teto de URL
-      // do gateway (~12 KB, ver lib/supabase/paginado.ts). O erro era engolido,
-      // então o perdão por motivo de erro simplesmente não era aplicado.
-      // De quebra, some um round-trip.
-      const { data: errosClassificados } = await supabase
-        .from("question_attempts")
-        .select("motivo_erro, questions!inner(topic_id)")
-        .eq("user_id", userId)
-        .eq("correta", false)
-        .not("motivo_erro", "is", null)
-        .in("questions.topic_id", topicoIds);
-      (errosClassificados || []).forEach((a) => {
-        if (a.motivo_erro) errosPorMotivo[a.motivo_erro] = (errosPorMotivo[a.motivo_erro] || 0) + 1;
-      });
+    // Filtra pelo tópico da questão via join (`questions!inner`), em vez de
+    // baixar os ids de TODAS as questões da matéria e mandá-los de volta num
+    // `.in()`. Aquele caminho já falhava de verdade: Cálculo I tem 663
+    // questões, o que dava ~24 KB de querystring — bem acima do teto de URL
+    // do gateway (~12 KB, ver lib/supabase/paginado.ts). O erro era engolido,
+    // então o perdão por motivo de erro simplesmente não era aplicado.
+    // De quebra, some um round-trip.
+    const { data: errosClassificados } = await supabase
+      .from("question_attempts")
+      .select("motivo_erro, questions!inner(topic_id)")
+      .eq("user_id", userId)
+      .eq("correta", false)
+      .not("motivo_erro", "is", null)
+      .in("questions.topic_id", topicoIds);
+    (errosClassificados || []).forEach((a) => {
+      if (a.motivo_erro)
+        errosPorMotivo[a.motivo_erro] =
+          (errosPorMotivo[a.motivo_erro] || 0) + 1;
+    });
   }
 
-  const metricas = questlyCalcularMetricas(subject, topicos, diasRestantes, diasEstudados, errosPorMotivo);
+  const metricas = questlyCalcularMetricas(
+    subject,
+    topicos,
+    diasRestantes,
+    diasEstudados,
+    errosPorMotivo,
+  );
 
   if (bossAlvo) {
     await supabase
@@ -559,7 +697,10 @@ async function atualizarMetricasSubject(
       .eq("id", bossAlvo.id);
   }
 
-  await supabase.from("subjects").update({ chance_aprovacao: metricas.chanceAprovacao }).eq("id", subject.id);
+  await supabase
+    .from("subjects")
+    .update({ chance_aprovacao: metricas.chanceAprovacao })
+    .eq("id", subject.id);
 }
 
 async function celebrarNovasMaestrias(
@@ -578,7 +719,9 @@ async function celebrarNovasMaestrias(
     .in("topico_id", idsUnicos);
 
   const jaEraMestre = new Set(topicosMestreInicioIds);
-  const novosMestres = (progs || []).filter((p) => questlyEhMestre(p) && !jaEraMestre.has(p.topico_id));
+  const novosMestres = (progs || []).filter(
+    (p) => questlyEhMestre(p) && !jaEraMestre.has(p.topico_id),
+  );
   if (novosMestres.length === 0) return [];
 
   const { data: topicos } = await supabase
@@ -596,15 +739,28 @@ async function prepararDesafioRecuperacao(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
 ): Promise<DesafioRecuperacao | null> {
-  const { data: meusSubjects } = await supabase.from("subjects").select("id, materia_id").eq("user_id", userId);
-  const materiaIds = (meusSubjects || []).map((s) => s.materia_id).filter(Boolean) as string[];
+  const { data: meusSubjects } = await supabase
+    .from("subjects")
+    .select("id, materia_id")
+    .eq("user_id", userId);
+  const materiaIds = (meusSubjects || [])
+    .map((s) => s.materia_id)
+    .filter(Boolean) as string[];
   if (materiaIds.length === 0) return null;
 
-  const { data: topicos } = await supabase.from("topicos").select("id, nome, materia_id").in("materia_id", materiaIds);
-  const topicoPorId: Record<string, { id: string; nome: string; materia_id: string }> = {};
+  const { data: topicos } = await supabase
+    .from("topicos")
+    .select("id, nome, materia_id")
+    .in("materia_id", materiaIds);
+  const topicoPorId: Record<
+    string,
+    { id: string; nome: string; materia_id: string }
+  > = {};
   (topicos || []).forEach((t) => (topicoPorId[t.id] = t));
 
-  const corte = new Date(Date.now() - DESAFIO_DIAS_SEM_TOCAR * 86400000).toISOString();
+  const corte = new Date(
+    Date.now() - DESAFIO_DIAS_SEM_TOCAR * 86400000,
+  ).toISOString();
   const { data: empoeirados } = await supabase
     .from("aluno_topico_progresso")
     .select("topico_id, status, num_questoes_respondidas, ultima_revisao")
@@ -612,7 +768,9 @@ async function prepararDesafioRecuperacao(
     .gt("num_questoes_respondidas", 0)
     .lt("ultima_revisao", corte);
 
-  const candidatos = (empoeirados || []).filter((p) => p.status !== "pulado" && topicoPorId[p.topico_id]);
+  const candidatos = (empoeirados || []).filter(
+    (p) => p.status !== "pulado" && topicoPorId[p.topico_id],
+  );
   if (candidatos.length === 0) return null;
 
   const sorteado = candidatos[Math.floor(Math.random() * candidatos.length)];
@@ -627,13 +785,17 @@ async function prepararDesafioRecuperacao(
     // pelo Banco de Questões. Ver supabase_questao_desafio.sql.
     .eq("desafio", false);
   if (!questoesTopico || questoesTopico.length === 0) return null;
-  const questaoDesafio = questoesTopico[Math.floor(Math.random() * questoesTopico.length)];
+  const questaoDesafio =
+    questoesTopico[Math.floor(Math.random() * questoesTopico.length)];
 
   const diasSemTocar = Math.round(
-    (Date.now() - new Date(sorteado.ultima_revisao as string).getTime()) / 86400000,
+    (Date.now() - new Date(sorteado.ultima_revisao as string).getTime()) /
+      86400000,
   );
 
-  const meuSubject = (meusSubjects || []).find((s) => s.materia_id === topico.materia_id);
+  const meuSubject = (meusSubjects || []).find(
+    (s) => s.materia_id === topico.materia_id,
+  );
 
   return {
     topicoId: topico.id,
@@ -668,7 +830,9 @@ export async function aceitarDesafioAction(input: {
       topic_ids: [input.topicoId],
       question_ids: [input.questaoId],
       qtd_questoes: 1,
-      tempo_previsto_min: input.tempoMedioSeg ? Math.max(1, Math.round(input.tempoMedioSeg / 60)) : null,
+      tempo_previsto_min: input.tempoMedioSeg
+        ? Math.max(1, Math.round(input.tempoMedioSeg / 60))
+        : null,
       xp_recompensa: questlyXpDaQuestao({ dificuldade: input.dificuldade }),
       concluida: false,
       avulsa: true,

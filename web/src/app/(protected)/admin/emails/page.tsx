@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
-import { CAMPANHA_PADRAO } from "@/lib/email/templates-campanha";
+import { CAMPANHA_LANCAMENTO_PRO } from "@/lib/email/templates-campanha";
 import { baseDoApp, previaCampanha } from "@/lib/email/campanha";
 import { CampanhaEmail } from "@/components/admin/campanha-email";
 
@@ -26,14 +26,14 @@ export default async function AdminEmailsPage() {
   let erroBase: string | null = null;
   try {
     link = `${baseDoApp()}/login`;
-    previaInicial = previaCampanha(CAMPANHA_PADRAO, link, "Paulo");
+    previaInicial = previaCampanha(CAMPANHA_LANCAMENTO_PRO, link, "Paulo");
   } catch (e) {
     erroBase = e instanceof Error ? e.message : String(e);
   }
 
   return (
     <CampanhaEmail
-      conteudoPadrao={CAMPANHA_PADRAO}
+      conteudoPadrao={CAMPANHA_LANCAMENTO_PRO}
       linkPadrao={link}
       previaInicial={previaInicial}
       erroBase={erroBase}

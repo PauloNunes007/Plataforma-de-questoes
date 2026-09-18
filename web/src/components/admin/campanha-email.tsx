@@ -23,7 +23,11 @@ import { AdminTabs } from "@/components/admin/admin-tabs";
 //   lotes, não uma requisição gigante — e ele PARA sozinho quando o saldo do
 //   dia chega na reserva do transacional.
 
-const CAMPANHA_INICIAL = "reengajamento-2026-09";
+// Nome do disparo atual. Ele é a CHAVE do índice único (campanha, user_id)
+// que garante um e-mail por aluno por campanha — trocar este nome é o que
+// libera um disparo novo pra base inteira, e reaproveitar um nome antigo é
+// o que impede reenviar sem querer o mesmo e-mail pra quem já recebeu.
+const CAMPANHA_INICIAL = "lancamento-pro-2026-09";
 
 function Campo({
   rotulo,

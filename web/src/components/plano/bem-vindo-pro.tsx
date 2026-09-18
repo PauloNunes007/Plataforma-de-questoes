@@ -17,6 +17,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ProEmblema } from "@/components/plano/pro-ui";
+import { ehProDeLancamento } from "@/lib/plano/lancamento";
 
 // A tela de BOAS-VINDAS ao Pro — o que o aluno vê no segundo seguinte ao
 // pagamento aprovado.
@@ -64,28 +65,32 @@ const DESTINOS: Destino[] = [
   {
     icone: InfinityIcon,
     titulo: "Questões sem teto",
-    texto: "Acabou o limite diário. Maratone a véspera da prova inteira, se for o caso.",
+    texto:
+      "Acabou o limite diário. Maratone a véspera da prova inteira, se for o caso.",
     href: "/questoes",
     cta: "Ir pro banco de questões",
   },
   {
     icone: FileText,
     titulo: "Simulados ilimitados",
-    texto: "Prova cronometrada quantas vezes quiser — inclusive as provas antigas da sua universidade.",
+    texto:
+      "Prova cronometrada quantas vezes quiser — inclusive as provas antigas da sua universidade.",
     href: "/simulados",
     cta: "Montar um simulado",
   },
   {
     icone: FileDown,
     titulo: "Exportar em PDF",
-    texto: "Baixe qualquer lista pra imprimir e resolver no papel, do jeito que a prova vai ser.",
+    texto:
+      "Baixe qualquer lista pra imprimir e resolver no papel, do jeito que a prova vai ser.",
     href: "/questoes/listas",
     cta: "Ver minhas listas",
   },
   {
     icone: Brain,
     titulo: "Autópsia do erro",
-    texto: "Em cada erro, o porquê: conceito, conta, interpretação ou chute. E o padrão que se repete.",
+    texto:
+      "Em cada erro, o porquê: conceito, conta, interpretação ou chute. E o padrão que se repete.",
     href: "/questoes",
     cta: "Praticar agora",
   },
@@ -114,8 +119,18 @@ export function BemVindoPro({
   expiraEm: string | null;
 }) {
   const validade = expiraEm
-    ? new Date(expiraEm).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
+    ? new Date(expiraEm).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
     : null;
+  // Esta tela nasceu pro segundo seguinte ao PAGAMENTO, e por isso abria com
+  // "Pagamento aprovado". A semana de lançamento chega na mesma tela sem que
+  // ninguém tenha pago — e o mesmo cabeçalho viraria a afirmação de uma
+  // cobrança que não existiu, que é a forma mais rápida de fazer um brinde
+  // parecer golpe.
+  const lancamento = ehProDeLancamento({ plano_ciclo: ciclo });
 
   return (
     <motion.section
@@ -130,22 +145,25 @@ export function BemVindoPro({
         </span>
 
         <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-questly-gold">
-          Pagamento aprovado
+          {lancamento ? "Semana de lançamento" : "Pagamento aprovado"}
         </p>
         <h2 className="mt-1.5 font-heading text-[24px] font-semibold leading-tight tracking-tight sm:text-[28px]">
           Bem-vindo ao Expectrum Pro
         </h2>
         <p className="mx-auto mt-2 max-w-md text-[13.5px] leading-relaxed text-muted-foreground">
-          Tudo abaixo já está liberado nesta conta — agora mesmo, sem esperar nada.{" "}
-          {ciclo === "semestral"
-            ? "Você garantiu o semestre inteiro."
-            : "Seu mês de Pro começa agora."}
+          Tudo abaixo já está liberado nesta conta — agora mesmo, sem esperar
+          nada.{" "}
+          {lancamento
+            ? "É a semana Pro de lançamento: nada foi cobrado, e no fim do prazo a conta volta ao grátis sozinha."
+            : ciclo === "semestral"
+              ? "Você garantiu o semestre inteiro."
+              : "Seu mês de Pro começa agora."}
         </p>
 
         {validade && (
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-questly-gold/30 bg-questly-gold/10 px-3 py-1 text-[12px] font-semibold text-questly-gold">
             <ProEmblema size={14} />
-            Ativo até {validade}
+            {lancamento ? "Vai até" : "Ativo até"} {validade}
           </p>
         )}
       </div>
@@ -169,8 +187,12 @@ export function BemVindoPro({
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-questly-gold/12 text-questly-gold">
                   <d.icone size={16} strokeWidth={2} />
                 </span>
-                <p className="mt-2.5 text-[13.5px] font-semibold tracking-tight">{d.titulo}</p>
-                <p className="mt-1 flex-1 text-[12px] leading-relaxed text-muted-foreground">{d.texto}</p>
+                <p className="mt-2.5 text-[13.5px] font-semibold tracking-tight">
+                  {d.titulo}
+                </p>
+                <p className="mt-1 flex-1 text-[12px] leading-relaxed text-muted-foreground">
+                  {d.texto}
+                </p>
                 <span className="mt-2.5 inline-flex items-center gap-1 text-[12px] font-semibold text-questly-green-dark">
                   {d.cta}
                   <ArrowRight
@@ -187,7 +209,8 @@ export function BemVindoPro({
 
       <p className="flex items-center justify-center gap-1.5 text-center text-[12px] text-muted-foreground">
         <Heart size={12} strokeWidth={2} className="text-questly-red" />
-        Obrigado por apoiar a Expectrum — é assinatura de aluno que mantém o banco de questões crescendo.
+        Obrigado por apoiar a Expectrum — é assinatura de aluno que mantém o
+        banco de questões crescendo.
       </p>
     </motion.section>
   );

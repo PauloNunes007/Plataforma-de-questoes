@@ -35,8 +35,18 @@ import {
 } from "./casca";
 import type { MensagemEmail } from "./enviar";
 
-/** Como esta conta virou Pro. Muda o agradecimento, nunca os benefícios. */
-export type OrigemPro = "pago" | "cupom";
+/**
+ * Como esta conta virou Pro. Muda o agradecimento, nunca os benefícios.
+ *
+ * `lancamento` é a semana de Pro liberada pra base inteira e pra quem se
+ * cadastrar durante a janela (ver lib/plano/lancamento.ts). Ela precisa de um
+ * texto próprio por uma razão que não é de estilo: é o único caso em que o
+ * aluno não pediu nada. Quem paga sabe que comprou; quem resgata cupom sabe
+ * que digitou um código; quem ganha a semana só vê a conta mudar sozinha — e
+ * se este e-mail não disser, com data, que o acesso é temporário e por que
+ * ele apareceu, a pessoa vai descobrir os dois no dia em que o Pro sumir.
+ */
+export type OrigemPro = "pago" | "cupom" | "lancamento";
 
 function primeiroNome(nome: string | null | undefined): string {
   const limpo = (nome ?? "").trim();
@@ -55,6 +65,7 @@ export function montarEmailBoasVindasPro(input: {
 }): MensagemEmail {
   const nome = primeiroNome(input.nome);
   const pago = input.origem === "pago";
+  const lancamento = input.origem === "lancamento";
   const validade = input.expiraEm
     ? new Date(input.expiraEm).toLocaleDateString("pt-BR", {
         day: "2-digit",
@@ -63,24 +74,30 @@ export function montarEmailBoasVindasPro(input: {
       })
     : null;
 
-  const saudacao = input.retorno
+  const saudacao = lancamento
     ? nome
-      ? `${nome}, seu Pro está de volta`
-      : "Seu Pro está de volta"
-    : nome
-      ? `Bem-vindo ao Pro, ${nome}`
-      : "Bem-vindo ao Expectrum Pro";
+      ? `${nome}, sua conta virou Pro`
+      : "Sua conta virou Pro"
+    : input.retorno
+      ? nome
+        ? `${nome}, seu Pro está de volta`
+        : "Seu Pro está de volta"
+      : nome
+        ? `Bem-vindo ao Pro, ${nome}`
+        : "Bem-vindo ao Expectrum Pro";
 
   // O agradecimento é a primeira coisa que a pessoa lê, e ele precisa ser
   // verdade: quem usou cupom não "confirmou um pagamento", e dizer que sim
   // estraga a confiança justamente em quem acabou de chegar.
-  const intro = pago
-    ? input.retorno
-      ? "Obrigado por voltar — pagamento confirmado. Tudo abaixo está liberado de novo na sua conta, e não precisa fazer mais nada."
-      : "Obrigado por assinar. É aluno pagante que mantém o Expectrum de pé. Tudo abaixo já está liberado na sua conta — não precisa fazer mais nada."
-    : input.retorno
-      ? "Seu cupom foi aplicado e tudo abaixo voltou a ficar liberado. Obrigado por continuar com a gente."
-      : "Seu cupom foi aplicado. Obrigado por experimentar o Pro — tudo abaixo já está liberado na sua conta, sem pagar nada e sem precisar fazer mais nada.";
+  const intro = lancamento
+    ? "Sem pegadinha e sem precisar fazer nada: estamos lançando o Expectrum e liberamos o plano Pro na sua conta por 7 dias. Tudo o que está abaixo já está funcionando pra você agora — o selo Pro dourado que apareceu no seu perfil é ele."
+    : pago
+      ? input.retorno
+        ? "Obrigado por voltar — pagamento confirmado. Tudo abaixo está liberado de novo na sua conta, e não precisa fazer mais nada."
+        : "Obrigado por assinar. É aluno pagante que mantém o Expectrum de pé. Tudo abaixo já está liberado na sua conta — não precisa fazer mais nada."
+      : input.retorno
+        ? "Seu cupom foi aplicado e tudo abaixo voltou a ficar liberado. Obrigado por continuar com a gente."
+        : "Seu cupom foi aplicado. Obrigado por experimentar o Pro — tudo abaixo já está liberado na sua conta, sem pagar nada e sem precisar fazer mais nada.";
 
   // Cada destaque corresponde a uma tela que existe e tem gate real (a regra
   // de lib/plano/plano.ts vale aqui também — e-mail é onde a promessa vazia
@@ -98,7 +115,8 @@ export function montarEmailBoasVindasPro(input: {
     },
     {
       titulo: "Questões sem teto diário",
-      texto: "O limite de questões por dia acabou. Maratone a véspera inteira, se for o caso.",
+      texto:
+        "O limite de questões por dia acabou. Maratone a véspera inteira, se for o caso.",
     },
     {
       titulo: "Simulados ilimitados e PDF",
@@ -127,18 +145,32 @@ export function montarEmailBoasVindasPro(input: {
       ? " É o semestre inteiro: dura mais que a próxima prova, a recuperação e a final."
       : "";
 
-  const fecho = validade
-    ? `Seu acesso vai até <b>${escapar(validade)}</b>.${notaSemestral} Qualquer dúvida, é só responder este e-mail.`
-    : "Qualquer dúvida, é só responder este e-mail.";
+  // A data em NEGRITO e a palavra "até" são obrigatórias no caso do
+  // lançamento: é a única linha do e-mail que impede o mal-entendido caro —
+  // achar que a plataforma ficou grátis. Anunciar o desconto junto é o que
+  // transforma o fim do prazo em oferta, em vez de em perda.
+  const fecho = lancamento
+    ? validade
+      ? `A semana Pro vale até <b>${escapar(validade)}</b>. Depois disso sua conta volta pro plano grátis sozinha — não cobramos nada e não pedimos cartão em lugar nenhum. Quem quiser continuar no Pro vai receber uma condição de lançamento antes de o prazo acabar.`
+      : "Depois da semana sua conta volta pro plano grátis sozinha — não cobramos nada e não pedimos cartão em lugar nenhum."
+    : validade
+      ? `Seu acesso vai até <b>${escapar(validade)}</b>.${notaSemestral} Qualquer dúvida, é só responder este e-mail.`
+      : "Qualquer dúvida, é só responder este e-mail.";
 
-  const assunto = input.retorno
-    ? "Seu Expectrum Pro está de volta"
-    : "Bem-vindo ao Expectrum Pro";
+  const assunto = lancamento
+    ? "Liberamos o Pro na sua conta por 7 dias"
+    : input.retorno
+      ? "Seu Expectrum Pro está de volta"
+      : "Bem-vindo ao Expectrum Pro";
 
   const corpo = [
     blocoTitulo(saudacao, intro),
     blocoDestaques(destaques),
-    blocoBotao("Ver o que foi liberado", `${APP_URL}/pro`, "24px 32px 6px 32px"),
+    blocoBotao(
+      "Ver o que foi liberado",
+      `${APP_URL}/pro`,
+      "24px 32px 6px 32px",
+    ),
     blocoParagrafo(fecho, "16px 32px 28px 32px"),
   ].join("");
 
@@ -150,7 +182,11 @@ export function montarEmailBoasVindasPro(input: {
     "Tudo isto já está liberado na sua conta:",
     ...destaques.map((d) => `- ${d.titulo}: ${d.texto}`),
     "",
-    validade ? `Seu acesso vai até ${validade}.` : "",
+    validade
+      ? lancamento
+        ? `A semana Pro vale até ${validade}. Depois disso sua conta volta pro plano grátis sozinha — sem cobrança e sem cartão.`
+        : `Seu acesso vai até ${validade}.`
+      : "",
     `Acesse: ${APP_URL}/pro`,
   ]
     .filter(Boolean)
@@ -162,12 +198,15 @@ export function montarEmailBoasVindasPro(input: {
     assunto,
     html: montarCasca({
       assunto,
-      preheader:
-        "Faltas, notas, questões sem teto, simulados ilimitados e PDF — tudo liberado agora.",
+      preheader: lancamento
+        ? "7 dias de Pro liberados na sua conta, sem cobrança e sem cartão."
+        : "Faltas, notas, questões sem teto, simulados ilimitados e PDF — tudo liberado agora.",
       corpo,
-      rodape: pago
-        ? "Você recebeu este e-mail porque assinou o Expectrum Pro."
-        : "Você recebeu este e-mail porque um cupom liberou o Expectrum Pro na sua conta.",
+      rodape: lancamento
+        ? "Você recebeu este e-mail porque tem conta na Expectrum e o Pro foi liberado nela no lançamento."
+        : pago
+          ? "Você recebeu este e-mail porque assinou o Expectrum Pro."
+          : "Você recebeu este e-mail porque um cupom liberou o Expectrum Pro na sua conta.",
     }),
     texto,
   };
