@@ -27,15 +27,20 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
-  // As duas leituras são independentes — em série, o header do app esperava
-  // um round-trip a mais em todo carregamento completo de página.
-  const [{ data: profile }, focoHojeSeg] = await Promise.all([
+  // As três leituras são independentes — em série, o header do app esperava
+  // round-trips a mais em todo carregamento completo de página. A de
+  // `afiliados` é barata (índice único em `user_id`, RLS já restringe a "só a
+  // própria linha") e é só o que decide se o item "Painel de parceiro"
+  // aparece no menu — sem ela o painel (/parceiro) existe mas é inalcançável
+  // de dentro do app pra quem não sabe a URL de cor.
+  const [{ data: profile }, focoHojeSeg, { data: afiliado }] = await Promise.all([
     supabase
       .from("profiles")
       .select("nome, username, curso, foto_url, plano, plano_expira_em")
       .eq("id", user.id)
       .maybeSingle(),
     carregarFocoHojeSeg(supabase, user.id),
+    supabase.from("afiliados").select("id").eq("user_id", user.id).eq("ativo", true).maybeSingle(),
   ]);
 
   // Onboarding obrigatório: sem curso salvo (inclui profile ainda inexistente),
@@ -48,6 +53,7 @@ export default async function ProtectedLayout({
   const nome = profile?.nome || user.email?.split("@")[0] || "Aluno(a)";
   const isAdmin = user.email === ADMIN_EMAIL;
   const pro = ehPro(profile);
+  const isParceiro = !!afiliado;
 
   return (
     <FocoProvider focoHojeSegInicial={focoHojeSeg} userId={user.id}>
@@ -68,6 +74,7 @@ export default async function ProtectedLayout({
             fotoUrl={profile?.foto_url ?? null}
             isAdmin={isAdmin}
             ehPro={pro}
+            isParceiro={isParceiro}
           />
           <FocoBar />
 

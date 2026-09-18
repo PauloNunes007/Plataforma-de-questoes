@@ -233,6 +233,19 @@ export function linkParceiroCurto(codigo: string, base?: string): string {
   return linkParceiro(codigo, base).replace(/^https?:\/\//, "");
 }
 
+/**
+ * O link do PAINEL do parceiro (/parceiro) — diferente de `linkParceiro`
+ * (o /p/<codigo> que vai na bio/story, pro PÚBLICO dele). Este é o que o
+ * admin manda em privado pro parceiro ver quanto está recebendo. Não leva
+ * `codigo`: o painel é da CONTA logada, não de um link — o vínculo é por
+ * `afiliados.user_id` (casado por e-mail no primeiro acesso, ver
+ * `acharParceiroDaConta`).
+ */
+export function linkPainelParceiro(base?: string): string {
+  const raiz = (base?.trim() || APP_URL).replace(/\/+$/, "");
+  return `${raiz}/parceiro`;
+}
+
 /* ----------------------------------------- convite de avaliação */
 
 /**

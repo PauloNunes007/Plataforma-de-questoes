@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { GraduationCap, LogOut, Settings, ShieldAlert, Timer } from "lucide-react";
+import { GraduationCap, Handshake, LogOut, Settings, ShieldAlert, Timer } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MATERIAS_NAV, TOP_NAV_ITEMS } from "@/components/nav-items";
@@ -22,6 +22,7 @@ type TopNavProps = {
   fotoUrl: string | null;
   isAdmin: boolean;
   ehPro: boolean;
+  isParceiro: boolean;
 };
 
 // Header HORIZONTAL (redesign 2026-09, a pedido — substitui a Sidebar
@@ -29,7 +30,7 @@ type TopNavProps = {
 // topo com marca + navegação por ícones+rótulo, e um cluster à direita:
 // tema, botão de Foco (timer), Pro e menu de conta. No mobile os links somem
 // (a MobileBottomNav cobre), sobrando marca + Foco + conta.
-export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavProps) {
+export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro, isParceiro }: TopNavProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl print:hidden">
       {/* fio de acento no topo — dá o toque "premium" sem pesar */}
@@ -72,6 +73,7 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNa
             fotoUrl={fotoUrl}
             isAdmin={isAdmin}
             ehPro={ehPro}
+            isParceiro={isParceiro}
           />
         </div>
       </div>
@@ -149,7 +151,7 @@ function FocoBotao() {
   );
 }
 
-function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavProps) {
+function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro, isParceiro }: TopNavProps) {
   const [aberto, setAberto] = useState(false);
   const identidade = resolverCurso(curso);
   const nomeCurso = cursoReconhecido(identidade) ? identidade.nome : curso;
@@ -228,6 +230,16 @@ function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro }: TopNavPro
                 <ProMark size={15} strokeWidth={1.9} />
                 {ehPro ? "Expectrum Pro" : "Seja Pro"}
               </ItemMenu>
+
+              {/* Só quem já está vinculado como parceiro (afiliados.user_id)
+                  vê este item — antes disso o painel (/parceiro) existe mas
+                  não tem link nenhum de dentro do app. */}
+              {isParceiro && (
+                <ItemMenu href="/parceiro" onClick={() => setAberto(false)} cor="text-questly-purple">
+                  <Handshake size={15} strokeWidth={1.75} />
+                  Painel de parceiro
+                </ItemMenu>
+              )}
 
               {isAdmin && (
                 <>

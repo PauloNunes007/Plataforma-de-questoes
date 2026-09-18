@@ -37,6 +37,7 @@ import {
   FAIXAS,
   JANELA_MESES_PADRAO,
   linkParceiroCurto,
+  linkPainelParceiro,
   rotuloCompetencia,
 } from "@/lib/afiliados/afiliados";
 import { reais } from "@/lib/plano/plano";
@@ -231,7 +232,9 @@ function LinhaParceiro({
 }) {
   const [aberto, setAberto] = useState(false);
   const [copiado, setCopiado] = useState(false);
+  const [copiadoPainel, setCopiadoPainel] = useState(false);
   const link = linkParceiroCurto(a.codigo);
+  const linkPainel = linkPainelParceiro();
 
   async function copiar() {
     try {
@@ -240,6 +243,16 @@ function LinhaParceiro({
       setTimeout(() => setCopiado(false), 1800);
     } catch {
       setCopiado(false);
+    }
+  }
+
+  async function copiarPainel() {
+    try {
+      await navigator.clipboard.writeText(linkPainel);
+      setCopiadoPainel(true);
+      setTimeout(() => setCopiadoPainel(false), 1800);
+    } catch {
+      setCopiadoPainel(false);
     }
   }
 
@@ -339,6 +352,27 @@ function LinhaParceiro({
                 e-mail <strong className="text-foreground">{a.email}</strong>
               </span>
             ) : null}
+          </div>
+
+          <div className="mt-3 rounded-xl border border-border bg-muted/30 px-3.5 py-3">
+            <p className="text-[11.5px] font-semibold tracking-wide text-muted-foreground uppercase">
+              Link do painel (privado — manda só pro parceiro)
+            </p>
+            <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
+              {a.vinculado
+                ? "Onde ele vê cliques, vendas e quanto está pra receber."
+                : `Ainda "sem conta": só funciona depois que ele criar a conta da Expectrum com${
+                    a.email ? ` o e-mail ${a.email}` : " o e-mail cadastrado aqui"
+                  } e abrir este link uma vez — é isso que vincula o painel a ele.`}
+            </p>
+            <button
+              type="button"
+              onClick={copiarPainel}
+              className="mt-2 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-questly-purple underline-offset-2 hover:underline"
+            >
+              {copiadoPainel ? <Check size={13} /> : <ClipboardCopy size={13} />}
+              {linkPainel.replace(/^https?:\/\//, "")}
+            </button>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
