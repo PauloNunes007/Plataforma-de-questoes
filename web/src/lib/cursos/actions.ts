@@ -122,7 +122,7 @@ export async function listarInstituicoesComQuestoes(): Promise<InstituicaoAgrega
 // ("Expectrum"). Sugerir esses como universidade confundiria o aluno.
 function ehInstituicaoSugerivel(nome: string): boolean {
   const n = nome.trim().toLowerCase();
-  if (n.includes("questly")) return false;
+  if (n.includes("questly") || n.includes("expectrum")) return false;
   if (/^[a-z]{2,5}[\s-]?\d{2,4}$/.test(n)) return false; // código de disciplina
   return true;
 }

@@ -91,7 +91,8 @@ where m.nome in ('Fundamentos de Cálculo e Geometria', 'Programação I')
 -- 'Integrais' dentro de Cálculo II só pra testar o fluxo — isso é
 -- conteúdo de Cálculo I e não bate com a ementa real. Remove esses
 -- tópicos SÓ se todas as questões deles forem as de demonstração
--- (instituicao = 'Questly'); questões reais importadas preservam tudo.
+-- (instituicao = 'Questly'/'Expectrum', os dois rótulos que o seed já
+-- usou); questões reais importadas preservam tudo.
 delete from topicos t
 using materias m
 where t.materia_id = m.id
@@ -99,7 +100,7 @@ where t.materia_id = m.id
   and lower(t.nome) in ('limites e derivadas', 'integrais')
   and not exists (
     select 1 from questions q
-    where q.topic_id = t.id and coalesce(q.instituicao, '') <> 'Questly'
+    where q.topic_id = t.id and lower(coalesce(q.instituicao, '')) not in ('questly', 'expectrum')
   );
 
 -- 5) MATÉRIAS DO CICLO BÁSICO -------------------------------------
@@ -255,15 +256,23 @@ where m.nome = 'Programação I'
 on conflict (materia_id, lower(nome)) do update set ordem = excluded.ordem, descricao = excluded.descricao;
 
 -- FUNDAMENTOS DE CÁLCULO E GEOMETRIA --------------------------------
+-- "Funções em R" e "Funções Exponenciais e Logarítmicas" foram uma só
+-- (2026-09-15): misturar exponencial/log no meio de domínio, módulo,
+-- polinômios e trigonometria escondia essas duas famílias de função
+-- no meio do resto. Separadas em dois tópicos pra dar precisão sem
+-- picar demais — ver supabase_reorganizar_topicos_calculo.sql, que
+-- move as questões correspondentes pro tópico novo (rode-o depois
+-- desta seção).
 insert into topicos (materia_id, nome, ordem, descricao)
 select m.id, t.nome, t.ordem, t.descricao
 from materias m
 cross join (values
-  (1, 'Funções em R',                        'Domínio, contradomínio e pré-imagem, inequações e módulo, funções básicas, polinômios e fatoração, trigonométricas, exponencial e logarítmica, composição, gráficos no GeoGebra'),
-  (2, 'Função Inversa',                      'Funções injetoras e bijetoras, inversa, relação entre logarítmica e exponencial, funções hiperbólicas e trigonométricas inversas'),
-  (3, 'Classes de Funções e seus Gráficos',  'Função par e ímpar, crescente e decrescente, limitada, translações e homotetias'),
-  (4, 'Vetores e Retas no Plano',            'Coordenadas cartesianas, distância e circunferência, vetores no plano, produto escalar, projeções e área, equação da reta, paralelismo, perpendicularismo, ângulos e distâncias'),
-  (5, 'Vetores no Espaço e Geometria Sólida','Distância e esfera, vetores no espaço, produto escalar, produto vetorial e volume, equações da reta e do plano, ângulos e distâncias entre retas e planos')
+  (1, 'Funções em R',                            'Domínio, contradomínio e pré-imagem, inequações e módulo, funções básicas, polinômios e fatoração, trigonométricas, composição, gráficos no GeoGebra'),
+  (2, 'Funções Exponenciais e Logarítmicas',     'Equações e inequações exponenciais, equações logarítmicas, domínio das funções exponencial e logarítmica, relação entre elas, aplicações (crescimento e decaimento exponencial)'),
+  (3, 'Função Inversa',                          'Funções injetoras e bijetoras, inversa, relação entre logarítmica e exponencial, funções hiperbólicas e trigonométricas inversas'),
+  (4, 'Classes de Funções e seus Gráficos',      'Função par e ímpar, crescente e decrescente, limitada, translações e homotetias'),
+  (5, 'Vetores e Retas no Plano',                'Coordenadas cartesianas, distância e circunferência, vetores no plano, produto escalar, projeções e área, equação da reta, paralelismo, perpendicularismo, ângulos e distâncias'),
+  (6, 'Vetores no Espaço e Geometria Sólida',    'Distância e esfera, vetores no espaço, produto escalar, produto vetorial e volume, equações da reta e do plano, ângulos e distâncias entre retas e planos')
 ) as t(ordem, nome, descricao)
 where m.nome = 'Fundamentos de Cálculo e Geometria'
 on conflict (materia_id, lower(nome)) do update set ordem = excluded.ordem, descricao = excluded.descricao;

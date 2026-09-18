@@ -43,8 +43,8 @@ export type FonteSimulado = {
  * lista de professor, não questão nossa.)
  */
 export function ehRotuloAutoral(instituicao: string | null | undefined): boolean {
-  const limpo = (instituicao || "").trim();
-  return limpo === "" || limpo.toLowerCase().includes("questly");
+  const limpo = (instituicao || "").trim().toLowerCase();
+  return limpo === "" || limpo.includes("questly") || limpo.includes("expectrum");
 }
 
 /** Valor cru de `questions.instituicao` → id de fonte. */

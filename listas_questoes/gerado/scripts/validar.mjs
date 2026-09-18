@@ -100,7 +100,7 @@ for (const arq of arquivos) {
     if (!item.enunciado || !item.enunciado.trim()) erro("enunciado vazio");
     if (!item.subtopico || !item.subtopico.trim()) erro("subtopico ausente");
     if (!DIFICULDADES.includes(item.dificuldade)) erro(`dificuldade inválida: ${item.dificuldade}`);
-    if (item.instituicao === "Questly") erro('instituicao "Questly" é reservada para conteúdo demo');
+    if (item.instituicao === "Questly" || item.instituicao === "Expectrum") erro(`instituicao "${item.instituicao}" é reservada para conteúdo demo`);
 
     const preenchidas = LETRAS.filter((l) => item.alternativas && item.alternativas[l] && String(item.alternativas[l]).trim());
     if (preenchidas.length < 2) erro(`só ${preenchidas.length} alternativa(s) preenchida(s)`);

@@ -29,7 +29,7 @@ where nome = 'Cálculo II'
 and not exists (select 1 from topicos t where t.materia_id = materias.id and t.nome = 'Integrais');
 
 insert into questions (topic_id, dificuldade, instituicao, ano, enunciado, alternativas, gabarito, resolucao, tempo_medio_seg)
-select id, 'facil', 'Questly', 2026,
+select id, 'facil', 'Expectrum', 2026,
   'Calcule o limite $\lim_{x \to 2} (x^2 + 3x - 1)$.',
   '{
     "a": "$7$",
@@ -43,7 +43,7 @@ select id, 'facil', 'Questly', 2026,
 from topicos where nome = 'Limites e Derivadas' limit 1;
 
 insert into questions (topic_id, dificuldade, instituicao, ano, enunciado, alternativas, gabarito, resolucao, tempo_medio_seg)
-select id, 'medio', 'Questly', 2026,
+select id, 'medio', 'Expectrum', 2026,
   'Se $f(x) = x^3 - 4x$, qual é o valor de $f''(2)$?',
   '{
     "a": "$4$",
@@ -57,7 +57,7 @@ select id, 'medio', 'Questly', 2026,
 from topicos where nome = 'Limites e Derivadas' limit 1;
 
 insert into questions (topic_id, dificuldade, instituicao, ano, enunciado, alternativas, gabarito, resolucao, tempo_medio_seg)
-select id, 'facil', 'Questly', 2026,
+select id, 'facil', 'Expectrum', 2026,
   'Calcule a integral $\int_0^1 2x \, dx$.',
   '{
     "a": "$0$",
@@ -71,7 +71,7 @@ select id, 'facil', 'Questly', 2026,
 from topicos where nome = 'Integrais' limit 1;
 
 insert into questions (topic_id, dificuldade, instituicao, ano, enunciado, alternativas, gabarito, resolucao, tempo_medio_seg)
-select id, 'dificil', 'Questly', 2026,
+select id, 'dificil', 'Expectrum', 2026,
   'Qual o valor de $\int x e^x \, dx$?',
   '{
     "a": "$e^x + C$",
