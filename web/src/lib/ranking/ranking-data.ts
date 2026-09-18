@@ -26,6 +26,11 @@
 //    array e a linha fixada de "Você" por uma contagem no banco — duas contas
 //    diferentes pro mesmo aluno, que discordavam sempre que havia empate. Hoje
 //    `posicao` vem pronta de `numerarPorCompeticao` e a tela só exibe.
+//
+// 4. TODO MUNDO APARECE nas listas globais, inclusive quem está zerado — ver
+//    o comentário da consulta do Top 100 em `carregarRankingGlobal`. A única
+//    exclusão que sobrou é a de SEMANA, e ela é sobre o dado estar velho, não
+//    sobre o aluno ter pontuado.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   questlyGarantirSemanaLiga,
@@ -94,12 +99,8 @@ export type RankingGlobal = {
   voce: RankingGlobalRow | null;
   posicaoVoce: number;
   foraDoTop: boolean;
-  /** quantos alunos de fato pontuaram nesse recorte (não "quantas contas
-   *  existem") — ver `contarParticipantes`. */
+  /** quantos alunos entram nesse recorte — ver `contarParticipantes`. */
   totalAlunos: number;
-  /** o aluno ainda não pontuou nesse recorte: não há posição pra mostrar,
-   *  e inventar "último lugar" seria mentira. */
-  semPontuacao: boolean;
 };
 
 const LIMITE_TOP = 100;
@@ -191,15 +192,22 @@ export async function carregarRankingGlobal(
   const coluna = modo === "geral" ? "xp_total" : "xp_semana";
   const desempate = modo === "geral" ? "questoes_total" : "questoes_semana";
 
-  // O Top 100 e a contagem de participantes só olham quem PONTUOU
-  // (`.gt(coluna, 0)`): uma conta recém-criada não é "o último colocado", ela
-  // simplesmente ainda não entrou na disputa. Sem esse filtro, o rodapé dizia
-  // "1.200 alunos" contando perfis vazios e o Top 100 se enchia de zeros
-  // enquanto a base era pequena.
+  // TODO MUNDO APARECE (pedido do dono, 2026-09-17). Até aqui as listas
+  // globais filtravam `.gt(coluna, 0)` — "conta recém-criada não é o último
+  // colocado, ela ainda não entrou na disputa". A decisão mudou: numa base
+  // pequena, sumir do ranking é pior do que aparecer com zero, porque o aluno
+  // que se cadastrou e ainda não fechou uma lista simplesmente não se
+  // encontra na tela. Sem o filtro, quem tem 0 cai no fim da ordenação por
+  // conta própria (o desempate por questões respondidas ainda separa quem
+  // respondeu algo de quem nunca abriu uma lista).
+  //
+  // O filtro de SEMANA (`semana_inicio`) continua, e não é a mesma coisa: a
+  // virada de semana é preguiçosa, então quem não abriu o app desde segunda
+  // ainda carrega o xp_semana da semana PASSADA na coluna — incluir essas
+  // linhas colocaria o campeão da semana anterior no pódio desta.
   let consultaTop = supabase
     .from("profiles")
     .select(COLUNAS_PERFIL)
-    .gt(coluna, 0)
     .order(coluna, { ascending: false })
     .order(desempate, { ascending: false })
     .order("id", { ascending: true })
@@ -209,7 +217,7 @@ export async function carregarRankingGlobal(
   const [{ data: topRaw }, { data: meuPerfilRaw }, totalAlunos] = await Promise.all([
     consultaTop,
     supabase.from("profiles").select(COLUNAS_PERFIL).eq("id", user.id).maybeSingle(),
-    contarParticipantes(supabase, coluna, modo === "semana" ? segundaAtual : null),
+    contarParticipantes(supabase, modo === "semana" ? segundaAtual : null),
   ]);
 
   const meuPerfil = (meuPerfilRaw as PerfilBruto | null) ?? null;
@@ -220,13 +228,13 @@ export async function carregarRankingGlobal(
   const linhas = brutos.map((p, i) => paraLinhaGlobal(p, valor(p), posicoes[i], user.id));
 
   const meuValor = meuPerfil ? valor(meuPerfil) : 0;
-  const semPontuacao = meuValor <= 0;
 
   // Posição do aluno: quantos têm métrica estritamente maior (+1) — a MESMA
   // régua de `numerarPorCompeticao`, pra linha fixada e linha da lista nunca
-  // discordarem. Quem ainda não pontuou não recebe posição nenhuma.
+  // discordarem. Com zero também há posição: é a última, dividida por todo
+  // mundo que ainda não pontuou (empate divide a mesma colocação).
   let posicaoVoce = 0;
-  if (meuPerfil && !semPontuacao) {
+  if (meuPerfil) {
     const minhaLinhaNoTop = linhas.find((l) => l.id === user.id);
     if (minhaLinhaNoTop) {
       posicaoVoce = minhaLinhaNoTop.posicao;
@@ -248,18 +256,20 @@ export async function carregarRankingGlobal(
     linhas,
     voce,
     posicaoVoce,
-    foraDoTop: !semPontuacao && !linhas.some((l) => l.ehVoce),
+    foraDoTop: !linhas.some((l) => l.ehVoce),
     totalAlunos,
-    semPontuacao,
   };
 }
 
+// Quantos alunos entram no recorte. Sem filtro de pontuação (ver o comentário
+// da consulta do Top 100): o rodapé conta a base inteira no Geral, e na Semana
+// conta quem já teve a semana virada — que é o mesmo conjunto que a lista
+// mostra, pra o "N de M" não sair maior que a lista de onde ele saiu.
 async function contarParticipantes(
   supabase: SupabaseClient,
-  coluna: string,
   semanaInicio: string | null,
 ): Promise<number> {
-  let q = supabase.from("profiles").select("id", { count: "exact", head: true }).gt(coluna, 0);
+  let q = supabase.from("profiles").select("id", { count: "exact", head: true });
   if (semanaInicio) q = q.eq("semana_inicio", semanaInicio);
   const { count } = await q;
   return count || 0;

@@ -117,6 +117,41 @@ async function atualizarXpELigaLegado(
   }
 }
 
+/**
+ * Realinha os contadores públicos de QUESTÃO (`questoes_total`,
+ * `acertos_total`, `questoes_semana`) sem pagar XP nenhum — daí o `p_xp: 0`.
+ *
+ * Chamada a cada resposta registrada. Antes, esses três números só eram
+ * escritos ao FECHAR uma lista: quem respondia 30 questões e saía no meio
+ * ficava com 30 linhas em `question_attempts` e 0 nos contadores, então a home
+ * (que conta as tentativas direto) mostrava um número e o ranking/card
+ * mostravam outro, pro MESMO aluno. Como a RPC RECOMPUTA de
+ * `question_attempts` em vez de incrementar, chamá-la aqui torna o contador
+ * uma leitura contínua da verdade, e não um saldo que depende do aluno chegar
+ * até o fim da lista.
+ *
+ * XP fica de fora de propósito: ele depende de combo/maestria/anti-farm do
+ * instante da resposta e do placar recomputado da lista inteira — continua
+ * sendo pago só no fechamento, por `atualizarXpELiga`.
+ *
+ * Falhar aqui é sempre não-fatal: contador atrasado não pode derrubar o
+ * registro da resposta, que é o dado que de fato importa.
+ */
+export async function sincronizarContadoresQuestao(supabase: SupabaseClient, userId: string) {
+  // A virada de semana vem antes pelo mesmo motivo de `atualizarXpELiga`: é
+  // ela que define de qual segunda-feira `questoes_semana` deve contar.
+  const estado = await questlyGarantirSemanaLiga(supabase, { id: userId });
+
+  const { error } = await supabase.rpc("questly_registrar_progresso", {
+    p_user_id: userId,
+    p_xp: 0,
+    p_semana_inicio: estado?.semana_inicio ?? null,
+  });
+  // Banco sem supabase_ranking_fiel.sql: os contadores voltam a só se mexer no
+  // fechamento da lista (o comportamento antigo), sem quebrar a resposta.
+  if (error) console.error("Não foi possível sincronizar os contadores de questão:", error);
+}
+
 export async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId: string) {
   const hoje = questlyHojeISO();
   const ontem = toISODate(addDias(new Date(), -1));

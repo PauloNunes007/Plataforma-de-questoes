@@ -94,7 +94,6 @@ export function RankingGlobalView({
         <PinnedVoce
           aluno={dados.voce}
           foraDoTop={dados.foraDoTop}
-          semPontuacao={dados.semPontuacao}
           totalAlunos={dados.totalAlunos}
           onClick={() => onAbrirCard(dados.voce!.id)}
         />
@@ -102,7 +101,7 @@ export function RankingGlobalView({
 
       {dados.linhas.length === 0 ? (
         <p className="py-8 text-center text-sm text-muted-foreground">
-          Ninguém pontuou ainda por aqui.
+          Ninguém por aqui ainda.
         </p>
       ) : (
         <>
@@ -216,13 +215,11 @@ function PodiumGlobal({
 function PinnedVoce({
   aluno,
   foraDoTop,
-  semPontuacao,
   totalAlunos,
   onClick,
 }: {
   aluno: RankingGlobalRow;
   foraDoTop: boolean;
-  semPontuacao: boolean;
   totalAlunos: number;
   onClick: () => void;
 }) {
@@ -237,12 +234,7 @@ function PinnedVoce({
         className="flex w-full cursor-pointer items-center gap-3.5 rounded-2xl border-2 border-questly-red/50 bg-questly-red-light/40 px-4 py-4 text-left"
       >
         <div className="w-12 shrink-0 text-center">
-          {/* Sem XP nesse recorte não existe posição. Mostrar "1º" (ou o
-              último lugar) seria inventar um número: o aluno não está mal
-              colocado, ele ainda não entrou na disputa. */}
-          <span className="tnum text-[17px] font-bold text-questly-red-dark">
-            {semPontuacao ? "—" : `${aluno.posicao}º`}
-          </span>
+          <span className="tnum text-[17px] font-bold text-questly-red-dark">{aluno.posicao}º</span>
         </div>
         <RankAvatar
           nome={aluno.username || aluno.nome}
@@ -266,11 +258,7 @@ function PinnedVoce({
           <span className="ml-1 text-[10px] font-medium text-muted-foreground">XP</span>
         </div>
       </motion.button>
-      {semPontuacao ? (
-        <p className="mt-2 text-center text-[11.5px] text-muted-foreground">
-          Responda questões pra entrar nesta lista.
-        </p>
-      ) : foraDoTop ? (
+      {foraDoTop ? (
         <p className="mt-2 text-center text-[11.5px] text-muted-foreground">
           Você está em {aluno.posicao.toLocaleString("pt-BR")}º de {totalAlunos.toLocaleString("pt-BR")} — fora do
           Top 100 exibido aqui.

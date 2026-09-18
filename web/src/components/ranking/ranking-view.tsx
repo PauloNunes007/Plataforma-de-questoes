@@ -195,7 +195,7 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
             titulo={aba === "geral" ? "Ranking Geral" : "Ranking da Semana"}
             subtitulo={
               aba === "geral"
-                ? `Top 100 por XP total · ${globalAtivo.totalAlunos.toLocaleString("pt-BR")} alunos com XP`
+                ? `Top 100 por XP total · ${globalAtivo.totalAlunos.toLocaleString("pt-BR")} alunos`
                 : `Top 100 por XP de ${periodoSemanaAtual()} · ${globalAtivo.totalAlunos.toLocaleString("pt-BR")} alunos nessa semana`
             }
           />

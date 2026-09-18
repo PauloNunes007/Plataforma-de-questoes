@@ -10,7 +10,11 @@ import {
   toISODate,
 } from "@/lib/questly/shared";
 import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
-import { atualizarStreakEDailyLog, atualizarXpELiga } from "@/lib/questly/economia";
+import {
+  atualizarStreakEDailyLog,
+  atualizarXpELiga,
+  sincronizarContadoresQuestao,
+} from "@/lib/questly/economia";
 import { FREQUENCIA_JANELA_DIAS, questlyCalcularMetricas } from "@/lib/questly/chance-aprovacao";
 import { restanteDoDia } from "@/lib/plano/limites";
 
@@ -185,7 +189,15 @@ export async function registrarRespostaAction(input: {
   // 25...) e pra descontar o teto do plano grátis. Reconta em vez de usar
   // `jaHoje + 1`: entre a checagem e aqui o aluno pode ter respondido em outra
   // aba, e o número que a tela usa pra travar precisa ser o do banco.
-  const questoesHoje = await respondidasHoje(supabase, user.id);
+  //
+  // Em paralelo, os contadores públicos do aluno (questoes_total/
+  // acertos_total/questoes_semana, que alimentam ranking e card) são
+  // realinhados AGORA e não só no fechamento da lista — ver
+  // sincronizarContadoresQuestao. São leituras independentes entre si.
+  const [questoesHoje] = await Promise.all([
+    respondidasHoje(supabase, user.id),
+    sincronizarContadoresQuestao(admin, user.id),
+  ]);
 
   return {
     attemptId: attempt?.id ?? null,
