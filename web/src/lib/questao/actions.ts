@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
@@ -396,6 +397,17 @@ export async function finalizarMissaoAction(input: {
     input.topicosMestreInicioIds,
   );
   const desafio = missao.avulsa ? null : await prepararDesafioRecuperacao(supabase, user.id);
+
+  // Fechar uma lista mexe em XP, ofensiva, liga, cobertura de tópico e no
+  // bloco do calendário — ou seja, em tudo que estas quatro telas mostram. O
+  // aluno volta pra elas por <Link>, que lê o cache de rota do cliente: sem
+  // invalidar aqui, ele veria o XP de ANTES da lista que acabou de fazer, e a
+  // home ficaria devendo até o cache vencer sozinho. É esta linha que permite
+  // que `staleTimes.dynamic` seja generoso no next.config.ts sem mentir.
+  revalidatePath("/dashboard");
+  revalidatePath("/trilha");
+  revalidatePath("/ranking");
+  revalidatePath("/calendario");
 
   return { recapResultado, novosMestresNomes, desafio, placar };
 }

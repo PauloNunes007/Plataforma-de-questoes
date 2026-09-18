@@ -40,10 +40,15 @@ export function HomeRail({
   visao,
   onVisao,
   onAbrirCarta,
+  onPreCarregar,
 }: {
   visao: VisaoHome;
   onVisao: (v: VisaoHome) => void;
   onAbrirCarta: () => void;
+  /** Avisa que o aluno está PRESTES a abrir esta visão (mouse em cima, dedo
+   *  encostado) — quem escuta aproveita pra buscar o dado antes do clique.
+   *  Hoje só "desempenho" tem o que buscar; o resto já veio com a página. */
+  onPreCarregar?: (v: VisaoHome) => void;
 }) {
   const semMovimento = useReducedMotion();
 
@@ -81,6 +86,12 @@ export function HomeRail({
               role="tab"
               aria-selected={ativo}
               onClick={() => onVisao(v.id)}
+              /* `pointerenter` cobre o mouse; `pointerdown` cobre o toque,
+                 onde não existe hover — entre encostar e soltar o dedo há uns
+                 bons décimos de segundo, e é neles que a busca cabe. */
+              onPointerEnter={() => onPreCarregar?.(v.id)}
+              onPointerDown={() => onPreCarregar?.(v.id)}
+              onFocus={() => onPreCarregar?.(v.id)}
               className={`relative flex h-10 min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl px-1 transition-colors lg:h-[68px] lg:flex-col lg:gap-1 ${
                 ativo
                   ? "text-questly-green-dark dark:text-questly-green"

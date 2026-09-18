@@ -25,6 +25,16 @@ import Link from "next/link";
 import { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 
+// `next/link` publica o tipo do Link do PAGES Router, que não conhece
+// `unstable_dynamicOnHover`. Em client component do App Router o mesmo
+// especificador é resolvido pro Link do app-dir
+// (next/dist/client/app-dir/link), cujo `LinkProps` TEM o prop. O alias
+// abaixo alinha o tipo ao componente que de fato roda — não acrescenta
+// comportamento nenhum, só para de esconder do TypeScript um prop que existe.
+const LinkApp = Link as unknown as React.ComponentType<
+  React.ComponentProps<typeof Link> & { unstable_dynamicOnHover?: boolean }
+>;
+
 /** Teto pro palpite: passou disso, a navegação não vai mesmo acontecer. */
 const LIMITE_PALPITE_MS = 8000;
 
@@ -85,9 +95,34 @@ export function NavLink({
   const { marcar } = useContext(Ctx);
 
   return (
-    <Link href={href} onNavigate={() => marcar(href)} className={className} {...props}>
+    <LinkApp
+      href={href}
+      onNavigate={() => marcar(href)}
+      /* PREFETCH DO CONTEÚDO, NÃO SÓ DA CASCA (2026-09-18).
+       *
+       * `experimental.dynamicOnHover` no next.config.ts NÃO basta sozinho:
+       * no Next 16 ele só liga a metade do interruptor. O outro lado é ESTE
+       * prop — `onNavigationIntent` (next/dist/client/components/links.js) só
+       * promove o prefetch pra `FetchStrategy.Full` quando a flag de build E
+       * o prop estão os dois ligados. Sem ele, encostar num link buscava
+       * apenas a casca estática (o loading.tsx), e o payload da página só
+       * começava a ser pedido DEPOIS do clique — exatamente o atraso que a
+       * flag tinha sido adicionada pra remover.
+       *
+       * Vale no celular também, e é lá que pesa mais: o mesmo caminho é
+       * disparado por `onTouchStart`, ou seja, no instante em que o dedo
+       * encosta — não existe hover no telefone, mas existe o intervalo entre
+       * encostar e soltar, e é nele que o conteúdo chega.
+       *
+       * O custo é contido: só a navegação PRINCIPAL (6 abas do header e da
+       * barra inferior) usa NavLink, e o prefetch só dispara por intenção do
+       * aluno — nada é buscado de véspera. */
+      unstable_dynamicOnHover
+      className={className}
+      {...props}
+    >
       {children}
-    </Link>
+    </LinkApp>
   );
 }
 

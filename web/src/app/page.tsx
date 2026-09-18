@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { LandingView } from "@/components/landing/landing-view";
 import { CAMPANHA } from "@/lib/landing/campanha";
 import { carregarStatsBanco } from "@/lib/landing/stats";
+import { PERGUNTAS } from "@/lib/landing/faq-dados";
+import { APP_URL } from "@/lib/app-url";
 
 // Revalida de hora em hora: os números do banco mudam devagar (o importador é
 // manual) e a landing é a página mais acessada — não faz sentido consultar o
@@ -41,5 +43,65 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const stats = await carregarStatsBanco();
-  return <LandingView stats={stats} />;
+
+  // DADOS ESTRUTURADOS (2026-09-18). As páginas de prova já publicavam os
+  // seus (CollectionPage/ItemList); a landing, que é a raiz do site, não
+  // publicava nenhum — o Google tinha que adivinhar o nome da marca, o site
+  // oficial e do que a página trata a partir do texto solto.
+  //
+  // São três coisas num grafo só, porque são três afirmações diferentes:
+  //   • WebSite      — este domínio é o site da Expectrum (é o que permite o
+  //                    nome da marca aparecer no lugar da URL no resultado);
+  //   • Organization — quem publica;
+  //   • FAQPage      — as perguntas da própria landing, lidas do MESMO módulo
+  //                    que o acordeão renderiza (lib/landing/faq-dados.ts),
+  //                    nunca de uma segunda cópia. É o formato que o Google
+  //                    pode abrir direto na página de resultados.
+  //
+  // Nada aqui é promessa de posição: dado estruturado não sobe ranking, ele
+  // deixa o resultado mais informativo pra quem já chegou nele.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${APP_URL}/#site`,
+        url: APP_URL,
+        name: "Expectrum",
+        inLanguage: "pt-BR",
+        description: DESCRICAO,
+        publisher: { "@id": `${APP_URL}/#org` },
+      },
+      {
+        "@type": "Organization",
+        "@id": `${APP_URL}/#org`,
+        name: "Expectrum",
+        url: APP_URL,
+        logo: `${APP_URL}/icon.svg`,
+        description:
+          "Plataforma de estudo para universitários: banco de questões de provas antigas com resolução, simulados cronometrados e acompanhamento por tópico da ementa.",
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${APP_URL}/#faq`,
+        mainEntity: PERGUNTAS.map((q) => ({
+          "@type": "Question",
+          name: q.p,
+          acceptedAnswer: { "@type": "Answer", text: q.r },
+        })),
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        // O JSON é montado aqui a partir de constantes nossas — não há entrada
+        // de usuário nenhuma neste objeto.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <LandingView stats={stats} />
+    </>
+  );
 }

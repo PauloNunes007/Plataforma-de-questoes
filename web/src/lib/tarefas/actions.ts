@@ -1,17 +1,34 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { contagemDasMaterias } from "@/lib/questly/contagem-questoes";
 import { criarListaDeQuestoes, questoesQueCabem, SEG_PADRAO_QUESTAO } from "@/lib/questly/criar-lista";
 import type { TipoItemAgenda } from "./tarefas-data";
 
 // CRUD simples e owner-scoped dos itens da agenda — sem lógica derivada (ao
-// contrário da trilha), então o componente cliente atualiza o
-// próprio estado local depois de um "ok: true" em vez de refetch/revalidatePath.
+// contrário da trilha), então o componente cliente atualiza o próprio estado
+// local depois de um "ok: true", e é por isso que a TELA de quem fez a
+// alteração continua certa sem refetch.
+//
+// O que faltava (2026-09-18) era a OUTRA tela: home e calendário mostram os
+// mesmos itens, e quem marca uma tarefa na home e vai pro calendário chega
+// numa cópia guardada no cache de rota do cliente, com a tarefa ainda aberta.
+// Com `staleTimes.dynamic` em 30s isso durava pouco; agora são 180s
+// (next.config.ts), então `marcarAgendaSuja` invalida as duas de uma vez.
+// Barato: invalidar não busca nada, só marca como vencido.
 //
 // Agendar um bloco NÃO gera missão, XP nem ofensiva: é o plano do aluno, e
 // misturar plano com conquista abriria caminho pra inflar o ranking marcando
 // sessões que nunca aconteceram.
+
+/** As duas telas que desenham os itens da agenda. Toda escrita aqui passa por
+ *  isto — inclusive a que falha no meio, porque o estado do banco depois de um
+ *  erro parcial é justamente o que não se pode continuar servindo de cache. */
+function marcarAgendaSuja() {
+  revalidatePath("/dashboard");
+  revalidatePath("/calendario");
+}
 
 /** Só aceita "HH:MM" (o que o <input type="time"> emite); o resto vira null. */
 function horaValida(hora: string | null | undefined): string | null {
@@ -109,6 +126,7 @@ export async function criarTarefaAction(
     .select("id")
     .single();
 
+  marcarAgendaSuja();
   if (error || !criada) {
     console.error("Erro ao criar item da agenda:", error);
     return { ok: false, id: null };
@@ -125,6 +143,7 @@ export async function alternarTarefaAction(id: string, concluida: boolean): Prom
 
   const { error } = await supabase.from("tarefas").update({ concluida }).eq("id", id).eq("user_id", user.id);
   if (error) console.error("Erro ao atualizar tarefa:", error);
+  marcarAgendaSuja();
   return { ok: !error };
 }
 
@@ -137,6 +156,7 @@ export async function excluirTarefaAction(id: string): Promise<{ ok: boolean }> 
 
   const { error } = await supabase.from("tarefas").delete().eq("id", id).eq("user_id", user.id);
   if (error) console.error("Erro ao excluir tarefa:", error);
+  marcarAgendaSuja();
   return { ok: !error };
 }
 
@@ -154,6 +174,7 @@ export async function moverTarefaAction(id: string, data: string): Promise<{ ok:
 
   const { error } = await supabase.from("tarefas").update({ data }).eq("id", id).eq("user_id", user.id);
   if (error) console.error("Erro ao mover item da agenda:", error);
+  marcarAgendaSuja();
   return { ok: !error };
 }
 
@@ -256,6 +277,9 @@ export async function iniciarEstudoPlanejadoAction(
     .eq("user_id", user.id);
   if (error) console.error("Erro ao ligar o bloco de estudo à lista:", error);
 
+  // O bloco passou a ter lista: a home precisa mostrar "continuar" em vez de
+  // "começar" quando o aluno voltar pra cá.
+  marcarAgendaSuja();
   return { missaoId, erro: null };
 }
 

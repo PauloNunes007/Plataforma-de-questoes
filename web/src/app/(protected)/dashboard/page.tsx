@@ -4,7 +4,6 @@ import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarDadosDashboard, carregarPerfilDashboard } from "@/lib/questly/dashboard-data";
 import { carregarRetomar } from "@/lib/retomar/retomar-data";
 import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
-import { carregarDesempenho } from "@/lib/dashboard/desempenho-data";
 import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
 import { carregarResumoRiscoAcademico } from "@/lib/academico/academico-data";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
@@ -26,15 +25,16 @@ export default async function DashboardPage() {
   // estava dentro de um Promise.all que só COMEÇAVA depois de
   // carregarDadosDashboard() inteiro.
   const perfil = await carregarPerfilDashboard(supabase, user.id);
-  const [dados, retomar, hero, atalhoSimulados, desempenho, riscoAcademico] = await Promise.all([
+  // A aba "Desempenho" NÃO entra aqui de propósito (2026-09-18). O histórico
+  // dela sai do banco cru — até 8.000 tentativas em páginas sequenciais, mais
+  // os lotes `.in()` de questions/topicos/materias — e segurava a home inteira
+  // por uma aba que não é a inicial. Ela busca o próprio dado ao ser aberta,
+  // via carregarDesempenhoAction (ver lib/dashboard/actions.ts).
+  const [dados, retomar, hero, atalhoSimulados, riscoAcademico] = await Promise.all([
     carregarDadosDashboard(supabase, user, perfil),
     carregarRetomar(supabase, user.id),
     carregarHeroDashboard(supabase, user, perfil),
     carregarAtalhoSimulados(supabase, user),
-    // Histórico agregado da aba Desempenho. Entra no mesmo Promise.all: a aba
-    // não é a inicial, mas a carga é leve (agregada por dia/tópico no
-    // servidor) e assim trocar de visão é instantâneo, sem spinner.
-    carregarDesempenho(supabase, user.id),
     // Faltas e notas do semestre, resumidas numa linha. Entra no mesmo
     // Promise.all porque o cartão da home precisa avisar ANTES da aula — uma
     // tela que o aluno tem que lembrar de abrir não avisa nada.
@@ -45,7 +45,6 @@ export default async function DashboardPage() {
     <DashboardView
       dados={dados}
       hero={hero}
-      desempenho={desempenho}
       atalhoSimulados={atalhoSimulados}
       retomar={retomar}
       riscoAcademico={riscoAcademico}

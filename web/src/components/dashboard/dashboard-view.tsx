@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Library } from "lucide-react";
 import type { DashboardData } from "@/lib/questly/dashboard-data";
 import type { HeroDados } from "@/lib/dashboard/hero-data";
 import type { DesempenhoDados } from "@/lib/dashboard/desempenho-data";
+import { carregarDesempenhoAction } from "@/lib/dashboard/actions";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
 import type { RetomarInfo } from "@/lib/retomar/retomar-data";
 import type { ResumoRiscoAcademico } from "@/lib/academico/academico-data";
@@ -65,7 +67,6 @@ import { ConquistasView } from "./conquistas-view";
 export function DashboardView({
   dados,
   hero,
-  desempenho,
   atalhoSimulados,
   retomar,
   riscoAcademico,
@@ -73,13 +74,50 @@ export function DashboardView({
 }: {
   dados: DashboardData;
   hero: HeroDados;
-  desempenho: DesempenhoDados;
   atalhoSimulados: AtalhoSimulados;
   retomar: RetomarInfo;
   riscoAcademico: ResumoRiscoAcademico;
   userId: string;
 }) {
   const [visao, setVisao] = useState<VisaoHome>("global");
+
+  // Desempenho é a única visão cujo dado NÃO vem com a página (ver
+  // lib/dashboard/actions.ts: o histórico cru dela segurava a home inteira).
+  // Busca uma vez e guarda enquanto a página viver — trocar de aba pra lá e
+  // pra cá não repete a consulta. O `pedido` é um ref, não estado: ele existe
+  // pra impedir a segunda chamada, e impedir uma chamada não é motivo pra
+  // redesenhar nada.
+  const [desempenho, setDesempenho] = useState<DesempenhoDados | null>(null);
+  const pedido = useRef<Promise<void> | null>(null);
+
+  const buscarDesempenho = useCallback(() => {
+    if (pedido.current) return;
+    pedido.current = carregarDesempenhoAction()
+      .then(setDesempenho)
+      .catch(() => {
+        // Deixa o ref limpo: a próxima abertura da aba tenta de novo em vez de
+        // ficar num esqueleto eterno.
+        pedido.current = null;
+      });
+  }, []);
+
+  // Encostar no botão "Desempenho" do trilho já começa a busca; quando o
+  // clique chega, o dado costuma estar aqui. Se não estiver, o esqueleto
+  // abaixo cobre a diferença.
+  const preCarregar = useCallback(
+    (v: VisaoHome) => {
+      if (v === "desempenho") buscarDesempenho();
+    },
+    [buscarDesempenho],
+  );
+
+  const trocarVisao = useCallback(
+    (v: VisaoHome) => {
+      preCarregar(v);
+      setVisao(v);
+    },
+    [preCarregar],
+  );
   const [card, setCard] = useState<CardUsuario | null>(null);
   const [carregandoCard, setCarregandoCard] = useState(false);
 
@@ -131,7 +169,12 @@ export function DashboardView({
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-5">
         <div className="lg:sticky lg:top-[70px]">
-          <HomeRail visao={visao} onVisao={setVisao} onAbrirCarta={abrirCarta} />
+          <HomeRail
+            visao={visao}
+            onVisao={trocarVisao}
+            onAbrirCarta={abrirCarta}
+            onPreCarregar={preCarregar}
+          />
         </div>
 
         <div className="min-w-0 flex-1">
@@ -194,9 +237,12 @@ export function DashboardView({
             </div>
           )}
 
-          {visao === "desempenho" && (
-            <DesempenhoView dados={desempenho} semana={dados.semana} ehPro={dados.ehPro} />
-          )}
+          {visao === "desempenho" &&
+            (desempenho ? (
+              <DesempenhoView dados={desempenho} semana={dados.semana} ehPro={dados.ehPro} />
+            ) : (
+              <EsqueletoDesempenho />
+            ))}
 
           {visao === "conquistas" && (
             <ConquistasView distintivos={hero.distintivos} selecionadosIniciais={hero.distintivosSelecionados} />
@@ -205,6 +251,32 @@ export function DashboardView({
       </div>
 
       <StudentCardModal card={card} loading={carregandoCard} onClose={fecharCarta} />
+    </div>
+  );
+}
+
+// Silhueta da aba Desempenho enquanto o histórico chega: os quatro KPIs, os
+// dois gráficos e as duas listas, nas proporções reais da visão montada. Uma
+// silhueta que promete a forma certa não faz a tela "pular" quando o dado
+// chega — mesma regra de (protected)/loading.tsx.
+function EsqueletoDesempenho() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Skeleton className="h-9 w-64 rounded-xl" />
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <Skeleton className="h-24 rounded-2xl" />
+        <Skeleton className="h-24 rounded-2xl" />
+        <Skeleton className="h-24 rounded-2xl" />
+        <Skeleton className="h-24 rounded-2xl" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <Skeleton className="h-72 rounded-2xl" />
+        <Skeleton className="h-72 rounded-2xl" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <Skeleton className="h-56 rounded-2xl" />
+        <Skeleton className="h-56 rounded-2xl" />
+      </div>
     </div>
   );
 }

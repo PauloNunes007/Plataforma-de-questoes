@@ -33,6 +33,18 @@ export const metadata: Metadata = {
   applicationName: "Expectrum",
   authors: [{ name: "Expectrum" }],
   robots: { index: true, follow: true },
+  // Verificação do Google Search Console. Sem estar verificado lá, não há como
+  // ENVIAR o sitemap nem pedir indexação — e um domínio novo, sem nenhum link
+  // externo apontando pra ele, pode ficar meses sem ser descoberto sozinho.
+  // (Em 2026-09-18 o site não tinha uma única página no índice.)
+  //
+  // Vem de env var porque o token é por propriedade do Search Console: quem
+  // criar a propriedade cola o valor em NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+  // na Vercel. Sem a var, a tag simplesmente não sai — verificar por registro
+  // DNS TXT no domínio funciona igual e dispensa isto.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
   openGraph: {
     type: "website",
     siteName: "Expectrum",

@@ -28,18 +28,32 @@ const nextConfig: NextConfig = {
     // protegida é dinâmica (lê a sessão), então voltar pro Início 5s depois
     // refazia o round-trip inteiro e o aluno olhava pro esqueleto de novo.
     //
-    // 30s é o intervalo em que ir e voltar entre abas é a MESMA sessão de
-    // uso ("dei uma olhada no ranking e voltei"). Passou disso, busca de
-    // novo. Toda escrita do app chama `router.refresh()`/`revalidatePath`,
-    // que invalidam este cache — ou seja, responder questão, marcar tarefa
-    // ou fechar simulado continuam refletindo na hora; o que o cache segura
-    // é só o vaivém sem escrita nenhuma no meio.
-    staleTimes: { dynamic: 30, static: 180 },
+    // 30s cobria "dei uma olhada no ranking e voltei", mas não cobre uma
+    // sessão de estudo: quem responde uma lista de 20 questões leva vários
+    // minutos, e ao voltar pagava o round-trip inteiro de novo em toda aba.
+    // 180s é a duração de um vaivém de verdade.
+    //
+    // O que tornou isso seguro foi o passo que faltava (2026-09-18): a
+    // afirmação de que "toda escrita chama router.refresh()/revalidatePath"
+    // simplesmente NÃO era verdade — o caminho mais quente do app, fechar uma
+    // lista de questões, não invalidava nada, e a home voltava mostrando o XP
+    // de antes. `finalizarMissaoAction` agora revalida /dashboard, /trilha,
+    // /ranking e /calendario (lib/questao/actions.ts). Sem aquela linha, subir
+    // este número faria a plataforma mentir por 3 minutos.
+    staleTimes: { dynamic: 180, static: 300 },
 
-    // Prefetch do conteúdo dinâmico no hover (não só do loading.tsx). No
-    // desktop, os ~200ms entre passar o mouse e clicar já bastam pro payload
-    // chegar, e a troca vira instantânea. No celular não existe hover, então
-    // isso não gera requisição nenhuma a mais lá.
+    // Prefetch do CONTEÚDO dinâmico por intenção de navegação (mouse em cima
+    // no desktop, dedo encostado no celular) — não só da casca estática do
+    // loading.tsx.
+    //
+    // ATENÇÃO: esta flag é metade do interruptor. O Next 16 só promove o
+    // prefetch a `FetchStrategy.Full` quando ela E o prop
+    // `unstable_dynamicOnHover` do <Link> estão ligados os dois (ver
+    // next/dist/client/components/links.js, onNavigationIntent). De
+    // 2026-09-17 até 2026-09-18 só esta linha existia, e por isso ela não
+    // fazia absolutamente nada: quem passa o prop é components/nav-link.tsx,
+    // usado pelas abas do header e da barra inferior. Ligar uma sem a outra
+    // é ligar nada.
     dynamicOnHover: true,
   },
 };
