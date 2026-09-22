@@ -2148,6 +2148,110 @@ três pedestais mostram "1" — e é assim que a virada de semana vai tratá-los
 e vida acadêmica não pagam XP nem acendem ofensiva (ver as seções próprias) —
 nada disso mudou aqui.
 
+## Fim da vergonha de errar (2026-09-22) — ranking privado + Caderno de Erros
+
+Dois repasses que são o **mesmo problema**: alunos travando, deixando de
+responder questão com medo de "parecer burro". O diagnóstico não era o
+ranking em si (ele **sempre** ordenou por XP, e nenhuma lista jamais mostrou
+taxa de acerto), era a combinação de uma vitrine pública de acerto com a
+ausência de qualquer lugar útil pra onde o erro pudesse ir.
+
+### 1. O ranking premia esforço, e a acertabilidade some da vitrine
+
+O que expunha o aluno era a **carta** (`student-card-modal.tsx`):
+`buscarCardUsuarioAction` aceita o id de QUALQUER aluno, e o card trazia
+"412 acertos em 605 questões · 68%" pra quem clicasse numa linha do ranking.
+
+- `CardUsuario.pctAcerto`/`acertosTotal` saíram do recorte público e
+  renasceram em **`privado`**, preenchido só quando `ehDono` — e `ehDono` é
+  resolvido pela sessão DENTRO da action, nunca por uma flag do cliente.
+  Quando não é o dono, a coluna **nem é lida**: o número não pode existir no
+  payload RSC da carta alheia;
+- **`xpMedioPorQuestao` saiu junto** (era o "auge" do selo Pro). Acerto paga
+  3/5/8 XP e erro paga uma fração — publicar a média é publicar a taxa de
+  acerto com outro nome e uma casa decimal;
+- o 4º "ataque" da carta era "Mira precisa" e virou **"Poder acumulado"** (XP
+  da carreira). Os quatro ataques passam a ser quatro medidas de esforço, e
+  nenhuma piora quando o aluno erra. A vaga não some: altura padrão pra todo
+  mundo continua valendo;
+- abaixo da carta, só pro dono, o **`PainelPrivado`** ("🔒 Só você vê"):
+  esconder o número não resolve sozinho — o aluno precisa SABER que é
+  privado, e o momento em que ele abre a própria carta é onde ele acredita;
+- `supabase_ranking_privado.sql` fecha a porta dos fundos com
+  `revoke select (acertos_total)`. **Ver o aviso de ordem no CLAUDE.md raiz:
+  o código vai primeiro**, porque `select *` passa a falhar até pro dono da
+  linha;
+- **nenhum distintivo é de acerto** (sempre foram streak/volume/nível/liga,
+  ver `lib/ranking/badges.ts`) — não havia o que mudar ali.
+
+**A economia teve que acompanhar**, senão a tela prometia uma coisa e o
+número entregava outra: `QUESTLY_XP_ERRO_FRACAO` foi de 0.2 pra **0.45** (a
+tabela da decisão está no comentário de `lib/questly/shared.ts`), com
+`QUESTLY_SEG_MIN_ESFORCO` = 12s como trava inseparável — erro instantâneo é
+clique, não tentativa, e paga zero. E como isso criou motivo pra mentir no
+relógio, `registrarRespostaAction` passou a **medir o ritmo no servidor**:
+vale o menor entre o `tempoSeg` do cliente e o intervalo real desde a
+resposta anterior da mesma lista. Mentir pra mais deixou de funcionar; mentir
+pra menos ninguém quer.
+
+**O selo, e por que NÃO é um "modo treino livre"** (`SeloPrivado`,
+`components/questao/selo-privado.tsx`): um modo seguro opcional ensina
+exatamente o contrário do que queremos — se existe uma sala segura, as outras
+são inseguras. A plataforma inteira é a sala segura; o trabalho é dizer isso,
+nos três momentos em que o medo aparece: cabeçalho da questão, tela de
+resultado da lista e montagem da lista no Banco. Três, e nenhum a mais —
+repetir demais vira ansiedade, que é o que estamos tratando.
+
+### 2. Caderno de Erros (`/questoes/caderno`, `lib/caderno/`)
+
+O destino que faltava pro erro. Uma linha de `caderno_erros` guarda **só a
+escolha de guardar** (ver `supabase_caderno_erros.sql` e o parágrafo no
+CLAUDE.md raiz); o resto é junção com quem já é dono da verdade.
+
+**Captura — o gatilho custa um toque.** Três pontos:
+
+1. **no feedback do erro** (`FeedbackArea`): cartão de largura inteira, o
+   único elemento com cor de marca naquela faixa. Um clique resolve — sem
+   modal, sem campo obrigatório; escrever o porquê é convite secundário,
+   nunca pedágio. Guardado, o cartão **não some**: vira o estado verde, porque
+   sumir tiraria do aluno a única confirmação de que a coisa aconteceu;
+2. **pílula "Caderno"** na `QuestaoAcoes` (pra quem acertou e quer guardar
+   assim mesmo, ou pra desfazer);
+3. **fim da lista** (`GuardarErrosCard` no `ResultView`): "guardar as N desta
+   lista". É o ponto de maior conversão do fluxo — o único momento em que o
+   aluno pensa na lista como um todo. Os ids **não vêm do cliente**: a action
+   lê as tentativas erradas da própria missão.
+
+**A tela.** Cartão colapsado responde "o que eu errei mesmo?" (disciplina ·
+tópico, enunciado em 2 linhas, `você marcou C` / `gabarito A`, o chip do
+`motivo_erro`, "errei 2×"); expandir acontece **no lugar**, sem modal e sem
+navegar. Filtros locais (em aberto / resolvidas / todas + disciplina): o
+caderno é curto por natureza e trocar de aba não pode parecer lento.
+
+Três decisões que valem manter:
+
+- **"Refazer" é o que fecha o ciclo** — monta uma lista avulsa com as questões
+  escolhidas (`refazerDoCadernoAction`, teto de 20) e volta pro Caderno pelo
+  `voltarHref` quando ela termina. Não dá pra reaproveitar
+  `criarListaDeQuestoes`: aquele helper sorteia por tópico, e aqui as questões
+  são exatamente estas;
+- **acertar no refazer não marca resolvido sozinho.** Um acerto pode ser
+  sorte, e considerar aprendido é decisão do aluno — a tela só avisa "você
+  acertou essa depois de guardar" e deixa o botão do lado;
+- **"Resolvi" não faz o item sumir debaixo do dedo**: ele esmaece e tem 6s de
+  desfazer.
+
+**Acessos:** trilho da home (FORA do grupo de visões, porque navega — mesma
+regra do botão "Carta"; e ao contrário do Carta ele **não some no celular**,
+onde vira linha de largura inteira, pra não repetir o erro da aba "Matérias"
+que só existia no desktop), com badge do que está esperando; terceiro cartão
+de "Minha coleção" no hub de Questões; e o link a partir de "Tópicos que você
+mais errou" na aba Desempenho — a ponte que faltava entre diagnóstico e ação.
+
+**Nada do Caderno paga XP, acende ofensiva ou entra no ranking** — guardar,
+anotar e marcar resolvido são organização, não estudo. Quem paga é refazer,
+pela via normal. Mesma linha que agenda, metas e vida acadêmica já respeitam.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).
