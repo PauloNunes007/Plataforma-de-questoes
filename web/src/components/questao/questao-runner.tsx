@@ -11,6 +11,7 @@ import {
   BookOpen,
   Brain,
   Calculator,
+  Check,
   CheckCircle2,
   Crown,
   Dices,
@@ -22,6 +23,7 @@ import {
   Landmark,
   Lightbulb,
   Lock,
+  NotebookPen,
   PartyPopper,
   Printer,
   Search,
@@ -61,6 +63,11 @@ import {
   alternarFavoritoAction,
   salvarNotaAction,
 } from "@/lib/anotacoes/actions";
+import {
+  guardarErrosDaListaAction,
+  guardarNoCadernoAction,
+  removerDoCadernoAction,
+} from "@/lib/caderno/actions";
 import type { MissaoResumo, Pergunta } from "@/lib/questao/types";
 import { hrefQuestao, rotuloOrigem } from "@/lib/questao/navegacao";
 
@@ -127,6 +134,7 @@ export function QuestaoRunner({
   jaTentadasAntesIds,
   topicosMestreInicioIds,
   favoritosIniciaisIds,
+  cadernoIniciaisIds,
   notasIniciais,
   ehPro,
   restanteHoje,
@@ -140,6 +148,8 @@ export function QuestaoRunner({
   jaTentadasAntesIds: string[];
   topicosMestreInicioIds: string[];
   favoritosIniciaisIds: string[];
+  /** Questões DESTA lista que já estão no Caderno de Erros. */
+  cadernoIniciaisIds: string[];
   notasIniciais: Record<string, string>;
   ehPro: boolean;
   /** Questões que ainda cabem hoje no plano grátis. null = Pro (sem teto). */
@@ -183,6 +193,9 @@ export function QuestaoRunner({
   const [desafioAceitando, setDesafioAceitando] = useState(false);
   const [favoritos, setFavoritos] = useState<Set<string>>(
     new Set(favoritosIniciaisIds),
+  );
+  const [caderno, setCaderno] = useState<Set<string>>(
+    new Set(cadernoIniciaisIds),
   );
   // Quanto sobrou do teto diário do plano grátis. Desce a cada resposta e é
   // RECONCILIADO com o número do servidor depois de cada registro — outra aba
@@ -382,6 +395,40 @@ export function QuestaoRunner({
     }
   }
 
+  /**
+   * Guardar/tirar do Caderno de Erros. Otimista como o favorito: o cartão
+   * pinta na hora e só volta atrás se o servidor recusar (teto do plano) —
+   * a captura tem que custar UM toque, e esperar o round-trip pra confirmar
+   * é justamente a fricção que faz o aluno não usar o recurso.
+   */
+  async function toggleCaderno(indice = indiceAtual) {
+    const alvo = perguntasState[indice];
+    if (!alvo) return;
+    const id = alvo.id;
+    const jaTinha = caderno.has(id);
+
+    setCaderno((prev) => {
+      const next = new Set(prev);
+      if (jaTinha) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+    const resultado = jaTinha
+      ? await removerDoCadernoAction(id)
+      : await guardarNoCadernoAction(id, estados[indice]?.attemptId ?? null);
+
+    if ("error" in resultado) {
+      setCaderno((prev) => {
+        const next = new Set(prev);
+        if (jaTinha) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+      setAvisoBiblioteca(resultado.error);
+    }
+  }
+
   async function salvarNota(texto: string) {
     const id = pergunta.id;
     const anterior = notas[id] ?? "";
@@ -456,6 +503,7 @@ export function QuestaoRunner({
   if (view === "resultado") {
     return (
       <ResultView
+        missaoId={missao.id}
         acertos={acertos}
         erros={erros}
         xpGanho={xpGanho}
@@ -650,8 +698,10 @@ export function QuestaoRunner({
           questionId={pergunta.id}
           resolucao={pergunta.resolucao}
           favoritado={favoritos.has(pergunta.id)}
+          noCaderno={caderno.has(pergunta.id)}
           notaInicial={notas[pergunta.id] ?? null}
           onToggleFavorito={toggleFavorito}
+          onToggleCaderno={() => toggleCaderno()}
           onSalvarNota={salvarNota}
         />
 
@@ -794,6 +844,8 @@ export function QuestaoRunner({
             pergunta={pergunta}
             estado={estado}
             onClassificarMotivo={classificarMotivo}
+            noCaderno={caderno.has(pergunta.id)}
+            onGuardarNoCaderno={() => toggleCaderno()}
             ehPro={ehPro}
             ehAdmin={ehAdmin}
           />
@@ -841,12 +893,16 @@ function FeedbackArea({
   pergunta,
   estado,
   onClassificarMotivo,
+  noCaderno,
+  onGuardarNoCaderno,
   ehPro,
   ehAdmin,
 }: {
   pergunta: Pergunta;
   estado: EstadoPergunta;
   onClassificarMotivo: (motivo: string) => void;
+  noCaderno: boolean;
+  onGuardarNoCaderno: () => void;
   ehPro: boolean;
   ehAdmin: boolean;
 }) {
@@ -931,6 +987,59 @@ function FeedbackArea({
           por ter encarado a questão — e é XP igual ao de qualquer um no
           ranking, que conta esforço, não acerto. Acertar ainda paga mais.
         </p>
+      )}
+
+      {/* CAPTURA DO CADERNO DE ERROS — o gatilho mais importante do fluxo.
+          Só no erro, e como cartão de largura inteira: é o único elemento
+          com cor de marca nesta faixa, então o olho vai nele sem esforço. Um
+          clique resolve (sem modal, sem campo obrigatório); escrever o porquê
+          é um convite secundário, nunca um pedágio.
+
+          Guardado, o cartão NÃO some — vira o estado verde. Sumir tiraria do
+          aluno a única confirmação de que a coisa aconteceu. */}
+      {!estado.correta && (
+        <motion.button
+          type="button"
+          onClick={onGuardarNoCaderno}
+          aria-pressed={noCaderno}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+          className={`mb-4 flex w-full cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3.5 text-left transition-colors ${
+            noCaderno
+              ? "border-questly-green/30 bg-questly-green-light/50"
+              : "border-questly-blue/25 bg-questly-blue-light/40 hover:bg-questly-blue-light/70"
+          }`}
+        >
+          <span
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm ${
+              noCaderno ? "bg-questly-green" : "bg-questly-blue"
+            }`}
+          >
+            {noCaderno ? (
+              <Check size={18} strokeWidth={2.4} />
+            ) : (
+              <NotebookPen size={18} strokeWidth={2} />
+            )}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[14.5px] font-semibold text-foreground">
+              {noCaderno ? "Guardada no Caderno" : "Guardar no Caderno de Erros"}
+            </span>
+            <span className="block text-[12.5px] leading-snug text-muted-foreground">
+              {noCaderno
+                ? "Ela te espera em Questões › Caderno de Erros, com a resolução."
+                : "Você revê essa questão depois, com a resolução do lado."}
+            </span>
+          </span>
+          {!noCaderno && (
+            <ArrowRight
+              size={17}
+              strokeWidth={2}
+              className="shrink-0 text-questly-blue"
+            />
+          )}
+        </motion.button>
       )}
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -1165,6 +1274,7 @@ function XpFloatOverlay({
 }
 
 function ResultView({
+  missaoId,
   acertos,
   erros,
   xpGanho,
@@ -1176,6 +1286,7 @@ function ResultView({
   onAceitarDesafio,
   voltarHref,
 }: {
+  missaoId: string;
   acertos: number;
   erros: number;
   xpGanho: number;
@@ -1331,6 +1442,8 @@ function ResultView({
           </div>
         )}
 
+        {erros > 0 && <GuardarErrosCard missaoId={missaoId} erros={erros} />}
+
         <Link
           href={voltarHref}
           className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-questly-green px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
@@ -1338,6 +1451,95 @@ function ResultView({
           {rotuloOrigem(voltarHref)}
         </Link>
       </motion.div>
+    </div>
+  );
+}
+
+/**
+ * "Guardar os N erros desta lista no Caderno" — o ponto de maior conversão do
+ * fluxo inteiro: é o único momento em que o aluno pensa na lista COMO UM
+ * TODO, e o único em que guardar tudo cabe num toque.
+ *
+ * Os ids não são mandados daqui: a Server Action lê as tentativas erradas da
+ * própria missão. O cliente só diz QUAL lista.
+ */
+function GuardarErrosCard({
+  missaoId,
+  erros,
+}: {
+  missaoId: string;
+  erros: number;
+}) {
+  const [salvando, setSalvando] = useState(false);
+  const [resultado, setResultado] = useState<{
+    salvos: number;
+    barrados: number;
+  } | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function guardar() {
+    setSalvando(true);
+    setErro(null);
+    const r = await guardarErrosDaListaAction(missaoId);
+    setSalvando(false);
+    if ("error" in r) {
+      setErro(r.error);
+      return;
+    }
+    setResultado(r);
+  }
+
+  return (
+    <div className="mb-4 rounded-xl border border-questly-purple/30 bg-questly-purple/5 p-4 text-left">
+      <div className="mb-1.5 flex items-center gap-2 text-[14.5px] font-semibold text-questly-purple">
+        <NotebookPen size={16} strokeWidth={2} />
+        {resultado
+          ? "Guardadas no Caderno de Erros"
+          : `Você errou ${erros} ${erros === 1 ? "questão" : "questões"} nesta lista`}
+      </div>
+
+      {resultado ? (
+        <>
+          <p className="mb-3.5 text-sm leading-relaxed text-muted-foreground">
+            {resultado.salvos > 0
+              ? `${resultado.salvos} ${resultado.salvos === 1 ? "questão guardada" : "questões guardadas"} com a resolução do lado, esperando você transformar em acerto.`
+              : "Essas questões já estavam no seu Caderno."}
+            {/* Guardar 3 de 5 em silêncio seria pior que recusar. */}
+            {resultado.barrados > 0 &&
+              ` ${resultado.barrados} ${resultado.barrados === 1 ? "ficou" : "ficaram"} de fora: seu plano grátis chegou ao limite de questões guardadas.`}
+          </p>
+          <Link
+            href="/questoes/caderno"
+            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-questly-purple/35 px-5 py-2.5 text-sm font-semibold text-questly-purple transition-colors hover:bg-questly-purple/10"
+          >
+            Abrir o Caderno
+            <ArrowRight size={14} strokeWidth={2.2} />
+          </Link>
+        </>
+      ) : (
+        <>
+          <p className="mb-3.5 text-sm leading-relaxed text-muted-foreground">
+            Guarde todas no Caderno de Erros e refaça quando quiser — é errando
+            a mesma questão duas vezes que ela deixa de cair na prova.
+          </p>
+          {erro && (
+            <p className="mb-2.5 text-[12.5px] font-medium text-questly-red-dark">
+              {erro}
+            </p>
+          )}
+          <button
+            type="button"
+            disabled={salvando}
+            onClick={guardar}
+            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-questly-purple px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+          >
+            <NotebookPen size={14} strokeWidth={2} />
+            {salvando
+              ? "Guardando..."
+              : `Guardar ${erros === 1 ? "no Caderno" : `as ${erros} no Caderno`}`}
+          </button>
+        </>
+      )}
     </div>
   );
 }

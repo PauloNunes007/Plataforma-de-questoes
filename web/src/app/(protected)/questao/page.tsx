@@ -99,14 +99,15 @@ export default async function QuestaoPage({
   const perguntaIds = perguntas.map((p) => p.id);
   const topicIdsDasPerguntas = Array.from(new Set(perguntas.map((p) => p.topic_id).filter(Boolean))) as string[];
 
-  // PERFORMANCE: estas cinco leituras dependem só das perguntas já sorteadas
-  // (ou de nada) — em série eram quatro round-trips empilhados antes de a
+  // PERFORMANCE: estas seis leituras dependem só das perguntas já sorteadas
+  // (ou de nada) — em série eram seis round-trips empilhados antes de a
   // primeira questão aparecer. Nenhuma usa o resultado da outra.
   const [
     { data: tentativasAnteriores },
     progsIniciais,
     { data: favoritosData },
     { data: notasData },
+    { data: cadernoData },
     { data: perfilPlano },
   ] = await Promise.all([
     // Histórico do aluno nessas questões: já acertou (paga metade) e já
@@ -127,6 +128,11 @@ export default async function QuestaoPage({
       : Promise.resolve(null),
     supabase.from("question_favoritos").select("question_id").eq("user_id", user.id).in("question_id", perguntaIds),
     supabase.from("question_notes").select("question_id, nota").eq("user_id", user.id).in("question_id", perguntaIds),
+    // Caderno de Erros: quais destas o aluno JÁ guardou. Sem isto o cartão
+    // "Guardar no Caderno" apareceria como novo numa questão que ele já
+    // guardou numa sessão anterior — e oferecer de novo o que já foi feito é
+    // a forma mais rápida de o botão perder o sentido.
+    supabase.from("caderno_erros").select("question_id").eq("user_id", user.id).in("question_id", perguntaIds),
     supabase.from("profiles").select("plano, plano_expira_em").eq("id", user.id).maybeSingle(),
   ]);
 
@@ -146,6 +152,10 @@ export default async function QuestaoPage({
   const jaTentadasAntesIds = (tentativasAnteriores || []).map((a) => a.question_id);
   const topicosMestreInicioIds = (progsIniciais || []).filter(questlyEhMestre).map((p) => p.topico_id);
   const favoritosIniciaisIds = (favoritosData || []).map((f) => f.question_id);
+  // Banco sem supabase_caderno_erros.sql ainda: a consulta falha, `data` vem
+  // null e o runner só mostra todos os cartões como "não guardado" — o app
+  // não cai por causa de uma tabela que ainda não existe.
+  const cadernoIniciaisIds = (cadernoData || []).map((c) => c.question_id);
   const notasIniciais: Record<string, string> = {};
   (notasData || []).forEach((n) => (notasIniciais[n.question_id] = n.nota));
 
@@ -188,6 +198,7 @@ export default async function QuestaoPage({
       jaTentadasAntesIds={jaTentadasAntesIds}
       topicosMestreInicioIds={topicosMestreInicioIds}
       favoritosIniciaisIds={favoritosIniciaisIds}
+      cadernoIniciaisIds={cadernoIniciaisIds}
       notasIniciais={notasIniciais}
       ehPro={ehPro(perfilPlano)}
       restanteHoje={restanteHoje}

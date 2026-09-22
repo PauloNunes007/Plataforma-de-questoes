@@ -47,6 +47,25 @@ export const FAVORITOS_FREE = 15;
 /** Anotações de questão no grátis. Gate: lib/anotacoes/actions.ts. */
 export const ANOTACOES_FREE = 10;
 
+/**
+ * Questões guardadas no Caderno de Erros no grátis.
+ * Gate: lib/caderno/actions.ts (guardar uma e guardar a lista inteira).
+ *
+ * Mais folgado que favoritos/anotações de propósito: o Caderno é exatamente
+ * o comportamento que a plataforma passou a querer provocar quando tornou a
+ * acertabilidade privada (ver supabase_ranking_privado.sql). Bater numa
+ * parede na terceira questão errada ensinaria o contrário do que a mudança
+ * inteira está tentando ensinar.
+ *
+ * Duas regras que fazem o teto não punir quem usa direito:
+ *   • só GUARDAR consome vaga — remover e marcar resolvido nunca são
+ *     barrados (mesma lógica de `excedeuLimite` em lib/anotacoes/actions.ts);
+ *   • item RESOLVIDO não ocupa vaga (o teto conta `resolvido_em is null`),
+ *     o que transforma o limite num incentivo a fechar pendência em vez de
+ *     numa punição por ter errado bastante.
+ */
+export const CADERNO_FREE = 40;
+
 /* ------------------------------------------ o teto que o PRO também tem */
 
 // Exportar em PDF é o único recurso que tira conteúdo de DENTRO do app: a

@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Flag, Sparkles, Star, StickyNote } from "lucide-react";
+import { Check, Flag, NotebookPen, Sparkles, Star, StickyNote } from "lucide-react";
 import { MathKeyboard } from "@/components/questao/math-keyboard";
 import { MOTIVOS_REPORT, type MotivoReport } from "@/lib/anotacoes/types";
 import { reportarQuestaoAction } from "@/lib/anotacoes/actions";
 
-// Barra de ações da questão (favoritar / anotar / reportar), reaproveitada
+// Barra de ações da questão (favoritar / caderno / anotar / reportar), reaproveitada
 // no QuestaoRunner e nos cards de /questoes/favoritos e /questoes/anotacoes.
 // Estado de favorito/nota é controlado pelo pai; aqui é só a UI + chamada
 // das Server Actions. Redesign fintech (2026-07): pills rotuladas em vez de
@@ -21,7 +21,7 @@ function Pill({
   onClick,
 }: {
   ativo: boolean;
-  cor: "gold" | "blue" | "red";
+  cor: "gold" | "blue" | "red" | "purple";
   icone: React.ReactNode;
   rotulo: string;
   onClick: () => void;
@@ -30,6 +30,9 @@ function Pill({
     gold: "bg-questly-gold-light text-questly-gold-dark ring-questly-gold/30",
     blue: "bg-questly-blue-light text-questly-blue-dark ring-questly-blue/30",
     red: "bg-questly-red-light text-questly-red-dark ring-questly-red/30",
+    // roxo = o Caderno como LUGAR (mesmo papel de cor do cartão dele no hub
+    // de Questões e do item no trilho da home)
+    purple: "bg-questly-purple/12 text-questly-purple ring-questly-purple/30",
   }[cor];
 
   return (
@@ -60,15 +63,21 @@ export function QuestaoAcoes({
   questionId,
   resolucao,
   favoritado,
+  noCaderno,
   notaInicial,
   onToggleFavorito,
+  onToggleCaderno,
   onSalvarNota,
 }: {
   questionId: string;
   resolucao: string | null;
   favoritado: boolean;
+  /** já está no Caderno de Erros. `undefined` = a tela que usa esta barra
+   *  não oferece o Caderno (as de Favoritos/Anotações), e a pílula some. */
+  noCaderno?: boolean;
   notaInicial: string | null;
   onToggleFavorito: () => void | Promise<void>;
+  onToggleCaderno?: () => void | Promise<void>;
   onSalvarNota: (texto: string) => void | Promise<void>;
 }) {
   const [painel, setPainel] = useState<"nota" | "report" | null>(null);
@@ -134,6 +143,15 @@ export function QuestaoAcoes({
           rotulo={favoritado ? "Favoritada" : "Favoritar"}
           onClick={() => onToggleFavorito()}
         />
+        {onToggleCaderno && (
+          <Pill
+            ativo={!!noCaderno}
+            cor="purple"
+            icone={<NotebookPen size={14} strokeWidth={2} />}
+            rotulo={noCaderno ? "No caderno" : "Caderno"}
+            onClick={() => onToggleCaderno()}
+          />
+        )}
         <Pill
           ativo={painel === "nota" || temNota}
           cor="blue"
