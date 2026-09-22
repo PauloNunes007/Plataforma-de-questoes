@@ -415,6 +415,28 @@ function CamadasInteligentes({ topico, est }: { topico: TopicoTrilha; est: Estad
         </div>
       )}
 
+      {/* DOMÍNIO — a barra de habilidade, ao lado da de presença.
+          `cobertura` responde "quanto eu fiz deste assunto"; esta responde
+          "quanto eu sei dele": a maestria bayesiana que o motor atualiza a
+          cada resposta (aluno_topico_progresso.maestria) e que, até
+          2026-09-22, nenhuma tela mostrava. Dado privado, como a
+          acertabilidade — vive aqui e na tela de resultado, nunca na carta
+          pública. */}
+      {topico.dominio != null && (
+        <div>
+          <div className="mb-1 flex items-center justify-between text-[11px] font-medium text-muted-foreground">
+            <span>Domínio</span>
+            <span className="tnum">{Math.round(topico.dominio * 100)}%</span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-questly-blue transition-[width] duration-700"
+              style={{ width: `${Math.round(topico.dominio * 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* memória caindo (Ebbinghaus) */}
       {topico.memoriaCaindo && topico.retencao != null && (
         <Callout

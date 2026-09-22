@@ -10,6 +10,7 @@ import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AtSign,
+  BellRing,
   BookOpen,
   CalendarDays,
   Camera,
@@ -23,6 +24,7 @@ import {
 import {
 } from "@/lib/questly/shared";
 import { redimensionarAvatar } from "@/lib/configuracoes/avatar-resize";
+import { usePush } from "@/components/pwa/push-provider";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import {
@@ -151,11 +153,15 @@ export function ConfiguracoesPanel({
   profile,
   subjectsIniciais,
   materiasComQuestoes = [],
+  chavePushPublica = null,
 }: {
   profile: ProfileMin | null;
   subjectsIniciais: SubjectComBosses[];
   /** Matérias que já têm questões no banco — a origem das sugestões. */
   materiasComQuestoes?: MateriaComQuestoes[];
+  /** chave VAPID pública; null = push não configurado no servidor, e aí o
+   *  cartão de lembrete não aparece em vez de aparecer quebrado */
+  chavePushPublica?: string | null;
 }) {
   const [subjects, setSubjects] = useState(subjectsIniciais);
   const [dias, setDias] = useState<string[]>(profile?.dias_disponiveis || []);
@@ -179,6 +185,7 @@ export function ConfiguracoesPanel({
 
           <SecaoKicker>Ritmo</SecaoKicker>
           <RotinaCard dias={dias} onSalvar={setDias} />
+          <LembreteCard chavePublica={chavePushPublica} />
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
@@ -648,6 +655,71 @@ function RotinaCard({ dias, onSalvar }: { dias: string[]; onSalvar: (dias: strin
 }
 
 // ————— Disciplinas —————
+
+// ————— Card "Lembrete": ligar/desligar o push de ofensiva —————
+//
+// O estado é do APARELHO, não da conta: o aluno pode querer o lembrete no
+// celular e não no notebook. Por isso o cartão fala em "neste aparelho" — uma
+// frase de conta ("você receberá lembretes") seria mentira no outro
+// dispositivo.
+function LembreteCard({ chavePublica }: { chavePublica: string | null }) {
+  const { estado, ocupado, ativar, desativar } = usePush(chavePublica);
+
+  // Sem chave configurada no servidor o recurso não existe: melhor não
+  // desenhar o cartão do que oferecer um botão que não faz nada.
+  if (!chavePublica) return null;
+
+  return (
+    <Card
+      icon={BellRing}
+      title="Lembrete de ofensiva"
+      sub="Um aviso no fim do dia, só se você ainda não tiver estudado. Nunca propaganda."
+    >
+      {estado === "indisponivel" && (
+        <p className="text-[13px] leading-relaxed text-muted-foreground">
+          Este navegador não aceita notificações. No iPhone, adicione a
+          Expectrum à tela inicial e o lembrete passa a funcionar.
+        </p>
+      )}
+
+      {estado === "negado" && (
+        <p className="text-[13px] leading-relaxed text-muted-foreground">
+          As notificações estão bloqueadas para a Expectrum neste navegador.
+          Para voltar atrás, libere nas permissões do site — o app não
+          consegue pedir de novo sozinho.
+        </p>
+      )}
+
+      {estado === "inativo" && (
+        <button
+          type="button"
+          onClick={ativar}
+          disabled={ocupado}
+          className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-questly-green px-4 py-2.5 text-[13.5px] font-medium text-white transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:text-[#0c1512]"
+        >
+          {ocupado ? "Ativando..." : "Ativar neste aparelho"}
+        </button>
+      )}
+
+      {estado === "ativo" && (
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-questly-green-dark">
+            <Check size={14} strokeWidth={2.4} />
+            Ativo neste aparelho
+          </span>
+          <button
+            type="button"
+            onClick={desativar}
+            disabled={ocupado}
+            className="cursor-pointer text-[13px] font-medium text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground disabled:opacity-50"
+          >
+            {ocupado ? "Desativando..." : "Desativar"}
+          </button>
+        </div>
+      )}
+    </Card>
+  );
+}
 
 function DisciplinasCard({
   subjects,

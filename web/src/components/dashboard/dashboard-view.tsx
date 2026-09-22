@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { AtalhoSimulados } from "@/lib/simulados/simulados-data";
 import type { RetomarInfo } from "@/lib/retomar/retomar-data";
 import type { ResumoRiscoAcademico } from "@/lib/academico/academico-data";
+import type { RevisarHoje } from "@/lib/revisar/revisar-data";
 import { ehEstudo } from "@/lib/tarefas/tarefas-data";
 import { QUESTLY_LIGA_INFO, QUESTLY_LIGAS, type Liga } from "@/lib/questly/liga";
 import { buscarCardUsuarioAction, type CardUsuario } from "@/lib/ranking/actions";
@@ -25,6 +26,7 @@ import { TarefasDoDiaCard } from "./tarefas-do-dia-card";
 import { MapaProgressoCard } from "./mapa-progresso-card";
 import { SimuladosCard } from "./simulados-card";
 import { MateriasRiscoCard } from "./materias-risco-card";
+import { RevisarHojeCard } from "./revisar-hoje-card";
 import { DesempenhoView } from "./desempenho-view";
 import { ConquistasView } from "./conquistas-view";
 
@@ -71,6 +73,7 @@ export function DashboardView({
   retomar,
   riscoAcademico,
   cadernoAbertos,
+  revisar,
   userId,
 }: {
   dados: DashboardData;
@@ -80,6 +83,8 @@ export function DashboardView({
   riscoAcademico: ResumoRiscoAcademico;
   /** questões esperando no Caderno de Erros (badge do trilho) */
   cadernoAbertos: number;
+  /** tópicos saindo da memória hoje; null = nada caindo, e o cartão não sai */
+  revisar: RevisarHoje | null;
   userId: string;
 }) {
   const [visao, setVisao] = useState<VisaoHome>("global");
@@ -164,6 +169,8 @@ export function DashboardView({
         xpTotal={dados.profile?.xp_total || 0}
         xpPorNivel={XP_POR_NIVEL}
         streakAtual={dados.profile?.streak_atual || 0}
+        escudos={dados.profile?.escudos || 0}
+        escudoUsadoRecente={dados.escudoUsadoRecente}
         recordeStreak={dados.semana.recorde.melhorStreak}
         hero={hero}
         pro={dados.ehPro}
@@ -223,6 +230,10 @@ export function DashboardView({
                   o meu plano?", que é uma pergunta diferente de "o que eu faço
                   agora?" — por isso vivem fora da coluna principal. */}
               <aside className="order-2 flex min-w-0 flex-col gap-4 xl:order-none xl:col-start-2 xl:row-start-1 xl:sticky xl:top-[70px]">
+                {/* Vem ANTES do panorama do mês: "o que está escapando agora"
+                    é pendência, e o calendário é retrospectiva. Só aparece
+                    quando existe de fato algo caindo — ver lib/revisar. */}
+                {revisar && <RevisarHojeCard revisar={revisar} />}
                 <MapaProgressoCard
                   monthLabel={dados.calendar.monthLabel}
                   dowOffset={dados.calendar.dowOffset}

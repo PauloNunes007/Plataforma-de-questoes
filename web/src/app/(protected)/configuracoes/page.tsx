@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ConfiguracoesPanel } from "@/components/configuracoes/configuracoes-panel";
+import { chavePublicaPush } from "@/lib/push/enviar";
 import type { SubjectComBosses } from "@/lib/configuracoes/actions";
 import { listarMateriasComQuestoes } from "@/lib/disciplinas/disciplinas-data";
 
@@ -38,6 +39,7 @@ export default async function ConfiguracoesPage() {
       profile={profile}
       subjectsIniciais={(subjectsData as SubjectComBosses[]) || []}
       materiasComQuestoes={materiasComQuestoes}
+      chavePushPublica={chavePublicaPush()}
     />
   );
 }

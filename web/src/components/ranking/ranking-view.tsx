@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crown, Gem, Globe, Sprout, TrendingDown, TrendingUp } from "lucide-react";
+import { Crown, Gem, Globe, GraduationCap, Sprout, TrendingDown, TrendingUp } from "lucide-react";
 import { RankAvatar } from "@/components/ranking/avatar";
 import { StudentCardModal } from "@/components/ranking/student-card-modal";
 import { LigaEmblema } from "@/components/ranking/liga-emblema";
@@ -13,12 +13,15 @@ import {
   buscarCardUsuarioAction,
   buscarRankingLigaAction,
   buscarRankingGlobalAction,
+  buscarRankingTurmaAction,
   type CardUsuario,
 } from "@/lib/ranking/actions";
 import type { DadosRanking, RankingRow, RankingGlobal, ModoGlobal } from "@/lib/ranking/ranking-data";
+import type { RankingTurma } from "@/lib/ranking/turma-data";
+import { TurmaView } from "@/components/ranking/turma-view";
 import { questlySegundaDaSemana, type Liga } from "@/lib/questly/liga";
 
-type Aba = "geral" | "semana" | "divisao";
+type Aba = "geral" | "semana" | "divisao" | "turma";
 
 type RankingViewProps = {
   dados: DadosRanking;
@@ -71,6 +74,18 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
   const [voceNaLiga, setVoceNaLiga] = useState<RankingRow | null>(dados.voce);
   const [carregandoGrupo, setCarregandoGrupo] = useState(false);
 
+  // Minha turma: colegas da mesma universidade na mesma disciplina. Carrega
+  // sob demanda (a aba não é a inicial) e guarda enquanto a página viver.
+  const [turma, setTurma] = useState<RankingTurma | null>(null);
+  const [carregandoTurma, setCarregandoTurma] = useState(false);
+
+  const buscarTurma = useCallback(async (materiaId?: string | null) => {
+    setCarregandoTurma(true);
+    const res = await buscarRankingTurmaAction(materiaId ?? null);
+    if (res) setTurma(res);
+    setCarregandoTurma(false);
+  }, []);
+
   const buscarGlobal = useCallback(async (modo: ModoGlobal) => {
     setCarregandoGlobal(true);
     const res = await buscarRankingGlobalAction(modo);
@@ -82,6 +97,9 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
     setAba(nova);
     if ((nova === "geral" || nova === "semana") && !globais[nova]) {
       await buscarGlobal(nova);
+    }
+    if (nova === "turma" && !turma) {
+      await buscarTurma(null);
     }
   }
 
@@ -185,7 +203,29 @@ export function RankingView({ dados, geralInicial }: RankingViewProps) {
         <AbaBtn ativo={aba === "divisao"} onClick={() => trocarAba("divisao")} icone={<Gem size={15} strokeWidth={2} />}>
           Divisão
         </AbaBtn>
+        <AbaBtn
+          ativo={aba === "turma"}
+          onClick={() => trocarAba("turma")}
+          icone={<GraduationCap size={15} strokeWidth={2} />}
+        >
+          Turma
+        </AbaBtn>
       </div>
+
+      {/* MINHA TURMA (mesma universidade + mesma disciplina) */}
+      {aba === "turma" &&
+        (turma ? (
+          <TurmaView
+            turma={turma}
+            carregando={carregandoTurma}
+            onTrocarMateria={(id) => buscarTurma(id)}
+            onAbrirCard={abrirCard}
+          />
+        ) : (
+          <div className="surface p-10 text-center text-sm text-muted-foreground">
+            Carregando sua turma…
+          </div>
+        ))}
 
       {/* MODO GLOBAL (Geral / Semana) */}
       {(aba === "geral" || aba === "semana") && globalAtivo && (

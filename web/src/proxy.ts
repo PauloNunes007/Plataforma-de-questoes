@@ -40,6 +40,11 @@ const ARQUIVOS_PUBLICOS = [
   "/icon",
   "/apple-icon",
   "/manifest.webmanifest",
+  // O service worker (public/sw.js) tem que ser servido SEM redirecionamento:
+  // o navegador recusa registrar um SW cuja resposta não seja o script em si,
+  // e um 307 pro /login mataria PWA e push de uma vez — silenciosamente, já
+  // que `register()` falha no console e mais nada. Não há segredo no arquivo.
+  "/sw.js",
 ];
 
 // Guarda de rota (equivalente ao antigo questlyExigirLogin de

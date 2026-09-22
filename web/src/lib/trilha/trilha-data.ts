@@ -23,7 +23,10 @@ import {
 // retenção (Ebbinghaus sobre a estabilidade persistida) — ciência de memória,
 // não previsão de nota: diz o que já está escapando, com base no que o aluno
 // respondeu e em quando respondeu.
-import { questlyRetencaoEfetiva } from "@/lib/questly/motor-aprovacao";
+import {
+  questlyEstadoEfetivo,
+  questlyRetencaoEfetiva,
+} from "@/lib/questly/motor-aprovacao";
 // reaproveita a constante já exportada por chance-aprovacao.ts em vez de
 // duplicar o literal — mantém em sincronia com COBERTURA_TOPICO (js/trilha.js)
 import { META_QUESTOES_TOPICO as COBERTURA_TOPICO } from "@/lib/questly/chance-aprovacao";
@@ -43,6 +46,12 @@ export type TopicoTrilha = {
   // ── camadas inteligentes (derivadas no server, prontas pra UI) ──────
   cobertura: number; // 0..1 — questões respondidas / meta de cobertura
   precisao: number | null; // 0..1 — taxa_acerto; null = sem dado
+  /** 0..1 — DOMÍNIO bayesiano (BKT, aluno_topico_progresso.maestria). null =
+   *  nunca tocado. Diferente de `precisao`: precisão é a média do que já
+   *  aconteceu, domínio é a probabilidade de ele acertar a PRÓXIMA — o
+   *  modelo desconta chute e valoriza acerto recente. Dado PRIVADO, mesma
+   *  família da acertabilidade: nunca vai pra carta nem pro ranking. */
+  dominio: number | null;
   retencao: number | null; // 0..1 — Ebbinghaus; null = nunca tocado
   memoriaCaindo: boolean; // tópico coberto cuja retenção caiu abaixo do limiar
   rumoMestre: RumoMestre | null; // só coberto/dominado (mestre já é o teto)
@@ -102,7 +111,13 @@ function derivarInteligencia(
   agoraMs: number,
 ): Pick<
   TopicoTrilha,
-  "cobertura" | "precisao" | "retencao" | "memoriaCaindo" | "rumoMestre" | "ultimaRevisao"
+  | "cobertura"
+  | "precisao"
+  | "dominio"
+  | "retencao"
+  | "memoriaCaindo"
+  | "rumoMestre"
+  | "ultimaRevisao"
 > {
   const num = progresso?.num_questoes_respondidas || 0;
   const taxa = progresso?.taxa_acerto ?? 0;
@@ -111,6 +126,9 @@ function derivarInteligencia(
   const cobertura = Math.min(1, num / COBERTURA_TOPICO);
   const precisao = num > 0 ? taxa : null;
   const retencao = tocado ? questlyRetencaoEfetiva(progresso, agoraMs) : null;
+  // `questlyEstadoEfetivo` semeia o cold-start com os mesmos números do
+  // backfill SQL, então um tópico recém-tocado não aparece saindo de zero.
+  const dominio = num > 0 ? questlyEstadoEfetivo(progresso).maestria : null;
   const memoriaCaindo = retencao != null && retencao < QUESTLY_RETENCAO_LIMIAR;
 
   // rumo a Mestre: só faz sentido em tópicos cobertos que ainda não são Mestre
@@ -126,6 +144,7 @@ function derivarInteligencia(
   return {
     cobertura,
     precisao,
+    dominio,
     retencao,
     memoriaCaindo,
     rumoMestre,

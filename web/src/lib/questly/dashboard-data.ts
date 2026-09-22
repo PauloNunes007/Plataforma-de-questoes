@@ -55,6 +55,12 @@ export type ProfileRow = {
   xp_total: number | null;
   nivel: number | null;
   streak_atual: number | null;
+  /** Escudos de ofensiva disponíveis (supabase_escudo_ofensiva.sql). Opcional
+   *  porque o banco pode não ter rodado a migração ainda. */
+  escudos?: number | null;
+  /** Dia que o último escudo cobriu — a home DIZ quando um foi usado, em vez
+   *  de fingir que a ofensiva nunca foi interrompida. */
+  escudo_usado_em?: string | null;
   dias_disponiveis: string[] | null;
   foto_url: string | null;
   liga: string | null;
@@ -73,7 +79,7 @@ export type ProfileRow = {
 // dono da própria linha, porque GRANT é por papel e não por linha. Coluna
 // nova que a home passe a usar entra AQUI.
 const COLUNAS_PERFIL_HOME =
-  "id, nome, curso, semestre, xp_total, nivel, streak_atual, dias_disponiveis, foto_url, liga, plano, plano_expira_em, distintivos_selecionados";
+  "id, nome, curso, semestre, xp_total, nivel, streak_atual, escudos, escudo_usado_em, dias_disponiveis, foto_url, liga, plano, plano_expira_em, distintivos_selecionados";
 
 export type SubjectListItem = {
   id: string;
@@ -174,6 +180,10 @@ export type DashboardData = {
   tarefasHoje: TarefaRow[];
   tarefasPorData: Record<string, TarefaRow[]>;
   metasHoje: MetasHoje;
+  /** O último escudo de ofensiva foi gasto nos últimos dias. Calculado aqui,
+   *  no servidor, porque "que dia é hoje" não é pergunta pra se fazer durante
+   *  o render de um componente cliente. */
+  escudoUsadoRecente: boolean;
   semana: SemanaResumo;
 };
 // PERFORMANCE (repasse 2026-09-10): esta função já foi uma escada de ~16
@@ -458,6 +468,22 @@ export async function carregarDadosDashboard(
     tarefasHoje,
     tarefasPorData,
     metasHoje,
+    // O aviso "1 escudo usado" é notícia por poucos dias: um escudo gasto há
+    // três semanas não explica a ofensiva de hoje, e fixo na tela viraria
+    // decoração. `hojeStr` e a data do escudo são as duas ISO locais, então a
+    // conta é subtração de dias direta.
+    escudoUsadoRecente: (() => {
+      const usado = profile?.escudo_usado_em
+        ? String(profile.escudo_usado_em).slice(0, 10)
+        : null;
+      if (!usado) return false;
+      const dias = Math.round(
+        (new Date(`${hojeStr}T12:00:00`).getTime() -
+          new Date(`${usado}T12:00:00`).getTime()) /
+          86400000,
+      );
+      return dias >= 0 && dias <= 2;
+    })(),
     semana,
   };
 }
@@ -468,8 +494,23 @@ export async function carregarPerfilDashboard(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<ProfileRow | null> {
-  const { data } = await supabase.from("profiles").select(COLUNAS_PERFIL_HOME).eq("id", userId).single();
-  return (data as ProfileRow | null) ?? null;
+  const ler = (colunas: string) =>
+    supabase.from("profiles").select(colunas).eq("id", userId).single();
+
+  const r = await ler(COLUNAS_PERFIL_HOME);
+  if (!r.error) return (r.data as unknown as ProfileRow | null) ?? null;
+
+  // 42703 = coluna inexistente: banco sem supabase_escudo_ofensiva.sql. A home
+  // inteira depende desta leitura, então ela nunca pode cair por causa de uma
+  // coluna de recurso novo — sem escudo, o cartão da ofensiva só não mostra a
+  // linha de escudo. Mesmo tratamento do resumo de missões acima.
+  if (r.error.code !== "42703") {
+    console.error("Erro ao ler o perfil da home:", r.error);
+    return null;
+  }
+  const semEscudo = COLUNAS_PERFIL_HOME.replace(", escudos, escudo_usado_em", "");
+  const r2 = await ler(semEscudo);
+  return (r2.data as unknown as ProfileRow | null) ?? null;
 }
 
 export { XP_POR_NIVEL };

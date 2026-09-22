@@ -2372,7 +2372,7 @@ Agora `finalizarMissaoAction` grava o valor pago de volta na linha da missão e
 `dashboard-data.ts` lê `xp_pago ?? xp_recompensa`, refazendo a consulta sem a
 coluna (42703) quando o banco ainda não rodou a migração.
 
-### O que ficou de fora desta rodada (backlog, por ordem de impacto)
+### O que ficou de fora desta rodada (FEITO na rodada seguinte — ver a seção abaixo)
 
 - **"Revisar hoje"**: `questlyRetencaoEfetiva` já sabe, todo dia, quais
   tópicos do aluno estão escorregando, e isso só aparece num badge dentro de
@@ -2391,6 +2391,172 @@ coluna (42703) quando o banco ainda não rodou a migração.
   worker nem push em lugar nenhum do repositório, e o único cron é o relatório
   semanal do Pro). O push só faz sentido DEPOIS do item 1 desta seção, porque é
   ele que permite silenciar a notificação de quem já estudou hoje.
+
+## O backlog de hábito virou código (2026-09-22, segunda rodada)
+
+As quatro ideias que a rodada anterior tinha deixado registradas como backlog.
+Nenhuma delas ressuscita o motor de missões: a régua continua sendo
+*informar* (um fato sobre o aluno) e nunca *prescrever* (um plano que ele não
+pediu).
+
+### 1. "Revisar hoje" na home (`lib/revisar/`)
+
+O motor de aprovação já calculava, a cada resposta, a meia-vida da memória de
+cada tópico (`aluno_topico_progresso.estabilidade` + `ultima_revisao` → R =
+e^(-Δt/S)). Esse sinal — o mais acionável que a plataforma produz — só
+aparecia num selo dentro de `/trilha`, tela que o aluno abre de vez em quando.
+
+`carregarRevisarHoje` devolve os tópicos DELE (não o banco inteiro) que caíram
+abaixo de `QUESTLY_RETENCAO_LIMIAR`, com questão disponível e já tocados;
+`pulado` fica de fora, porque o aluno já disse que sabe. O cartão mostra até 3,
+do pior pro menos pior, e um botão monta a lista cruzando os três
+(`revisarAgoraAction` → `criarListaDeQuestoes`, `subject_id: null`, como o
+Caderno já fazia).
+
+Três decisões que valem manter:
+
+- **os tópicos não vêm do cliente.** A action recarrega o diagnóstico do zero;
+  o payload da tela viraria, senão, um jeito de montar lista com tópico
+  arbitrário por fora dos filtros do Banco — e um cartão aberto desde ontem
+  montaria uma revisão que já não faz sentido;
+- **sem nada caindo, o cartão não existe.** Um cartão que se preenche à força
+  todo dia vira ruído, e ruído diário é como o aluno aprende a ignorar a
+  coluna inteira;
+- **o número exibido é o da MEMÓRIA, não o de acerto.** Acertabilidade virou
+  dado privado em 2026-09-22 e não volta pra tela por uma porta lateral.
+
+Fica ACIMA do Mapa de progresso na coluna da direita: pendência vem antes de
+retrospectiva.
+
+### 2. Domínio visível (`medirEvolucaoDominio`, `TopicoTrilha.dominio`)
+
+`aluno_topico_progresso.maestria` é uma probabilidade bayesiana de domínio
+(BKT), atualizada a cada resposta desde `supabase_motor_maestria.sql` — e
+**nenhuma tela jamais a mostrou**. O que o aluno via era COBERTURA ("5 de 5
+questões"): quanto ele fez, não quanto ele sabe. Barra de presença, não de
+habilidade — e só a segunda dá vontade de fechar mais um bloco.
+
+Dois lugares, os dois só pro dono:
+
+- **fim da lista**: "Regra da cadeia: 34% → 61%", com a barra animando de um
+  valor ao outro (o movimento É a informação). O "depois" é lido do banco
+  sempre; o "antes" é um snapshot tirado em `questao/page.tsx` quando a lista
+  abriu, com o mesmo nível de confiança que `topicosMestreInicioIds` já tinha
+  — é número de EXIBIÇÃO, não entra em XP, ranking nem em decisão de motor,
+  então um cliente que mentisse ali só enganaria a si mesmo;
+- **painel do tópico na trilha**: barra de Domínio ao lado da de Cobertura.
+
+**A queda também aparece.** Uma lista ruim derruba a maestria, e o cartão diz
+isso em vez de esconder: um número que só sobe não é medida, é troféu. Domínio
+é da mesma família da acertabilidade — pode aparecer pro dono aqui e na
+trilha, em NENHUMA superfície pública (carta, ranking, card de aluno).
+
+Variação menor que 1 ponto percentual não é mostrada: "61% → 61%" só ensina
+que o número não se mexe.
+
+### 3. "Minha turma" (`lib/ranking/turma-data.ts`, aba nova em `/ranking`)
+
+O ranking global põe o aluno de Cálculo II da UFF pra competir com gente de
+outra universidade e outra ementa. Quem move um universitário de exatas é a
+comparação com os 60 que vão sentar na MESMA P1.
+
+Sem tabela nova: `profiles.universidade` + `subjects.materia_id` já existem e
+são legíveis por qualquer autenticado sob RLS (é o que já faz o ranking
+cross-user e a carta funcionarem). Uma turma por disciplina, com seletor —
+é a matéria que define quem faz a mesma prova.
+
+Regras herdadas, sem exceção: ordena por **XP** (esforço), nunca por
+acertabilidade; posição por competição (empate divide a colocação); desempate
+determinístico por questões e por id, senão a ordem dos empatados muda a cada
+recarga; e `xpSemana` só conta com `semana_inicio` = segunda atual, porque a
+virada de semana é preguiçosa e quem não abriu o app desde segunda ainda
+carrega o XP da semana passada na coluna.
+
+**Massa crítica (`TURMA_MINIMA` = 5):** abaixo disso a tela diz que a turma
+está pequena em vez de desenhar um pódio de duas pessoas. Um ranking de dois
+não é competição, é constrangimento.
+
+**Limite de escala assumido:** a turma é montada em duas etapas (quem cursa a
+matéria → quem desses é da minha universidade) porque não há índice cruzando
+as duas tabelas. Barato na escala atual; quando uma matéria passar de alguns
+milhares de matrículas, o caminho é uma view agregada, como
+`vw_questoes_por_topico` fez com a contagem de questões.
+
+### 4. Escudo de ofensiva (`supabase_escudo_ofensiva.sql`)
+
+Um dia perdido deixa de zerar a ofensiva quando o aluno tem escudo: ele ganha
+1 a cada `ESCUDO_A_CADA` (5) dias consecutivos e acumula no máximo
+`ESCUDO_MAX` (2). A lógica inteira mora em `atualizarStreakEDailyLog`
+(`lib/questly/economia.ts`), que já era o único lugar que mexe no streak.
+
+Duas travas que impedem isto de virar "ofensiva de mentira", e nenhuma é
+negociável sem refazer a conta:
+
+- **escudo NUNCA se compra** — nem com XP, nem com Pro, nem com convite.
+  Ofensiva comprada não mede mais estudo nenhum, e a ofensiva é justamente o
+  número que a rodada anterior acabou de fazer medir estudo de verdade;
+- **o consumo é VISÍVEL**: a home mostra "1 escudo usado" por até 2 dias
+  depois. Esconder faria o número da ofensiva virar afirmação falsa — e este
+  banco já gastou uma migração inteira (`supabase_ranking_fiel.sql`)
+  consertando número que mentia na tela.
+
+O escudo cobre o dia em que a vida aconteceu, não o mês em que o aluno
+desistiu: dois dias seguidos perdidos continuam zerando tudo (a regra exige
+ter estudado ANTEONTEM). As colunas entraram no trigger
+`questly_proteger_colunas_profile` junto com plano/XP/liga/streak — sem isso,
+qualquer aluno logado se daria escudos infinitos do console do browser com a
+chave anon.
+
+A frescura do aviso é decidida no SERVIDOR (`DashboardData.escudoUsadoRecente`):
+"que dia é hoje" não é pergunta pra se fazer durante o render, e a regra
+`react-hooks/set-state-in-effect`/pureza do React 19 recusa `Date.now()` ali.
+
+### 5. PWA + Web Push — o canal que não existia
+
+Até aqui, se o aluno não abrisse o site sozinho, o produto não tinha como
+falar com ele: nem manifest, nem service worker, nem push, e o único cron era
+o relatório semanal (só Pro). A retenção D1 dependia inteiramente de memória
+humana.
+
+- **`app/manifest.ts`** torna a Expectrum instalável. Ganhar ícone na tela
+  inicial é um gatilho diário passivo que não gasta notificação nenhuma — e no
+  **iOS 16.4+ Web Push só funciona em PWA instalado**, então sem o manifest
+  metade da base ficaria fora do lembrete por limitação de plataforma.
+  `start_url` é `/dashboard` e não `/`, porque a raiz é a landing de
+  marketing: quem instalou já é aluno.
+- **`public/sw.js` NÃO faz cache de nada, de propósito.** Um SW que serve
+  resposta guardada é a forma mais fácil de o aluno ver XP, ofensiva ou
+  questão desatualizados — o mesmo problema que este repositório já consertou
+  uma vez, agora por uma porta que o servidor nem consegue invalidar. Ele só
+  existe, recebe push e leva o aluno pra tela certa.
+- **`/sw.js` precisou entrar em `ARQUIVOS_PUBLICOS` do `proxy.ts`**: sem
+  isso levava 307 pro `/login`, e o navegador recusa registrar um SW cuja
+  resposta não seja o script. Falha silenciosa — `register()` reclama no
+  console e mais nada. Os ícones já passavam pelo prefixo `/icon`.
+- **Os ícones PNG do manifest** (`/icone-192.png`, `/icone-512.png`) são
+  gerados por `ImageResponse` a partir da MESMA `MarcaOg` do favicon e do
+  ícone do iOS — mexer na marca atualiza os quatro de uma vez.
+- **A permissão nunca é pedida na carga da página.** Quem pede é o
+  `ConviteLembrete`, no fim de uma lista, e só pra quem já tem ofensiva de 2+
+  dias: "não perca sua sequência" só é argumento pra quem tem uma sequência.
+  Permissão negada no navegador NÃO se pede de novo, então ela só é gasta
+  quando existe motivo pra dizer sim. Dispensado uma vez, não volta
+  (`localStorage`, lido por `useSyncExternalStore` — o mesmo padrão e o mesmo
+  motivo da preferência de recolhimento em `perfil-bar.tsx`).
+- **O cron (`/api/cron/lembrete-ofensiva`, diário às 21h UTC)** manda no
+  máximo um por dia, **silenciado pra quem já estudou hoje** (`daily_logs`
+  responde isso antes de qualquer envio) e só pra quem tem sequência viva
+  (estudou ontem, streak ≥ 2). Repare que ele **só é possível depois** do
+  conserto da rodada anterior: enquanto `daily_logs` só registrava quem
+  FECHAVA lista, o aluno que respondeu 25 questões e saiu receberia um "você
+  não estudou hoje" — a mensagem mais fácil de fazer alguém desinstalar um
+  app. Endpoint morto (404/410) é apagado na hora, senão a tabela vira
+  cemitério e o número de "alunos com lembrete" mente.
+- **Não é canal de marketing.** O dia em que este cron mandar propaganda é o
+  dia em que ele para de funcionar pra todo mundo.
+- **Degrada inteiro sem as chaves VAPID**: sem elas o cartão não aparece, o
+  convite não aparece e o cron responde 503. O PWA continua funcionando (não
+  depende delas). Dependência nova: `web-push`.
 
 ## Conventions carried over from the legacy app
 

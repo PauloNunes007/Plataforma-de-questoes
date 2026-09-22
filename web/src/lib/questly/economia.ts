@@ -152,9 +152,32 @@ export async function sincronizarContadoresQuestao(supabase: SupabaseClient, use
   if (error) console.error("Não foi possível sincronizar os contadores de questão:", error);
 }
 
+// ── ESCUDO DE OFENSIVA (supabase_escudo_ofensiva.sql) ──────────────────────
+//
+// Um dia perdido deixa de zerar a ofensiva quando o aluno tem escudo. Ele
+// ganha 1 a cada ESCUDO_A_CADA dias consecutivos e acumula no máximo
+// ESCUDO_MAX.
+//
+// As duas travas que impedem isto de virar "ofensiva de mentira":
+// escudo NUNCA se compra (nem com XP, nem com Pro — ofensiva comprada não
+// mede estudo nenhum), e o consumo é VISÍVEL na home ("12 dias · 1 escudo
+// usado"). Esconder faria o 12 virar afirmação falsa, e este banco já gastou
+// uma migração inteira consertando número que mentia na tela.
+//
+// O escudo cobre o dia em que a vida aconteceu, não o mês em que o aluno
+// desistiu: com teto de 2, duas semanas sumidas continuam zerando tudo.
+export const ESCUDO_A_CADA = 5;
+export const ESCUDO_MAX = 2;
+
+/** Ganhou escudo AO CHEGAR neste streak? (múltiplo de ESCUDO_A_CADA) */
+function ganhouEscudo(streak: number): boolean {
+  return streak > 0 && streak % ESCUDO_A_CADA === 0;
+}
+
 export async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId: string) {
   const hoje = questlyHojeISO();
   const ontem = toISODate(addDias(new Date(), -1));
+  const anteontem = toISODate(addDias(new Date(), -2));
 
   const { data: logHoje } = await supabase
     .from("daily_logs")
@@ -171,15 +194,71 @@ export async function atualizarStreakEDailyLog(supabase: SupabaseClient, userId:
     // Streak = dias CONSECUTIVOS. Se ontem também teve estudo, continua a
     // sequência; se não, hoje reinicia em 1. Antes o contador só somava e nunca
     // zerava, então o "🔥 streak" na verdade era o total de dias estudados.
-    const { data: logOntem } = await supabase
+    //
+    // Anteontem entra na leitura por causa do escudo: é ele que separa "faltei
+    // UM dia" (cobrível) de "sumi" (não cobrível). As duas linhas saem da
+    // mesma consulta.
+    const { data: logsRecentes } = await supabase
       .from("daily_logs")
-      .select("estudou")
+      .select("data, estudou")
       .eq("user_id", userId)
-      .eq("data", ontem)
-      .maybeSingle();
+      .in("data", [ontem, anteontem]);
 
-    const { data: profile } = await supabase.from("profiles").select("streak_atual").eq("id", userId).single();
-    const novoStreak = logOntem?.estudou ? (profile?.streak_atual || 0) + 1 : 1;
-    await supabase.from("profiles").update({ streak_atual: novoStreak }).eq("id", userId);
+    const estudouEm = (d: string) =>
+      Boolean((logsRecentes || []).find((l) => String(l.data).slice(0, 10) === d)?.estudou);
+    const estudouOntem = estudouEm(ontem);
+    const estudouAnteontem = estudouEm(anteontem);
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("streak_atual, escudos, escudo_usado_em")
+      .eq("id", userId)
+      .single();
+
+    const streakAnterior = profile?.streak_atual || 0;
+    // `escudos` ausente = banco sem a migração; aí o escudo simplesmente não
+    // existe e a regra antiga vale inteira.
+    const escudosAtuais = profile?.escudos ?? 0;
+
+    let novoStreak: number;
+    let escudos = escudosAtuais;
+    let escudoUsadoEm: string | null = (profile?.escudo_usado_em as string | null) ?? null;
+
+    if (estudouOntem) {
+      novoStreak = streakAnterior + 1;
+    } else if (
+      // Exatamente UM dia perdido (estudou anteontem, faltou ontem), tem
+      // escudo e a ofensiva valia a pena proteger.
+      estudouAnteontem &&
+      escudosAtuais > 0 &&
+      streakAnterior > 0
+    ) {
+      // O escudo cobre ONTEM: a sequência segue, e hoje soma normalmente.
+      novoStreak = streakAnterior + 1;
+      escudos = escudosAtuais - 1;
+      escudoUsadoEm = ontem;
+    } else {
+      novoStreak = 1;
+    }
+
+    // Ganho: ao CRUZAR o múltiplo, e nunca acima do teto. Fica depois do
+    // consumo de propósito — quem gastou o último escudo hoje e bateu o
+    // múltiplo no mesmo dia sai com um de novo, o que é justo: ele estudou.
+    if (ganhouEscudo(novoStreak)) escudos = Math.min(ESCUDO_MAX, escudos + 1);
+
+    const patch: Record<string, unknown> = { streak_atual: novoStreak };
+    if (profile && "escudos" in profile) {
+      patch.escudos = escudos;
+      patch.escudo_usado_em = escudoUsadoEm;
+    }
+
+    const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
+    // Banco sem supabase_escudo_ofensiva.sql: reescreve só o streak, que é o
+    // comportamento de antes. Uma coluna que ainda não existe não pode
+    // derrubar o registro do dia.
+    if (error) {
+      console.error("Erro ao atualizar ofensiva:", error);
+      await supabase.from("profiles").update({ streak_atual: novoStreak }).eq("id", userId);
+    }
   }
 }

@@ -10,7 +10,10 @@ import {
   questlyXpDaResposta,
   toISODate,
 } from "@/lib/questly/shared";
-import { questlyEvoluirEstadoTopico } from "@/lib/questly/motor-aprovacao";
+import {
+  questlyEstadoEfetivo,
+  questlyEvoluirEstadoTopico,
+} from "@/lib/questly/motor-aprovacao";
 import {
   atualizarStreakEDailyLog,
   atualizarXpELiga,
@@ -336,6 +339,13 @@ export type DesafioRecuperacao = {
   dificuldade: string | null;
 };
 
+/** Um assunto e o quanto o domínio dele se moveu nesta lista (0..1). */
+export type EvolucaoDominio = {
+  topicoNome: string;
+  de: number;
+  para: number;
+};
+
 export type FinalizarMissaoResultado = {
   recapResultado: { dominou: boolean; taxa: number } | null;
   novosMestresNomes: string[];
@@ -347,6 +357,11 @@ export type FinalizarMissaoResultado = {
    * a tela de resultado é o fim de uma onda, não o começo de outra.
    */
   continuacoes: Continuacoes;
+  /**
+   * Quanto o DOMÍNIO de cada assunto da lista mudou — a recompensa que a
+   * plataforma calculava e escondia. Ver medirEvolucaoDominio.
+   */
+  evolucaoDominio: EvolucaoDominio[];
   /**
    * A conta está Pro por causa da semana de lançamento — e até quando.
    *
@@ -479,6 +494,9 @@ export async function finalizarMissaoAction(input: {
   missaoId: string;
   tempoGastoMinMissao: number;
   topicosMestreInicioIds: string[];
+  /** Maestria por tópico no momento em que a lista abriu (ver
+   *  medirEvolucaoDominio). Mesma natureza de `topicosMestreInicioIds`. */
+  maestriaInicio?: Record<string, number>;
 }): Promise<FinalizarMissaoResultado> {
   const vazio = {
     recapResultado: null,
@@ -486,6 +504,7 @@ export async function finalizarMissaoAction(input: {
     desafio: null,
     placar: { acertos: 0, erros: 0, xpGanho: 0 },
     continuacoes: CONTINUACOES_VAZIAS,
+    evolucaoDominio: [],
     lancamento: null,
   };
   const supabase = await createClient();
@@ -570,12 +589,20 @@ export async function finalizarMissaoAction(input: {
   const topicIdsDasPerguntas = (
     Array.isArray(missao.topic_ids) ? missao.topic_ids : []
   ) as string[];
-  const novosMestresNomes = await celebrarNovasMaestrias(
-    supabase,
-    user.id,
-    topicIdsDasPerguntas,
-    input.topicosMestreInicioIds,
-  );
+  const [novosMestresNomes, evolucaoDominio] = await Promise.all([
+    celebrarNovasMaestrias(
+      supabase,
+      user.id,
+      topicIdsDasPerguntas,
+      input.topicosMestreInicioIds,
+    ),
+    medirEvolucaoDominio(
+      supabase,
+      user.id,
+      topicIdsDasPerguntas,
+      input.maestriaInicio || {},
+    ),
+  ]);
   const desafio = missao.avulsa
     ? null
     : await prepararDesafioRecuperacao(supabase, user.id);
@@ -636,6 +663,7 @@ export async function finalizarMissaoAction(input: {
     desafio,
     placar,
     continuacoes,
+    evolucaoDominio,
     lancamento: await lerLancamento(admin, user.id),
   };
 }
@@ -879,6 +907,67 @@ async function celebrarNovasMaestrias(
     );
 
   return (topicos || []).map((t) => t.nome);
+}
+
+/**
+ * Quanto o DOMÍNIO de cada assunto mudou do começo ao fim da lista.
+ *
+ * `aluno_topico_progresso.maestria` é uma probabilidade bayesiana real (BKT,
+ * ver lib/questly/motor-aprovacao.ts), atualizada a cada resposta desde
+ * supabase_motor_maestria.sql — e o aluno NUNCA a viu. O que a tela mostrava
+ * era cobertura ("5 de 5 questões"), que mede quanto ele fez, não quanto ele
+ * sabe: uma barra de presença, não de habilidade. Só a segunda dá vontade de
+ * fechar mais um bloco.
+ *
+ * O "depois" é lido do banco, sempre. O "antes" vem do snapshot que a página
+ * da questão tirou quando a lista abriu, do mesmo jeito (e com o mesmo nível
+ * de confiança) que `topicosMestreInicioIds` já fazia: é número de EXIBIÇÃO,
+ * não entra em XP, ranking nem em nenhuma decisão do motor, então um cliente
+ * que mentisse no "antes" só enganaria a si mesmo. Sem snapshot (lista antiga,
+ * aba aberta antes deste código) o tópico simplesmente não aparece.
+ *
+ * DOMÍNIO É DADO PRIVADO, da mesma família da acertabilidade que saiu da
+ * vitrine em supabase_ranking_privado.sql: pode aparecer pro dono aqui e na
+ * trilha, em NENHUMA superfície pública (carta, ranking, card de aluno).
+ */
+async function medirEvolucaoDominio(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  topicIds: string[],
+  maestriaInicio: Record<string, number>,
+): Promise<EvolucaoDominio[]> {
+  const idsUnicos = Array.from(new Set(topicIds)).filter(
+    (id) => maestriaInicio[id] != null,
+  );
+  if (idsUnicos.length === 0) return [];
+
+  const { data: progs } = await supabase
+    .from("aluno_topico_progresso")
+    .select("topico_id, taxa_acerto, num_questoes_respondidas, maestria, estabilidade")
+    .eq("user_id", userId)
+    .in("topico_id", idsUnicos);
+  if (!progs || progs.length === 0) return [];
+
+  const { data: topicos } = await supabase
+    .from("topicos")
+    .select("id, nome")
+    .in("id", idsUnicos);
+  const nomePorId = new Map((topicos || []).map((t) => [t.id as string, t.nome as string]));
+
+  const saida: EvolucaoDominio[] = [];
+  for (const p of progs) {
+    const id = p.topico_id as string;
+    const de = maestriaInicio[id];
+    const para = questlyEstadoEfetivo(p).maestria;
+    // Movimento menor que um ponto percentual não é notícia — mostrar
+    // "61% → 61%" só ensina que o número não se mexe.
+    if (!Number.isFinite(de) || Math.abs(para - de) < 0.01) continue;
+    saida.push({ topicoNome: nomePorId.get(id) || "Tópico", de, para });
+  }
+
+  // Maior avanço primeiro: é o que o aluno quer ver.
+  saida.sort((a, b) => b.para - b.de - (a.para - a.de));
+  return saida;
 }
 
 async function prepararDesafioRecuperacao(

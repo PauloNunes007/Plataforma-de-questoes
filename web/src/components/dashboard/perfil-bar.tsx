@@ -28,7 +28,7 @@
 
 import { useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ChevronDown, ChevronRight, ChevronUp, IdCard, Medal, Trophy, Zap } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, IdCard, Medal, ShieldCheck, Trophy, Zap } from "lucide-react";
 import Link from "next/link";
 import { LigaEmblema } from "@/components/ranking/liga-emblema";
 import { LIGA_COR, LIGA_GRADIENTE } from "@/components/ranking/liga-visual";
@@ -96,6 +96,13 @@ type PerfilBarProps = {
   xpPorNivel: number;
   streakAtual: number;
   recordeStreak: number;
+  /** escudos de ofensiva guardados (supabase_escudo_ofensiva.sql) */
+  escudos: number;
+  /** o último escudo foi gasto nos últimos dias — o aviso "1 escudo usado" só
+   *  vale enquanto for notícia; um escudo gasto há três semanas não explica a
+   *  ofensiva de hoje. Decidido no SERVIDOR: "que dia é hoje" não é pergunta
+   *  pra se fazer durante o render. */
+  escudoUsadoRecente: boolean;
   hero: HeroDados;
   pro?: boolean;
   onAbrirCarta: () => void;
@@ -112,6 +119,8 @@ export function PerfilBar({
   xpPorNivel,
   streakAtual,
   recordeStreak,
+  escudos,
+  escudoUsadoRecente,
   hero,
   pro = false,
   onAbrirCarta,
@@ -121,6 +130,8 @@ export function PerfilBar({
   const pctNivel = Math.min(100, (xpNoNivel / xpPorNivel) * 100);
   const cor = LIGA_COR[liga];
   const marcosStreak = 7;
+
+
 
   // Recolhido é o padrão no celular (ver a nota da loja, no topo do arquivo).
   const expandido = useSyncExternalStore(
@@ -353,6 +364,18 @@ export function PerfilBar({
                 <p className="tnum mt-1.5 text-[10.5px] font-medium leading-tight text-muted-foreground">
                   Recorde: {recordeStreak}
                 </p>
+                {/* O escudo é DITO, nunca escondido: uma ofensiva de 12 dias
+                    em que um deles foi coberto continua valendo 12, mas o
+                    aluno precisa saber disso — senão o número vira afirmação
+                    falsa. Ver supabase_escudo_ofensiva.sql. */}
+                {(escudos > 0 || escudoUsadoRecente) && (
+                  <p className="mt-1 flex items-center gap-1 text-[10.5px] font-medium leading-tight text-questly-blue-dark">
+                    <ShieldCheck size={11} strokeWidth={2.2} />
+                    {escudoUsadoRecente
+                      ? "1 escudo usado"
+                      : `${escudos} escudo${escudos > 1 ? "s" : ""}`}
+                  </p>
+                )}
               </div>
               <ChamaStreak size={42} apagada={streakAtual === 0} className="-mr-0.5 -mt-1" />
             </div>

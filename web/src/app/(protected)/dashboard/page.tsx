@@ -7,6 +7,7 @@ import { carregarHeroDashboard } from "@/lib/dashboard/hero-data";
 import { carregarAtalhoSimulados } from "@/lib/simulados/simulados-data";
 import { carregarResumoRiscoAcademico } from "@/lib/academico/academico-data";
 import { contarCaderno } from "@/lib/caderno/dados";
+import { carregarRevisarHoje } from "@/lib/revisar/revisar-data";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
 
 export const metadata: Metadata = {
@@ -31,7 +32,7 @@ export default async function DashboardPage() {
   // os lotes `.in()` de questions/topicos/materias — e segurava a home inteira
   // por uma aba que não é a inicial. Ela busca o próprio dado ao ser aberta,
   // via carregarDesempenhoAction (ver lib/dashboard/actions.ts).
-  const [dados, retomar, hero, atalhoSimulados, riscoAcademico, caderno] = await Promise.all([
+  const [dados, retomar, hero, atalhoSimulados, riscoAcademico, caderno, revisar] = await Promise.all([
     carregarDadosDashboard(supabase, user, perfil),
     carregarRetomar(supabase, user.id),
     carregarHeroDashboard(supabase, user, perfil),
@@ -44,6 +45,12 @@ export default async function DashboardPage() {
     // precisa VER que tem questão esperando, senão o Caderno vira uma gaveta
     // em que ele guarda coisas e nunca mais volta.
     contarCaderno(supabase, user.id),
+    // O que a memória do aluno está perdendo hoje (lib/revisar). Entra na
+    // carga da home porque é justamente o sinal que morria dentro da /trilha:
+    // um diagnóstico que só existe na tela que o aluno esquece de abrir não
+    // muda o comportamento de ninguém. Devolve null quando não há nada
+    // caindo, e aí o cartão não é desenhado.
+    carregarRevisarHoje(supabase, user.id),
   ]);
 
   return (
@@ -54,6 +61,7 @@ export default async function DashboardPage() {
       retomar={retomar}
       riscoAcademico={riscoAcademico}
       cadernoAbertos={caderno.abertos}
+      revisar={revisar}
       userId={user.id}
     />
   );

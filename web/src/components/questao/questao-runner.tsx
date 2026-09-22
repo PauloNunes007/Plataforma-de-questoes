@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
   Atom,
   BookOpen,
   Brain,
+  BrainCircuit,
   Calculator,
   Check,
   CheckCircle2,
@@ -64,6 +65,7 @@ import {
   praticarProximoTopicoAction,
   refazerErrosDaListaAction,
   registrarRespostaAction,
+  type EvolucaoDominio,
   type FinalizarMissaoResultado,
 } from "@/lib/questao/actions";
 import {
@@ -77,6 +79,7 @@ import {
 } from "@/lib/caderno/actions";
 import type { MissaoResumo, Pergunta } from "@/lib/questao/types";
 import { hrefQuestao, rotuloOrigem } from "@/lib/questao/navegacao";
+import { ConviteLembrete } from "@/components/pwa/convite-lembrete";
 
 type EstadoPergunta = {
   selecionada: string | null;
@@ -140,6 +143,9 @@ export function QuestaoRunner({
   jaAcertadasAntesIds,
   jaTentadasAntesIds,
   topicosMestreInicioIds,
+  maestriaInicio,
+  streakAtual,
+  chavePushPublica,
   favoritosIniciaisIds,
   cadernoIniciaisIds,
   notasIniciais,
@@ -154,6 +160,14 @@ export function QuestaoRunner({
   jaAcertadasAntesIds: string[];
   jaTentadasAntesIds: string[];
   topicosMestreInicioIds: string[];
+  /** Domínio por tópico quando a lista abriu — o "antes" do delta que a tela
+   *  de resultado mostra. Tirado no servidor, ver questao/page.tsx. */
+  maestriaInicio: Record<string, number>;
+  /** ofensiva atual — o convite de lembrete só aparece pra quem tem uma
+   *  sequência pra proteger */
+  streakAtual: number;
+  /** chave VAPID pública; null = push não configurado no servidor */
+  chavePushPublica: string | null;
   favoritosIniciaisIds: string[];
   /** Questões DESTA lista que já estão no Caderno de Erros. */
   cadernoIniciaisIds: string[];
@@ -221,6 +235,9 @@ export function QuestaoRunner({
   const jaTentadasAntes = useRef(new Set(jaTentadasAntesIds));
   const comboRef = useRef(0);
   const topicosMestreInicio = useRef(new Set(topicosMestreInicioIds));
+  // Ref pelo mesmo motivo do conjunto acima: o ponto de partida não pode
+  // mudar no meio da lista, nem provocar redesenho.
+  const dominioInicio = useRef(maestriaInicio);
   const tempoInicioMissaoMs = useRef(0);
   const tempoInicioPergunta = useRef(new Map<number, number>());
   const correctBtnRef = useRef<HTMLDivElement | null>(null);
@@ -475,6 +492,7 @@ export function QuestaoRunner({
       missaoId: missao.id,
       tempoGastoMinMissao: tempoMin,
       topicosMestreInicioIds: Array.from(topicosMestreInicio.current),
+      maestriaInicio: dominioInicio.current,
     });
 
     // O servidor é a autoridade: XP/acertos/erros são recomputados lá a partir
@@ -510,6 +528,8 @@ export function QuestaoRunner({
   if (view === "resultado") {
     return (
       <ResultView
+        streakAtual={streakAtual}
+        chavePushPublica={chavePushPublica}
         missaoId={missao.id}
         acertos={acertos}
         erros={erros}
@@ -1292,6 +1312,8 @@ function ResultView({
   desafioAceitando,
   onAceitarDesafio,
   voltarHref,
+  streakAtual,
+  chavePushPublica,
 }: {
   missaoId: string;
   acertos: number;
@@ -1304,6 +1326,8 @@ function ResultView({
   desafioAceitando: boolean;
   onAceitarDesafio: () => void;
   voltarHref: string;
+  streakAtual: number;
+  chavePushPublica: string | null;
 }) {
   const total = acertos + erros;
   const taxa = total > 0 ? acertos / total : 0;
@@ -1427,6 +1451,10 @@ function ResultView({
           </div>
         )}
 
+        {resultadoExtra && resultadoExtra.evolucaoDominio.length > 0 && (
+          <DominioCard evolucao={resultadoExtra.evolucaoDominio} />
+        )}
+
         {resultadoExtra?.desafio && (
           <div className="mb-4 rounded-xl border border-questly-purple/30 bg-questly-purple/5 p-4 text-left">
             <div className="mb-1.5 flex items-center gap-2 text-[14.5px] font-semibold text-questly-purple">
@@ -1455,6 +1483,11 @@ function ResultView({
 
         {erros > 0 && <GuardarErrosCard missaoId={missaoId} erros={erros} />}
 
+        {/* O convite pra ligar o lembrete de ofensiva. Aqui, e em nenhum
+            outro lugar: permissão de notificação negada não se pede de novo,
+            então ela só é gasta depois de o aluno ter acabado de estudar. */}
+        <ConviteLembrete chavePublica={chavePushPublica} streakAtual={streakAtual} />
+
         {resultadoExtra?.continuacoes && (
           <ContinuarCard
             missaoId={missaoId}
@@ -1478,6 +1511,83 @@ function ResultView({
           {rotuloOrigem(voltarHref)}
         </Link>
       </motion.div>
+    </div>
+  );
+}
+
+/**
+ * "Derivadas: 34% → 61% de domínio" — o número que o motor calculava e
+ * ninguém via.
+ *
+ * `aluno_topico_progresso.maestria` é uma probabilidade bayesiana de domínio
+ * (BKT), atualizada a cada resposta desde supabase_motor_maestria.sql. O que
+ * a tela mostrava até aqui era COBERTURA ("5 de 5 questões"): quanto o aluno
+ * fez, não quanto ele sabe — barra de presença, não de habilidade.
+ *
+ * A barra anima de `de` pra `para` porque o movimento É a informação; um
+ * número parado não diz que houve progresso. Com prefers-reduced-motion ela
+ * simplesmente aparece no valor final.
+ *
+ * Domínio é PRIVADO, mesma família da acertabilidade (ver SeloPrivado e
+ * supabase_ranking_privado.sql): aparece aqui e na trilha, pro dono, e em
+ * nenhuma superfície pública.
+ */
+function DominioCard({ evolucao }: { evolucao: EvolucaoDominio[] }) {
+  const semMovimento = useReducedMotion();
+  return (
+    <div className="mb-4 rounded-xl border border-questly-blue/30 bg-questly-blue/5 p-4 text-left">
+      <div className="mb-2.5 flex items-center gap-2 text-[14.5px] font-semibold text-questly-blue-dark">
+        <BrainCircuit size={16} strokeWidth={2} />
+        Seu domínio subiu
+      </div>
+      <ul className="flex flex-col gap-2.5">
+        {evolucao.map((e) => {
+          const de = Math.round(e.de * 100);
+          const para = Math.round(e.para * 100);
+          const caiu = para < de;
+          return (
+            <li key={e.topicoNome}>
+              <div className="mb-1 flex items-baseline justify-between gap-2">
+                <span className="min-w-0 flex-1 truncate text-[13px] font-medium">
+                  {e.topicoNome}
+                </span>
+                <span className="tnum shrink-0 text-[12.5px] font-semibold">
+                  <span className="text-muted-foreground">{de}%</span>
+                  <span className="mx-1 text-muted-foreground">→</span>
+                  <span
+                    className={
+                      caiu ? "text-questly-orange-dark" : "text-questly-blue-dark"
+                    }
+                  >
+                    {para}%
+                  </span>
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-questly-blue/12">
+                <motion.div
+                  className={`h-full rounded-full ${
+                    caiu ? "bg-questly-orange-dark" : "bg-questly-blue"
+                  }`}
+                  initial={{ width: `${semMovimento ? para : de}%` }}
+                  animate={{ width: `${para}%` }}
+                  transition={
+                    semMovimento ? { duration: 0 } : { duration: 0.9, ease: "easeOut" }
+                  }
+                />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      {/* Uma lista pode DERRUBAR o domínio — errar é evidência tanto quanto
+          acertar, e esconder a queda transformaria o número num troféu que só
+          sobe, ou seja, em nada. */}
+      {evolucao.some((e) => e.para < e.de) && (
+        <p className="mt-2.5 text-[12px] leading-relaxed text-muted-foreground">
+          Caiu em algum assunto? É o modelo aprendendo com o que acabou de
+          acontecer — e é exatamente por isso que ele serve pra estudar.
+        </p>
+      )}
     </div>
   );
 }

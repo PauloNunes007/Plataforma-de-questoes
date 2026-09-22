@@ -4,10 +4,12 @@ import { Map as MapIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { questlyEhMestre, questlyEmbaralhar } from "@/lib/questly/shared";
+import { questlyEstadoEfetivo } from "@/lib/questly/motor-aprovacao";
 import { QuestaoRunner } from "@/components/questao/questao-runner";
 import { ehPro } from "@/lib/plano/plano";
 import { restanteDoDia } from "@/lib/plano/limites";
 import { ehAdmin } from "@/lib/admin/auth";
+import { chavePublicaPush } from "@/lib/push/enviar";
 import type { Pergunta } from "@/lib/questao/types";
 import { PARAM_ORIGEM, origemSegura, rotuloOrigem } from "@/lib/questao/navegacao";
 
@@ -121,7 +123,9 @@ export default async function QuestaoPage({
     topicIdsDasPerguntas.length > 0
       ? supabase
           .from("aluno_topico_progresso")
-          .select("topico_id, taxa_acerto, num_questoes_respondidas")
+          .select(
+            "topico_id, taxa_acerto, num_questoes_respondidas, maestria, estabilidade",
+          )
           .eq("user_id", user.id)
           .in("topico_id", topicIdsDasPerguntas)
           .then((r) => r.data)
@@ -133,7 +137,13 @@ export default async function QuestaoPage({
     // guardou numa sessão anterior — e oferecer de novo o que já foi feito é
     // a forma mais rápida de o botão perder o sentido.
     supabase.from("caderno_erros").select("question_id").eq("user_id", user.id).in("question_id", perguntaIds),
-    supabase.from("profiles").select("plano, plano_expira_em").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("profiles")
+      // `streak_atual` vem junto pro convite de lembrete no fim da lista saber
+      // se existe ofensiva pra proteger — ver components/pwa/convite-lembrete.
+      .select("plano, plano_expira_em, streak_atual")
+      .eq("id", user.id)
+      .maybeSingle(),
   ]);
 
   // Teto diário do plano grátis: o runner precisa saber QUANTAS ainda cabem
@@ -151,6 +161,18 @@ export default async function QuestaoPage({
   const jaAcertadasAntesIds = (tentativasAnteriores || []).filter((a) => a.correta).map((a) => a.question_id);
   const jaTentadasAntesIds = (tentativasAnteriores || []).map((a) => a.question_id);
   const topicosMestreInicioIds = (progsIniciais || []).filter(questlyEhMestre).map((p) => p.topico_id);
+  // O DOMÍNIO de cada assunto no instante em que a lista abre — o "antes" do
+  // "34% → 61%" que a tela de resultado mostra no fim (ver
+  // medirEvolucaoDominio). Snapshot aqui pelo mesmo motivo de
+  // topicosMestreInicioIds: depois da primeira resposta o valor do banco já
+  // mudou, e não dá pra reconstruir o ponto de partida. `questlyEstadoEfetivo`
+  // é quem resolve o cold-start (linha sem maestria persistida é semeada com
+  // os mesmos números do backfill SQL), pra um tópico novo não aparecer
+  // saindo de zero.
+  const maestriaInicio: Record<string, number> = {};
+  (progsIniciais || []).forEach((p) => {
+    maestriaInicio[p.topico_id] = questlyEstadoEfetivo(p).maestria;
+  });
   const favoritosIniciaisIds = (favoritosData || []).map((f) => f.question_id);
   // Banco sem supabase_caderno_erros.sql ainda: a consulta falha, `data` vem
   // null e o runner só mostra todos os cartões como "não guardado" — o app
@@ -197,11 +219,14 @@ export default async function QuestaoPage({
       jaAcertadasAntesIds={jaAcertadasAntesIds}
       jaTentadasAntesIds={jaTentadasAntesIds}
       topicosMestreInicioIds={topicosMestreInicioIds}
+      maestriaInicio={maestriaInicio}
       favoritosIniciaisIds={favoritosIniciaisIds}
       cadernoIniciaisIds={cadernoIniciaisIds}
       notasIniciais={notasIniciais}
       ehPro={ehPro(perfilPlano)}
       restanteHoje={restanteHoje}
+      streakAtual={perfilPlano?.streak_atual || 0}
+      chavePushPublica={chavePublicaPush()}
       voltarHref={voltarHref}
       disciplinaNome={disciplinaNome}
       ehAdmin={ehAdmin(user.email)}

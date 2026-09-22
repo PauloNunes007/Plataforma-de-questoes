@@ -12,6 +12,7 @@ import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { BotaoErroRapido } from "@/components/aprovacao/botao-erro-rapido";
 import { ConviteAutoResgate } from "@/components/plano/convite-auto-resgate";
 import { IndicacaoAuto } from "@/components/afiliados/indicacao-auto";
+import { RegistrarServiceWorker } from "@/components/pwa/push-provider";
 
 export default async function ProtectedLayout({
   children,
@@ -77,6 +78,13 @@ export default async function ProtectedLayout({
             isParceiro={isParceiro}
           />
           <FocoBar />
+
+          {/* Registra o service worker (public/sw.js) — é ele que torna a
+              Expectrum instalável e, no iOS 16.4+, o que permite Web Push.
+              Não faz cache de NADA, de propósito: ver o cabeçalho do arquivo.
+              A PERMISSÃO de notificação não é pedida aqui, e sim no fim da
+              primeira lista, onde existe motivo pra dizer sim. */}
+          <RegistrarServiceWorker />
 
           {/* pb-16 abre espaço pra MobileBottomNav (fixed) não tampar o fim da
               página em telas < lg. */}

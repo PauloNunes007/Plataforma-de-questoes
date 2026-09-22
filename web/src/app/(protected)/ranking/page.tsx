@@ -24,7 +24,7 @@ export default async function RankingPage() {
       <header>
         <h1 className="font-heading text-[22px] font-semibold tracking-tight">Ranking</h1>
         <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
-          Top 100 geral e da semana, mais a sua divisão. Suba subindo de XP e terminando entre os melhores.
+          Top 100 geral e da semana, a sua divisão e a sua turma. Suba subindo de XP e terminando entre os melhores.
         </p>
       </header>
 

@@ -16,6 +16,7 @@ import {
   type ModoGlobal,
   type RankingGlobal,
 } from "@/lib/ranking/ranking-data";
+import { carregarRankingTurma, type RankingTurma } from "@/lib/ranking/turma-data";
 
 // Amostra mínima pra exibir acertabilidade no card público.
 const MIN_QUESTOES_ACERTABILIDADE = 10;
@@ -236,4 +237,22 @@ export async function salvarDistintivosCardAction(ids: string[]): Promise<{ ok: 
     .eq("id", user.id);
 
   return { ok: !error, salvos };
+}
+
+/**
+ * A turma do aluno numa disciplina — ver lib/ranking/turma-data.ts.
+ *
+ * `materiaId` vem do seletor da tela e NÃO precisa ser validado aqui contra
+ * nada: o loader só aceita uma das disciplinas do próprio aluno (cai na
+ * primeira quando o id não bate), e tudo que ele lê já é público sob RLS.
+ */
+export async function buscarRankingTurmaAction(
+  materiaId?: string | null,
+): Promise<RankingTurma | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  return carregarRankingTurma(supabase, user, materiaId ?? null);
 }
