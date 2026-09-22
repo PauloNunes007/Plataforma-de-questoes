@@ -99,6 +99,29 @@ export type MetasHoje = {
   xpHoje: number;
 };
 
+/** A linha de `missions` que o resumo de hoje e a aba Semana consomem. */
+type LinhaMissaoResumo = {
+  data: string | null;
+  concluida: boolean | null;
+  xp_recompensa: number | null;
+  /** Ausente em banco sem supabase_xp_pago.sql, e NULL em lista fechada
+   *  antes dela — nos dois casos vale a estimativa. */
+  xp_pago?: number | null;
+  qtd_questoes: number | null;
+};
+
+/**
+ * O XP de uma lista FECHADA, na ordem certa: o que foi pago, e só então a
+ * estimativa da criação.
+ *
+ * `xp_recompensa` é somado na montagem (3/5/8 por dificuldade) e ignora
+ * combo, maestria, anti-farm e a consolação do erro — somá-lo aqui fazia a
+ * home anunciar um "XP de hoje" que não era o que entrou no ranking.
+ */
+function xpDaMissao(m: LinhaMissaoResumo): number {
+  return m.xp_pago ?? m.xp_recompensa ?? 0;
+}
+
 export type DiaSemanaResumo = {
   data: string;
   label: string;
@@ -235,12 +258,26 @@ export async function carregarDadosDashboard(
   // ------------------------------------------------------------ onda 2
   const [missoesRange, blocoLiga, todosLogs, tarefasPorData] =
     await Promise.all([
-      // (a) listas fechadas na janela do resumo de hoje + da semana (fundidas)
-      supabase
-        .from("missions")
-        .select("data, concluida, xp_recompensa, qtd_questoes")
-        .eq("user_id", user.id)
-        .gte("data", inicioMissoesStr),
+      // (a) listas fechadas na janela do resumo de hoje + da semana (fundidas).
+      //     `xp_pago` (supabase_xp_pago.sql) é o XP REAL do fechamento; o
+      //     `xp_recompensa` ao lado dele é a estimativa da criação e só serve
+      //     de fallback pras listas fechadas antes da migração — ver
+      //     `xpDaMissao` abaixo. Banco sem a migração cai no retry sem a
+      //     coluna: um resumo do dia com o número velho é ruim, zerado é pior.
+      (async () => {
+        const pedir = (colunas: string) =>
+          supabase
+            .from("missions")
+            .select(colunas)
+            .eq("user_id", user.id)
+            .gte("data", inicioMissoesStr);
+        const r = await pedir("data, concluida, xp_recompensa, xp_pago, qtd_questoes");
+        if (!r.error) return r as unknown as { data: LinhaMissaoResumo[] | null };
+        if (r.error.code !== "42703") console.error("Erro ao ler missões do resumo:", r.error);
+        return (await pedir(
+          "data, concluida, xp_recompensa, qtd_questoes",
+        )) as unknown as { data: LinhaMissaoResumo[] | null };
+      })(),
 
       // (b) liga (pode virar a semana) e, na sequência, o comparativo — que
       //     depende do xp_semana já normalizado por essa virada
@@ -289,7 +326,7 @@ export async function carregarDadosDashboard(
   const metasHoje: MetasHoje = {
     listasConcluidas: fechadasHoje.length,
     questoesRespondidas: fechadasHoje.reduce((acc, m) => acc + (m.qtd_questoes || 0), 0),
-    xpHoje: fechadasHoje.reduce((acc, m) => acc + (m.xp_recompensa || 0), 0),
+    xpHoje: fechadasHoje.reduce((acc, m) => acc + xpDaMissao(m), 0),
   };
 
   // ---- Liga ----
@@ -352,7 +389,7 @@ export async function carregarDadosDashboard(
     if (!m.concluida) return;
     const dataStr = String(m.data).slice(0, 10);
     if (dataStr < inicioSemanaStr || dataStr > fimSemanaStr) return;
-    xpPorDia[dataStr] = (xpPorDia[dataStr] || 0) + (m.xp_recompensa || 0);
+    xpPorDia[dataStr] = (xpPorDia[dataStr] || 0) + xpDaMissao(m);
   });
 
   const xpSemana = blocoLiga.xpSemana;

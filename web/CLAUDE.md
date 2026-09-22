@@ -2145,8 +2145,10 @@ O pódio ganhou `slot` separado de `posicao`: `slot` é a vaga do pedestal
 três pedestais mostram "1" — e é assim que a virada de semana vai tratá-los.
 
 **O que continua fora do ranking, de propósito:** simulado, agenda/calendário
-e vida acadêmica não pagam XP nem acendem ofensiva (ver as seções próprias) —
-nada disso mudou aqui.
+e vida acadêmica não pagam XP (ver as seções próprias) — nada disso mudou
+aqui. ⚠️ **A parte "nem acendem ofensiva" desta frase valeu até 2026-09-22**:
+o simulado passou a acender, e só ele — ver "A ofensiva passa a medir estudo"
+abaixo. Agenda e vida acadêmica continuam fora, porque não são estudo.
 
 ## Fim da vergonha de errar (2026-09-22) — ranking privado + Caderno de Erros
 
@@ -2251,6 +2253,144 @@ mais errou" na aba Desempenho — a ponte que faltava entre diagnóstico e açã
 **Nada do Caderno paga XP, acende ofensiva ou entra no ranking** — guardar,
 anotar e marcar resolvido são organização, não estudo. Quem paga é refazer,
 pela via normal. Mesma linha que agenda, metas e vida acadêmica já respeitam.
+
+## Hábito e tempo de sessão (2026-09-22) — os dois vazamentos
+
+Repasse pedido pelo dono: *"o aluno entra, faz uma ou duas questões e vai
+embora"*. O diagnóstico depois de ler o código **não** foi "falta
+gamificação" — já existem streak, combo de 4 degraus, marcos diários, ligas,
+12 distintivos, timer de foco, Caderno de Erros, comentários por questão e um
+motor bayesiano de memória. O problema era de encaixe, e dois defeitos
+concretos explicavam a maior parte do sintoma.
+
+**Nada aqui ressuscitou o motor de missões.** A régua usada o tempo todo:
+*prescrever* ("estude isto hoje") continua proibido; *informar* ("faltam 5
+questões pro marco de hoje") não é prescrição. Seguem intactas as regras de
+que nada além de estudo real paga XP ou entra no ranking, e de que
+acertabilidade é privada.
+
+### 1. A ofensiva passa a medir estudo, não o ato de fechar lista
+
+`atualizarStreakEDailyLog` (`lib/questly/economia.ts`) tinha **um único
+chamador**: `finalizarMissaoAction`. Quem fazia um simulado inteiro, ou
+respondia 25 questões e saía sem finalizar, registrava **zero** em
+`daily_logs` — com as 25 tentativas gravadas em `question_attempts`. O número
+mais formador de hábito do produto era o mais fácil de perder estudando de
+verdade.
+
+Dois gatilhos novos, nenhum deles pagando XP:
+
+- **primeira questão do dia**, em `registrarRespostaAction`: a condição é
+  `jaHoje === 0`, o valor que já era contado ali pro teto do grátis, então não
+  custa consulta nova. Acende no máximo uma vez por dia, e é por isso que o
+  `revalidatePath("/dashboard")` ao lado é barato — sem ele, o caso que este
+  conserto existe pra cobrir (responder e sair sem fechar a lista) deixaria a
+  home mostrando a ofensiva de ontem até o cache de rota vencer sozinho;
+- **simulado concluído**, em `finalizarSimuladoAction` — e só no caminho de
+  conclusão, nunca em `abandonarSimuladoAction`, senão "começar e sair"
+  viraria atalho.
+
+**Isto reverte uma regra documentada**, e a reversão é parcial de propósito.
+A frase antiga juntava três coisas ("simulado, agenda/calendário e vida
+acadêmica não acendem ofensiva") que não são a mesma: marcar uma falta ou
+agendar um bloco **não é estudar** — e se acendesse, seria a rota de forja
+mais barata já inventada neste banco. Um simulado **é** estudo, o mais difícil
+que a plataforma oferece. Acender a ofensiva é registro de presença, não
+economia: o simulado continua sem pagar XP, fora do ranking e fora do motor de
+maestria. `atualizarStreakEDailyLog` já era idempotente no dia, então os dois
+caminhos convivem sem contar duas vezes.
+
+### 2. O fim da lista vira um começo (`lib/questao/continuar.ts`)
+
+`ResultView` tinha **um CTA primário só: voltar**. O aluno terminava 10
+questões no melhor estado possível — placar na tela, combo fresco, assunto
+recém-mexido — e a única porta era a saída. O `GuardarErrosCard` já convertia
+bem, mas ele *arquiva pra depois*; faltava o caminho de *fazer agora*.
+
+Três continuações, calculadas no servidor **junto do placar** e devolvidas em
+`FinalizarMissaoResultado.continuacoes` — a tela de resultado é o fim de uma
+onda, não o começo de outra (regra das "ondas" acima):
+
+1. **"Mais N de {disciplina}"** (`continuarPraticandoAction`) — mesmos
+   assuntos, um toque, no lugar dos quatro cliques do wizard. As dificuldades
+   são **derivadas** das questões da lista que acabou (um ou dois níveis
+   distintos = o aluno filtrou e a continuação acompanha; três = não havia
+   filtro), porque `missions` não guarda com que filtros nasceu;
+2. **"Refazer os N erros"** (`refazerErrosDaListaAction`) — os ids saem das
+   tentativas erradas da própria missão, lidas no servidor, mesma regra de
+   `guardarErrosDaListaAction`: o cliente só diz QUAL lista. Refazer paga XP
+   pela via normal, inclusive o ZERO de questão já tentada antes — o que torna
+   isto estudo, e não rota de farm;
+3. **"Seguir: {próximo assunto}"** (`praticarProximoTopicoAction`) — o
+   primeiro tópico `pendente` da ementa que não estava na lista que acabou.
+   Usa `classificarEstado` de `lib/trilha/trilha-data.ts` (exportada neste
+   repasse) em vez de reimplementar a regra: duas versões e o botão começaria
+   a discordar do mapa que o aluno vê em `/trilha`. **Não** reusa
+   `iniciarPraticaTopicoAction`, que grava `recap_topico_id` — um recap tem
+   consequência própria (passar de 70% marca `dominado`), e virar o capítulo é
+   prática comum, não prova de que já se sabia o assunto.
+
+Duas decisões de tela que valem manter:
+
+- **o caminho de volta nunca some**, só deixa de ser o único destaque quando
+  há continuação oferecida. Dois botões cheios da mesma cor na mesma dobra
+  disputariam o olho, e o que o aluno mais quer neste segundo é seguir, não
+  sair;
+- **a continuação herda a origem** (`?de=`), como `aceitarDesafioAction` já
+  fazia: encadear listas não pode ir apagando o caminho de volta.
+
+`criarListaDeQuestoes` ganhou `despriorizarIds` — as questões recém-vistas vão
+pro **fim** da fila do sorteio, não pra fora dela. Num tópico com 12 questões,
+excluir as 10 que acabaram de sair devolveria uma lista de 2 (ou nenhuma):
+repetir é chato, mas "não há mais nada aqui" logo depois de um clique em "mais
+10" é pior.
+
+### 3. O empurrão do marco, e o teto que o escondia
+
+`questlyProximoMarco` (`lib/questly/marcos.ts`) só alimentava um overlay no
+MEIO da lista. Na tela de resultado ele virou o motivo de não fechar a aba:
+*"faltam 5 questões pro marco de hoje"* — um alvo de cinco minutos no instante
+exato em que a sessão ia terminar. Marco continua sem pagar XP e fora de
+ranking algum: é reconhecimento, não economia.
+
+Isso expôs uma contradição que já existia: os marcos vão até **100
+questões/dia** e `QUESTOES_DIA_FREE` é **30**, então o aluno grátis recebia um
+alvo de 40 que o próprio teto torna inalcançável. `questlyProximoMarco` passou
+a aceitar `tetoDoDia` (null = Pro) e devolve `null` pro marco fora de alcance;
+`questlyMarcoBloqueadoPeloPlano` devolve o primeiro marco ACIMA do teto, e
+**só depois que o aluno passou do último que cabe nele** — antes disso seria
+propaganda no meio do caminho de quem mal começou. Os dois nunca aparecem
+juntos. A mesma frase entrou na `LimiteDiarioView`, que já é a tela do teto
+batido.
+
+### 4. O XP da home parou de mentir (`missions.xp_pago`)
+
+Ver `supabase_xp_pago.sql` e o parágrafo no `CLAUDE.md` raiz. Em resumo:
+`xp_recompensa` é a estimativa gravada na criação e era o que a home somava; o
+valor real vem de `recomputarPlacarMissao` e ia só pra `profiles.xp_total`.
+Agora `finalizarMissaoAction` grava o valor pago de volta na linha da missão e
+`dashboard-data.ts` lê `xp_pago ?? xp_recompensa`, refazendo a consulta sem a
+coluna (42703) quando o banco ainda não rodou a migração.
+
+### O que ficou de fora desta rodada (backlog, por ordem de impacto)
+
+- **"Revisar hoje"**: `questlyRetencaoEfetiva` já sabe, todo dia, quais
+  tópicos do aluno estão escorregando, e isso só aparece num badge dentro de
+  `/trilha`. Um card na home + um botão que monta a lista dos tópicos em risco
+  é o único gatilho diário que não é meta inventada — o conteúdo muda sozinho
+  porque é um fato sobre o aluno, não uma cobrança;
+- **domínio visível**: `aluno_topico_progresso.maestria` é uma probabilidade
+  bayesiana real, atualizada a cada resposta, e **o aluno nunca a vê** — ele só
+  vê cobertura, que mede quanto fez, não quanto sabe. Mostrar o delta no fim da
+  lista ("Regra da cadeia: 34% → 61%") é a recompensa mais satisfatória que o
+  produto pode dar. Atenção: é da mesma família da acertabilidade, que virou
+  privada — pode aparecer pro dono, em nenhuma superfície pública;
+- **"Minha turma"**: ranking recortado por `profiles.universidade` + mesma
+  disciplina, derivável sem tabela nova, só com massa crítica (≥5 alunos);
+- **escudo de ofensiva** e **PWA + Web Push** (hoje não há manifest, service
+  worker nem push em lugar nenhum do repositório, e o único cron é o relatório
+  semanal do Pro). O push só faz sentido DEPOIS do item 1 desta seção, porque é
+  ele que permite silenciar a notificação de quem já estudou hoje.
 
 ## Conventions carried over from the legacy app
 

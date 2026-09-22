@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { atualizarStreakEDailyLog } from "@/lib/questly/economia";
 import { lerPaginado } from "@/lib/supabase/paginado";
 import { questlyEmbaralhar } from "@/lib/questly/shared";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
@@ -643,6 +645,32 @@ export async function finalizarSimuladoAction(
     console.error("Erro ao finalizar simulado:", error);
     return { ok: false };
   }
+
+  // A OFENSIVA ACENDE AQUI — reversão deliberada da regra antiga.
+  //
+  // Até 2026-09-22 o CLAUDE.md dizia que "simulado, agenda/calendário e vida
+  // acadêmica não pagam XP nem acendem ofensiva". As três estavam na mesma
+  // frase, mas não são a mesma coisa: marcar uma falta ou agendar um bloco não
+  // é estudar (e se acendesse, seria a rota de forja mais barata do banco).
+  // Um simulado é estudo — o mais difícil que a plataforma oferece —, e o
+  // aluno que passava 90 minutos numa prova cronometrada terminava o dia com a
+  // chama apagada.
+  //
+  // O que NÃO muda: o simulado continua sem pagar XP, fora do ranking e fora
+  // do motor de maestria (ver o docblock de treinarTopicosDoSimuladoAction).
+  // Acender a ofensiva é registro de presença, não economia.
+  //
+  // Só no caminho de CONCLUSÃO: abandonarSimuladoAction não acende, senão
+  // "começar e sair" viraria atalho. O cliente admin é obrigatório porque as
+  // colunas de streak são protegidas (supabase_seguranca_hardening.sql), e a
+  // função é idempotente no dia — fechar um simulado e uma lista no mesmo dia
+  // não conta duas vezes.
+  await atualizarStreakEDailyLog(createAdminClient(), user.id);
+
+  // A home lê a chama e o mapa do mês pelo cache de rota do cliente; sem
+  // invalidar, o aluno voltaria do simulado e veria a ofensiva de ontem.
+  revalidatePath("/dashboard");
+
   return { ok: true, acertos, total, nota };
 }
 

@@ -80,7 +80,7 @@ export type CaminhoDisciplina = {
   questoesRespondidas: number;
 };
 
-type ProgressoRow = {
+export type ProgressoRow = {
   topico_id: string;
   status?: string | null;
   taxa_acerto?: number | null;
@@ -153,7 +153,10 @@ function resumoPrecisao(linhas: (ProgressoRow | undefined)[]): {
   };
 }
 
-function classificarEstado(progresso: ProgressoRow | undefined, temQuestoes: boolean): EstadoTopico {
+/** Exportada porque a continuação do fim da lista (lib/questao/continuar.ts)
+ *  precisa da MESMA definição de "tópico pendente" que desenha a trilha — duas
+ *  versões da regra e o "próximo assunto" começaria a discordar do mapa. */
+export function classificarEstado(progresso: ProgressoRow | undefined, temQuestoes: boolean): EstadoTopico {
   const status = progresso?.status || "pendente";
   if (status === "pulado") return "pulado";
   if (questlyEhMestre(progresso)) return "mestre";

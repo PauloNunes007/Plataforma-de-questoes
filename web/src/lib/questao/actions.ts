@@ -21,6 +21,14 @@ import {
   questlyCalcularMetricas,
 } from "@/lib/questly/chance-aprovacao";
 import { restanteDoDia } from "@/lib/plano/limites";
+import {
+  CONTINUACOES_VAZIAS,
+  calcularContinuacoes,
+  tamanhoDaContinuacao,
+  type Continuacoes,
+} from "@/lib/questao/continuar";
+import { criarListaDeQuestoes, minutosEstimados } from "@/lib/questly/criar-lista";
+import { LOTE_IN } from "@/lib/supabase/paginado";
 import { ehPro } from "@/lib/plano/plano";
 import { ehProDeLancamento } from "@/lib/plano/lancamento";
 
@@ -255,10 +263,37 @@ export async function registrarRespostaAction(input: {
   // acertos_total/questoes_semana, que alimentam ranking e card) são
   // realinhados AGORA e não só no fechamento da lista — ver
   // sincronizarContadoresQuestao. São leituras independentes entre si.
+  //
+  // E é aqui que a OFENSIVA acende, quando esta é a primeira questão do dia
+  // (`jaHoje` foi contado antes do insert, lá em cima, pro teto do grátis).
+  //
+  // Antes, o único gatilho era FECHAR uma lista — e por isso quem respondia 25
+  // questões e saía sem finalizar registrava zero em `daily_logs`, mesmo com
+  // as 25 tentativas gravadas. O número mais formador de hábito do produto era
+  // o mais fácil de perder estudando de verdade.
+  //
+  // Acender a ofensiva NÃO é economia: não paga XP, não move a liga e não
+  // entra no ranking. É registro de presença, e a evidência aceita passa a ser
+  // a mesma que o resto do app já trata como verdade (a tentativa gravada, já
+  // saneada pelo gabarito do servidor e pelo relógio medido aqui).
+  //
+  // `atualizarStreakEDailyLog` é idempotente por construção (só mexe no streak
+  // na primeira vez do dia), então rodar por este caminho e pelo fechamento da
+  // lista no mesmo dia não conta duas vezes. A condição abaixo existe só pra
+  // não pagar uma ida ao banco em toda resposta.
+  const acendeuHoje = jaHoje === 0 && !attemptError;
   const [questoesHoje] = await Promise.all([
     respondidasHoje(supabase, user.id),
     sincronizarContadoresQuestao(admin, user.id),
+    acendeuHoje ? atualizarStreakEDailyLog(admin, user.id) : Promise.resolve(),
   ]);
+
+  // Só quando a chama acabou de acender — ou seja, no máximo uma vez por dia
+  // por aluno. Sem isto, justamente o caso que este conserto existe pra cobrir
+  // (responder e sair SEM fechar a lista) deixaria a home mostrando a ofensiva
+  // de ontem até o cache de rota vencer sozinho. Revalidar a cada resposta
+  // seria caro; revalidar uma vez por dia não é.
+  if (acendeuHoje) revalidatePath("/dashboard");
 
   return {
     attemptId: attempt?.id ?? null,
@@ -282,6 +317,11 @@ export async function classificarMotivoErroAction(
 }
 
 const RECAP_APROVACAO = 0.7;
+
+/** Teto do "refazer os erros desta lista". Mesmo espírito do REFAZER_MAX do
+ *  Caderno: uma sessão de correção é curta por definição, e o teto diário do
+ *  plano grátis continua valendo por cima, no registro de cada resposta. */
+const REFAZER_ERROS_MAX = 20;
 const DESAFIO_DIAS_SEM_TOCAR = 7;
 
 export type DesafioRecuperacao = {
@@ -301,6 +341,12 @@ export type FinalizarMissaoResultado = {
   novosMestresNomes: string[];
   desafio: DesafioRecuperacao | null;
   placar: { acertos: number; erros: number; xpGanho: number };
+  /**
+   * O que oferecer DEPOIS do placar (ver lib/questao/continuar.ts). Viaja
+   * junto do resultado em vez de virar uma chamada nova quando a tela monta:
+   * a tela de resultado é o fim de uma onda, não o começo de outra.
+   */
+  continuacoes: Continuacoes;
   /**
    * A conta está Pro por causa da semana de lançamento — e até quando.
    *
@@ -439,6 +485,7 @@ export async function finalizarMissaoAction(input: {
     novosMestresNomes: [],
     desafio: null,
     placar: { acertos: 0, erros: 0, xpGanho: 0 },
+    continuacoes: CONTINUACOES_VAZIAS,
     lancamento: null,
   };
   const supabase = await createClient();
@@ -453,7 +500,7 @@ export async function finalizarMissaoAction(input: {
   const { data: missao } = await supabase
     .from("missions")
     .select(
-      "id, subject_id, recap_topico_id, avulsa, concluida, question_ids, topic_ids",
+      "id, subject_id, recap_topico_id, avulsa, concluida, question_ids, topic_ids, qtd_questoes, subjects(nome)",
     )
     .eq("id", input.missaoId)
     .eq("user_id", user.id)
@@ -478,6 +525,23 @@ export async function finalizarMissaoAction(input: {
   if (!reservada || reservada.length === 0) return vazio; // outra chamada ganhou
 
   const placar = await recomputarPlacarMissao(supabase, user.id, missao);
+
+  // O XP REAL volta pra linha da missão (supabase_xp_pago.sql).
+  //
+  // `xp_recompensa` é a estimativa da criação — soma pura por dificuldade,
+  // sem combo, sem maestria, sem anti-farm, sem consolação de erro. A home
+  // somava essa estimativa pra dizer "XP de hoje" enquanto `profiles.xp_total`
+  // recebia o valor de verdade, e os dois números discordavam na mesma tela.
+  // Gravar aqui é o que faz o resumo do dia passar a falar a mesma língua do
+  // ranking. Não é reserva nem trava (quem reserva é o update condicional
+  // acima), então falhar aqui não pode derrubar o fechamento: banco sem a
+  // migração só continua caindo no fallback de leitura.
+  const { error: xpPagoError } = await supabase
+    .from("missions")
+    .update({ xp_pago: placar.xpGanho })
+    .eq("id", missao.id)
+    .eq("user_id", user.id);
+  if (xpPagoError) console.error("Erro ao gravar xp_pago da missão:", xpPagoError);
 
   // XP/liga/streak vivem em colunas protegidas de `profiles` (só service_role
   // escreve — supabase_seguranca_hardening.sql). Essas duas rodam via cliente
@@ -516,6 +580,45 @@ export async function finalizarMissaoAction(input: {
     ? null
     : await prepararDesafioRecuperacao(supabase, user.id);
 
+  // AS CONTINUAÇÕES — o que a tela oferece depois do placar.
+  //
+  // Precisam do total de hoje e do teto do plano: o empurrão do marco
+  // ("faltam 5 pro marco de 25") é o que dá ao aluno um alvo de cinco minutos
+  // no instante em que ele ia fechar a aba, e no grátis esse alvo não pode
+  // apontar pra um marco que o teto de 30 torna inalcançável.
+  const [questoesHoje, { data: perfilDoTeto }] = await Promise.all([
+    respondidasHoje(supabase, user.id),
+    supabase
+      .from("profiles")
+      .select("plano, plano_expira_em")
+      .eq("id", user.id)
+      .maybeSingle(),
+  ]);
+  // `restanteDoDia` devolve null pro Pro (sem teto) — o mesmo contrato que
+  // questlyProximoMarco espera em `tetoDoDia`. Somar o que falta ao que já foi
+  // feito reconstrói o teto sem redigitar a constante aqui.
+  const restanteAgora = restanteDoDia(perfilDoTeto, questoesHoje);
+  const tetoDoDia = restanteAgora === null ? null : questoesHoje + restanteAgora;
+
+  const disciplinaNome = Array.isArray(missao.subjects)
+    ? (missao.subjects[0] as { nome?: string } | undefined)?.nome ?? null
+    : ((missao.subjects as { nome?: string } | null)?.nome ?? null);
+
+  const continuacoes = await calcularContinuacoes(
+    supabase,
+    user.id,
+    {
+      id: missao.id as string,
+      subject_id: missao.subject_id as string | null,
+      topic_ids: missao.topic_ids as string[] | null,
+      qtd_questoes: missao.qtd_questoes as number | null,
+    },
+    placar.erros,
+    questoesHoje,
+    tetoDoDia,
+    disciplinaNome,
+  );
+
   // Fechar uma lista mexe em XP, ofensiva, liga, cobertura de tópico e no
   // bloco do calendário — ou seja, em tudo que estas quatro telas mostram. O
   // aluno volta pra elas por <Link>, que lê o cache de rota do cliente: sem
@@ -532,6 +635,7 @@ export async function finalizarMissaoAction(input: {
     novosMestresNomes,
     desafio,
     placar,
+    continuacoes,
     lancamento: await lerLancamento(admin, user.id),
   };
 }
@@ -887,4 +991,217 @@ export async function aceitarDesafioAction(input: {
     return { missaoId: null };
   }
   return { missaoId: missaoDesafio.id };
+}
+
+// ------------------------------------------------------- continuar praticando
+//
+// As duas ações do fim da lista (ver lib/questao/continuar.ts). Nenhuma delas
+// recebe ids de questão do cliente: a única coisa que a tela manda é QUAL
+// lista acabou, e o servidor deriva o resto. Sem isso, as duas virariam um
+// atalho pra montar lista arbitrária por fora dos filtros do Banco.
+
+/**
+ * "Mais N de {disciplina}" — a continuação com os mesmos assuntos da lista
+ * que acabou de fechar.
+ *
+ * As dificuldades são DERIVADAS das questões que a lista trouxe: se todas
+ * eram médias, o aluno claramente filtrou por médias e a continuação respeita
+ * isso; se vieram dos três níveis, não havia filtro e a continuação também não
+ * põe um. É a aproximação possível sem gravar os filtros na missão — hoje
+ * `missions` não guarda com que filtros nasceu.
+ */
+export async function continuarPraticandoAction(
+  missaoId: string,
+): Promise<{ missaoId: string | null; error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { missaoId: null, error: "Sessão expirada." };
+
+  const { data: missao } = await supabase
+    .from("missions")
+    .select("id, subject_id, topic_ids, question_ids, qtd_questoes")
+    .eq("id", missaoId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!missao) return { missaoId: null, error: "Lista não encontrada." };
+
+  const topicIds = (Array.isArray(missao.topic_ids) ? missao.topic_ids : []) as string[];
+  if (topicIds.length === 0)
+    return { missaoId: null, error: "Essa lista não tem assunto pra continuar." };
+
+  const questionIds = (Array.isArray(missao.question_ids) ? missao.question_ids : []) as string[];
+
+  // Dificuldades da lista anterior. Três níveis distintos (ou nenhum dado) =
+  // sem filtro; um ou dois = o aluno filtrou e a continuação acompanha.
+  let dificuldades: string[] = [];
+  if (questionIds.length > 0) {
+    const { data: anteriores } = await supabase
+      .from("questions")
+      .select("dificuldade")
+      .in("id", questionIds.slice(0, LOTE_IN));
+    const niveis = Array.from(
+      new Set(
+        (anteriores || [])
+          .map((q) => q.dificuldade as string | null)
+          .filter((d): d is string => Boolean(d)),
+      ),
+    );
+    if (niveis.length > 0 && niveis.length < 3) dificuldades = niveis;
+  }
+
+  const { missaoId: nova } = await criarListaDeQuestoes(supabase, user.id, {
+    subjectId: (missao.subject_id as string | null) ?? null,
+    topicIds,
+    dificuldades,
+    quantidade: tamanhoDaContinuacao(missao.qtd_questoes as number | null),
+    // As que ele acabou de ver vão pro fim da fila, não pra fora dela — ver o
+    // comentário de `despriorizarIds` em lib/questly/criar-lista.ts.
+    despriorizarIds: questionIds,
+  });
+
+  if (!nova) return { missaoId: null, error: "Não sobrou questão nova desse assunto." };
+  return { missaoId: nova };
+}
+
+/**
+ * "Refazer os N erros agora" — o par que faltava do `GuardarErrosCard`.
+ *
+ * Aquele cartão ARQUIVA o erro pra depois (Caderno de Erros); este refaz na
+ * hora, que é quando a questão ainda está fresca. Os ids saem das tentativas
+ * ERRADAS da própria missão, lidas aqui — mesma regra de
+ * `guardarErrosDaListaAction`: o cliente só diz qual lista.
+ *
+ * Refazer paga XP pela via normal de sempre (registrarRespostaAction),
+ * inclusive a regra de ZERO XP em questão já tentada antes — o que torna esta
+ * continuação um ato de estudo, e não uma rota de farm.
+ */
+export async function refazerErrosDaListaAction(
+  missaoId: string,
+): Promise<{ missaoId: string | null; error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { missaoId: null, error: "Sessão expirada." };
+
+  const { data: missao } = await supabase
+    .from("missions")
+    .select("id, question_ids")
+    .eq("id", missaoId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!missao) return { missaoId: null, error: "Lista não encontrada." };
+
+  const doEscopo = new Set(
+    (Array.isArray(missao.question_ids) ? missao.question_ids : []) as string[],
+  );
+
+  const { data: tentativas } = await supabase
+    .from("question_attempts")
+    .select("question_id, correta")
+    .eq("user_id", user.id)
+    .eq("mission_id", missaoId);
+
+  // Uma questão pode ter mais de uma tentativa na mesma lista; vale a última
+  // palavra do banco: errou em alguma e não acertou depois.
+  const acertou = new Set<string>();
+  const errou = new Set<string>();
+  for (const t of tentativas || []) {
+    const qid = t.question_id as string;
+    if (doEscopo.size > 0 && !doEscopo.has(qid)) continue;
+    if (t.correta) acertou.add(qid);
+    else errou.add(qid);
+  }
+  const ids = Array.from(errou).filter((id) => !acertou.has(id)).slice(0, REFAZER_ERROS_MAX);
+  if (ids.length === 0) return { missaoId: null, error: "Nenhum erro pra refazer nesta lista." };
+
+  const { data: questoes } = await supabase
+    .from("questions")
+    .select("id, topic_id, dificuldade, tempo_medio_seg")
+    .in("id", ids);
+  const lista = questoes || [];
+  if (lista.length === 0) return { missaoId: null, error: "Questões não encontradas." };
+
+  const topicIds = Array.from(
+    new Set(lista.map((q) => q.topic_id).filter((t): t is string => !!t)),
+  );
+
+  const { data: criada, error } = await supabase
+    .from("missions")
+    .insert({
+      user_id: user.id,
+      // null de propósito: os erros de uma lista podem cruzar disciplinas
+      // (uma revisão do Caderno, por exemplo), e subject_id é nullable.
+      subject_id: null,
+      data: questlyHojeISO(),
+      topic_ids: topicIds,
+      question_ids: lista.map((q) => q.id),
+      qtd_questoes: lista.length,
+      tempo_previsto_min: minutosEstimados(lista),
+      xp_recompensa: lista.reduce((acc, q) => acc + questlyXpDaQuestao(q), 0),
+      concluida: false,
+      avulsa: true,
+    })
+    .select("id")
+    .single();
+
+  if (error || !criada) {
+    console.error("Erro ao montar a lista de erros:", error);
+    return { missaoId: null, error: "Não deu pra montar a lista agora." };
+  }
+  return { missaoId: criada.id as string };
+}
+
+/**
+ * "Começar {próximo assunto}" — a terceira continuação.
+ *
+ * Deliberadamente NÃO reusa `iniciarPraticaTopicoAction` (lib/trilha): aquela
+ * grava `recap_topico_id`, e um recap tem consequência própria — passar de 70%
+ * marca o tópico como dominado e a tela de resultado troca o título. Seguir
+ * pro próximo capítulo da ementa é prática comum, não uma prova de que já se
+ * sabia o assunto.
+ *
+ * O tópico vem do cliente, então é conferido contra a ementa da disciplina do
+ * aluno antes de virar filtro — mesma trava de `iniciarEstudoPlanejadoAction`
+ * (lib/tarefas/actions.ts), onde um id de outra disciplina montaria uma lista
+ * que não tem nada a ver com o que foi pedido.
+ */
+export async function praticarProximoTopicoAction(input: {
+  subjectId: string;
+  topicoId: string;
+  quantidade?: number;
+}): Promise<{ missaoId: string | null; error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { missaoId: null, error: "Sessão expirada." };
+
+  const { data: subject } = await supabase
+    .from("subjects")
+    .select("id, materia_id")
+    .eq("id", input.subjectId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!subject) return { missaoId: null, error: "Disciplina não encontrada." };
+
+  const { data: topico } = await supabase
+    .from("topicos")
+    .select("id")
+    .eq("id", input.topicoId)
+    .eq("materia_id", subject.materia_id)
+    .maybeSingle();
+  if (!topico) return { missaoId: null, error: "Esse assunto não é dessa disciplina." };
+
+  const { missaoId } = await criarListaDeQuestoes(supabase, user.id, {
+    subjectId: subject.id as string,
+    topicIds: [input.topicoId],
+    dificuldades: [],
+    quantidade: tamanhoDaContinuacao(input.quantidade ?? null),
+  });
+
+  if (!missaoId) return { missaoId: null, error: "Esse assunto ainda não tem questões." };
+  return { missaoId };
 }

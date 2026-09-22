@@ -47,7 +47,11 @@ import {
   questlyMultiplicadorCombo,
   questlyXpDaResposta,
 } from "@/lib/questly/shared";
-import { questlyMarcoAtingido, type MarcoDiario } from "@/lib/questly/marcos";
+import {
+  questlyMarcoAtingido,
+  questlyMarcoBloqueadoPeloPlano,
+  type MarcoDiario,
+} from "@/lib/questly/marcos";
 import { AVISO_RESTANTE, QUESTOES_DIA_FREE } from "@/lib/plano/limites";
 import { ProMark } from "@/components/plano/pro-ui";
 import { AvisoProLancamento } from "@/components/plano/aviso-pro-lancamento";
@@ -55,7 +59,10 @@ import { Insignia } from "@/components/insignias/insignia";
 import {
   aceitarDesafioAction,
   classificarMotivoErroAction,
+  continuarPraticandoAction,
   finalizarMissaoAction,
+  praticarProximoTopicoAction,
+  refazerErrosDaListaAction,
   registrarRespostaAction,
   type FinalizarMissaoResultado,
 } from "@/lib/questao/actions";
@@ -1301,6 +1308,10 @@ function ResultView({
   const total = acertos + erros;
   const taxa = total > 0 ? acertos / total : 0;
   const recap = resultadoExtra?.recapResultado;
+  const cont = resultadoExtra?.continuacoes;
+  const temContinuacao = Boolean(
+    cont && (cont.mais || cont.erros > 0 || cont.proximoTopico),
+  );
 
   let Icone = PartyPopper;
   let corIcone = "text-questly-green";
@@ -1444,13 +1455,161 @@ function ResultView({
 
         {erros > 0 && <GuardarErrosCard missaoId={missaoId} erros={erros} />}
 
+        {resultadoExtra?.continuacoes && (
+          <ContinuarCard
+            missaoId={missaoId}
+            continuacoes={resultadoExtra.continuacoes}
+            voltarHref={voltarHref}
+          />
+        )}
+
+        {/* O caminho de volta NUNCA some — só deixa de ser o único destaque
+            quando há continuação oferecida acima. Dois botões cheios da mesma
+            cor na mesma dobra disputariam o olho, e o que o aluno mais quer
+            neste segundo é seguir, não sair. */}
         <Link
           href={voltarHref}
-          className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-questly-green px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+          className={
+            temContinuacao
+              ? "mt-2 inline-flex w-full items-center justify-center rounded-xl border border-border bg-card px-6 py-3 text-sm font-medium text-muted-foreground transition-all hover:bg-muted active:scale-[0.98]"
+              : "mt-2 inline-flex w-full items-center justify-center rounded-xl bg-questly-green px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+          }
         >
           {rotuloOrigem(voltarHref)}
         </Link>
       </motion.div>
+    </div>
+  );
+}
+
+/**
+ * O fim de uma lista vira um começo.
+ *
+ * Antes, esta tela tinha um CTA primário só — voltar. O aluno terminava 10
+ * questões no melhor estado possível (placar na tela, combo fresco, assunto
+ * recém-mexido) e a única porta era a saída. Aqui ficam as três continuações,
+ * já calculadas no servidor junto do placar (lib/questao/continuar.ts): elas
+ * não planejam o dia de ninguém, são portas — quem não quiser nenhuma continua
+ * tendo o botão de voltar logo abaixo, com o nome da origem de sempre.
+ *
+ * A ordem é a do que a lista que acabou revelou: seguir no mesmo assunto,
+ * corrigir o que errou, ou virar o capítulo.
+ */
+function ContinuarCard({
+  missaoId,
+  continuacoes,
+  voltarHref,
+}: {
+  missaoId: string;
+  continuacoes: NonNullable<FinalizarMissaoResultado["continuacoes"]>;
+  voltarHref: string;
+}) {
+  const router = useRouter();
+  const [indo, setIndo] = useState<string | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+
+  const { mais, erros, proximoTopico, marco, marcoBloqueado } = continuacoes;
+  const temAlgo = Boolean(mais || erros > 0 || proximoTopico);
+  if (!temAlgo && !marcoBloqueado) return null;
+
+  // A lista nova herda a MESMA origem: encadear continuações não pode ir
+  // apagando o caminho de volta (mesma regra de aceitarDesafioAction).
+  async function ir(qual: string, acao: () => Promise<{ missaoId: string | null; error?: string }>) {
+    if (indo) return;
+    setIndo(qual);
+    setErro(null);
+    const r = await acao();
+    if (!r.missaoId) {
+      setIndo(null);
+      setErro(r.error || "Não deu pra montar a lista agora.");
+      return;
+    }
+    router.push(hrefQuestao(r.missaoId, voltarHref));
+  }
+
+  return (
+    <div className="mb-4 rounded-xl border border-questly-green/30 bg-questly-green-light/60 p-4 text-left dark:bg-questly-green/10">
+      <div className="mb-1.5 flex items-center gap-2 text-[14.5px] font-semibold text-questly-green-dark">
+        <ArrowRight size={16} strokeWidth={2} />
+        Continuar agora
+      </div>
+
+      {/* O empurrão do marco: um alvo de cinco minutos no instante exato em
+          que a aba ia fechar. O marco em si não paga XP nem entra em ranking
+          (ver lib/questly/marcos.ts) — é reconhecimento, não economia. */}
+      {marco && marco.faltam > 0 && (
+        <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
+          Faltam{" "}
+          <b className="font-medium text-foreground">
+            {marco.faltam} {marco.faltam === 1 ? "questão" : "questões"}
+          </b>{" "}
+          pro marco de hoje: {marco.titulo}.
+        </p>
+      )}
+
+      {mais && (
+        <button
+          type="button"
+          disabled={Boolean(indo)}
+          onClick={() => ir("mais", () => continuarPraticandoAction(missaoId))}
+          className="mb-2 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:text-[#0c1512]"
+        >
+          <Zap size={14} strokeWidth={2} />
+          {indo === "mais"
+            ? "Montando..."
+            : `Mais ${mais.quantidade}${mais.disciplina ? ` de ${mais.disciplina}` : " do mesmo assunto"}`}
+        </button>
+      )}
+
+      <div className="flex flex-col gap-2 sm:flex-row">
+        {erros > 0 && (
+          <button
+            type="button"
+            disabled={Boolean(indo)}
+            onClick={() => ir("erros", () => refazerErrosDaListaAction(missaoId))}
+            className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-questly-green/40 bg-card px-4 py-2.5 text-sm font-medium text-questly-green-dark transition-all hover:bg-questly-green-light active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+          >
+            <NotebookPen size={14} strokeWidth={2} />
+            {indo === "erros"
+              ? "Montando..."
+              : `Refazer ${erros === 1 ? "o erro" : `os ${erros} erros`}`}
+          </button>
+        )}
+        {proximoTopico && (
+          <button
+            type="button"
+            disabled={Boolean(indo)}
+            onClick={() =>
+              ir("topico", () =>
+                praticarProximoTopicoAction({
+                  subjectId: proximoTopico.subjectId,
+                  topicoId: proximoTopico.topicoId,
+                }),
+              )
+            }
+            className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-questly-green/40 bg-card px-4 py-2.5 text-sm font-medium text-questly-green-dark transition-all hover:bg-questly-green-light active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+          >
+            <ArrowRight size={14} strokeWidth={2} />
+            {indo === "topico" ? "Montando..." : `Seguir: ${proximoTopico.nome}`}
+          </button>
+        )}
+      </div>
+
+      {/* Gancho de Pro: só aparece quando o aluno JÁ passou do último marco que
+          cabe no teto dele — antes disso seria propaganda no meio do caminho de
+          quem mal começou. Ver questlyMarcoBloqueadoPeloPlano. */}
+      {marcoBloqueado && (
+        <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+          <Lock size={12} strokeWidth={2.2} className="mr-1 inline align-[-1px]" />
+          O marco de {marcoBloqueado.questoes} questões num dia existe —{" "}
+          <Link href="/pro" className="font-medium text-questly-gold-dark underline underline-offset-2">
+            no Pro, sem teto diário
+          </Link>
+          .
+        </p>
+      )}
+
+      {erro && <p className="mt-2 text-[13px] text-questly-red-dark">{erro}</p>}
     </div>
   );
 }
@@ -1592,6 +1751,10 @@ function LimiteDiarioView({
   onEncerrar: () => void;
   voltarHref: string;
 }) {
+  const marcoAlemDoTeto = questlyMarcoBloqueadoPeloPlano(
+    QUESTOES_DIA_FREE,
+    QUESTOES_DIA_FREE,
+  );
   return (
     <div className="casca-leitura flex min-h-screen flex-col items-center justify-center py-10">
       <motion.div
@@ -1618,6 +1781,16 @@ function LimiteDiarioView({
               ? "questão respondida"
               : "questões respondidas"}{" "}
             nesta lista — o XP é seu.
+          </p>
+        )}
+
+        {/* O marco que o teto esconde, dito pelo nome. Os marcos do dia vão
+            até 100 questões (lib/questly/marcos.ts) e o grátis para em 30:
+            antes disso a tela prometia alvos que não dava pra alcançar. */}
+        {marcoAlemDoTeto && (
+          <p className="tnum mt-2 text-[12.5px] text-muted-foreground">
+            Depois daqui ainda existe o marco de {marcoAlemDoTeto.questoes}{" "}
+            questões num dia.
           </p>
         )}
 

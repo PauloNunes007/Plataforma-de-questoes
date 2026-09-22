@@ -66,6 +66,16 @@ export type NovaLista = {
   quantidade: number | "todas";
   /** Marca a lista como recap de um tópico (trilha). */
   recapTopicoId?: string | null;
+  /**
+   * Questões a DESPRIORIZAR no sorteio — as que o aluno acabou de responder,
+   * quando esta lista é a continuação de outra ("mais 10 do mesmo assunto").
+   *
+   * Despriorizar, não excluir: num tópico com 12 questões, excluir as 10 que
+   * acabaram de sair devolveria uma lista de 2 (ou nenhuma). Elas vão pro fim
+   * da fila e só entram se não houver com que preencher — repetir é chato,
+   * mas "não há mais nada aqui" logo depois de um clique em "mais 10" é pior.
+   */
+  despriorizarIds?: string[];
 };
 
 /**
@@ -99,7 +109,18 @@ export async function criarListaDeQuestoes(
   });
   if (candidatas.length === 0) return { missaoId: null, total: 0 };
 
-  const embaralhadas = questlyEmbaralhar(candidatas);
+  // Embaralha primeiro (o sorteio continua sendo sorteio) e só então empurra
+  // pro fim as que o aluno acabou de ver — a ordem relativa dentro de cada
+  // grupo segue aleatória.
+  const despriorizar = new Set(input.despriorizarIds ?? []);
+  const sorteadas = questlyEmbaralhar(candidatas);
+  const embaralhadas =
+    despriorizar.size === 0
+      ? sorteadas
+      : [
+          ...sorteadas.filter((q) => !despriorizar.has(q.id)),
+          ...sorteadas.filter((q) => despriorizar.has(q.id)),
+        ];
   const qtdQuestoes =
     input.quantidade === "todas"
       ? embaralhadas.length

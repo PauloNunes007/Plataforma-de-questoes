@@ -69,7 +69,40 @@ export function questlyMarcoAtingido(questoesHoje: number): MarcoDiario | null {
   return QUESTLY_MARCOS_DIARIOS.find((m) => m.questoes === questoesHoje) ?? null;
 }
 
-/** Próximo marco ainda não batido — usado pra mostrar "faltam N". */
-export function questlyProximoMarco(questoesHoje: number): MarcoDiario | null {
-  return QUESTLY_MARCOS_DIARIOS.find((m) => m.questoes > questoesHoje) ?? null;
+/**
+ * Próximo marco ainda não batido — usado pra mostrar "faltam N".
+ *
+ * `tetoDoDia` é o limite de questões do plano (QUESTOES_DIA_FREE no grátis,
+ * `null` no Pro). Sem ele, a tela prometia ao aluno grátis um marco de 40, 60
+ * ou 100 questões que o teto de 30 torna inalcançável — um alvo apontando pra
+ * uma parede. Com ele, o marco fora de alcance vira `null` aqui e quem chama
+ * troca o "faltam N" por um convite honesto ao Pro.
+ */
+export function questlyProximoMarco(
+  questoesHoje: number,
+  tetoDoDia?: number | null,
+): MarcoDiario | null {
+  const proximo = QUESTLY_MARCOS_DIARIOS.find((m) => m.questoes > questoesHoje) ?? null;
+  if (!proximo) return null;
+  if (tetoDoDia != null && proximo.questoes > tetoDoDia) return null;
+  return proximo;
+}
+
+/**
+ * O primeiro marco que o teto do plano esconde — o gancho de Pro.
+ *
+ * Devolve algo só quando existe marco ACIMA do teto e o aluno já passou do
+ * último que cabe nele: é o momento em que "existe mais chão aqui" é
+ * informação, e não propaganda no meio do caminho de quem mal começou.
+ */
+export function questlyMarcoBloqueadoPeloPlano(
+  questoesHoje: number,
+  tetoDoDia?: number | null,
+): MarcoDiario | null {
+  if (tetoDoDia == null) return null;
+  const ultimoQueCabe = [...QUESTLY_MARCOS_DIARIOS]
+    .reverse()
+    .find((m) => m.questoes <= tetoDoDia);
+  if (ultimoQueCabe && questoesHoje < ultimoQueCabe.questoes) return null;
+  return QUESTLY_MARCOS_DIARIOS.find((m) => m.questoes > tetoDoDia) ?? null;
 }
