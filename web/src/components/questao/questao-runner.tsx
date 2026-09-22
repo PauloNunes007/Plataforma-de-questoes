@@ -38,6 +38,7 @@ import {
 } from "@/components/questao/figura-questao";
 import { QuestaoAcoes } from "@/components/questao/questao-acoes";
 import { QuestaoComentarios } from "@/components/questao/questao-comentarios";
+import { SeloPrivado } from "@/components/questao/selo-privado";
 import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 import {
   questlyDegrauCombo,
@@ -273,6 +274,11 @@ export function QuestaoRunner({
         !!pergunta.topic_id &&
         topicosMestreInicio.current.has(pergunta.topic_id),
       acertosSeguidos,
+      // Mesma trava do servidor (QUESTLY_SEG_MIN_ESFORCO): o número que anima
+      // na tela tem que ser o que entra no ranking. O servidor ainda vai
+      // clampar isto contra o relógio dele — aqui é só pra não prometer XP
+      // que não vem.
+      segundosGastos: tempoSeg,
     });
 
     if (correta) setAcertos((a) => a + 1);
@@ -587,7 +593,7 @@ export function QuestaoRunner({
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm ring-1 ring-inset ring-white/25">
             <IconeDisciplina nome={nomeDisc} className="text-white" />
           </span>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70">
               Disciplina
             </div>
@@ -595,6 +601,9 @@ export function QuestaoRunner({
               {nomeDisc || "Prática livre"}
             </div>
           </div>
+          {/* A sala é fechada, e o aluno precisa saber disso ANTES de
+              responder — ver components/questao/selo-privado.tsx. */}
+          <SeloPrivado variante="sobreCor" />
         </div>
 
         <div className="tnum kicker mb-2">
@@ -919,8 +928,8 @@ function FeedbackArea({
           <b className="font-semibold text-foreground">
             {estado.xpConcedido} XP
           </b>{" "}
-          por ter encarado a questão — errar tentando também constrói
-          repertório. Acertar paga bem mais.
+          por ter encarado a questão — e é XP igual ao de qualquer um no
+          ranking, que conta esforço, não acerto. Acertar ainda paga mais.
         </p>
       )}
 
@@ -1260,6 +1269,15 @@ function ResultView({
             previsto: ~{tempoPrevistoMin} min
           </p>
         )}
+
+        {/* O placar acima é o único lugar onde acerto e erro aparecem juntos —
+            então é exatamente aqui que vale dizer quem mais vê isso: ninguém. */}
+        <div className="mb-1 mt-3">
+          <SeloPrivado
+            variante="linha"
+            texto="Acertos e erros desta lista são só seus. No ranking entra o XP — que você ganha encarando questão, não acertando todas."
+          />
+        </div>
 
         {melhorCombo >= 3 && (
           <p className="tnum mb-5 mt-2 inline-flex items-center gap-1.5 rounded-full bg-questly-orange-light px-3 py-1 text-[12.5px] font-semibold text-questly-orange-dark">

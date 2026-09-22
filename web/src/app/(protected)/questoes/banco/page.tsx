@@ -4,6 +4,7 @@ import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarDisciplinasPratica } from "@/lib/disciplinas/disciplinas-data";
 import { PraticaWizard } from "@/components/disciplinas/pratica-wizard";
 import { PageHeader } from "@/components/page-header";
+import { SeloPrivado } from "@/components/questao/selo-privado";
 
 export const metadata: Metadata = {
   title: "Banco de Questões",
@@ -25,6 +26,13 @@ export default async function BancoDeQuestoesPage() {
         voltarHref="/questoes"
         voltarLabel="Questões"
       />
+
+      {/* O medo mora ANTES do primeiro clique: é aqui que o aluno decide se
+          encara uma lista difícil ou se escolhe algo em que já sabe que vai
+          bem. Ver components/questao/selo-privado.tsx. */}
+      <div className="-mt-3">
+        <SeloPrivado texto="Erre à vontade: ninguém vê sua taxa de acerto." />
+      </div>
 
       <PraticaWizard disciplinas={disciplinas} />
     </div>

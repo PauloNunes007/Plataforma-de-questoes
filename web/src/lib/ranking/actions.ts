@@ -34,10 +34,6 @@ export type CardUsuario = {
   nivel: number;
   streakAtual: number;
   questoesTotal: number;
-  /** acertos vitalícios (profiles.acertos_total) */
-  acertosTotal: number;
-  /** acertabilidade em %, null enquanto o aluno não respondeu nada */
-  pctAcerto: number | null;
   disciplinas: string[];
   /** vagas fixas do card (ver MAX_DISTINTIVOS_CARD) — o que o aluno
    *  escolheu mostrar, ou o resumo automático sem escolha própria. */
@@ -50,13 +46,35 @@ export type CardUsuario = {
   pro: boolean;
   /** a liga mais alta que a pessoa já alcançou, do histórico semanal */
   melhorLigaNome: string;
-  /** só no card Pro: dias seguidos no recorde pessoal de streak não existem
-   *  como coluna, então o "auge" é a melhor liga + o XP total. */
-  xpMedioPorQuestao: number | null;
+  /**
+   * ACERTABILIDADE — só vem preenchida quando a carta é a do PRÓPRIO aluno.
+   *
+   * Até 2026-09-22 estes dois números eram públicos: qualquer autenticado
+   * abria a carta de qualquer um pelo ranking e via "412 acertos em 605
+   * questões · 68%". O efeito medido foi o oposto do pretendido — aluno
+   * travando de medo de errar em público, que é exatamente o comportamento
+   * que a plataforma existe pra destravar. O ranking premia XP (esforço);
+   * acerto é diagnóstico, e diagnóstico é privado.
+   *
+   * Não basta o cliente esconder: quando não é o dono, o servidor nem LÊ a
+   * coluna, pra o número não existir no payload RSC da carta alheia. E não
+   * basta o app: `supabase_ranking_privado.sql` revoga o SELECT da coluna
+   * `profiles.acertos_total` pras chaves anon/authenticated, senão ela volta
+   * por uma chamada direta na API.
+   */
+  privado: { pctAcerto: number | null; acertosTotal: number } | null;
 };
 
 export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuario | null> {
   const supabase = await createClient();
+
+  // Quem está pedindo. `ehDono` decide o RECORTE da carta, e é resolvido aqui
+  // dentro a partir da sessão — nunca por uma flag que o cliente manda, senão
+  // "sou eu mesmo" vira um booleano que qualquer um escreve.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const ehDono = !!user && user.id === userId;
 
   const [{ data: profile }, { data: perfilAcertos }, { data: subjects }, { data: historico }] = await Promise.all([
     supabase
@@ -66,10 +84,14 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
       )
       .eq("id", userId)
       .single(),
-    // acertos_total é coluna nova (supabase_acertos_publicos.sql) — lida
-    // separada pra que um banco sem a migração ainda renderize o card,
-    // só sem a linha de acertabilidade.
-    supabase.from("profiles").select("acertos_total").eq("id", userId).maybeSingle(),
+    // acertos_total é PRIVADA (ver o campo `privado` do tipo): só é lida na
+    // carta do próprio aluno. Na carta alheia a consulta nem acontece — o
+    // número não pode nem chegar ao payload. Continua uma leitura separada
+    // porque a coluna é opcional no banco (supabase_acertos_publicos.sql):
+    // num banco sem aquela migração a carta ainda renderiza, só sem a linha.
+    ehDono
+      ? supabase.from("profiles").select("acertos_total").eq("id", userId).maybeSingle()
+      : Promise.resolve({ data: null }),
     supabase.from("subjects").select("nome").eq("user_id", userId).order("nome"),
     supabase.from("historico_semanal").select("liga").eq("user_id", userId),
   ]);
@@ -113,13 +135,6 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
     nivel,
     streakAtual: profile.streak_atual || 0,
     questoesTotal: profile.questoes_total || 0,
-    acertosTotal: acertosTotal ?? 0,
-    // Só mostra a acertabilidade com amostra mínima: 1 acerto em 1 questão
-    // vira "100%" e isso é ruído, não conquista.
-    pctAcerto:
-      acertosTotal != null && questoesTotal >= MIN_QUESTOES_ACERTABILIDADE
-        ? Math.round((acertosTotal / questoesTotal) * 100)
-        : null,
     disciplinas,
     // Vagas fixas (MAX_DISTINTIVOS_CARD): o que o próprio aluno escolheu
     // mostrar, restrito ao que ele de fato conquistou; sem escolha, o
@@ -129,8 +144,22 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
     totalDistintivosConquistados: distintivos.filter((d) => d.conquistado).length,
     pro: ehPro(profile),
     melhorLigaNome: (QUESTLY_LIGA_INFO[melhorLiga] || QUESTLY_LIGA_INFO.bronze).nome,
-    xpMedioPorQuestao:
-      questoesTotal > 0 ? Math.round(((profile.xp_total || 0) / questoesTotal) * 10) / 10 : null,
+    // XP médio por questão SAIU do card (era o "auge" do selo Pro). Acerto
+    // paga 3/5/8 XP e erro paga uma fração disso — publicar a média é
+    // publicar a taxa de acerto com outro nome e uma casa decimal. Fechar o
+    // KPI de acertabilidade e deixar esta era trocar a fechadura e esquecer
+    // a janela.
+    privado: ehDono
+      ? {
+          acertosTotal: acertosTotal ?? 0,
+          // Só mostra a acertabilidade com amostra mínima: 1 acerto em 1
+          // questão vira "100%" e isso é ruído, não conquista.
+          pctAcerto:
+            acertosTotal != null && questoesTotal >= MIN_QUESTOES_ACERTABILIDADE
+              ? Math.round((acertosTotal / questoesTotal) * 100)
+              : null,
+        }
+      : null,
   };
 }
 

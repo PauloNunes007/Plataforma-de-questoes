@@ -58,13 +58,22 @@ export type ProfileRow = {
   dias_disponiveis: string[] | null;
   foto_url: string | null;
   liga: string | null;
-  // vêm do mesmo `select("*")`; declaradas porque `ehPro(profile)` as lê.
+  // vêm na mesma leitura (COLUNAS_PERFIL_HOME); declaradas porque `ehPro(profile)` as lê.
   plano?: string | null;
   plano_expira_em?: string | null;
   // idem — `hero-data.ts` lê pra saber quais distintivos o aluno escolheu
   // pro card público (ver lib/ranking/badges.ts).
   distintivos_selecionados?: string[] | null;
 };
+
+// Colunas do perfil que a home consome. Lista explícita e NÃO `select("*")`
+// de propósito: `profiles.acertos_total` deixou de ser legível pela chave do
+// aluno (revoke de coluna em supabase_ranking_privado.sql — acertabilidade é
+// dado privado), e `select *` estoura "permission denied for column" ATÉ pro
+// dono da própria linha, porque GRANT é por papel e não por linha. Coluna
+// nova que a home passe a usar entra AQUI.
+const COLUNAS_PERFIL_HOME =
+  "id, nome, curso, semestre, xp_total, nivel, streak_atual, dias_disponiveis, foto_url, liga, plano, plano_expira_em, distintivos_selecionados";
 
 export type SubjectListItem = {
   id: string;
@@ -172,7 +181,7 @@ export async function carregarDadosDashboard(
   const [profileResultado, { data: subjectsRaw }] = await Promise.all([
     profilePrefetch !== undefined
       ? Promise.resolve({ data: profilePrefetch })
-      : supabase.from("profiles").select("*").eq("id", user.id).single(),
+      : supabase.from("profiles").select(COLUNAS_PERFIL_HOME).eq("id", user.id).single(),
     supabase
       .from("subjects")
       .select("*, bosses(id, nome, data_prova)")
@@ -422,7 +431,7 @@ export async function carregarPerfilDashboard(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<ProfileRow | null> {
-  const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
+  const { data } = await supabase.from("profiles").select(COLUNAS_PERFIL_HOME).eq("id", userId).single();
   return (data as ProfileRow | null) ?? null;
 }
 

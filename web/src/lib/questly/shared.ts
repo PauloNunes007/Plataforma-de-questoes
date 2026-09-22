@@ -69,14 +69,43 @@ export function questlyXpDaQuestao(q: { dificuldade?: string | null } | null | u
   return (q?.dificuldade && QUESTLY_XP_POR_DIFICULDADE[q.dificuldade]) || 5;
 }
 
-// XP de participação (errou, mas tentou). Zero XP por erro pune justamente
-// o comportamento que a gente quer: encarar questão difícil. Aqui o erro
-// paga uma fração pequena do acerto — o suficiente pra sessão nunca render
-// nada, mas longe de competir com acertar (um acerto vale ~5x um erro).
+// XP de participação (errou, mas tentou). Zero XP por erro puniria justamente
+// o comportamento que a gente quer: encarar questão difícil.
+//
+// **Subiu de 0.2 pra 0.45 em 2026-09-22**, junto com a decisão de tornar a
+// acertabilidade privada (ver supabase_ranking_privado.sql). Os dois são a
+// mesma mudança: o ranking passou a prometer "quem estuda mais fica no topo",
+// e a 0.2 essa promessa não era verdade em número nenhum. A conta que
+// decidiu a régua — quantas questões o aluno de 50% de acerto precisa fazer
+// pra empatar com o de 90% que fez 100:
+//
+//     fração 0.20 (antes) → 158 questões (+58% de trabalho)
+//     fração 0.45 (hoje)  → 132 questões (+32%)
+//     fração 0.70         → 118 questões (+18%)
+//     fração 1.00         → 105 questões (+5%) — aí o ranking premia clicar
+//
+// 0.45 é onde dedicação vence habilidade com uma margem de esforço honesta,
+// sem o ranking virar contador de cliques. Acertar continua valendo ~2,2x
+// errar, mais combo e maestria por cima.
 //
 // Só vale na PRIMEIRA vez que o aluno encara aquela questão: repetir uma
 // questão já tentada errando de novo paga 0, senão vira farm de ranking.
-export const QUESTLY_XP_ERRO_FRACAO = 0.2;
+export const QUESTLY_XP_ERRO_FRACAO = 0.45;
+
+/**
+ * Tempo mínimo, em segundos, pra uma resposta ERRADA contar como esforço.
+ *
+ * Trava que nasceu junto com a fração acima e não pode ser separada dela: a
+ * 0.45, clicar qualquer alternativa em 3 segundos passaria a render mais XP
+ * por minuto do que estudar de verdade — 20 questões chutadas em 1 minuto
+ * pagariam ~45 XP, contra os ~40 de uma lista honesta de 10 questões em 25
+ * minutos. Abaixo deste piso o erro é registrado normalmente (a tentativa é
+ * verdade, e o BKT/maestria precisa dela) mas paga ZERO.
+ *
+ * Vale só pro erro. Acerto rápido não é suspeito — é o aluno que sabe, e
+ * "sabe rápido" é o que a plataforma quer produzir.
+ */
+export const QUESTLY_SEG_MIN_ESFORCO = 12;
 
 export function questlyXpDoErro(q: { dificuldade?: string | null } | null | undefined) {
   return Math.max(1, Math.round(questlyXpDaQuestao(q) * QUESTLY_XP_ERRO_FRACAO));
@@ -118,6 +147,16 @@ export type EntradaXpResposta = {
   topicoMestre: boolean;
   /** acertos seguidos INCLUINDO esta resposta (0 quando errou) */
   acertosSeguidos: number;
+  /**
+   * Segundos gastos NESTA questão. Só o erro consulta (ver
+   * QUESTLY_SEG_MIN_ESFORCO). `null`/undefined = sem medida confiável, e aí
+   * o benefício da dúvida é do aluno: paga a consolação.
+   *
+   * No servidor este número é o MENOR entre o que o cliente mandou e o
+   * intervalo real medido entre tentativas — o relógio do browser é do
+   * browser (lib/questao/actions.ts).
+   */
+  segundosGastos?: number | null;
 };
 
 // FONTE ÚNICA da regra de XP por resposta. O cliente usa pra mostrar o
@@ -126,7 +165,12 @@ export type EntradaXpResposta = {
 // mesmo lugar, senão o número que anima na tela não é o que entra no
 // ranking.
 export function questlyXpDaResposta(e: EntradaXpResposta): number {
-  if (!e.correta) return e.jaTentouAntes ? 0 : questlyXpDoErro(e);
+  if (!e.correta) {
+    if (e.jaTentouAntes) return 0;
+    // Erro instantâneo não é tentativa, é clique. Ver QUESTLY_SEG_MIN_ESFORCO.
+    if (e.segundosGastos != null && e.segundosGastos < QUESTLY_SEG_MIN_ESFORCO) return 0;
+    return questlyXpDoErro(e);
+  }
 
   let xp = questlyXpDaQuestao(e);
   if (e.jaAcertouAntes) xp = Math.max(1, Math.round(xp / 2));

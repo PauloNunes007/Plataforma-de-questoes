@@ -114,6 +114,39 @@ export async function registrarRespostaAction(input: {
     questaoGabarito?.gabarito != null &&
     input.respostaMarcada === questaoGabarito.gabarito;
 
+  // TEMPO EFETIVO — o relógio do browser é do browser.
+  //
+  // `input.tempoSeg` é medido no cliente e chega por uma Server Action que
+  // qualquer um chama do console. Desde que o erro passou a pagar 45% do
+  // acerto (QUESTLY_XP_ERRO_FRACAO), existe motivo pra mentir: basta jurar
+  // "gastei 30s" em cada chute pra furar o piso de QUESTLY_SEG_MIN_ESFORCO e
+  // transformar cliques em XP.
+  //
+  // O servidor mede o RITMO real: o intervalo entre esta resposta e a
+  // anterior da mesma lista é o teto do que pode ter sido gasto aqui. Vale o
+  // MENOR dos dois. Mentir pra mais deixa de funcionar; mentir pra menos
+  // ninguém quer (tempo não paga XP, só abre a porta dele).
+  //
+  // Na PRIMEIRA questão da lista não há intervalo pra medir e o benefício da
+  // dúvida fica com o aluno — uma questão por lista não é rota de farm, e a
+  // trava continua valendo pra todas as outras.
+  const { data: anterior } = await supabase
+    .from("question_attempts")
+    .select("created_at")
+    .eq("user_id", user.id)
+    .eq("mission_id", input.missaoId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const tempoCliente = Math.max(0, Math.round(input.tempoSeg || 0));
+  const tempoSeg = anterior?.created_at
+    ? Math.min(
+        tempoCliente,
+        Math.max(0, Math.round((Date.now() - new Date(anterior.created_at).getTime()) / 1000)),
+      )
+    : tempoCliente;
+
   const { data: attempt, error: attemptError } = await supabase
     .from("question_attempts")
     .insert({
@@ -122,7 +155,7 @@ export async function registrarRespostaAction(input: {
       mission_id: input.missaoId,
       resposta_marcada: input.respostaMarcada,
       correta,
-      tempo_gasto_seg: input.tempoSeg,
+      tempo_gasto_seg: tempoSeg,
       tentativa_num: 1,
     })
     .select("id")
@@ -176,9 +209,12 @@ export async function registrarRespostaAction(input: {
       console.error("Erro ao atualizar progresso do tópico:", upsertError);
   }
 
+  // Mesma medida efetiva: a média móvel de `tempo_medio_seg` é o que
+  // dimensiona listas e simulados pra TODO MUNDO, então ela não pode ser
+  // deslocada pelo relógio (ou pela lábia) de um cliente só.
   const novoTempoMedio = input.tempoMedioAnterior
-    ? Math.round(input.tempoMedioAnterior * 0.7 + input.tempoSeg * 0.3)
-    : input.tempoSeg;
+    ? Math.round(input.tempoMedioAnterior * 0.7 + tempoSeg * 0.3)
+    : tempoSeg;
   // `questions` só é escrita pelo admin (RLS de segurança) — a recalibração do
   // tempo médio e os contadores globais (tentativas_total/acertos_total, que
   // alimentam a rede neural) rodam via service_role no servidor, com o user já
@@ -197,7 +233,7 @@ export async function registrarRespostaAction(input: {
     {
       p_question_id: input.questionId,
       p_correta: correta,
-      p_tempo_seg: input.tempoSeg,
+      p_tempo_seg: tempoSeg,
     },
   );
   if (statsError) {
@@ -289,7 +325,7 @@ async function recomputarPlacarMissao(
 ): Promise<{ acertos: number; erros: number; xpGanho: number }> {
   const { data: tentativas } = await supabase
     .from("question_attempts")
-    .select("question_id, resposta_marcada, created_at")
+    .select("question_id, resposta_marcada, created_at, tempo_gasto_seg")
     .eq("user_id", userId)
     .eq("mission_id", missao.id)
     .order("created_at", { ascending: true });
@@ -301,10 +337,15 @@ async function recomputarPlacarMissao(
   // mais de uma, a última resposta vale e a posição é a da primeira.)
   const ordemResposta: string[] = [];
   const respostaPorQuestao = new Map<string, string>();
+  // Tempo gravado por questão — já é o tempo EFETIVO (clampado contra o
+  // relógio do servidor em registrarRespostaAction), e é o que decide se um
+  // erro paga consolação ou não (QUESTLY_SEG_MIN_ESFORCO).
+  const tempoPorQuestao = new Map<string, number | null>();
   for (const t of tentativas || []) {
     if (!respostaPorQuestao.has(t.question_id))
       ordemResposta.push(t.question_id);
     respostaPorQuestao.set(t.question_id, t.resposta_marcada);
+    tempoPorQuestao.set(t.question_id, t.tempo_gasto_seg ?? null);
   }
 
   // Só pontua as questões que a missão realmente contém (missions.question_ids
@@ -381,6 +422,7 @@ async function recomputarPlacarMissao(
       jaTentouAntes: jaTentadasAntes.has(q.id),
       topicoMestre: !!q.topic_id && mestres.has(q.topic_id),
       acertosSeguidos,
+      segundosGastos: tempoPorQuestao.get(questaoId) ?? null,
     });
   }
 

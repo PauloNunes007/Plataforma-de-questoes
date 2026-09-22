@@ -3,13 +3,15 @@
 // Card público do aluno em "vibe Pokémon TCG" (pedido do usuário,
 // 2026-07-11): moldura metálica na cor da liga, janela de arte com o
 // retrato, faixa de info como a linha "Nº 0025 Pokémon Rato…", os
-// "ataques" são as contribuições reais (XP da semana, streak, questões),
+// "ataques" são as contribuições reais (XP da semana, streak, questões
+// encaradas, XP da carreira — quatro medidas de esforço, nenhuma delas de
+// acerto: ver o 4º ataque e o PainelPrivado no fim do arquivo),
 // e o rodapé leva raridade + numeração como uma carta impressa. Ligas
 // raras (ouro+) ganham o brilho holográfico; o card inteiro responde ao
 // mouse com tilt 3D, como uma carta segurada na mão.
 import { useRef } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
-import { Crosshair, Crown, Flame, Medal, Target, X, Zap } from "lucide-react";
+import { Crown, Flame, Lock, Medal, Target, TrendingUp, X, Zap } from "lucide-react";
 import { RankAvatar } from "@/components/ranking/avatar";
 import {
   LIGA_CARD_BG,
@@ -86,7 +88,10 @@ export function StudentCardModal({ card, loading, onClose }: StudentCardModalPro
               <div className="h-3 w-24 animate-pulse rounded-full bg-muted" />
             </motion.div>
           ) : (
-            <CartaTcg card={card} />
+            <div className="flex w-full max-w-[370px] flex-col items-stretch gap-3 sm:my-auto">
+              <CartaTcg card={card} />
+              {card.privado && <PainelPrivado privado={card.privado} />}
+            </div>
           )}
         </motion.div>
       )}
@@ -127,7 +132,7 @@ function CartaTcg({ card }: { card: CardUsuario }) {
       ref={ref}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={`relative w-full max-w-[370px] rounded-[20px] bg-gradient-to-br p-[10px] shadow-2xl shadow-black/50 sm:my-auto ${
+      className={`relative w-full rounded-[20px] bg-gradient-to-br p-[10px] shadow-2xl shadow-black/50 ${
         pro ? PRO_FRAME : LIGA_FRAME[card.liga]
       }`}
       initial={{ opacity: 0, scale: 0.82, rotateX: -14, y: 24 }}
@@ -245,22 +250,23 @@ function CartaTcg({ card }: { card: CardUsuario }) {
             valor={card.questoesTotal}
             unidade=""
           />
-          {/* Mira precisa — SEMPRE 4 "ataques", pro card grátis e pro Pro,
-              com N distintivos ou nenhum: regra de ouro é altura padrão pra
-              todo mundo (pedido explícito do usuário), então essa vaga nunca
-              some — sem amostra mínima (ver MIN_QUESTOES_ACERTABILIDADE),
-              vira um placeholder honesto em vez de sumir e encolher o card. */}
+          {/* 4º ataque — SEMPRE 4, pro card grátis e pro Pro, com N
+              distintivos ou nenhum: regra de ouro é altura padrão pra todo
+              mundo (pedido explícito do usuário), então essa vaga nunca some.
+
+              Esta vaga era "Mira precisa" (acertabilidade) e virou o XP
+              acumulado em 2026-09-22. Os quatro ataques da carta passam a ser
+              quatro medidas de ESFORÇO — XP da semana, dias seguidos,
+              questões encaradas e XP da carreira — e nenhuma delas piora
+              quando o aluno erra. Acertabilidade continua existindo, no
+              painel privado abaixo da carta, só pro dono. */}
           <Ataque
-            icone={<Crosshair size={13} strokeWidth={2.25} />}
-            corEnergia="bg-questly-green"
-            nome="Mira precisa"
-            descricao={
-              card.pctAcerto != null
-                ? `${card.acertosTotal.toLocaleString("pt-BR")} acertos em ${card.questoesTotal.toLocaleString("pt-BR")} questões`
-                : "ainda sem amostra suficiente"
-            }
-            valor={card.pctAcerto}
-            unidade={card.pctAcerto != null ? "%" : ""}
+            icone={<TrendingUp size={13} strokeWidth={2.25} />}
+            corEnergia="bg-questly-blue"
+            nome="Poder acumulado"
+            descricao="XP somado em toda a carreira"
+            valor={card.xpTotal}
+            unidade="XP"
           />
         </div>
 
@@ -285,11 +291,7 @@ function CartaTcg({ card }: { card: CardUsuario }) {
               XP/questão), que antes vinha como 2 ataques extras, virou só o
               title deste selo (hover no desktop). */}
           <span
-            title={
-              pro
-                ? `Auge: Liga ${card.melhorLigaNome}${card.xpMedioPorQuestao != null ? ` · ${card.xpMedioPorQuestao.toFixed(1)} XP/questão` : ""}`
-                : undefined
-            }
+            title={pro ? `Auge: Liga ${card.melhorLigaNome}` : undefined}
             className={`mb-2 flex w-fit max-w-full items-center gap-1.5 truncate rounded-full bg-gradient-to-r from-questly-gold to-amber-300 px-2.5 py-1 text-[10px] font-bold text-[#3a2a05] ring-1 ring-white/50 ${pro ? "" : "invisible"}`}
           >
             <Crown size={11} strokeWidth={2.5} className="shrink-0 fill-current" />
@@ -403,5 +405,59 @@ function Ataque({
         {unidade && <span className="ml-1 text-[10px] font-semibold text-white/70">{unidade}</span>}
       </span>
     </div>
+  );
+}
+
+/**
+ * O único lugar do app onde a acertabilidade aparece dentro do ranking — e só
+ * pra quem é dono dela (`CardUsuario.privado` vem null pra qualquer outro).
+ *
+ * Fica FORA da carta de propósito, por dois motivos: a carta tem altura
+ * padrão pra todo mundo (ver os comentários de vagas fixas acima), e o
+ * contraste entre "a carta que os outros veem" e "o painel que só eu vejo" é
+ * justamente o que a tela precisa comunicar. Esconder o número não resolve o
+ * problema sozinho: o aluno precisa SABER que ele é privado, e o momento em
+ * que ele abre a própria carta é onde ele acredita nisso.
+ */
+function PainelPrivado({
+  privado,
+}: {
+  privado: NonNullable<CardUsuario["privado"]>;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.15, duration: 0.3 }}
+      className="rounded-2xl border border-white/15 bg-black/40 p-3.5 backdrop-blur-sm"
+    >
+      <div className="mb-1.5 flex items-center gap-1.5">
+        <Lock size={12} strokeWidth={2.2} className="shrink-0 text-white/70" />
+        <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-white/70">
+          Só você vê
+        </span>
+      </div>
+      {privado.pctAcerto != null ? (
+        <>
+          <p className="tnum font-heading text-[19px] font-bold leading-none text-white">
+            {privado.pctAcerto}%{" "}
+            <span className="font-sans text-[12.5px] font-medium text-white/70">
+              de acertabilidade
+            </span>
+          </p>
+          <p className="tnum mt-1 text-[11.5px] text-white/60">
+            {privado.acertosTotal.toLocaleString("pt-BR")} acertos na carreira
+          </p>
+        </>
+      ) : (
+        <p className="text-[12.5px] leading-snug text-white/75">
+          Responda mais algumas questões e sua acertabilidade aparece aqui.
+        </p>
+      )}
+      <p className="mt-2 border-t border-white/10 pt-2 text-[11px] leading-snug text-white/55">
+        Ninguém mais tem acesso a esse número — no ranking entra o XP, que você
+        ganha encarando questão.
+      </p>
+    </motion.div>
   );
 }

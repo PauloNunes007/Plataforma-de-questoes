@@ -1,0 +1,72 @@
+-- ============================================================
+-- EXPECTRUM — a acertabilidade deixa de ser dado público
+--
+-- Rodar DEPOIS de supabase_acertos_publicos.sql (a migração que criou
+-- `profiles.acertos_total` e a publicou no card do ranking). Aditiva,
+-- idempotente e REVERSÍVEL (o grant de volta está no fim, comentado).
+--
+-- POR QUE ISTO EXISTE
+-- -------------------
+-- O ranking sempre ordenou por XP — o que expunha o aluno era a CARTA
+-- pública: `buscarCardUsuarioAction` aceita o id de qualquer aluno e o card
+-- mostrava "412 acertos em 605 questões · 68%" pra quem clicasse numa linha
+-- do ranking. O efeito observado foi o contrário do pretendido: aluno
+-- travando de medo de errar em público — exatamente o comportamento que a
+-- plataforma existe pra destravar. A régua nova é: **o ranking premia XP
+-- (esforço); acerto é diagnóstico, e diagnóstico é privado.**
+--
+-- POR QUE UM REVOKE DE COLUNA, E NÃO RLS
+-- --------------------------------------
+-- RLS filtra LINHA, não coluna — e a linha de `profiles` PRECISA continuar
+-- legível por qualquer autenticado, senão o ranking cross-user, o card e o
+-- comparativo da home param de funcionar (ver "RLS visibilidade" no
+-- CLAUDE.md). Quem filtra coluna no Postgres é GRANT. Sem isto, tirar o
+-- número da tela seria teatro: ele voltaria inteiro numa chamada direta à
+-- API com a chave anon, que é pública por definição.
+--
+-- A COLUNA NÃO É DROPADA, DE PROPÓSITO
+-- ------------------------------------
+-- `acertos_total` continua existindo e continua sendo escrita — quem escreve
+-- é `service_role` (lib/questly/economia.ts e a RPC
+-- questly_registrar_progresso, ambas server-side), que não é afetado por
+-- revoke nenhum. O que muda é só quem consegue LER. Assim o dado segue
+-- disponível pro dono (pela tela de Desempenho, que soma
+-- `question_attempts` — dono-only) e pra qualquer estatística futura do
+-- servidor, sem ficar pendurado na chave pública.
+--
+-- ⚠️ PRÉ-REQUISITO DE CÓDIGO — RODAR ISTO ANTES DO DEPLOY DERRUBA A HOME
+-- ---------------------------------------------------------------------
+-- `select *` passa a estourar "permission denied for column acertos_total"
+-- ATÉ pro dono da própria linha: GRANT é por PAPEL, não por linha. Os dois
+-- `from("profiles").select("*")` de lib/questly/dashboard-data.ts já viraram
+-- lista explícita de colunas (COLUNAS_PERFIL_HOME) no mesmo commit desta
+-- migração. Se você está rodando este arquivo num banco cujo app ainda é
+-- mais antigo que esse commit, atualize o app PRIMEIRO.
+--
+-- O que foi conferido e NÃO precisa mudar: `lib/questly/economia.ts` (tanto
+-- a RPC quanto o caminho legado `atualizarXpELigaLegado`) recebe o cliente
+-- ADMIN — as colunas que ele escreve já eram protegidas pelo trigger
+-- questly_proteger_colunas_profile, então aquele arquivo sempre rodou com
+-- service_role e segue lendo/escrevendo acertos_total normalmente. O mesmo
+-- vale pra `sincronizarContadoresQuestao` em lib/questao/actions.ts.
+-- A tela de Desempenho também não é afetada: ela soma `question_attempts`
+-- (dono-only), nunca o contador de `profiles`.
+-- ============================================================
+
+revoke select (acertos_total) on public.profiles from authenticated;
+revoke select (acertos_total) on public.profiles from anon;
+
+-- ------------------------------------------------------------------
+-- Conferência. Esperado: NENHUMA linha para 'anon'/'authenticated'.
+-- (`service_role` e o dono do banco continuam aparecendo — é o certo.)
+-- ------------------------------------------------------------------
+-- select grantee, privilege_type
+--   from information_schema.column_privileges
+--  where table_schema = 'public'
+--    and table_name = 'profiles'
+--    and column_name = 'acertos_total';
+
+-- ------------------------------------------------------------------
+-- Desfazer (se um dia a acertabilidade voltar a ser pública):
+-- ------------------------------------------------------------------
+-- grant select (acertos_total) on public.profiles to authenticated;
