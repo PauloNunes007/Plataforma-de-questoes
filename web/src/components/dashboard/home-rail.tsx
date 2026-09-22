@@ -25,8 +25,9 @@
 // distância só gastava a largura que os três segmentos precisam. No desktop,
 // onde o trilho é uma coluna vertical com espaço de sobra, ele continua lá.
 
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Globe2, IdCard, LineChart, Medal } from "lucide-react";
+import { Globe2, IdCard, LineChart, Medal, NotebookPen } from "lucide-react";
 
 export type VisaoHome = "global" | "desempenho" | "conquistas";
 
@@ -40,11 +41,14 @@ export function HomeRail({
   visao,
   onVisao,
   onAbrirCarta,
+  cadernoAbertos,
   onPreCarregar,
 }: {
   visao: VisaoHome;
   onVisao: (v: VisaoHome) => void;
   onAbrirCarta: () => void;
+  /** questões esperando no Caderno de Erros — vira o badge do atalho */
+  cadernoAbertos: number;
   /** Avisa que o aluno está PRESTES a abrir esta visão (mouse em cima, dedo
    *  encostado) — quem escuta aproveita pra buscar o dado antes do clique.
    *  Hoje só "desempenho" tem o que buscar; o resto já veio com a página. */
@@ -55,7 +59,7 @@ export function HomeRail({
   return (
     <nav
       aria-label="Visões da home"
-      className="flex shrink-0 gap-2 lg:w-[92px] lg:flex-col"
+      className="flex shrink-0 flex-col gap-2 lg:w-[92px]"
     >
       {/* Carta — ação, não visão. Some no celular (a faixa de perfil acima já
           abre a carta e diz isso por extenso). */}
@@ -69,6 +73,29 @@ export function HomeRail({
         </span>
         <span className="text-[11.5px] font-bold tracking-tight">Carta</span>
       </button>
+
+      {/* Caderno de Erros — NAVEGA (não troca a visão), então fica fora do
+          grupo de visões pela mesma regra do "Carta" logo acima: dentro do
+          tablist o estado "ativo" mentiria. Diferente do Carta, ele NÃO some
+          no celular: o Carta tem um gêmeo na faixa de perfil, o Caderno não
+          teria nenhum outro caminho aqui — e recurso que só existe no desktop
+          é recurso que metade da base nunca encontra (o erro já cometido com
+          a aba "Matérias", ver components/nav-items.ts). No celular ele vira
+          uma linha de largura inteira ABAIXO do controle segmentado. */}
+      <Link
+        href="/questoes/caderno"
+        className="surface-interativa relative order-last flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-2xl px-3 py-2.5 lg:order-none lg:w-auto lg:flex-col lg:py-3"
+      >
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-questly-blue to-questly-purple text-white shadow-sm">
+          <NotebookPen size={17} strokeWidth={2.1} />
+        </span>
+        <span className="text-[11.5px] font-bold tracking-tight">Caderno</span>
+        {cadernoAbertos > 0 && (
+          <span className="tnum absolute right-2 top-2 rounded-full bg-questly-purple px-1.5 py-0.5 text-[10px] font-bold leading-none text-white lg:right-2.5 lg:top-2.5">
+            {cadernoAbertos > 99 ? "99+" : cadernoAbertos}
+          </span>
+        )}
+      </Link>
 
       <div
         role="tablist"

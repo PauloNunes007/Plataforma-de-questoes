@@ -16,8 +16,9 @@
 // mostrar um 0% que não significa nada.
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { AlertTriangle, FileText, Sparkles, Target, TriangleAlert } from "lucide-react";
+import { AlertTriangle, FileText, NotebookPen, Sparkles, Target, TriangleAlert } from "lucide-react";
 import type { DesempenhoDados } from "@/lib/dashboard/desempenho-data";
 import { PERIODOS, recortar, type PeriodoId } from "@/lib/dashboard/desempenho-calc";
 import type { SemanaResumo } from "@/lib/questly/dashboard-data";
@@ -260,6 +261,18 @@ function TopicosErrados({
           ))}
         </ol>
       )}
+
+      {/* A ponte que faltava entre DIAGNÓSTICO e AÇÃO. Esta seção sempre
+          soube apontar o que o aluno mais erra e nunca soube o que fazer com
+          isso — o Caderno de Erros é o destino natural, e o link fecha o
+          caminho sem ele ter que adivinhar que a tela existe. */}
+      <Link
+        href="/questoes/caderno"
+        className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-questly-purple/30 px-4 py-2.5 text-[12.5px] font-semibold text-questly-purple transition-colors hover:bg-questly-purple/10"
+      >
+        <NotebookPen size={14} strokeWidth={2.1} />
+        Revisar no Caderno de Erros
+      </Link>
     </section>
   );
 }

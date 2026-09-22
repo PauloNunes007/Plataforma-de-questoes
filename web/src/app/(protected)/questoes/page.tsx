@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Clock, Layers, ListChecks, NotebookPen, Star, Timer } from "lucide-react";
+import { ArrowRight, Clock, Layers, ListChecks, NotebookPen, Star, StickyNote, Timer } from "lucide-react";
 import { HubTiltCard } from "@/components/questoes/hub-tilt-card";
 
 // Hub sem fetch — cada sub-rota trata seu próprio empty-state (sem
@@ -102,10 +102,17 @@ export default function QuestoesPage() {
               },
               {
                 href: "/questoes/anotacoes",
-                icone: <NotebookPen size={17} strokeWidth={1.9} />,
+                icone: <StickyNote size={17} strokeWidth={1.9} />,
                 corBg: "bg-questly-blue-light text-questly-blue-dark",
                 titulo: "Minhas anotações",
                 desc: "Questões em que você deixou uma anotação.",
+              },
+              {
+                href: "/questoes/caderno",
+                icone: <NotebookPen size={17} strokeWidth={1.9} />,
+                corBg: "bg-questly-purple/12 text-questly-purple",
+                titulo: "Caderno de Erros",
+                desc: "O que você errou e guardou, pra virar acerto.",
               },
             ].map((item) => (
               <Link

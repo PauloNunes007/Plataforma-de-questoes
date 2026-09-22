@@ -70,6 +70,7 @@ export function DashboardView({
   atalhoSimulados,
   retomar,
   riscoAcademico,
+  cadernoAbertos,
   userId,
 }: {
   dados: DashboardData;
@@ -77,6 +78,8 @@ export function DashboardView({
   atalhoSimulados: AtalhoSimulados;
   retomar: RetomarInfo;
   riscoAcademico: ResumoRiscoAcademico;
+  /** questões esperando no Caderno de Erros (badge do trilho) */
+  cadernoAbertos: number;
   userId: string;
 }) {
   const [visao, setVisao] = useState<VisaoHome>("global");
@@ -173,6 +176,7 @@ export function DashboardView({
             visao={visao}
             onVisao={trocarVisao}
             onAbrirCarta={abrirCarta}
+            cadernoAbertos={cadernoAbertos}
             onPreCarregar={preCarregar}
           />
         </div>
