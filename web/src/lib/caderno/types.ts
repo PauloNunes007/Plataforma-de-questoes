@@ -17,6 +17,10 @@ export type ItemCaderno = {
   acertouDepois: boolean;
   /** a anotação de question_notes (a mesma de /questoes/anotacoes) */
   notaTexto: string | null;
+  /** favoritada (question_favoritos) — a barra de ações do cartão expandido
+   *  mostra o estado REAL da estrela; sem isto ela apareceria sempre apagada
+   *  e desfavoritaria ao ser clicada. */
+  favoritado: boolean;
   resolvidoEm: string | null;
 };
 

@@ -175,7 +175,13 @@ export function CadernoView({ itens }: { itens: ItemCaderno[] }) {
 
   async function onToggleFavorito(id: string) {
     const r = await alternarFavoritoAction(id);
-    if ("error" in r) setAviso(r.error);
+    if ("error" in r) {
+      setAviso(r.error);
+      return;
+    }
+    setLista((prev) =>
+      prev.map((i) => (i.questao.id === id ? { ...i, favoritado: r.favoritado } : i)),
+    );
   }
 
   async function onSalvarNota(id: string, texto: string) {
@@ -446,7 +452,7 @@ export function CadernoView({ itens }: { itens: ItemCaderno[] }) {
                         <QuestaoAcoes
                           questionId={q.id}
                           resolucao={q.resolucao}
-                          favoritado={false}
+                          favoritado={item.favoritado}
                           notaInicial={item.notaTexto}
                           onToggleFavorito={() => onToggleFavorito(q.id)}
                           onSalvarNota={(texto) => onSalvarNota(q.id, texto)}

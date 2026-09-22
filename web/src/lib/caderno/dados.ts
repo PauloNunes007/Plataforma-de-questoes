@@ -48,7 +48,7 @@ export async function carregarCaderno(
 
   const ids = linhas.map((l) => l.question_id);
 
-  const [questoes, { data: tentativas }, { data: notas }] = await Promise.all([
+  const [questoes, { data: tentativas }, { data: notas }, { data: favoritos }] = await Promise.all([
     // Em lotes: a lista de um aluno não tem teto, e um `.in()` grande estoura
     // a URL do gateway antes de chegar no banco.
     emLotes(ids, (lote) =>
@@ -60,6 +60,7 @@ export async function carregarCaderno(
       .eq("user_id", user.id)
       .order("created_at", { ascending: true }),
     supabase.from("question_notes").select("question_id, nota").eq("user_id", user.id),
+    supabase.from("question_favoritos").select("question_id").eq("user_id", user.id),
   ]);
 
   const questaoPorId = new Map<string, ItemCaderno["questao"]>();
@@ -75,6 +76,8 @@ export async function carregarCaderno(
 
   const notaPorId = new Map<string, string>();
   (notas || []).forEach((n) => notaPorId.set(n.question_id as string, n.nota as string));
+
+  const favoritadas = new Set((favoritos || []).map((f) => f.question_id as string));
 
   // Histórico por questão, montado numa passada só.
   type Hist = {
@@ -137,6 +140,7 @@ export async function carregarCaderno(
         // própria: um acerto pode ser sorte, e a decisão é do aluno.
         acertouDepois: !!h?.ultimoAcertoEm && h.ultimoAcertoEm > linha.criado_em,
         notaTexto: notaPorId.get(linha.question_id) ?? null,
+        favoritado: favoritadas.has(linha.question_id),
         resolvidoEm: linha.resolvido_em,
       };
     })
