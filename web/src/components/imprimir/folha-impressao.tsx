@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import type { Pergunta } from "@/lib/questao/types";
 import { CSS_IMPRESSAO } from "@/components/imprimir/estilos-impressao";
-import { FolhaProva, type VarianteFolha } from "@/components/imprimir/folha-prova";
+import { FolhaProva, type MoldeUff, type VarianteFolha } from "@/components/imprimir/folha-prova";
 import {
   ESPACAMENTOS,
   limitarQuantidade,
@@ -72,6 +72,7 @@ export function FolhaImpressao({
   voltarRotulo = "Voltar",
   permitirRecorte = true,
   variante = "lista",
+  moldeUff = null,
   avisoCota = null,
 }: {
   titulo: string;
@@ -86,6 +87,8 @@ export function FolhaImpressao({
   permitirRecorte?: boolean;
   /** O molde da folha — ver folha-prova.tsx. */
   variante?: VarianteFolha;
+  /** Só pro molde `uff`: qual prova do semestre esta folha replica. */
+  moldeUff?: MoldeUff | null;
   /**
    * Uma linha sobre a COTA de exportação (lib/imprimir/cota.ts), quando há o
    * que dizer: "restam 2 exportações nesta semana" ou "a lista tem 120
@@ -304,6 +307,7 @@ export function FolhaImpressao({
           <FolhaProva
             folhaRef={folhaRef}
             variante={variante}
+            moldeUff={moldeUff}
             titulo={titulo}
             disciplina={disciplina}
             linhaContexto={linhaContexto}

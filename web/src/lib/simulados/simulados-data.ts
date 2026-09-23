@@ -452,6 +452,10 @@ export type SimuladoCompleto = {
   titulo: string;
   /** prova oficial reaplicada (supabase_provas_oficiais.sql); null = sorteado */
   prova_codigo: string | null;
+  /** Slot que este simulado replica ("P1"…) quando é uma prova prevista do
+   *  Gêmeo da Banca. Null em simulado comum e em prova oficial — as duas
+   *  colunas são independentes (ver supabase_prova_prevista.sql). */
+  prova_prevista: string | null;
   /** o aluno autorizou aparecer no ranking desta prova (só faz sentido com
    *  prova_codigo preenchido) */
   publico: boolean;
@@ -513,6 +517,7 @@ export async function carregarSimulado(
     id: s.id,
     titulo: s.titulo,
     prova_codigo: s.prova_codigo ?? null,
+    prova_prevista: s.prova_prevista ?? null,
     publico: s.publico === true,
     instituicao: s.instituicao,
     status: s.status,

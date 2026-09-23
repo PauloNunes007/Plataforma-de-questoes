@@ -36,6 +36,7 @@ import {
   Plus,
   SlidersHorizontal,
   Sparkles,
+  Target,
 } from "lucide-react";
 import type { SimuladoResumo, StatusPlanoSimulado } from "@/lib/simulados/simulados-data";
 import type { InstituicaoAgregada } from "@/lib/cursos/instituicao";
@@ -165,7 +166,7 @@ export function SimuladosLista({
           caminhos alternativos pra mesma coisa. */}
       <motion.section {...anim} className="flex flex-col gap-2">
         <span className="kicker">Começar uma prova</span>
-        <div className={`grid gap-2.5 ${provasOficiais > 0 ? "sm:grid-cols-2" : ""}`}>
+        <div className={`grid gap-2.5 ${provasOficiais > 0 ? "sm:grid-cols-2 xl:grid-cols-3" : ""}`}>
           <PortaSimulado
             href="/simulados/montar"
             desabilitada={!podeMontar}
@@ -181,6 +182,20 @@ export function SimuladosLista({
               titulo="Provas antigas"
               descricao={`${provasOficiais} provas reais, inteiras e na ordem original — com ranking entre quem fez.`}
               tom="azul"
+            />
+          )}
+          {/* A terceira porta só faz sentido onde existe acervo: a previsão é
+              lida das provas antigas. Não custa consulta nenhuma aqui — se as
+              disciplinas DESTE aluno não tiverem amostra, a própria tela diz
+              isso, em vez de o hub pagar o perfil de todas as matérias em
+              toda visita. */}
+          {provasOficiais > 0 && (
+            <PortaSimulado
+              href="/simulados/prevista"
+              icone={<Target size={19} />}
+              titulo="Prova prevista"
+              descricao="Como a sua prova costuma cair — e uma prova nova montada nessa mesma composição."
+              tom="roxo"
             />
           )}
         </div>
@@ -373,13 +388,15 @@ function PortaSimulado({
   icone: React.ReactNode;
   titulo: string;
   descricao: string;
-  tom: "verde" | "azul";
+  tom: "verde" | "azul" | "roxo";
   desabilitada?: boolean;
 }) {
   const cor =
     tom === "verde"
       ? "bg-questly-green-light text-questly-green-dark"
-      : "bg-questly-blue-light text-questly-blue-dark";
+      : tom === "roxo"
+        ? "bg-questly-gold-light text-questly-gold-dark"
+        : "bg-questly-blue-light text-questly-blue-dark";
 
   const conteudo = (
     <>

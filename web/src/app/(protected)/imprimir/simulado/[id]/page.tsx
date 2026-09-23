@@ -5,6 +5,7 @@ import { ehPro } from "@/lib/plano/plano";
 import { carregarSimulado } from "@/lib/simulados/simulados-data";
 import { lerCodigoProva, rotuloProva } from "@/lib/simulados/provas-oficiais";
 import { rotuloDuracao } from "@/lib/simulados/constantes";
+import { formularioDaProva, linhaDaProva, semestreDe } from "@/lib/imprimir/formulario";
 import { FolhaImpressao } from "@/components/imprimir/folha-impressao";
 import { PortaCota, PortaPro } from "@/components/imprimir/porta-pro";
 import { registrarExportacao } from "@/lib/imprimir/cota";
@@ -82,6 +83,30 @@ export default async function ImprimirSimuladoPage({
   }
 
   const partes = simulado.prova_codigo ? lerCodigoProva(simulado.prova_codigo) : null;
+
+  // MOLDE DA FOLHA. Quando a linha sabe QUAL prova do semestre ela é — porque
+  // reaplica uma prova real (`prova_codigo`) ou porque é a prova prevista do
+  // Gêmeo da Banca (`prova_prevista`) — a folha sai no molde da prova de
+  // faculdade: capa com cartão óptico, formulário e miolo em duas colunas.
+  // Sem isso, segue o molde `prova` de sempre.
+  const slotDaProva = simulado.prova_prevista ?? partes?.prova ?? null;
+  const materiaNome =
+    Object.values(simulado.contexto).find((c) => c.materia)?.materia ?? simulado.instituicao ?? null;
+  const hoje = new Date();
+  const moldeUff =
+    slotDaProva && materiaNome
+      ? {
+          materiaNome,
+          linhaProva: linhaDaProva({
+            slot: slotDaProva,
+            ano: partes?.ano ?? hoje.getFullYear(),
+            semestre: partes?.semestre ?? semestreDe(hoje),
+            data: hoje,
+          }),
+          duracaoRotulo: rotuloDuracao(simulado.duracao_min),
+          formulario: formularioDaProva(materiaNome, slotDaProva),
+        }
+      : null;
   const contexto = [
     simulado.instituicao,
     partes ? rotuloProva(partes) : null,
@@ -107,10 +132,11 @@ export default async function ImprimirSimuladoPage({
       voltarHref={`/simulados/${simulado.id}`}
       voltarRotulo="Voltar pro simulado"
       permitirRecorte={false}
-      // Molde de prova: cabeçalho centrado, filete duplo, "QUESTÃO 01".
-      // A folha de um simulado precisa parecer a prova que ela simula — ver
-      // `VarianteFolha` em components/imprimir/folha-prova.tsx.
-      variante="prova"
+      // `uff` quando dá pra saber qual prova do semestre é (réplica fiel da
+      // folha da faculdade); `prova` no resto — ver `VarianteFolha` em
+      // components/imprimir/folha-prova.tsx.
+      variante={moldeUff ? "uff" : "prova"}
+      moldeUff={moldeUff}
     />
   );
 }

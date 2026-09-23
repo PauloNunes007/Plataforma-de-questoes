@@ -2617,6 +2617,72 @@ quase único por questão — precisa ser clusterizado offline e revisado) e, s�
 no fim, geração sintética com dupla verificação e revisão humana. Questão
 gerada não entra no banco sem passar pela fila de `/importar`.
 
+### Fatia 2 — a prova prevista e a folha no molde da banca (2026-09-22)
+
+O perfil virou produto, em duas partes que não dependem de IA nenhuma.
+
+**A prova prevista** (`/simulados/prevista`, `lib/banca/banca-data.ts` +
+`lib/banca/actions.ts`). O montador comum pergunta ao aluno quais tópicos ele
+quer; aqui ninguém pergunta nada — a composição vem do perfil medido daquele
+slot. `montarSimuladoPrevistoAction` reparte as vagas por tópico
+(`cotasPorTopico`), ajusta ao que o banco tem (`ajustarCotasAoBanco`: um tópico
+com cota 6 e 4 questões devolve 2 vagas pros mais cobrados, senão a prova sai
+com 13 questões em vez de 15) e escolhe **guloso por déficit de dificuldade**,
+pra o conjunto bater o mix que a banca aplica em vez de virar um bloco de
+difíceis porque o banco tem mais dessas. Inédita na frente de já vista, como o
+montador comum — prioridade, não filtro.
+
+- **Nada é gerado**: as questões são reais, do banco. A previsão decide a
+  COMPOSIÇÃO. Risco de alucinação: zero.
+- **`prova_codigo` fica NULL** e o slot vai em `simulados_aluno.prova_prevista`
+  (`supabase_prova_prevista.sql`, aditiva, RLS herdada). Preencher
+  `prova_codigo` colocaria exames sintéticos — e mutuamente diferentes — dentro
+  de `vw_ranking_provas_oficiais`, que só faz sentido entre quem fez exatamente
+  as mesmas questões. O insert **degrada sozinho** num banco sem a migração
+  (42703 → repete sem a coluna): a prova é montada, só perde o molde.
+- A tela mostra o ESPELHO antes do botão (composição medida, "caiu em 7 de 7",
+  "nunca caiu nesta prova") — o valor é entender a prova; o simulado é a
+  consequência. `ROTULO_CONFIANCA`/`comoLer` impedem a leitura de adivinhação:
+  amostra pequena sai como "leia como indício".
+- A porta no hub aparece quando há acervo (`provasOficiais > 0`), **sem
+  consulta nova** — se as disciplinas daquele aluno não tiverem amostra, quem
+  diz isso é a própria tela.
+- `dentroDoLimiteSemanal` e `questoesJaVistas` saíram de `simulados/actions.ts`
+  pra `simulados/limite.ts` e `simulados/vistas.ts`: num arquivo `"use server"`
+  toda função exportada vira endpoint, e a alternativa era duplicar uma trava
+  de plano — que é a forma garantida de as duas divergirem.
+
+**A folha no molde da banca** (`variante="uff"`,
+`components/imprimir/folha-uff.tsx`). Pedido do dono: o PDF do simulado tem que
+sair **idêntico à prova impressa da UFF**, trocando só a identidade. Réplica
+conferida contra `provas_uff/` (P1 de 2023.1 e P3 de 2024.1): cabeçalho em
+caixa de três células (selo · título · "NOTA DA PROVA"), instruções numeradas
+à esquerda, cartão-resposta óptico à direita (Nome/Matrícula/Prof/Turma, 20
+linhas A–E, marcas fiduciais nos cantos), tracejado de corte, **formulário** e
+miolo **em duas colunas** serifadas com "1ª questão -" dentro do parágrafo.
+
+- **A identidade é Expectrum.** A geometria é a mesma; brasão, instituto e
+  assinatura são nossos. Reproduzir a marca da universidade numa folha que não
+  é dela seria se passar por ela — regra que já valia no molde `prova`.
+- **O formulário é transcrito, nunca inventado** (`lib/imprimir/formulario.ts`).
+  Slot sem transcrição conferida entra com `fisicas: []` e a folha **omite a
+  seção**: um formulário plausível mas diferente quebra exatamente a promessa
+  de ser igual à prova. Hoje há Física 2 P1 completo, e constantes + integrais
+  (idênticas nas duas provas conferidas) pros demais slots.
+- **Duas colunas no gerador de PDF** (`lib/imprimir/gerar-pdf.ts`): bloco com
+  `data-pdf-coluna="1"` sai com metade da largura útil e FLUI — enche a
+  esquerda, passa pra direita, vira a página. Bloco sem o atributo se comporta
+  exatamente como antes. `topoColunas` guarda onde a região de colunas começa
+  na página (a coluna da direita recomeça ali, não na margem, senão subiria por
+  cima da capa), e `avancar()` é o único ponto em que "próxima coluna" e
+  "próxima página" se confundem. **Um bloco de largura inteira depois de blocos
+  em coluna força página nova** — é o que faz o gabarito cair certo no fim.
+- O molde entra sozinho quando a linha sabe QUAL prova do semestre ela é: por
+  `prova_codigo` (prova real reaplicada) ou por `prova_prevista`. Sem isso,
+  segue o molde `prova` de antes.
+- `Gabarito` virou componente próprio em `folha-prova.tsx` — os três moldes
+  usam o mesmo, porque conferir resposta é conferir resposta em qualquer folha.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

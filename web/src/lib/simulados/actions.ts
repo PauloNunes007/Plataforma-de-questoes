@@ -7,10 +7,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { atualizarStreakEDailyLog } from "@/lib/questly/economia";
 import { lerPaginado } from "@/lib/supabase/paginado";
 import { questlyEmbaralhar } from "@/lib/questly/shared";
-import { questlySegundaDaSemana } from "@/lib/questly/liga";
-import { ehPro } from "@/lib/plano/plano";
 import { iniciarPraticaLivreAction } from "@/lib/disciplinas/actions";
 import { nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
+import { dentroDoLimiteSemanal } from "./limite";
+import { questoesJaVistas } from "./vistas";
 import { listarInstituicoes } from "@/lib/questly/contagem-questoes";
 import {
   duracaoProvaOficial,
@@ -25,7 +25,6 @@ import {
   rotuloDasFontes,
 } from "./fontes";
 import {
-  SIMULADO_FREE_LIMITE_SEMANA,
   clampQuantidade,
   ehDuracaoValida,
   ehEstrategiaValida,
@@ -182,46 +181,6 @@ function sortear(
 }
 
 /**
- * Tudo que este aluno já respondeu — as questões das missões (question_attempts)
- * mais as que caíram em simulados anteriores (que não geram attempt, porque um
- * simulado não alimenta o motor de maestria).
- *
- * Lê o histórico DELE, e não os attempts das questões do pool: o histórico de
- * um aluno é um conjunto pequeno e limitado pela própria atividade, enquanto o
- * pool pode ter mil ids e viraria cinco idas ao banco por causa do teto de
- * tamanho de URL (ver lib/supabase/paginado.ts). Falhar aqui não é fatal — o
- * sorteio só perde a preferência por inédito.
- */
-async function questoesJaVistas(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string,
-): Promise<Set<string>> {
-  const vistas = new Set<string>();
-  try {
-    const attempts = await lerPaginado<{ question_id: string | null }>(
-      () => supabase.from("question_attempts").select("question_id").eq("user_id", userId),
-      // Teto: além disso a preferência já não muda nada (o aluno viu tudo) e
-      // não vale segurar a montagem da prova.
-      { ordenarPor: "question_id", maxPaginas: 12 },
-    );
-    for (const a of attempts) if (a.question_id) vistas.add(a.question_id);
-
-    const { data: simulados } = await supabase
-      .from("simulados_aluno")
-      .select("question_ids")
-      .eq("user_id", userId)
-      .order("criado_em", { ascending: false })
-      .limit(100);
-    for (const s of (simulados || []) as { question_ids: string[] | null }[]) {
-      for (const qid of s.question_ids || []) vistas.add(qid);
-    }
-  } catch (e) {
-    console.error("Não foi possível ler o histórico pra priorizar questões inéditas:", e);
-  }
-  return vistas;
-}
-
-/**
  * Título do simulado: precisa ser reconhecível numa lista de vinte. Como toda
  * prova é de UMA disciplina, o nome dela é o escopo; a FONTE ("UFF",
  * "Autorais", "UFF + autorais") entra na frente porque, desde que o aluno pode
@@ -258,32 +217,6 @@ function montarTitulo(
 // da fonte: os ids pedidos são casados contra `vw_instituicoes` e viram valores
 // crus de `questions.instituicao` aqui dentro — o cliente nunca manda um filtro
 // de banco, só um id de um conjunto fechado.
-/**
- * Gate do plano, AUTORITATIVO no servidor: free monta um simulado por semana
- * (janela = semana da liga), Pro é ilimitado. Vale igual pro montador e pra
- * prova antiga oficial — as duas consomem uma prova da semana, porque as duas
- * são uma prova cronometrada inteira.
- */
-async function dentroDoLimiteSemanal(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string,
-): Promise<boolean> {
-  const { data: perfil } = await supabase
-    .from("profiles")
-    .select("plano, plano_expira_em")
-    .eq("id", userId)
-    .maybeSingle();
-  if (ehPro(perfil)) return true;
-
-  const segunda = questlySegundaDaSemana(new Date());
-  const { count } = await supabase
-    .from("simulados_aluno")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .gte("criado_em", segunda);
-  return (count ?? 0) < SIMULADO_FREE_LIMITE_SEMANA;
-}
-
 export async function montarSimuladoAction(input: MontarSimuladoInput): Promise<MontarSimuladoResultado> {
   const supabase = await createClient();
   const {

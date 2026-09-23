@@ -47,6 +47,20 @@ const SOBRA_INUTIL_MM = 14;
 const ALTURA_SEPARADOR_MM = 7.5;
 
 /**
+ * DUAS COLUNAS — o molde da prova impressa de faculdade.
+ *
+ * Um bloco marcado com `data-pdf-coluna="1"` é desenhado com metade da largura
+ * útil e flui: enche a coluna da esquerda, passa pra da direita, e só então
+ * vira a página. Bloco SEM o atributo continua exatamente como antes (largura
+ * inteira), então nada do que já existia muda de comportamento.
+ *
+ * A gola (o vão entre as colunas) é o que impede a última palavra de uma linha
+ * da esquerda de encostar na primeira da direita.
+ */
+const GOLA_COLUNA_MM = 7;
+const LARGURA_COLUNA = (LARGURA_UTIL - GOLA_COLUNA_MM) / 2;
+
+/**
  * Largura em px com que a folha é fotografada.
  *
  * FIXA, e não a largura da tela: sem isso o PDF sairia com a diagramação do
@@ -149,6 +163,14 @@ export async function baixarFolhaEmPdf({
     let y = MARGEM.topo;
     let paginaVazia = true;
 
+    // Estado do modo de duas colunas (ver GOLA_COLUNA_MM). `topoColunas` é a
+    // altura em que a região de colunas começa NESTA página: a coluna da
+    // direita recomeça ali, e não no topo da margem, senão ela subiria por
+    // cima do cabeçalho na primeira página.
+    let emModoColuna = false;
+    let coluna = 0; // 0 = esquerda, 1 = direita
+    let topoColunas = MARGEM.topo;
+
     // ONDE HÁ TEXTO EM CADA PÁGINA.
     //
     // Guardado enquanto a folha é montada porque é aqui — e só aqui — que se
@@ -169,11 +191,27 @@ export async function baixarFolhaEmPdf({
       pagina += 1;
       y = MARGEM.topo;
       paginaVazia = true;
+      coluna = 0;
+      topoColunas = MARGEM.topo;
     };
 
     for (let i = 0; i < blocos.length; i++) {
       const bloco = blocos[i];
       onProgresso?.({ feitos: i, total: blocos.length });
+
+      // Entrada e saída do modo de duas colunas. Um bloco de largura inteira
+      // depois de blocos em coluna começa página nova: encaixá-lo ao lado de
+      // meia coluna já preenchida daria uma folha que ninguém lê na ordem
+      // certa.
+      const emColuna = bloco.dataset.pdfColuna === "1";
+      if (emColuna && !emModoColuna) {
+        emModoColuna = true;
+        topoColunas = y;
+        coluna = 0;
+      } else if (!emColuna && emModoColuna) {
+        emModoColuna = false;
+        if (!paginaVazia || coluna === 1) novaPagina();
+      }
 
       if (bloco.dataset.pdfPagina === "nova" && !paginaVazia) novaPagina();
 
@@ -186,8 +224,23 @@ export async function baixarFolhaEmPdf({
 
       if (canvas.width === 0 || canvas.height === 0) continue;
 
-      const pxPorMm = canvas.width / LARGURA_UTIL;
+      const larguraAlvo = emColuna ? LARGURA_COLUNA : LARGURA_UTIL;
+      const xDoBloco = () =>
+        MARGEM.esquerda + (emColuna && coluna === 1 ? LARGURA_COLUNA + GOLA_COLUNA_MM : 0);
+      const pxPorMm = canvas.width / larguraAlvo;
       const alturaMm = canvas.height / pxPorMm;
+
+      // "Avançar" é a próxima coluna quando há uma, e a próxima página quando
+      // não há. É o único lugar em que as duas coisas se confundem.
+      const avancar = () => {
+        if (emColuna && coluna === 0) {
+          coluna = 1;
+          y = topoColunas;
+          paginaVazia = true;
+        } else {
+          novaPagina();
+        }
+      };
 
       // Filete separando uma questão da anterior. É desenhado DEPOIS de decidir
       // a página, não antes: a primeira versão desenhava e só então descobria
@@ -197,12 +250,11 @@ export async function baixarFolhaEmPdf({
       const querSeparador = bloco.dataset.pdfSeparador === "1";
       const alturaSeparador = querSeparador && !paginaVazia ? ALTURA_SEPARADOR_MM : 0;
 
-      // Bloco que cabe numa página inteira nunca é fatiado: desce inteiro.
-      if (
-        alturaMm <= LIMITE_Y - MARGEM.topo &&
-        y + alturaSeparador + alturaMm > LIMITE_Y
-      ) {
-        novaPagina();
+      // Bloco que cabe numa coluna (ou numa página, fora do modo de colunas)
+      // nunca é fatiado: desce inteiro.
+      const alturaDisponivelCheia = LIMITE_Y - (emColuna ? topoColunas : MARGEM.topo);
+      if (alturaMm <= alturaDisponivelCheia && y + alturaSeparador + alturaMm > LIMITE_Y) {
+        avancar();
       }
 
       if (querSeparador && !paginaVazia) {
@@ -222,7 +274,7 @@ export async function baixarFolhaEmPdf({
       while (offsetPx < canvas.height) {
         const disponivelMm = LIMITE_Y - y;
         if (disponivelMm < SOBRA_INUTIL_MM) {
-          novaPagina();
+          avancar();
           continue;
         }
         const fatiaPx = Math.min(canvas.height - offsetPx, Math.floor(disponivelMm * pxPorMm));
@@ -230,9 +282,9 @@ export async function baixarFolhaEmPdf({
         pdf.addImage(
           fatia.toDataURL("image/jpeg", QUALIDADE_JPEG),
           "JPEG",
-          MARGEM.esquerda,
+          xDoBloco(),
           y,
-          LARGURA_UTIL,
+          larguraAlvo,
           fatiaPx / pxPorMm,
           undefined,
           "FAST",
@@ -242,7 +294,7 @@ export async function baixarFolhaEmPdf({
         y += fatiaPx / pxPorMm;
         paginaVazia = false;
         offsetPx += fatiaPx;
-        if (offsetPx < canvas.height) novaPagina();
+        if (offsetPx < canvas.height) avancar();
       }
 
       descartar(canvas);

@@ -3,6 +3,8 @@
 import { MathText } from "@/components/questao/math-text";
 import type { Pergunta } from "@/lib/questao/types";
 import { ALTURA_RESOLUCAO_MM, alternativasEmLinha, type OpcoesFolha } from "@/lib/imprimir/opcoes";
+import type { Formulario } from "@/lib/imprimir/formulario";
+import { CapaUff, INSTRUCOES_PROVA_PADRAO, MioloUff } from "@/components/imprimir/folha-uff";
 
 // A FOLHA — o que de fato vai pro arquivo.
 //
@@ -42,7 +44,18 @@ import { ALTURA_RESOLUCAO_MM, alternativasEmLinha, type OpcoesFolha } from "@/li
 //    gerador quantos milímetros reservar depois do bloco, e ele desenha isso em
 //    vetor (e deixa quebrar entre páginas, que o miolo não pode).
 
-export type VarianteFolha = "lista" | "prova";
+export type VarianteFolha = "lista" | "prova" | "uff";
+
+/** O que o molde `uff` precisa saber e os outros dois não: qual prova do
+ *  semestre é esta, como a linha abaixo do título se lê e qual formulário a
+ *  banca entrega. Vem pronto do servidor (ver lib/imprimir/formulario.ts). */
+export type MoldeUff = {
+  materiaNome: string;
+  /** "1ª prova - 2º período de 2026  22/09/2026" */
+  linhaProva: string;
+  duracaoRotulo: string | null;
+  formulario: Formulario | null;
+};
 
 export function FolhaProva({
   titulo,
@@ -55,6 +68,7 @@ export function FolhaProva({
   nomeAluno,
   folhaRef,
   variante = "lista",
+  moldeUff = null,
 }: {
   titulo: string;
   disciplina: string | null;
@@ -66,6 +80,7 @@ export function FolhaProva({
   nomeAluno: string | null;
   folhaRef?: React.Ref<HTMLDivElement>;
   variante?: VarianteFolha;
+  moldeUff?: MoldeUff | null;
 }) {
   const hoje = new Date().toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -74,6 +89,32 @@ export function FolhaProva({
   });
   const alturaResolucao = ALTURA_RESOLUCAO_MM[opcoes.espacamento];
   const ehProva = variante === "prova";
+
+  // O molde `uff` é outra folha, não uma variação de estilo desta: capa com
+  // cartão óptico, formulário e miolo em duas colunas. Sai por aqui pra não
+  // encher o corpo comum de condicionais que só valem pra ele.
+  if (variante === "uff" && moldeUff) {
+    return (
+      <div
+        ref={folhaRef}
+        className="folha folha-uff relative mx-auto w-full max-w-[820px] px-6 py-9 sm:px-12"
+      >
+        <MarcaDiagonal email={emailAluno} />
+        <div className="folha-conteudo">
+          <CapaUff
+            materiaNome={moldeUff.materiaNome}
+            linhaProva={moldeUff.linhaProva}
+            instrucoes={instrucoes.length > 0 ? instrucoes : INSTRUCOES_PROVA_PADRAO}
+            totalQuestoes={questoes.length}
+            duracaoRotulo={moldeUff.duracaoRotulo}
+            formulario={moldeUff.formulario}
+          />
+          <MioloUff questoes={questoes} />
+          {opcoes.gabarito && <Gabarito questoes={questoes} opcoes={opcoes} />}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -156,7 +197,27 @@ export function FolhaProva({
         {opcoes.cartaoResposta && <CartaoRespostaImpresso questoes={questoes} />}
 
         {/* -------------------------------------------------- gabarito */}
-        {opcoes.gabarito && (
+        {opcoes.gabarito && <Gabarito questoes={questoes} opcoes={opcoes} />}
+
+        <p className="sans mt-10 border-t border-[#dde2e6] pt-3 text-center text-[10px] text-[#8b949e]">
+          Gerado por Expectrum para {nomeAluno ? `${nomeAluno} · ` : ""}
+          {emailAluno} · uso pessoal
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// Gabarito
+// ---------------------------------------------------------------------------
+
+/** O gabarito (e as resoluções) no fim, em página nova. Compartilhado pelos
+ *  três moldes — o molde `uff` chama esta mesma seção, porque conferir
+ *  resposta é conferir resposta em qualquer folha. */
+function Gabarito({ questoes, opcoes }: { questoes: Pergunta[]; opcoes: OpcoesFolha }) {
+  return (
           <section className="quebra-pagina pt-2">
             {/* O título e a grade são UM bloco no PDF; cada resolução é outro.
                 Se a seção inteira fosse um bloco só, uma página de resoluções
@@ -204,14 +265,6 @@ export function FolhaProva({
               </div>
             )}
           </section>
-        )}
-
-        <p className="sans mt-10 border-t border-[#dde2e6] pt-3 text-center text-[10px] text-[#8b949e]">
-          Gerado por Expectrum para {nomeAluno ? `${nomeAluno} · ` : ""}
-          {emailAluno} · uso pessoal
-        </p>
-      </div>
-    </div>
   );
 }
 
