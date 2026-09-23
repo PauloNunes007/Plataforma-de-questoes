@@ -2669,10 +2669,28 @@ miolo **em duas colunas** serifadas com "1ª questão -" dentro do parágrafo.
   seção**: um formulário plausível mas diferente quebra exatamente a promessa
   de ser igual à prova. Hoje há Física 2 P1 completo, e constantes + integrais
   (idênticas nas duas provas conferidas) pros demais slots.
-- **Duas colunas no gerador de PDF** (`lib/imprimir/gerar-pdf.ts`): bloco com
-  `data-pdf-coluna="1"` sai com metade da largura útil e FLUI — enche a
-  esquerda, passa pra direita, vira a página. Bloco sem o atributo se comporta
-  exatamente como antes. `topoColunas` guarda onde a região de colunas começa
+- **Duas colunas em DOIS lugares, e os dois são obrigatórios.** No gerador
+  (`lib/imprimir/gerar-pdf.ts`), bloco com `data-pdf-coluna="1"` sai com metade
+  da largura útil e FLUI — enche a esquerda, passa pra direita, vira a página;
+  bloco sem o atributo se comporta exatamente como antes. **E no DOM**, via
+  `column-count: 2` no `<ol>` do miolo. O segundo não é estética: o gerador
+  fotografa o bloco e ESCALA a imagem pra largura de destino, então um bloco
+  que ocupa a folha inteira no DOM, desenhado em meia coluna, sai com a letra
+  pela METADE do tamanho — foi exatamente o defeito do primeiro PDF gerado, e
+  o visualizador não mostrava porque ali o bloco tinha a largura certa. Com
+  `column-count`, o `<li>` já nasce com a largura de uma coluna e a escala
+  fecha: (664px − gola)/2 sobre 87,5mm dá os mesmos ~3,65 px/mm de um bloco
+  inteiro sobre 182mm. A gola do DOM vai em **porcentagem** (7/182 = 3,85%)
+  pra acompanhar `GOLA_COLUNA_MM` em qualquer largura de render — **mexeu num,
+  mexa no outro**. De quebra a tela passou a mostrar o que o PDF vai ser, com
+  a mesma ordem de leitura (desce a esquerda, depois a direita).
+- **As questões começam em página nova** (`data-pdf-pagina="nova"` no primeiro
+  bloco do miolo): a capa é a folha que o professor recolhe — é pra isso que
+  serve o tracejado de corte.
+- **As instruções do molde `uff` são as da prova, não as do chamador.** A
+  página de impressão passa instruções escritas pro molde `prova` ("a prova tem
+  13 questões e duração de 1h30") e, somadas às que a capa gera a partir desta
+  prova, saíam duplicadas na folha. `topoColunas` guarda onde a região de colunas começa
   na página (a coluna da direita recomeça ali, não na margem, senão subiria por
   cima da capa), e `avancar()` é o único ponto em que "próxima coluna" e
   "próxima página" se confundem. **Um bloco de largura inteira depois de blocos

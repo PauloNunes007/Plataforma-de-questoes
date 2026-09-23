@@ -104,7 +104,7 @@ export function FolhaProva({
           <CapaUff
             materiaNome={moldeUff.materiaNome}
             linhaProva={moldeUff.linhaProva}
-            instrucoes={instrucoes.length > 0 ? instrucoes : INSTRUCOES_PROVA_PADRAO}
+            instrucoes={INSTRUCOES_PROVA_PADRAO}
             totalQuestoes={questoes.length}
             duracaoRotulo={moldeUff.duracaoRotulo}
             formulario={moldeUff.formulario}

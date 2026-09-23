@@ -30,6 +30,13 @@ import { type Formulario, tituloFormulario } from "@/lib/imprimir/formulario";
 const LINHAS_CARTAO = 20;
 const LETRAS_CARTAO = ["A", "B", "C", "D", "E"] as const;
 
+/**
+ * As instruções da prova, na ordem da folha original. O molde `uff` usa SEMPRE
+ * esta lista, e não a que o chamador passa: a do chamador é escrita pro molde
+ * `prova` ("a prova tem 13 questões e duração de 1h30") e, somada aos itens que
+ * a capa gera a partir desta prova, saía duplicada — "1- A prova tem 13
+ * questões" seguido de "4- A prova consiste em 13 questões objetivas".
+ */
 export const INSTRUCOES_PROVA_PADRAO = [
   "Escreva seu nome de forma LEGÍVEL na folha do cartão de respostas.",
   "Analise sua resposta. Ela faz sentido? Isso poderá ajudá-lo a encontrar erros.",
@@ -37,6 +44,7 @@ export const INSTRUCOES_PROVA_PADRAO = [
   "Marque as respostas das questões no CARTÃO RESPOSTA preenchendo integralmente o círculo (com caneta) referente a sua resposta.",
   "É permitido o uso de calculadora científica simples, sem conectividade e sem gráficos.",
   "Não é permitido portar celular (mesmo que desligado) durante a prova.",
+  "Ao terminar, transcreva as marcações no Expectrum pra receber a correção, o tempo por questão e a análise de erros.",
 ];
 
 // ---------------------------------------------------------------------------
@@ -290,9 +298,32 @@ function AlternativasUff({ q }: { q: Pergunta }) {
  */
 export function MioloUff({ questoes }: { questoes: Pergunta[] }) {
   return (
-    <ol className="mt-5 flex flex-col">
+    // DUAS COLUNAS DE VERDADE, no DOM — e não só no gerador de PDF.
+    //
+    // Isto não é estética: `gerar-pdf.ts` fotografa cada bloco e ESCALA a
+    // imagem pra largura de destino. Um bloco que ocupa a folha inteira no DOM,
+    // desenhado em meia coluna, sai com a letra pela METADE do tamanho — foi
+    // exatamente o defeito do primeiro PDF. Com `column-count`, o <li> já nasce
+    // com a largura de uma coluna e a escala fecha: (664px − gola)/2 sobre
+    // 87,5mm dá os mesmos 3,65 px/mm de um bloco inteiro sobre 182mm.
+    //
+    // A gola vai em PORCENTAGEM (7mm / 182mm) pra acompanhar `GOLA_COLUNA_MM`
+    // do gerador seja qual for a largura de render. Se mexer num, mexa no outro.
+    //
+    // De quebra, a tela passa a mostrar o que o PDF vai ser — e a ordem de
+    // leitura é a mesma: desce a coluna da esquerda, depois a da direita.
+    <ol className="mt-5" style={{ columnCount: 2, columnGap: "3.85%" }}>
       {questoes.map((q, i) => (
-        <li key={q.id} className="pb-6" data-pdf="bloco" data-pdf-coluna="1">
+        <li
+          key={q.id}
+          className="pb-6"
+          style={{ breakInside: "avoid" }}
+          data-pdf="bloco"
+          data-pdf-coluna="1"
+          // A capa é a folha que o professor recolhe (por isso o tracejado de
+          // corte): as questões começam em página nova, como na prova real.
+          data-pdf-pagina={i === 0 ? "nova" : undefined}
+        >
           <div className="text-justify text-[12.5px] leading-[1.5] text-black">
             <span className="font-bold">{i + 1}ª questão - </span>
             <MathText text={q.enunciado} />
