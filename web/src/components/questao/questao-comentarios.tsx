@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, MessageCircle, Pencil, Reply, Send, Trash2, X } from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
+import { BotaoAcao } from "@/components/ui/botao-acao";
 import {
   alternarCurtidaAction,
   carregarComentariosAction,
@@ -498,15 +499,24 @@ export function QuestaoComentarios({ questionId, ehAdmin }: { questionId: string
 
   return (
     <>
-      <button
-        type="button"
+      {/* Mesmo BotaoAcao do resto do grupo (resolução / estatísticas): o gatilho
+          da discussão tinha o próprio estilo, com fundo `/50` que sumia sobre o
+          cartão. Aqui é o componente da plataforma — mesma altura, mesmo
+          contraste, mesma borda. */}
+      <BotaoAcao
+        tom="green"
         onClick={abrir}
-        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-questly-green/30 bg-questly-green-light/50 px-4 py-3 text-sm font-semibold text-questly-green-dark transition-colors hover:bg-questly-green-light"
+        icone={<MessageCircle size={15} strokeWidth={2.2} />}
+        sufixo={
+          total != null && total > 0 ? (
+            <span className="tnum rounded-full bg-questly-green/15 px-1.5 py-0.5 text-[11.5px] font-bold">
+              {total}
+            </span>
+          ) : undefined
+        }
       >
-        <MessageCircle size={15} strokeWidth={2} />
         Discussão
-        {total != null && total > 0 && <span className="tnum">· {total}</span>}
-      </button>
+      </BotaoAcao>
       {typeof document !== "undefined" && createPortal(drawer, document.body)}
     </>
   );

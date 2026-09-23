@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Flag, NotebookPen, Sparkles, Star, StickyNote } from "lucide-react";
 import { MathKeyboard } from "@/components/questao/math-keyboard";
+import { BarraAcoes, BotaoAcao, type TomAcao } from "@/components/ui/botao-acao";
 import { MOTIVOS_REPORT, type MotivoReport } from "@/lib/anotacoes/types";
 import { reportarQuestaoAction } from "@/lib/anotacoes/actions";
 
@@ -13,6 +14,19 @@ import { reportarQuestaoAction } from "@/lib/anotacoes/actions";
 // das Server Actions. Redesign fintech (2026-07): pills rotuladas em vez de
 // ícones soltos, painéis animados, anotação com teclado de fórmulas.
 
+/**
+ * Uma ação da barra. Delega no BotaoAcao da plataforma
+ * (components/ui/botao-acao.tsx) — antes tinha estilo próprio, e no estado
+ * INATIVO não tinha fundo nem borda nenhuma: só `text-muted-foreground` sobre
+ * cartão branco. O aluno não percebia que "Favoritar", "Anotar" e "Caderno"
+ * eram botões. Agora inativo é cartão com borda (tom neutro) e ativo é o tom
+ * da ação — a cor passa a dizer "ligado", em vez de dizer "existe".
+ *
+ * `tamanho="sm"` porque esta barra fica acima do enunciado, ao lado dos selos
+ * de dificuldade/instituição: ela acompanha o conteúdo, e o grupo de altura
+ * cheia é o do pós-resposta (resolução / estatísticas / discussão). Todas as
+ * quatro têm a mesma altura entre si, que é o que importa.
+ */
 function Pill({
   ativo,
   cor,
@@ -21,34 +35,21 @@ function Pill({
   onClick,
 }: {
   ativo: boolean;
-  cor: "gold" | "blue" | "red" | "purple";
+  cor: TomAcao;
   icone: React.ReactNode;
   rotulo: string;
   onClick: () => void;
 }) {
-  const estilos = {
-    gold: "bg-questly-gold-light text-questly-gold-dark ring-questly-gold/30",
-    blue: "bg-questly-blue-light text-questly-blue-dark ring-questly-blue/30",
-    red: "bg-questly-red-light text-questly-red-dark ring-questly-red/30",
-    // roxo = o Caderno como LUGAR (mesmo papel de cor do cartão dele no hub
-    // de Questões e do item no trilho da home)
-    purple: "bg-questly-purple/12 text-questly-purple ring-questly-purple/30",
-  }[cor];
-
   return (
-    <button
-      type="button"
+    <BotaoAcao
+      tom={ativo ? cor : "neutro"}
+      tamanho="sm"
+      ativo={ativo}
       onClick={onClick}
-      aria-pressed={ativo}
-      className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-all ${
-        ativo
-          ? `${estilos} ring-1`
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      }`}
+      icone={icone}
     >
-      {icone}
       {rotulo}
-    </button>
+    </BotaoAcao>
   );
 }
 
@@ -135,7 +136,7 @@ export function QuestaoAcoes({
 
   return (
     <div className="mb-6">
-      <div className="flex flex-wrap items-center gap-1">
+      <BarraAcoes>
         <Pill
           ativo={favoritado}
           cor="gold"
@@ -166,7 +167,7 @@ export function QuestaoAcoes({
           rotulo="Reportar"
           onClick={() => setPainel((p) => (p === "report" ? null : "report"))}
         />
-      </div>
+      </BarraAcoes>
 
       <AnimatePresence initial={false} mode="wait">
         {painel === "nota" && (

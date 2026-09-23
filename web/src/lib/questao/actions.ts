@@ -25,6 +25,11 @@ import {
 } from "@/lib/questly/chance-aprovacao";
 import { restanteDoDia } from "@/lib/plano/limites";
 import {
+  ESTATISTICAS_VAZIAS,
+  resumirDistribuicao,
+  type EstatisticasQuestao,
+} from "@/lib/questao/estatisticas";
+import {
   CONTINUACOES_VAZIAS,
   calcularContinuacoes,
   tamanhoDaContinuacao,
@@ -305,6 +310,58 @@ export async function registrarRespostaAction(input: {
     questoesHoje,
     bloqueado: false,
   };
+}
+
+/**
+ * Estatísticas públicas de uma questão — o painel de "Estatísticas desta
+ * questão" na tela de resolução. Lê a view agregada
+ * `vw_distribuicao_respostas` (supabase_estatisticas_questao.sql); a
+ * matemática e o porquê do desenho estão em `lib/questao/estatisticas.ts`.
+ *
+ * É sob demanda (o aluno abre o painel) e só depois de ele responder: a
+ * distribuição diz qual letra a maioria marcou, o que antes da resposta seria
+ * o gabarito de graça.
+ */
+export async function carregarEstatisticasQuestaoAction(
+  questionId: string,
+): Promise<EstatisticasQuestao | { error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sessão expirada. Entre de novo." };
+
+  const { data: questao, error: erroQuestao } = await supabase
+    .from("questions")
+    .select("gabarito, alternativas, tempo_medio_seg")
+    .eq("id", questionId)
+    .single();
+  if (erroQuestao || !questao) {
+    return { error: "Não foi possível carregar essa questão." };
+  }
+
+  const { data: linhas, error: erroView } = await supabase
+    .from("vw_distribuicao_respostas")
+    .select("letra, total")
+    .eq("question_id", questionId);
+
+  // A view não existe (migração não rodada) ou a leitura falhou: devolve o
+  // estado vazio em vez de erro. Uma seção de estatística que derruba a tela de
+  // resolução é pior que uma que diz "ainda sem dados" — e é por isso que
+  // supabase_estatisticas_questao.sql não é deploy blocker.
+  if (erroView) {
+    console.error("Estatísticas da questão indisponíveis:", erroView);
+    return { ...ESTATISTICAS_VAZIAS, tempoMedioSeg: questao.tempo_medio_seg ?? null };
+  }
+
+  return resumirDistribuicao({
+    linhas: linhas ?? [],
+    gabarito: questao.gabarito,
+    letrasQuestao: Object.keys(
+      (questao.alternativas as Record<string, string> | null) ?? {},
+    ),
+    tempoMedioSeg: questao.tempo_medio_seg ?? null,
+  });
 }
 
 export async function classificarMotivoErroAction(

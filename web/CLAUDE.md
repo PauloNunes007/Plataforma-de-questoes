@@ -2736,6 +2736,134 @@ Regras do manual que valem como contrato de dados:
 Aprovadas, entram no sorteio normal e na prova prevista daquele slot — a
 previsão sorteia por tópico e dificuldade, **não por origem**.
 
+## A tela de resolver questão: proporção, contraste e estatística (2026-09-23)
+
+Repasse pedido pelo dono com prints da tela ao lado de outra plataforma, usada
+como referência **de proporção e organização** (não de estilo: o tema escuro e
+as cores dela ficaram de fora de propósito). Três problemas e um recurso novo.
+
+### 1. Os botões eram de três réguas diferentes
+
+`Confirmar resposta` era `w-full` + `py-3.5` — uma barra da largura do cartão,
+o elemento mais alto da tela. `Próxima` era `flex-1` com
+`shadow-lg shadow-black/15`, e `Anterior` cabia em `w-[110px]`. No runner de
+simulados, a MESMA navegação era `py-2.5` com "Anterior" em
+`text-muted-foreground`. Ou seja: quatro botões da mesma família, quatro
+tamanhos, nenhum deles decidido.
+
+Agora existe **um componente da plataforma**, `components/ui/botao-nav.tsx`
+(`BotaoNav` + `BarraNav`), e os dois runners o usam:
+
+- **altura fixa** por tamanho (`md` 44px, `lg` 48px), igual pros três botões do
+  mesmo fluxo. "Proporcionais entre si" passa a ser verdade por construção, e
+  não por coincidência de padding;
+- **largura limitada**. No desktop cada variante tem `min-w` (primário 184px,
+  secundário 140px — razão de ~1,3x, nunca "slab × botãozinho") e nada de
+  `w-full`; no celular os dois dividem a linha em partes iguais, que é o único
+  caso em que ocupar tudo é a leitura certa. O `Confirmar` fica em
+  `sm:min-w-[260px]`, a linha inteira só no celular;
+- **uma sombra só** (`elev-sm`, a escala do design system) em lugar do
+  `shadow-lg shadow-black/15` que fazia o CTA flutuar acima do cartão;
+- a hierarquia veio **da cor** — primário é o gradiente da marca, secundário é
+  cartão com borda de verdade e texto `foreground` (o `text-muted-foreground`
+  anterior fazia "Anterior" parecer desabilitado).
+
+O contador `n / total` entrou no meio da barra: quem está no fim de uma lista de
+30 não precisa rolar até o topo pra saber onde está.
+
+**"Anterior" já existia no runner de questões** (o print do dono é anterior a
+ele, ou de uma largura em que os 110px o escondiam ao lado do slab verde); o que
+mudou foi ele deixar de parecer um acessório. No de simulados também já existia.
+
+### 2. As ações secundárias eram quase invisíveis
+
+`Ver resolução` e `Discussão` usavam `bg-questly-gold-light/50` e
+`bg-questly-green-light/50` — o `/50` sobre cartão branco apaga o fundo. Pior: as
+pílulas de `QuestaoAcoes` (Favoritar / Caderno / Anotar / Reportar), no estado
+INATIVO, não tinham fundo nem borda nenhuma, só `text-muted-foreground`. O aluno
+não tinha como saber que eram botões.
+
+`components/ui/botao-acao.tsx` (`BotaoAcao` + `BarraAcoes`) é o segundo
+componente da plataforma que saiu deste repasse, e agora atende os três lugares
+(runner, gatilho da Discussão, barra do `QuestaoAcoes` — que aparece também em
+`/questoes/favoritos` e `/questoes/anotacoes`):
+
+- fundo e borda **sólidos**. Os pares usados (`-light` de fundo, `-dark` de
+  texto) são os mesmos já aferidos em AA no repasse de cor da marca; o que mudou
+  foi tirar o `/50` que os diluía. Inativo virou "cartão com borda" (tom
+  `neutro`), então a cor passa a dizer **ligado**, em vez de dizer **existe**;
+- altura fixa por tamanho, igual pra todos os botões do MESMO grupo — é o que
+  faz o grupo ler como grupo;
+- `destaque` (anel + sombra, **nunca** tamanho) para UMA ação por contexto. Hoje
+  é o `Ver resolução` logo depois de confirmar, que era justamente a ação mais
+  importante do instante e a mais apagada da tela. Destacar crescendo quebraria
+  a regra da altura na primeira vez que fosse usado.
+
+### 3. Estatísticas da questão (`supabase_estatisticas_questao.sql`)
+
+Recurso novo: `components/questao/estatisticas-questao.tsx`, atrás do botão
+`Estatísticas` do grupo pós-resposta.
+
+**O dado.** `question_attempts` tem RLS dono-only, então contar no cliente daria
+a estatística de UMA pessoa disfarçada de estatística da plataforma — a mesma
+classe de número que mente na tela que `supabase_ranking_fiel.sql` gastou uma
+migração inteira consertando. A migração cria `vw_distribuicao_respostas`, uma
+view **agregada** (`question_id`, letra, contagem — nenhum `user_id`, nenhuma
+data), `security invoker = false` como `vw_ranking_provas_oficiais`: é o que
+deixa a agregação enxergar as tentativas de todo mundo sem expor linha nenhuma.
+RLS não serviria, porque RLS filtra LINHA e o que precisa sair daqui é o agregado
+de linhas que o aluno não pode ver.
+
+**Por que é buscado sob demanda** (`carregarEstatisticasQuestaoAction` em
+`lib/questao/actions.ts`, matemática pura em `lib/questao/estatisticas.ts`): a
+distribuição diz qual letra a maioria marcou, então vir junto com a lista seria
+entregar o gabarito no HTML antes de o aluno responder. E uma lista tem até 40
+questões: carregar as 40 pra que ele talvez abra uma seria pagar 40 agregações
+por lista.
+
+**A taxa de acerto sai da MESMA soma das barras.** Havia o caminho fácil de ler
+o percentual de `questions.acertos_total` (supabase_rede_neural.sql) e as barras
+da view — e aí o anel discordaria do gráfico ao lado dele. Dois lugares pra mesma
+verdade, de novo.
+
+**Amostra mínima** (`EST_MIN_AMOSTRA` = 8, no app e não na view, porque é régua
+de produto): abaixo disso a tela diz quantas pessoas responderam e que ainda não
+dá pra falar da questão, em vez de desenhar um gráfico de duas barras que
+descreve essas pessoas.
+
+**O desenho** segue as regras de `components/simulados/graficos/base.tsx` (o app
+não precisa de um segundo idioma de gráfico): SVG na mão, cor é STATUS e não hue
+por categoria — VERDE é o gabarito, ÂMBAR o distrator que mais pega gente, CINZA
+o resto; nenhum valor mora só no hover. O que ele acrescenta a um gráfico de
+barras:
+
+- **anel de acerto** de 260° (mesma abertura do anel de nota dos simulados),
+  escala 0–100% sempre desenhada por inteiro, e o rótulo fala da QUESTÃO
+  ("divide a turma", "das que mais derrubam") — nunca do aluno;
+- **cápsulas** escaladas pela MAIOR fatia, não por 100%: numa questão em que a
+  distribuição toda cabe em 40%, escalar por 100 deixaria todas rasas e
+  visualmente iguais. O percentual real está escrito ao lado, então a escala
+  relativa não engana;
+- a cápsula do **gabarito** é mais alta e tem brilho próprio — é o realce da
+  alternativa certa DENTRO do gráfico, sem depender de legenda;
+- a **régua do chute**: hairline vertical em 100/n %. É ela que transforma "37%
+  marcaram a C" em informação — acima dela o distrator atrai gente de verdade,
+  abaixo é ruído de chute. Mesmo papel da marca da metade no anel de nota;
+- a **pegadinha é nomeada** em uma frase. Saber que metade da turma caiu na
+  mesma armadilha é o que muda o estudo depois do erro.
+
+**Estado no `useEstatisticasQuestao`, não em efeito.** A busca acontece no
+handler do clique, e o resultado é guardado **indexado pelo question_id**: um
+`dados` único com reset na troca de questão não basta — se o aluno avança antes
+de a resposta chegar, o `.then` escreveria a estatística da questão velha no
+estado da nova. De graça, voltar pro "Anterior" não refaz a busca. O painel fecha
+na troca de questão por ajuste durante o render (o padrão do React pra estado que
+depende de prop), porque `react-hooks/set-state-in-effect` proíbe o efeito.
+
+Nada disso é escrita: não paga XP, não acende ofensiva, não entra no ranking.
+A migração **não é deploy blocker** — sem a view, a action devolve o estado vazio
+e a seção diz "ainda sem dados" em vez de derrubar a tela de resolução.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).

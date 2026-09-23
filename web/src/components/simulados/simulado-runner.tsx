@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { MathText } from "@/components/questao/math-text";
+import { BarraNav, BotaoNav } from "@/components/ui/botao-nav";
 import { FiguraQuestao, figurasDaPergunta, usePrefetchFiguras } from "@/components/questao/figura-questao";
 import type { SimuladoCompleto } from "@/lib/simulados/simulados-data";
 import {
@@ -362,34 +363,42 @@ export function SimuladoRunner({
               })}
             </div>
 
-            {/* Navegação prev/next */}
-            <div className="mt-6 flex items-center justify-between gap-3">
-              <button
-                type="button"
+            {/* Navegação prev/next — mesmos botões do runner de questões
+                (components/ui/botao-nav.tsx). Aqui eram `py-2.5` com "Anterior"
+                em `text-muted-foreground`, ou seja: a mesma ação com outra
+                régua e menos contraste que na outra tela. */}
+            <BarraNav className="mt-6">
+              <BotaoNav
+                variante="secundario"
                 disabled={indice === 0}
                 onClick={() => setIndice((i) => Math.max(0, i - 1))}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-questly-green/40 disabled:pointer-events-none disabled:opacity-40"
+                iconeInicio={<ArrowLeft size={16} strokeWidth={2.2} />}
               >
-                <ArrowLeft size={15} /> Anterior
-              </button>
+                Anterior
+              </BotaoNav>
+
+              <span className="tnum hidden shrink-0 text-[12.5px] font-semibold text-muted-foreground sm:block">
+                {indice + 1} / {perguntas.length}
+              </span>
+
               {indice < perguntas.length - 1 ? (
-                <button
-                  type="button"
+                <BotaoNav
+                  variante="primario"
                   onClick={() => setIndice((i) => Math.min(perguntas.length - 1, i + 1))}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+                  iconeFim={<ArrowRight size={16} strokeWidth={2.4} />}
                 >
-                  Próxima <ArrowRight size={15} />
-                </button>
+                  Próxima
+                </BotaoNav>
               ) : (
-                <button
-                  type="button"
+                <BotaoNav
+                  variante="primario"
                   onClick={() => setConfirmar(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-questly-green px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.98] dark:text-[#0c1512]"
+                  iconeInicio={<Flag size={16} strokeWidth={2.2} />}
                 >
-                  <Flag size={15} /> Finalizar
-                </button>
+                  Finalizar
+                </BotaoNav>
               )}
-            </div>
+            </BarraNav>
           </motion.div>
         </AnimatePresence>
         </>

@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Atom,
+  BarChart3,
   BookOpen,
   Brain,
   BrainCircuit,
@@ -80,6 +81,12 @@ import {
 import type { MissaoResumo, Pergunta } from "@/lib/questao/types";
 import { hrefQuestao, rotuloOrigem } from "@/lib/questao/navegacao";
 import { ConviteLembrete } from "@/components/pwa/convite-lembrete";
+import {
+  PainelEstatisticas,
+  useEstatisticasQuestao,
+} from "@/components/questao/estatisticas-questao";
+import { BarraNav, BotaoNav } from "@/components/ui/botao-nav";
+import { BarraAcoes, BotaoAcao } from "@/components/ui/botao-acao";
 
 type EstadoPergunta = {
   selecionada: string | null;
@@ -857,14 +864,23 @@ export function QuestaoRunner({
         </div>
 
         {!estado.respondida ? (
-          <button
-            type="button"
+          /* Antes era uma barra de largura INTEIRA com `py-3.5`: o botão mais
+             alto e mais largo da tela, do tamanho de um banner, ao lado de um
+             "Anterior" de 110px. Agora é o mesmo BotaoNav da barra de baixo, na
+             mesma altura dela — a ênfase vem da cor, não do tamanho. No celular
+             ele ocupa a linha (aí "ocupar tudo" é a leitura certa); no desktop
+             para em ~260px. */
+          <BotaoNav
+            variante="primario"
+            tamanho="lg"
+            largura="auto"
             disabled={!estado.selecionada}
             onClick={confirmarResposta}
-            className="w-full cursor-pointer rounded-xl bg-questly-green px-6 py-3.5 text-[15px] font-medium text-white shadow-sm transition-all hover:brightness-105 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-40 dark:text-[#0c1512]"
+            iconeFim={<Check size={16} strokeWidth={2.4} />}
+            className="w-full sm:w-auto sm:min-w-[260px]"
           >
             Confirmar resposta
-          </button>
+          </BotaoNav>
         ) : (
           <FeedbackArea
             key={pergunta.id}
@@ -879,39 +895,39 @@ export function QuestaoRunner({
         )}
       </div>
 
-      <div className="mt-4 flex gap-3">
-        <button
-          type="button"
+      {/* Barra de navegação. Os dois botões vêm do mesmo componente da
+          plataforma (components/ui/botao-nav.tsx), então têm a MESMA altura e
+          larguras na mesma ordem de grandeza — antes "Próxima" era `flex-1`
+          com `shadow-lg` e "Anterior" cabia em 110px, o que fazia voltar
+          parecer uma opção de segunda classe. O contador no meio dá a
+          referência de onde ele está sem precisar rolar até o topo. */}
+      <BarraNav className="mt-4">
+        <BotaoNav
+          variante="secundario"
           disabled={indiceAtual === 0}
           onClick={() => navegarPara(indiceAtual - 1)}
-          className="inline-flex w-[110px] shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-2 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40 sm:w-[150px]"
+          iconeInicio={<ArrowLeft size={16} strokeWidth={2.2} />}
         >
-          <ArrowLeft size={15} strokeWidth={2} />
           Anterior
-        </button>
-        <button
-          type="button"
+        </BotaoNav>
+
+        <span className="tnum hidden shrink-0 text-[12.5px] font-semibold text-muted-foreground sm:block">
+          {indiceAtual + 1} / {perguntasState.length}
+        </span>
+
+        <BotaoNav
+          variante="primario"
           disabled={finalizando}
           onClick={handleProximo}
-          /* O gradiente esmeralda cru (#10b981 → #047857) era o único verde do
-             app fora dos tokens da marca: mais claro, mais saturado e — no
-             botão que o aluno mais aperta — o brilho que mais cansava. Agora
-             ele é a própria marca, do tom padrão ao "deep". */
-          className="group relative inline-flex flex-1 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-black/15 transition-all hover:shadow-xl hover:shadow-black/20 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 dark:text-[#04120c]"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--questly-green), var(--questly-green-dark) 60%, var(--questly-green-deep))",
-          }}
+          iconeFim={!finalizando ? <ArrowRight size={16} strokeWidth={2.4} /> : undefined}
         >
-          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
           {finalizando
             ? "Finalizando..."
             : indiceAtual < perguntasState.length - 1
               ? "Próxima"
               : "Finalizar missão"}
-          {!finalizando && <ArrowRight size={15} strokeWidth={2.25} />}
-        </button>
-      </div>
+        </BotaoNav>
+      </BarraNav>
     </div>
   );
 }
@@ -934,6 +950,7 @@ function FeedbackArea({
   ehAdmin: boolean;
 }) {
   const [mostrarResolucao, setMostrarResolucao] = useState(false);
+  const estatisticas = useEstatisticasQuestao(pergunta.id);
   const degrauAtingido = estado.correta
     ? questlyDegrauCombo(estado.combo)
     : null;
@@ -1069,19 +1086,38 @@ function FeedbackArea({
         </motion.button>
       )}
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      {/* GRUPO DE AÇÕES DO PÓS-RESPOSTA. Os três botões vêm do mesmo
+          componente (components/ui/botao-acao.tsx) e têm a mesma altura, então
+          leem como um grupo — antes eram três estilos escritos à mão, todos
+          com fundo semitransparente (`/50`) que praticamente desaparecia sobre
+          o cartão branco.
+
+          "Ver resolução" leva `destaque`: é a ação mais importante do instante
+          seguinte à resposta e era justamente a que passava batida. O destaque
+          é anel e sombra, nunca tamanho — crescer quebraria o grupo. */}
+      <BarraAcoes className="mb-4">
         {pergunta.resolucao && (
-          <button
-            type="button"
+          <BotaoAcao
+            tom="gold"
+            destaque={!mostrarResolucao}
+            ativo={mostrarResolucao}
             onClick={() => setMostrarResolucao((v) => !v)}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-questly-gold/30 bg-questly-gold-light/50 px-4 py-3 text-sm font-semibold text-questly-gold-dark transition-colors hover:bg-questly-gold-light"
+            icone={<Lightbulb size={15} strokeWidth={2.2} />}
           >
-            <Lightbulb size={15} strokeWidth={2} />
             {mostrarResolucao ? "Ocultar resolução" : "Ver resolução"}
-          </button>
+          </BotaoAcao>
         )}
+        <BotaoAcao
+          tom="purple"
+          ativo={estatisticas.aberto}
+          onClick={estatisticas.alternar}
+          icone={<BarChart3 size={15} strokeWidth={2.2} />}
+        >
+          Estatísticas
+        </BotaoAcao>
         <QuestaoComentarios questionId={pergunta.id} ehAdmin={ehAdmin} />
-      </div>
+      </BarraAcoes>
+
 
       <AnimatePresence initial={false}>
         {pergunta.resolucao && mostrarResolucao && (
@@ -1106,6 +1142,11 @@ function FeedbackArea({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* O painel fica DEPOIS da resolução expandida de propósito: "Ver
+          resolução" é a ação em destaque, e o que ela abre tem que nascer
+          colado nos botões — não depois de um gráfico de 200px. */}
+      <PainelEstatisticas estado={estatisticas} />
 
       {!estado.correta && !ehPro && (
         <Link
