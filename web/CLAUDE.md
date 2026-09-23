@@ -2683,6 +2683,41 @@ miolo **em duas colunas** serifadas com "1ª questão -" dentro do parágrafo.
 - `Gabarito` virou componente próprio em `folha-prova.tsx` — os três moldes
   usam o mesmo, porque conferir resposta é conferir resposta em qualquer folha.
 
+### Fatia 3 — questões autorais no estilo da banca (2026-09-22)
+
+"Escrever uma questão parecida com a da UFF" é pedido vago até alguém dizer
+**parecida em quê**. `scripts/briefing-banca.ts` responde com dado medido:
+dado um curso e um slot, ele lê as provas reais e escreve um dossiê em
+`listas_questoes/gerado/briefings/<curso>-<slot>.md` com a composição, o mix de
+dificuldade, o **inventário de arquétipos** (os `subtopico` das provas — é ali
+que o estilo mora: não é "questão de Gauss", é "indução em casca esférica
+condutora com carga puntiforme no centro") e **exemplares íntegros** dos mais
+recentes, que respondem o que instrução nenhuma responde (comprimento do
+enunciado, números redondos ou feios, I/II/III ou valor direto).
+
+Gerados hoje: `fis2-p1` (7 edições), `fis2-p2` (8), `fis2-p3` (7) e `fis1-p2`
+(21 edições, confiança média — a prova varia de 7 a 20 questões).
+
+**Nenhuma questão é gerada por máquina dentro do app, e isso é decisão, não
+limitação.** A autoria segue o fluxo que este repositório já tem — briefing +
+agente + `/importar` (ver `AGENTE_QUESTOES_AUTORAIS.md`, par do
+`AGENTE_PROVA_UFF_FIS2.md`) — porque ali já existem a detecção de duplicata, o
+LaTeX renderizado e o olho humano. Uma questão com gabarito errado destrói a
+confiança no banco inteiro, e o aluno não tem como saber que o erro é nosso.
+
+Regras do manual que valem como contrato de dados:
+
+- **`instituicao: "Expectrum"`** e **`prova_codigo` ausente**. Questão nossa
+  catalogada como prova da universidade é mentira no banco — e vazaria pro
+  acervo público de provas antigas;
+- questão que o autor não consegue resolver é descartada, e cada distrator tem
+  que ser um **erro plausível e nomeável**, nunca número aleatório;
+- seguir a composição e o mix do briefing: um lote só de difíceis desequilibra
+  o sorteio da prova prevista, que tenta bater o mix real.
+
+Aprovadas, entram no sorteio normal e na prova prevista daquele slot — a
+previsão sorteia por tópico e dificuldade, **não por origem**.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).
