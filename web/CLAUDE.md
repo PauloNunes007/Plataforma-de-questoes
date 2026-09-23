@@ -2558,6 +2558,65 @@ humana.
   convite não aparece e o cron responde 503. O PWA continua funcionando (não
   depende delas). Dependência nova: `web-push`.
 
+## Gêmeo da Banca (2026-09-22) — `lib/banca/perfil.ts`
+
+**Primeira fatia de uma feature nova, e só a matemática: não há tela ainda.**
+A tese é que uma prova real é uma AMOSTRA da distribuição geradora de um
+professor — e o acervo de `supabase_provas_oficiais.sql` já tem amostra
+suficiente pra descrever essa distribuição com número em vez de impressão.
+Medido no corpus de `listas_questoes/gerado/` (43 provas, 621 questões):
+
+- **fis2-uff-P1**, 7 edições: `A Lei de Gauss` e `O Campo Elétrico` em **7 de
+  7**, `A Lei de Coulomb` em 7 de 7 com 2–3 questões, `Potencial Elétrico` em
+  3 de 7. A P1 **é** ~6 + ~5 + ~3.
+- **fis2-uff-P3**, 7 edições: `O Campo Magnético` 7/7 (média 7,1), `Indução`
+  7/7, `Oscilações e CA` 7/7. Sete tópicos da matéria **nunca** caíram nessa
+  prova — e "o que nunca cai" é metade do valor do perfil.
+- **fis1-uff-P2**, 21 edições (2014.1 → 2026.1): o caso que obriga o
+  decaimento de recência. `Rotação de Corpo Rígido` caiu em 9 das 21 edições
+  (média simples 1,8) e a média **ponderada** é 0,2 — o professor parou de
+  cobrar, e uma média simples continuaria prevendo rotação por anos.
+
+Decisões do módulo que não devem ser afrouxadas:
+
+- **É puro e devolve `null`.** Sem Supabase, constantes calibráveis exportadas
+  no topo, na convenção de `motor-aprovacao.ts`. Abaixo de `BANCA_MIN_EDICOES`
+  (3) não existe perfil — a mesma disciplina de `questlyCalcularMetricas`, que
+  se recusa a inventar porcentagem. Slot sem amostra some da lista; ausência é
+  resposta honesta, perfil vazio não é.
+- **Recência com meia-vida de 3 semestres** (`BANCA_MEIA_VIDA_SEMESTRES`).
+  Uma banca muda, e a média simples é a forma óbvia de o perfil envelhecer sem
+  ninguém perceber.
+- **A previsão FECHA.** As questões previstas por tópico somam exatamente o
+  tamanho previsto da prova, por alocação de maior resto
+  (`distribuirPorMaiorResto`, Hamilton — a mesma família que o `rotina-engine`
+  legado usava pra repartir minutos), com desempate explícito (maior resto →
+  maior peso → menor índice). Arredondar cada tópico por conta daria uma prova
+  de 16 questões com cara de 15, e ordem instável a cada recarga é a classe de
+  bug que `supabase_ranking_fiel.sql` gastou uma migração consertando.
+- **Confiança cai por amostra pequena E por prova de tamanho instável**
+  (`BANCA_CV_TAMANHO_INSTAVEL`). A P2 de Física 1 varia de 7 a 20 questões:
+  prever "14" ali é média de coisas diferentes, e o perfil sai como `media`,
+  nunca `alta`.
+- **Descreve a BANCA, nunca o aluno.** Não é recomendação de estudo e não
+  reabre a porta que "Fim do motor de missões" fechou.
+
+`scripts/perfil-banca.ts` (`cd web && npx tsx scripts/perfil-banca.ts`) roda o
+módulo sobre o corpus real e confere três coisas com resposta conhecida: o
+retrato da P1 de Física 2, o fechamento da soma em todos os slots e a
+honestidade da confiança. Mesmo papel de `scripts/rede-sintetica.ts` — provar
+que a máquina funciona antes de existir tela. Ele lê os JSONs de origem (e não
+o banco) porque o corpus em disco tem mais edições do que a migração
+conseguiu casar; em produção a fonte é `questions.prova_codigo`.
+
+**Próximas fatias, não feitas:** tela pública "Como cai a P1" (é conteúdo de
+aquisição — a rota `/provas/` já existe e é indexada), estratégia `preditiva`
+no montador de simulados (sorteio do banco respeitando a distribuição
+prevista, sem gerar nada), arquétipos derivados de `subtopico` (texto livre,
+quase único por questão — precisa ser clusterizado offline e revisado) e, só
+no fim, geração sintética com dupla verificação e revisão humana. Questão
+gerada não entra no banco sem passar pela fila de `/importar`.
+
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).
