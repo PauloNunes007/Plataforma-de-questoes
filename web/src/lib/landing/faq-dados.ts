@@ -8,6 +8,9 @@
 // do mesmo texto viram, na primeira edição, uma promessa no Google que a
 // página não cumpre.
 import { CAMPANHA } from "./campanha";
+import { QUESTOES_DIA_FREE, SIMULADO_FREE_LIMITE_SEMANA } from "@/lib/plano/limites";
+
+const PERGUNTA_PAGAR = "Preciso pagar pra usar?";
 
 export type PerguntaFaq = { p: string; r: string };
 
@@ -25,8 +28,8 @@ export const PERGUNTAS: PerguntaFaq[] = [
     r: "O que você tiver. Você monta a lista do tamanho que couber — 5 questões no corredor entre aulas ou 40 num sábado. A Expectrum não tem cota diária nem cobra presença: o que ela guarda é o que você já fez, pra você enxergar onde está.",
   },
   {
-    p: "Preciso pagar pra usar?",
-    r: "Não. O plano grátis tem o banco de questões inteiro com resolução, listas sem limite, disciplinas ilimitadas, a trilha da ementa, anotações, streak, ligas e um simulado cronometrado por semana. O Pro tira o limite de simulados e abre a autópsia do erro e as estatísticas avançadas, por R$ 15/mês ou R$ 10/mês no semestral.",
+    p: PERGUNTA_PAGAR,
+    r: `Tem um plano grátis pra experimentar: ${QUESTOES_DIA_FREE} questões por dia com resolução, a trilha da ementa, streak, ligas e ${SIMULADO_FREE_LIMITE_SEMANA} simulado cronometrado por semana. O Pro libera tudo sem teto — questões, simulados, Caderno de Erros, faltas e notas, autópsia do erro e estatísticas —, por R$ 15/mês ou R$ 10/mês no semestral.`,
   },
   {
     p: "A Expectrum monta um cronograma pra mim?",
@@ -37,3 +40,18 @@ export const PERGUNTAS: PerguntaFaq[] = [
     r: "Não, e não quer. A Expectrum é onde você pratica, revisa na hora certa e descobre o que ainda não sabe. Teoria você vê com seu professor e seu livro — aqui é o treino que transforma teoria em nota.",
   },
 ];
+
+// Durante o acesso livre (lib/plano/acesso-livre.ts) a resposta sobre preço
+// muda — e muda nos DOIS consumidores ao mesmo tempo, porque os dois chamam
+// esta função com o mesmo booleano calculado em app/page.tsx.
+export function perguntasFaq(acessoLivre: boolean): PerguntaFaq[] {
+  if (!acessoLivre) return PERGUNTAS;
+  return PERGUNTAS.map((q) =>
+    q.p === PERGUNTA_PAGAR
+      ? {
+          p: q.p,
+          r: "Não. Por tempo limitado, a Expectrum está totalmente gratuita: banco de questões inteiro com resolução, simulados sem limite, Caderno de Erros, controle de faltas e notas, autópsia do erro e estatísticas — tudo liberado, sem cartão de crédito.",
+        }
+      : q,
+  );
+}

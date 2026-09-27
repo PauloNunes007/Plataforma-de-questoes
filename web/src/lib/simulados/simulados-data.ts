@@ -5,7 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { contagemInstituicaoCompleta, listarInstituicoes } from "@/lib/questly/contagem-questoes";
 import type { Pergunta } from "@/lib/questao/types";
 import { instituicoesQueCasam, nomeExibicaoInstituicao } from "@/lib/cursos/instituicao";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import {
   SIMULADO_FREE_LIMITE_SEMANA,
@@ -380,7 +380,7 @@ export async function carregarStatusPlano(
     .eq("id", user.id)
     .maybeSingle();
 
-  if (ehPro(perfil)) {
+  if (temAcessoPro(perfil)) {
     return { ehPro: true, usadosNaSemana: 0, limite: SIMULADO_FREE_LIMITE_SEMANA, restantes: -1, podeMontar: true };
   }
 

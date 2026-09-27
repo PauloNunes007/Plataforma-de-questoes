@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { lerPaginado } from "@/lib/supabase/paginado";
 import type { Pergunta } from "@/lib/questao/types";
 import { FolhaImpressao } from "@/components/imprimir/folha-impressao";
@@ -43,7 +43,7 @@ export default async function ImprimirTopicoPage({
     .eq("id", user.id)
     .maybeSingle();
 
-  if (!ehPro(perfil)) return <PortaPro contexto="lista" />;
+  if (!temAcessoPro(perfil)) return <PortaPro contexto="lista" />;
 
   const { data: topico } = await supabase
     .from("topicos")

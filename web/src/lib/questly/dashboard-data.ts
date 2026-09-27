@@ -17,6 +17,7 @@ import {
   saudacaoPorHorario,
 } from "./shared";
 import { questlyGarantirSemanaLiga, questlySegundaDaSemana, QUESTLY_LIGA_INFO, type EstadoLiga } from "./liga";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { ehPro } from "@/lib/plano/plano";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarTarefasIntervalo, type TarefaRow } from "@/lib/tarefas/tarefas-data";
@@ -64,7 +65,7 @@ export type ProfileRow = {
   dias_disponiveis: string[] | null;
   foto_url: string | null;
   liga: string | null;
-  // vêm na mesma leitura (COLUNAS_PERFIL_HOME); declaradas porque `ehPro(profile)` as lê.
+  // vêm na mesma leitura (COLUNAS_PERFIL_HOME); declaradas porque `temAcessoPro(profile)` as lê.
   plano?: string | null;
   plano_expira_em?: string | null;
   // idem — `hero-data.ts` lê pra saber quais distintivos o aluno escolheu
@@ -168,6 +169,8 @@ export type SemanaResumo = {
 export type DashboardData = {
   profile: ProfileRow | null;
   ehPro: boolean;
+  /** Pagou (ou cupom) — só pro enfeite de Pro no avatar; `ehPro` acima é o gate e inclui o acesso livre. */
+  proPago: boolean;
   greeting: string;
   subheading: string;
   subjects: SubjectListItem[];
@@ -458,7 +461,8 @@ export async function carregarDadosDashboard(
 
   return {
     profile,
-    ehPro: ehPro(profile),
+    ehPro: temAcessoPro(profile),
+    proPago: ehPro(profile),
     greeting,
     subheading,
     subjects: subjectListItems,

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
 import { SIMULADO_FREE_LIMITE_SEMANA } from "./constantes";
 
@@ -24,7 +24,7 @@ export async function dentroDoLimiteSemanal(
     .select("plano, plano_expira_em")
     .eq("id", userId)
     .maybeSingle();
-  if (ehPro(perfil)) return true;
+  if (temAcessoPro(perfil)) return true;
 
   const segunda = questlySegundaDaSemana(new Date());
   const { count } = await supabase

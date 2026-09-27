@@ -23,13 +23,18 @@
 //   • faltas, notas, relatório semanal e exportar PDF — recursos novos, Pro
 //     desde o primeiro dia (ver supabase_vida_academica.sql).
 //
+// **Repasse de 2026-09-26 — o grátis virou amostra.** Até 07/10/2026 nada
+// disto vale pra ninguém (acesso livre, ver ./acesso-livre.ts); a partir de
+// 08/10 o grátis cai pra 10 questões/dia, 5 favoritos, 3 anotações e 10 itens
+// no Caderno — a plataforma de verdade passa a ser o Pro.
+//
 // REGRA DE OURO (a mesma de lib/plano/plano.ts): todo limite anunciado tem que
 // existir NO SERVIDOR. Um limite que só a UI respeita não é um limite — é um
 // pedido educado que qualquer Server Action chamada direto ignora. Por isso
 // cada constante daqui tem um ponto de checagem citado abaixo dela.
 
 import type { PlanoDoProfile } from "./plano";
-import { ehPro } from "./plano";
+import { temAcessoPro } from "./acesso-livre";
 import { SIMULADO_FREE_LIMITE_SEMANA } from "@/lib/simulados/constantes";
 
 // Re-exportado pra que quem precisa dos limites do plano encontre TODOS num
@@ -39,13 +44,13 @@ export { SIMULADO_FREE_LIMITE_SEMANA };
 
 /** Questões que o plano grátis responde por dia. Gate: lib/questao/actions.ts
  *  (`registrarRespostaAction` — conta ANTES de inserir a tentativa). */
-export const QUESTOES_DIA_FREE = 30;
+export const QUESTOES_DIA_FREE = 10;
 
 /** Favoritos guardados no grátis. Gate: lib/anotacoes/actions.ts. */
-export const FAVORITOS_FREE = 15;
+export const FAVORITOS_FREE = 5;
 
 /** Anotações de questão no grátis. Gate: lib/anotacoes/actions.ts. */
-export const ANOTACOES_FREE = 10;
+export const ANOTACOES_FREE = 3;
 
 /**
  * Questões guardadas no Caderno de Erros no grátis.
@@ -64,7 +69,7 @@ export const ANOTACOES_FREE = 10;
  *     o que transforma o limite num incentivo a fechar pendência em vez de
  *     numa punição por ter errado bastante.
  */
-export const CADERNO_FREE = 40;
+export const CADERNO_FREE = 10;
 
 /* ------------------------------------------ o teto que o PRO também tem */
 
@@ -125,12 +130,12 @@ export const PDF_AVISO_RESTANTE = 3;
  * daria "0 restantes" pra um assinante).
  */
 export function restanteDoDia(perfil: PlanoDoProfile | null | undefined, respondidasHoje: number): number | null {
-  if (ehPro(perfil)) return null;
+  if (temAcessoPro(perfil)) return null;
   return Math.max(0, QUESTOES_DIA_FREE - Math.max(0, respondidasHoje));
 }
 
 /** A partir de quantas restantes a tela avisa "seu limite está acabando". */
-export const AVISO_RESTANTE = 10;
+export const AVISO_RESTANTE = 3;
 
 export type LimitesDoPlano = {
   pro: boolean;
@@ -144,7 +149,7 @@ export type LimitesDoPlano = {
 };
 
 export function limitesDoPlano(perfil: PlanoDoProfile | null | undefined): LimitesDoPlano {
-  if (ehPro(perfil)) {
+  if (temAcessoPro(perfil)) {
     return {
       pro: true,
       questoesDia: null,

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { carregarVidaAcademica } from "@/lib/academico/academico-data";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { PageHeader } from "@/components/page-header";
 import { MateriasView } from "@/components/academico/materias-view";
 
@@ -36,7 +36,7 @@ export default async function MateriasPage() {
       />
       <MateriasView
         materias={materias}
-        ehPro={ehPro(perfil)}
+        ehPro={temAcessoPro(perfil)}
         relatorioSemanal={perfil?.relatorio_semanal !== false}
       />
     </div>

@@ -132,6 +132,47 @@ export const CAMPANHA_LANCAMENTO_PRO: ConteudoCampanha = {
     "A semana acaba na sexta, 25/09, e a conta volta pro plano grátis sozinha — não cobramos nada e não pedimos cartão em lugar nenhum. Antes de o prazo acabar eu mando uma condição especial de lançamento pra quem quiser continuar no Pro. Se algo não funcionar, é só responder este e-mail — eu leio todos.",
 };
 
+/**
+ * O disparo do ACESSO LIVRE (lib/plano/acesso-livre.ts) — avisa a base de que
+ * a plataforma inteira está liberada de graça.
+ *
+ * "Por tempo limitado" está no assunto E no corpo pela mesma razão da regra 2
+ * de CAMPANHA_LANCAMENTO_PRO: sem isso o e-mail afirma que a plataforma ficou
+ * grátis, e o fim do período vira recurso retirado de quem acreditou no texto.
+ * A data de fim não aparece — decisão de negócio —, mas o caráter temporário
+ * aparece, e é ele que separa oferta de publicidade enganosa (CDC art. 37).
+ */
+export const CAMPANHA_ACESSO_LIVRE: ConteudoCampanha = {
+  assunto: "A Expectrum está totalmente gratuita — por tempo limitado",
+  preheader: "Tudo liberado pra todo mundo, sem cartão e sem código pra resgatar.",
+  titulo: "liberamos tudo, de graça",
+  intro:
+    "Por tempo limitado, a Expectrum está totalmente gratuita: todos os recursos estão liberados na sua conta, sem teto e sem cartão. Já está valendo — não precisa resgatar nada, é só abrir o app.",
+  destaques: [
+    {
+      titulo: "Questões sem limite",
+      texto: "Responda quantas quiser, sem parede no meio da lista. Se a sua prova está chegando, é agora que isso vale.",
+    },
+    {
+      titulo: "Simulados cronometrados ilimitados",
+      texto:
+        "Inclusive as provas antigas da sua universidade, reaplicadas na íntegra, corrigidas na hora e com revisão questão a questão.",
+    },
+    {
+      titulo: "Faltas e notas, as duas contas que decidem o semestre",
+      texto:
+        "Quantas faltas ainda cabem em cada disciplina e quanto você precisa tirar na próxima prova pra passar.",
+    },
+    {
+      titulo: "Caderno de Erros, PDF, autópsia do erro e estatísticas",
+      texto:
+        "Guarde o que errou pra refazer, imprima listas e simulados, descubra por que errou e veja seu percentil e recordes.",
+    },
+  ],
+  rotuloBotao: "Estudar agora",
+  fecho: "Se algo não funcionar, é só responder este e-mail — eu leio todos.",
+};
+
 export function montarEmailCampanha(opcoes: {
   conteudo: ConteudoCampanha;
   nome: string;

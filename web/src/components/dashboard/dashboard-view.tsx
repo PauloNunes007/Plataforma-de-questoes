@@ -173,7 +173,7 @@ export function DashboardView({
         escudoUsadoRecente={dados.escudoUsadoRecente}
         recordeStreak={dados.semana.recorde.melhorStreak}
         hero={hero}
-        pro={dados.ehPro}
+        pro={dados.proPago}
         onAbrirCarta={abrirCarta}
       />
 

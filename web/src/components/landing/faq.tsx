@@ -6,10 +6,10 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { PERGUNTAS } from "@/lib/landing/faq-dados";
+import { perguntasFaq } from "@/lib/landing/faq-dados";
 
 
-export function Faq() {
+export function Faq({ acessoLivre = false }: { acessoLivre?: boolean }) {
   const [aberta, setAberta] = useState<number | null>(0);
   const reduzir = useReducedMotion();
 
@@ -21,7 +21,7 @@ export function Faq() {
         </h2>
 
         <div className="mt-12 divide-y divide-border overflow-hidden rounded-3xl border border-border bg-card">
-          {PERGUNTAS.map((q, i) => {
+          {perguntasFaq(acessoLivre).map((q, i) => {
             const ativa = aberta === i;
             return (
               <div key={q.p}>

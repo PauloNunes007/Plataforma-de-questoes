@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { carregarSimulado } from "@/lib/simulados/simulados-data";
 import { lerCodigoProva, rotuloProva } from "@/lib/simulados/provas-oficiais";
 import { rotuloDuracao } from "@/lib/simulados/constantes";
@@ -47,7 +47,7 @@ export default async function ImprimirSimuladoPage({
     .eq("id", user.id)
     .maybeSingle();
 
-  if (!ehPro(perfil)) return <PortaPro contexto="simulado" />;
+  if (!temAcessoPro(perfil)) return <PortaPro contexto="simulado" />;
 
   const simulado = await carregarSimulado(supabase, user, id);
   if (!simulado || simulado.perguntas.length === 0) {

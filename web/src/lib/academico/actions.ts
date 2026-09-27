@@ -15,7 +15,7 @@
 // edição. O contrário seria o produto apagar dados do aluno como tática de
 // venda.
 import { createClient } from "@/lib/supabase/server";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 
 type Sessao = {
   supabase: Awaited<ReturnType<typeof createClient>>;
@@ -36,7 +36,7 @@ async function exigirPro(): Promise<Sessao | { error: string }> {
     .select("plano, plano_expira_em")
     .eq("id", user.id)
     .maybeSingle();
-  if (!ehPro(perfil)) return { error: ERRO_PRO };
+  if (!temAcessoPro(perfil)) return { error: ERRO_PRO };
 
   return { supabase, userId: user.id };
 }

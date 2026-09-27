@@ -6,7 +6,7 @@ import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { questlyEhMestre, questlyEmbaralhar } from "@/lib/questly/shared";
 import { questlyEstadoEfetivo } from "@/lib/questly/motor-aprovacao";
 import { QuestaoRunner } from "@/components/questao/questao-runner";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { restanteDoDia } from "@/lib/plano/limites";
 import { ehAdmin } from "@/lib/admin/auth";
 import { chavePublicaPush } from "@/lib/push/enviar";
@@ -223,7 +223,7 @@ export default async function QuestaoPage({
       favoritosIniciaisIds={favoritosIniciaisIds}
       cadernoIniciaisIds={cadernoIniciaisIds}
       notasIniciais={notasIniciais}
-      ehPro={ehPro(perfilPlano)}
+      ehPro={temAcessoPro(perfilPlano)}
       restanteHoje={restanteHoje}
       streakAtual={perfilPlano?.streak_atual || 0}
       chavePushPublica={chavePublicaPush()}

@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { ANOTACOES_FREE, FAVORITOS_FREE } from "@/lib/plano/limites";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import type { MotivoReport } from "./types";
 
 // Portado do mesmo padrão de lib/*/actions.ts do resto do repo (ver
@@ -70,7 +70,7 @@ async function excedeuLimite(
     .select("plano, plano_expira_em")
     .eq("id", userId)
     .maybeSingle();
-  if (ehPro(perfil)) return false;
+  if (temAcessoPro(perfil)) return false;
 
   const { count } = await supabase
     .from(opcoes.tabela)

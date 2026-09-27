@@ -64,6 +64,7 @@ import {
 import { FitaCampanha, SecaoCampanha, SeloCampanhaHero } from "./campanha-uff";
 import { SimuladosShowcase } from "./simulados-showcase";
 import { Faq } from "./faq";
+import { PDF_SEMANA_PRO } from "@/lib/plano/limites";
 
 /* Link estilizado como botão — o Button do app (base-ui) não tem `asChild`,
    então aplicamos as variantes direto num <Link>/<a>. */
@@ -316,7 +317,7 @@ const PASSOS: { n: string; titulo: string; desc: string }[] = [
 
 /* ------------------------------------------------------------------ view */
 
-export function LandingView({ stats }: { stats: StatsBanco }) {
+export function LandingView({ stats, acessoLivre = false }: { stats: StatsBanco; acessoLivre?: boolean }) {
   const reduzir = useReducedMotion();
   const glows = useMemo(
     () => (
@@ -461,7 +462,9 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
               className="mt-5 flex items-center gap-2 text-sm text-muted-foreground"
             >
               <ShieldCheck className="size-4 text-questly-green" />
-              Grátis pra começar · sem cartão de crédito
+              {acessoLivre
+                ? "Totalmente gratuita por tempo limitado · sem cartão de crédito"
+                : "Grátis pra começar · sem cartão de crédito"}
             </motion.p>
 
             <SeloCampanhaHero stats={stats} />
@@ -634,6 +637,9 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
       </section>
 
       {/* ---------------------------------------------------------- preços */}
+      {acessoLivre ? (
+        <SecaoAcessoLivre />
+      ) : (
       <section id="precos" className="relative scroll-mt-16 py-24">
         <div className="mx-auto max-w-5xl px-5">
           <Revelar className="mx-auto max-w-2xl text-center">
@@ -728,8 +734,10 @@ export function LandingView({ stats }: { stats: StatsBanco }) {
         </div>
       </section>
 
+      )}
+
       {/* ------------------------------------------------------------- faq */}
-      <Faq />
+      <Faq acessoLivre={acessoLivre} />
 
       {/* ------------------------------------------------------- final CTA */}
       <section className="relative px-5 py-24">
@@ -1065,5 +1073,60 @@ function PesoVisual() {
         Barra = quanto da cobertura do tópico você já fez · número = seu acerto nele.
       </p>
     </div>
+  );
+}
+
+// Durante o acesso livre (lib/plano/acesso-livre.ts) a seção de preços vira
+// um cartão só: tudo liberado, R$ 0. A lista é explícita e NÃO é RECURSOS_PRO:
+// o relatório semanal por e-mail e o selo Pro do ranking continuam só de quem
+// pagou (ver o comentário de lib/plano/acesso-livre.ts) e não podem ser
+// anunciados aqui.
+const RECURSOS_ACESSO_LIVRE = [
+  "Banco de questões inteiro, com resolução passo a passo",
+  "Questões ilimitadas — sem teto diário",
+  "Simulados cronometrados ilimitados",
+  "Caderno de Erros, favoritos e anotações sem limite",
+  "Controle de faltas e calculadora de notas",
+  `Exportar listas e simulados em PDF (até ${PDF_SEMANA_PRO} por semana)`,
+  "Autópsia do erro e estatísticas avançadas",
+  "Trilha da ementa, streak, XP e ligas semanais",
+];
+
+function SecaoAcessoLivre() {
+  return (
+    <section id="precos" className="relative scroll-mt-16 py-24">
+      <div className="mx-auto max-w-3xl px-5">
+        <Revelar className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+            A Expectrum está totalmente gratuita.
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground text-pretty">
+            Por tempo limitado, tudo liberado pra todo mundo: sem teto de questões, simulados sem
+            limite e todos os recursos do Pro. Sem cartão de crédito.
+          </p>
+        </Revelar>
+        <Revelar delay={0.08}>
+          <div className="surface-brand relative mt-14 flex flex-col rounded-3xl p-8 shadow-lg">
+            <span className="absolute -top-3 left-8 inline-flex items-center gap-1 rounded-full bg-questly-green px-3 py-1 text-xs font-semibold text-white shadow-sm dark:text-[#0c1512]">
+              <Sparkles className="size-3.5" />
+              Tudo liberado
+            </span>
+            <div className="flex items-baseline gap-1">
+              <span className="tnum text-4xl font-semibold tracking-tight">R$ 0</span>
+              <span className="text-sm text-muted-foreground">· por tempo limitado</span>
+            </div>
+            <BtnLink href="/login" className="mt-6 h-11">
+              Criar conta grátis
+              <ArrowRight />
+            </BtnLink>
+            <ul className="mt-7 space-y-3">
+              {RECURSOS_ACESSO_LIVRE.map((texto) => (
+                <FeatureLinha key={texto} texto={texto} incluso />
+              ))}
+            </ul>
+          </div>
+        </Revelar>
+      </div>
+    </section>
   );
 }

@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { CADERNO_FREE } from "@/lib/plano/limites";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import { questlyHojeISO, questlyXpDaQuestao } from "@/lib/questly/shared";
 import { minutosEstimados } from "@/lib/questly/criar-lista";
 
@@ -21,7 +21,7 @@ async function vagasDisponiveis(
     .select("plano, plano_expira_em")
     .eq("id", userId)
     .maybeSingle();
-  if (ehPro(perfil)) return null; // sem teto
+  if (temAcessoPro(perfil)) return null; // sem teto
 
   const { count } = await supabase
     .from("caderno_erros")

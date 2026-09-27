@@ -2867,3 +2867,7 @@ e a seção diz "ainda sem dados" em vez de derrubar a tela de resolução.
 ## Conventions carried over from the legacy app
 
 Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed shared function names in `lib/questly/*`, same XP/mastery/spaced-repetition/league constants and formulas (ported faithfully, not reinvented). Don't re-derive the algorithms from scratch — read the corresponding `js/*.js` file in the repo root first, the Next.js version is meant to be a faithful port unless a change was explicitly requested (the dashboard trail redesign and the 2026-09-16 mission/modular overhaul above are the deliberate exceptions).
+
+## Acesso livre até 08/10/2026 (`lib/plano/acesso-livre.ts`)
+
+Até `ACESSO_LIVRE_ATE` (2026-10-08 00:00 BRT) toda conta tem os recursos do Pro: todo **gate** de recurso (tetos de `lib/plano/limites.ts`, faltas/notas, PDF, autópsia, simulados, Caderno) usa `temAcessoPro()` = período livre OU `ehPro()`. `ehPro()` continua significando "pagou/cupom" e é o que decide selo Pro no ranking, anel dourado do avatar, relatório semanal por e-mail, compra/cupom/afiliados — não troque esses por `temAcessoPro`. A partir da data, os tetos do grátis (apertados em 2026-09-26: 10 questões/dia, 5 favoritos, 3 anotações, 10 no Caderno, 1 simulado/semana) voltam sozinhos, sem cron nem deploy. A landing (`app/page.tsx` → `acessoLivreAtivo()`) troca a seção de preços e a FAQ de "totalmente gratuita por tempo limitado" pra grade normal na primeira revalidação depois da data (até 1h).

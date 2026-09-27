@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
-import { ehPro } from "@/lib/plano/plano";
+import { temAcessoPro } from "@/lib/plano/acesso-livre";
 import type { Pergunta } from "@/lib/questao/types";
 import { FolhaImpressao } from "@/components/imprimir/folha-impressao";
 import { PortaCota, PortaPro } from "@/components/imprimir/porta-pro";
@@ -49,7 +49,7 @@ export default async function ImprimirPage({
   // Gate no SERVIDOR: sem isso, a página seria o caminho mais curto pra um
   // aluno grátis baixar o banco inteiro em PDF — pior que o teto diário que
   // acabamos de instalar, porque sai do app de vez.
-  if (!ehPro(perfil)) return <PortaPro contexto="lista" />;
+  if (!temAcessoPro(perfil)) return <PortaPro contexto="lista" />;
 
   const { data: missao } = await supabase
     .from("missions")

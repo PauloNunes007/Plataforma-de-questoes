@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { LandingView } from "@/components/landing/landing-view";
 import { CAMPANHA } from "@/lib/landing/campanha";
 import { carregarStatsBanco } from "@/lib/landing/stats";
-import { PERGUNTAS } from "@/lib/landing/faq-dados";
+import { perguntasFaq } from "@/lib/landing/faq-dados";
+import { acessoLivreAtivo } from "@/lib/plano/acesso-livre";
 import { APP_URL } from "@/lib/app-url";
 
 // Revalida de hora em hora: os números do banco mudam devagar (o importador é
@@ -43,6 +44,9 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const stats = await carregarStatsBanco();
+  // Avaliado a cada revalidação (1h): a landing troca sozinha de "totalmente
+  // gratuita" pra grade de preços no fim do acesso livre, com até 1h de atraso.
+  const acessoLivre = acessoLivreAtivo();
 
   // DADOS ESTRUTURADOS (2026-09-18). As páginas de prova já publicavam os
   // seus (CollectionPage/ItemList); a landing, que é a raiz do site, não
@@ -84,7 +88,7 @@ export default async function Home() {
       {
         "@type": "FAQPage",
         "@id": `${APP_URL}/#faq`,
-        mainEntity: PERGUNTAS.map((q) => ({
+        mainEntity: perguntasFaq(acessoLivre).map((q) => ({
           "@type": "Question",
           name: q.p,
           acceptedAnswer: { "@type": "Answer", text: q.r },
@@ -101,7 +105,7 @@ export default async function Home() {
         // de usuário nenhuma neste objeto.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <LandingView stats={stats} />
+      <LandingView stats={stats} acessoLivre={acessoLivre} />
     </>
   );
 }
