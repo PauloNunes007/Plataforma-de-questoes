@@ -26,7 +26,7 @@
 // vw_questoes_por_topico fez com a contagem de questões.
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { questlySegundaDaSemana } from "@/lib/questly/liga";
-import { ehPro } from "@/lib/plano/plano";
+import { mostrarComoPro } from "@/lib/plano/acesso-livre";
 import { emLotes, lerPaginado } from "@/lib/supabase/paginado";
 
 /** Abaixo disto não existe turma — ver o cabeçalho. */
@@ -128,7 +128,7 @@ function paraLinha(
     questoesSemana: questoesVigentes(p, segundaAtual),
     posicao,
     ehVoce: p.id === meuId,
-    pro: ehPro(p),
+    pro: mostrarComoPro(p),
   };
 }
 

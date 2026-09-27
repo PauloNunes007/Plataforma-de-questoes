@@ -41,7 +41,7 @@ import {
   type Liga,
 } from "@/lib/questly/liga";
 import { questlyNivelDoXp } from "@/lib/questly/shared";
-import { ehPro } from "@/lib/plano/plano";
+import { mostrarComoPro } from "@/lib/plano/acesso-livre";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type RankingRow = {
@@ -179,7 +179,7 @@ function paraLinhaGlobal(p: PerfilBruto, xp: number, posicao: number, meuId: str
     streakAtual: p.streak_atual || 0,
     posicao,
     ehVoce: p.id === meuId,
-    pro: ehPro(p),
+    pro: mostrarComoPro(p),
   };
 }
 
@@ -354,7 +354,7 @@ export async function buscarGrupoLiga(
         indiceLiga,
       }),
       ehVoce: a.id === meuId,
-      pro: ehPro(a),
+      pro: mostrarComoPro(a),
     };
   });
 
@@ -415,7 +415,7 @@ async function buscarMinhaLinhaNaLiga(
     posicao: estritamenteAcima + 1,
     destino: questlyDestinoPorAgregado({ n, ativos, estritamenteAcima, meuXp, indiceLiga }),
     ehVoce: true,
-    pro: ehPro(eu),
+    pro: mostrarComoPro(eu),
   };
 }
 

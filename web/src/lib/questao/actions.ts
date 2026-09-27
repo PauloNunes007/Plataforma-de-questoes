@@ -37,8 +37,8 @@ import {
 } from "@/lib/questao/continuar";
 import { criarListaDeQuestoes, minutosEstimados } from "@/lib/questly/criar-lista";
 import { LOTE_IN } from "@/lib/supabase/paginado";
-import { ehPro } from "@/lib/plano/plano";
 import { ehProDeLancamento } from "@/lib/plano/lancamento";
+import { mostrarComoPro } from "@/lib/plano/acesso-livre";
 
 // Portado de js/questao.js — mesmo fluxo (registrar tentativa, atualizar
 // progresso do tópico, recalibrar tempo médio, finalizar missão: XP/liga,
@@ -746,7 +746,8 @@ async function lerLancamento(
     .eq("id", userId)
     .maybeSingle();
   if (error || !data) return null;
-  if (!ehPro(data) || !ehProDeLancamento(data)) return null;
+  // Durante o acesso livre ninguém aparece como Pro (ver mostrarComoPro).
+  if (!mostrarComoPro(data) || !ehProDeLancamento(data)) return null;
   return { expiraEm: data.plano_expira_em ?? null };
 }
 

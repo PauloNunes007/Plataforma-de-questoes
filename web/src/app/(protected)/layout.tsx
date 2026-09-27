@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { usuarioDaSessao } from "@/lib/auth/sessao";
 import { ADMIN_EMAIL } from "@/lib/admin/auth";
-import { ehPro } from "@/lib/plano/plano";
+import { mostrarComoPro } from "@/lib/plano/acesso-livre";
 import { carregarFocoHojeSeg } from "@/lib/foco/foco-data";
 import { FocoProvider } from "@/components/foco/foco-provider";
 import { FocoBar } from "@/components/foco/foco-bar";
@@ -53,7 +53,7 @@ export default async function ProtectedLayout({
 
   const nome = profile?.nome || user.email?.split("@")[0] || "Aluno(a)";
   const isAdmin = user.email === ADMIN_EMAIL;
-  const pro = ehPro(profile);
+  const pro = mostrarComoPro(profile);
   const isParceiro = !!afiliado;
 
   return (

@@ -32,3 +32,14 @@ export function acessoLivreAtivo(agora: Date = new Date()): boolean {
 export function temAcessoPro(p: PlanoDoProfile | null | undefined): boolean {
   return acessoLivreAtivo() || ehPro(p);
 }
+
+/**
+ * Exibição: esta conta deve APARECER como Pro (selo, aro dourado, "Expectrum
+ * Pro" no menu)? Durante o acesso livre ninguém aparece — todo mundo tem
+ * tudo, e marcar só quem pagou criaria uma distinção que não corresponde a
+ * nada na plataforma. Volta sozinho em `ACESSO_LIVRE_ATE`. Não usar pra
+ * decisão de dinheiro (crédito, cupom, afiliados): ali vale `ehPro()`.
+ */
+export function mostrarComoPro(p: PlanoDoProfile | null | undefined): boolean {
+  return !acessoLivreAtivo() && ehPro(p);
+}

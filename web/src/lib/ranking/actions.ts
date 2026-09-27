@@ -7,7 +7,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { QUESTLY_LIGAS, QUESTLY_LIGA_INFO, questlySegundaDaSemana, type Liga } from "@/lib/questly/liga";
 import { calcularDistintivos, distintivosParaCard, IDS_DISTINTIVOS, MAX_DISTINTIVOS_CARD, type Distintivo } from "@/lib/ranking/badges";
-import { ehPro } from "@/lib/plano/plano";
+import { mostrarComoPro } from "@/lib/plano/acesso-livre";
 import { questlyNivelDoXp } from "@/lib/questly/shared";
 import {
   buscarGrupoLiga,
@@ -143,7 +143,7 @@ export async function buscarCardUsuarioAction(userId: string): Promise<CardUsuar
     // (era o que fazia o card crescer sem limite a cada brasão novo).
     distintivos: distintivosParaCard(distintivos, profile.distintivos_selecionados),
     totalDistintivosConquistados: distintivos.filter((d) => d.conquistado).length,
-    pro: ehPro(profile),
+    pro: mostrarComoPro(profile),
     melhorLigaNome: (QUESTLY_LIGA_INFO[melhorLiga] || QUESTLY_LIGA_INFO.bronze).nome,
     // XP médio por questão SAIU do card (era o "auge" do selo Pro). Acerto
     // paga 3/5/8 XP e erro paga uma fração disso — publicar a média é
