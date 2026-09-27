@@ -11,6 +11,7 @@ import { ProBadge, ProCta, ProMark } from "@/components/plano/pro-ui";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 import { resolverCurso, cursoReconhecido } from "@/lib/cursos/registro";
 import { signOutAction } from "@/lib/auth/actions";
+import { acessoLivreAtivo } from "@/lib/plano/acesso-livre";
 import { NavLink, NavProgresso, useAbaAtiva } from "@/components/nav-link";
 import { useFoco } from "@/components/foco/foco-provider";
 import { FocoHojeChip } from "@/components/foco/foco-bar";
@@ -64,7 +65,10 @@ export function TopNav({ nome, username, curso, fotoUrl, isAdmin, ehPro, isParce
               selo saiu do lado do perfil (pedido do usuário): a identidade Pro
               agora aparece onde ela é vista pelos outros — no aro dourado do
               avatar e no card do ranking. */}
-          {!ehPro && <ProCta ehPro={false} className="hidden sm:inline-flex" />}
+          {/* Durante o acesso livre (até ACESSO_LIVRE_ATE) não há o que
+              vender: tudo já está aberto. O convite volta sozinho no dia em
+              que a plataforma passa a ser paga — mesma data, sem deploy. */}
+          {!ehPro && !acessoLivreAtivo() && <ProCta ehPro={false} className="hidden sm:inline-flex" />}
 
           <ContaMenu
             nome={nome}
@@ -226,10 +230,14 @@ function ContaMenu({ nome, username, curso, fotoUrl, isAdmin, ehPro, isParceiro 
                 <Settings size={15} strokeWidth={1.75} />
                 Ajustes
               </ItemMenu>
-              <ItemMenu href="/pro" onClick={() => setAberto(false)} cor="text-questly-gold">
-                <ProMark size={15} strokeWidth={1.9} />
-                {ehPro ? "Expectrum Pro" : "Seja Pro"}
-              </ItemMenu>
+              {/* Quem já pagou continua vendo a própria assinatura; o "Seja
+                  Pro" só aparece quando o acesso livre acaba (ver o ProCta). */}
+              {(ehPro || !acessoLivreAtivo()) && (
+                <ItemMenu href="/pro" onClick={() => setAberto(false)} cor="text-questly-gold">
+                  <ProMark size={15} strokeWidth={1.9} />
+                  {ehPro ? "Expectrum Pro" : "Seja Pro"}
+                </ItemMenu>
+              )}
 
               {/* Só quem já está vinculado como parceiro (afiliados.user_id)
                   vê este item — antes disso o painel (/parceiro) existe mas
