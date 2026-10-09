@@ -1,0 +1,338 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Força resultante por superposição e simetria",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Em um octógono regular, cuja distância do centro a um dos vértices é $L$, todos os vértices estão ocupados por cargas imóveis de mesmo módulo $q$ e com sinais indicados na figura. Qual é o módulo da força eletrostática sobre uma partícula (imóvel) de carga $-Q$ colocada no centro?",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$\\dfrac{kQq}{L^{2}}$",
+      "c": "$\\dfrac{2kQq}{L^{2}}$",
+      "d": "$\\dfrac{6kQq}{L^{2}}$",
+      "e": "$\\dfrac{8kQq}{L^{2}}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Na figura, o vértice $C$ está ocupado por $+q$ e os outros sete vértices por $-q$; a carga do centro é $-Q$.\n\nUse superposição a partir de uma configuração de simetria conhecida: se os oito vértices tivessem a mesma carga $-q$, as oito forças sobre a carga central se cancelariam duas a duas (vértices diametralmente opostos) e a resultante seria nula.\n\nA configuração real é essa configuração simétrica mais uma carga extra em $C$: trocar $-q$ por $+q$ equivale a somar $+2q$ naquele vértice. Só essa carga extra sobrevive à soma.\n\nPortanto a resultante é a força de Coulomb entre $2q$ (no vértice $C$, a uma distância $L$) e $-Q$ (no centro):\n\n$F = \\dfrac{k\\,(2q)\\,Q}{L^{2}} = \\dfrac{2kQq}{L^{2}}$, atrativa, dirigida do centro para o vértice $C$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q01.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Dipolo elétrico em campo não uniforme",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Um dipolo elétrico é liberado a partir do repouso em um campo elétrico não uniforme com a orientação indicada na figura. Assinale a opção que descreve corretamente o movimento inicial do dipolo se ele é liberado a partir do repouso na posição indicada?",
+    "alternativas": {
+      "a": "Desloca-se para a parte superior da página.",
+      "b": "Ele se move em direção à parte inferior da página.",
+      "c": "Ele se move para a esquerda.",
+      "d": "Ele se move para a direita.",
+      "e": "Não se move."
+    },
+    "gabarito": "d",
+    "resolucao": "Em um campo uniforme a força resultante sobre um dipolo é nula (as forças nas duas cargas têm mesmo módulo e sentidos opostos). Aqui o campo é não uniforme, então o que decide é onde o campo é mais intenso.\n\nNa figura as linhas de campo apontam para a esquerda e se aproximam umas das outras à direita: quanto mais juntas as linhas, maior $|\\vec{E}|$. Logo o campo é mais intenso do lado direito da figura.\n\nO dipolo tem $+Q$ à esquerda (região de campo mais fraco) e $-Q$ à direita (região de campo mais forte). A força sobre $+Q$ é $Q\\vec{E}$, para a esquerda e de módulo pequeno; a força sobre $-Q$ é $-Q\\vec{E}$, para a direita e de módulo maior.\n\nA resultante aponta, portanto, para a direita: o dipolo é puxado para a região de campo mais intenso.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q02.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Força conservativa e definição de potencial",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Qual das seguintes afirmações melhor explica por que é possível definir um potencial eletrostático em uma região do espaço que contém um campo eletrostático?",
+    "alternativas": {
+      "a": "Trabalho deve ser feito para aproximar duas cargas positivas.",
+      "b": "Cargas iguais se repelem e cargas diferentes se atraem.",
+      "c": "Uma carga positiva ganhará energia cinética à medida que se aproxima de uma carga negativa.",
+      "d": "Uma carga negativa ganhará energia cinética à medida que se afasta de outra carga negativa.",
+      "e": "O trabalho necessário para unir duas cargas é independente do caminho percorrido."
+    },
+    "gabarito": "e",
+    "resolucao": "Uma energia potencial (e, por consequência, um potencial elétrico) só pode ser definida quando a força envolvida é conservativa, isto é, quando o trabalho realizado por ela entre dois pontos não depende da trajetória seguida, apenas dos pontos inicial e final.\n\nÉ exatamente isso que a alternativa (e) afirma. Com essa propriedade, o trabalho $W_{A\\to B}$ define univocamente a diferença de potencial $V_A - V_B = W_{A\\to B}/q$.\n\nAs demais alternativas descrevem consequências ou fatos verdadeiros sobre a interação elétrica (repulsão, atração, ganho de energia cinética), mas nenhuma delas é a razão pela qual o potencial pode ser definido.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Campo radial de uma casca esférica carregada",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma casca esférica condutora de raio $R$ e espessura desprezível está homogeneamente carregada com uma carga positiva. Qual dos gráficos a seguir melhor descreve o campo elétrico na direção radial como função da distância ao centro?",
+    "alternativas": {
+      "a": "Gráfico que cresce linearmente de zero até um máximo em $r = R$ e, a partir daí, decai suavemente.",
+      "b": "Gráfico nulo para $r < R$, que salta para um valor máximo em $r = R$ e decai para $r > R$.",
+      "c": "Gráfico que parte de zero, mergulha para valores negativos ao se aproximar de $R$ por dentro e, para $r > R$, parte de um máximo positivo e decai.",
+      "d": "Gráfico que cresce linearmente de zero até um máximo em $r = R$ e cai bruscamente a zero para $r > R$.",
+      "e": "Gráfico que diverge perto da origem, decai até $r = R$ e é nulo para $r > R$."
+    },
+    "alternativas_imagens": {
+      "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q04_a.png",
+      "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q04_b.png",
+      "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q04_c.png",
+      "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q04_d.png",
+      "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q04_e.png"
+    },
+    "gabarito": "b",
+    "resolucao": "Aplique a lei de Gauss a uma superfície esférica de raio $r$ concêntrica com a casca: $E\\,(4\\pi r^{2}) = \\dfrac{q_{\\text{int}}}{\\varepsilon_0}$.\n\nPara $r < R$ não há carga interna à gaussiana ($q_{\\text{int}} = 0$), pois toda a carga está sobre a casca. Logo $E = 0$ em toda a região interna.\n\nPara $r > R$ a gaussiana engloba toda a carga $Q$, e $E = \\dfrac{1}{4\\pi\\varepsilon_0}\\dfrac{Q}{r^{2}}$, que decai como $1/r^{2}$.\n\nO campo é, portanto, nulo até $R$, salta descontinuamente para o valor máximo $\\dfrac{1}{4\\pi\\varepsilon_0}\\dfrac{Q}{R^{2}}$ em $r = R$ e decai daí em diante — o comportamento do gráfico (b).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": ["a", "b", "c", "d", "e"]
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Campo de uma distribuição linear finita de carga",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma carga de $2{,}0$ nC está distribuída uniformemente em um segmento do eixo $x$ que vai de $x = 0$ a $x = 3$ m. Qual é a componente $x$ do campo elétrico no ponto sobre o eixo $y$ localizado em $y = 2$ m?",
+    "alternativas": {
+      "a": "$-1{,}3$ N/C",
+      "b": "$-2{,}4$ N/C",
+      "c": "$-4{,}0$ N/C",
+      "d": "$-5{,}7$ N/C",
+      "e": "$-9{,}0$ N/C"
+    },
+    "gabarito": "a",
+    "resolucao": "A densidade linear é uniforme: $\\lambda = \\dfrac{2{,}0 \\times 10^{-9}}{3} \\approx 6{,}67 \\times 10^{-10}$ C/m.\n\nUm elemento $dq = \\lambda\\,dx$ situado em $(x,\\,0)$ produz no ponto $P = (0,\\,2)$ um campo cujo vetor separação é $(-x,\\,2)$, com $r = \\sqrt{x^{2} + 4}$. A componente $x$ vale\n\n$dE_x = k\\,\\lambda\\,dx\\,\\dfrac{-x}{(x^{2}+4)^{3/2}}$.\n\nIntegrando de $x = 0$ a $x = 3$:\n\n$E_x = -k\\lambda \\displaystyle\\int_{0}^{3} \\dfrac{x\\,dx}{(x^{2}+4)^{3/2}} = -k\\lambda\\left[\\dfrac{1}{\\sqrt{4}} - \\dfrac{1}{\\sqrt{13}}\\right]$.\n\nNumericamente: $k\\lambda = 8{,}99 \\times 10^{9} \\times 6{,}67 \\times 10^{-10} \\approx 6{,}0$ e $(0{,}500 - 0{,}277) = 0{,}223$, de modo que\n\n$E_x \\approx -6{,}0 \\times 0{,}223 \\approx -1{,}3$ N/C.\n\nO sinal negativo era esperado: a carga é positiva e está toda em $x > 0$, então o campo em $P$ tem componente no sentido $-x$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Eletrização por indução em condutores",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Duas esferas condutoras não carregadas, A e B, são suspensas por fios isolantes de modo que se tocam. Enquanto um bastão carregado negativamente é mantido próximo, mas sem tocar a esfera A, alguém move a bola B para longe de A. Qual a configuração das cargas líquidas nas esferas após este processo?",
+    "alternativas": {
+      "a": "esfera A neutra e esfera B neutra.",
+      "b": "esfera A positiva e esfera B negativa.",
+      "c": "esfera A negativa e esfera B positiva.",
+      "d": "esfera A neutra e esfera B positiva.",
+      "e": "esfera A negativa e esfera B neutra."
+    },
+    "gabarito": "b",
+    "resolucao": "Enquanto se tocam, A e B formam um único condutor. O bastão negativo, aproximado de A, repele os elétrons livres desse condutor para o lado mais distante, ou seja, para a esfera B.\n\nCom o bastão ainda presente, a esfera B fica com excesso de elétrons (negativa) e a esfera A com falta de elétrons (positiva) — é a indução eletrostática.\n\nAo separar B de A ainda com o bastão por perto, essa separação de cargas fica presa: cada esfera guarda a carga líquida que tinha no momento da separação.\n\nResultado: A positiva e B negativa (a carga total continua nula, como exige a conservação da carga).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q06.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Equilíbrio entre força elétrica e peso",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Um núcleo de hélio está localizado entre as placas de um capacitor de placas paralelas, como mostrado. O núcleo tem uma carga de $+2e$ e uma massa de $6{,}6 \\times 10^{-27}$ kg. Qual é a magnitude do campo elétrico tal que a força elétrica equilibra exatamente o peso do núcleo de hélio, de modo que ele permaneça estacionário?",
+    "alternativas": {
+      "a": "$4{,}0 \\times 10^{-7}$ N/C",
+      "b": "$6{,}6 \\times 10^{-26}$ N/C",
+      "c": "$2{,}0 \\times 10^{-7}$ N/C",
+      "d": "$5{,}0 \\times 10^{-3}$ N/C",
+      "e": "$1{,}4 \\times 10^{-8}$ N/C"
+    },
+    "gabarito": "c",
+    "resolucao": "O equilíbrio exige que o módulo da força elétrica seja igual ao do peso:\n\n$qE = mg \\quad\\Rightarrow\\quad E = \\dfrac{mg}{q} = \\dfrac{mg}{2e}$.\n\nSubstituindo $m = 6{,}6 \\times 10^{-27}$ kg, $g = 9{,}8$ m/s$^{2}$ e $2e = 2 \\times 1{,}6 \\times 10^{-19} = 3{,}2 \\times 10^{-19}$ C:\n\n$E = \\dfrac{6{,}6 \\times 10^{-27} \\times 9{,}8}{3{,}2 \\times 10^{-19}} = \\dfrac{6{,}47 \\times 10^{-26}}{3{,}2 \\times 10^{-19}} \\approx 2{,}0 \\times 10^{-7}$ N/C.\n\nComo o peso aponta para baixo e a carga é positiva, o campo precisa apontar para cima — coerente com a placa negativa em cima e a positiva embaixo na figura.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q07.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Energia potencial e cinética de um elétron",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Quais afirmações são verdadeiras para um elétron se movendo sob ação exclusiva de um campo elétrico?\n\nI) Sua energia potencial elétrica aumenta à medida que vai do alto para o baixo potencial.\n\nII) Sua energia potencial elétrica diminui à medida que vai do alto para o baixo potencial.\n\nIII) Sua energia potencial diminui à medida que sua energia cinética diminui.\n\nIV) Sua energia cinética diminui à medida que se move no sentido do campo elétrico.\n\nV) Sua energia cinética aumenta à medida que se move no sentido do campo elétrico.",
+    "alternativas": {
+      "a": "I e IV",
+      "b": "II e V",
+      "c": "I e V",
+      "d": "III e IV",
+      "e": "II e III"
+    },
+    "gabarito": "a",
+    "resolucao": "A energia potencial de uma carga $q$ em um ponto de potencial $V$ é $U = qV$. Para o elétron, $q = -e < 0$, então $U = -eV$: onde o potencial é menor, a energia potencial do elétron é maior.\n\nI) Indo do alto para o baixo potencial, $V$ diminui e $U = -eV$ aumenta. VERDADEIRA (e, por consequência, II é falsa).\n\nIII) Como só a força elétrica atua, $U + K$ é constante: se $K$ diminui, $U$ necessariamente aumenta. FALSA.\n\nIV) A força sobre o elétron é $\\vec{F} = -e\\vec{E}$, oposta a $\\vec{E}$. Movendo-se no sentido de $\\vec{E}$, o elétron se move contra a força que sofre, o trabalho é negativo e $K$ diminui. VERDADEIRA (e V é falsa).\n\nSão verdadeiras I e IV.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Partilha de carga entre esferas condutoras idênticas",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Considere 3 esferas condutoras idênticas de raio $R$. A primeira esfera, eletricamente neutra, é posta em contato elétrico com a segunda, com carga $Q > 0$. Em seguida, é posta em contato elétrico com a terceira esfera, cuja carga vale $-Q$. O campo elétrico produzido pela primeira esfera a uma distância $2R$ de seu centro vale:",
+    "alternativas": {
+      "a": "$\\dfrac{1}{4\\pi\\varepsilon_0}\\,\\dfrac{Q}{16R^{2}}$, apontando para fora da esfera",
+      "b": "$\\dfrac{1}{4\\pi\\varepsilon_0}\\,\\dfrac{Q}{16R^{2}}$, apontando para dentro da esfera",
+      "c": "$\\dfrac{1}{4\\pi\\varepsilon_0}\\,\\dfrac{Q}{8R^{2}}$, apontando para fora da esfera",
+      "d": "$\\dfrac{1}{4\\pi\\varepsilon_0}\\,\\dfrac{Q}{8R^{2}}$, apontando para dentro da esfera",
+      "e": "zero"
+    },
+    "gabarito": "b",
+    "resolucao": "Esferas condutoras idênticas em contato dividem a carga total igualmente entre si.\n\nPrimeiro contato (esfera 1 neutra com esfera 2, de carga $Q$): a carga total $0 + Q = Q$ se reparte, e cada uma fica com $Q/2$.\n\nSegundo contato (esfera 1, com $Q/2$, encostada na esfera 3, de carga $-Q$): a carga total é $\\dfrac{Q}{2} - Q = -\\dfrac{Q}{2}$, e cada uma fica com $-\\dfrac{Q}{4}$.\n\nFora de uma esfera uniformemente carregada o campo é o de uma carga puntiforme no centro. A $2R$ do centro:\n\n$E = \\dfrac{1}{4\\pi\\varepsilon_0}\\dfrac{|-Q/4|}{(2R)^{2}} = \\dfrac{1}{4\\pi\\varepsilon_0}\\dfrac{Q}{16R^{2}}$.\n\nComo a carga final da primeira esfera é negativa, o campo aponta para dentro, em direção à esfera.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Comparação de potenciais pela variação de energia cinética",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma partícula carregada positivamente é solta a partir do repouso no ponto $P_1$ em uma região sob influência de um campo eletrostático. Observa-se que ela então passa pelo ponto $P_2$ com velocidade $\\vec{v}_2 = v\\,\\hat{i}$ e depois pelo ponto $P_3$ com velocidade $\\vec{v}_3 = -v\\,\\hat{j}$, onde $\\hat{i}$ e $\\hat{j}$ são os vetores unitários nas direções $x$ e $y$. Sabe-se que apenas a força elétrica realiza trabalho. A respeito dos potenciais elétricos nos pontos $P_1$, $P_2$ e $P_3$, denominados respectivamente $V_1$, $V_2$ e $V_3$, podemos afirmar:",
+    "alternativas": {
+      "a": "$V_1 < V_2 < V_3$",
+      "b": "$V_1 > V_2 > V_3$",
+      "c": "$V_1 = V_2 = V_3$",
+      "d": "$V_1 < V_2 = V_3$",
+      "e": "$V_1 > V_2 = V_3$"
+    },
+    "gabarito": "e",
+    "resolucao": "Como só a força elétrica realiza trabalho, a energia mecânica se conserva: $K + qV$ é o mesmo em todos os pontos, com $q > 0$.\n\nEm $P_1$ a partícula parte do repouso: $K_1 = 0$. Em $P_2$ e em $P_3$ o módulo da velocidade é o mesmo, $v$ (as direções são diferentes, mas a energia cinética só depende do módulo): $K_2 = K_3 = \\tfrac{1}{2}mv^{2}$.\n\nDa conservação, $qV_1 = K_2 + qV_2 = K_3 + qV_3$. Como $K_2 = K_3 > 0$ e $q > 0$, segue $V_2 = V_3$ e $V_1 > V_2$.\n\nLogo $V_1 > V_2 = V_3$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Direção do campo de um fio com densidade não uniforme",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "O fio da figura está carregado com uma distribuição de carga não uniforme, de modo que sua densidade linear de carga $\\lambda$ depende da posição. Considerando-se os eixos da figura, cuja origem está no ponto $O$, tem-se $\\lambda(z) = Cz$, sendo $C$ uma constante positiva. O campo elétrico no ponto $P$, localizado no eixo que passa pelo centro do fio a uma distância $x$ deste, poderia ser representado por qual dos vetores abaixo?",
+    "alternativas": {
+      "a": "Vetor horizontal apontando para a direita, afastando-se do fio.",
+      "b": "Vetor apontando para a direita e para baixo.",
+      "c": "Vetor apontando para a direita e para cima.",
+      "d": "Vetor horizontal apontando para a esquerda, em direção ao fio.",
+      "e": "Vetor apontando para a esquerda e para cima."
+    },
+    "alternativas_imagens": {
+      "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q11_a.png",
+      "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q11_b.png",
+      "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q11_c.png",
+      "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q11_d.png",
+      "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q11_e.png"
+    },
+    "gabarito": "b",
+    "resolucao": "Toda a carga do fio é positiva ($C > 0$ e $z > 0$ ao longo do fio), então cada elemento empurra o campo para longe do fio: a componente horizontal em $P$ é positiva, apontando para a direita. Isso já elimina as opções que apontam para a esquerda.\n\nFalta a componente vertical. O ponto $P$ está na altura do centro do fio. Um elemento situado abaixo de $P$ contribui com campo apontando para cima; um elemento situado acima contribui com campo apontando para baixo.\n\nComo $\\lambda(z) = Cz$ cresce com a altura, a metade de cima do fio carrega bem mais carga que a metade de baixo. As contribuições para baixo vencem as contribuições para cima.\n\nO campo resultante em $P$ aponta, portanto, para a direita e para baixo.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q11.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Fluxo elétrico e argumentos de simetria",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "O octaedro regular, representado na figura, é um poliedro com 8 faces iguais. Suponha que uma carga puntiforme $Q$ seja colocada no centro geométrico do octaedro. O fluxo do campo elétrico através de cada face do octaedro vale:",
+    "alternativas": {
+      "a": "$Q/\\varepsilon_0$",
+      "b": "$Q/(2\\varepsilon_0)$",
+      "c": "$Q/(8\\varepsilon_0)$",
+      "d": "zero",
+      "e": "Não é possível calcular, pois o campo elétrico não é constante em cada face."
+    },
+    "gabarito": "c",
+    "resolucao": "Pela lei de Gauss, o fluxo total através de qualquer superfície fechada que envolva a carga $Q$ vale $\\Phi_{\\text{total}} = \\dfrac{Q}{\\varepsilon_0}$, independentemente do formato da superfície.\n\nO octaedro regular tem 8 faces iguais e a carga está no seu centro geométrico, de modo que as 8 faces são equivalentes por simetria: cada uma recebe a mesma fração do fluxo total.\n\n$\\Phi_{\\text{face}} = \\dfrac{1}{8}\\dfrac{Q}{\\varepsilon_0} = \\dfrac{Q}{8\\varepsilon_0}$.\n\nObserve a armadilha da alternativa (e): o campo realmente não é constante sobre cada face, mas isso não impede o cálculo — a simetria resolve o problema sem precisar integrar.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q12.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Energia potencial de um conjunto de cargas puntiformes",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Você fixa quatro cargas $q$ pontuais idênticas e de massa $m$ nos vértices de um quadrado de lado $L$. Em seguida, você as libera simultaneamente, de modo que elas passam a se afastar. A máxima velocidade que cada carga atingirá será:",
+    "alternativas": {
+      "a": "infinitamente grande",
+      "b": "$\\sqrt{\\dfrac{2Kq^{2}}{mL}}$",
+      "c": "$\\sqrt{\\left(2+\\dfrac{\\sqrt{2}}{2}\\right)\\dfrac{Kq^{2}}{mL}}$",
+      "d": "$\\sqrt{\\dfrac{3}{2}\\dfrac{Kq^{2}}{mL}}$",
+      "e": "$\\sqrt{\\left(1+\\dfrac{\\sqrt{2}}{4}\\right)\\dfrac{Kq^{2}}{mL}}$"
+    },
+    "gabarito": "c",
+    "resolucao": "A energia potencial inicial é a soma sobre os 6 pares de cargas do quadrado: 4 pares ao longo dos lados (distância $L$) e 2 pares nas diagonais (distância $L\\sqrt{2}$):\n\n$U_i = 4\\,\\dfrac{Kq^{2}}{L} + 2\\,\\dfrac{Kq^{2}}{L\\sqrt{2}} = \\dfrac{Kq^{2}}{L}\\left(4 + \\sqrt{2}\\right)$.\n\nA velocidade máxima é atingida quando as cargas já estão infinitamente afastadas, onde $U_f = 0$ e toda a energia potencial virou energia cinética. Por simetria as quatro cargas têm o mesmo módulo de velocidade $v$:\n\n$K_f = 4 \\cdot \\dfrac{1}{2}mv^{2} = 2mv^{2}$.\n\nConservação de energia: $2mv^{2} = \\dfrac{Kq^{2}}{L}(4+\\sqrt{2})$, logo\n\n$v^{2} = \\dfrac{4+\\sqrt{2}}{2}\\,\\dfrac{Kq^{2}}{mL} = \\left(2+\\dfrac{\\sqrt{2}}{2}\\right)\\dfrac{Kq^{2}}{mL}$,\n\ne portanto $v = \\sqrt{\\left(2+\\dfrac{\\sqrt{2}}{2}\\right)\\dfrac{Kq^{2}}{mL}}$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Fluxo através de superfície que envolve um dipolo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma superfície esférica imaginária envolve um dipolo elétrico e mais nenhuma outra carga. Sobre essa situação, podemos afirmar que:",
+    "alternativas": {
+      "a": "O fluxo do campo elétrico na superfície não pode ser nulo, uma vez que há cargas elétricas em seu interior.",
+      "b": "O fluxo do campo elétrico em um hemisfério da superfície pode ser não nulo.",
+      "c": "O campo elétrico é nulo em todos os pontos da superfície.",
+      "d": "O campo elétrico é normal à superfície em todos os pontos dela.",
+      "e": "A superfície é uma equipotencial."
+    },
+    "gabarito": "b",
+    "resolucao": "A lei de Gauss depende só da carga líquida interna. Um dipolo tem $+q$ e $-q$, logo $q_{\\text{int}} = 0$ e o fluxo total pela esfera é nulo — o que já derruba a alternativa (a): fluxo nulo não significa ausência de cargas internas.\n\nFluxo total nulo, porém, não quer dizer campo nulo. O campo do dipolo é diferente de zero sobre a superfície e aponta para fora em uma parte dela e para dentro na outra, o que derruba (c).\n\nJustamente por isso, o fluxo em apenas um hemisfério pode perfeitamente ser não nulo: as duas metades têm fluxos de sinais opostos que só se cancelam na soma. A alternativa (b) é a correta.\n\nO campo do dipolo não é radial em relação ao centro da esfera nem tem módulo constante sobre ela, então a superfície não é perpendicular ao campo em todo ponto nem é equipotencial — o que descarta (d) e (e).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Esfera isolante dentro de casca condutora e leitura do gráfico de E",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma esfera de borracha carregada homogeneamente com uma carga $Q > 0$ está na cavidade interior de uma esfera condutora oca. Os centros de ambas coincidem, como esquematizado na figura à esquerda. O gráfico à direita mostra o módulo do campo elétrico da configuração ao longo de uma linha radial (os pontilhados servem apenas como referência). Sobre essa situação, indique a afirmativa FALSA:",
+    "alternativas": {
+      "a": "Uma vez que o campo elétrico não se anula para $r > 1$ m, a esfera condutora deve estar carregada.",
+      "b": "O raio da esfera de borracha é 50 cm.",
+      "c": "O raio interno da esfera condutora vale 75 cm.",
+      "d": "A carga da esfera de borracha em Coulombs é $\\pi\\varepsilon_0$.",
+      "e": "A superfície externa da esfera condutora possui uma densidade superficial de carga igual a $\\varepsilon_0/4$ C/m²."
+    },
+    "gabarito": "a",
+    "resolucao": "Leitura do gráfico: o campo cresce linearmente de $0$ até $r = 0{,}50$ m (comportamento típico do interior de uma esfera isolante uniformemente carregada), depois decai como $1/r^{2}$ até $r = 0{,}75$ m, anula-se entre $0{,}75$ m e $1{,}0$ m (o material do condutor, em equilíbrio eletrostático) e volta a ser não nulo para $r > 1{,}0$ m.\n\nIsso fixa o raio da esfera de borracha em 50 cm (b, verdadeira) e os raios interno e externo do condutor em 75 cm e 1,0 m (c, verdadeira).\n\nO valor de pico é $|\\vec{E}| = 1$ N/C em $r = 0{,}50$ m, então $\\dfrac{1}{4\\pi\\varepsilon_0}\\dfrac{Q}{(0{,}5)^{2}} = 1 \\Rightarrow Q = 4\\pi\\varepsilon_0 \\times 0{,}25 = \\pi\\varepsilon_0$ C (d, verdadeira).\n\nPara $r > 1$ m o gráfico volta exatamente à curva pontilhada $\\dfrac{1}{4\\pi\\varepsilon_0}\\dfrac{Q}{r^{2}}$, ou seja, a carga líquida englobada continua sendo apenas $Q$: o condutor está neutro. Ele apenas induz $-Q$ na superfície interna e $+Q$ na externa. A densidade na superfície externa (raio 1 m) fica $\\sigma = \\dfrac{Q}{4\\pi(1)^{2}} = \\dfrac{\\pi\\varepsilon_0}{4\\pi} = \\dfrac{\\varepsilon_0}{4}$ C/m² (e, verdadeira).\n\nA afirmativa (a) é a FALSA: o campo não se anula para $r > 1$ m por causa da carga $Q$ da esfera de borracha, e não porque o condutor esteja carregado — um condutor neutro produz exatamente o mesmo campo externo.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p1/q15.png"
+  }
+]

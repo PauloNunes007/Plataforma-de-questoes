@@ -1,0 +1,343 @@
+[
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Campo de fios retilíneos e superposição vetorial",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Uma corrente constante $i$ passa em cada um dos três fios retilíneos longos, situados nos vértices de um triângulo eqüilátero. Os fios são normais em relação ao plano que contém o triângulo, conforme mostra a figura. No vértice superior a corrente sai do plano da figura e nos dois vértices inferiores a corrente entra no plano da figura; o ponto P é o centro do triângulo.\n\nDesconsiderando o campo magnético terrestre, a orientação de uma bússola colocada no ponto P é:",
+  "alternativas": {
+   "a": "Agulha na vertical, com o polo norte (N) para cima e o polo sul (S) para baixo.",
+   "b": "Agulha inclinada, com o polo norte (N) para cima e à direita e o polo sul (S) para baixo e à esquerda.",
+   "c": "Agulha na horizontal, com o polo norte (N) apontando para a direita e o polo sul (S) para a esquerda.",
+   "d": "Agulha inclinada, com o polo norte (N) para baixo e à direita e o polo sul (S) para cima e à esquerda.",
+   "e": "Agulha na vertical, com o polo norte (N) para baixo e o polo sul (S) para cima."
+  },
+  "alternativas_imagens": {
+   "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q01_a.png",
+   "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q01_b.png",
+   "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q01_c.png",
+   "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q01_d.png",
+   "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q01_e.png"
+  },
+  "gabarito": "c",
+  "resolucao": "A agulha da bússola se alinha com o campo magnético resultante em P, então basta somar vetorialmente os três campos.\n\nP é o centro do triângulo equilátero, logo está à mesma distância $d$ dos três fios e cada fio contribui com o mesmo módulo\n\n$B_0 = \\dfrac{\\mu_0 i}{2\\pi d}$.\n\nColoque P na origem, com o vértice de cima em $90^\\circ$ e os de baixo em $210^\\circ$ e $330^\\circ$. Usando a regra da mão direita ($\\vec{B}$ circula no sentido anti-horário em torno de uma corrente que sai do papel e no sentido horário em torno de uma que entra):\n\nfio de cima (corrente saindo): $\\vec{B}_1 = B_0\\,(+\\hat{x})$;\n\nfio de baixo à esquerda (corrente entrando): $\\vec{B}_2 = B_0\\,(0{,}50\\,\\hat{x} - 0{,}87\\,\\hat{y})$;\n\nfio de baixo à direita (corrente entrando): $\\vec{B}_3 = B_0\\,(0{,}50\\,\\hat{x} + 0{,}87\\,\\hat{y})$.\n\nAs componentes verticais dos dois fios de baixo se cancelam e as horizontais se somam:\n\n$\\vec{B} = B_0(1 + 0{,}50 + 0{,}50)\\,\\hat{x} = 2B_0\\,\\hat{x} = \\dfrac{\\mu_0 i}{\\pi d}\\,\\hat{x}$.\n\nO campo resultante em P é horizontal e aponta para a direita. Como o polo norte da agulha aponta no sentido de $\\vec{B}$, a bússola fica deitada na horizontal, com N à direita e S à esquerda.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q01.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "Indução Eletromagnética",
+  "subtopico": "Lei de Faraday em bobinas acopladas por núcleo de ferro",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "A figura representa uma das experiências de Faraday que ilustram a indução eletromagnética, em que $\\varepsilon$ é uma bateria de tensão constante, K é uma chave, $B_1$ e $B_2$ são duas bobinas enroladas num núcleo de ferro doce e G é um galvanômetro ligado aos terminais de $B_2$ que, com o ponteiro na posição central, indica corrente elétrica de intensidade nula.\n\nQuando a chave K é ligada, o ponteiro do galvanômetro se desloca para a direita e:",
+  "alternativas": {
+   "a": "assim se mantém até a chave ser desligada, quando o ponteiro se desloca para a esquerda por alguns instantes e volta à posição central.",
+   "b": "logo em seguida volta à posição central e assim se mantém até a chave ser desligada, quando o ponteiro se desloca para a esquerda por alguns instantes e volta à posição central.",
+   "c": "logo em seguida volta à posição central e assim se mantém até a chave ser desligada, quando o ponteiro volta a se deslocar para a direita por alguns instantes e volta à posição central.",
+   "d": "para a esquerda com uma oscilação de frequência e amplitude constantes e assim se mantém até a chave ser desligada, quando o ponteiro volta à posição central.",
+   "e": "para a esquerda com uma oscilação cuja frequência e amplitude se reduzem continuamente até a chave ser desligada, quando o ponteiro volta à posição central."
+  },
+  "gabarito": "b",
+  "resolucao": "A corrente induzida em $B_2$ é dada pela lei de Faraday:\n\n$\\varepsilon_{\\text{ind}} = -\\dfrac{d\\Phi_B}{dt}$,\n\nou seja, só existe enquanto o fluxo magnético através de $B_2$ estiver variando.\n\nAo ligar K, a corrente em $B_1$ cresce de zero até seu valor final em um curto intervalo de tempo. Durante essa subida, $d\\Phi_B/dt \\neq 0$ e o galvanômetro acusa corrente (ponteiro para a direita). Assim que a corrente em $B_1$ estabiliza, o fluxo fica constante, $d\\Phi_B/dt = 0$ e o ponteiro volta ao centro — mesmo com a chave ainda ligada.\n\nAo desligar K, a corrente em $B_1$ cai a zero: o fluxo varia novamente, agora no sentido oposto, e o ponteiro se desloca por alguns instantes para a esquerda, voltando em seguida à posição central.\n\nEsse é exatamente o comportamento descrito na alternativa B. Uma bateria de tensão constante não produz oscilação nenhuma, o que descarta D e E.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q02.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Força magnética entre fios paralelos",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Três fios retos e muito longos (5 m de comprimento), orientados ao longo do eixo $x$ e contidos no plano $xy$, transportam correntes iguais a 20 A no sentido positivo do eixo $x$. Os fios estão separados por uma distância de 10 cm, nas seguintes posições: $y = 10$ cm, $y = 0$ e $y = -10$ cm. Qual é a força resultante (módulo e orientação) no fio que está em $y = 10$ cm? (despreze o campo magnético terrestre)",
+  "alternativas": {
+   "a": "$6 \\times 10^{-3}$ N $(-\\hat{j})$",
+   "b": "$6 \\times 10^{-3}$ N $(\\hat{j})$",
+   "c": "$2 \\times 10^{-3}$ N $(-\\hat{j})$",
+   "d": "$2 \\times 10^{-3}$ N $(\\hat{j})$",
+   "e": "$2 \\times 10^{-3}$ N $(-\\hat{i})$"
+  },
+  "gabarito": "a",
+  "resolucao": "Dois fios paralelos percorridos por correntes de mesmo sentido se atraem, e a força sobre um trecho de comprimento $L$ vale\n\n$F = \\dfrac{\\mu_0 i_1 i_2 L}{2\\pi d}$.\n\nComo as três correntes têm o mesmo sentido ($+\\hat{x}$), o fio em $y = 10$ cm é atraído pelos outros dois, isto é, puxado no sentido $-\\hat{y}$ nos dois casos.\n\nFio em $y = 0$ ($d = 0{,}10$ m):\n\n$F_1 = \\dfrac{(4\\pi \\times 10^{-7})(20)(20)(5)}{2\\pi (0{,}10)} = 4{,}0 \\times 10^{-3}\\text{ N}$.\n\nFio em $y = -10$ cm ($d = 0{,}20$ m):\n\n$F_2 = \\dfrac{(4\\pi \\times 10^{-7})(20)(20)(5)}{2\\pi (0{,}20)} = 2{,}0 \\times 10^{-3}\\text{ N}$.\n\nAs duas apontam no mesmo sentido, então\n\n$F = F_1 + F_2 = 6{,}0 \\times 10^{-3}\\text{ N}$, na direção $-\\hat{j}$.",
+  "tikz_code": null,
+  "imagem_enunciado": false,
+  "alternativas_com_imagem": []
+ },
+ {
+  "materia": "Física II",
+  "topico": "Indução Eletromagnética",
+  "subtopico": "F.e.m. de movimento e sentido da corrente induzida",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Uma espira ABCD feita de fios ideais está totalmente imersa em um campo magnético $B$, uniforme, de intensidade $0{,}50$ T e direção perpendicular ao plano da espira (saindo do papel), como mostra a figura. O lado AB, de comprimento 20 cm, é móvel e se desloca com velocidade constante de 10 m/s e R é um resistor de resistência $R = 0{,}50\\ \\Omega$. Nessas condições é correto afirmar que, devido ao movimento do lado AB da espira:",
+  "alternativas": {
+   "a": "Não circula nenhuma corrente na espira, pois o campo é uniforme.",
+   "b": "Aparecerá uma corrente induzida, no sentido horário, de 2 A.",
+   "c": "Aparecerá uma corrente induzida, no sentido horário, de 0,50 A.",
+   "d": "Aparecerá uma corrente induzida, no sentido anti-horário, de 2,0 A.",
+   "e": "Aparecerá uma corrente induzida, no sentido anti-horário, de 0,50 A."
+  },
+  "gabarito": "b",
+  "resolucao": "Mesmo com o campo uniforme, a área da espira varia porque a barra AB se move — e é isso que gera fluxo variável. A f.e.m. de movimento é\n\n$|\\varepsilon| = B L v = (0{,}50)(0{,}20)(10) = 1{,}0\\text{ V}$.\n\nA corrente induzida vale\n\n$i = \\dfrac{|\\varepsilon|}{R} = \\dfrac{1{,}0}{0{,}50} = 2{,}0\\text{ A}$.\n\nSentido: com $\\vec{B}$ saindo do papel e a barra AB se afastando (área crescendo), o fluxo para fora do papel aumenta. Pela lei de Lenz, a corrente induzida deve criar fluxo entrando no papel dentro da espira, o que corresponde a percorrê-la no sentido horário.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q04.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "Indução Eletromagnética",
+  "subtopico": "Potência dissipada pela f.e.m. de movimento",
+  "dificuldade": "facil",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Uma espira ABCD feita de fios ideais está totalmente imersa em um campo magnético $B$, uniforme, de intensidade $0{,}50$ T e direção perpendicular ao plano da espira, como mostra a figura. O lado AB, de comprimento 20 cm, é móvel e se desloca com velocidade constante de 10 m/s e R é um resistor de resistência $R = 0{,}50\\ \\Omega$. Nessas condições, qual a potência dissipada no resistor?",
+  "alternativas": {
+   "a": "100 W",
+   "b": "200 W",
+   "c": "50 W",
+   "d": "20 W",
+   "e": "2 W"
+  },
+  "gabarito": "e",
+  "resolucao": "A f.e.m. de movimento gerada pela barra AB é\n\n$|\\varepsilon| = B L v = (0{,}50)(0{,}20)(10) = 1{,}0\\text{ V}$,\n\ne a corrente na espira é\n\n$i = \\dfrac{|\\varepsilon|}{R} = \\dfrac{1{,}0}{0{,}50} = 2{,}0\\text{ A}$.\n\nA potência dissipada no resistor é\n\n$P = R\\,i^2 = (0{,}50)(2{,}0)^2 = 2{,}0\\text{ W}$.\n\nEquivalentemente, $P = \\varepsilon i = (1{,}0)(2{,}0) = 2{,}0$ W, ou $P = \\varepsilon^2/R = 1{,}0/0{,}50 = 2{,}0$ W.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q05.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Campo resultante nulo de dois fios retilíneos",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Os fios 1 e 2, mostrados na figura, são retilíneos e muito compridos, estando ambos no ar e situados no plano desta folha. Há, no fio 1, uma corrente $i_1 = 5{,}0$ A e uma corrente $i_2$ no fio 2. Deseja-se que o campo magnético resultante, devido aos fios, seja nulo no ponto P (figura). O fio 1 é horizontal, com $i_1$ para a direita; o fio 2 é vertical; o ponto P fica 15 cm abaixo do fio 1 e 45 cm à direita do fio 2.\n\nPara que isso aconteça, determine qual deve ser o valor e o sentido da corrente $i_2$:",
+  "alternativas": {
+   "a": "5 A para baixo",
+   "b": "10 A para baixo",
+   "c": "10 A para cima",
+   "d": "15 A para baixo",
+   "e": "15 A para cima"
+  },
+  "gabarito": "d",
+  "resolucao": "Cada fio retilíneo muito longo cria em P um campo de módulo $B = \\dfrac{\\mu_0 i}{2\\pi d}$, com $d$ a distância perpendicular do fio ao ponto.\n\nFio 1 (horizontal, corrente para a direita, $d_1 = 0{,}15$ m): pela regra da mão direita, abaixo do fio o campo entra no papel.\n\nPara anular o resultante, o fio 2 precisa produzir em P um campo saindo do papel. Como P está à direita do fio 2, um campo saindo do papel exige, pela regra da mão direita, corrente para baixo.\n\nIgualando os módulos, com $d_2 = 0{,}45$ m:\n\n$\\dfrac{\\mu_0 i_1}{2\\pi d_1} = \\dfrac{\\mu_0 i_2}{2\\pi d_2} \\Rightarrow i_2 = i_1\\,\\dfrac{d_2}{d_1} = 5{,}0 \\times \\dfrac{0{,}45}{0{,}15} = 15\\text{ A}$.\n\nLogo $i_2 = 15$ A, para baixo.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q06.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "Indução Eletromagnética",
+  "subtopico": "Circuito RL: corrente logo após a abertura da chave",
+  "dificuldade": "dificil",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Considere o circuito mostrado na figura. A bateria tem fem $\\varepsilon = 25$ volts e resistência interna desprezível. A indutância é $L = 0{,}80$ H e as resistências são $R_1 = 12\\ \\Omega$ e $R_2 = 9\\ \\Omega$. Inicialmente, a chave S está fechada há um longo tempo. Então o interruptor é aberto.\n\nQual é a corrente no resistor $R_1$ logo após a chave ser aberta?",
+  "alternativas": {
+   "a": "0,0 A",
+   "b": "2,1 A",
+   "c": "0,5 A",
+   "d": "2,8 A",
+   "e": "4,9 A"
+  },
+  "gabarito": "d",
+  "resolucao": "Com S fechada há muito tempo o regime é estacionário: a corrente no indutor não varia mais, ele não gera f.e.m. e se comporta como um fio ideal. O ramo $R_2$–$L$ fica então diretamente ligado à bateria:\n\n$i_L = \\dfrac{\\varepsilon}{R_2} = \\dfrac{25}{9} \\approx 2{,}8\\text{ A}$.\n\n(Em paralelo, $R_1$ conduzia $25/12 \\approx 2{,}1$ A vindos da bateria.)\n\nA corrente em um indutor não pode mudar bruscamente, pois isso exigiria $\\varepsilon_L = -L\\,di/dt$ infinita. Assim, no instante imediatamente posterior à abertura de S, a corrente no indutor continua valendo $\\approx 2{,}8$ A.\n\nCom a bateria desconectada, o único caminho fechado que resta é a malha $L$–$R_2$–$R_1$, e toda a corrente do indutor passa a circular por $R_1$:\n\n$i_{R_1} = i_L \\approx 2{,}8\\text{ A}$,\n\nagora em sentido oposto ao que ela tinha antes da abertura.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q07.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "Oscilações Eletromagnéticas e CA",
+  "subtopico": "Corrente máxima em um circuito LC ideal",
+  "dificuldade": "facil",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Em um circuito LC contendo um indutor ideal de 40 mH e um capacitor de 1,2 mF, a carga máxima no capacitor é de 45 mC durante as oscilações. Qual é a corrente máxima através do indutor durante as oscilações?",
+  "alternativas": {
+   "a": "3,7 A",
+   "b": "4,2 A",
+   "c": "8,5 A",
+   "d": "6,5 A",
+   "e": "2,5 A"
+  },
+  "gabarito": "d",
+  "resolucao": "Num circuito LC ideal a carga oscila como $q(t) = Q\\cos(\\omega t + \\phi)$, com\n\n$\\omega = \\dfrac{1}{\\sqrt{LC}}$,\n\ne a corrente é $i = -\\omega Q \\operatorname{sen}(\\omega t + \\phi)$, de modo que $I_{\\max} = \\omega Q$.\n\nCalculando a frequência angular:\n\n$\\omega = \\dfrac{1}{\\sqrt{(40 \\times 10^{-3})(1{,}2 \\times 10^{-3})}} = \\dfrac{1}{\\sqrt{4{,}8 \\times 10^{-5}}} \\approx 144{,}3\\text{ rad/s}$.\n\nLogo\n\n$I_{\\max} = (144{,}3)(45 \\times 10^{-3}) \\approx 6{,}5\\text{ A}$.\n\nO mesmo resultado sai da conservação da energia: $\\dfrac{Q^2}{2C} = \\dfrac{L I_{\\max}^2}{2}$.",
+  "tikz_code": null,
+  "imagem_enunciado": false,
+  "alternativas_com_imagem": []
+ },
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Polaridade magnética e linhas de campo de um solenoide",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Um solenóide de extremidades A e B é percorrido por uma corrente elétrica constante $i$, conforme mostra a figura abaixo.\n\nCom base nas informações e na figura, analise a veracidade (V) ou falsidade (F) das seguintes afirmações.\n\n( ) A é o norte magnético do solenoide.\n\n( ) Uma bússola colocada junto à extremidade B sobre o eixo do solenóide terá seu sul magnético próximo a B.\n\n( ) As linhas de indução do campo magnético dentro do solenóide são retas igualmente espaçadas entre si.\n\nAssinale a alternativa que preenche corretamente os parênteses, de cima para baixo.",
+  "alternativas": {
+   "a": "F – V – F",
+   "b": "V – F – V",
+   "c": "V – V – F",
+   "d": "F – F – V",
+   "e": "F – V – V"
+  },
+  "gabarito": "e",
+  "resolucao": "Pela regra da mão direita aplicada ao enrolamento da figura (os dedos acompanham o sentido da corrente nas espiras e o polegar aponta para o norte), o campo no interior do solenóide aponta de A para B. O norte magnético fica portanto na extremidade B, e A é o polo sul.\n\n1ª afirmação — \"A é o norte magnético\": falsa, A é o polo sul.\n\n2ª afirmação — o polo norte do solenóide (extremidade B) atrai o polo sul da agulha da bússola; sobre o eixo as linhas saem de B, o norte da agulha se alinha com elas apontando para fora e o sul fica voltado para B. Verdadeira.\n\n3ª afirmação — no interior de um solenóide longo o campo é uniforme, de modo que as linhas de indução são retas paralelas ao eixo e igualmente espaçadas. Verdadeira.\n\nSequência: F – V – V.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q09.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Efeito Hall usado para medir o campo magnético",
+  "dificuldade": "dificil",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "O dispositivo abaixo foi desenhado para medir o campo magnético terrestre e consiste de uma placa condutora ligada a uma bateria que fornece uma d.d.p. constante $\\Delta V_{bat}$. O voltímetro V então monitora a d.d.p. conforme ilustrado, enquanto o dispositivo é lentamente rotacionado ao longo de todas as direções no espaço. Um visor mostra a máxima d.d.p. observada no processo.\n\nDesprezando-se os campos gerados pelos próprios fios do dispositivo, pode-se afirmar:",
+  "alternativas": {
+   "a": "A máxima d.d.p. medida ocorre quando a placa está orientada com o lado $L_1$ na direção leste-oeste e o lado $L_2$ na direção norte-sul.",
+   "b": "Se a máxima d.d.p. medida é $\\varepsilon$, então o campo magnético terrestre local é $B = \\varepsilon L_2 v_d$, onde $v_d$ é a velocidade de deriva dos elétrons na placa.",
+   "c": "O dispositivo não funciona, pois deveria na verdade medir a voltagem entre as outras duas laterais da placa.",
+   "d": "A máxima d.d.p. medida é $\\varepsilon = B I L_2$, e é a partir daí que pode-se medir o campo magnético terrestre.",
+   "e": "Quando o dispositivo está na posição em que a máxima d.d.p. é observada, a d.d.p. não se altera se ele for girado em torno de um eixo perpendicular à placa."
+  },
+  "gabarito": "e",
+  "resolucao": "O aparelho é um sensor Hall. Os portadores que percorrem a placa com velocidade de deriva $v_d$ sofrem a força $\\vec{F} = q\\,\\vec{v}_d \\times \\vec{B}$, que os acumula nas bordas laterais até que o campo elétrico transversal equilibre a força magnética. A d.d.p. medida é a tensão Hall\n\n$\\varepsilon_H = v_d B_\\perp L$,\n\nem que $B_\\perp$ é a componente de $\\vec{B}$ perpendicular à placa e $L$ a largura transversal à corrente. A d.d.p. é máxima quando $\\vec{B}$ está totalmente perpendicular à placa.\n\nNessa posição, girar o dispositivo em torno de um eixo perpendicular à placa não muda a orientação relativa entre $\\vec{B}$ e a placa: o campo continua perpendicular a ela, corrente e placa giram juntas e a tensão Hall permanece a mesma. A alternativa E está correta.\n\nAs demais falham: em A a condição imposta não garante $\\vec{B}$ perpendicular à placa; em B a relação está invertida (o correto seria $B = \\varepsilon/(L\\,v_d)$); em C a medida entre as bordas transversais à corrente é justamente a correta; e em D a expressão $\\varepsilon = B I L_2$ não é a da tensão Hall nem tem dimensão de tensão.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q10.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "Indução Eletromagnética",
+  "subtopico": "F.e.m. de movimento e força de freio (lei de Lenz)",
+  "dificuldade": "dificil",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Uma espira condutora retangular de lados $L_1$ e $L_2$, com $L_1 > L_2$, e resistência $R$ é lançada com velocidade $v$ em direção a uma região com campo magnético uniforme $B$ (entrando no papel). Na situação I, o lado $L_1$ está alinhado verticalmente, enquanto na situação II a espira foi girada e $L_1$ está na horizontal, conforme a figura. Sobre essas situações, pode-se afirmar:",
+  "alternativas": {
+   "a": "A máxima f.e.m. induzida é maior na situação I.",
+   "b": "A força magnética na espira assim que ela entra na região com campo é maior na situação II.",
+   "c": "A resultante vertical da força magnética sentida pela espira é maior em II.",
+   "d": "A espira é freada ao penetrar no campo em ambos os casos, porém, se o campo magnético estivesse no sentido contrário (saindo do papel), ela seria puxada para dentro da região com campo.",
+   "e": "A corrente induzida é a mesma nas duas situações e tem sentido horário."
+  },
+  "gabarito": "a",
+  "resolucao": "Enquanto a espira entra na região de campo, a f.e.m. induzida é a f.e.m. de movimento do lado que já cruzou a fronteira:\n\n$|\\varepsilon| = B\\,\\ell\\,v$,\n\nem que $\\ell$ é o comprimento do lado perpendicular à velocidade (o lado que corta as linhas de campo).\n\nNa situação I esse lado é $L_1$; na situação II é $L_2$. Como $L_1 > L_2$,\n\n$\\varepsilon_I = B L_1 v > \\varepsilon_{II} = B L_2 v$,\n\ne a alternativa A está correta.\n\nAs outras: a força de freio vale $F = \\dfrac{B^2\\ell^2 v}{R}$, maior em I e não em II, o que descarta B; essa força é horizontal, oposta a $\\vec{v}$, e as forças sobre os dois lados paralelos a $\\vec{v}$ se cancelam, o que descarta C; a lei de Lenz sempre se opõe à entrada, então inverter o sentido de $\\vec{B}$ apenas inverte a corrente induzida, mantendo a espira freada, o que descarta D; e a corrente $i = B\\ell v/R$ depende de $\\ell$, logo não é a mesma nas duas situações, descartando E.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q11.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "Indução Eletromagnética",
+  "subtopico": "Corrente induzida a partir do gráfico da corrente indutora",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "A figura mostra o corte de um solenóide grande em cujo interior está um solenóide menor. O gráfico a seguir mostra a corrente no solenóide maior como função do tempo: ela oscila, sempre com valores positivos, e a partir do instante $t_1$ passa a ser constante. O sinal indica o sentido da corrente, e valores positivos correspondem à situação mostrada acima.\n\nO gráfico que melhor representa a corrente no solenóide menor como função do tempo é:",
+  "alternativas": {
+   "a": "Curva sempre positiva, oscilando entre dois valores positivos e ficando constante (positiva) depois de $t_1$ — a mesma forma do gráfico da corrente no solenóide maior.",
+   "b": "Curva que oscila simetricamente em torno de zero, cruzando o eixo, e que se anula (fica sobre o eixo) a partir de $t_1$.",
+   "c": "Curva sempre negativa, que oscila abaixo do eixo tocando o zero nos máximos e se anula a partir de $t_1$.",
+   "d": "Curva que oscila em torno de zero e, a partir de $t_1$, fica constante em um valor negativo.",
+   "e": "Curva que oscila em torno de zero e, a partir de $t_1$, fica constante em um valor positivo."
+  },
+  "alternativas_imagens": {
+   "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q12_a.png",
+   "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q12_b.png",
+   "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q12_c.png",
+   "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q12_d.png",
+   "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q12_e.png"
+  },
+  "gabarito": "b",
+  "resolucao": "O solenóide menor está imerso no campo do maior, e o campo interno de um solenóide é $B = \\mu_0 n i$. O fluxo através do solenóide menor é portanto proporcional à corrente $i(t)$ do maior, e a corrente induzida nele vale\n\n$i_{\\text{ind}} = \\dfrac{\\varepsilon}{R} = -\\dfrac{1}{R}\\dfrac{d\\Phi_B}{dt} \\propto -\\dfrac{di}{dt}$.\n\nO que importa não é o valor de $i$, e sim sua derivada:\n\nenquanto $i$ oscila, $di/dt$ alterna de sinal, então a corrente induzida oscila em torno de zero, cruzando o eixo — mesmo com $i$ sendo sempre positiva;\n\na partir de $t_1$ a corrente do solenóide maior é constante, logo $di/dt = 0$ e a corrente induzida é nula.\n\nO único gráfico com esses dois comportamentos é o da alternativa B. O gráfico A apenas copia $i(t)$; o C não muda de sinal; e D e E terminam em um valor constante não nulo, o que exigiria fluxo variando indefinidamente.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q12.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Lei de Ampère e corrente enlaçada por uma curva",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "A figura mostra dois fios infinitos perpendiculares ao plano da figura, ambos com uma mesma corrente $I$, e uma curva orientada $C$ imaginária circundando um deles. O fio interno a $C$ tem corrente saindo do plano da figura e o fio externo tem corrente entrando nele; a curva $C$ está orientada no sentido anti-horário. O fio externo é então deslocado para o ponto $P'$, também fora de $C$, conforme indicado. Analise as afirmações a seguir.\n\nI - O fluxo magnético na superfície delimitada por $C$ no plano da figura é nulo antes e depois do deslocamento.\n\nII - O campo magnético sobre todos os pontos da curva $C$ não se altera após o deslocamento.\n\nIII - A integral de linha do campo magnético ao longo de $C$, isto é, $\\oint_{C} \\vec{B} \\cdot d\\vec{s}$, é positiva e não se altera com o deslocamento.\n\nSão verdadeiras apenas as afirmações:",
+  "alternativas": {
+   "a": "I",
+   "b": "II",
+   "c": "III",
+   "d": "I e III",
+   "e": "I, II e III"
+  },
+  "gabarito": "d",
+  "resolucao": "I — verdadeira. Os fios são perpendiculares ao plano da figura, então o campo que eles criam é sempre paralelo a esse plano (circula em torno dos fios). A superfície delimitada por $C$ está no próprio plano da figura e seu vetor normal é perpendicular ao plano, portanto perpendicular a $\\vec{B}$ em todo ponto: $\\Phi_B = \\int \\vec{B}\\cdot d\\vec{A} = 0$, antes e depois de mover o fio.\n\nII — falsa. O campo em cada ponto é a soma dos campos dos dois fios. Mudar um fio de lugar muda a distância dele até cada ponto de $C$ e, portanto, sua contribuição — o campo sobre a curva se altera ponto a ponto.\n\nIII — verdadeira. Pela lei de Ampère,\n\n$\\oint_{C} \\vec{B}\\cdot d\\vec{s} = \\mu_0 I_{\\text{enlaçada}}$,\n\ne só a corrente que atravessa a superfície limitada por $C$ conta. O fio deslocado continua fora de $C$ (tanto na posição original quanto em $P'$), então a corrente enlaçada continua sendo apenas a do fio interno, que sai do papel. Com $C$ orientada no sentido anti-horário, a normal dada pela regra da mão direita também aponta para fora do papel, logo $I_{\\text{enlaçada}} > 0$: a integral é positiva e não muda.\n\nSão verdadeiras apenas I e III.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q13.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Força sobre carga em movimento paralelo a um fio",
+  "dificuldade": "medio",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Uma carga $q$ positiva é colocada em movimento com velocidade $v$ paralela a um fio muito longo que está a uma distância $d$ e no qual flui uma corrente $I$, conforme a figura (a carga está acima do fio e sua velocidade tem o mesmo sentido da corrente). Sobre o instante inicial do movimento, podemos afirmar:",
+  "alternativas": {
+   "a": "A carga sofre uma força magnética saindo do papel de intensidade $F_m = q\\,v\\,I\\,d$",
+   "b": "A carga é atraída em direção ao fio com uma força de intensidade $F_m = q\\,v\\,I\\,d$",
+   "c": "A carga é repelida pelo fio com uma força de intensidade $F_m = q\\,v\\,\\mu_0 I / (2\\pi d)$",
+   "d": "A carga sofre uma força magnética entrando no papel e de intensidade $F_m = q\\,v\\,\\mu_0 I / (2\\pi d)$",
+   "e": "A carga é atraída em direção ao fio com uma força de intensidade $F_m = q\\,v\\,\\mu_0 I / (2\\pi d)$"
+  },
+  "gabarito": "e",
+  "resolucao": "O campo do fio na posição da carga tem módulo\n\n$B = \\dfrac{\\mu_0 I}{2\\pi d}$,\n\ne, pela regra da mão direita, com a corrente para a direita e a carga acima do fio, esse campo sai do papel.\n\nA força sobre a carga é\n\n$\\vec{F} = q\\,\\vec{v} \\times \\vec{B}$.\n\nCom $\\vec{v}$ para a direita ($+\\hat{x}$) e $\\vec{B}$ saindo do papel ($+\\hat{z}$):\n\n$\\hat{x} \\times \\hat{z} = -\\hat{y}$,\n\nou seja, a força aponta para baixo, em direção ao fio. Como $\\vec{v} \\perp \\vec{B}$, o módulo é\n\n$F_m = q\\,v\\,B = \\dfrac{q\\,v\\,\\mu_0 I}{2\\pi d}$.\n\nA carga positiva movendo-se no mesmo sentido da corrente é, portanto, atraída pelo fio com essa intensidade. As alternativas A e B usam $F_m = qvId$, que nem sequer tem dimensão de força.",
+  "tikz_code": null,
+  "imagem_enunciado": true,
+  "alternativas_com_imagem": [],
+  "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-1-p3/q14.png"
+ },
+ {
+  "materia": "Física II",
+  "topico": "O Campo Magnético",
+  "subtopico": "Raio da trajetória circular após aceleração por uma ddp",
+  "dificuldade": "dificil",
+  "instituicao": "UFF (1º sem.)",
+  "ano": 2023,
+  "enunciado": "Um próton (carga $e$, massa $m_p$), um dêuteron (carga $e$, massa $2m_p$) e uma partícula alfa (carga $2e$, massa $4m_p$) são acelerados a partir do repouso por uma mesma voltagem $\\varepsilon$. Em seguida cada partícula entra numa região de campo magnético uniforme $\\vec{B}$ com a velocidade perpendicular a $\\vec{B}$. O próton faz um movimento circular de raio $r_p$. Os raios $r_d$ e $r_a$ do movimento do dêuteron e da partícula alfa, respectivamente, obedecem a:",
+  "alternativas": {
+   "a": "$r_d = r_a = \\sqrt{2}\\,r_p$",
+   "b": "$r_d = r_a = r_p$",
+   "c": "$r_d = 2r_p$ e $r_a = 4r_p$",
+   "d": "$r_d = \\sqrt{2}\\,r_p$ e $r_a = 2r_p$",
+   "e": "$r_d = 2r_p$ e $r_a = r_p$"
+  },
+  "gabarito": "a",
+  "resolucao": "Na aceleração, o trabalho da ddp vira energia cinética:\n\n$q\\varepsilon = \\dfrac{1}{2}mv^2 \\Rightarrow v = \\sqrt{\\dfrac{2q\\varepsilon}{m}}$.\n\nNa região de campo, a força magnética faz o papel de resultante centrípeta:\n\n$qvB = \\dfrac{mv^2}{r} \\Rightarrow r = \\dfrac{mv}{qB}$.\n\nSubstituindo $v$:\n\n$r = \\dfrac{m}{qB}\\sqrt{\\dfrac{2q\\varepsilon}{m}} = \\dfrac{1}{B}\\sqrt{\\dfrac{2m\\varepsilon}{q}}$,\n\nou seja, $r \\propto \\sqrt{m/q}$.\n\nPróton: $\\sqrt{m_p/e}$.\n\nDêuteron: $\\sqrt{2m_p/e} = \\sqrt{2}\\,\\sqrt{m_p/e}$, portanto $r_d = \\sqrt{2}\\,r_p$.\n\nPartícula alfa: $\\sqrt{4m_p/(2e)} = \\sqrt{2m_p/e} = \\sqrt{2}\\,\\sqrt{m_p/e}$, portanto $r_a = \\sqrt{2}\\,r_p$.\n\nO dobro da massa da alfa é compensado pelo dobro da carga, e ela acaba com o mesmo raio do dêuteron: $r_d = r_a = \\sqrt{2}\\,r_p$.",
+  "tikz_code": null,
+  "imagem_enunciado": false,
+  "alternativas_com_imagem": []
+ }
+]

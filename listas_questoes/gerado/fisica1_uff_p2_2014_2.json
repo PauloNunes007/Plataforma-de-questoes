@@ -1,0 +1,180 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Variação do momento linear — direção e sentido, não apenas o módulo da velocidade",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Considere estas três situações: (i) Uma bola se movendo para a direita com rapidez v chega ao repouso. (ii) A mesma bola em repouso é projetada com rapidez v para a esquerda. (iii) A mesma bola se movendo para a esquerda com rapidez v acelera para 2v também para a esquerda. Em qual situação (ou situações) o módulo da variação de momento linear da bola é maior?",
+    "alternativas": {
+      "a": "Na situação (i).",
+      "b": "Na situação (ii).",
+      "c": "Na situação (iii).",
+      "d": "Nas situações (i) e (ii).",
+      "e": "A variação é a mesma nas três situações."
+    },
+    "gabarito": "e",
+    "resolucao": "A variação de momento linear é $\\Delta \\vec p = m\\Delta \\vec v = m(\\vec v_f - \\vec v_i)$. É preciso tratar a velocidade como vetor, com sinal, e não apenas comparar módulos.\n\nAdotando a direita como sentido positivo: (i) $v_i=+v$, $v_f=0 \\Rightarrow \\Delta v = -v$, módulo $v$. (ii) $v_i=0$, $v_f=-v \\Rightarrow \\Delta v = -v$, módulo $v$. (iii) $v_i=-v$, $v_f=-2v \\Rightarrow \\Delta v = -v$, módulo $v$.\n\nNas três situações o módulo da variação de velocidade — e, portanto, do momento linear — é o mesmo, igual a $mv$. A resposta correta é (e).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Centro de massa — relação inversa entre massa e distância ao centro de massa",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Duas massas pontuais estão colocadas no mesmo plano. A distância da massa 1 ao centro de massa é 3,0 m. A distância da massa 2 ao centro de massa é 1,0 m. Qual é a razão da massa 1 para a massa 2 ($m_1/m_2$)?",
+    "alternativas": {
+      "a": "3/4",
+      "b": "4/3",
+      "c": "1/3",
+      "d": "7/4",
+      "e": "3/1"
+    },
+    "gabarito": "c",
+    "resolucao": "Por definição, o centro de massa de um sistema de duas partículas satisfaz $m_1 d_1 = m_2 d_2$, onde $d_1$ e $d_2$ são as distâncias de cada massa ao centro de massa (medidas em sentidos opostos a partir dele).\n\n$m_1 \\times 3{,}0 = m_2 \\times 1{,}0 \\Rightarrow \\dfrac{m_1}{m_2} = \\dfrac{1{,}0}{3{,}0} = \\dfrac{1}{3}$.\n\nFaz sentido fisicamente: a massa mais próxima do centro de massa (massa 2) precisa ser a maior, para equilibrar a massa 1, que está mais distante. A resposta correta é (c).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Movimento permitido a partir do gráfico de energia potencial — condição $E_T \\geq E_P$",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Considere o gráfico de energia de uma partícula em função de sua posição X, onde $E_T$ é a energia total e $E_P$ é a energia potencial. A região do gráfico onde o movimento da partícula é possível é",
+    "alternativas": {
+      "a": "$X_2 \\leq X \\leq X_4$ e $X_6 \\leq X \\leq X_8$",
+      "b": "$X_1 \\leq X \\leq X_2$ e $X_9 \\leq X \\leq X_8$",
+      "c": "$X_4 \\leq X \\leq X_6$",
+      "d": "$X_1 \\leq X \\leq X_9$",
+      "e": "$X_1 \\leq X \\leq X_2$, $X_2 \\leq X \\leq X_4$ e $X_6 \\leq X \\leq X_8$"
+    },
+    "gabarito": "a",
+    "resolucao": "A energia cinética é $K = E_T - E_P(x)$. Como $K$ nunca pode ser negativa, o movimento só é possível nos trechos onde a curva de energia potencial $E_P(x)$ está em ou abaixo da linha horizontal de energia total $E_T$.\n\nObservando o gráfico, a curva $E_P(x)$ fica abaixo de $E_T$ exatamente nos intervalos $X_2 \\leq X \\leq X_4$ (o primeiro poço de potencial) e $X_6 \\leq X \\leq X_8$ (o segundo poço). Fora desses trechos — antes de $X_2$, entre $X_4$ e $X_6$ (onde há uma barreira de potencial acima de $E_T$), e depois de $X_8$ — a energia potencial ultrapassa a energia total, o que exigiria energia cinética negativa, fisicamente impossível.\n\nA resposta correta é (a).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (14.2) Física I.pdf",
+    "fonte_pagina": 5
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Teorema trabalho-energia — trabalho igual implica mesma energia cinética, independente da massa",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Dois trenós A e B apostam uma corrida sobre um lago congelado sem atrito. Os trenós A e B possuem massas m e 2m, respectivamente. A vela de um trenó é idêntica à do outro, de modo que o vento exerce a mesma força constante F sobre cada trenó. Os dois trenós partem do repouso e a distância entre a partida e a linha de chegada é igual a d. Qual a razão entre a energia cinética do trenó A e a energia cinética do trenó B, $K_A/K_B$, na reta de chegada?",
+    "alternativas": {
+      "a": "2",
+      "b": "1/2",
+      "c": "1/8",
+      "d": "$\\sqrt{2}$",
+      "e": "1"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo teorema trabalho-energia, o trabalho realizado pela força resultante é igual à variação de energia cinética: $W = \\Delta K$. Como os trenós partem do repouso, $K_{final} = W = F\\cdot d$.\n\nComo a força $F$ e a distância percorrida $d$ são as mesmas para os dois trenós, o trabalho realizado sobre A e sobre B é idêntico — mesmo eles tendo massas diferentes ($m$ e $2m$). A massa afeta a aceleração e o tempo de percurso, mas não o trabalho realizado ao longo da mesma distância $d$.\n\nLogo $K_A = K_B = Fd$, e a razão $K_A/K_B = 1$. A resposta correta é (e).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (14.2) Física I.pdf",
+    "fonte_pagina": 5
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Teorema dos eixos paralelos (Steiner)",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma das peças de uma articulação mecânica possui massa igual a 3,6 kg. Medimos seu momento de inércia em relação a um eixo situado a uma distância de 0,15 m do seu centro de massa e encontramos o valor $I_P = 0{,}13$ kg$\\cdot$m². Qual é o momento de inércia $I_{CM}$ em relação a um eixo paralelo que passa pelo centro de massa?",
+    "alternativas": {
+      "a": "$2{,}1\\times10^{-1}$ kg$\\cdot$m²",
+      "b": "$4{,}9\\times10^{-2}$ kg$\\cdot$m²",
+      "c": "$2{,}3\\times10^{-1}$ kg$\\cdot$m²",
+      "d": "$1{,}3\\times10^{-2}$ kg$\\cdot$m²",
+      "e": "$4{,}1\\times10^{-1}$ kg$\\cdot$m²"
+    },
+    "gabarito": "b",
+    "resolucao": "O teorema dos eixos paralelos (teorema de Steiner) relaciona o momento de inércia em torno de um eixo qualquer, $I_P$, com o momento de inércia em torno do eixo paralelo que passa pelo centro de massa, $I_{CM}$: $I_P = I_{CM} + md^2$, onde $d$ é a distância entre os dois eixos.\n\nIsolando $I_{CM}$: $I_{CM} = I_P - md^2 = 0{,}13 - 3{,}6\\times(0{,}15)^2 = 0{,}13 - 3{,}6\\times0{,}0225 = 0{,}13 - 0{,}081 = 0{,}049\\ \\text{kg}\\cdot\\text{m}^2$.\n\nOu seja, $I_{CM} \\approx 4{,}9\\times10^{-2}\\ \\text{kg}\\cdot\\text{m}^2$. A resposta correta é (b).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (14.2) Física I.pdf",
+    "fonte_pagina": 6
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Momento de inércia e aceleração — sistema roldana/disco com massas na haste",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Cada sistema A e B é composto de um disco, uma haste presa ao disco e duas massas presas à haste. A haste está contida no plano do disco. Um bloco é preso à extremidade livre de um fio leve enrolado ao redor do disco que pode girar livremente em torno do eixo que passa pelo seu centro e é perpendicular ao seu plano. Os dois sistemas mostrados na figura abaixo são idênticos, exceto pelas posições das massas na haste. Se os dois blocos são soltos simultaneamente a partir do repouso, qual deles chega primeiro ao solo? E por quê?",
+    "alternativas": {
+      "a": "O do sistema A, porque neste o momento de inércia é maior do que o de B.",
+      "b": "O do sistema B, porque neste o momento de inércia é menor do que o de A.",
+      "c": "O do sistema A, porque neste o momento de inércia é menor do que o de B.",
+      "d": "O do sistema B, porque neste o momento de inércia é maior do que o de A.",
+      "e": "Os dois blocos chegam ao mesmo tempo."
+    },
+    "gabarito": "b",
+    "resolucao": "Ao cair, a energia potencial perdida pelo bloco se converte em energia cinética de translação do bloco e em energia cinética de rotação do sistema disco+haste+massas: $mgh = \\frac12 mv^2 + \\frac12 I\\omega^2$, com $v=\\omega R$ (fio inextensível enrolado no disco de raio $R$).\n\nQuanto maior o momento de inércia $I$ do sistema, maior a fração da energia potencial que vai para a rotação, e menor a fração disponível para acelerar o bloco — logo, menor a aceleração do bloco e maior o tempo para ele chegar ao chão.\n\nNo sistema B as massas estão mais próximas do eixo de rotação (na figura), o que dá a B um momento de inércia menor que o de A. Um momento de inércia menor significa maior aceleração do bloco e, portanto, o bloco de B chega primeiro ao solo.\n\nA resposta correta é (b).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (14.2) Física I.pdf",
+    "fonte_pagina": 6
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Torque resultante de várias forças aplicadas a um disco — soma vetorial de torques",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Sobre o disco de raio b, situado no plano xy, são aplicadas as forças como mostra a figura. As forças de 9,00 N e de 10,0 N tangenciam o disco, a força de 8,00 N é normal ao disco e a força de 20,0 N tangencia o círculo de raio a. Qual o torque resultante sobre o disco, em relação ao eixo z que passa por O e perpendicular ao disco. Considere a = 10,0 cm e b = 25,0 cm.",
+    "alternativas": {
+      "a": "$-0{,}500\\,\\hat k$ (N$\\cdot$m)",
+      "b": "$5{,}00\\,\\hat k$ (N$\\cdot$m)",
+      "c": "$2{,}75\\,\\hat k$ (N$\\cdot$m)",
+      "d": "$-2{,}75\\,\\hat k$ (N$\\cdot$m)",
+      "e": "$-0{,}750\\,\\hat k$ (N$\\cdot$m)"
+    },
+    "gabarito": "d",
+    "resolucao": "O torque de cada força tangencial em relação ao eixo z é $\\tau = \\pm rF$ (positivo se tende a girar o disco no sentido anti-horário, negativo se no sentido horário, vistos do eixo $+z$). A força de $8{,}00$ N é normal ao disco, ou seja, paralela ao próprio eixo $z$ — seu braço de alavanca em relação a esse eixo é nulo, então ela não contribui para o torque.\n\nForça de $10{,}0$ N, aplicada no topo do disco (braço $b$) e apontando no sentido que gira o disco no sentido horário: $\\tau_1 = -b\\times10{,}0 = -0{,}250\\times10{,}0 = -2{,}50\\ \\text{N}\\cdot\\text{m}$.\n\nForça de $9{,}00$ N, aplicada na lateral do disco (braço $b$), também no sentido horário: $\\tau_2 = -b\\times9{,}00 = -0{,}250\\times9{,}00 = -2{,}25\\ \\text{N}\\cdot\\text{m}$.\n\nForça de $20{,}0$ N, tangente ao círculo interno de raio $a$, no sentido anti-horário: $\\tau_3 = +a\\times20{,}0 = 0{,}100\\times20{,}0 = 2{,}00\\ \\text{N}\\cdot\\text{m}$.\n\nSomando: $\\tau = \\tau_1+\\tau_2+\\tau_3 = -2{,}50-2{,}25+2{,}00 = -2{,}75\\ \\text{N}\\cdot\\text{m}$, ou seja, $\\vec\\tau = -2{,}75\\,\\hat k\\ \\text{N}\\cdot\\text{m}$.\n\nA resposta correta é (d).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (14.2) Física I.pdf",
+    "fonte_pagina": 6
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Potência a partir de energia potencial gravitacional e vazão mássica",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma queda d'água tem 130 m de altura e a água flui à taxa de $1{,}40\\times10^6$ kg/s. Se a metade da energia potencial dessa queda d'água fosse convertida em energia elétrica, quanto se poderia produzir de potência elétrica?",
+    "alternativas": {
+      "a": "$8{,}92\\times10^{8}$ W",
+      "b": "$8{,}92\\times10^{6}$ W",
+      "c": "$1{,}78\\times10^{9}$ W",
+      "d": "$1{,}78\\times10^{7}$ W",
+      "e": "$9{,}10\\times10^{7}$ W"
+    },
+    "gabarito": "a",
+    "resolucao": "A potência associada à queda de uma massa $\\dfrac{dm}{dt}$ (vazão mássica) de uma altura $h$ é $P = \\dfrac{dm}{dt}\\,g\\,h$. Convertendo apenas metade dessa energia em energia elétrica: $P_{el} = \\dfrac12\\dfrac{dm}{dt}\\,g\\,h$.\n\n$P_{el} = \\dfrac12\\times1{,}40\\times10^6\\times9{,}80\\times130 = \\dfrac12\\times1{,}40\\times10^6\\times1274 \\approx 8{,}92\\times10^{8}\\ \\text{W}$.\n\nA resposta correta é (a).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  }
+]

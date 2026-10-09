@@ -1,0 +1,303 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Par ação-reação numa colisão entre carros de massas diferentes",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "O carro B parou em um sinal vermelho. O motorista do carro A, cuja massa é diferente da do carro B, não vê a luz vermelha e vai de encontro à traseira de B. Qual das seguintes afirmações é verdadeira?",
+    "alternativas": {
+      "a": "B exerce uma força sobre A, mas este não exerce uma força sobre B.",
+      "b": "B exerce uma força sobre A maior do que a força que este exerce sobre B.",
+      "c": "B exerce uma força sobre A de mesma intensidade que a força que este exerce sobre B.",
+      "d": "A exerce uma força sobre B maior do que a força que este exerce sobre A.",
+      "e": "A exerce uma força sobre B, mas este não exerce uma força sobre A."
+    },
+    "gabarito": "c",
+    "resolucao": "Pela Terceira Lei de Newton (ação e reação), as forças que dois corpos exercem um sobre o outro durante qualquer interação — incluindo uma colisão — têm sempre a mesma intensidade e sentidos opostos, independentemente das massas envolvidas.\n\nLogo, a força que B exerce sobre A tem a mesma intensidade da força que A exerce sobre B.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Sistema de polia fixa sustentando homem e plataforma em equilíbrio",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Um homem está sobre uma plataforma. O homem mantém a plataforma em repouso através de uma corda que passa por uma polia presa ao teto, como na figura. As massas da corda e da polia podem ser desprezadas, assim como o atrito na polia. Se o homem tem massa $m$ e a plataforma tem massa $M$, qual é o módulo da força que o homem precisa fazer para manter a plataforma em repouso? (Dica: faça diagramas de corpo livre antes de responder!)",
+    "alternativas": {
+      "a": "$Mg$",
+      "b": "$mg$",
+      "c": "$\\dfrac{(M+m)g}{3}$",
+      "d": "$(M+m)g$",
+      "e": "$\\dfrac{(M+m)g}{2}$"
+    },
+    "gabarito": "e",
+    "resolucao": "A corda passa pela polia presa ao teto e volta até a mão do homem: por isso, duas partes da corda puxam o sistema (homem + plataforma) para cima — uma presa à própria plataforma, outra segurada pelo homem.\n\nFazendo o diagrama de corpo livre do conjunto homem+plataforma (massa total $M+m$), a tração $T$ aparece duas vezes puxando para cima: $2T = (M+m)g \\Rightarrow T = \\dfrac{(M+m)g}{2}$.\n\nEssa tração $T$ é exatamente a força que o homem precisa aplicar na corda.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2024-1-p2/q02.png"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Velocidade angular mínima no topo de um círculo vertical",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Você gira uma bola em círculos em um plano vertical, usando uma corda de comprimento $15$ cm. Existe uma velocidade angular mínima $\\omega_{min}$ que você deve manter para que a bola execute o círculo completo. Se você girar a bola com velocidade angular menor do que $\\omega_{min}$, a corda fica frouxa e a bola não consegue chegar ao ponto mais alto do círculo. Qual o valor de $\\omega_{min}$?",
+    "alternativas": {
+      "a": "$8{,}1$ rad/s",
+      "b": "$0{,}54$ rad/s",
+      "c": "$50$ rad/s",
+      "d": "$0{,}81$ rad/s",
+      "e": "$5{,}2$ rad/s"
+    },
+    "gabarito": "a",
+    "resolucao": "No ponto mais alto do círculo, a velocidade mínima ocorre quando o próprio peso fornece toda a força centrípeta necessária, com a tração da corda caindo a zero: $mg = m\\omega_{min}^2 R \\Rightarrow \\omega_{min} = \\sqrt{g/R}$.\n\nCom $R=0{,}15$ m: $\\omega_{min} = \\sqrt{9{,}8/0{,}15} = \\sqrt{65{,}3} \\approx 8{,}1$ rad/s.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Tração no ponto mais baixo de um círculo vertical",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Uma pequena esfera de massa $m$ está presa a uma corda de massa desprezível que gira num plano vertical num círculo de raio $R = 1{,}3$ m. A velocidade da esfera no ponto mais baixo é de $5{,}0$ m/s e a intensidade da força de tração na corda é de $20$ N. Qual das alternativas abaixo mais se aproxima da massa da esfera?",
+    "alternativas": {
+      "a": "$0{,}60$ kg",
+      "b": "$0{,}70$ kg",
+      "c": "$0{,}80$ kg",
+      "d": "$1{,}2$ kg",
+      "e": "$1{,}6$ kg"
+    },
+    "gabarito": "b",
+    "resolucao": "No ponto mais baixo do círculo, a tração e o peso são verticais, e a resultante centrípeta (apontando para cima, para o centro) vale $T - mg = \\dfrac{mv^2}{R}$.\n\nIsolando $m$: $m = \\dfrac{T}{g + v^2/R} = \\dfrac{20}{9{,}8 + 5{,}0^2/1{,}3} = \\dfrac{20}{9{,}8+19{,}2} = \\dfrac{20}{29{,}0} \\approx 0{,}70$ kg.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Atrito estático fornecendo força centrípeta em curva de caminhão",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Um caminhão com carroceria plana horizontal carrega uma caixa retangular de massa $m$, apoiada sem amarras no chão da carroceria. O caminhão, trafegando com velocidade escalar $V_0$ constante, entra numa curva horizontal de raio $R$ muito maior que as dimensões do caminhão, de modo que esta pode ser desprezada. Qual deve ser o coeficiente de atrito estático $\\mu_e$ para que a caixa não deslize?",
+    "alternativas": {
+      "a": "$\\mu_e = 0{,}3\\,V_0^2/(Rg)$",
+      "b": "$\\mu_e = V_0^2/(Rg)$",
+      "c": "$\\mu_e = 3\\,V_0^2/(Rg)$",
+      "d": "$\\mu_e = 0{,}1\\,V_0^2/(Rg)$",
+      "e": "$\\mu_e = 0{,}2\\,V_0^2/(Rg)$"
+    },
+    "gabarito": "b",
+    "resolucao": "Na curva horizontal, a única força que pode fornecer a aceleração centrípeta à caixa é o atrito estático entre ela e a carroceria: $F_{at} = \\mu_e mg = \\dfrac{mV_0^2}{R}$.\n\nIsolando: $\\mu_e = \\dfrac{V_0^2}{Rg}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2024-1-p2/q06.png"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Condição geral de conservação do momento linear numa colisão",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Complete a seguinte afirmação: o momento linear (momentum) será conservado numa colisão de dois corpos se e somente se",
+    "alternativas": {
+      "a": "a resultante das forças externas sobre o sistema de dois corpos for nula.",
+      "b": "a colisão for elástica.",
+      "c": "a energia cinética do sistema se conservar.",
+      "d": "ambos os corpos ficarem em repouso após a colisão.",
+      "e": "as forças internas do sistema de dois corpos se cancelarem em pares ação-reação."
+    },
+    "gabarito": "a",
+    "resolucao": "A conservação do momento linear total de um sistema decorre diretamente da Segunda Lei de Newton aplicada ao sistema como um todo: $\\vec F_{ext,res} = \\dfrac{d\\vec p_{sist}}{dt}$.\n\nSe a resultante das forças externas é nula, $\\vec p_{sist}$ é constante — essa é a condição necessária e suficiente, independente de a colisão ser elástica ou não.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Conservação do momento linear numa explosão no espaço",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Uma bomba em repouso explode no espaço e se parte num grande número de pequenos fragmentos. No local da explosão, a força gravitacional é zero. Qual das seguintes afirmações sobre esse evento é verdadeira?",
+    "alternativas": {
+      "a": "A energia cinética é conservada no processo.",
+      "b": "A soma das energias cinéticas dos fragmentos é necessariamente zero.",
+      "c": "Todos os fragmentos têm necessariamente a mesma energia cinética.",
+      "d": "A soma do momento linear de todos os fragmentos após a explosão deve ser nula.",
+      "e": "As massas dos fragmentos devem ser todas iguais entre si."
+    },
+    "gabarito": "d",
+    "resolucao": "Antes da explosão a bomba está em repouso, logo o momento linear total do sistema é zero. Como não há forças externas (a força gravitacional é nula no local), o momento linear total deve permanecer zero após a explosão.\n\nOu seja, a soma vetorial dos momentos de todos os fragmentos deve ser nula, mesmo que a energia cinética total não seja zero (ela vem da energia química liberada na explosão).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica bidimensional entre asteroides",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Dois asteroides, um de massa $m$ e outro de massa $0{,}5m$, estão se movendo no espaço, como mostra a figura. Os asteroides colidem no ponto $O$ e a colisão é perfeitamente inelástica. Qual é o ângulo que a velocidade do objeto único resultante da colisão faz com o eixo $x$?",
+    "alternativas": {
+      "a": "$45°$",
+      "b": "$30°$",
+      "c": "$80°$",
+      "d": "$60°$",
+      "e": "$90°$"
+    },
+    "gabarito": "a",
+    "resolucao": "Tomando o eixo $y$ ao longo da vertical (bissetriz mostrada na figura) e o eixo $x$ horizontal: o asteroide de massa $0{,}5m$ tem velocidade $45{,}3$ m/s fazendo $60°$ com o eixo $y$, e o de massa $m$ tem velocidade $8{,}3$ m/s ao longo do eixo $y$.\n\nComponentes do momento antes da colisão:\n\n$p_x = 0{,}5m\\cdot45{,}3\\,\\text{sen}(60°) \\approx 19{,}6\\,m$\n\n$p_y = 0{,}5m\\cdot45{,}3\\cos(60°) + m\\cdot8{,}3 \\approx 11{,}3\\,m + 8{,}3\\,m = 19{,}6\\,m$\n\nComo $p_x \\approx p_y$, e a massa total após a colisão é $1{,}5m$, as componentes da velocidade final também são aproximadamente iguais ($v_x\\approx v_y$), ou seja, a velocidade resultante faz $45°$ com o eixo $x$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2024-1-p2/q09.png"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Teorema impulso-momento a partir de um gráfico força×tempo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Uma bola de massa $5{,}0$ kg e velocidade escalar igual a $1$ m/s no sentido positivo do eixo $x$ recebe, durante $1$ ms, um impulso no mesmo sentido, como mostrado na figura abaixo. Qual é o momentum final da bola?",
+    "alternativas": {
+      "a": "$3{,}0$ kg·m/s",
+      "b": "$-8{,}0$ kg·m/s",
+      "c": "$2{,}0$ kg·m/s",
+      "d": "$8{,}0$ kg·m/s",
+      "e": "$-2{,}0$ kg·m/s"
+    },
+    "gabarito": "d",
+    "resolucao": "O impulso é a área sob o gráfico $F\\times t$: uma força de $3000$ N atuando por $1$ ms fornece $J = F\\Delta t = 3000\\times0{,}001 = 3{,}0$ kg·m/s, no mesmo sentido do movimento.\n\nO momento inicial é $p_i = mv_i = 5{,}0\\times1{,}0 = 5{,}0$ kg·m/s. Pelo teorema impulso-momento: $p_f = p_i + J = 5{,}0+3{,}0 = 8{,}0$ kg·m/s.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2024-1-p2/q10.png"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Energia cinética no ponto mais alto de um lançamento oblíquo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Um projétil de $2{,}0$ kg é disparado com uma velocidade inicial com componentes $v_{0x} = 30$ m/s e $v_{0y} = 40$ m/s a partir de um ponto sobre a superfície da Terra. A resistência do ar é desprezível. Qual é a energia cinética do projétil quando ele alcança o ponto mais alto da sua trajetória?",
+    "alternativas": {
+      "a": "$0{,}0$ J",
+      "b": "$0{,}9\\times10^3$ J",
+      "c": "$1{,}6\\times10^3$ J",
+      "d": "$2{,}5\\times10^3$ J",
+      "e": "$4{,}9\\times10^3$ J"
+    },
+    "gabarito": "b",
+    "resolucao": "No ponto mais alto da trajetória, a componente vertical da velocidade é zero, mas a horizontal permanece igual à inicial ($v_x=30$ m/s), pois a gravidade não atua na horizontal.\n\nA energia cinética nesse ponto é $E_c = \\dfrac{1}{2}mv_x^2 = \\dfrac{1}{2}\\times2{,}0\\times30^2 = 900\\text{ J} = 0{,}9\\times10^3$ J.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Arbitrariedade do referencial de energia potencial",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "É possível que um sistema tenha energia potencial negativa?",
+    "alternativas": {
+      "a": "Sim, desde que a energia mecânica seja positiva.",
+      "b": "Sim, desde que a força não seja conservativa.",
+      "c": "Não, porque a energia mecânica tem que ser positiva.",
+      "d": "Sim, porque a escolha do zero da energia potencial é arbitrária.",
+      "e": "Não, porque uma tal situação não teria significado físico."
+    },
+    "gabarito": "d",
+    "resolucao": "A energia potencial não tem um valor absoluto definido — apenas diferenças de energia potencial têm significado físico, já que a força é dada por $F=-dU/dx$.\n\nPor isso, o ponto onde $U=0$ pode ser escolhido livremente, e nada impede que, com essa escolha, $U$ assuma valores negativos em outras posições.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão inelástica seguida de compressão de mola",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Numa superfície sem atrito, um bloco de massa $m_1 = 1{,}0$ kg está preso a uma mola de constante elástica $k = 3{,}0\\times10^2$ N/m e, inicialmente, encontra-se em repouso. Um bloco de massa $m_2 = 2{,}0$ kg, que se move com uma rapidez $v = 3{,}0$ m/s, colide com o primeiro bloco e fica grudado. A compressão máxima da mola é, aproximadamente:",
+    "alternativas": {
+      "a": "$10$ cm",
+      "b": "$20$ cm",
+      "c": "$40$ cm",
+      "d": "$16$ cm",
+      "e": "$12$ cm"
+    },
+    "gabarito": "b",
+    "resolucao": "A colisão entre $m_2$ e $m_1$ é perfeitamente inelástica (ficam grudados). Pela conservação do momento linear: $v' = \\dfrac{m_2 v}{m_1+m_2} = \\dfrac{2{,}0\\times3{,}0}{3{,}0} = 2{,}0$ m/s.\n\nDepois, toda a energia cinética do conjunto se converte em energia potencial elástica da mola: $\\dfrac{1}{2}(m_1+m_2)v'^2 = \\dfrac{1}{2}kx^2 \\Rightarrow x = v'\\sqrt{\\dfrac{m_1+m_2}{k}} = 2{,}0\\sqrt{\\dfrac{3{,}0}{300}} = 2{,}0\\times0{,}10 = 0{,}20\\text{ m} = 20\\text{ cm}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2024-1-p2/q13.png"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Velocidade máxima a partir de um diagrama de energia potencial",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "A figura ao lado representa o diagrama de energia potencial para uma partícula de $20{,}0$ g que é liberada do repouso em $x=1$ m. Qual é a velocidade máxima alcançada pela partícula em seu movimento?",
+    "alternativas": {
+      "a": "$17{,}3$ m/s",
+      "b": "$20{,}0$ m/s",
+      "c": "$10{,}0$ m/s",
+      "d": "$14{,}1$ m/s",
+      "e": "$89{,}0$ m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "Como a partícula é liberada do repouso em $x=1$ m, sua energia mecânica total é $E = U(1)\\approx4{,}0$ J (lido no gráfico).\n\nA velocidade máxima ocorre no ponto de menor energia potencial, $U_{min}\\approx1{,}0$ J (em torno de $x=4$ m): $\\dfrac{1}{2}mv_{max}^2 = E - U_{min} \\approx 3{,}0\\text{ J} \\Rightarrow v_{max}=\\sqrt{\\dfrac{2\\times3{,}0}{0{,}020}} \\approx 17{,}3$ m/s.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2024-1-p2/q14.png"
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Conservação de energia mecânica numa superfície curva sem atrito",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2024,
+    "enunciado": "Um corpo desliza ao longo da superfície curva e livre de atrito da figura. Ele é liberado na posição mostrada com velocidade diferente de zero. O ponto mais alto que a esfera atingirá do outro lado da pista será:",
+    "alternativas": {
+      "a": "acima do ponto b",
+      "b": "abaixo do ponto b",
+      "c": "exatamente o ponto b",
+      "d": "dependente do formato da superfície",
+      "e": "dependente da aceleração da gravidade no local"
+    },
+    "gabarito": "a",
+    "resolucao": "Como a superfície é livre de atrito, a energia mecânica se conserva. Diferente de um corpo solto do repouso, aqui o corpo já parte com energia cinética extra (velocidade diferente de zero no ponto de partida).\n\nAo subir do outro lado, ele converte toda a energia cinética que tinha — inclusive a inicial — de volta em energia potencial. Por isso alcança uma altura maior do que a altura de partida, ou seja, um ponto acima do ponto $b$ (que representaria apenas a mesma altura inicial).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2024-1-p2/q15.png"
+  }
+]

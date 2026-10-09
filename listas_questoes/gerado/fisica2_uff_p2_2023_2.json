@@ -1,0 +1,340 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Potencial de uma esfera condutora carregada",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma esfera condutora de raio $R$ tem uma carga positiva e está muito distante de quaisquer outras cargas. Qual dos gráficos a seguir ilustra melhor o potencial (em relação ao infinito) produzido por esta esfera em função da distância $r$ do centro da esfera?",
+    "alternativas": {
+      "a": "Gráfico em que $V$ cresce linearmente de zero (em $r = 0$) até um máximo em $r = R$ e, a partir daí, decai suavemente com $r$.",
+      "b": "Gráfico em que $V$ só aparece a partir de $r = R$, decaindo com $r$; para $r < R$ não há curva alguma.",
+      "c": "Gráfico em que $V$ cresce de zero até $r = R$ com concavidade para baixo e depois decai com $r$.",
+      "d": "Gráfico em que $V$ é constante de $r = 0$ até $r = R$ e, para $r > R$, decai com $r$.",
+      "e": "Gráfico em que $V$ cresce de zero até um pico em $r = R$ e decai de forma aproximadamente simétrica depois do pico."
+    },
+    "alternativas_imagens": {
+      "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q01_a.png",
+      "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q01_b.png",
+      "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q01_c.png",
+      "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q01_d.png",
+      "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q01_e.png"
+    },
+    "gabarito": "d",
+    "resolucao": "Em equilíbrio eletrostático o campo elétrico é nulo dentro de um condutor. Como $E_r = -\\dfrac{dV}{dr}$, campo nulo significa potencial constante: em toda a região $0 \\le r \\le R$ o potencial vale $V = \\dfrac{kQ}{R}$ (todo o volume da esfera, inclusive a superfície, é um equipotencial).\n\nFora da esfera, uma distribuição esférica de carga se comporta como uma carga pontual no centro, ou seja, $V(r) = \\dfrac{kQ}{r}$ para $r > R$, que decai como $1/r$ e tende a zero no infinito.\n\nO gráfico correto é, portanto, um patamar constante até $r = R$ seguido de uma queda do tipo $1/r$ — alternativa D. As curvas que partem de zero na origem descreveriam o potencial de uma esfera isolante uniformemente carregada (ou o módulo do campo), não o de um condutor.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e"
+    ]
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Campo elétrico pela inclinação do gráfico $V \\times r$",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "O gráfico da figura mostra a variação do potencial elétrico $V$ (medido em volts) criado por uma certa configuração de carga em função da direção radial $r$ (medida em metros). Para qual faixa ou valor de $r$ o **módulo** do campo elétrico é maior?",
+    "alternativas": {
+      "a": "de $r = 0\\ \\text{m}$ a $r = 3\\ \\text{m}$",
+      "b": "de $r = 3\\ \\text{m}$ a $r = 4\\ \\text{m}$",
+      "c": "de $r = 4\\ \\text{m}$ a $r = 6\\ \\text{m}$",
+      "d": "em $r = 3\\ \\text{m}$",
+      "e": "em $r = 4\\ \\text{m}$"
+    },
+    "gabarito": "b",
+    "resolucao": "A componente radial do campo é menos a inclinação do gráfico do potencial: $E_r = -\\dfrac{dV}{dr}$. Logo o módulo do campo é maior onde o gráfico $V \\times r$ é mais inclinado.\n\nDe $r = 0$ a $r = 3\\ \\text{m}$ o potencial sobe de $0$ até cerca de $2{,}3\\ \\text{V}$: $|E| \\approx \\dfrac{2{,}3}{3} \\approx 0{,}8\\ \\text{V/m}$.\n\nDe $r = 3\\ \\text{m}$ a $r = 4\\ \\text{m}$ o potencial cai de $\\approx 2{,}3\\ \\text{V}$ para $-3\\ \\text{V}$: $|E| \\approx \\dfrac{5{,}3}{1} \\approx 5{,}3\\ \\text{V/m}$ — de longe a maior inclinação.\n\nDe $r = 4\\ \\text{m}$ a $r = 6\\ \\text{m}$ o potencial é constante, ou seja, $E = 0$. Em $r = 3\\ \\text{m}$ e $r = 4\\ \\text{m}$ há apenas bicos do gráfico (pontos isolados onde a derivada nem está definida). A resposta é a faixa de $3\\ \\text{m}$ a $4\\ \\text{m}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q02.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Resistência em função do comprimento e do diâmetro",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Um fio de resistividade $\\rho$ deve ser substituído em um circuito por um fio do mesmo material, mas com comprimento 4 vezes maior. Se, no entanto, a resistência do novo fio for igual à resistência do fio original, o diâmetro do novo fio deve ser",
+    "alternativas": {
+      "a": "igual ao diâmetro do fio original.",
+      "b": "$1/2$ do diâmetro do fio original.",
+      "c": "$1/4$ do diâmetro do fio original.",
+      "d": "2 vezes o diâmetro do fio original.",
+      "e": "4 vezes o diâmetro do fio original."
+    },
+    "gabarito": "d",
+    "resolucao": "A resistência de um fio homogêneo é $R = \\rho\\dfrac{L}{A}$, com seção circular $A = \\dfrac{\\pi d^2}{4}$, ou seja, $R = \\dfrac{4\\rho L}{\\pi d^2}$.\n\nO material é o mesmo (mesmo $\\rho$) e queremos $R' = R$ com $L' = 4L$:\n\n$\\dfrac{4\\rho\\,(4L)}{\\pi d'^2} = \\dfrac{4\\rho L}{\\pi d^2} \\Rightarrow \\dfrac{4}{d'^2} = \\dfrac{1}{d^2} \\Rightarrow d'^2 = 4d^2 \\Rightarrow d' = 2d$.\n\nO diâmetro precisa dobrar: a área quadruplica e compensa exatamente o comprimento 4 vezes maior.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Associação de capacitores em série e paralelo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Três capacitores, com capacitâncias $C_1 = 4{,}0\\ \\mu\\text{F}$, $C_2 = 3{,}0\\ \\mu\\text{F}$ e $C_3 = 2{,}0\\ \\mu\\text{F}$, estão conectados a uma fonte de tensão $\\Delta V_{ab} = 12\\ \\text{V}$, conforme mostrado na figura. Qual é a carga do capacitor $C_2$?",
+    "alternativas": {
+      "a": "$16{,}0\\ \\mu\\text{C}$",
+      "b": "$32{,}0\\ \\mu\\text{C}$",
+      "c": "$2{,}0\\ \\mu\\text{C}$",
+      "d": "$8{,}0\\ \\mu\\text{C}$",
+      "e": "$4{,}0\\ \\mu\\text{C}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Na figura, $C_2$ e $C_3$ estão em paralelo entre si, e esse bloco está em série com $C_1$.\n\nParalelo: $C_{23} = C_2 + C_3 = 3{,}0 + 2{,}0 = 5{,}0\\ \\mu\\text{F}$.\n\nSérie: $\\dfrac{1}{C_{eq}} = \\dfrac{1}{4{,}0} + \\dfrac{1}{5{,}0} \\Rightarrow C_{eq} = \\dfrac{20}{9} \\approx 2{,}22\\ \\mu\\text{F}$.\n\nA carga fornecida pela fonte é $Q = C_{eq}\\,\\Delta V_{ab} = 2{,}22 \\times 12 \\approx 26{,}7\\ \\mu\\text{C}$, e é essa mesma carga que atravessa $C_1$ e chega ao bloco em paralelo.\n\nA tensão sobre o bloco paralelo vale $\\Delta V_{23} = \\dfrac{26{,}7}{5{,}0} \\approx 5{,}33\\ \\text{V}$, de modo que\n\n$Q_2 = C_2\\,\\Delta V_{23} = 3{,}0 \\times 5{,}33 \\approx 16{,}0\\ \\mu\\text{C}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q04.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Resistência equivalente em série e em paralelo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Qual das alternativas a seguir é uma afirmação correta para vários resistores conectados em série ou paralelo?",
+    "alternativas": {
+      "a": "A resistência equivalente em um circuito com vários resistores em série diminui à medida que mais resistores são adicionados.",
+      "b": "A corrente através de resistores conectados em série é diferente.",
+      "c": "A diferença de potencial entre os terminais de resistores conectados em paralelo é diferente.",
+      "d": "A resistência equivalente em um circuito com vários resistores em paralelo diminui à medida que mais resistores são adicionados.",
+      "e": "Nenhuma das afirmações acima está correta."
+    },
+    "gabarito": "d",
+    "resolucao": "Em série, $R_{eq} = R_1 + R_2 + \\dots$: a resistência equivalente só pode **aumentar** quando se acrescentam resistores (A é falsa), e a corrente é a **mesma** em todos eles, já que não há por onde a carga se dividir (B é falsa).\n\nEm paralelo, todos os resistores estão ligados aos mesmos dois nós, logo a diferença de potencial é **igual** para todos (C é falsa), e\n\n$\\dfrac{1}{R_{eq}} = \\dfrac{1}{R_1} + \\dfrac{1}{R_2} + \\dots$\n\nCada novo termo aumenta a soma dos inversos e, portanto, **diminui** $R_{eq}$ — cada resistor a mais abre um caminho extra para a corrente. A afirmação correta é a D.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Potência dissipada em resistores em série",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma bateria de $4{,}5\\ \\text{V}$ está conectada a dois resistores ligados em série, conforme mostrado no desenho. A potência total dissipada nos resistores é mais próxima de",
+    "alternativas": {
+      "a": "$0{,}033\\ \\text{W}$",
+      "b": "$0{,}090\\ \\text{W}$",
+      "c": "$0{,}15\\ \\text{W}$",
+      "d": "$0{,}60\\ \\text{W}$",
+      "e": "$4{,}70\\ \\text{W}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Os dois resistores do desenho valem $68\\ \\Omega$ cada e estão em série:\n\n$R_{eq} = 68 + 68 = 136\\ \\Omega$.\n\nA potência total dissipada é\n\n$P = \\dfrac{\\varepsilon^2}{R_{eq}} = \\dfrac{(4{,}5)^2}{136} = \\dfrac{20{,}25}{136} \\approx 0{,}149\\ \\text{W}$,\n\nou seja, aproximadamente $0{,}15\\ \\text{W}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q06.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Deslocamento perpendicular ao campo e trabalho nulo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma carga $q = -6{,}0\\ \\mu\\text{C}$ é movida $0{,}25\\ \\text{m}$ horizontalmente até o ponto P em uma região onde um campo elétrico é de $250\\ \\text{V/m}$ direcionado verticalmente, como mostrado. Qual é a variação da energia potencial elétrica da carga?",
+    "alternativas": {
+      "a": "$-2{,}40 \\times 10^{-5}\\ \\text{J}$",
+      "b": "$-3{,}75 \\times 10^{-4}\\ \\text{J}$",
+      "c": "zero",
+      "d": "$+3{,}75 \\times 10^{-4}\\ \\text{J}$",
+      "e": "$+2{,}40 \\times 10^{-5}\\ \\text{J}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Em um campo uniforme, o trabalho da força elétrica é $W = q\\,\\vec{E}\\cdot\\vec{d}$ e a variação de energia potencial é $\\Delta U = -W$.\n\nAqui o campo é vertical e o deslocamento é horizontal: os dois vetores são perpendiculares, então $\\vec{E}\\cdot\\vec{d} = E\\,d\\cos 90^\\circ = 0$.\n\nLogo $W = 0$ e $\\Delta U = 0$. Equivalentemente: o deslocamento ocorre sobre uma superfície equipotencial (perpendicular às linhas de campo), então $\\Delta V = 0$ e $\\Delta U = q\\,\\Delta V = 0$, independentemente do valor e do sinal da carga.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q07.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Efeito de fechar a chave num circuito com lâmpada",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma lâmpada é conectada no circuito mostrado na figura com o interruptor S aberto. Todos os cabos de conexão não têm resistência apreciável e a bateria não tem resistência interna. Quando fechamos o interruptor, quais afirmações abaixo descrevem com precisão o comportamento do circuito?",
+    "alternativas": {
+      "a": "O brilho da lâmpada aumentará e a diferença de potencial em $R_2$ diminuirá.",
+      "b": "O brilho da lâmpada diminuirá e a diferença de potencial em $R_2$ diminuirá.",
+      "c": "O brilho da lâmpada não mudará e a diferença de potencial em $R_2$ permanecerá constante.",
+      "d": "O brilho da lâmpada aumentará e a diferença de potencial em $R_2$ aumentará.",
+      "e": "O brilho da lâmpada diminuirá e a diferença de potencial em $R_2$ aumentará."
+    },
+    "gabarito": "a",
+    "resolucao": "Com S aberto, a corrente sai da bateria, passa por $R_1$ e pela lâmpada (em série) e volta pelo único ramo disponível, $R_2$. A resistência total é $R_1 + R_L + R_2$, chamando de $R_L$ a resistência da lâmpada.\n\nAo fechar S, $R_3$ entra em paralelo com $R_2$ e a resistência desse trecho cai: $R_{23} = \\dfrac{R_2R_3}{R_2+R_3} < R_2$. Com resistência total menor, a corrente que sai da bateria **aumenta**; como essa corrente passa inteira pela lâmpada, ela brilha **mais**.\n\nA diferença de potencial no trecho paralelo é o que sobra da fem depois das quedas em $R_1$ e na lâmpada:\n\n$\\Delta V_{23} = \\varepsilon - I\\,(R_1 + R_L)$.\n\nComo $I$ aumentou, essa diferença **diminui** — e ela é exatamente a tensão sobre $R_2$. Portanto: brilho maior e $\\Delta V$ em $R_2$ menor.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q08.jpg"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "FEM, resistência interna e potência no resistor externo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "A FEM e a resistência interna de uma bateria são mostradas na figura. Se uma corrente de $8{,}3\\ \\text{A}$ é extraída da bateria quando um resistor $R$ é conectado através dos terminais **ab** da bateria, qual é aproximadamente a taxa com que a energia é dissipada pelo resistor $R$?",
+    "alternativas": {
+      "a": "$222\\ \\text{W}$",
+      "b": "$700\\ \\text{W}$",
+      "c": "$444\\ \\text{W}$",
+      "d": "$535\\ \\text{W}$",
+      "e": "$797\\ \\text{W}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Pela figura, $\\varepsilon = 95{,}0\\ \\text{V}$ e $r = 5{,}0\\ \\Omega$. A tensão nos terminais $ab$ é\n\n$\\Delta V_{ab} = \\varepsilon - I r = 95{,}0 - (8{,}3)(5{,}0) = 95{,}0 - 41{,}5 = 53{,}5\\ \\text{V}$.\n\nEssa é a tensão aplicada ao resistor externo $R$, logo a potência dissipada nele vale\n\n$P_R = I\\,\\Delta V_{ab} = (8{,}3)(53{,}5) \\approx 444\\ \\text{W}$.\n\n(Para comparar: a potência total gerada pela bateria seria $I\\varepsilon \\approx 789\\ \\text{W}$, dos quais $I^2 r \\approx 344\\ \\text{W}$ ficam na própria resistência interna.)",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q09.jpg"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Energia armazenada em um capacitor",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Um capacitor de $C = 4{,}0\\ \\mu\\text{F}$ é conectado a uma bateria de $100\\ \\text{V}$. Depois de muito tempo qual é a energia armazenada no capacitor?",
+    "alternativas": {
+      "a": "$2{,}5\\ \\text{J}$",
+      "b": "$0{,}025\\ \\text{J}$",
+      "c": "$0{,}04\\ \\text{J}$",
+      "d": "$0{,}40\\ \\text{J}$",
+      "e": "$0{,}02\\ \\text{J}$"
+    },
+    "gabarito": "e",
+    "resolucao": "Depois de muito tempo o capacitor está totalmente carregado e a tensão entre suas placas é a da bateria, $V = 100\\ \\text{V}$. A energia armazenada é\n\n$U = \\dfrac{1}{2}CV^2 = \\dfrac{1}{2}(4{,}0\\times10^{-6})(100)^2 = \\dfrac{1}{2}(4{,}0\\times10^{-6})(1{,}0\\times10^{4}) = 2{,}0\\times10^{-2}\\ \\text{J}$,\n\nou seja, $0{,}02\\ \\text{J}$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Potencial pela área sob o gráfico de $E_x$",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Considere um campo elétrico unidimensional $E_x$. O gráfico abaixo representa o comportamento de $E_x$ em função da coordenada $x$. Dado que o potencial em $x = 0$ vale $500\\ \\text{V}$, qual o valor do potencial em $x = 3\\ \\text{m}$?",
+    "alternativas": {
+      "a": "$0\\ \\text{V}$",
+      "b": "$100\\ \\text{V}$",
+      "c": "$700\\ \\text{V}$",
+      "d": "$200\\ \\text{V}$",
+      "e": "$500\\ \\text{V}$"
+    },
+    "gabarito": "a",
+    "resolucao": "A relação entre campo e potencial em uma dimensão é\n\n$V(3) - V(0) = -\\displaystyle\\int_0^{3} E_x\\,dx$,\n\nou seja, a variação do potencial é menos a área sob a curva $E_x \\times x$.\n\nPelo gráfico, $E_x = 200\\ \\text{V/m}$ é constante de $x = 0$ a $x = 2\\ \\text{m}$ e cai linearmente de $200\\ \\text{V/m}$ até zero entre $x = 2\\ \\text{m}$ e $x = 3\\ \\text{m}$. A área vale\n\n$A = (200)(2) + \\dfrac{1}{2}(200)(1) = 400 + 100 = 500\\ \\text{V}$.\n\nLogo $V(3) = V(0) - 500 = 500 - 500 = 0\\ \\text{V}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q11.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Resistência interna a partir da queda de tensão",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Quando um resistor de $20{,}0\\ \\Omega$ é conectado aos terminais de uma bateria de $12{,}0\\ \\text{V}$, a tensão nos terminais da bateria cai de $0{,}300\\ \\text{V}$. Qual é a resistência interna desta bateria?",
+    "alternativas": {
+      "a": "$3{,}60\\ \\Omega$",
+      "b": "$1{,}56\\ \\Omega$",
+      "c": "$0{,}98\\ \\Omega$",
+      "d": "$0{,}30\\ \\Omega$",
+      "e": "$0{,}51\\ \\Omega$"
+    },
+    "gabarito": "e",
+    "resolucao": "A queda de $0{,}300\\ \\text{V}$ é exatamente a tensão perdida na resistência interna: $I r = 0{,}300\\ \\text{V}$.\n\nA tensão que sobra nos terminais (e portanto no resistor externo) é\n\n$\\Delta V = 12{,}0 - 0{,}300 = 11{,}7\\ \\text{V}$,\n\nde onde a corrente do circuito vale\n\n$I = \\dfrac{11{,}7}{20{,}0} = 0{,}585\\ \\text{A}$.\n\nEntão\n\n$r = \\dfrac{0{,}300}{0{,}585} \\approx 0{,}51\\ \\Omega$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Variação de energia potencial em campo uniforme",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma partícula eletrizada positivamente com carga $q = 3 \\times 10^{-15}\\ \\text{C}$ é lançada em um campo elétrico uniforme de intensidade $2 \\times 10^{3}\\ \\text{N/C}$, descrevendo o movimento representado na figura. Qual a variação da energia potencial elétrica da partícula entre os pontos A e B?",
+    "alternativas": {
+      "a": "$30 \\times 10^{-14}\\ \\text{J}$",
+      "b": "$-30 \\times 10^{-14}\\ \\text{J}$",
+      "c": "$-24 \\times 10^{-14}\\ \\text{J}$",
+      "d": "$24 \\times 10^{-14}\\ \\text{J}$",
+      "e": "Zero"
+    },
+    "gabarito": "d",
+    "resolucao": "O campo é uniforme e horizontal (as linhas apontam para a direita). Só o deslocamento **na direção do campo** conta: pela figura, de A até B a partícula recua $4\\ \\text{cm} = 0{,}04\\ \\text{m}$ no sentido contrário ao campo; os $3\\ \\text{cm}$ verticais são perpendiculares a $\\vec{E}$ e não contribuem.\n\nO trabalho da força elétrica sobre a carga positiva é\n\n$W = qE\\,\\Delta x = (3\\times10^{-15})(2\\times10^{3})(-0{,}04) = -2{,}4\\times10^{-13}\\ \\text{J}$.\n\nComo $\\Delta U = -W$:\n\n$\\Delta U = U_B - U_A = +2{,}4\\times10^{-13}\\ \\text{J} = 24\\times10^{-14}\\ \\text{J}$.\n\nO sinal positivo faz sentido: a partícula positiva se move contra o campo, ganhando energia potencial (e perdendo energia cinética).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q13.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Carga de circuito RC e energia no capacitor",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Para o circuito mostrado na figura, a chave S está inicialmente aberta e o capacitor está **descarregado**. O interruptor é então fechado no tempo $t = 0$. Quantos segundos após o fechamento do interruptor a energia armazenada no capacitor será igual a $50{,}2\\ \\text{mJ}$?",
+    "alternativas": {
+      "a": "$81\\ \\text{s}$",
+      "b": "$65\\ \\text{s}$",
+      "c": "$97\\ \\text{s}$",
+      "d": "$110\\ \\text{s}$",
+      "e": "$130\\ \\text{s}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Da figura: $\\varepsilon = 40\\ \\text{V}$, $R = 0{,}50\\ \\text{M}\\Omega = 5{,}0\\times10^{5}\\ \\Omega$ e $C = 90\\ \\mu\\text{F}$. A constante de tempo é\n\n$\\tau = RC = (5{,}0\\times10^{5})(90\\times10^{-6}) = 45\\ \\text{s}$.\n\nA energia pedida corresponde a uma tensão no capacitor de\n\n$V_C = \\sqrt{\\dfrac{2U}{C}} = \\sqrt{\\dfrac{2(50{,}2\\times10^{-3})}{90\\times10^{-6}}} \\approx 33{,}4\\ \\text{V}$.\n\nNa carga de um circuito RC, $V_C(t) = \\varepsilon\\left(1 - e^{-t/\\tau}\\right)$, logo\n\n$1 - e^{-t/\\tau} = \\dfrac{33{,}4}{40} = 0{,}835 \\Rightarrow e^{-t/\\tau} = 0{,}165$,\n\n$t = \\tau\\,\\ln\\left(\\dfrac{1}{0{,}165}\\right) = 45 \\times 1{,}80 \\approx 81\\ \\text{s}$.\n\n(Confere: a energia máxima seria $\\dfrac{1}{2}C\\varepsilon^2 = 72\\ \\text{mJ}$, então $50{,}2\\ \\text{mJ}$ é mesmo um instante intermediário da carga.)",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q14.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Velocidade de deriva e área da seção reta",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "A figura mostra dois fios conectados feitos do mesmo material. A corrente que entra no fio à esquerda é $2{,}0\\ \\text{A}$ e nesse fio a velocidade de deriva dos elétrons é $v_d$. Qual é a velocidade de deriva dos elétrons no fio do lado direito?",
+    "alternativas": {
+      "a": "$4v_d$",
+      "b": "$2v_d$",
+      "c": "$v_d$",
+      "d": "$v_d/2$",
+      "e": "$v_d/4$"
+    },
+    "gabarito": "e",
+    "resolucao": "A corrente se escreve $i = n\\,q\\,A\\,v_d$. Os fios são do mesmo material (mesmo $n$) e estão em série, ou seja, conduzem a mesma corrente $i = 2{,}0\\ \\text{A}$ (a carga não se acumula na junção). Assim\n\n$A_1 v_{d1} = A_2 v_{d2}$.\n\nOs diâmetros são $1{,}0\\ \\text{mm}$ e $2{,}0\\ \\text{mm}$, e a área vai com o quadrado do diâmetro:\n\n$\\dfrac{A_2}{A_1} = \\left(\\dfrac{2{,}0}{1{,}0}\\right)^2 = 4$.\n\nPortanto\n\n$v_{d2} = v_{d1}\\dfrac{A_1}{A_2} = \\dfrac{v_d}{4}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p2/q15.png"
+  }
+]

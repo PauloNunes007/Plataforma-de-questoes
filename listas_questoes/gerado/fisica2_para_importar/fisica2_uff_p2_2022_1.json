@@ -1,0 +1,323 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Definição de força eletromotriz",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Complete a seguinte afirmação: A força eletromotriz é:",
+    "alternativas": {
+      "a": "a máxima diferença de potencial entre os terminais de uma bateria",
+      "b": "a força que acelera os elétrons através de um fio quando uma bateria está conectada a ele",
+      "c": "a força que acelera prótons através de um fio quando uma bateria está conectada a ele",
+      "d": "a capacitância máxima entre os terminais de uma bateria",
+      "e": "a energia potencial elétrica máxima armazenada em uma bateria."
+    },
+    "gabarito": "a",
+    "resolucao": "Apesar do nome, a força eletromotriz (fem) não é uma força: ela tem unidade de volt. A fem $\\varepsilon$ de uma fonte é o trabalho que ela realiza por unidade de carga ao empurrar portadores do terminal de menor para o de maior potencial.\n\nNum circuito real, a diferença de potencial medida entre os terminais da bateria é $\\Delta V = \\varepsilon - r\\,i$, onde $r$ é a resistência interna. Ou seja, $\\Delta V$ é sempre menor que $\\varepsilon$ quando há corrente, e só atinge o valor $\\varepsilon$ em circuito aberto ($i = 0$).\n\nPortanto a fem é exatamente a máxima diferença de potencial possível entre os terminais da bateria — alternativa A. As alternativas B e C descrevem uma força (unidade de newton), a D confunde fem com capacitância e a E confunde fem (energia por carga, em joule/coulomb) com energia armazenada (em joule).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Brilho de lâmpadas em série e paralelo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "No circuito mostrado na figura, todas as lâmpadas são idênticas. Qual das seguintes é a classificação correta do brilho das lâmpadas?",
+    "alternativas": {
+      "a": "B e C têm brilho igual, e A é o mais escuro",
+      "b": "A e B têm brilho igual, e C é o mais escuro",
+      "c": "A é o mais brilhante, C é o mais escuro e B está no meio",
+      "d": "A é o mais brilhante, e B e C têm brilho igual, mas menor que A",
+      "e": "Todas as três lâmpadas têm o mesmo brilho."
+    },
+    "gabarito": "d",
+    "resolucao": "A lâmpada A está sozinha num ramo ligado diretamente aos terminais da bateria, enquanto B e C estão em série entre si num segundo ramo, e os dois ramos estão em paralelo com a bateria.\n\nChamando de $R$ a resistência de cada lâmpada e de $\\varepsilon$ a fem da bateria:\n\nRamo de A: $\\Delta V_A = \\varepsilon$, logo $P_A = \\dfrac{\\varepsilon^2}{R}$.\n\nRamo de B e C: a resistência do ramo é $2R$, a corrente é $i = \\dfrac{\\varepsilon}{2R}$ e cada lâmpada recebe $\\Delta V = \\dfrac{\\varepsilon}{2}$, logo $P_B = P_C = \\dfrac{\\varepsilon^2}{4R}$.\n\nComo a mesma corrente atravessa B e C, elas brilham igualmente, e cada uma dissipa apenas $1/4$ da potência de A. Portanto A é a mais brilhante e B e C têm brilho igual entre si e menor que o de A — alternativa D.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p2/q02.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Energia em associação mista de capacitores",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Na figura abaixo, os 4 capacitores estão completamente carregados. Determine a energia armazenada por $C_4$, sabendo que $C_1 = 20\\,\\mu\\mathrm{F}$, $C_2 = 10\\,\\mu\\mathrm{F}$, $C_3 = 14\\,\\mu\\mathrm{F}$, $C_4 = 30\\,\\mu\\mathrm{F}$ e $V_0 = 45\\,\\mathrm{V}$.",
+    "alternativas": {
+      "a": "$3{,}8$ mJ",
+      "b": "$2{,}7$ mJ",
+      "c": "$3{,}2$ mJ",
+      "d": "$2{,}2$ mJ",
+      "e": "$8{,}1$ mJ"
+    },
+    "gabarito": "d",
+    "resolucao": "Pelo desenho, $C_2$ e $C_3$ estão em paralelo entre si, e esse conjunto está em série com $C_1$ e com $C_4$, formando um único caminho ligado à fonte $V_0$.\n\nParalelo: $C_{23} = C_2 + C_3 = 10 + 14 = 24\\,\\mu\\mathrm{F}$.\n\nSérie: $\\dfrac{1}{C_{eq}} = \\dfrac{1}{20} + \\dfrac{1}{24} + \\dfrac{1}{30} = 0{,}0500 + 0{,}0417 + 0{,}0333 = 0{,}1250\\ (\\mu\\mathrm{F})^{-1}$, logo $C_{eq} = 8{,}0\\,\\mu\\mathrm{F}$.\n\nComo os três blocos estão em série, todos têm a mesma carga, que é a carga total fornecida pela fonte:\n\n$Q = C_{eq}V_0 = 8{,}0\\times 10^{-6}\\times 45 = 3{,}6\\times 10^{-4}\\ \\mathrm{C}$.\n\nEssa é justamente a carga de $C_4$. A energia nele vale\n\n$U_4 = \\dfrac{Q^2}{2C_4} = \\dfrac{(3{,}6\\times 10^{-4})^2}{2\\times 30\\times 10^{-6}} = \\dfrac{1{,}296\\times 10^{-7}}{6{,}0\\times 10^{-5}} = 2{,}16\\times 10^{-3}\\ \\mathrm{J} \\approx 2{,}2\\ \\mathrm{mJ}$.\n\nAlternativa D.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p2/q03.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Leis de Kirchhoff em circuito de duas malhas",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "No circuito a seguir, um voltímetro verificou que há uma queda de potencial elétrico entre os pontos A e B (com $V_A > V_B$) igual a $5$ V. Determine o valor da resistência $R$.",
+    "alternativas": {
+      "a": "$30{,}0\\ \\Omega$",
+      "b": "$67{,}5\\ \\Omega$",
+      "c": "$55{,}0\\ \\Omega$",
+      "d": "$13{,}3\\ \\Omega$",
+      "e": "$22{,}6\\ \\Omega$"
+    },
+    "gabarito": "a",
+    "resolucao": "O circuito tem três ramos ligando os nós A e B: o ramo central com o resistor de $5\\ \\Omega$, o ramo da direita ($10\\ \\Omega$ em série com a bateria de $3$ V) e o ramo da esquerda ($20\\ \\Omega$, a bateria de $65$ V e o resistor $R$).\n\nRamo central: $i_5 = \\dfrac{V_A - V_B}{5} = \\dfrac{5}{5} = 1{,}0\\ \\mathrm{A}$, de A para B.\n\nRamo da direita (percorrendo de A para B, atravessando o resistor e depois a bateria de $3$ V do $+$ para o $-$):\n\n$V_A - 10\\,i_{10} - 3 = V_B \\Rightarrow 5 - 10\\,i_{10} - 3 = 0 \\Rightarrow i_{10} = 0{,}20\\ \\mathrm{A}$, também de A para B.\n\nNó A (a corrente que chega pelo ramo da esquerda se divide nos outros dois):\n\n$i_R = i_5 + i_{10} = 1{,}0 + 0{,}20 = 1{,}2\\ \\mathrm{A}$.\n\nRamo da esquerda (de B, passando por $R$, pela bateria de $65$ V do $-$ para o $+$, e pelo resistor de $20\\ \\Omega$ até A):\n\n$V_B - 1{,}2R + 65 - 20\\times 1{,}2 = V_A$\n\n$-1{,}2R + 65 - 24 = 5 \\Rightarrow 1{,}2R = 36 \\Rightarrow R = 30{,}0\\ \\Omega$.\n\nAlternativa A.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p2/q04.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Corrente em ramo ligado direto a uma fonte",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Para o circuito mostrado na figura, qual a corrente medida pelo amperímetro, considerado ideal?",
+    "alternativas": {
+      "a": "$0{,}033$ A",
+      "b": "$0{,}078$ A",
+      "c": "$0{,}230$ A",
+      "d": "$0{,}120$ A",
+      "e": "$0{,}360$ A"
+    },
+    "gabarito": "a",
+    "resolucao": "O truque da questão é olhar a topologia antes de sair montando malhas. O ramo que contém o amperímetro é formado pelo resistor vertical de $90{,}0\\ \\Omega$ em série com o próprio amperímetro (ideal, resistência nula), e esse ramo liga o nó superior direito ao fio de baixo.\n\nMas esse mesmo nó superior direito é o terminal positivo da bateria de $3{,}0$ V, cujo terminal negativo está no fio de baixo. Logo o ramo do amperímetro está em paralelo com a bateria de $3{,}0$ V, e a diferença de potencial sobre ele é exatamente $3{,}0$ V — independentemente do que acontece no resto do circuito (a bateria de $10{,}0$ V, o resistor de $90{,}0\\ \\Omega$ horizontal e os dois de $80{,}0\\ \\Omega$ não alteram esse valor).\n\n$i = \\dfrac{\\Delta V}{R} = \\dfrac{3{,}0}{90{,}0} = 0{,}0333\\ \\mathrm{A} \\approx 0{,}033\\ \\mathrm{A}$.\n\nAlternativa A.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p2/q05.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Resistência de fio cortado e potência dissipada",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Um resistor, feito de um fio longo de comprimento $L$, é conectado aos terminais de uma bateria que fornece uma tensão elétrica constante $\\Delta V_0$. Nesta situação, uma corrente elétrica $I$ flui através do resistor. Em seguida, o resistor é cortado ao meio, em dois segmentos de comprimento $L/2$. Os dois resistores são então conectados em paralelo aos terminais da mesma bateria. Qual a potência fornecida pela bateria nesta nova situação?",
+    "alternativas": {
+      "a": "$(\\Delta V_0)\\,I/2$",
+      "b": "$(\\Delta V_0)I/4$",
+      "c": "$(\\Delta V_0)I$",
+      "d": "$2(\\Delta V_0)I$",
+      "e": "$4(\\Delta V_0)I$"
+    },
+    "gabarito": "e",
+    "resolucao": "A resistência de um fio é $R = \\rho\\dfrac{L}{A}$, proporcional ao comprimento. Na situação inicial, $R = \\dfrac{\\Delta V_0}{I}$.\n\nAo cortar o fio ao meio, cada pedaço tem comprimento $L/2$ e portanto resistência $R/2$. Ligando os dois em paralelo:\n\n$R_{eq} = \\dfrac{(R/2)(R/2)}{(R/2)+(R/2)} = \\dfrac{R}{4}$.\n\nCom a mesma tensão $\\Delta V_0$, a nova corrente total é\n\n$I' = \\dfrac{\\Delta V_0}{R/4} = 4\\dfrac{\\Delta V_0}{R} = 4I$.\n\nA potência fornecida pela bateria é\n\n$P' = \\Delta V_0\\,I' = 4(\\Delta V_0)I$.\n\nAlternativa E. (Equivalentemente, $P = \\dfrac{(\\Delta V_0)^2}{R_{eq}}$ quadruplica quando a resistência cai a um quarto.)",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Carga de um circuito RC em série",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Um circuito RC em série é conectado a uma fonte ideal através de uma chave aberta. A chave é fechada no instante $t = 0$ s. Qual das seguintes afirmações sobre o circuito está correta?",
+    "alternativas": {
+      "a": "O capacitor carrega até seu valor máximo em um intervalo de tempo igual a uma constante característica do circuito e a corrente é zero naquele momento",
+      "b": "A diferença de potencial no resistor e a diferença de potencial no capacitor são sempre iguais",
+      "c": "A diferença de potencial no resistor é sempre maior que a diferença de potencial no capacitor",
+      "d": "A diferença de potencial no capacitor é sempre maior que a diferença de potencial no resistor",
+      "e": "Uma vez que o capacitor está essencialmente totalmente carregado, não há corrente apreciável no circuito"
+    },
+    "gabarito": "e",
+    "resolucao": "Na carga de um RC série ligado a uma fem $\\varepsilon$ valem\n\n$q(t) = C\\varepsilon\\left(1 - e^{-t/\\tau}\\right)$, $\\quad i(t) = \\dfrac{\\varepsilon}{R}e^{-t/\\tau}$, $\\quad \\tau = RC$.\n\nA corrente decai exponencialmente: quando o capacitor está praticamente carregado ($t \\gg \\tau$), $i \\to 0$ e não há corrente apreciável no circuito — alternativa E, correta.\n\nAs outras: em $t = \\tau$ o capacitor atingiu apenas $1 - e^{-1} \\approx 63\\%$ da carga máxima, e a corrente ainda vale $\\varepsilon/(eR)$, cerca de $37\\%$ da inicial (A é falsa, e a carga máxima só é atingida assintoticamente). Pela lei das malhas, $\\Delta V_R + \\Delta V_C = \\varepsilon$ a todo instante, com $\\Delta V_R = \\varepsilon e^{-t/\\tau}$ e $\\Delta V_C = \\varepsilon(1 - e^{-t/\\tau})$: elas só são iguais no instante $t = \\tau\\ln 2$ (B é falsa); antes desse instante $\\Delta V_R > \\Delta V_C$ e depois $\\Delta V_C > \\Delta V_R$, então nenhuma das duas domina sempre (C e D são falsas).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Capacitores e Capacitância",
+    "subtopico": "Afastamento das placas com bateria ligada",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Um capacitor de placas paralelas está conectado aos terminais de uma bateria cuja força eletromotriz vale $\\varepsilon$. Após o carregamento do capacitor, e mantendo-se a conexão com a bateria, mãos isoladas afastam as placas. Marque a alternativa **FALSA**.",
+    "alternativas": {
+      "a": "A diferença de potencial permanece constante entre as placas do capacitor.",
+      "b": "A carga no capacitor diminui após o afastamento.",
+      "c": "A capacitância diminui após o afastamento.",
+      "d": "A energia armazenada no capacitor aumenta após o afastamento.",
+      "e": "O módulo do campo elétrico entre as placas diminui após o afastamento."
+    },
+    "gabarito": "d",
+    "resolucao": "Como a bateria continua ligada, a grandeza que fica fixa é a diferença de potencial: $\\Delta V = \\varepsilon$ (alternativa A é verdadeira).\n\nA capacitância de placas paralelas é $C = \\dfrac{\\varepsilon_0 A}{d}$; aumentar $d$ faz $C$ diminuir (C é verdadeira).\n\nA carga é $Q = C\\,\\Delta V = C\\varepsilon$; com $\\Delta V$ fixo e $C$ menor, $Q$ diminui — parte da carga volta para a bateria (B é verdadeira).\n\nO campo entre as placas é $E = \\dfrac{\\Delta V}{d}$; com $\\Delta V$ fixo e $d$ maior, $E$ diminui (E é verdadeira).\n\nA energia armazenada é $U = \\dfrac{1}{2}C(\\Delta V)^2 = \\dfrac{1}{2}C\\varepsilon^2$; com $\\Delta V$ fixo e $C$ menor, $U$ diminui. Logo a afirmação de que a energia aumenta é a FALSA — alternativa D.\n\n(O aumento de energia ocorreria no caso oposto, com o capacitor desconectado da bateria, quando é $Q$ que fica constante e $U = \\dfrac{Q^2}{2C}$ cresce ao afastar as placas.)",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Velocidade de deriva e área da seção reta",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "A figura mostra dois fios de diâmetros $1{,}0$ mm e $2{,}0$ mm, conectados em série. Os fios são feitos do mesmo material e uma corrente de $2{,}0$ A entra no fio pelo lado esquerdo. Neste fio, os elétrons têm velocidade de deriva $v_d$. Qual é a velocidade de deriva no fio do lado direito cujo diâmetro é maior?",
+    "alternativas": {
+      "a": "$4v_d$",
+      "b": "$2v_d$",
+      "c": "$v_d$",
+      "d": "$v_d/2$",
+      "e": "$v_d/4$"
+    },
+    "gabarito": "e",
+    "resolucao": "Como os fios estão em série, a corrente é a mesma nos dois: $i = n\\,q\\,A\\,v_d$, com $n$ e $q$ iguais (mesmo material).\n\nLogo $A_1 v_{d1} = A_2 v_{d2}$, ou seja, $v_d \\propto \\dfrac{1}{A}$.\n\nA área é $A = \\dfrac{\\pi D^2}{4}$, proporcional ao quadrado do diâmetro. Dobrando o diâmetro ($1{,}0$ mm para $2{,}0$ mm), a área fica $4$ vezes maior:\n\n$v_{d2} = v_d\\dfrac{A_1}{A_2} = \\dfrac{v_d}{4}$.\n\nAlternativa E.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p2/q09.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Campo elétrico interno e condução em fios",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Analise as proposições a seguir e marque a **VERDADEIRA**.",
+    "alternativas": {
+      "a": "Em um fio condutor atravessado por uma corrente elétrica, a carga elétrica em seu interior será nula em média, mas haverá uma densidade superficial uniforme de carga na superfície do fio.",
+      "b": "A velocidade de deriva dos elétrons em um fio condutor, é oriunda do movimento térmico dos elétrons na rede de íons do metal.",
+      "c": "Em um fio condutor atravessado por uma corrente elétrica, haverá uma queda de potencial no sentido oposto ao da corrente elétrica convencional $I$.",
+      "d": "O campo elétrico no interior de um fio condutor é o responsável pela velocidade de deriva dos elétrons no meio.",
+      "e": "Um fio condutor atravessado por uma corrente elétrica pode ser considerado em equilíbrio eletrostático, uma vez que a carga está distribuída apenas na superfície dele."
+    },
+    "gabarito": "d",
+    "resolucao": "Um fio percorrido por corrente não está em equilíbrio eletrostático: existe um campo elétrico $\\vec{E}$ no seu interior, sustentado pela fonte. É esse campo que exerce a força $\\vec{F} = -e\\vec{E}$ sobre os elétrons e, junto com as colisões na rede, produz a velocidade média de arrasto $\\vec{v}_d = -\\dfrac{e\\tau}{m}\\vec{E}$. A alternativa D é a verdadeira.\n\nAnalisando as demais: em A, a densidade superficial de carga de fato existe, mas não é uniforme — ela varia ao longo do fio, e é justamente esse gradiente que mantém o campo interno paralelo ao fio. Em B, o movimento térmico é aleatório e tem média nula; a deriva vem do campo aplicado, e é ordens de grandeza mais lenta que a velocidade térmica. Em C, o potencial cai no sentido da corrente convencional (num resistor a corrente vai do maior para o menor potencial), não no sentido oposto. Em E, como já dito, há campo no interior e dissipação de energia, o que é incompatível com equilíbrio eletrostático.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Campo uniforme a partir de potenciais em três pontos",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Sabe-se que o campo elétrico é uniforme em uma região do espaço. Os potenciais nos pontos A, B e C estão indicados na figura. Determine o valor das componentes $x$ ($E_x$) e $y$ ($E_y$) do campo elétrico nessa região.",
+    "alternativas": {
+      "a": "$E_x = -200$ N/C ; $E_y = +500$ N/C",
+      "b": "$E_x = +200$ N/C ; $E_y = -500$ N/C",
+      "c": "$E_x = +40$ N/C ; $E_y = -60$ N/C",
+      "d": "$E_x = -40$ N/C ; $E_y = +60$ N/C",
+      "e": "Não é possível calcular as componentes separadamente."
+    },
+    "gabarito": "a",
+    "resolucao": "Num campo uniforme, $E_x = -\\dfrac{\\Delta V}{\\Delta x}$ e $E_y = -\\dfrac{\\Delta V}{\\Delta y}$, usando pares de pontos que diferem em apenas uma coordenada.\n\nDe A ($100$ V) para B ($140$ V) o deslocamento é só em $x$, com $\\Delta x = 20\\ \\mathrm{cm} = 0{,}20$ m:\n\n$E_x = -\\dfrac{140 - 100}{0{,}20} = -\\dfrac{40}{0{,}20} = -200\\ \\mathrm{N/C}$.\n\nDe B ($140$ V) para C ($80$ V) o deslocamento é só em $y$, com $\\Delta y = 12\\ \\mathrm{cm} = 0{,}12$ m:\n\n$E_y = -\\dfrac{80 - 140}{0{,}12} = -\\dfrac{-60}{0{,}12} = +500\\ \\mathrm{N/C}$.\n\nAlternativa A. As alternativas C e D correspondem ao erro de usar apenas as diferenças de potencial sem dividir pela distância.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2022-1-p2/q11.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Campo como gradiente do potencial em uma dimensão",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "O potencial elétrico ao longo do eixo $x$ é dado por $V(x) = (10x^2 - 2x)$ V, onde $x$ está em metros. Uma partícula de carga positiva $q = 2$ mC é posicionada em $x = 1$ m. Qual é o módulo $F$ e o sentido da força elétrica experimentada pela carga elétrica?",
+    "alternativas": {
+      "a": "$F = 0{,}036$ N no sentido positivo do eixo $x$.",
+      "b": "$F = 0{,}016$ N no sentido negativo do eixo $x$.",
+      "c": "$F = 0{,}016$ N no sentido positivo do eixo $x$.",
+      "d": "$F = 0{,}008$ N no sentido positivo do eixo $x$.",
+      "e": "$F = 0{,}036$ N no sentido negativo do eixo $x$."
+    },
+    "gabarito": "e",
+    "resolucao": "O campo elétrico é menos o gradiente do potencial:\n\n$E_x = -\\dfrac{dV}{dx} = -\\dfrac{d}{dx}(10x^2 - 2x) = -(20x - 2)$.\n\nEm $x = 1$ m:\n\n$E_x = -(20\\times 1 - 2) = -18\\ \\mathrm{V/m}$.\n\nA força sobre a carga positiva $q = 2\\ \\mathrm{mC} = 2\\times 10^{-3}$ C é\n\n$F_x = qE_x = 2\\times 10^{-3}\\times(-18) = -3{,}6\\times 10^{-2}\\ \\mathrm{N}$.\n\nO módulo é $0{,}036$ N e o sinal negativo indica que a força aponta no sentido negativo do eixo $x$ — alternativa E. (Faz sentido: em $x = 1$ m o potencial cresce com $x$, e uma carga positiva é empurrada para regiões de menor potencial.)",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Potencial Elétrico",
+    "subtopico": "Potencial dentro e fora de uma esfera condutora",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma esfera condutora de raio $r = 3$ cm está carregada, e sabe-se que a diferença de potencial entre um ponto a $10$ cm do centro e outro a $2$ cm do centro vale $42$ V. Determine a carga elétrica da esfera.",
+    "alternativas": {
+      "a": "$0{,}1$ nC",
+      "b": "$0{,}2$ nC",
+      "c": "$0{,}3$ nC",
+      "d": "$0{,}4$ nC",
+      "e": "$0{,}5$ nC"
+    },
+    "gabarito": "b",
+    "resolucao": "O ponto a $2$ cm está dentro do condutor ($2\\ \\mathrm{cm} < 3\\ \\mathrm{cm}$). Num condutor em equilíbrio o potencial é constante em todo o volume e igual ao da superfície:\n\n$V_{2\\,\\mathrm{cm}} = V_{sup} = \\dfrac{kQ}{R} = \\dfrac{kQ}{0{,}03}$.\n\nO ponto a $10$ cm está fora, onde a esfera se comporta como uma carga pontual:\n\n$V_{10\\,\\mathrm{cm}} = \\dfrac{kQ}{0{,}10}$.\n\nA diferença de potencial entre os dois pontos, em módulo, é\n\n$|\\Delta V| = kQ\\left(\\dfrac{1}{0{,}03} - \\dfrac{1}{0{,}10}\\right) = kQ(33{,}33 - 10) = 23{,}33\\,kQ = 42\\ \\mathrm{V}$.\n\nLogo $kQ = 1{,}80\\ \\mathrm{V\\cdot m}$ e\n\n$Q = \\dfrac{1{,}80}{9{,}0\\times 10^{9}} = 2{,}0\\times 10^{-10}\\ \\mathrm{C} = 0{,}2\\ \\mathrm{nC}$.\n\nAlternativa B. O detalhe que a questão cobra é perceber que o ponto interno não usa $kQ/r$ com $r = 2$ cm, e sim o potencial da superfície.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Corrente e Resistência Elétricas",
+    "subtopico": "Densidade de corrente e dimensionamento de cabo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Um aparelho de ar condicionado com especificação $6150$ W / $110$ V será ligado em uma tomada alimentada através de um cabo condutor. O cabo deve ser dimensionado de forma que a densidade de corrente não exceda o valor de $10\\ \\mathrm{A/mm^2}$. Qual é, aproximadamente, o menor valor da área de seção do cabo condutor que atende a esse critério?",
+    "alternativas": {
+      "a": "$5{,}6\\ \\mathrm{mm^2}$",
+      "b": "$0{,}5\\ \\mathrm{mm^2}$",
+      "c": "$1{,}1\\ \\mathrm{mm^2}$",
+      "d": "$6{,}1\\ \\mathrm{mm^2}$",
+      "e": "$2{,}3\\ \\mathrm{mm^2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "Primeiro a corrente exigida pelo aparelho, a partir de $P = \\Delta V\\,i$:\n\n$i = \\dfrac{P}{\\Delta V} = \\dfrac{6150}{110} = 55{,}9\\ \\mathrm{A}$.\n\nA densidade de corrente é $J = \\dfrac{i}{A}$. Impondo $J \\le 10\\ \\mathrm{A/mm^2}$:\n\n$A \\ge \\dfrac{i}{J_{max}} = \\dfrac{55{,}9}{10} = 5{,}59\\ \\mathrm{mm^2} \\approx 5{,}6\\ \\mathrm{mm^2}$.\n\nComo se pede a menor área que atende ao critério, a resposta é $5{,}6\\ \\mathrm{mm^2}$ — alternativa A.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Circuitos de Corrente Contínua",
+    "subtopico": "Descarga RC e tempo para meia energia",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2022,
+    "enunciado": "Um capacitor de $4{,}0$ mF é descarregado através de um resistor de $4{,}0\\ \\mathrm{k\\Omega}$. Quanto tempo levará para o capacitor perder metade de sua energia inicial armazenada?",
+    "alternativas": {
+      "a": "$9{,}2$ s",
+      "b": "$5{,}5$ s",
+      "c": "$10{,}2$ s",
+      "d": "$2{,}7$ s",
+      "e": "$1{,}6$ s"
+    },
+    "gabarito": "b",
+    "resolucao": "Constante de tempo do circuito:\n\n$\\tau = RC = (4{,}0\\times 10^{3})(4{,}0\\times 10^{-3}) = 16\\ \\mathrm{s}$.\n\nNa descarga, $q(t) = q_0 e^{-t/\\tau}$, e a energia armazenada é\n\n$U(t) = \\dfrac{q^2}{2C} = U_0 e^{-2t/\\tau}$.\n\nNote que a energia decai com o dobro da taxa da carga. Impondo $U = U_0/2$:\n\n$e^{-2t/\\tau} = \\dfrac{1}{2} \\Rightarrow \\dfrac{2t}{\\tau} = \\ln 2 \\Rightarrow t = \\dfrac{\\tau\\ln 2}{2}$.\n\n$t = \\dfrac{16\\times 0{,}693}{2} = 5{,}5\\ \\mathrm{s}$.\n\nAlternativa B. O valor $11{,}1$ s (que seria $\\tau\\ln 2$) corresponderia ao tempo para a carga cair à metade, não a energia.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  }
+]

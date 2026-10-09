@@ -22,7 +22,7 @@
 import { ehPro, type PlanoDoProfile } from "./plano";
 
 /** Primeiro instante SEM acesso livre (meia-noite de Brasília). */
-export const ACESSO_LIVRE_ATE = "2026-10-08T00:00:00-03:00";
+export const ACESSO_LIVRE_ATE = "2026-10-12T00:00:00-03:00";
 
 export function acessoLivreAtivo(agora: Date = new Date()): boolean {
   return agora.getTime() < new Date(ACESSO_LIVRE_ATE).getTime();

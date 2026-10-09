@@ -1,0 +1,351 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Campo de um conjunto de cargas e movimento de elétrons",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Os centros de quatro esferas idênticas, I, II, III e IV, com distribuições uniformes de carga, formam um quadrado. Um feixe de elétrons penetra na região delimitada por esse quadrado, pelo ponto equidistante aos centros das esferas III e IV, com velocidade inicial $\\vec{v}$ na direção perpendicular à reta que une os centros de III e IV, conforme representado a figura.\n\nNa figura, I e II ocupam os vértices superiores (I à esquerda) e III e IV os vértices inferiores (III à esquerda); o feixe entra pelo meio do lado III–IV, dirigindo-se para o interior do quadrado.\n\nA trajetória dos elétrons será retilínea, na direção de $\\vec{v}$, e eles serão acelerados com velocidade crescente dentro da região plana delimitada pelo quadrado, se as esferas I, II, III e IV estiverem, respectivamente, eletrizadas com carga (note e adote: $Q$ é um número positivo)",
+    "alternativas": {
+      "a": "$+Q$, $-Q$, $-Q$, $+Q$",
+      "b": "$+2Q$, $-Q$, $+Q$, $-2Q$",
+      "c": "$+Q$, $+Q$, $-Q$, $-Q$",
+      "d": "$-Q$, $-Q$, $+Q$, $+Q$",
+      "e": "$+Q$, $+2Q$, $-2Q$, $-Q$"
+    },
+    "gabarito": "c",
+    "resolucao": "Para que a trajetória seja retilínea ao longo de $\\vec{v}$, a força elétrica não pode ter componente lateral. Sobre a reta vertical que passa pelo meio do quadrado isso só acontece se a configuração for simétrica em relação a essa reta, ou seja, se as duas esferas de cima tiverem cargas iguais entre si e as duas de baixo também. Isso elimina as alternativas (a), (b) e (e).\n\nSobram (c) e (d). Como o elétron tem carga negativa, a força sobre ele é $\\vec{F} = -e\\vec{E}$, ou seja, oposta ao campo. Para o feixe ganhar velocidade subindo, a força precisa apontar para cima, logo $\\vec{E}$ deve apontar para baixo em todo o trecho.\n\nCom I e II positivas (em cima) e III e IV negativas (embaixo), o campo das cargas de cima aponta para longe delas (para baixo, na região entre elas e o feixe) e o campo das cargas de baixo aponta para elas (também para baixo). Os dois efeitos se somam e $\\vec{E}$ é para baixo em toda a linha central — a força sobre o elétron é para cima e ele acelera. A opção (d) daria exatamente o contrário (o feixe seria freado).\n\nLogo, a resposta é (c): $+Q$, $+Q$, $-Q$, $-Q$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q01.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Conservação e redistribuição de carga entre condutores",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Duas esferas condutoras de iguais dimensões, A e B, estão eletricamente carregadas como indica a figura, sendo unidas por um fio condutor no qual há uma chave C inicialmente aberta. Na figura, a esfera A está carregada com $+6\\ \\text{C}$ e a esfera B com $-4\\ \\text{C}$.\n\nQuando a chave é fechada, passam elétrons...",
+    "alternativas": {
+      "a": "de A para B e a nova carga de A é $+2\\ \\text{C}$",
+      "b": "de A para B e a nova carga de B é $-1\\ \\text{C}$",
+      "c": "de B para A e a nova carga de A é $+1\\ \\text{C}$",
+      "d": "de B para A e a nova carga de B é $-1\\ \\text{C}$",
+      "e": "de B para A e a nova carga de A é $+2\\ \\text{C}$"
+    },
+    "gabarito": "c",
+    "resolucao": "Ao fechar a chave, as duas esferas passam a formar um único condutor. Como elas têm dimensões iguais, a carga total se divide igualmente entre elas.\n\nCarga total: $Q_{\\text{total}} = +6\\ \\text{C} + (-4\\ \\text{C}) = +2\\ \\text{C}$.\n\nCarga final de cada esfera: $Q_A' = Q_B' = \\dfrac{+2\\ \\text{C}}{2} = +1\\ \\text{C}$.\n\nA esfera A passou de $+6\\ \\text{C}$ para $+1\\ \\text{C}$, isto é, ficou menos positiva — ela ganhou carga negativa. Portanto os elétrons se deslocaram de B para A, e a nova carga de A é $+1\\ \\text{C}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q02.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Propriedades dos condutores em equilíbrio eletrostático",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Com respeito aos condutores ideais em equilíbrio eletrostático, é **INCORRETO** dizer:",
+    "alternativas": {
+      "a": "O campo elétrico no seu interior é sempre nulo, mesmo havendo cargas externas presentes ao redor.",
+      "b": "Se estiver carregado, essas cargas estarão distribuídas na superfície do condutor.",
+      "c": "Se estiver carregado, o campo elétrico em sua superfície é não nulo e perpendicular à superfície.",
+      "d": "Se houver uma cavidade no condutor com uma carga dentro, o campo elétrico no interior do condutor pode ser diferente de zero.",
+      "e": "Se induzido por uma carga externa, um condutor neutro tende a separar suas cargas positivas das negativas."
+    },
+    "gabarito": "d",
+    "resolucao": "Num condutor ideal em equilíbrio eletrostático o campo elétrico dentro do material condutor é sempre nulo — se não fosse, as cargas livres continuariam se movendo e não haveria equilíbrio. Isso vale mesmo com cargas externas (as cargas do condutor se redistribuem até anular o campo interno) e também quando existe uma cavidade com carga dentro: nesse caso aparece na parede da cavidade uma carga induzida de mesmo módulo e sinal oposto, de modo que qualquer superfície gaussiana traçada dentro do material envolve carga líquida nula e o campo continua zero no material.\n\nPortanto a afirmação incorreta é a (d).\n\nAs demais são verdadeiras: (a) é a própria condição de equilíbrio; (b) o excesso de carga vai todo para a superfície (Lei de Gauss aplicada a uma gaussiana interna); (c) na superfície o campo vale $E = \\dfrac{\\sigma}{\\varepsilon_0}$ e é perpendicular a ela, pois uma componente tangencial moveria cargas; (e) é a descrição da indução eletrostática.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Movimento de carga em campo elétrico uniforme entre placas",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Um feixe de elétrons é injetado entre duas placas muito grandes separadas por uma distância $h$. A injeção ocorre em um ponto equidistante às duas placas e todos os elétrons são injetados horizontalmente. O módulo da velocidade de injeção, porém, pode variar de elétron para elétron. Um pequeno orifício existe na placa positiva a uma distância $L$ do ponto de injeção, conforme indicado na figura (ele é suficientemente pequeno para não influenciar o campo elétrico). A densidade superficial de cargas em cada placa tem módulo $\\eta$, e a aceleração da gravidade pode ser desprezada. Sendo $e$ o módulo da carga do elétron, e $m_e$ sua massa, os elétrons que escapam pelo orifício foram injetados com velocidade:",
+    "alternativas": {
+      "a": "$L\\sqrt{\\dfrac{2e\\eta}{\\varepsilon_0 m_e h}}$",
+      "b": "$L\\sqrt{\\dfrac{e\\eta}{\\varepsilon_0 m_e h}}$",
+      "c": "$\\sqrt{\\dfrac{2e\\eta L}{\\varepsilon_0 m_e h}}$",
+      "d": "$\\sqrt{\\dfrac{e\\eta h}{\\varepsilon_0 m_e}}$",
+      "e": "$\\sqrt{\\dfrac{e\\eta L}{2\\varepsilon_0 m_e h}}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Entre duas placas planas extensas com densidades $+\\eta$ e $-\\eta$ o campo é uniforme e vale $E = \\dfrac{\\eta}{\\varepsilon_0}$, apontando da placa positiva para a negativa.\n\nO elétron (carga $-e$) sofre força na direção contrária ao campo, isto é, é atraído para a placa positiva. A aceleração transversal é constante:\n\n$a = \\dfrac{eE}{m_e} = \\dfrac{e\\eta}{\\varepsilon_0 m_e}$.\n\nO movimento é um lançamento horizontal. Na direção horizontal, $L = v\\,t$, logo $t = \\dfrac{L}{v}$. Na direção transversal, o elétron parte do meio das placas e precisa percorrer $\\dfrac{h}{2}$ para alcançar o orifício:\n\n$\\dfrac{h}{2} = \\dfrac{1}{2}a t^2 = \\dfrac{1}{2}\\cdot\\dfrac{e\\eta}{\\varepsilon_0 m_e}\\cdot\\dfrac{L^2}{v^2}$.\n\nIsolando $v$:\n\n$v^2 = \\dfrac{e\\eta L^2}{\\varepsilon_0 m_e h} \\quad\\Rightarrow\\quad v = L\\sqrt{\\dfrac{e\\eta}{\\varepsilon_0 m_e h}}$.\n\nResposta: alternativa (b).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q04.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Campo no interior de uma casca esférica condutora",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma partícula carregada negativamente é abandonada no interior de uma casca esférica condutora, carregada uniformemente com carga positiva, como mostra a figura ao lado. As direções 1, 2, 3 e 4 indicadas na figura partem da partícula. Nessas condições a força elétrica que atua na partícula:",
+    "alternativas": {
+      "a": "aponta na direção 1.",
+      "b": "aponta na direção 2.",
+      "c": "aponta na direção 3.",
+      "d": "aponta na direção 4.",
+      "e": "é nula."
+    },
+    "gabarito": "e",
+    "resolucao": "Aplicando a Lei de Gauss a uma superfície esférica de raio $r$ menor que o raio interno da casca, a carga envolvida é nula (toda a carga da casca está fora dessa superfície). Pela simetria esférica da distribuição, isso implica $\\vec{E} = 0$ em qualquer ponto da cavidade.\n\nCom campo nulo, a força sobre a partícula, $\\vec{F} = q\\vec{E}$, também é nula — não importa onde ela esteja dentro da cavidade, nem que ela esteja fora do centro.\n\nResposta: alternativa (e).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q05.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Força resultante de cargas nos vértices de um quadrado",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Quatro partículas carregadas estão fixadas nos vértices de um quadrado. As cargas têm a mesma magnitude, $Q$, e seus sinais são indicados na figura: A (vértice superior esquerdo) e C (vértice inferior direito) têm carga $+Q$; B (vértice inferior esquerdo) e D (vértice superior direito) têm carga $-Q$. A partícula sobre o vértice D é então solta e deixada livre para se movimentar, a partir do repouso.\n\nSobre a partícula solta, pode-se afirmar que ela:",
+    "alternativas": {
+      "a": "oscilará entre o vértice D e um ponto dentro do quadrado, movimentando-se sempre sobre a diagonal BD.",
+      "b": "oscilará entre o vértice D e um ponto fora do quadrado, movimentando-se sempre na direção definida pela diagonal BD.",
+      "c": "será repelida para fora do quadrado, afastando-se sempre dele.",
+      "d": "será puxada para dentro do quadrado em direção à partícula no vértice B, de quem se aproximará indefinidamente.",
+      "e": "será puxada para dentro do quadrado ao longo da diagonal BD, até atingir um ponto de equilíbrio onde permanecerá em repouso."
+    },
+    "gabarito": "a",
+    "resolucao": "Chame de $L$ o lado do quadrado e de $k$ a constante de Coulomb. Sobre a partícula em D (carga $-Q$) atuam:\n\nAtração de A ($+Q$, a uma distância $L$): força de módulo $kQ^2/L^2$ apontando de D para A. Atração de C ($+Q$, a uma distância $L$): força de módulo $kQ^2/L^2$ apontando de D para C. Repulsão de B ($-Q$, a uma distância $L\\sqrt{2}$): força de módulo $kQ^2/(2L^2)$ apontando de B para D.\n\nAs duas atrações somam um vetor ao longo da diagonal DB, de módulo $\\sqrt{2}\\,kQ^2/L^2 \\approx 1{,}41\\,kQ^2/L^2$, contra $0{,}50\\,kQ^2/L^2$ da repulsão de B. A resultante inicial, portanto, aponta de D para dentro do quadrado, ao longo da diagonal BD — a partícula começa a se mover nessa direção.\n\nComo A e C são simétricas em relação à diagonal BD e têm cargas iguais, a resultante permanece sobre essa diagonal durante todo o movimento: a trajetória é retilínea sobre BD.\n\nNo centro do quadrado, porém, as forças de A e C se cancelam e sobra apenas a repulsão de B, que empurra a partícula de volta para D. Existe então um ponto de equilíbrio entre D e o centro. A partícula acelera de D até esse ponto, passa por ele com velocidade máxima, é freada adiante e retorna: como não há dissipação, ela oscila entre o vértice D e um ponto dentro do quadrado, sempre sobre a diagonal BD.\n\nResposta: alternativa (a). A alternativa (e) está errada porque a partícula chega ao ponto de equilíbrio com velocidade, e não em repouso.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q06.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Força e aceleração de uma carga em campo uniforme",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma partícula eletrizada positivamente com carga $q = 3\\times 10^{-9}\\ \\text{C}$ e massa $m = 5\\ \\text{g}$, é lançada em um campo elétrico uniforme de intensidade $2\\times 10^{6}\\ \\text{N/C}$, cujas linhas estão desenhadas na figura. A trajetória percorrida pela partícula é representada pela linha tracejada.\n\nCom respeito ao movimento da carga entre os pontos A e B é correto afirmar:",
+    "alternativas": {
+      "a": "A aceleração da partícula é de 1,2 m/s² na direção do campo e 0,9 m/s² na direção perpendicular ao campo.",
+      "b": "A aceleração da partícula é de 0,9 m/s² na direção do campo e 1,2 m/s² na direção perpendicular ao campo.",
+      "c": "A aceleração da partícula é de 0,9 m/s² na direção do campo e 0 m/s² na direção perpendicular ao campo.",
+      "d": "A aceleração da partícula é de 1,2 m/s² na direção do campo e 0 m/s² na direção perpendicular ao campo.",
+      "e": "A aceleração é a mesma nas duas direções e igual a 1,2 m/s²."
+    },
+    "gabarito": "d",
+    "resolucao": "A única força relevante é a elétrica, $\\vec{F} = q\\vec{E}$, que tem a mesma direção e sentido do campo (a carga é positiva). Logo não há nenhuma componente de força perpendicular às linhas de campo, e a aceleração nessa direção é zero — a curvatura da trajetória vem apenas da velocidade inicial oblíqua, como num lançamento de projétil.\n\nNa direção do campo:\n\n$F = qE = (3\\times 10^{-9}\\ \\text{C})(2\\times 10^{6}\\ \\text{N/C}) = 6\\times 10^{-3}\\ \\text{N}$.\n\n$a = \\dfrac{F}{m} = \\dfrac{6\\times 10^{-3}\\ \\text{N}}{5\\times 10^{-3}\\ \\text{kg}} = 1{,}2\\ \\text{m/s}^2$.\n\nAs medidas de 3 cm e 4 cm da figura são apenas geométricas e não entram nesse cálculo (os valores de $0{,}9$ nas outras alternativas são distratores).\n\nResposta: alternativa (d).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q07.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Superposição dos campos de dois planos carregados",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Duas superfícies planas extensas e paralelas, homogeneamente carregadas, uma com densidade superficial de cargas $+\\eta$ e outra com $-\\eta/3$, estão separadas por uma distância $d$, como mostra a figura. Os planos são perpendiculares ao eixo $x$; a região I fica à esquerda do plano $+\\eta$, a região II entre os planos e a região III à direita do plano $-\\eta/3$. Assinale a opção que especifica corretamente o módulo, direção e sentido do campo elétrico na região I:",
+    "alternativas": {
+      "a": "$0$",
+      "b": "$+\\dfrac{4\\eta}{3\\varepsilon_0}\\,\\hat{\\imath}$",
+      "c": "$-\\dfrac{2\\eta}{3\\varepsilon_0}\\,\\hat{\\imath}$",
+      "d": "$-\\dfrac{\\eta}{3\\varepsilon_0}\\,\\hat{\\imath}$",
+      "e": "$+\\dfrac{2\\eta}{3\\varepsilon_0}\\,\\hat{\\imath}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Um plano infinito com densidade superficial $\\sigma$ cria um campo de módulo $\\dfrac{|\\sigma|}{2\\varepsilon_0}$, perpendicular ao plano, apontando para fora dele se $\\sigma > 0$ e para dentro se $\\sigma < 0$.\n\nNa região I (à esquerda dos dois planos):\n\nO plano $+\\eta$ produz campo apontando para longe do plano, ou seja, no sentido $-\\hat{\\imath}$, com módulo $\\dfrac{\\eta}{2\\varepsilon_0}$.\n\nO plano $-\\eta/3$ produz campo apontando para o plano, ou seja, no sentido $+\\hat{\\imath}$, com módulo $\\dfrac{\\eta}{6\\varepsilon_0}$.\n\nSomando:\n\n$\\vec{E}_I = \\left(-\\dfrac{\\eta}{2\\varepsilon_0} + \\dfrac{\\eta}{6\\varepsilon_0}\\right)\\hat{\\imath} = -\\dfrac{3\\eta - \\eta}{6\\varepsilon_0}\\,\\hat{\\imath} = -\\dfrac{\\eta}{3\\varepsilon_0}\\,\\hat{\\imath}$.\n\nResposta: alternativa (d) — módulo $\\dfrac{\\eta}{3\\varepsilon_0}$, direção do eixo $x$, sentido $-\\hat{\\imath}$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q08.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Campo elétrico de cilindros condutores coaxiais",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Um cilindro condutor muito longo e de raio $a$ está carregado positivamente com uma densidade de carga por unidade de comprimento $\\lambda$, e está localizado no centro da cavidade de outro cilindro condutor longo e oco de raio interno $b$ e raio externo $c$, conforme a figura (que mostra um corte da seção reta). O cilindro oco está carregado com uma densidade de carga por unidade de comprimento $-\\lambda$. Qual das figuras abaixo melhor representa o campo elétrico resultante nas diversas regiões da configuração?",
+    "alternativas": {
+      "a": "Setas apontando para fora na região entre $a$ e $b$ e, ao mesmo tempo, setas apontando para dentro na região externa ($r > c$).",
+      "b": "Setas apontando para dentro apenas no interior do cilindro maciço ($r < a$).",
+      "c": "Setas apontando para fora apenas na região entre $a$ e $b$; campo nulo nas demais regiões.",
+      "d": "Setas apontando para fora apenas na região externa ($r > c$); campo nulo nas demais regiões.",
+      "e": "Setas apontando para fora tanto na região entre $a$ e $b$ quanto na região externa ($r > c$)."
+    },
+    "alternativas_imagens": {
+      "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q09_a.png",
+      "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q09_b.png",
+      "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q09_c.png",
+      "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q09_d.png",
+      "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q09_e.png"
+    },
+    "gabarito": "c",
+    "resolucao": "Use uma gaussiana cilíndrica de raio $r$ e comprimento $\\ell$, coaxial com a configuração. Pela simetria, $\\vec{E}$ é radial e $E\\,(2\\pi r \\ell) = \\dfrac{q_{\\text{int}}}{\\varepsilon_0}$.\n\nRegião $r < a$: dentro do material do condutor maciço em equilíbrio, $E = 0$.\n\nRegião $a < r < b$: $q_{\\text{int}} = \\lambda\\ell > 0$, logo $E = \\dfrac{\\lambda}{2\\pi\\varepsilon_0 r}$, radial e para fora.\n\nRegião $b < r < c$: é o material do condutor oco, portanto $E = 0$ (a superfície interna adquire $-\\lambda$ por indução).\n\nRegião $r > c$: $q_{\\text{int}} = \\lambda\\ell - \\lambda\\ell = 0$, logo $E = 0$.\n\nO campo existe apenas na cavidade entre os dois cilindros, apontando para fora — que é a figura da alternativa (c).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q09.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Coulomb",
+    "subtopico": "Indução eletrostática e atração de um condutor neutro",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "As esferas isolantes A e B foram eletrizadas com cargas desconhecidas. Quando aproximadas uma da outra, as forças de interação elétrica entre elas são conforme a figura a seguir (as setas mostram A e B se atraindo).\n\nAs forças elétricas que surgem quando uma outra esfera C, condutora e descarregada, é aproximada (sem tocar) das esferas A e B separadamente, são melhor representadas por",
+    "alternativas": {
+      "a": "C e A se repelindo; C e B se atraindo.",
+      "b": "C e A se atraindo; C e B se atraindo.",
+      "c": "Nenhuma força em nenhum dos dois casos.",
+      "d": "C atraída por A, sem força sobre A; C atraída por B, sem força sobre B.",
+      "e": "C repelida por A, sem força sobre A; C atraída por B, sem força sobre B."
+    },
+    "alternativas_imagens": {
+      "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q10_a.png",
+      "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q10_b.png",
+      "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q10_c.png",
+      "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q10_d.png",
+      "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q10_e.png"
+    },
+    "gabarito": "b",
+    "resolucao": "A esfera C é condutora e está descarregada, mas não é indiferente ao campo: aproximada de qualquer corpo carregado, suas cargas livres se separam por indução. As cargas de sinal oposto ao do corpo carregado se acumulam na face próxima e as de mesmo sinal na face distante.\n\nComo a força elétrica cai com a distância, a atração pela face próxima é sempre maior que a repulsão pela face distante. O resultado líquido é uma atração, qualquer que seja o sinal da carga do corpo — vale tanto para A quanto para B, independentemente de quais sejam seus sinais (a figura só informa que A e B se atraem, isto é, têm sinais opostos).\n\nAlém disso, pela terceira lei de Newton, se C é atraída por A, então A é atraída por C com força de mesmo módulo e sentido oposto: as setas têm de aparecer nos dois corpos, apontando uma para a outra. Isso descarta as figuras em que só C sofre força.\n\nResposta: alternativa (b) — atração mútua nos dois pares.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q10.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Superposição dos campos de duas esferas carregadas",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Duas esferas maciças isolantes de raios $R_1$ e $R_2$ estão dispostas conforme a figura abaixo. A esfera de raio $R_1$ possui carga total $Q$, e a outra esfera possui carga total $-Q$, ambas distribuídas uniformemente por seus volumes. O ponto P está fora das duas esferas e, como indica a figura, as duas retas que ligam P aos centros formam entre si um ângulo reto. O campo elétrico produzido por elas no ponto P indicado, o qual dista $d$ do centro de ambas as esferas, vale:",
+    "alternativas": {
+      "a": "$\\dfrac{2Q}{4\\pi\\varepsilon_0 d^2}$",
+      "b": "$\\dfrac{\\sqrt{2}\\,Q}{4\\pi\\varepsilon_0 d^2}$",
+      "c": "$\\dfrac{Q\\left(\\dfrac{1}{R_1^2} + \\dfrac{1}{R_2^2}\\right)}{4\\pi\\varepsilon_0}$",
+      "d": "zero",
+      "e": "$\\dfrac{\\sqrt{2}\\,Q}{8\\pi\\varepsilon_0 d^2}$"
+    },
+    "gabarito": "b",
+    "resolucao": "Fora de uma esfera com carga distribuída uniformemente, o campo é igual ao de uma carga pontual no centro. Como P está fora das duas esferas e a uma distância $d$ de cada centro, cada esfera contribui com o mesmo módulo:\n\n$E_1 = E_2 = \\dfrac{1}{4\\pi\\varepsilon_0}\\dfrac{Q}{d^2}$.\n\nA esfera de carga $+Q$ produz em P um campo que aponta para longe dela; a de carga $-Q$ produz um campo que aponta para ela. Os dois vetores estão ao longo das linhas que ligam P aos centros, e a figura indica que essas duas linhas são perpendiculares entre si.\n\nComo os vetores são perpendiculares e de mesmo módulo, o módulo da resultante é\n\n$E = \\sqrt{E_1^2 + E_2^2} = \\sqrt{2}\\,E_1 = \\dfrac{\\sqrt{2}\\,Q}{4\\pi\\varepsilon_0 d^2}$.\n\nOs raios $R_1$ e $R_2$ não entram no resultado, pois P é externo às duas esferas.\n\nResposta: alternativa (b).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q11.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Elétrico",
+    "subtopico": "Campo de uma distribuição linear não homogênea",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "O fio da figura está carregado positivamente, porém a carga está distribuída de forma não homogênea: o trecho em cinza mais escuro possui densidade linear de carga $\\lambda$ (constante ao longo do trecho), enquanto o trecho mais claro tem densidade linear de carga $\\lambda/10$ (também constante ao longo do trecho). O fio é vertical, o trecho escuro é o de cima e o trecho claro o de baixo; o ponto P está à direita do fio, na mesma altura da fronteira entre os dois trechos. Qual dos vetores abaixo melhor representa o campo elétrico no ponto P indicado?",
+    "alternativas": {
+      "a": "Vetor apontando para a direita e para baixo.",
+      "b": "Vetor horizontal apontando para a direita.",
+      "c": "Vetor apontando para a direita e para cima.",
+      "d": "Vetor apontando para cima e para a esquerda.",
+      "e": "Vetor horizontal apontando para a esquerda."
+    },
+    "alternativas_imagens": {
+      "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q12_a.png",
+      "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q12_b.png",
+      "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q12_c.png",
+      "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q12_d.png",
+      "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q12_e.png"
+    },
+    "gabarito": "a",
+    "resolucao": "Todo o fio é positivo, então cada pedacinho $dq$ produz em P um campo que aponta de $dq$ para P — o campo resultante tem, necessariamente, componente horizontal para a direita (afastando-se do fio). Isso já elimina as alternativas com seta para a esquerda.\n\nFalta a componente vertical. Um elemento situado acima da altura de P produz em P um campo com componente para baixo; um elemento abaixo produz componente para cima. Se as duas metades tivessem a mesma densidade, essas contribuições se cancelariam por simetria e o campo seria horizontal (alternativa b).\n\nMas a metade de cima tem densidade $\\lambda$ e a de baixo apenas $\\lambda/10$: a contribuição para baixo é dez vezes maior que a contribuição para cima. Sobra, portanto, uma componente vertical apontando para baixo.\n\nO campo em P aponta para a direita e para baixo — alternativa (a).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q12.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Leitura do gráfico de E(r) para esfera e casca esférica",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma esfera maciça, carregada com carga $Q$, está posicionada no interior de uma casca esférica oca (com ambos os centros coincidindo). O gráfico abaixo mostra a intensidade do campo elétrico na direção radial produzido pela configuração como função da distância ao centro. No gráfico, $E_r$ cresce linearmente de $0$ até $r = 0{,}50\\ \\text{m}$, decresce como $1/r^2$ até $r = 0{,}75\\ \\text{m}$, é nulo entre $0{,}75\\ \\text{m}$ e $1{,}00\\ \\text{m}$ e, a partir de $1{,}00\\ \\text{m}$, volta a coincidir com o prolongamento (tracejado) da curva $1/r^2$ anterior. Assinale a afirmativa correta sobre os elementos da configuração:",
+    "alternativas": {
+      "a": "A esfera maciça e a casca são ambas condutoras, e a casca possui carga total nula.",
+      "b": "A esfera maciça não é condutora e está carregada uniformemente. A casca é condutora e possui carga total $-Q$.",
+      "c": "A esfera maciça e a casca são ambas condutoras e a casca possui carga total $-Q$.",
+      "d": "A esfera maciça é condutora e está carregada uniformemente. A casca é isolante e possui carga total $-Q$.",
+      "e": "A esfera maciça não é condutora e está carregada uniformemente. A casca é condutora e possui carga total nula."
+    },
+    "gabarito": "e",
+    "resolucao": "Cada trecho do gráfico revela uma característica da configuração.\n\nDe $r = 0$ a $r = 0{,}50\\ \\text{m}$ o campo cresce linearmente com $r$. Essa é a assinatura de uma esfera isolante com carga distribuída uniformemente pelo volume: pela Lei de Gauss, $q_{\\text{int}} \\propto r^3$ e $E \\propto q_{\\text{int}}/r^2 \\propto r$. Se a esfera fosse condutora, o campo seria zero em todo o seu interior. Isso elimina (a), (c) e (d).\n\nEntre $0{,}75$ e $1{,}00\\ \\text{m}$ o campo é exatamente zero. Campo nulo dentro do material é a marca de um condutor em equilíbrio — a casca é condutora, com raio interno $0{,}75\\ \\text{m}$ e externo $1{,}00\\ \\text{m}$.\n\nPara $r > 1{,}00\\ \\text{m}$ a curva volta a coincidir com o prolongamento tracejado da curva anterior, ou seja, o campo externo é o mesmo que existiria só com a esfera. Pela Lei de Gauss, a carga total envolvida continua sendo $Q$, logo a casca contribui com carga líquida nula (ela tem $-Q$ na superfície interna, induzida, e $+Q$ na externa).\n\nSe a casca tivesse carga total $-Q$, a carga envolvida para $r > 1{,}00\\ \\text{m}$ seria zero e o campo externo seria nulo — o que não é o caso.\n\nResposta: alternativa (e).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q13.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Fluxo elétrico em superfícies fechadas e condutor com cavidade",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "A figura mostra um condutor com uma cavidade oca, em equilíbrio eletrostático, em cujo interior está uma carga pontual de $+0{,}5\\ \\text{nC}$. O condutor havia sido carregado previamente com uma carga $-1\\ \\text{nC}$. A superfície fechada A está inteiramente dentro do material do condutor e envolve a cavidade; a superfície fechada B envolve todo o condutor. Os fluxos de campo elétrico $\\Phi_A$ e $\\Phi_B$ nas superfícies fechadas A e B, respectivamente, são mais próximos de",
+    "alternativas": {
+      "a": "$\\Phi_A = 56{,}5\\ \\text{Nm}^2/\\text{C}$ e $\\Phi_B = -113{,}0\\ \\text{Nm}^2/\\text{C}$",
+      "b": "$\\Phi_A = 56{,}5\\ \\text{Nm}^2/\\text{C}$ e $\\Phi_B = 0$",
+      "c": "$\\Phi_A = 0$ e $\\Phi_B = 113{,}0\\ \\text{Nm}^2/\\text{C}$",
+      "d": "$\\Phi_A = 0$ e $\\Phi_B = -56{,}5\\ \\text{Nm}^2/\\text{C}$",
+      "e": "$\\Phi_A = 56{,}5\\ \\text{Nm}^2/\\text{C}$ e $\\Phi_B = -56{,}5\\ \\text{Nm}^2/\\text{C}$"
+    },
+    "gabarito": "d",
+    "resolucao": "Lei de Gauss: $\\Phi = \\dfrac{q_{\\text{int}}}{\\varepsilon_0}$.\n\nSuperfície A: está inteiramente dentro do material condutor, onde $\\vec{E} = 0$; logo $\\Phi_A = 0$. Coerentemente, a carga envolvida também é nula — a carga pontual de $+0{,}5\\ \\text{nC}$ induz $-0{,}5\\ \\text{nC}$ na parede da cavidade, e a soma dá zero.\n\nSuperfície B: envolve todo o condutor, portanto a carga envolvida é a soma da carga da cavidade com a carga do condutor:\n\n$q_{\\text{int}} = +0{,}5\\ \\text{nC} - 1\\ \\text{nC} = -0{,}5\\ \\text{nC} = -5{,}0\\times10^{-10}\\ \\text{C}$.\n\n$\\Phi_B = \\dfrac{-5{,}0\\times10^{-10}}{8{,}85\\times10^{-12}} \\approx -56{,}5\\ \\text{Nm}^2/\\text{C}$.\n\nResposta: alternativa (d).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2023-2-p1/q14.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "A Lei de Gauss",
+    "subtopico": "Cargas induzidas nas superfícies de uma casca condutora",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma casca esférica condutora de raio interno $a$ e raio externo $b$ está carregada com uma carga total $Q$. Se colocarmos uma carga pontual com valor de $-3Q$ no centro da casca esférica, haverá uma redistribuição de cargas na casca. Nessa nova configuração, as cargas nas superfícies interna e externa serão respectivamente",
+    "alternativas": {
+      "a": "Zero e $Q$",
+      "b": "$3Q$ e $2Q$",
+      "c": "$3Q$ e $-2Q$",
+      "d": "$2Q$ e $3Q$",
+      "e": "$-2Q$ e $3Q$"
+    },
+    "gabarito": "c",
+    "resolucao": "Dentro do material de um condutor em equilíbrio o campo é nulo. Tomando uma superfície gaussiana esférica inteiramente dentro do material (raio entre $a$ e $b$), o fluxo é zero e portanto a carga envolvida também tem de ser zero:\n\n$q_{\\text{central}} + q_{\\text{interna}} = 0 \\quad\\Rightarrow\\quad -3Q + q_{\\text{interna}} = 0 \\quad\\Rightarrow\\quad q_{\\text{interna}} = +3Q$.\n\nA carga total da casca é $Q$ e ela se conserva (a casca está isolada), então a superfície externa fica com o que sobra:\n\n$q_{\\text{externa}} = Q - q_{\\text{interna}} = Q - 3Q = -2Q$.\n\nResposta: alternativa (c) — $3Q$ na superfície interna e $-2Q$ na externa.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  }
+]

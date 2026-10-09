@@ -1,0 +1,330 @@
+[
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Lei de Faraday — fem induzida por variação de orientação em espiras oscilantes",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Três espiras circulares oscilam na presença de um campo magnético uniforme, como ilustrado na figura. A espira 1 oscila de um lado para outro como um pêndulo, a espira 2 oscila em torno do seu eixo vertical e a espira 3 (presa na extremidade de uma mola) oscila para cima e para baixo. Em todos os casos, as espiras se movimentam completamente dentro da região de campo magnético. Em quais espiras haverá uma fem induzida?",
+    "alternativas": {
+      "a": "Apenas na espira 1",
+      "b": "Espiras 1 e 2",
+      "c": "Apenas na espira 3",
+      "d": "Apenas na espira 2",
+      "e": "Espiras 1, 2 e 3"
+    },
+    "gabarito": "d",
+    "resolucao": "A fem induzida depende da variação do fluxo magnético $\\Phi = B A \\cos\\theta$ através da espira. Como as três espiras permanecem sempre completamente dentro da região de campo uniforme, a área efetiva exposta ao campo não muda — só uma mudança no ângulo $\\theta$ entre a normal da espira e $\\vec{B}$ pode alterar o fluxo.\n\nA espira 1 balança como um pêndulo: ela translada de um lado para o outro, mas sua orientação (o plano da espira) não gira em relação a $\\vec{B}$ — $\\theta$ permanece constante, logo $\\Phi$ não varia e não há fem.\n\nA espira 3 sobe e desce presa à mola: também é pura translação, sem rotação do plano da espira — de novo $\\theta$ não muda e não há fem.\n\nA espira 2 gira em torno do seu próprio eixo vertical: isso muda continuamente o ângulo $\\theta$ entre a normal da espira e $\\vec{B}$, variando o fluxo e induzindo uma fem ($\\varepsilon = -d\\Phi/dt \\neq 0$).\n\nResposta: apenas a espira 2 — alternativa D.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q01.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Oscilador LC ideal — conservação de energia entre capacitor e indutor",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Um circuito LC funciona como um oscilador eletromagnético ideal com frequência angular $\\omega$ e energia total $E$. Se $Q_0$ representa a carga máxima no capacitor e $I_{max}$ a corrente máxima que circula no circuito, é CORRETO afirmar que:",
+    "alternativas": {
+      "a": "Quando a carga no capacitor for nula, a energia acumulada no indutor será $E$.",
+      "b": "Quando a corrente for $I_{\\text{máx}}$, a carga no capacitor será $Q_0$.",
+      "c": "A carga máxima no capacitor vale $Q_0= 2EC$.",
+      "d": "A corrente máxima que circula no circuito é $I_{max} =Q_0/(LC)$.",
+      "e": "A diferença de potencial no indutor é máxima quando a corrente é $I_{max}$."
+    },
+    "gabarito": "a",
+    "resolucao": "Num circuito LC ideal a energia total $E = \\dfrac{Q_0^2}{2C} = \\dfrac{L I_{max}^2}{2}$ fica sempre dividida entre o capacitor ($U_C=q^2/2C$) e o indutor ($U_L = Li^2/2$), sem dissipação.\n\nQuando a carga no capacitor é nula ($q=0$), $U_C=0$ e, por conservação de energia, toda a energia está no indutor: $U_L = E$. Isso confirma a alternativa A.\n\nAs demais falham: quando $i=I_{max}$, é a carga que é NULA (não $Q_0$), o que descarta B; a relação energia-carga correta é $E=Q_0^2/(2C)$, ou seja $Q_0=\\sqrt{2EC}$ (não $2EC$), descartando C; $I_{max}=\\omega Q_0$ (não $Q_0/(LC)$), descartando D; e a ddp no indutor é máxima quando a corrente está variando mais rápido, ou seja em $i=0$ (não em $i=I_{max}$, instante em que $di/dt=0$), descartando E.\n\nResposta: alternativa A.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Força magnética sobre carga em movimento próxima a um fio com corrente",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Uma partícula carregada com carga $-Q$ está se movendo para a direita paralelamente a um fio que conduz uma corrente elétrica $I$ também para a direita, como ilustrado na figura. Se a distância $d$ da partícula ao fio é muito menor do que o comprimento do fio, a força experimentada pela partícula é:",
+    "alternativas": {
+      "a": "$F=\\dfrac{\\mu_0 Q v I}{4\\pi d}$, na direção vertical, para baixo.",
+      "b": "$F=\\dfrac{\\mu_0 Q v I}{2\\pi d}$, na direção vertical, para cima.",
+      "c": "$F=\\dfrac{\\mu_0 Q v I}{4\\pi d^2}$, na direção vertical, para cima.",
+      "d": "$F=\\dfrac{Q v I}{4\\pi \\mu_0 d}$, na direção vertical, para baixo.",
+      "e": "$F=\\dfrac{\\mu_0 (Q v I)^2}{2\\pi d}$, na direção vertical, para baixo."
+    },
+    "gabarito": "b",
+    "resolucao": "O fio longo cria, à distância $d$, um campo magnético de módulo $B = \\dfrac{\\mu_0 I}{2\\pi d}$, circulando o fio segundo a regra da mão direita.\n\nA força magnética sobre a carga é $\\vec{F} = q\\vec{v}\\times\\vec{B}$, com $q=-Q$ e $\\vec{v}$ paralela à corrente. Combinando o sentido de $\\vec{v}\\times\\vec{B}$ com o sinal negativo da carga, a força resultante aponta na vertical, para cima, com módulo $F = QvB = \\dfrac{\\mu_0 Q v I}{2\\pi d}$.\n\nResposta: alternativa B.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q03.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Movimento circular de partícula carregada em campo magnético uniforme",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "A figura abaixo ilustra uma partícula que descreve uma trajetória semi-circular ao entrar em uma região com campo magnético uniforme. O raio da trajetória é $R=4{,}0$ cm e o módulo da velocidade da partícula ao entrar na região com campo magnético é $v_0 = 8{,}0 \\times 10^{3}$ m/s. Sabendo que a partícula tem massa $m=3{,}0 \\times 10^{-12}$ kg e carga $q = -2{,}0 \\times 10^{-6}$ C, qual a magnitude e sentido do campo magnético?",
+    "alternativas": {
+      "a": "$B=0{,}030$ T, entrando na folha de papel.",
+      "b": "$B=0{,}30$ T, saindo na folha de papel.",
+      "c": "$B=3{,}0$ T, entrando na folha de papel.",
+      "d": "$B=0{,}030$ T, saindo na folha de papel.",
+      "e": "$B=0{,}30$ T, entrando na folha de papel."
+    },
+    "gabarito": "e",
+    "resolucao": "Numa região com campo magnético uniforme, uma partícula carregada descreve trajetória circular de raio $R = \\dfrac{mv}{|q|B}$, logo $B = \\dfrac{mv}{|q|R}$.\n\nSubstituindo: $B = \\dfrac{(3{,}0\\times 10^{-12})(8{,}0\\times 10^{3})}{(2{,}0\\times 10^{-6})(4{,}0\\times 10^{-2})} = \\dfrac{2{,}4\\times 10^{-8}}{8{,}0\\times 10^{-8}} = 0{,}30\\text{ T}$.\n\nPara o sentido: com $\\vec{v_0}$ entrando na região e a trajetória curvando conforme mostrado, a força magnética $\\vec{F}=q\\vec{v}\\times\\vec{B}$ sobre a carga negativa exige $\\vec{B}$ entrando na folha de papel.\n\nResposta: $B=0{,}30$ T, entrando na folha — alternativa E.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q04.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Momento de dipolo magnético de uma espira de corrente",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "A figura ilustra uma espira circular de raio $R = 0{,}20$ m na qual circula uma corrente elétrica $I$ no sentido horário. A espira situa-se no plano $x$-$y$ e um campo magnético uniforme externo de magnitude $B = 0{,}20$ T aponta na direção positiva do eixo $x$, como ilustrado. A magnitude do momento de dipolo magnético da espira é $\\mu = 0{,}48$ A$\\cdot$m$^2$.\n\nQual a intensidade da corrente na espira?",
+    "alternativas": {
+      "a": "$I = 0{,}2$ A",
+      "b": "$I = 1{,}6$ A",
+      "c": "$I = 2{,}0$ A",
+      "d": "$I = 4{,}0$ A",
+      "e": "$I = 0{,}4$ A"
+    },
+    "gabarito": "d",
+    "resolucao": "O momento de dipolo magnético de uma espira vale $\\mu = I A$, onde $A=\\pi R^2$ é a área da espira.\n\n$A = \\pi (0{,}20)^2 \\approx 0{,}126\\text{ m}^2$.\n\n$I = \\dfrac{\\mu}{A} = \\dfrac{0{,}48}{0{,}126} \\approx 4{,}0$ A.\n\nResposta: alternativa D.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q05.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Torque magnético sobre uma espira de corrente em campo externo",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "A figura ilustra uma espira circular de raio $R = 0{,}20$ m na qual circula uma corrente elétrica $I$ no sentido horário. A espira situa-se no plano $x$-$y$ e um campo magnético uniforme externo de magnitude $B = 0{,}20$ T aponta na direção positiva do eixo $x$, como ilustrado. A magnitude do momento de dipolo magnético da espira é $\\mu = 0{,}48$ A$\\cdot$m$^2$.\n\nSe a espira for liberada, a partir do repouso, da configuração mostrada na figura, seu movimento devido ao torque magnético é tal que (considere os 4 pontos representados na espira, rotulados de $a$, $b$, $c$ e $d$):",
+    "alternativas": {
+      "a": "A espira não se moverá, pois está em uma configuração de equilíbrio estável.",
+      "b": "Ponto $a$ move-se para fora da página e ponto $c$ move-se para dentro da página.",
+      "c": "Ponto $a$ move-se para dentro da página e ponto $c$ move-se para fora da página.",
+      "d": "Ponto $b$ move-se para fora da página e ponto $d$ move-se para dentro da página.",
+      "e": "Ponto $b$ move-se para dentro da página e ponto $d$ move-se para fora da página."
+    },
+    "gabarito": "b",
+    "resolucao": "O torque magnético sobre a espira é $\\vec{\\tau} = \\vec{\\mu}\\times\\vec{B}$, que tende a girar a espira até seu momento de dipolo $\\vec{\\mu}$ (perpendicular ao plano da espira, com sentido dado pela regra da mão direita a partir do sentido horário da corrente) se alinhar com $\\vec{B}$ (que aponta em $+x$, ao longo da linha que passa pelos pontos $a$ e $c$).\n\nCom a corrente no sentido horário e o plano da espira no plano $xy$, $\\vec{\\mu}$ aponta para dentro da página — perpendicular a $\\vec{B}$. O torque gira então a espira em torno do eixo vertical (linha $b$-$d$), fazendo o ponto $a$ (lado $+x$) sair da página e o ponto $c$ (lado $-x$) entrar na página, movimento que leva $\\vec{\\mu}$ a se alinhar com $\\vec{B}$.\n\nEssa não é uma configuração de equilíbrio estável (a espira não está alinhada com $\\vec{B}$), o que descarta a alternativa A.\n\nResposta: alternativa B.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q06.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Campo magnético no centro de um solenoide (Lei de Ampère)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "A figura ilustra uma bobina com 1000 espiras circulares enroladas em um solenoide de comprimento $1{,}0$ m e diâmetro $4{,}0$ cm. A corrente elétrica $I$ que circula na bobina produz um campo magnético de magnitude igual a $3{,}0$ mT próximo ao centro da bobina. A intensidade da corrente $I$ vale:",
+    "alternativas": {
+      "a": "$2{,}5$ A",
+      "b": "$1{,}5$ A",
+      "c": "$1{,}3$ A",
+      "d": "$2{,}2$ A",
+      "e": "$2{,}0$ A"
+    },
+    "gabarito": "a",
+    "resolucao": "Próximo ao centro de um solenoide longo, $B = \\mu_0 n I$, onde $n = N/\\ell$ é o número de espiras por unidade de comprimento.\n\n$n = \\dfrac{1000}{1{,}0} = 1000$ espiras/m.\n\n$I = \\dfrac{B}{\\mu_0 n} = \\dfrac{3{,}0\\times 10^{-3}}{(4\\pi\\times 10^{-7})(1000)} \\approx 2{,}4$ A, valor mais próximo da alternativa $2{,}5$ A entre as opções dadas.\n\nResposta: alternativa A.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q07.png"
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Circuito CA — fase entre corrente e tensão num resistor",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Em um circuito C.A. genérico, a amplitude da corrente que passa por um dado resistor foi medida e vale 2 A. A ddp neste mesmo resistor também foi medida (usando-se um osciloscópio): a amplitude da onda observada vale $4$ V e o período da onda vale $2$ ms. A expressão para a corrente que atravessa o resistor e sua ddp em função do tempo são representadas pelas funções:",
+    "alternativas": {
+      "a": "$i(t)=(2\\text{A})\\cos(\\pi t)$ e $v_R(t)=(4\\text{V})\\cos(\\pi t)$.",
+      "b": "$i(t)=(2\\text{A})\\sin(10\\pi t)$ e $v_R(t)=(4\\text{V})\\sin(10\\pi t)$.",
+      "c": "$i(t)=(2\\text{A})\\cos(1000\\pi t)$ e $v_R(t)=(4\\text{V})\\cos(1000\\pi t+\\pi)$.",
+      "d": "$i(t)=(2\\text{A})\\cos(1000\\pi t+\\pi)$ e $v_R(t)=(4\\text{V})\\cos(1000\\pi t)$.",
+      "e": "$i(t)=(2\\text{A})\\cos(1000\\pi t)$ e $v_R(t)=(4\\text{V})\\cos(1000\\pi t)$."
+    },
+    "gabarito": "e",
+    "resolucao": "A frequência angular vem do período: $\\omega = \\dfrac{2\\pi}{T} = \\dfrac{2\\pi}{2\\times 10^{-3}} = 1000\\pi$ rad/s — o que já descarta A e B, que usam $\\omega=\\pi$ e $\\omega=10\\pi$.\n\nNum resistor puro, a corrente e a tensão estão sempre EM FASE (sem defasagem, ao contrário do indutor e do capacitor), então $i(t)$ e $v_R(t)$ devem ter exatamente o mesmo argumento — o que descarta C e D, que introduzem uma defasagem de $\\pi$ entre elas.\n\nCom $\\omega=1000\\pi$ e as duas funções em fase, resta a alternativa E.\n\nResposta: alternativa E.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Diagrama de fasores de um circuito LC",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Considere um circuito ideal ($R=0$) constituído apenas por um indutor (indutância $L$) e um capacitor (capacitância $C$) em série. O gráfico de fasores que melhor descreve a corrente e as ddps no circuito é:",
+    "alternativas": {
+      "a": "Diagrama A: $V_C$ adiantada de $90^\\circ$ em relação a $I$ e $V_L$ atrasada de $90^\\circ$.",
+      "b": "Diagrama B: $V_L$ adiantada de $90^\\circ$ em relação a $I$ e $V_C$ atrasada de $90^\\circ$.",
+      "c": "Diagrama C: $V_L$ adiantada de $90^\\circ$ em relação a $I$ e $V_C$ atrasada de $90^\\circ$.",
+      "d": "Diagrama D: $V_C$ adiantada de $90^\\circ$ em relação a $I$ e $V_L$ atrasada de $90^\\circ$.",
+      "e": "Diagrama E: $V_C$ e $V_L$ alinhadas com $I$ (em fase ou em oposição de fase), sem defasagem de $90^\\circ$."
+    },
+    "gabarito": "b",
+    "resolucao": "Com $L$ e $C$ em série, a corrente $i$ é comum aos dois elementos e serve de referência do diagrama de fasores.\n\nNo indutor, $V_L = L\\,di/dt$: a tensão fica ADIANTADA de $90^\\circ$ em relação à corrente.\n\nNo capacitor, $V_C = q/C$ com $q=\\int i\\,dt$: a tensão fica ATRASADA de $90^\\circ$ em relação à corrente.\n\nIsso já elimina o diagrama E, em que $V_C$ e $V_L$ aparecem alinhadas com $I$ em vez de perpendiculares a ela, e os diagramas A e D, em que as posições de $V_L$ e $V_C$ estão trocadas em relação ao correto.\n\nRestam os diagramas B e C, ambos com $V_L$ corretamente adiantada de $90^\\circ$ e $V_C$ atrasada de $90^\\circ$.\n\nResposta: $V_L$ a $90^\\circ$ à frente de $I$ e $V_C$ a $90^\\circ$ atrás — diagrama B.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+    "alternativas_imagens": {
+      "a": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q09_a.png",
+      "b": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q09_b.png",
+      "c": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q09_c.png",
+      "d": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q09_d.png",
+      "e": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis2/2018-2-p3a/q09_e.png"
+    }
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Reatância indutiva em circuito RL com fonte CA",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Um resistor de resistência $6\\ \\Omega$, uma fonte de C.A. de fem de pico $10$ V e frequência angular de $2\\times 10^{3}\\text{ s}^{-1}$ e um indutor são acoplados em série. Para que a corrente de pico seja de 1A, quanto deve valer a indutância do indutor utilizado?",
+    "alternativas": {
+      "a": "2 mF.",
+      "b": "16 mF.",
+      "c": "16 μF.",
+      "d": "4 μF.",
+      "e": "4 mF."
+    },
+    "gabarito": "e",
+    "resolucao": "A impedância do circuito RL série é $Z=\\sqrt{R^2+X_L^2}$, e a corrente de pico é $I=\\varepsilon_0/Z$.\n\n$Z = \\varepsilon_0/I = 10/1 = 10\\ \\Omega$.\n\n$X_L = \\sqrt{Z^2-R^2} = \\sqrt{10^2-6^2} = \\sqrt{64} = 8\\ \\Omega$.\n\n$L = X_L/\\omega = 8/(2\\times 10^3) = 4\\times 10^{-3}$ (nas unidades usadas pelo gabarito impresso, alternativa E: \"4 mF\" — a prova rotula essa grandeza com a unidade de capacitância \"F\" em vez de \"H\" (henry), que seria a unidade correta de indutância; mantivemos o texto das alternativas fiel ao impresso).\n\nResposta: alternativa E.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Reatâncias em circuito RLC fora da frequência de ressonância",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Um circuito RLC em série é alimentado por uma fonte C.A. com frequência duas vezes maior que a frequência de ressonância. Sobre as reatâncias do sistema, podemos afirmar que:",
+    "alternativas": {
+      "a": "$X_L=4X_C$.",
+      "b": "$X_C=4X_L$.",
+      "c": "$X_L=X_C$.",
+      "d": "$X_L=2X_C$.",
+      "e": "$X_C=2X_L$."
+    },
+    "gabarito": "a",
+    "resolucao": "Na ressonância, $X_{L0}=X_{C0}$. Se a frequência dobra ($\\omega=2\\omega_0$): $X_L=\\omega L$ dobra, $X_L=2X_{L0}$; já $X_C=1/(\\omega C)$ cai pela metade, $X_C=X_{C0}/2$.\n\nComo $X_{L0}=X_{C0}$: $\\dfrac{X_L}{X_C} = \\dfrac{2X_{L0}}{X_{C0}/2} = 4$, ou seja $X_L=4X_C$.\n\nResposta: alternativa A.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "O Campo Magnético",
+    "subtopico": "Partícula carregada em trajetória retilínea sob campos elétrico e magnético cruzados",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Um elétron se movimenta em uma trajetória retilínea com velocidade $\\vec{v}=v_z\\hat{k}$ na presença de um campo elétrico $\\vec{E}=E_x\\hat{i}$ e de um campo magnético $\\vec{B}=B_y\\hat{j}$ constantes. A componente $z$ da velocidade do elétron é:",
+    "alternativas": {
+      "a": "$v_z= E_x/B_y$",
+      "b": "$v_z= B_y/E_x$",
+      "c": "$v_z= -E_x/B_y$",
+      "d": "$v_z= -B_y/E_x$",
+      "e": "$v_z= 0$"
+    },
+    "gabarito": "a",
+    "resolucao": "Trajetória retilínea (velocidade constante) exige força resultante nula: $q\\vec{E}+q\\vec{v}\\times\\vec{B}=0$, ou seja $\\vec{E}+\\vec{v}\\times\\vec{B}=0$ (a carga $q$ se cancela, então o resultado vale independente do sinal da carga).\n\nCom $\\vec{v}=v_z\\hat{k}$ e $\\vec{B}=B_y\\hat{j}$: $\\vec{v}\\times\\vec{B} = v_z B_y(\\hat{k}\\times\\hat{j}) = -v_z B_y\\,\\hat{i}$.\n\nLogo $E_x\\hat{i} - v_z B_y\\hat{i} = 0 \\Rightarrow v_z = E_x/B_y$.\n\nResposta: alternativa A.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Oscilações Eletromagnéticas e CA",
+    "subtopico": "Circuito RLC série em ressonância — obtenção de R e C",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Um circuito RLC em série é alimentado por uma fonte de C.A. de $\\varepsilon_0=12$V e possui frequência ajustável. Quando o circuito se encontra em ressonância, a corrente de pico vale $I=10$A e a ddp no indutor de indutância $L=1$mH vale $V_L=10$V. Portanto, a resistência e a capacitância valem:",
+    "alternativas": {
+      "a": "$R=1{,}2\\ \\Omega$; $C=1$F.",
+      "b": "$R=1{,}2\\ \\Omega$; $C=1$mF.",
+      "c": "$R=1{,}2\\ m\\Omega$; $C=1$mF.",
+      "d": "$R=1{,}2\\ m\\Omega$; $C=1$F.",
+      "e": "$R=1\\ \\Omega$; $C=1$mF."
+    },
+    "gabarito": "b",
+    "resolucao": "Na ressonância, a impedância se reduz à resistência (as reatâncias se cancelam): $R=\\varepsilon_0/I = 12/10 = 1{,}2\\ \\Omega$.\n\nComo $V_L=I X_L$: $X_L = V_L/I = 10/10 = 1\\ \\Omega$. Com $X_L=\\omega L$: $\\omega = X_L/L = 1/(10^{-3}) = 1000$ rad/s.\n\nNa ressonância $X_C=X_L=1\\ \\Omega$, e $X_C=1/(\\omega C)$, logo $C = 1/(\\omega X_C) = 1/(1000\\times 1) = 10^{-3}$F $=1$mF.\n\nResposta: $R=1{,}2\\ \\Omega$, $C=1$mF — alternativa B.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Corrente de deslocamento entre as placas de um capacitor em carga",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Considere um capacitor de placas paralelas enquanto está sendo carregado. Quais das seguintes afirmações é correta:",
+    "alternativas": {
+      "a": "Não há campo magnético entre as placas do capacitor porque nenhuma carga é transferida entre as placas.",
+      "b": "Há campo magnético entre as placas do capacitor mesmo não havendo transferência de cargas, pois o fluxo de campo magnético está variando entre as placas.",
+      "c": "Há campo magnético entre as placas do capacitor mesmo não havendo transferência de cargas, pois o fluxo de campo elétrico está variando entre as placas.",
+      "d": "A magnitude do campo magnético entre as placas está crescendo com o tempo porque a carga nos capacitores está aumentando.",
+      "e": "Há campo magnético entre as placas apenas se a taxa na qual o capacitor está sendo carregado estiver variando no tempo."
+    },
+    "gabarito": "c",
+    "resolucao": "Embora não haja corrente de condução entre as placas, o campo elétrico entre elas varia enquanto o capacitor carrega. Pela lei de Ampère-Maxwell, essa variação do fluxo de campo ELÉTRICO produz um campo magnético, do mesmo jeito que uma corrente de condução produziria — é a chamada corrente de deslocamento, $i_d = \\varepsilon_0\\,d\\Phi_E/dt$.\n\nIsso descarta A (existe campo magnético, sim) e B (é o fluxo de campo elétrico que varia, não o magnético). A alternativa D também erra: o campo magnético depende da taxa de variação da carga ($dq/dt$), não da carga em si. A alternativa E é capciosa e incompleta perto de C.\n\nResposta: alternativa C.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física II",
+    "topico": "Indução Eletromagnética",
+    "subtopico": "Cálculo da corrente de deslocamento na descarga de um capacitor",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2018,
+    "enunciado": "Um capacitor de placas paralelas circulares muito próximas, inicialmente carregado com carga $Q_0$, descarrega através de uma resistência $R$. Lembrando que a carga no capacitor decai exponencialmente de acordo com $Q(t)=Q_0 e^{-t/RC}$ e sabendo que a área das placas vale $A$, calcule o módulo da corrente de deslocamento no interior das placas do capacitor:",
+    "alternativas": {
+      "a": "$i_d = 0$.",
+      "b": "$i_d = \\dfrac{\\mu_0 Q_0}{2\\pi RC}e^{-t/RC}$.",
+      "c": "$i_d = \\dfrac{A Q_0}{2RC}e^{-t/RC}$.",
+      "d": "$i_d = \\dfrac{Q_0}{RC}e^{-t/RC}$.",
+      "e": "$i_d = \\dfrac{\\mu_0 Q_0}{2\\pi RC}e^{-t/RC}$."
+    },
+    "gabarito": "d",
+    "resolucao": "A corrente de deslocamento entre as placas de um capacitor é sempre igual, em módulo, à corrente de condução que carrega/descarrega as placas: $i_d = |dQ/dt|$.\n\nDerivando $Q(t)=Q_0 e^{-t/RC}$: $\\dfrac{dQ}{dt} = -\\dfrac{Q_0}{RC}e^{-t/RC}$.\n\nEm módulo: $i_d = \\dfrac{Q_0}{RC}e^{-t/RC}$.\n\nResposta: alternativa D.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  }
+]

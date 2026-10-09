@@ -1,0 +1,220 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho da tensão e da força gravitacional numa rotação completa em círculo vertical",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um rapaz gira uma bola de massa igual a $0{,}300$ kg com um barbante a uma rapidez variável em um círculo vertical de raio igual a $1{,}20$ m. Quais são os trabalhos realizados sobre a bola por uma força de tensão de $10{,}0$ N no barbante e pela força gravitacional durante uma rotação completa da bola?",
+    "alternativas": {
+      "a": "$126$ J; $0$",
+      "b": "$75{,}0$ J; $7{,}00$ J",
+      "c": "$0$; $0$",
+      "d": "$30{,}0$ J; $14{,}0$ J",
+      "e": "$75{,}0$ J; $35{,}0$ J"
+    },
+    "gabarito": "c",
+    "resolucao": "A força de tensão no barbante é sempre radial (centrípeta), ou seja, perpendicular à velocidade da bola em cada instante. Uma força perpendicular ao deslocamento não realiza trabalho, então o trabalho da tensão é zero em qualquer trecho do movimento, inclusive numa rotação completa — independentemente do valor do seu módulo ser $10{,}0$ N.\n\nJá a força gravitacional é conservativa: seu trabalho ao longo de uma trajetória fechada (como uma rotação completa, que retorna ao ponto de partida) é zero, pois depende apenas do deslocamento vertical líquido, que é nulo.\n\nPortanto, os dois trabalhos são iguais a zero.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Igualdade da rapidez de impacto em três lançamentos com ângulos diferentes, por conservação de energia",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Três bolas são lançadas de um prédio alto com a mesma rapidez, mas em direções diferentes. A bola A é lançada na direção horizontal; a bola B, a $45°$ acima da horizontal e a bola C, a $45°$ abaixo da horizontal. Desprezando quaisquer efeitos devidos à resistência do ar, qual bola tem a maior rapidez um pouco antes de chocar-se com o solo?",
+    "alternativas": {
+      "a": "A bola A",
+      "b": "A bola B",
+      "c": "A bola C",
+      "d": "Todas as bolas têm a mesma rapidez.",
+      "e": "As bolas B e C têm a mesma rapidez, que é maior que a rapidez da bola A."
+    },
+    "gabarito": "d",
+    "resolucao": "Sem resistência do ar, apenas a força gravitacional (conservativa) realiza trabalho sobre cada bola. Pela conservação de energia mecânica, $\\dfrac{1}{2}mv_0^2 + mgh = \\dfrac{1}{2}mv_f^2$, onde $h$ é a mesma altura de queda (a altura do prédio) e $v_0$ é a mesma rapidez inicial nos três casos.\n\nComo $m$, $v_0$ e $h$ são idênticos nas três situações, $v_f$ também é o mesmo — a direção do lançamento altera a trajetória e o tempo de voo, mas não a rapidez final. Logo, as três bolas chegam ao solo com a mesma rapidez.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Intervalo de movimento de uma partícula a partir do gráfico de energia potencial U(x) e da energia mecânica total",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma partícula de massa $1{,}00$ kg move-se ao longo do eixo $x$ na região em que a energia potencial $U(x)$ varia conforme a figura. Quando a partícula se encontra em $x = 20{,}0$ cm, sua velocidade é de $-2{,}00$ m/s. Determine o intervalo onde ocorre o movimento da partícula.",
+    "alternativas": {
+      "a": "$12 \\le x(\\text{cm}) \\le 60$",
+      "b": "$20 \\le x(\\text{cm}) \\le 55$",
+      "c": "$16 \\le x(\\text{cm}) \\le 57$",
+      "d": "$23 \\le x(\\text{cm}) \\le 54$",
+      "e": "$16 \\le x(\\text{cm}) \\le 24$"
+    },
+    "gabarito": "c",
+    "resolucao": "Em $x=20{,}0$ cm, a energia cinética é $K = \\dfrac{1}{2}mv^2 = \\dfrac{1}{2}(1{,}00)(2{,}00)^2 = 2{,}00$ J. Pelo gráfico, a energia potencial nesse ponto vale $U(20\\text{ cm}) \\approx -6$ J (no trecho em que $U$ cai linearmente de $0$, em $x=10$ cm, até $-12$ J, em $x=30$ cm), de modo que a energia mecânica total é $E = K+U \\approx -4$ J.\n\nO movimento da partícula fica restrito à região em que $U(x) \\le E$, pois a energia cinética $K = E - U(x)$ não pode ser negativa. Lendo no gráfico os pontos onde $U(x) \\approx E \\approx -4$ J — um no trecho decrescente entre $x=10$ cm e $x=30$ cm, outro no trecho crescente entre $x=50$ cm ($U=-12$ J) e $x=60$ cm ($U=-2$ J) — obtém-se aproximadamente $x \\approx 16$ cm e $x \\approx 57$ cm como os limites do movimento.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (15.2) Física I.pdf",
+    "fonte_pagina": 6
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Força a partir da inclinação do gráfico de energia potencial U(x)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Ainda sobre o gráfico da questão anterior, determine o sentido e a intensidade da força sobre a partícula na posição $x = 20{,}0$ cm.",
+    "alternativas": {
+      "a": "$6$ N no sentido negativo.",
+      "b": "$60$ N no sentido negativo.",
+      "c": "$6$ N no sentido positivo.",
+      "d": "$60$ N no sentido positivo.",
+      "e": "$12$ N no sentido positivo."
+    },
+    "gabarito": "d",
+    "resolucao": "A força associada a uma energia potencial unidimensional é $F = -\\dfrac{dU}{dx}$, ou seja, o negativo da inclinação do gráfico $U(x)$ no ponto considerado.\n\nEm $x=20{,}0$ cm, a partícula está no trecho reto do gráfico entre $x=10$ cm ($U=0$) e $x=30$ cm ($U=-12$ J). A inclinação desse trecho é\n\n$\\dfrac{dU}{dx} = \\dfrac{-12-0}{0{,}30-0{,}10} = \\dfrac{-12}{0{,}20} = -60$ J/m.\n\nLogo, $F = -\\dfrac{dU}{dx} = +60$ N. O sinal positivo indica que a força aponta no sentido positivo do eixo $x$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Potência adicional necessária para manter velocidade constante subindo uma ladeira",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um carro de massa $1{,}38 \\times 10^3$ kg anda numa estrada plana com velocidade constante de $80{,}0$ km/h, quando sobe uma ladeira inclinada de $5{,}0°$. Para manter a velocidade constante, o motorista precisa pisar mais fundo no acelerador, gerando uma potência adicional. Quanto vale essa potência em kW?",
+    "alternativas": {
+      "a": "$26$ kW",
+      "b": "$300$ kW",
+      "c": "$39$ kW",
+      "d": "$50$ kW",
+      "e": "Zero porque o carro está com velocidade constante."
+    },
+    "gabarito": "a",
+    "resolucao": "Para manter a velocidade constante numa subida, a força motriz extra deve equilibrar a componente do peso ao longo da rampa: $F_{extra} = mg\\,\\text{sen}\\,\\theta$.\n\nA potência adicional necessária é $P = F_{extra}\\cdot v = mg\\,\\text{sen}\\,\\theta \\cdot v$.\n\nConvertendo a velocidade: $v = 80{,}0$ km/h $= 22{,}2$ m/s.\n\n$P = (1{,}38\\times 10^3)(9{,}80)(\\text{sen}\\,5{,}0°)(22{,}2) \\approx (1{,}38\\times 10^3)(9{,}80)(0{,}0872)(22{,}2) \\approx 2{,}6\\times 10^4$ W $= 26$ kW.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Teorema dos eixos paralelos aplicado a um anel",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "O momento de inércia de um anel em torno de seu eixo de simetria é $I_{CM} = MR^2$. Qual é o momento de inércia em relação ao eixo P paralelo ao eixo de simetria que passa pela borda do anel?",
+    "alternativas": {
+      "a": "$5\\,MR^2$",
+      "b": "$2\\,MR^2$",
+      "c": "$MR^2$",
+      "d": "$1{,}5\\,MR^2$",
+      "e": "$0{,}5\\,MR^2$"
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo teorema dos eixos paralelos, $I_P = I_{CM} + Md^2$, onde $d$ é a distância entre o eixo P e o eixo que passa pelo centro de massa. Como o eixo P passa pela borda do anel, $d = R$.\n\n$I_P = MR^2 + MR^2 = 2\\,MR^2$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (15.2) Física I.pdf",
+    "fonte_pagina": 7
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Rapidez final igual em diferentes rampas sem atrito, por conservação de energia",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma bola rola a partir do repouso em diferentes rampas com atrito praticamente nulo. Em qual das rampas a bola chega com maior rapidez no final?",
+    "alternativas": {
+      "a": "A rampa X.",
+      "b": "A rampa Y.",
+      "c": "A rampa Z.",
+      "d": "A rapidez final será a mesma em todas as rampas.",
+      "e": "A rampa W."
+    },
+    "gabarito": "d",
+    "resolucao": "Como o atrito é desprezível, a energia mecânica se conserva ao longo de cada rampa. Todas as rampas partem do mesmo nível e terminam no mesmo nível (o solo), então a queda de altura total é a mesma nos quatro casos, apesar dos diferentes formatos das rampas — que só alteram a trajetória e o tempo de percurso, não a variação de altura.\n\nPela conservação de energia, $mgh = \\dfrac{1}{2}mv_f^2$ (partindo do repouso), logo $v_f = \\sqrt{2gh}$ depende apenas de $h$, que é igual nas quatro rampas. Portanto, a rapidez final é a mesma em todas elas.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (15.2) Física I.pdf",
+    "fonte_pagina": 7
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Comparação de acelerações tangencial, centrípeta e total entre dois discos conectados por correia",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "O disco A, de $10$ cm de raio, é acoplado por uma correia ao disco B, cujo raio vale $25$ cm. O disco A aumenta sua velocidade angular, a partir do repouso, a uma taxa uniforme de $1{,}6$ rad/s². Supondo que a correia não deslize, qual das seguintes afirmações não é verdadeira?",
+    "alternativas": {
+      "a": "A aceleração tangencial na borda de A é igual a aceleração tangencial na borda de B.",
+      "b": "A aceleração centrípeta na borda de A é diferente da aceleração centrípeta na borda de B.",
+      "c": "A velocidade angular de A é diferente da velocidade angular de B.",
+      "d": "A rapidez na borda de A é igual a rapidez na parte reta da correia.",
+      "e": "O módulo do vetor aceleração em um ponto na borda de A é igual ao módulo da aceleração em um ponto na borda de B."
+    },
+    "gabarito": "e",
+    "resolucao": "Como a correia não desliza, a rapidez tangencial é a mesma nas bordas de A e B e na correia (afirmação d, verdadeira), e por isso a aceleração tangencial também é a mesma nos dois discos (afirmação a, verdadeira), já que $a_t=dv/dt$ é a mesma para uma velocidade $v$ comum.\n\nComo as velocidades se relacionam por $v=\\omega_A r_A=\\omega_B r_B$ e os raios são diferentes ($r_A=10$ cm, $r_B=25$ cm), as velocidades angulares são diferentes (afirmação c, verdadeira).\n\nA aceleração centrípeta é $a_c=v^2/r$; como $v$ é igual mas os raios diferem, $a_c$ é diferente em A e B (afirmação b, verdadeira).\n\nJá o módulo da aceleração total num ponto da borda é $a=\\sqrt{a_t^2+a_c^2}$. Como $a_t$ é igual mas $a_c$ é diferente entre A e B, o módulo total da aceleração também é diferente entre os dois discos. Portanto, a afirmação (e) — que diz que os módulos são iguais — é a que NÃO é verdadeira.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (15.2) Física I.pdf",
+    "fonte_pagina": 7
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Propriedade que não caracteriza uma força conservativa (módulo constante)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Qual das seguintes afirmações a respeito de uma força conservativa não é verdadeira?",
+    "alternativas": {
+      "a": "O trabalho por ela realizado sempre pode ser expresso como a diferença entre os valores inicial e final da energia potencial.",
+      "b": "O trabalho por ela realizado é independente do caminho percorrido e só depende dos pontos inicial e final.",
+      "c": "O trabalho por ela realizado numa trajetória fechada é nulo.",
+      "d": "Sob sua ação, a energia mecânica de um corpo se conserva.",
+      "e": "Enquanto age sob um corpo, o seu módulo se conserva."
+    },
+    "gabarito": "e",
+    "resolucao": "As alternativas (a), (b), (c) e (d) são propriedades fundamentais e verdadeiras de qualquer força conservativa: seu trabalho define uma energia potencial ($W=-\\Delta U$), não depende do caminho, é nulo numa trajetória fechada e, por isso, conserva a energia mecânica do corpo.\n\nJá a alternativa (e) não é uma propriedade geral das forças conservativas: o módulo de uma força conservativa pode variar ao longo do movimento — por exemplo, a força elástica de uma mola, $F=kx$, ou a força gravitacional entre corpos a distâncias variáveis, $F=GMm/r^2$, mudam de módulo mesmo sendo conservativas. Por isso, essa é a afirmação falsa procurada.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Propriedades de um corpo rígido girando com energia cinética de rotação constante",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2015,
+    "enunciado": "Um corpo rígido gira em torno de um eixo fixo com energia cinética de rotação constante. Qual das afirmações não é verdadeira?",
+    "alternativas": {
+      "a": "Em qualquer ponto do corpo, a aceleração angular é nula.",
+      "b": "Um ponto qualquer do corpo, menos no eixo fixo, possui aceleração radial.",
+      "c": "Se o corpo parar de girar, seu momento de inércia se torna nulo.",
+      "d": "Todos os pontos do corpo têm a mesma velocidade angular.",
+      "e": "O momento de inércia é de menor valor se o corpo gira em torno de um eixo que passa pelo seu centro de massa."
+    },
+    "gabarito": "c",
+    "resolucao": "Energia cinética de rotação constante ($K=\\dfrac{1}{2}I\\omega^2$, com $I$ fixo para um eixo fixo) implica $\\omega$ constante, logo a aceleração angular é nula em todo o corpo (afirmação a, verdadeira) e todos os pontos compartilham a mesma velocidade angular (afirmação d, sempre verdadeira para um corpo rígido). Com $\\omega \\neq 0$ constante, todo ponto fora do eixo tem aceleração centrípeta (radial) não nula, $a_c=\\omega^2 r$ (afirmação b, verdadeira). Pelo teorema dos eixos paralelos, $I=I_{CM}+Md^2 \\ge I_{CM}$, logo o momento de inércia é mínimo em relação a um eixo que passa pelo centro de massa (afirmação e, verdadeira).\n\nJá a alternativa (c) é falsa: o momento de inércia depende apenas da distribuição de massa do corpo em relação ao eixo, não do seu estado de rotação. Mesmo parado, o corpo continua tendo exatamente o mesmo momento de inércia.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  }
+]

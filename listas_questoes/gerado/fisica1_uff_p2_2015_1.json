@@ -1,0 +1,218 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Sinal do trabalho da tensão, do peso e da força resultante num elevador em descida a velocidade constante",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um elevador sustentado por um cabo desce com velocidade constante. As únicas forças agindo sobre o elevador são a tensão no cabo e a força gravitacional. Durante a descida do elevador, qual das seguintes afirmações é verdadeira?",
+    "alternativas": {
+      "a": "O trabalho realizado pela tensão é positivo.",
+      "b": "O trabalho realizado pela força gravitacional é negativo.",
+      "c": "O trabalho realizado pela tensão é zero.",
+      "d": "O trabalho realizado pela força gravitacional é zero.",
+      "e": "O trabalho realizado pela força resultante é zero."
+    },
+    "gabarito": "e",
+    "resolucao": "Como o elevador desce com velocidade constante, sua energia cinética não varia. Pelo teorema do trabalho-energia, o trabalho da força resultante sobre o elevador é igual à variação da sua energia cinética, que é zero.\n\nIsso também é consistente com a segunda lei de Newton: velocidade constante implica aceleração nula, logo a força resultante sobre o elevador é nula — e o trabalho de uma força nula, ao longo de qualquer deslocamento, é zero.\n\n(A tensão de fato realiza trabalho negativo, pois aponta para cima enquanto o deslocamento é para baixo; o peso realiza trabalho positivo, pois aponta na mesma direção do deslocamento — os dois se cancelam exatamente, o que descarta as alternativas (c) e (d).)",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Variação da energia térmica do sistema satélite-atmosfera-Terra após a velocidade terminal",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um satélite inativo penetra na atmosfera e cai verticalmente sob a ação da gravidade terrestre e da resistência do ar. O satélite atinge a velocidade terminal (velocidade limite) quando se encontra a uma altura H da superfície da Terra. Durante o restante da queda desta altura até atingir a superfície da Terra, a variação da energia térmica do sistema (satélite + atmosfera + Terra) é",
+    "alternativas": {
+      "a": "Zero.",
+      "b": "Igual à variação da energia potencial gravitacional do satélite.",
+      "c": "Igual a menos a variação da energia potencial gravitacional do satélite.",
+      "d": "Igual à variação da energia cinética do satélite.",
+      "e": "Igual à soma das variações da energia cinética e da energia potencial do satélite."
+    },
+    "gabarito": "c",
+    "resolucao": "Como o satélite já está na velocidade terminal, sua velocidade permanece praticamente constante durante o restante da queda, logo a variação da energia cinética é aproximadamente zero.\n\nPela conservação de energia do sistema isolado (satélite + atmosfera + Terra): $\\Delta E_{cin} + \\Delta E_{pot} + \\Delta E_{\\text{térmica}} = 0$. Com $\\Delta E_{cin} \\approx 0$, resulta $\\Delta E_{\\text{térmica}} = -\\Delta E_{pot}$ — a variação da energia térmica é igual a menos a variação da energia potencial gravitacional do satélite (que é negativa, já que o satélite desce, tornando a variação térmica positiva, como se espera do atrito com o ar).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Definição de força conservativa via independência do trabalho em relação ao caminho",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma força que age sobre um objeto é dita conservativa se",
+    "alternativas": {
+      "a": "ela obedece às leis de Newton;",
+      "b": "ela provoca uma mudança na energia cinética do objeto;",
+      "c": "ela sempre age no mesmo sentido do movimento do objeto;",
+      "d": "o trabalho que ela realiza sobre o objeto não depende do caminho seguido pelo objeto;",
+      "e": "o trabalho que ela realiza sobre o objeto é igual à variação da energia cinética do objeto."
+    },
+    "gabarito": "d",
+    "resolucao": "Por definição, uma força é conservativa quando o trabalho que ela realiza sobre uma partícula, entre dois pontos, não depende do caminho percorrido entre eles — depende apenas das posições inicial e final. É essa propriedade que permite associar à força uma energia potencial.\n\nAs demais alternativas descrevem características gerais de qualquer força (como o teorema trabalho-energia cinética, alternativa (e), válido inclusive para forças não conservativas), e não uma condição exclusiva de conservatividade.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Energia cinética final a partir da área sob o gráfico força-posição (teorema trabalho-energia)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma partícula move-se para a direita, submetida à força $F$ que varia com a posição conforme mostra o gráfico. Quando está em $x = 0$ m, sua energia cinética é de $10$ J. Qual é a energia cinética da partícula quando ela está em $x = 5$ m?",
+    "alternativas": {
+      "a": "Nula.",
+      "b": "$10$ J",
+      "c": "$20$ J",
+      "d": "$30$ J",
+      "e": "$40$ J"
+    },
+    "gabarito": "d",
+    "resolucao": "O trabalho realizado pela força entre $x=0$ e $x=5$ m é a área sob o gráfico $F$ versus $x$ nesse intervalo. O gráfico forma um triângulo com base de $4$ m (de $x=0$ a $x=4$ m, já que $F=0$ para $x>4$ m) e altura máxima de $10$ N (em $x=2$ m):\n\n$W = \\dfrac{1}{2}\\times 4 \\times 10 = 20$ J.\n\nPelo teorema do trabalho-energia cinética, $K_f = K_i + W = 10 + 20 = 30$ J.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (15.1) Física I.pdf",
+    "fonte_pagina": 5
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Variação do momento linear da bola e da Terra numa colisão elástica com o solo (quique)",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Uma bola de tênis tem velocidade de $12$ m/s para baixo imediatamente antes de bater no chão. Ao atingir o solo a bola quica e abandona o chão com velocidade de $12$ m/s para cima. Qual das afirmações abaixo a respeito desta situação é verdadeira?",
+    "alternativas": {
+      "a": "O momento linear da bola e o momento linear da Terra mudam.",
+      "b": "Nem o momento linear da bola nem o momento linear da Terra mudam.",
+      "c": "O momento linear da bola muda; o momento linear da Terra não muda.",
+      "d": "O momento linear da bola não muda; o momento linear da Terra muda.",
+      "e": "Tanto o momento linear quanto a energia cinética da bola mudam por causa da colisão."
+    },
+    "gabarito": "a",
+    "resolucao": "O momento linear da bola muda claramente: ele inverte de sentido, de $12$ m/s para baixo para $12$ m/s para cima. Pela terceira lei de Newton, a força que o chão exerce sobre a bola tem uma reação igual e oposta da bola sobre a Terra; como o momento linear total do sistema bola+Terra se conserva, a variação do momento da bola é compensada por uma variação igual e oposta do momento da Terra. Logo, ambos os momentos lineares mudam.\n\n(A energia cinética da bola, por outro lado, não muda, pois a rapidez é a mesma antes e depois da colisão — apenas o sentido se inverte —, o que descarta a alternativa (e).)",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Conservação do momento linear na separação de um veículo espacial em duas partes",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um veículo espacial de massa $m$ tem rapidez $v$. Num certo instante, ele se separa em duas partes, cada uma de massa $m/2$. Uma das partes fica em repouso logo após a separação. Qual das seguintes afirmações a respeito desta situação é verdadeira?",
+    "alternativas": {
+      "a": "A parte que se move tem rapidez $2v$.",
+      "b": "Neste processo a energia cinética se conserva.",
+      "c": "A parte em repouso possui energia cinética.",
+      "d": "Neste processo a energia total não se conserva.",
+      "e": "Neste processo o momento linear total não se conserva."
+    },
+    "gabarito": "a",
+    "resolucao": "Não há forças externas horizontais durante a separação, logo o momento linear total se conserva:\n\n$mv = \\dfrac{m}{2}(0) + \\dfrac{m}{2}v'$\n\n$v' = 2v$.\n\nA parte que continua em movimento tem rapidez $2v$. (A energia cinética não se conserva nesse processo — ela aumenta às custas de alguma fonte de energia interna liberada na separação, como uma pequena explosão ou mola —, mas a energia total, incluindo essa fonte interna, sim se conserva, o que descarta as alternativas (b) e (d).)",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Trabalho",
+    "subtopico": "Trabalho necessário para parar um objeto em movimento, via teorema trabalho-energia cinética",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "A quantidade de trabalho necessário para parar um objeto em movimento é igual",
+    "alternativas": {
+      "a": "à velocidade do objeto;",
+      "b": "à energia cinética do objeto;",
+      "c": "à massa do objeto vezes sua aceleração;",
+      "d": "à massa do objeto vezes sua velocidade;",
+      "e": "ao quadrado da velocidade do objeto."
+    },
+    "gabarito": "b",
+    "resolucao": "Pelo teorema do trabalho-energia cinética, $W = \\Delta K = K_f - K_i$. Para parar o objeto, $K_f = 0$, logo o trabalho realizado (pela força que o freia) é $W = -K_i$. Em módulo, a quantidade de trabalho necessária para parar o objeto é igual à sua energia cinética inicial.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Propriedade sempre válida num corpo rígido girando em torno de um eixo fixo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Um corpo rígido gira em torno de um eixo fixo. Qual das afirmações é sempre verdadeira?",
+    "alternativas": {
+      "a": "A velocidade do centro de massa do corpo é zero.",
+      "b": "Todos os pontos do corpo têm a mesma velocidade linear.",
+      "c": "A aceleração do centro de massa do corpo é zero.",
+      "d": "Todos os pontos do corpo têm a mesma velocidade angular.",
+      "e": "Todos os pontos do corpo têm a mesma aceleração tangencial."
+    },
+    "gabarito": "d",
+    "resolucao": "Num corpo rígido, todos os pontos giram juntos em torno do eixo com a mesma velocidade angular $\\omega$ em qualquer instante — essa é a própria definição de rigidez do corpo. Já a velocidade linear ($v=\\omega r$) e a aceleração tangencial ($a_t=\\alpha r$) dependem da distância $r$ ao eixo, sendo diferentes para pontos a raios diferentes.\n\nAs alternativas sobre o centro de massa só valeriam se o eixo de rotação passasse pelo centro de massa, o que não é garantido pelo enunciado.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Rotação de Corpo Rígido",
+    "subtopico": "Comparação do momento de inércia entre disco, anel e aro fino de mesma massa",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "Os três corpos rígidos mostrados na figura têm a mesma massa, e densidade homogênea. O corpo 1 é um disco, o corpo 2 é um anel e o corpo 3 é um aro fino. Para um eixo de rotação passando pelo centro de massa, e perpendicular ao plano dos corpos, ordene os seus momentos de inércia.",
+    "alternativas": {
+      "a": "$I_1 > I_2 > I_3$",
+      "b": "$I_3 > I_2 > I_1$",
+      "c": "$I_1 = I_2 = I_3$",
+      "d": "$I_2 > I_3 > I_1$",
+      "e": "$I_3 > I_1 > I_2$"
+    },
+    "gabarito": "b",
+    "resolucao": "O disco (corpo 1), sólido de raio $R$, tem $I_1 = \\dfrac{1}{2}MR^2 = 0{,}5\\,MR^2$.\n\nO anel (corpo 2), com raio externo $R$ e raio interno $R/2$, tem $I_2 = \\dfrac{1}{2}M\\left(R^2+\\left(\\dfrac{R}{2}\\right)^2\\right) = \\dfrac{1}{2}M\\left(R^2+\\dfrac{R^2}{4}\\right) = 0{,}625\\,MR^2$.\n\nO aro fino (corpo 3), com toda a massa concentrada no raio $R$, tem $I_3 = MR^2$.\n\nComparando: $I_3\\,(1{,}0\\,MR^2) > I_2\\,(0{,}625\\,MR^2) > I_1\\,(0{,}5\\,MR^2)$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (15.1) Física I.pdf",
+    "fonte_pagina": 6
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Ponto de retorno de uma partícula a partir do gráfico de energia potencial U(x) e da energia mecânica total",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2015,
+    "enunciado": "No diagrama abaixo, de energia versus posição, está mostrado o gráfico da energia potencial de uma partícula que se move ao longo de uma linha reta. Quando passa pela posição $x=1$ m, a partícula está se movendo para a direita e possui $1$ J de energia cinética. Onde se encontra o ponto de retorno desta partícula, ponto em que ela para momentaneamente e o sentido do movimento se inverte?",
+    "alternativas": {
+      "a": "Em $x = 1$ m",
+      "b": "Em $x = 2$ m",
+      "c": "Em $x = 6$ m",
+      "d": "Em $x = 7$ m",
+      "e": "A partícula não tem ponto de retorno."
+    },
+    "gabarito": "c",
+    "resolucao": "Em $x=1$ m, o gráfico indica energia potencial $U=3$ J. Como a energia cinética nesse ponto é $1$ J, a energia mecânica total da partícula é $E = U + K = 3 + 1 = 4$ J, e permanece constante ao longo do movimento (não há atrito).\n\nO ponto de retorno é onde toda a energia é potencial, isto é, onde $U(x) = E = 4$ J. Pelo gráfico, a energia potencial cresce linearmente a partir de $x=2$ m (onde $U=0$) até $x=7$ m; em $x=6$ m, $U=4$ J, exatamente a energia mecânica total. Como a partícula se move para a direita a partir de $x=1$ m, esse é o próximo ponto em que $K=0$ — ou seja, o ponto de retorno procurado.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (15.1) Física I.pdf",
+    "fonte_pagina": 7
+  }
+]

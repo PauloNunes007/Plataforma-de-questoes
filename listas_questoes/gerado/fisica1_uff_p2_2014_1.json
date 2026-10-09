@@ -1,0 +1,153 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Momento linear como grandeza vetorial — dependência da massa e da velocidade",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Um caminhão de 3 t (3000 kg) de massa e uma bicicleta de 10 kg de massa movem-se com velocidade de $20$ km/h ($\\approx 5{,}6$ m/s). Das afirmações abaixo, qual é a VERDADEIRA?",
+    "alternativas": {
+      "a": "O momento linear é uma grandeza escalar e, portanto, não depende nem da direção nem do sentido da velocidade.",
+      "b": "Como o caminhão e a bicicleta têm a mesma velocidade, o momento linear também é o mesmo.",
+      "c": "O momento linear do caminhão tem valor $16{,}8$ kg$\\cdot$m/s e sempre o mesmo sentido de sua velocidade.",
+      "d": "Os vetores momento linear do caminhão e da bicicleta serão iguais caso eles tenham velocidades com mesma direção e mesmo sentido.",
+      "e": "O módulo do momento linear de cada um deles é diferente porque suas massas são diferentes."
+    },
+    "gabarito": "e",
+    "resolucao": "O momento linear é uma grandeza vetorial, $\\vec p = m\\vec v$, e não uma grandeza escalar — a alternativa (a) já está errada por isso.\n\nComo caminhão e bicicleta têm a mesma velocidade mas massas muito diferentes ($3000$ kg contra $10$ kg), seus momentos lineares têm módulos bem diferentes: $p_{\\text{caminhão}} = 3000\\times5{,}6 = 16800$ kg$\\cdot$m/s, enquanto $p_{\\text{bicicleta}}=10\\times5{,}6=56$ kg$\\cdot$m/s. Isso descarta (b) (não são iguais) e (c) (o valor $16{,}8$ está mil vezes menor que o correto).\n\nA alternativa (d) erra ao dizer que bastaria mesma direção e sentido para os vetores serem iguais — como as massas são diferentes, os vetores $\\vec p$ nunca serão iguais nessas condições, só poderiam ser paralelos.\n\nA alternativa correta é (e): como $p=mv$ e a velocidade é a mesma para os dois, a diferença de massa é justamente o que torna os módulos dos momentos lineares diferentes.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Impulso em colisões — Terceira Lei de Newton aplicada aos impulsos",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Na colisão entre dois objetos de massas diferentes, como se relacionam os módulos dos impulsos aplicados sobre cada objeto?",
+    "alternativas": {
+      "a": "Ambos os objetos recebem o mesmo impulso.",
+      "b": "O objeto mais pesado recebe um impulso maior.",
+      "c": "O objeto mais leve recebe um impulso maior.",
+      "d": "A resposta depende da razão entre as massas.",
+      "e": "A resposta depende da razão entre as velocidades."
+    },
+    "gabarito": "a",
+    "resolucao": "Pela Terceira Lei de Newton, a força que o objeto 1 exerce sobre o objeto 2 durante o contato é, a cada instante, igual em módulo e oposta em sentido à força que o objeto 2 exerce sobre o objeto 1: $\\vec F_{12} = -\\vec F_{21}$.\n\nComo os dois objetos ficam em contato pelo mesmo intervalo de tempo $\\Delta t$ (a colisão é o mesmo evento para ambos), o impulso $\\vec J = \\int \\vec F\\, dt$ tem o mesmo módulo para os dois — apenas com sentidos opostos.\n\nIsso vale independentemente das massas ou das velocidades envolvidas, o que descarta (b), (c), (d) e (e). A resposta correta é (a): ambos os objetos recebem impulsos de mesmo módulo.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Lançamento vertical — conservação de energia mecânica e proporcionalidade altura ∝ v²",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "São lançadas verticalmente para cima duas bolas idênticas, a bola A com velocidade $V$ e a bola B com velocidade $2V$. Desprezando a resistência do ar, qual das afirmativas sobre estas bolas é correta?",
+    "alternativas": {
+      "a": "A bola B alcançará duas vezes a altura da bola A porque tinha duas vezes a velocidade inicial.",
+      "b": "A bola B alcançará quatro vezes a altura da bola A porque tinha quatro vezes a energia cinética inicial.",
+      "c": "As bolas alcançarão a mesma altura porque elas têm a mesma massa e a mesma aceleração.",
+      "d": "Na sua altura máxima, a bola B terá duas vezes a energia potencial gravitacional da bola A porque partiu duas vezes mais rápida.",
+      "e": "Nas alturas máximas, a aceleração de cada bola é instantaneamente igual a zero porque elas param por um instante."
+    },
+    "gabarito": "b",
+    "resolucao": "Como não há resistência do ar, toda a energia cinética de lançamento se converte em energia potencial gravitacional no ponto mais alto (onde $v=0$): $\\frac12 mv_0^2 = mgh \\Rightarrow h = \\dfrac{v_0^2}{2g}$.\n\nA altura máxima é proporcional a $v_0^2$, ou seja, à energia cinética inicial. A bola B parte com o dobro da velocidade ($2V$), logo sua energia cinética inicial é $\\left(\\frac{2V}{V}\\right)^2=4$ vezes maior, e por isso ela atinge $4$ vezes a altura de A.\n\nIsso descarta (a) (dobrar a velocidade não dobra a altura, quadruplica) e (d) (na altura máxima a energia cinética é zero, então a energia potencial máxima é igual à energia cinética inicial — logo B tem 4 vezes, não 2 vezes, a energia potencial de A). A alternativa (c) está errada pois a altura depende de $v_0$. A alternativa (e) está errada: no ponto mais alto a velocidade é zero, mas a aceleração continua sendo $g$, apontada para baixo — não é a aceleração que se anula, é a velocidade.\n\nA resposta correta é (b).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica — conservação do momento e energia cinética dissipada",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Uma bola de massa 1,0 kg com velocidade de 10 m/s colide com outra bola de massa 3,0 kg inicialmente em repouso. Supondo a colisão perfeitamente inelástica, qual a velocidade das bolas após a colisão e a energia dissipada no processo?",
+    "alternativas": {
+      "a": "2,5 m/s e 25 J",
+      "b": "5,0 m/s e 25 J",
+      "c": "3,3 m/s e 28 J",
+      "d": "7,5 m/s e 38 J",
+      "e": "2,5 m/s e 38 J"
+    },
+    "gabarito": "e",
+    "resolucao": "Na colisão perfeitamente inelástica, os corpos ficam grudados após o choque e o momento linear total se conserva: $m_1v_1 = (m_1+m_2)v'$.\n\n$v' = \\dfrac{1{,}0\\times10}{1{,}0+3{,}0} = \\dfrac{10}{4{,}0} = 2{,}5\\ \\text{m/s}$.\n\nA energia cinética inicial é $K_i = \\frac12\\times1{,}0\\times10^2 = 50\\ \\text{J}$. A energia cinética final é $K_f = \\frac12\\times4{,}0\\times2{,}5^2 = 12{,}5\\ \\text{J}$.\n\nA energia dissipada é $\\Delta K = K_i - K_f = 50 - 12{,}5 = 37{,}5\\ \\text{J} \\approx 38\\ \\text{J}$.\n\nA resposta correta é (e): $2{,}5$ m/s e $38$ J.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão elástica — força média via teorema impulso-momento",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Um bloco de massa m = 8,40 kg desliza sobre uma superfície horizontal sem atrito com velocidade de 4,20 m/s e colide com outro bloco de massa M em repouso. A colisão é perfeitamente elástica, os blocos ficam em contato por 0,200 s e o bloco m tem velocidade de 0,400 m/s com sentido oposto ao da velocidade inicial. A intensidade da força média exercida pelo bloco M sobre m durante o contato é",
+    "alternativas": {
+      "a": "160 N",
+      "b": "168 N",
+      "c": "176 N",
+      "d": "185 N",
+      "e": "193 N"
+    },
+    "gabarito": "e",
+    "resolucao": "Pelo teorema impulso-momento, a força média sobre o bloco $m$ é $\\vec F_{\\text{méd}} = \\dfrac{\\Delta \\vec p}{\\Delta t}$, aplicado apenas ao bloco $m$ (não é preciso conhecer $M$).\n\nAdotando o sentido inicial da velocidade como positivo, $v_i = +4{,}20$ m/s e $v_f = -0{,}400$ m/s (sentido oposto, como diz o enunciado).\n\n$\\Delta p = m(v_f - v_i) = 8{,}40\\times(-0{,}400 - 4{,}20) = 8{,}40\\times(-4{,}60) = -38{,}64\\ \\text{kg}\\cdot\\text{m/s}$.\n\n$|F_{\\text{méd}}| = \\dfrac{|\\Delta p|}{\\Delta t} = \\dfrac{38{,}64}{0{,}200} \\approx 193\\ \\text{N}$.\n\nA resposta correta é (e).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Relação entre energia potencial e força a partir de um gráfico — $F=-dU/dx$",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Indique o ponto do gráfico ao lado, onde a força F que atua sobre a partícula é negativa.",
+    "alternativas": {
+      "a": "A",
+      "b": "B",
+      "c": "C",
+      "d": "D",
+      "e": "E"
+    },
+    "gabarito": "d",
+    "resolucao": "A força associada a uma energia potencial $U(x)$ é dada por $F = -\\dfrac{dU}{dx}$, ou seja, o oposto da inclinação da curva $U(x)$ naquele ponto.\n\nA força é negativa exatamente onde o gráfico de $U(x)$ tem inclinação positiva (a curva está subindo, $x$ crescendo). Analisando o gráfico do poço de potencial: nos pontos $A$ e $B$ a curva ainda está descendo (inclinação negativa, logo $F>0$); no ponto $C$, no fundo do poço, a inclinação é nula ($F=0$); no ponto $E$, próximo ao topo à direita, a inclinação também está próxima de zero.\n\nJá no ponto $D$, a curva está no trecho ascendente do poço (subindo de volta em direção a $E$), com inclinação claramente positiva — logo, é aí que $F<0$.\n\nA resposta correta é (d).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (14.1) Física I.pdf",
+    "fonte_pagina": 4
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica seguida de queda livre — energia cinética final por conservação de energia",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2014,
+    "enunciado": "Na figura, uma caixa de sapatos de 3,20 kg desliza em uma mesa horizontal sem atrito e colide com outra caixa de sapatos de 2,00 kg inicialmente em repouso na extremidade da mesa, a uma altura h = 0,400 m do chão. A velocidade da caixa de 3,20 kg é de 3,00 m/s imediatamente antes da colisão. Se as caixas grudam uma na outra por haver cola nas faces de contato, qual é a energia cinética do conjunto imediatamente antes de atingir o chão?",
+    "alternativas": {
+      "a": "33,0 J",
+      "b": "29,3 J",
+      "c": "43,8 J",
+      "d": "21,5 J",
+      "e": "17,5 J"
+    },
+    "gabarito": "b",
+    "resolucao": "Primeiro, a colisão perfeitamente inelástica: pela conservação do momento linear, $v' = \\dfrac{m_1v_1}{m_1+m_2} = \\dfrac{3{,}20\\times3{,}00}{3{,}20+2{,}00} = \\dfrac{9{,}60}{5{,}20} \\approx 1{,}846\\ \\text{m/s}$.\n\nA energia cinética do conjunto logo após a colisão (ainda sobre a mesa) é $K_1 = \\frac12(5{,}20)(1{,}846)^2 \\approx 8{,}86\\ \\text{J}$.\n\nDepois, o conjunto sai da mesa e cai em queda livre por uma altura $h=0{,}400$ m. Pela conservação de energia mecânica, a energia potencial perdida vira energia cinética adicional: $\\Delta K = mgh = 5{,}20\\times9{,}80\\times0{,}400 \\approx 20{,}4\\ \\text{J}$.\n\nA energia cinética total imediatamente antes de atingir o chão é $K_2 = K_1 + \\Delta K \\approx 8{,}86 + 20{,}4 \\approx 29{,}3\\ \\text{J}$.\n\nA resposta correta é (b).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (14.1) Física I.pdf",
+    "fonte_pagina": 5
+  }
+]

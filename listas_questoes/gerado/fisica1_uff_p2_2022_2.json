@@ -1,0 +1,218 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Propriedades do movimento circular uniforme — força, aceleração e velocidade",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Considere uma partícula que realiza um movimento circular com rapidez constante. Sobre este movimento, podemos afirmar que",
+    "alternativas": {
+      "a": "Existe somente uma força atuando sobre a partícula.",
+      "b": "O movimento não é acelerado.",
+      "c": "A aceleração da partícula é constante.",
+      "d": "A magnitude da aceleração da partícula é constante.",
+      "e": "A direção da aceleração da partícula é tangente ao círculo."
+    },
+    "gabarito": "d",
+    "resolucao": "(a) está errada: podem agir várias forças sobre a partícula — a única exigência é que a resultante aponte para o centro.\n\n(b) está errada: mesmo com rapidez constante, existe aceleração, a centrípeta, responsável por mudar a direção da velocidade.\n\n(c) está errada: a aceleração é um vetor que muda de direção continuamente, pois sempre aponta para o centro do círculo, e essa direção muda conforme a partícula se move.\n\n(e) está errada: a direção da aceleração centrípeta é radial, sempre para o centro, e não tangente ao círculo.\n\nComo o módulo da aceleração centrípeta é $a_c=v^2/r$, com $v$ e $r$ constantes, sua magnitude é constante, mesmo a direção mudando o tempo todo — isso torna (d) a alternativa correta.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força normal no ponto mais baixo de um loop — normal dada como múltiplo do peso",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Ao passar pelo ponto mais baixo de um loop circular de uma montanha-russa de raio $r$, a força normal aplicada no passageiro de massa igual a $m$ pelo banco sobre o qual ele está sentado é igual a $1{,}5\\,mg$. Quanto vale a velocidade do passageiro nesse ponto?",
+    "alternativas": {
+      "a": "$\\sqrt{gr}/2$",
+      "b": "$\\sqrt{gr}/3$",
+      "c": "$\\sqrt{gr/2}$",
+      "d": "$\\sqrt{2gr}$",
+      "e": "$2\\sqrt{gr}$"
+    },
+    "gabarito": "c",
+    "resolucao": "No ponto mais baixo do loop, o centro da trajetória circular está acima do passageiro, então a resultante centrípeta aponta para cima. As forças verticais são a normal $N$ (para cima) e o peso $mg$ (para baixo).\n\nPela 2ª lei de Newton na direção radial: $m\\dfrac{v^2}{r}=N-mg$.\n\nComo $N=1{,}5\\,mg=\\dfrac32 mg$: $m\\dfrac{v^2}{r}=\\dfrac32 mg-mg=\\dfrac12 mg \\Rightarrow \\dfrac{v^2}{r}=\\dfrac{g}{2} \\Rightarrow v=\\sqrt{\\dfrac{gr}{2}}$.\n\nA resposta correta é (c).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Comparação qualitativa de impulso — ricochete elástico vs. colisão perfeitamente inelástica",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma bola de borracha e outra de argila de mesma massa são arremessadas contra uma parede com velocidades iniciais iguais. A bola de borracha ricocheteia e a de argila gruda na parede. Qual delas exerce maior impulso sobre a parede?",
+    "alternativas": {
+      "a": "A bola de argila, pois ela fica grudada.",
+      "b": "A bola de borracha, pois ela ricocheteia.",
+      "c": "Elas exercem impulsos iguais, pois possuem massas e velocidades iniciais iguais.",
+      "d": "Não há impulso, pois a parede não se move.",
+      "e": "A bola de argila, pois a parede exerce um impulso maior sobre esta bola."
+    },
+    "gabarito": "b",
+    "resolucao": "Pela 3ª lei de Newton, o impulso que a bola exerce sobre a parede tem o mesmo módulo do impulso que a parede exerce sobre a bola. Basta então comparar a variação de momento linear de cada bola.\n\nAdotando o sentido inicial do movimento (em direção à parede) como positivo, com rapidez $v$: a bola de argila gruda, então $v_i=v$ e $v_f=0$, dando $|\\Delta p|=mv$.\n\nA bola de borracha ricocheteia com a mesma rapidez, então $v_i=v$ e $v_f=-v$, dando $|\\Delta p|=|m(-v)-mv|=2mv$ — o dobro do caso da argila.\n\nComo o impulso sobre a parede é igual, em módulo, ao impulso sobre a bola, a bola de borracha exerce o maior impulso sobre a parede.\n\nA resposta correta é (b).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Pêndulo cônico com dois fios (um vertical, um inclinado) — tensão no fio vertical",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Uma bola de $5{,}0$ kg está suspensa por dois fios ideais presos na haste horizontal que gira em torno de um eixo vertical, como mostra a figura. A bola descreve uma trajetória circular horizontal de raio $0{,}80$ m com rapidez de $2{,}6$ m/s. O comprimento do fio vertical é de $0{,}60$ m e do fio inclinado é de $1{,}0$ m. Qual a tensão aproximada no fio vertical?",
+    "alternativas": {
+      "a": "4,3 N",
+      "b": "8,5 N",
+      "c": "42 N",
+      "d": "25 N",
+      "e": "18 N"
+    },
+    "gabarito": "e",
+    "resolucao": "O fio inclinado ($T_2$, comprimento $1{,}0$ m), o fio vertical ($T_1$, comprimento $0{,}60$ m, paralelo ao eixo) e o raio da trajetória ($r=0{,}80$ m) formam um triângulo retângulo 3-4-5 (escalado por $0{,}2$): o ângulo $\\theta$ do fio inclinado com a horizontal satisfaz $\\tan\\theta=\\dfrac{0{,}60}{0{,}80}=\\dfrac34$.\n\nComo o fio vertical é paralelo ao eixo, sua tensão $T_1$ é inteiramente vertical. Na direção radial (horizontal), só o fio inclinado contribui: $m\\dfrac{v^2}{r}=T_2\\cos\\theta$ (1). Na direção vertical, o equilíbrio dá $T_1+T_2\\,\\text{sen}\\,\\theta-mg=0$, ou seja, $mg-T_1=T_2\\,\\text{sen}\\,\\theta$ (2).\n\nDividindo (2) por (1): $\\dfrac{mg-T_1}{mv^2/r}=\\tan\\theta \\Rightarrow T_1=mg-\\dfrac{mv^2}{r}\\tan\\theta$.\n\nUsando $g=10$ m/s²: $T_1=5{,}0\\times10-\\dfrac{5{,}0\\times2{,}6^2}{0{,}80}\\times\\dfrac34=50-42{,}25\\times0{,}75\\approx50-31{,}7\\approx18{,}3$ N $\\approx18$ N.\n\nA resposta correta é (e).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (22.2) Física I.pdf",
+    "fonte_pagina": 2
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Terceira lei de Newton aplicada aos impulsos numa colisão entre massas diferentes",
+    "dificuldade": "facil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Na colisão entre dois corpos de massas $M$ e $m$, onde $m<M$, como estão relacionadas as magnitudes dos impulsos nos corpos de massas $M$ e $m$?",
+    "alternativas": {
+      "a": "O corpo de massa $m$ recebe um impulso de magnitude maior.",
+      "b": "O corpo de massa $M$ recebe um impulso de magnitude maior.",
+      "c": "Ambos os corpos recebem impulsos de magnitude iguais.",
+      "d": "A resposta depende da razão entre as massas.",
+      "e": "A resposta depende da razão entre os módulos das velocidades dos corpos."
+    },
+    "gabarito": "c",
+    "resolucao": "Pela 3ª lei de Newton, a força que o corpo de massa $M$ exerce sobre o de massa $m$ é, a cada instante, igual em módulo e oposta em sentido à força que o corpo de massa $m$ exerce sobre o de massa $M$: $\\vec F_{Mm}=-\\vec F_{mM}$.\n\nComo os dois corpos ficam em contato durante o mesmo intervalo de tempo $\\Delta t$ (a colisão é o mesmo evento para ambos), o módulo do impulso sobre cada um é $|\\vec F|\\Delta t$ — o mesmo valor para os dois, independentemente das massas ou velocidades envolvidas.\n\nA resposta correta é (c): os impulsos têm magnitudes iguais.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força normal no topo de uma colina e no fundo de uma depressão de mesmo raio",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Um carro de massa igual a $m$ percorre uma estrada com velocidade constante, cujo perfil está representado na figura abaixo, sem jamais perder contato com o solo. As afirmações em seguida se referem às forças que agem sobre ele no topo da colina C e no fundo da depressão D, ambas com o mesmo raio.",
+    "alternativas": {
+      "a": "A força normal aplicada sobre o carro é igual a $mg$ nos dois pontos.",
+      "b": "A força normal aplicada sobre o carro é menor que $mg$ no ponto C.",
+      "c": "A força normal aplicada sobre o carro nos pontos C e D pode ser maior, menor ou igual a $mg$, dependendo da sua velocidade.",
+      "d": "A força normal aplicada sobre o carro é menor que $mg$ no ponto D.",
+      "e": "Nenhuma das alternativas anteriores está correta."
+    },
+    "gabarito": "b",
+    "resolucao": "Em ambos os pontos, a aceleração centrípeta $v^2/r$ aponta para o centro de curvatura local.\n\nNo topo da colina C, o centro fica abaixo do carro, então a resultante centrípeta aponta para baixo: $m\\dfrac{v^2}{r}=mg-N \\Rightarrow N=mg-\\dfrac{mv^2}{r}<mg$. A normal é menor que o peso.\n\nNo fundo da depressão D, o centro fica acima do carro, então a resultante centrípeta aponta para cima: $m\\dfrac{v^2}{r}=N-mg \\Rightarrow N=mg+\\dfrac{mv^2}{r}>mg$. A normal é maior que o peso.\n\nComo em C a normal é sempre menor que $mg$ para qualquer $v>0$, a alternativa (b) é verdadeira; (a), (c) e (d) são falsas.\n\nA resposta correta é (b).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (22.2) Física I.pdf",
+    "fonte_pagina": 3
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Projétil incrustado em bloco — colisão perfeitamente inelástica seguida de frenagem por atrito",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Um projétil de $4{,}0$ g é disparado horizontalmente com uma rapidez de $300$ m/s contra um bloco de madeira de $0{,}8$ kg. O bloco de madeira se encontra em repouso. Após a colisão, o projétil fica incrustado no bloco de madeira. Sabendo que o coeficiente de atrito cinético entre o bloco e o solo é de $0{,}3$, determine a distância aproximada percorrida pelo bloco após a colisão.",
+    "alternativas": {
+      "a": "0,5 m",
+      "b": "0,4 m",
+      "c": "0,3 m",
+      "d": "0,2 m",
+      "e": "0,1 m"
+    },
+    "gabarito": "b",
+    "resolucao": "Na colisão perfeitamente inelástica, o momento linear se conserva: $mv=(m+M)V$, com $m=4{,}0\\times10^{-3}$ kg, $v=300$ m/s e $M=0{,}8$ kg.\n\n$V=\\dfrac{mv}{m+M}=\\dfrac{0{,}004\\times300}{0{,}804}=\\dfrac{1{,}2}{0{,}804}\\approx1{,}5$ m/s.\n\nApós a colisão, o atrito cinético desacelera o conjunto: $a=\\mu_c g=0{,}3\\times10=3{,}0$ m/s² (desaceleração).\n\nUsando Torricelli, $v_f^2=V^2-2ad$, com $v_f=0$: $d=\\dfrac{V^2}{2a}=\\dfrac{1{,}5^2}{2\\times3{,}0}=\\dfrac{2{,}25}{6{,}0}\\approx0{,}375$ m $\\approx0{,}4$ m.\n\nA resposta correta é (b).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Velocidade máxima numa curva plana com atrito estático fornecendo a força centrípeta",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Um carro percorre uma curva de raio $r$ não inclinada. O coeficiente de atrito estático entre os pneus e o solo é $\\mu_e$. Qual é a máxima velocidade com que o carro poderá fazer a curva sem derrapar?",
+    "alternativas": {
+      "a": "$\\mu\\sqrt{rg}$",
+      "b": "$2\\mu\\sqrt{rg}$",
+      "c": "$\\sqrt{\\mu rg}$",
+      "d": "$2\\sqrt{\\mu rg}$",
+      "e": "$\\sqrt{rg/\\mu}$"
+    },
+    "gabarito": "c",
+    "resolucao": "O atrito estático entre pneus e pista é a única força horizontal disponível para fornecer a resultante centrípeta: $m\\dfrac{v^2}{r}=f_e$, com $f_e\\leq f_{e,\\text{máx}}=\\mu_e N$.\n\nComo o carro está numa pista plana, a normal equilibra o peso: $N=mg$.\n\nA velocidade máxima ocorre na iminência do derrapamento, quando $f_e=\\mu_e mg$: $m\\dfrac{v_{max}^2}{r}=\\mu_e mg \\Rightarrow v_{max}=\\sqrt{\\mu_e rg}$.\n\nA resposta correta é (c).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Cinemática em Duas Dimensões",
+    "subtopico": "Movimento circular com aceleração tangencial constante — instante em que a_t iguala a_centrípeta",
+    "dificuldade": "medio",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Em $t=0$, um objeto inicia um movimento circular de raio igual a $8$ m a partir do repouso com aceleração tangencial constante de $2$ m/s². Em que instante o módulo da sua aceleração tangencial é igual ao módulo da sua aceleração centrípeta?",
+    "alternativas": {
+      "a": "0,5 s",
+      "b": "4 s",
+      "c": "0,4 s",
+      "d": "0,25 s",
+      "e": "2 s"
+    },
+    "gabarito": "e",
+    "resolucao": "Como a aceleração tangencial $a_t$ é constante e a partícula parte do repouso, sua rapidez no instante $t$ é $v=a_t t$.\n\nA aceleração centrípeta é $a_c=\\dfrac{v^2}{r}=\\dfrac{a_t^2t^2}{r}$.\n\nIgualando $a_c=a_t$: $\\dfrac{a_t^2t^2}{r}=a_t \\Rightarrow t^2=\\dfrac{r}{a_t} \\Rightarrow t=\\sqrt{\\dfrac{r}{a_t}}=\\sqrt{\\dfrac{8}{2}}=\\sqrt{4}=2$ s.\n\nA resposta correta é (e).",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão unidimensional interpretada por gráfico posição-tempo — velocidade final a partir da inclinação",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (2º sem.)",
+    "ano": 2022,
+    "enunciado": "Duas bolas de mesma massa sofrem uma colisão. A colisão é unidimensional. A bola 1 tem rapidez inicial $v_1=2{,}67$ m/s e colide com a bola 2 em repouso. O gráfico da posição em função do tempo da bola 2 é mostrado abaixo. A seta azul marca o instante da colisão ($t=1{,}5$ s). Qual das opções representa corretamente a posição em função do tempo para a bola 1?",
+    "alternativas": {
+      "a": "Reta única, com a mesma inclinação antes e depois da colisão (nenhuma mudança de velocidade em t = 1,5 s)",
+      "b": "Reta com inclinação positiva menor após a colisão (a bola 1 continua para frente, porém mais devagar)",
+      "c": "Reta com inclinação nula após a colisão (a bola 1 para completamente em t = 1,5 s)",
+      "d": "Reta com inclinação negativa após a colisão (a bola 1 inverte o sentido do movimento)",
+      "e": "Curva (não uma reta) após a colisão, com inclinação crescente (velocidade não constante)"
+    },
+    "gabarito": "c",
+    "resolucao": "Como as massas são iguais, a conservação do momento linear dá $v_1=v_1'+v_2' \\Rightarrow v_1'+v_2'=2{,}67$ m/s.\n\nDo gráfico da bola 2: antes da colisão ela está parada ($x=4$ m constante); depois, sua posição varia de $4$ m para $8$ m em $\\Delta t=3{,}0-1{,}5=1{,}5$ s, ou seja, $v_2'=\\dfrac{\\Delta x}{\\Delta t}=\\dfrac{4}{1{,}5}\\approx2{,}67$ m/s.\n\nComo $v_1'+v_2'=2{,}67$ m/s e $v_2'\\approx2{,}67$ m/s, conclui-se que $v_1'\\approx0$: a bola 1 para completamente após a colisão.\n\nNo gráfico $x(t)$ da bola 1, isso corresponde a uma reta com inclinação positiva antes da colisão (ela se aproxima com velocidade constante) seguida de uma reta horizontal depois de $t=1{,}5$ s (posição constante, repouso).\n\nA resposta correta é (c).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": ["a", "b", "c", "d", "e"],
+    "fonte_arquivo": "P2 (22.2) Física I.pdf",
+    "fonte_pagina": 5
+  }
+]

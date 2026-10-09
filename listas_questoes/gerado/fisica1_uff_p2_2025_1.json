@@ -1,0 +1,280 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Sistema de três blocos e polia em plano inclinado composto — razão de tensões",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Considere um sistema composto por três blocos sobre um plano inclinado, conectados por fios ideais (sem massa e inextensíveis), conforme a figura abaixo. A roldana também é ideal. Considere que o atrito entre os blocos e a superfície é desprezível.\n\nSabendo que as massas dos blocos são dadas por $m_1 = 20{,}0$ kg, $m_2 = 40{,}0$ kg e $m_3 = 60{,}0$ kg, o valor que melhor representa a razão entre as tensões dos fios 1 e 2 é:",
+    "alternativas": {
+      "a": "$\\dfrac{1}{3}$",
+      "b": "$\\dfrac{1}{2}$",
+      "c": "$\\dfrac{2}{3}$",
+      "d": "$1$",
+      "e": "$\\dfrac{3}{2}$"
+    },
+    "gabarito": "a",
+    "resolucao": "O sistema tem $m_1$ (mais baixo) e $m_2$ ligados pelo fio 1, ambos sobre o lado de $30°$; $m_2$ liga-se por cima da roldana, pelo fio 2, a $m_3$, sobre o lado de $60°$. Como o lado de $60°$ puxa mais forte (massa maior projetada num ângulo maior), o sistema acelera com $m_3$ descendo e $m_1,m_2$ subindo o lado de $30°$.\n\nTratando o sistema todo (massa total $m_1+m_2+m_3=120$ kg) como um bloco só preso por um fio ideal sobre uma roldana ideal:\n\n$m_3 g\\,\\text{sen}\\,60° - (m_1+m_2) g\\,\\text{sen}\\,30° = (m_1+m_2+m_3)\\,a$\n\n$60(9{,}8)(0{,}866) - 60(9{,}8)(0{,}5) = 120\\,a \\;\\Rightarrow\\; 509{,}2 - 294{,}0 = 120\\,a \\;\\Rightarrow\\; a \\approx 1{,}79\\ \\text{m/s}^2$\n\nA tensão do fio 1 (entre $m_1$ e $m_2$) é obtida isolando $m_1$, que sobe o plano:\n\n$T_1 - m_1 g\\,\\text{sen}\\,30° = m_1 a \\;\\Rightarrow\\; T_1 = 20(1{,}79 + 4{,}9) \\approx 134\\ \\text{N}$\n\nA tensão do fio 2 (entre a roldana e $m_3$) é obtida isolando $m_3$, que desce o plano:\n\n$m_3 g\\,\\text{sen}\\,60° - T_2 = m_3 a \\;\\Rightarrow\\; T_2 = 60(8{,}49 - 1{,}79) \\approx 402\\ \\text{N}$\n\nA razão $T_1/T_2 = 134/402 \\approx 1/3$.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2025-1-p2/q01.png",
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Coeficiente de atrito cinético em plano inclinado com bloco em velocidade constante",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Um bloco de massa $m = 4{,}0$ kg desliza sobre um plano de inclinação igual a $35°$, descendo com velocidade constante quando sujeito a uma força de $16$ N aplicada paralela ao plano inclinado, apontando plano acima. Qual é o coeficiente de atrito cinético, $\\mu_c$, entre a superfície e o bloco?",
+    "alternativas": {
+      "a": "$0{,}20$",
+      "b": "$0{,}23$",
+      "c": "$0{,}26$",
+      "d": "$0{,}33$",
+      "e": "$0{,}41$"
+    },
+    "gabarito": "a",
+    "resolucao": "Como o bloco desce a velocidade constante, a resultante das forças ao longo do plano é nula. Descendo, a componente do peso ao longo do plano ($mg\\,\\text{sen}\\,\\theta$, plano abaixo) é equilibrada pela força aplicada ($F=16$ N, plano acima) e pelo atrito cinético ($f_c=\\mu_c N$, que se opõe ao movimento, logo também plano acima):\n\n$mg\\,\\text{sen}\\,\\theta = F + \\mu_c\\,mg\\,\\cos\\theta$\n\n$\\mu_c = \\dfrac{mg\\,\\text{sen}\\,\\theta - F}{mg\\,\\cos\\theta} = \\dfrac{(4{,}0)(9{,}8)(0{,}574) - 16}{(4{,}0)(9{,}8)(0{,}819)} = \\dfrac{22{,}5 - 16}{32{,}1} \\approx 0{,}20$",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Independência da velocidade final em relação à direção de lançamento — conservação de energia",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Uma pessoa lança uma pedra de uma ponte de quatro diferentes formas:\n\nI. Verticalmente para cima;\n\nII. Verticalmente para baixo;\n\nIII. A um ângulo de $45°$ com a horizontal;\n\nIV. Horizontalmente para frente.\n\nConsiderando que a velocidade com a qual a pedra sai da mão da pessoa é sempre a mesma, em qual dos casos a pedra atinge o lago situado abaixo da ponte com a maior velocidade?",
+    "alternativas": {
+      "a": "I",
+      "b": "II",
+      "c": "III",
+      "d": "IV",
+      "e": "A velocidade será a mesma em todos os casos."
+    },
+    "gabarito": "e",
+    "resolucao": "Desprezando a resistência do ar, a única força que realiza trabalho sobre a pedra é a gravidade, que é conservativa. Pelo teorema trabalho-energia (ou conservação da energia mecânica), a variação de energia cinética entre a saída da mão e a chegada ao lago depende apenas da queda de altura $h$ (a mesma em todos os casos, já que a pedra sai do mesmo ponto da ponte e chega ao mesmo nível do lago), e não da direção inicial da velocidade:\n\n$\\dfrac12 m v_f^2 = \\dfrac12 m v_0^2 + mgh \\;\\Rightarrow\\; v_f = \\sqrt{v_0^2 + 2gh}$\n\nComo $v_0$ e $h$ são os mesmos nos quatro casos, $v_f$ também é o mesmo — a velocidade de chegada não depende da direção do lançamento.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica seguida de compressão de mola — velocidade inicial do projétil",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Um projétil de massa $m = 8{,}0$ g é disparado e permanece alojado em um bloco de massa $M = 4{,}0$ kg, inicialmente em repouso. O bloco então move-se sobre uma superfície sem atrito e comprime uma mola de constante elástica $k = 2500$ N/m por uma distância de $3{,}7$ cm, até parar, conforme ilustrado na figura abaixo.\n\nA velocidade inicial do projétil é, aproximadamente:",
+    "alternativas": {
+      "a": "$4{,}6 \\times 10^{2}$ m/s",
+      "b": "$4{,}4 \\times 10^{2}$ m/s",
+      "c": "$4{,}8 \\times 10^{2}$ m/s",
+      "d": "$5{,}0 \\times 10^{2}$ m/s",
+      "e": "$5{,}2 \\times 10^{2}$ m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "Primeiro, a colisão perfeitamente inelástica (projétil se aloja no bloco) conserva o momento linear:\n\n$m v_0 = (m+M) v_1 \\;\\Rightarrow\\; v_1 = \\dfrac{m\\,v_0}{m+M}$\n\nDepois, o conjunto (sem atrito) converte toda a sua energia cinética em energia potencial elástica ao comprimir a mola até parar:\n\n$\\dfrac12 (m+M) v_1^2 = \\dfrac12 k x^2 \\;\\Rightarrow\\; v_1 = x\\sqrt{\\dfrac{k}{m+M}}$\n\nCombinando as duas equações para isolar $v_0$:\n\n$v_0 = \\dfrac{(m+M)}{m}\\,x\\sqrt{\\dfrac{k}{m+M}} = \\dfrac{x}{m}\\sqrt{k(m+M)}$\n\nCom $m=0{,}0080$ kg, $M=4{,}0$ kg, $x=0{,}037$ m, $k=2500$ N/m:\n\n$v_0 = \\dfrac{0{,}037}{0{,}0080}\\sqrt{2500 \\times 4{,}008} \\approx 4{,}625 \\times 100{,}1 \\approx 4{,}6 \\times 10^{2}\\ \\text{m/s}$",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2025-1-p2/q04.png",
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Variação de energia cinética em lançamento oblíquo via conservação de energia mecânica",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Uma bola de massa igual a $40{,}0$ g é lançada do alto de um edifício (ponto A) de $30$ metros de altura sob um ângulo desconhecido. Conforme ilustrado na figura abaixo, a bola atinge a altura máxima $10$ metros acima do topo do edifício, até atingir o solo no ponto B. Desprezando a resistência do ar, qual é a diferença entre a energia cinética da bola nos pontos B e A, isto é, $K_B - K_A$?",
+    "alternativas": {
+      "a": "$0$ J",
+      "b": "$-12$ J",
+      "c": "$12$ J",
+      "d": "$-20$ J",
+      "e": "$20$ J"
+    },
+    "gabarito": "c",
+    "resolucao": "Como a resistência do ar é desprezada, a energia mecânica se conserva do ponto A ao ponto B, independentemente do que acontece entre eles (inclusive da altura máxima extra de $10$ m, que não entra nesta conta):\n\n$K_A + U_A = K_B + U_B \\;\\Rightarrow\\; K_B - K_A = U_A - U_B = mg\\,(h_A - h_B)$\n\nTomando o solo (ponto B) como referência de altura zero, $h_A = 30$ m:\n\n$K_B - K_A = (0{,}0400)(9{,}8)(30) \\approx 11{,}8 \\approx 12\\ \\text{J}$",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2025-1-p2/q05.png",
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Velocidade do centro de massa de dois blocos com velocidades opostas",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Dois blocos A e B de massas $m_A = 4{,}0$ kg e $m_B = 8{,}0$ kg movem-se em sentidos opostos sobre uma reta com velocidades de módulos iguais a $v_A = 2{,}0$ m/s e $v_B = 3{,}0$ m/s, respectivamente. O centro de massa do sistema formado pelos dois blocos move-se com velocidade aproximadamente:",
+    "alternativas": {
+      "a": "$1{,}3$ m/s no sentido de $v_A$",
+      "b": "$1{,}3$ m/s no sentido de $v_B$",
+      "c": "$2{,}7$ m/s no sentido de $v_A$",
+      "d": "$1{,}0$ m/s no sentido de $v_B$",
+      "e": "$5{,}0$ m/s no sentido de $v_A$"
+    },
+    "gabarito": "b",
+    "resolucao": "A velocidade do centro de massa é $v_{cm} = \\dfrac{m_A v_A - m_B v_B}{m_A+m_B}$, tomando o sentido de $v_A$ como positivo (já que $v_B$ é oposto):\n\n$v_{cm} = \\dfrac{(4{,}0)(2{,}0) - (8{,}0)(3{,}0)}{4{,}0+8{,}0} = \\dfrac{8{,}0-24{,}0}{12{,}0} = \\dfrac{-16{,}0}{12{,}0} \\approx -1{,}3\\ \\text{m/s}$\n\nO sinal negativo indica que o centro de massa se move no sentido de $v_B$ (o sentido oposto ao adotado como positivo), com módulo $1{,}3$ m/s.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Razão entre momentos lineares de duas armas de mesma velocidade e massas diferentes",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Balas são disparadas com mesma velocidade de duas armas diferentes. A bala disparada pela arma A tem o dobro da massa da bala disparada pela arma B. Supondo que não haja nenhuma força externa agindo sobre o sistema, determine a razão entre o momento linear adquirido pela arma A e o momento linear adquirido pela arma B.",
+    "alternativas": {
+      "a": "$\\dfrac{1}{2}$",
+      "b": "$\\dfrac{2}{3}$",
+      "c": "$\\dfrac{3}{2}$",
+      "d": "$2$",
+      "e": "$3$"
+    },
+    "gabarito": "d",
+    "resolucao": "Para cada arma, o sistema arma+bala parte do repouso e não sofre força externa, logo o momento linear total se conserva em zero: o momento adquirido pela arma tem o mesmo módulo que o momento adquirido pela bala (sentidos opostos). Como as duas balas saem com a mesma velocidade $v$:\n\n$p_A = m_{bala,A}\\,v = 2\\,m_{bala,B}\\,v = 2\\,p_B$\n\nLogo $\\dfrac{p_A}{p_B} = 2$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Bloco preso a mola vertical via polia — velocidade após queda livre parcial",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Um bloco de massa $m = 20{,}0$ kg está preso a uma mola de constante elástica $k = 380$ N/m que passa através de uma polia sem atrito, conforme ilustrado na figura abaixo.\n\nO bloco é liberado a partir do repouso quando a mola não está distendida. Qual é a velocidade do bloco após percorrer uma distância vertical de $0{,}40$ m?",
+    "alternativas": {
+      "a": "$2{,}2$ m/s",
+      "b": "$2{,}5$ m/s",
+      "c": "$1{,}9$ m/s",
+      "d": "$1{,}7$ m/s",
+      "e": "$3{,}6$ m/s"
+    },
+    "gabarito": "a",
+    "resolucao": "Pela conservação de energia mecânica (a polia é ideal, sem atrito), a energia potencial gravitacional perdida vira energia cinética mais energia potencial elástica armazenada na mola:\n\n$mgd = \\dfrac12 k d^2 + \\dfrac12 m v^2 \\;\\Rightarrow\\; v = \\sqrt{2gd - \\dfrac{k}{m}d^2}$\n\n$v = \\sqrt{2(9{,}8)(0{,}40) - \\dfrac{380}{20{,}0}(0{,}40)^2} = \\sqrt{7{,}84 - 3{,}04} = \\sqrt{4{,}80} \\approx 2{,}2\\ \\text{m/s}$",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2025-1-p2/q08.png",
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Força e Movimento",
+    "subtopico": "Terceira Lei de Newton — força de contato entre dois blocos empurrados",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Dois blocos de massas $M = 4{,}0$ kg e $m = 2{,}0$ kg são acelerados por uma força horizontal de $12$ N que empurra o bloco maior em direção ao menor sobre uma superfície sem atrito, conforme ilustrado na figura abaixo.\n\nQuais são o módulo e a direção força que o bloco menor exerce sobre o bloco maior?",
+    "alternativas": {
+      "a": "$4$ N, horizontal para a esquerda",
+      "b": "$12$ N, horizontal para a esquerda",
+      "c": "$0$ N",
+      "d": "$4$ N, horizontal para a direita",
+      "e": "$8$ N, horizontal para a direita"
+    },
+    "gabarito": "a",
+    "resolucao": "Tratando os dois blocos juntos como um sistema de massa total $M+m=6{,}0$ kg empurrado por $F=12$ N:\n\n$a = \\dfrac{F}{M+m} = \\dfrac{12}{6{,}0} = 2{,}0\\ \\text{m/s}^2$\n\nIsolando o bloco menor (que só recebe força de contato do bloco maior, na direção do movimento): $F_{contato} = m\\,a = (2{,}0)(2{,}0) = 4{,}0$ N (para a direita, sentido do empurrão).\n\nPela Terceira Lei de Newton, a força que o bloco menor exerce de volta sobre o bloco maior tem o mesmo módulo, $4{,}0$ N, mas sentido oposto: para a esquerda (freando o bloco maior).",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "imagem_url": "https://xgaqkmgdoocwlklvdapw.supabase.co/storage/v1/object/public/questoes/uff-fis1/2025-1-p2/q09.png",
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Comparação de energias cinéticas a partir de vetores velocidade",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Uma partícula movendo-se num plano pode ter uma das seguintes velocidades em metros por segundo: (a) $\\vec v = 4\\hat\\imath + 3\\hat\\jmath$; (b) $\\vec v = -4\\hat\\imath + 3\\hat\\jmath$; (c) $\\vec v = -3\\hat\\imath + 4\\hat\\jmath$; (d) $\\vec v = 6\\hat\\imath$; (e) $v=8$ fazendo $45°$ com o eixo x. Ordene em ordem crescente as energias cinéticas da partícula.",
+    "alternativas": {
+      "a": "$K_b < K_a = K_c < K_d < K_e$",
+      "b": "$K_a = K_b = K_c < K_e < K_d$",
+      "c": "$K_c < K_b < K_a < K_e < K_d$",
+      "d": "$K_a = K_b < K_c < K_d < K_e$",
+      "e": "$K_a = K_b = K_c < K_d < K_e$"
+    },
+    "gabarito": "e",
+    "resolucao": "A energia cinética depende só do módulo da velocidade: $K = \\tfrac12 m v^2$. Calculando os módulos:\n\n$|\\vec v_a| = \\sqrt{4^2+3^2} = 5$; $|\\vec v_b| = \\sqrt{(-4)^2+3^2} = 5$; $|\\vec v_c| = \\sqrt{(-3)^2+4^2} = 5$; $|\\vec v_d| = 6$; $|\\vec v_e| = 8$.\n\nComo $v_a=v_b=v_c=5 < v_d=6 < v_e=8$, segue que $K_a=K_b=K_c < K_d < K_e$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Velocidade em fração da altura máxima de lançamento vertical",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Uma partícula de massa $m$ é arremessada verticalmente com velocidade inicial $v_0$ para cima. Quando a altura dela é $1/3$ da altura máxima atingida, o módulo de sua velocidade $v$ será",
+    "alternativas": {
+      "a": "$v_0/3$",
+      "b": "$2v_0/3$",
+      "c": "$v_0\\sqrt{2/3}$",
+      "d": "$v_0\\sqrt{3/4}$",
+      "e": "$v_0$"
+    },
+    "gabarito": "c",
+    "resolucao": "Na altura máxima $H$, a velocidade é nula: $0 = v_0^2 - 2gH \\Rightarrow H = \\dfrac{v_0^2}{2g}$.\n\nNa altura $h = H/3$, pela mesma equação de Torricelli:\n\n$v^2 = v_0^2 - 2gh = v_0^2 - 2g\\cdot\\dfrac{v_0^2}{6g} = v_0^2 - \\dfrac{v_0^2}{3} = \\dfrac{2}{3}v_0^2$\n\nLogo $v = v_0\\sqrt{2/3}$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Arbitrariedade do referencial de energia potencial — sinal negativo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "É possível que um sistema tenha energia potencial negativa?",
+    "alternativas": {
+      "a": "Sim, desde que a energia mecânica seja positiva.",
+      "b": "Sim, desde que a força não seja conservativa.",
+      "c": "Não, porque a energia mecânica tem que ser positiva.",
+      "d": "Sim, porque a escolha do zero da energia potencial é arbitrária.",
+      "e": "Não, porque uma tal situação não teria significado físico."
+    },
+    "gabarito": "d",
+    "resolucao": "A energia potencial não tem um valor absoluto: apenas diferenças de energia potencial têm significado físico direto (relacionadas ao trabalho de forças conservativas). O ponto onde $U=0$ é escolhido por conveniência, de forma arbitrária. Dependendo dessa escolha, a energia potencial em outros pontos pode perfeitamente ser negativa, sem que isso viole nenhum princípio físico.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Rapidez conservada vs. velocidade vetorial ao retornar a um ponto",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2025,
+    "enunciado": "Uma partícula está em movimento de forma tal que a sua energia mecânica seja conservada. A partícula tem velocidade $v$ quando está no ponto O. Num instante posterior a partícula passa novamente pelo ponto O. É verdadeiro afirmar que:",
+    "alternativas": {
+      "a": "A rapidez da partícula quando retorna ao ponto O será maior que o módulo de $v$.",
+      "b": "A rapidez da partícula quando retorna ao ponto O será igual ao módulo de $v$.",
+      "c": "A rapidez da partícula quando retorna ao ponto O será menor que o módulo de $v$.",
+      "d": "A velocidade da partícula quando retorna ao ponto O será igual a $v$.",
+      "e": "A velocidade da partícula quando retorna ao ponto O será igual a $v$ e a variação da energia potencial será zero."
+    },
+    "gabarito": "b",
+    "resolucao": "Como a energia mecânica se conserva e a partícula está no mesmo ponto O (logo, com a mesma energia potencial $U$ que antes), a energia cinética também deve ser a mesma de antes: $K = E - U$ não muda. Como $K=\\tfrac12 m v^2$ depende só do módulo da velocidade, a rapidez ao retornar é igual à rapidez anterior. Isso não implica, porém, que o vetor velocidade seja o mesmo — a partícula pode passar por O numa direção diferente (por exemplo, descendo em vez de subindo), então a velocidade vetorial não precisa ser igual a $v$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  }
+]

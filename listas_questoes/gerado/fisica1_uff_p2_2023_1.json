@@ -1,0 +1,201 @@
+[
+  {
+    "materia": "Física I",
+    "topico": "A Terceira Lei de Newton",
+    "subtopico": "Pares ação-reação entre dois corpos de massas diferentes durante um empurrão mútuo",
+    "dificuldade": "facil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Na figura abaixo, o estudante \"a\" tem uma massa de 90 kg e o estudante \"b\" tem uma massa de 60 kg. Os estudantes estão sentados de frente um para o outro em cadeiras de escritório idênticas. O estudante \"a\" coloca os seus pés nos joelhos do estudante \"b\", conforme mostrado. O estudante \"a\" subitamente empurra seu colega com os pés, fazendo com que ambas as cadeiras se movam. Durante o impulso e enquanto os estudantes ainda estão em contato com o outro:",
+    "alternativas": {
+      "a": "Nenhum estudante exerce uma força no outro.",
+      "b": "O estudante \"a\" exerce uma força em \"b\", mas \"b\" não exerce nenhuma força em \"a\".",
+      "c": "Cada estudante exerce uma força no outro, mas \"b\" exerce a força maior.",
+      "d": "Cada estudante exerce uma força no outro, mas \"a\" exerce a força maior.",
+      "e": "Cada estudante exerce a mesma força no outro."
+    },
+    "gabarito": "e",
+    "resolucao": "Pela Terceira Lei de Newton, as forças de interação entre dois corpos formam sempre um par ação-reação: têm o mesmo módulo, mesma direção e sentidos opostos, atuando em corpos diferentes — isso vale independentemente das massas dos estudantes ou das acelerações que cada um sofre.\n\nAssim, enquanto os pés de \"a\" empurram \"b\", \"b\" empurra \"a\" de volta com uma força de mesmo módulo. A diferença de massa só afeta a aceleração (e consequentemente a velocidade) que cada cadeira ganha — o estudante mais leve acelera mais —, mas não muda a intensidade da força trocada entre eles.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (23.1) Física I.pdf",
+    "fonte_pagina": 2
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento Retilíneo",
+    "subtopico": "Tração na corda entre dois blocos puxados juntos com atrito cinético",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Dois blocos de mesmo material e massas 2,0 kg e 3,0 kg são ligados por meio de uma corda de massa desprezível e são puxados sobre uma superfície com atrito cinético de coeficiente $\\mu_c=0{,}5$, por meio de uma força igual a F=50,0 N. Considere a aceleração da gravidade igual a 9,8 m/s². A tração na corda vale:",
+    "alternativas": {
+      "a": "10,0 N",
+      "b": "20,0 N",
+      "c": "25,0 N",
+      "d": "15,0 N",
+      "e": "50,0 N"
+    },
+    "gabarito": "b",
+    "resolucao": "Como os blocos A (2,0 kg) e B (3,0 kg) são do mesmo material e estão sobre a mesma superfície, ambos têm o mesmo coeficiente de atrito cinético $\\mu_c=0{,}5$. A força $F$ é aplicada em B, que puxa A por meio da corda.\n\nTratando o conjunto A+B (massa total $m=2{,}0+3{,}0=5{,}0$ kg) como um único sistema, a força de atrito total é $f_{at}=\\mu_c\\,m\\,g=0{,}5\\times5{,}0\\times9{,}8=24{,}5$ N. A aceleração do conjunto é $a=\\dfrac{F-f_{at}}{m}=\\dfrac{50{,}0-24{,}5}{5{,}0}=5{,}1$ m/s².\n\nIsolando o bloco A, que é puxado apenas pela tração $T$ da corda e sofre seu próprio atrito: $T-\\mu_c\\,m_A\\,g=m_A\\,a$, logo $T=m_A(a+\\mu_c g)=2{,}0\\times(5{,}1+0{,}5\\times9{,}8)=2{,}0\\times10{,}0=20{,}0$ N.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (23.1) Física I.pdf",
+    "fonte_pagina": 2
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Razão entre força normal e peso no topo de um loop vertical, com velocidade dobrada em relação à crítica",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Um vagão de montanha russa passa pelo topo de um loop vertical e circular com velocidade duas vezes maior do que a velocidade crítica. A razão entre a força normal e a força gravitacional vale?",
+    "alternativas": {
+      "a": "1",
+      "b": "2",
+      "c": "3",
+      "d": "4",
+      "e": "5"
+    },
+    "gabarito": "c",
+    "resolucao": "A velocidade crítica no topo de um loop vertical é aquela para a qual a força normal se anula e todo o peso faz o papel de força centrípeta: $mg=\\dfrac{mv_c^2}{R}\\Rightarrow v_c^2=gR$.\n\nSe o vagão passa pelo topo com $v=2v_c$, então $v^2=4v_c^2=4gR$.\n\nNo topo, a segunda lei de Newton na direção centrípeta (radial, apontando para baixo) dá $N+mg=\\dfrac{mv^2}{R}\\Rightarrow N=\\dfrac{mv^2}{R}-mg=4mg-mg=3mg$.\n\nLogo, $\\dfrac{N}{mg}=3$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Velocidade máxima numa curva bancada sem atrito",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "A curva de uma auto-estrada com raio de 100 m, tem o piso inclinado em um ângulo de 30 graus. O valor aproximado da velocidade que um carro de massa 1500 kg, sem a ajuda do atrito, pode fazer essa curva sem derrapar vale aproximadamente:",
+    "alternativas": {
+      "a": "100 km/h",
+      "b": "102 km/h",
+      "c": "64 km/h",
+      "d": "86 km/h",
+      "e": "75 km/h"
+    },
+    "gabarito": "d",
+    "resolucao": "Numa curva bancada e sem atrito, a componente horizontal da força normal é quem fornece a força centrípeta. Isso leva à condição clássica $\\tan\\theta=\\dfrac{v^2}{gR}$.\n\nCom $\\theta=30°$, $R=100$ m e $g=10$ m/s²: $v^2=gR\\tan30°=10\\times100\\times0{,}577\\approx577$ m²/s² $\\Rightarrow v\\approx24{,}0$ m/s.\n\nConvertendo para km/h: $v\\approx24{,}0\\times3{,}6\\approx86{,}5$ km/h.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Dinâmica do Movimento no Plano",
+    "subtopico": "Força resultante em movimento circular quando aceleração centrípeta iguala a tangencial",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Um modelo novo de carro de massa $1{,}5\\times10^3$ kg é testado em uma pista circular. Se o carro tem uma aceleração tangencial constante e igual a $1{,}5$ m/s², a força resultante que atua sobre o carro no instante em que o módulo de sua aceleração centrípeta se iguala ao módulo de sua aceleração tangencial vale aproximadamente:",
+    "alternativas": {
+      "a": "$3{,}18\\times10^3$ N",
+      "b": "$4{,}2\\times10^3$ N",
+      "c": "$4{,}5\\times10^3$ N",
+      "d": "$5{,}0\\times10^3$ N",
+      "e": "$8{,}0\\times10^3$ N"
+    },
+    "gabarito": "a",
+    "resolucao": "No instante pedido, a aceleração centrípeta se iguala à tangencial: $a_c=a_t=1{,}5$ m/s². Como essas duas componentes são perpendiculares entre si, a aceleração resultante tem módulo $a=\\sqrt{a_t^2+a_c^2}=\\sqrt{2}\\,a_t=\\sqrt{2}\\times1{,}5\\approx2{,}12$ m/s².\n\nA força resultante é $F=ma=1{,}5\\times10^3\\times2{,}12\\approx3{,}18\\times10^3$ N.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Colisão perfeitamente inelástica com gráfico força×tempo — teorema do impulso",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Dois blocos de massas M = 0,50 kg e m = 0,25 kg deslizam sem atrito sobre uma reta horizontal. Inicialmente, o bloco de massa M se move no sentido positivo com rapidez de 4,0 m/s e o bloco de massa m que se move no sentido negativo com rapidez igual a 2,0 m/s. Eles colidem e, após a colisão, ficam colados. O gráfico abaixo mostra a variação com o tempo do módulo da força exercida por um bloco sobre o outro durante a colisão. Qual é o valor de F no gráfico?",
+    "alternativas": {
+      "a": "20 N",
+      "b": "$1{,}0\\times10^3$ N",
+      "c": "$2{,}0\\times10^3$ N",
+      "d": "$3{,}0\\times10^3$ N",
+      "e": "$5{,}0\\times10^3$ N"
+    },
+    "gabarito": "b",
+    "resolucao": "Primeiro, a colisão é perfeitamente inelástica (os blocos ficam colados), então a velocidade final comum $v_f$ vem da conservação do momento linear: $Mv_M+mv_m=(M+m)v_f$, com $v_M=+4{,}0$ m/s e $v_m=-2{,}0$ m/s: $v_f=\\dfrac{0{,}50\\times4{,}0+0{,}25\\times(-2{,}0)}{0{,}75}=\\dfrac{2{,}0-0{,}5}{0{,}75}=2{,}0$ m/s.\n\nO impulso sofrido pelo bloco $m$ é $J=m(v_f-v_m)=0{,}25\\times(2{,}0-(-2{,}0))=1{,}0$ kg·m/s.\n\nPelo gráfico, o impulso é a área do triângulo força×tempo: base total $2{,}0$ ms $=2{,}0\\times10^{-3}$ s, altura $F$, então $J=\\dfrac12\\times(2{,}0\\times10^{-3})\\times F$.\n\nIgualando: $1{,}0=1{,}0\\times10^{-3}\\,F\\Rightarrow F=1{,}0\\times10^3$ N.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (23.1) Física I.pdf",
+    "fonte_pagina": 3
+  },
+  {
+    "materia": "Física I",
+    "topico": "Impulso e Momento Linear",
+    "subtopico": "Conservação de momento linear num sistema pessoa-carrinho-bola com colisão interna contra anteparo",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Uma pessoa está sobre um carrinho que está inicialmente parado. O atrito de rolamento com o solo é desprezível. Ela joga uma bola sobre o anteparo rigidamente montado no carrinho. Depois que a bola ricocheteia no anteparo, como mostrado na figura abaixo, o carrinho",
+    "alternativas": {
+      "a": "passa a se mover para a direita.",
+      "b": "permanece parado.",
+      "c": "passa a se mover para a esquerda.",
+      "d": "é impossível afirmar o que acontece sem saber as massas do carrinho e da bola.",
+      "e": "é impossível afirmar o que acontece sem saber se a colisão é elástica."
+    },
+    "gabarito": "b",
+    "resolucao": "O atrito de rolamento é desprezível, então o sistema pessoa+carrinho+bola não sofre nenhuma força horizontal externa: o momento linear total do sistema é conservado e permanece igual a zero (estava tudo em repouso). O anteparo contra o qual a bola ricocheteia está rigidamente preso ao carrinho, ou seja, faz parte do mesmo sistema — a colisão da bola com ele é interna ao sistema, não uma força externa.\n\nComo mostrado na figura, a bola acaba em repouso sobre o carrinho ao final do processo. Nesse instante final, pessoa+carrinho+bola formam um único corpo com alguma velocidade comum $v$; para que o momento total continue nulo, $v$ precisa ser zero.\n\nLogo, apesar de o carrinho poder oscilar durante o lançamento e o ricocheteio da bola, ao final ele permanece parado.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (23.1) Física I.pdf",
+    "fonte_pagina": 4
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Altura máxima em loop vertical (vale + colina) para manter contato com o trilho — conservação de energia",
+    "dificuldade": "dificil",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Um vagão de montanha russa se move sobre um trilho (atrito desprezível), como ilustra a figura abaixo. O vagão parte do repouso de uma altura h acima do solo. O trecho do trilho em vale e o trecho em forma de colina são, ambos, arcos circulares de raio R. Qual é a altura máxima hmax de partida para a qual o vagão não perde contato com o trilho no topo da colina?",
+    "alternativas": {
+      "a": "R",
+      "b": "2R",
+      "c": "3R/2",
+      "d": "5R/2",
+      "e": "3R"
+    },
+    "gabarito": "d",
+    "resolucao": "Tomando o nível do solo (mesma altura do início e do fim do trecho plano) como referência de altura zero, o topo da colina — arco de raio $R$ apoiado no solo — fica a uma altura $2R$ acima do solo.\n\nNo topo da colina, a condição limite para o vagão não perder contato com o trilho é a normal se anular, com o peso inteiro fazendo o papel de força centrípeta (apontando para baixo, para o centro da colina): $mg=\\dfrac{mv_{topo}^2}{R}\\Rightarrow v_{topo}^2=gR$.\n\nPela conservação de energia entre o ponto de partida (altura $h$, repouso) e o topo da colina (altura $2R$): $mgh=mg(2R)+\\dfrac12mv_{topo}^2\\Rightarrow gh=2gR+\\dfrac{gR}{2}\\Rightarrow h=2R+\\dfrac{R}{2}=\\dfrac{5R}{2}$.\n\nEssa é a altura máxima: para $h$ maiores, o vagão chegaria ao topo com velocidade maior que a crítica e perderia contato com o trilho.",
+    "tikz_code": null,
+    "imagem_enunciado": true,
+    "alternativas_com_imagem": [],
+    "fonte_arquivo": "P2 (23.1) Física I.pdf",
+    "fonte_pagina": 4
+  },
+  {
+    "materia": "Física I",
+    "topico": "Energia",
+    "subtopico": "Compressão máxima de mola em função da velocidade inicial — conservação de energia",
+    "dificuldade": "medio",
+    "instituicao": "UFF (1º sem.)",
+    "ano": 2023,
+    "enunciado": "Um bloco desliza sobre uma superfície sem atrito com uma rapidez v, ele colide com uma mola cuja outra extremidade está fixa. A compressão máxima da mola é x. Qual será a compressão máxima da mola se a rapidez do bloco antes da colisão for igual a 2v?",
+    "alternativas": {
+      "a": "4x",
+      "b": "3x/2",
+      "c": "$\\sqrt{2}\\,x$",
+      "d": "2x",
+      "e": "8x"
+    },
+    "gabarito": "d",
+    "resolucao": "A energia cinética do bloco antes da colisão se transforma inteiramente em energia potencial elástica da mola na compressão máxima (não há atrito, e nesse instante o bloco está momentaneamente em repouso): $\\dfrac12mv^2=\\dfrac12kx^2\\Rightarrow x=v\\sqrt{\\dfrac{m}{k}}$, ou seja, $x\\propto v$.\n\nSe a velocidade inicial dobra (de $v$ para $2v$), a compressão máxima também dobra: nova compressão $=2x$.",
+    "tikz_code": null,
+    "imagem_enunciado": false,
+    "alternativas_com_imagem": []
+  }
+]
