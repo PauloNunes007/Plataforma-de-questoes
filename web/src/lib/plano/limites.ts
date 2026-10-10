@@ -44,7 +44,7 @@ export { SIMULADO_FREE_LIMITE_SEMANA };
 
 /** Questões que o plano grátis responde por dia. Gate: lib/questao/actions.ts
  *  (`registrarRespostaAction` — conta ANTES de inserir a tentativa). */
-export const QUESTOES_DIA_FREE = 10;
+export const QUESTOES_DIA_FREE = 200;
 
 /** Favoritos guardados no grátis. Gate: lib/anotacoes/actions.ts. */
 export const FAVORITOS_FREE = 5;
