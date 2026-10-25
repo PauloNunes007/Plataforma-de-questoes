@@ -27,6 +27,7 @@ import { MapaProgressoCard } from "./mapa-progresso-card";
 import { SimuladosCard } from "./simulados-card";
 import { MateriasRiscoCard } from "./materias-risco-card";
 import { RevisarHojeCard } from "./revisar-hoje-card";
+import { RelampagoCard } from "./relampago-card";
 import { DesempenhoView } from "./desempenho-view";
 import { ConquistasView } from "./conquistas-view";
 
@@ -217,6 +218,10 @@ export function DashboardView({
                   hoje={hojeStr}
                   novato={hero.totalQuestoes === 0}
                 />
+
+                {/* Novato já tem a "primeira lista" no AcaoCard; dois CTAs
+                    de começar competiriam. */}
+                {hero.totalQuestoes > 0 && <RelampagoCard />}
 
                 {/* As duas portas de entrada, com o mesmo peso visual:
                     "monte a sua prática" e "faça uma prova cronometrada".

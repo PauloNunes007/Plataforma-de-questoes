@@ -2890,3 +2890,11 @@ Peça de divulgação pra P3: a P2 de 17/10/2026 de Física I (versão A) e Fís
 - **P3**: `topicosP3` = tópicos da ementa depois da P2 (Física I: Rotação, Gravitação, Oscilações; Física 2: Campo Magnético, Indução, Oscilações EM e CA). O treino sorteia 15 questões regulares deles; as contagens da página são lidas ao vivo via service_role.
 - **Treinar sem conta**: os botões apontam pra rota GET `…/treinar/[chave]` (`fis1|fis2` × `v1|v2|p3`). Sem sessão ou sem onboarding, ela grava o próprio caminho no cookie `expectrum_destino` (`lib/provas/destino.ts`, só aceita esse prefixo — não é open redirect) e manda pra `/login?modo=criar` ou `/onboarding`. `destinoPosLogin` e `destinoFimOnboardingAction` leem o cookie e devolvem o aluno pra rota, que cria o simulado e apaga o cookie. Respeita o limite semanal de simulado do grátis e retoma um em andamento com o mesmo título.
 - `/login?modo=criar` abre direto na aba de cadastro.
+
+## Rodada Relâmpago (2026-10-25) — `lib/relampago/`
+
+Botão de um clique na home (`RelampagoCard`, só pra quem já respondeu algo; novato continua com a "primeira lista") que monta 5 questões sem o aluno decidir nada. Ataca a barreira de entrada: abrir o app com pouco tempo e fechar a aba por não querer escolher disciplina/assuntos/dificuldade/quantidade.
+
+- **`montarRodadaRelampago`** escolhe, por prioridade: até 2 erros ainda em aberto do Caderno → até 2 questões de tópicos abaixo do limiar de retenção (o mesmo diagnóstico de `carregarRevisarHoje`, intercalando tópicos) → o resto de inéditas dos assuntos ainda não cobertos (`< 5` respondidas, ordem da ementa; prefere questão que o aluno nunca tentou, completa com repetidas). Fonte vazia é completada pelas outras. `desafio=true` nunca entra, exceto o que o aluno mesmo guardou no Caderno.
+- **`criarListaPorIds`** (`lib/questly/criar-lista.ts`) é o terceiro caminho de criar lista: grava uma `missions` avulsa a partir de ids já escolhidos, relendo XP/tempo do banco pela mesma conta dos outros dois.
+- Nada vem do cliente (a action só aperta o botão). Sem migração, sem RLS novo. A rodada em si não paga nada: XP sai pela via normal de `registrarRespostaAction`.

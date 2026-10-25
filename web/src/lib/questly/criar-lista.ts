@@ -153,3 +153,58 @@ export async function criarListaDeQuestoes(
   }
   return { missaoId: criada.id as string, total: candidatas.length };
 }
+
+/**
+ * Grava uma lista a partir de questões JÁ ESCOLHIDAS (a ordem recebida é a
+ * ordem da lista). É o caminho de quem monta a lista por critério próprio em
+ * vez de por tópico — a Rodada Relâmpago mistura erro antigo, revisão e
+ * questão inédita, que nenhum filtro de tópico/dificuldade expressa.
+ *
+ * Relê as questões do banco em vez de confiar no que veio de quem chama: o
+ * XP e o tempo previstos saem do dado de verdade, pela mesma conta de
+ * `criarListaDeQuestoes`.
+ */
+export async function criarListaPorIds(
+  supabase: SupabaseClient,
+  userId: string,
+  questionIds: string[],
+): Promise<{ missaoId: string | null; total: number }> {
+  const ids = Array.from(new Set(questionIds));
+  if (ids.length === 0) return { missaoId: null, total: 0 };
+
+  const { data: linhas } = await supabase
+    .from("questions")
+    .select("id, tempo_medio_seg, dificuldade, topic_id")
+    .in("id", ids);
+  const porId = new Map((linhas ?? []).map((q) => [q.id as string, q]));
+  const escolhidas = ids.map((id) => porId.get(id)).filter((q) => q != null);
+  if (escolhidas.length === 0) return { missaoId: null, total: 0 };
+
+  const topicIds = Array.from(
+    new Set(escolhidas.map((q) => q.topic_id as string | null).filter((t): t is string => Boolean(t))),
+  );
+
+  const { data: criada, error } = await supabase
+    .from("missions")
+    .insert({
+      user_id: userId,
+      subject_id: null,
+      data: questlyHojeISO(),
+      topic_ids: topicIds,
+      question_ids: escolhidas.map((q) => q.id as string),
+      qtd_questoes: escolhidas.length,
+      tempo_previsto_min: minutosEstimados(escolhidas),
+      xp_recompensa: escolhidas.reduce((acc, q) => acc + questlyXpDaQuestao(q), 0),
+      concluida: false,
+      avulsa: true,
+      recap_topico_id: null,
+    })
+    .select("id")
+    .single();
+
+  if (error || !criada) {
+    console.error("Erro ao criar lista por ids:", error);
+    return { missaoId: null, total: escolhidas.length };
+  }
+  return { missaoId: criada.id as string, total: escolhidas.length };
+}
