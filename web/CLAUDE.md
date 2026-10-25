@@ -2898,3 +2898,8 @@ Botão de um clique na home (`RelampagoCard`, só pra quem já respondeu algo; n
 - **`montarRodadaRelampago`** escolhe, por prioridade: até 2 erros ainda em aberto do Caderno → até 2 questões de tópicos abaixo do limiar de retenção (o mesmo diagnóstico de `carregarRevisarHoje`, intercalando tópicos) → o resto de inéditas dos assuntos ainda não cobertos (`< 5` respondidas, ordem da ementa; prefere questão que o aluno nunca tentou, completa com repetidas). Fonte vazia é completada pelas outras. `desafio=true` nunca entra, exceto o que o aluno mesmo guardou no Caderno.
 - **`criarListaPorIds`** (`lib/questly/criar-lista.ts`) é o terceiro caminho de criar lista: grava uma `missions` avulsa a partir de ids já escolhidos, relendo XP/tempo do banco pela mesma conta dos outros dois.
 - Nada vem do cliente (a action só aperta o botão). Sem migração, sem RLS novo. A rodada em si não paga nada: XP sai pela via normal de `registrarRespostaAction`.
+
+## Trilha: nó que racha + Redenção (2026-10-25)
+
+- **Nó que racha** (`no-jornada.tsx`): `perda` = `1 - retencao/QUESTLY_RETENCAO_LIMIAR` (0..1) só quando `memoriaCaindo`. Gradua o desbotar (`saturate`) e acrescenta rachaduras SVG (1 → 2 → 3 traços em 0, 0,35 e 0,7). Antes, todo nó com memória caindo piscava igual; agora o que está mais esquecido parece mais estragado. Decorativo (`aria-hidden`): o número continua no painel do tópico. Perda visível, mas recuperável com uma revisão — sem punição.
+- **Redenção** (`registrarRespostaAction` → `redencaoDias`): se a tentativa ANTERIOR da mesma questão foi erro e agora ele acertou, a tela de resolução mostra "Você errou esta há N dias — e hoje acertou". A tentativa anterior é lida ANTES do insert. Só leitura: não paga XP extra nem entra no ranking.

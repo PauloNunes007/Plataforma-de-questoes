@@ -29,6 +29,7 @@ import {
   PartyPopper,
   Printer,
   Search,
+  Sparkles,
   Trophy,
   X,
   XCircle,
@@ -98,6 +99,9 @@ type EstadoPergunta = {
   xpConcedido: number;
   /** acertos seguidos NO MOMENTO desta resposta (0 se errou) */
   combo: number;
+  /** dias desde o erro anterior nesta MESMA questão, quando ele acertou agora
+   *  (null = não é uma redenção) */
+  redencaoDias: number | null;
 };
 
 const MOTIVOS_ERRO = [
@@ -141,6 +145,7 @@ function estadoInicial(): EstadoPergunta {
     motivoErro: null,
     xpConcedido: 0,
     combo: 0,
+    redencaoDias: null,
   };
 }
 
@@ -380,7 +385,10 @@ export function QuestaoRunner({
       );
     }
 
-    atualizarEstado(indiceAtual, { attemptId: resultado.attemptId });
+    atualizarEstado(indiceAtual, {
+      attemptId: resultado.attemptId,
+      redencaoDias: resultado.redencaoDias,
+    });
 
     // Marco do dia (10/15/25/...): a contagem vem do servidor, então conta
     // questão respondida em QUALQUER missão de hoje, não só nesta sessão.
@@ -990,6 +998,21 @@ function FeedbackArea({
           </span>
         )}
       </div>
+
+      {/* Redenção: errou esta mesma questão antes e agora acertou. */}
+      {estado.correta && estado.redencaoDias != null && (
+        <p className="mb-4 flex items-center gap-2 rounded-xl border border-questly-gold/40 bg-questly-gold-light px-4 py-2.5 text-[13px] font-medium text-questly-gold-dark">
+          <Sparkles size={15} strokeWidth={2.2} className="shrink-0" />
+          <span>
+            {estado.redencaoDias === 0
+              ? "Você errou esta mais cedo hoje — e agora acertou."
+              : estado.redencaoDias === 1
+                ? "Você errou esta ontem — e hoje acertou."
+                : `Você errou esta há ${estado.redencaoDias} dias — e hoje acertou.`}{" "}
+            Isso é aprendizado de verdade.
+          </span>
+        </p>
+      )}
 
       {/* A linha abaixo do banner é o feedback do ESFORÇO: no acerto, o
           estado do combo; no erro, o porquê de ainda ter vindo XP. */}

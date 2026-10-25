@@ -86,6 +86,7 @@ export async function registrarRespostaAction(input: {
       correta: false,
       questoesHoje: 0,
       bloqueado: false,
+      redencaoDias: null as number | null,
     };
 
   // TETO DIÁRIO DO PLANO GRÁTIS (lib/plano/limites.ts).
@@ -113,6 +114,7 @@ export async function registrarRespostaAction(input: {
       correta: false,
       questoesHoje: jaHoje,
       bloqueado: true,
+      redencaoDias: null as number | null,
     };
   }
 
@@ -162,6 +164,26 @@ export async function registrarRespostaAction(input: {
         Math.max(0, Math.round((Date.now() - new Date(anterior.created_at).getTime()) / 1000)),
       )
     : tempoCliente;
+
+  // REDENÇÃO: a última vez que ele viu ESTA questão foi um erro e agora acertou.
+  // Lido ANTES do insert, senão a "última tentativa" seria a que acabou de
+  // entrar. É o momento de progresso mais concreto que o app consegue mostrar:
+  // não "você subiu de nível", e sim "isto que te derrubou, você agora sabe".
+  const { data: tentativaAnterior } = await supabase
+    .from("question_attempts")
+    .select("correta, created_at")
+    .eq("user_id", user.id)
+    .eq("question_id", input.questionId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const redencaoDias =
+    correta && tentativaAnterior && tentativaAnterior.correta === false && tentativaAnterior.created_at
+      ? Math.max(
+          0,
+          Math.floor((Date.now() - new Date(tentativaAnterior.created_at).getTime()) / 86400000),
+        )
+      : null;
 
   const { data: attempt, error: attemptError } = await supabase
     .from("question_attempts")
@@ -309,6 +331,7 @@ export async function registrarRespostaAction(input: {
     correta,
     questoesHoje,
     bloqueado: false,
+    redencaoDias,
   };
 }
 
