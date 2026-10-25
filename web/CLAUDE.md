@@ -2871,3 +2871,11 @@ Same as root `CLAUDE.md`: Portuguese identifiers/UI strings, `questly`-prefixed 
 ## Acesso livre até 08/10/2026 (`lib/plano/acesso-livre.ts`)
 
 Até `ACESSO_LIVRE_ATE` (2026-10-08 00:00 BRT) toda conta tem os recursos do Pro: todo **gate** de recurso (tetos de `lib/plano/limites.ts`, faltas/notas, PDF, autópsia, simulados, Caderno) usa `temAcessoPro()` = período livre OU `ehPro()`. `ehPro()` continua significando "pagou/cupom" e é o que decide selo Pro no ranking, anel dourado do avatar, relatório semanal por e-mail, compra/cupom/afiliados — não troque esses por `temAcessoPro`. A partir da data, os tetos do grátis (apertados em 2026-09-26: 10 questões/dia, 5 favoritos, 3 anotações, 10 no Caderno, 1 simulado/semana) voltam sozinhos, sem cron nem deploy. A landing (`app/page.tsx` → `acessoLivreAtivo()`) troca a seção de preços e a FAQ de "totalmente gratuita por tempo limitado" pra grade normal na primeira revalidação depois da data (até 1h).
+
+## A primeira questão (2026-10-24) — `lib/onboarding/primeira-lista.ts`
+
+Funil medido no banco: 47 cadastros → 43 confirmaram o e-mail → 36 terminaram o onboarding → **11 responderam alguma questão** → 4 voltaram em outro dia. O buraco não era a verificação nem o onboarding: 25 alunos chegavam à home e nunca começavam. A home mandava quem nunca tinha visto uma questão "Montar minha semana" num calendário vazio, e o caminho alternativo era um assistente de quatro escolhas.
+
+- **`criarPrimeiraLista`**: 5 questões fáceis/médias dos 2 primeiros tópicos (por `ordem`) da disciplina do aluno com mais questões regulares; sem fácil/médio ali, qualquer dificuldade. Grava via `criarListaDeQuestoes` (mesma regra de sorteio, XP e tempo do Banco). Não é prescrição de rotina — é uma porta de entrada, oferecida só a quem nunca respondeu.
+- **Fim do onboarding**: o tour termina chamando `comecarPrimeiraListaAction` e cai direto em `/questao` (origem `/dashboard`); sem disciplina com questão, vai pra home como antes. O CTA da última cena virou "Responder minha primeira questão".
+- **Home**: `AcaoCard` ganhou o modo `primeira` (`hero.totalQuestoes === 0`) — "Sua primeira lista", um clique. O modo `vazio` (calendário) ficou só pra quem já respondeu algum dia e não tem nada hoje.

@@ -1048,7 +1048,7 @@ function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => voi
           onClick={onComecar}
           className="flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[0.06] px-6 font-heading text-[15px] font-semibold text-white/85 backdrop-blur-md transition-colors hover:bg-white/10"
         >
-          Continuar no grátis
+          Responder minha primeira questão
           <ArrowRight size={16} strokeWidth={2.4} />
         </motion.button>
       </motion.div>
@@ -1060,7 +1060,7 @@ function CenaPro({ rm, onVerPro, onComecar }: { rm: boolean; onVerPro: () => voi
         className="mt-3 flex items-center gap-1.5 text-[11px] text-white/40"
       >
         <Flame size={11} strokeWidth={2.4} />
-        Seu banco de questões já está aberto no painel.
+        Sua primeira lista já está pronta: 5 questões, uns 10 minutos.
       </motion.p>
     </>
   );

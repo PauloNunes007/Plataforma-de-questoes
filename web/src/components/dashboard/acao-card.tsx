@@ -59,11 +59,14 @@ import { corDaDisciplina } from "@/lib/questao/disciplina-cor";
 import { hrefQuestao } from "@/lib/questao/navegacao";
 import { fmtDuracao } from "@/lib/agenda/formato";
 import { iniciarEstudoPlanejadoAction } from "@/lib/tarefas/actions";
+import { comecarPrimeiraListaAction } from "@/lib/onboarding/actions";
 import type { TarefaRow } from "@/lib/tarefas/tarefas-data";
 import type { MetasHoje } from "@/lib/questly/dashboard-data";
 import type { RetomarInfo } from "@/lib/retomar/retomar-data";
 
 const GRAD_DIA_FEITO = "linear-gradient(135deg, #076b4a, #04412e)";
+type Modo = "plano" | "retomar" | "dia" | "primeira" | "vazio";
+
 const GRAD_NEUTRO = "linear-gradient(135deg, #253343, #151d27)";
 
 export function AcaoCard({
@@ -71,6 +74,7 @@ export function AcaoCard({
   plano,
   metas,
   hoje,
+  novato,
 }: {
   retomar: RetomarInfo;
   /** O bloco de estudo de hoje ainda não concluído, se houver. */
@@ -78,6 +82,8 @@ export function AcaoCard({
   metas: MetasHoje;
   /** "YYYY-MM-DD" de hoje — a régua que separa lista quente de lista fria. */
   hoje: string;
+  /** Nunca respondeu uma questão — a faixa vira a porta da primeira lista. */
+  novato: boolean;
 }) {
   const foco = useFoco();
   const router = useRouter();
@@ -93,13 +99,21 @@ export function AcaoCard({
   const listaQuente = Boolean(retomar && retomar.data === hoje);
   const planoVence = Boolean(plano) && !planoLigado && !listaQuente;
 
-  const modo: "plano" | "retomar" | "dia" | "vazio" = planoVence
+  // "primeira" (2026-10-24): conta que nunca respondeu nada. O funil medido
+  // mostrou 25 de 36 alunos terminando o onboarding sem responder uma questão
+  // sequer — e a faixa os mandava planejar a semana num calendário vazio. Pra
+  // quem ainda não viu uma questão, o próximo passo é ver uma, e a lista sai
+  // num clique (lib/onboarding/primeira-lista.ts). Quem já respondeu algum
+  // dia continua no "vazio".
+  const modo: Modo = planoVence
     ? "plano"
     : retomar
       ? "retomar"
       : fezAlgoHoje
         ? "dia"
-        : "vazio";
+        : novato
+          ? "primeira"
+          : "vazio";
 
   const naFaixa = modo === "plano" ? plano : null;
   const emCima = modo === "retomar" ? retomar : null;
@@ -129,7 +143,9 @@ export function AcaoCard({
         ? naFaixa!.nome
         : modo === "dia"
           ? "Bom trabalho hoje"
-          : "Monte a sua semana";
+          : modo === "primeira"
+            ? "Sua primeira lista"
+            : "Monte a sua semana";
 
   const plural = (n: number, um: string, varios: string) => (n === 1 ? um : varios);
   const legenda =
@@ -145,7 +161,9 @@ export function AcaoCard({
         ? detalheDoPlano(naFaixa!)
         : modo === "dia"
           ? `${metas.questoesRespondidas} ${plural(metas.questoesRespondidas, "questão", "questões")} · ${metas.xpHoje} XP · ${metas.listasConcluidas} ${plural(metas.listasConcluidas, "lista fechada", "listas fechadas")}`
-          : "Marque no calendário o que você vai estudar em cada dia. Depois é só clicar em Começar, aqui mesmo, que a lista sai pronta.";
+          : modo === "primeira"
+            ? "5 questões do começo da ementa, uns 10 minutos, com resolução passo a passo. Depois você monta as listas do seu jeito."
+            : "Marque no calendário o que você vai estudar em cada dia. Depois é só clicar em Começar, aqui mesmo, que a lista sai pronta.";
 
   async function comecarPlano() {
     if (!plano || iniciando) return;
@@ -171,12 +189,33 @@ export function AcaoCard({
     setIniciando(false);
   }
 
+  async function comecarPrimeira() {
+    if (iniciando) return;
+    setIniciando(true);
+    setErro(null);
+    try {
+      const { missaoId } = await comecarPrimeiraListaAction();
+      if (missaoId) {
+        router.push(hrefQuestao(missaoId, origem));
+        return;
+      }
+      // Nenhuma disciplina do aluno tem questão: o Banco mostra o que existe.
+      router.push("/questoes/banco");
+      return;
+    } catch (e) {
+      console.error("Falha ao montar a primeira lista:", e);
+      setErro("Sem resposta do servidor. Confira a conexão e tente de novo.");
+    }
+    setIniciando(false);
+  }
+
   const cta = (
     <Cta
       retomar={emCima}
       plano={naFaixa}
       iniciando={iniciando}
       onComecarPlano={comecarPlano}
+      onComecarPrimeira={comecarPrimeira}
       cor={corCta}
       origem={origem}
       modo={modo}
@@ -281,6 +320,14 @@ export function AcaoCard({
           detalhe="disciplina, assunto e tamanho"
         />
       )}
+      {modo === "primeira" && (
+        <Secundaria
+          icone={<Sparkles size={11} strokeWidth={2.4} />}
+          href="/questoes/banco"
+          rotulo="Prefiro escolher o assunto"
+          detalhe="disciplina, assunto e tamanho"
+        />
+      )}
 
       {/* Progresso rente à base — só existe quando há uma lista aberta de
           verdade NA FAIXA. Um bloco só planejado não tem "quanto falta": ele
@@ -371,6 +418,7 @@ function Cta({
   plano,
   iniciando,
   onComecarPlano,
+  onComecarPrimeira,
   cor,
   origem,
   modo,
@@ -379,9 +427,10 @@ function Cta({
   plano: TarefaRow | null;
   iniciando: boolean;
   onComecarPlano: () => void;
+  onComecarPrimeira: () => void;
   cor: string;
   origem: string;
-  modo: "plano" | "retomar" | "dia" | "vazio";
+  modo: Modo;
 }) {
   const base =
     "inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl px-5 text-[14px] font-bold transition-transform hover:scale-[1.02] active:scale-[0.98] sm:w-auto";
@@ -414,9 +463,24 @@ function Cta({
     );
   }
 
-  // Tela vazia = conta nova (ou dia sem nada marcado): o convite é planejar a
-  // semana, não sortear questões no escuro. Quem JÁ estudou hoje (modo "dia")
-  // não precisa de plano pra continuar — pra esse, a porta certa é o banco.
+  if (modo === "primeira") {
+    return (
+      <button
+        type="button"
+        onClick={onComecarPrimeira}
+        disabled={iniciando}
+        className={`${base} cursor-pointer bg-white shadow-lg shadow-black/20 disabled:cursor-not-allowed disabled:opacity-70`}
+        style={{ color: cor }}
+      >
+        <Play size={15} strokeWidth={2.6} fill="currentColor" />
+        {iniciando ? "Montando lista..." : "Responder minha primeira questão"}
+      </button>
+    );
+  }
+
+  // Dia sem nada marcado, de quem JÁ respondeu algum dia (a conta nova cai no
+  // "primeira" acima): o convite é planejar a semana. Quem já estudou hoje
+  // (modo "dia") não precisa de plano pra continuar — a porta certa é o banco.
   if (modo === "vazio") {
     return (
       <Link href="/calendario" className={`${base} bg-white shadow-lg shadow-black/20`} style={{ color: cor }}>

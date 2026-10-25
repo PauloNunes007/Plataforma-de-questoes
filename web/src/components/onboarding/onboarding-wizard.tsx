@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Sparkles, X } from "lucide-react";
 import {
+  comecarPrimeiraListaAction,
   salvarCampanhaAction,
   verificarUsernameAction,
   type DisciplinaInput,
@@ -15,6 +16,7 @@ import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cur
 import { CursoReveal } from "@/components/onboarding/curso-reveal";
 import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
 import { TourPlataforma } from "@/components/onboarding/tour-plataforma";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 import { Insignia, type NomeInsignia, type TomInsignia } from "@/components/insignias/insignia";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 
@@ -199,6 +201,7 @@ export function OnboardingWizard({
   const [erro, setErro] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState(false);
   const [mostrarTour, setMostrarTour] = useState(false);
+  const finalizando = useRef(false);
 
   function irPara(novoStep: number) {
     if (novoStep < 1 || novoStep > TOTAL_STEPS) return;
@@ -279,8 +282,28 @@ export function OnboardingWizard({
   // dentro do próprio passo — basta deixar em branco).
   const mostrarPular = step === 3;
 
+  // O tour termina numa QUESTÃO, não na home (2026-10-24): de 36 alunos que
+  // chegavam à home depois daqui, 25 nunca responderam nada. A primeira lista
+  // sai pronta (lib/onboarding/primeira-lista.ts); sem disciplina com questão,
+  // a home continua sendo o destino. O ref segura o duplo disparo (Esc, "Pular"
+  // e o CTA da última cena chamam o mesmo onFinalizar).
+  async function finalizarTour() {
+    if (finalizando.current) return;
+    finalizando.current = true;
+    try {
+      const { missaoId } = await comecarPrimeiraListaAction();
+      if (missaoId) {
+        router.push(hrefQuestao(missaoId, "/dashboard"));
+        return;
+      }
+    } catch (e) {
+      console.error("Falha ao montar a primeira lista:", e);
+    }
+    router.push("/dashboard");
+  }
+
   if (mostrarTour) {
-    return <TourPlataforma identidade={acento} onFinalizar={() => router.push("/dashboard")} />;
+    return <TourPlataforma identidade={acento} onFinalizar={finalizarTour} />;
   }
 
   return (

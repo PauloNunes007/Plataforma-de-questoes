@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { criarPrimeiraLista } from "@/lib/onboarding/primeira-lista";
 // Grava o profile (curso/universidade/semestre/nivel/dias) e, por disciplina
 // escolhida: materia (busca ou cria a taxonomia compartilhada), subject e
 // campaign.
@@ -184,4 +185,19 @@ export async function salvarCampanhaAction(
   }
 
   return { error: null };
+}
+
+/**
+ * Monta a primeira lista do aluno (5 questões do começo da ementa, ver
+ * lib/onboarding/primeira-lista.ts) e devolve o id — é o fim do onboarding e
+ * o CTA da home de quem nunca respondeu. null = nenhuma disciplina com
+ * questão; quem chama manda pro Banco de Questões.
+ */
+export async function comecarPrimeiraListaAction(): Promise<{ missaoId: string | null }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { missaoId: null };
+  return criarPrimeiraLista(supabase, user.id);
 }
