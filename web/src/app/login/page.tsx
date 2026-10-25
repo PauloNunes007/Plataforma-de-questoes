@@ -17,9 +17,9 @@ export const revalidate = 3600;
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ confirmacao?: string }>;
+  searchParams: Promise<{ confirmacao?: string; modo?: string }>;
 }) {
-  const { confirmacao } = await searchParams;
+  const { confirmacao, modo } = await searchParams;
   const stats = await carregarStatsBanco();
 
   return (
@@ -50,7 +50,9 @@ export default async function LoginPage({
               conta ainda não estiver confirmada, a gente reenvia um link novo na hora.
             </div>
           )}
-          <LoginForm stats={stats} />
+          {/* `?modo=criar` abre direto na aba de cadastro: quem clicou em "Criar
+              conta" ou "Treinar" não deveria cair num "Bem-vindo de volta". */}
+          <LoginForm stats={stats} abaInicial={modo === "criar" ? "signup" : "signin"} />
         </div>
       </main>
     </div>

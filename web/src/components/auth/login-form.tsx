@@ -103,7 +103,13 @@ function BotaoMostrarSenha({
   );
 }
 
-export function LoginForm({ stats }: { stats: StatsBanco }) {
+export function LoginForm({
+  stats,
+  abaInicial = "signin",
+}: {
+  stats: StatsBanco;
+  abaInicial?: "signin" | "signup";
+}) {
   const perks = montarPerks(stats);
   const [signInState, signInFormAction, signInPending] = useActionState(
     signInAction,
@@ -131,7 +137,7 @@ export function LoginForm({ stats }: { stats: StatsBanco }) {
           O copiloto da sua aprovação
         </span>
 
-        <Tabs defaultValue="signin" className="mt-6">
+        <Tabs defaultValue={abaInicial} className="mt-6">
           <TabsList className="mb-6 grid h-11 w-full grid-cols-2 rounded-xl p-1">
             <TabsTrigger value="signin" className="rounded-lg text-[13.5px] font-semibold">
               Entrar

@@ -1,5 +1,6 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { concederProLancamento } from "@/lib/plano/lancamento-servidor";
+import { lerDestinoPendente } from "@/lib/provas/destino";
 
 // Espelha questlyGarantirProfile (js/supabase-client.js): cria a linha em
 // "profiles" na primeira vez que o usuário aparece autenticado. Compartilhado
@@ -50,5 +51,8 @@ export async function destinoPosLogin(
     .eq("id", userId)
     .maybeSingle();
 
-  return profile?.curso ? "/dashboard" : "/onboarding";
+  if (!profile?.curso) return "/onboarding";
+  // Quem veio de um "Treinar" da página pública da P2 volta pra ele em vez de
+  // cair na home (ver lib/provas/destino.ts).
+  return (await lerDestinoPendente()) ?? "/dashboard";
 }

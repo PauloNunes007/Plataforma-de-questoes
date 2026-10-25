@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { APP_URL } from "@/lib/app-url";
 import { carregarCatalogoProvas } from "@/lib/provas/catalogo";
+import { ROTA_P2_2026_2 } from "@/lib/provas/p2-2026-2";
 
 // O acervo público de provas antigas entra aqui uma URL por prova: são elas
 // que respondem a busca de cauda longa ("p2 de física 2 uff 2024") e o
@@ -27,6 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: agora,
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${APP_URL}${ROTA_P2_2026_2}`,
+      lastModified: agora,
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     ...provas,
     { url: `${APP_URL}/login`, lastModified: agora, changeFrequency: "monthly", priority: 0.5 },

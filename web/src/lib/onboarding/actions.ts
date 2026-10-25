@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { criarPrimeiraLista } from "@/lib/onboarding/primeira-lista";
+import { lerDestinoPendente } from "@/lib/provas/destino";
+import { hrefQuestao } from "@/lib/questao/navegacao";
 // Grava o profile (curso/universidade/semestre/nivel/dias) e, por disciplina
 // escolhida: materia (busca ou cria a taxonomia compartilhada), subject e
 // campaign.
@@ -200,4 +202,16 @@ export async function comecarPrimeiraListaAction(): Promise<{ missaoId: string |
   } = await supabase.auth.getUser();
   if (!user) return { missaoId: null };
   return criarPrimeiraLista(supabase, user.id);
+}
+
+/**
+ * Pra onde vai quem acabou o onboarding. Se ele chegou pelo "Treinar" da
+ * página pública da P2 (lib/provas/destino.ts), volta pro simulado que pediu;
+ * senão, cai na primeira lista. Sem disciplina com questão, a home.
+ */
+export async function destinoFimOnboardingAction(): Promise<{ href: string }> {
+  const pendente = await lerDestinoPendente();
+  if (pendente) return { href: pendente };
+  const { missaoId } = await comecarPrimeiraListaAction();
+  return { href: missaoId ? hrefQuestao(missaoId, "/dashboard") : "/dashboard" };
 }

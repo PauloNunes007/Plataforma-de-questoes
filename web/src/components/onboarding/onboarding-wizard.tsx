@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Sparkles, X } from "lucide-react";
 import {
-  comecarPrimeiraListaAction,
+  destinoFimOnboardingAction,
   salvarCampanhaAction,
   verificarUsernameAction,
   type DisciplinaInput,
@@ -16,7 +16,6 @@ import { resolverCurso, cursoReconhecido, type CursoIdentidade } from "@/lib/cur
 import { CursoReveal } from "@/components/onboarding/curso-reveal";
 import { InstituicaoCallout } from "@/components/onboarding/instituicao-callout";
 import { TourPlataforma } from "@/components/onboarding/tour-plataforma";
-import { hrefQuestao } from "@/lib/questao/navegacao";
 import { Insignia, type NomeInsignia, type TomInsignia } from "@/components/insignias/insignia";
 import { CursoIcone } from "@/components/cursos/curso-icone";
 
@@ -284,18 +283,17 @@ export function OnboardingWizard({
 
   // O tour termina numa QUESTÃO, não na home (2026-10-24): de 36 alunos que
   // chegavam à home depois daqui, 25 nunca responderam nada. A primeira lista
-  // sai pronta (lib/onboarding/primeira-lista.ts); sem disciplina com questão,
-  // a home continua sendo o destino. O ref segura o duplo disparo (Esc, "Pular"
-  // e o CTA da última cena chamam o mesmo onFinalizar).
+  // sai pronta (lib/onboarding/primeira-lista.ts) — ou, pra quem chegou pelo
+  // "Treinar" da página da P2, o simulado que ele pediu. Sem nada disso, a
+  // home. O ref segura o duplo disparo (Esc, "Pular" e o CTA da última cena
+  // chamam o mesmo onFinalizar).
   async function finalizarTour() {
     if (finalizando.current) return;
     finalizando.current = true;
     try {
-      const { missaoId } = await comecarPrimeiraListaAction();
-      if (missaoId) {
-        router.push(hrefQuestao(missaoId, "/dashboard"));
-        return;
-      }
+      const { href } = await destinoFimOnboardingAction();
+      router.push(href);
+      return;
     } catch (e) {
       console.error("Falha ao montar a primeira lista:", e);
     }
