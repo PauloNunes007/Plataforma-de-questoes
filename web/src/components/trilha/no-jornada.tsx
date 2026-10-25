@@ -22,6 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { TopicoTrilha } from "@/lib/trilha/trilha-data";
+import { QUESTLY_RETENCAO_LIMIAR } from "@/lib/questly/shared";
 import { Mascote } from "./mascote-capivara";
 
 export type EstadoVisual = TopicoTrilha["estado"] | "fronteira";
@@ -126,6 +127,13 @@ export function NoJornada({
   const ehFronteira = est === "fronteira";
   const size = ehFronteira ? 60 : 48;
   const anel = size + 10;
+  // O quanto a memória já escapou, 0..1: 0 = no limiar de retenção, 1 = nada
+  // sobrou. Gradua o desbotar e a rachadura do nó — quanto mais esquecido,
+  // mais estragado ele parece, em vez de um pisca-pisca igual pra todos.
+  const perda =
+    topico.memoriaCaindo && topico.retencao != null
+      ? Math.min(1, Math.max(0, 1 - topico.retencao / QUESTLY_RETENCAO_LIMIAR))
+      : 0;
 
   return (
     <div
@@ -200,10 +208,54 @@ export function NoJornada({
             height: size,
             fontSize: ehFronteira ? 15 : 13,
             transform: "translate(-50%,-50%) perspective(400px) rotateX(6deg)",
+            filter: perda > 0 ? `saturate(${1 - 0.55 * perda})` : undefined,
           }}
         >
           <span className="tnum">{ICONE_ESTADO[est] || numero}</span>
         </span>
+
+        {/* rachadura: aparece quando a memória do tópico está caindo e fica
+            mais longa quanto menos sobrou. Decorativa (aria-hidden); o texto
+            "Memória em X%" continua no painel do tópico. */}
+        {perda > 0 && (
+          <svg
+            aria-hidden
+            width={size}
+            height={size}
+            viewBox="0 0 48 48"
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ transform: "translate(-50%,-50%) perspective(400px) rotateX(6deg)" }}
+          >
+            <path
+              d="M30 3 L25 14 L31 20 L23 29"
+              fill="none"
+              stroke="rgba(0,0,0,0.55)"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            {perda > 0.35 && (
+              <path
+                d="M23 29 L28 36 L24 45"
+                fill="none"
+                stroke="rgba(0,0,0,0.55)"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            )}
+            {perda > 0.7 && (
+              <path
+                d="M25 14 L14 18 L9 27"
+                fill="none"
+                stroke="rgba(0,0,0,0.55)"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            )}
+          </svg>
+        )}
 
       </button>
 
